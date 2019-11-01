@@ -1,0 +1,61 @@
+%% =================================================================================================
+% this doc contains messages (please do not modify);
+% read via getinfomessage.m
+%% =================================================================================================
+
+
+##msgprojectfile##
+
+ #k        NOTE
+ #k ==================== 
+ #r The template "templateBerlin_hres" has been removed from the toolbox--> chose "mouse_spmmouse"
+ #r instead
+
+ #k ______________________________________________________________________________________________
+ #k The current configfile ("*.m"-file) is still linked to the "templateBerlin_hres" templates
+ #k but "templateBerlin_hres" has been removed from ant-tbx (reason & setup, see below).
+ #g Please set the path of following variables TO those of "mouse_spmmouse":
+ #g                   [refpath]
+ #b SOLUTION
+ #k Go to [settings] select the icon next to ## "refpath" ## in the antconfig-window to change
+ #k these variables in one step. 
+ #k Please, check the fields [voxsize] and [species] carfully. 
+ #k ______________________________________________________________________________________________
+
+ #b REASONING
+The template-folder "templateBerlin_hres" (containing ANO,AVGT,TPM etc.) is no  longer located
+in the ANT-toolbox since the last update. The outtsourcing of templates allows to use other 
+reference systmes (templates & atlases). Note that the reference system "templateBerlin_hres" 
+is renamed to "mouse_spmmouse".
+
+ #b TEMPLATES SETUP
+(1) "mouse_spmmouse" and other reference systems (Hikishima template and the Waxholm rat 
+  template/atlas) can be downloaded from goolgedrive. The reference sytem is basically a folder
+  containing a template, TPMs, the atlas and labels.
+(2) Create a directory at same hierarchical level as the ant-tbx and name it 'anttemplates'.
+(3) Save the downloaded reference system (folder) in the 'anttemplates' directory.
+
+ Example, how it looks on my o-drive. Here, the 'anttemplates' folder contain three reference 
+ systems:
+   o:/antx
+   o:/anttemplates/mouse_hikishima     (..if downloaded..)                    
+   o:/anttemplates/mouse_spmmouse      (..if downloaded.., previously "templateBerlin_hres" )                     
+   o:/anttemplates/rat_Waxholm         (..if downloaded..)
+
+
+##end
+
+%% =================================================================================================
+
+##test
+
+inf1 inf2
+inf4
+
+##end
+%% =================================================================================================
+
+
+
+
+ #b https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM.

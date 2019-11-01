@@ -1,0 +1,17 @@
+
+================
+IMORTANT NOTES
+================
+- the structural t2w nifti volume has to be renamed to "t2.nii" to use it as moving image for registration with the Allen template
+- remove '.' from all mousepaths   use mouse1_1_12_82 instead of mouse1_1.12.82
+- check voxelsize of original files, sometimes voxelsize is set to 1 x 1 x 1 mm presumably due during   conversion--> (see: rchangehdr.m)
+
+
+================
+useful files, update
+================
+rchangehdr.m -   change header information of 3d/4d nifti files (multifile-based)
+movefilem.m  -   mass-renaming files 
+copyfilem.m  -   mass-copying files  
+deletem.m    -   mass-deleting files 
+

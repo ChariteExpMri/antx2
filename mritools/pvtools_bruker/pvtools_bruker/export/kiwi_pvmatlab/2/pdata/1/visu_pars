@@ -1,0 +1,60 @@
+##TITLE=Parameter List, pvmatlab
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=nmrsu
+$$ 2015-09-28 11:52:19 Matlab
+$$export\Kiwi_pvmatlab\2\pdata\1\visu_pars
+$$ process Matlab
+##$VisuUid=( 64 )
+<2.16.756.5.104.68702774378.161052.1443441140.89196>
+##$VisuVersion=3
+##$VisuCreator=( 65 )
+<pvmatlab - MATLAB package for handling ParaVision data>
+##$VisuCreatorVersion=( 65 )
+<0.CVS.3>
+##$VisuCreationDate=<2015-09-28T11:52:19,493+0020>
+##$VisuInstanceModality=( 65 )
+<MR>
+##$VisuCoreFrameCount=5
+##$VisuCoreDim=2
+##$VisuCoreSize=( 2 )
+256  128
+##$VisuCoreDimDesc=( 2 )
+spatial spatial
+##$VisuCoreExtent=( 2 )
+80  80
+##$VisuCoreFrameThickness=( 1 )
+2
+##$VisuCoreUnits=( 2, 65 )
+<mm> <mm>
+##$VisuCoreOrientation=( 5, 9 )
+1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 0 1
+##$VisuCorePosition=( 5, 3 )
+-40 -40 -10 -40 -40 -5 -40 -40 0 -40 -40 5 -40 -40 10
+##$VisuCoreDataSlope=( 5 ) 
+72.6087256047168      75.5723941264772      66.7436601955053      62.3892585075025      63.8053615988339
+##$VisuCoreDataOffs=( 5 ) 
+0                     0                     0                     0                     0
+##$VisuCoreDataMin=( 5 ) 
+1.04078521059653      1.99993896298105      2.26448736998514      3.63380281690141      1.18438460148202
+##$VisuCoreDataMax=( 5 ) 
+32766                 32766                 32766                 32766                 32766
+##$VisuCoreFrameType=MAGNITUDE_IMAGE
+##$VisuCoreWordType=_16BIT_SGN_INT
+##$VisuCoreByteOrder=littleEndian
+##$VisuSubjectName=( 65 )
+<Kiwi>
+##$VisuSubjectId=( 65 )
+<Kiwi>
+##$VisuStudyUid=( 65 )
+<2.16.756.5.5.100.2473242608.12179.1336487241.1545>
+##$VisuStudyId=( 65 )
+<pvmatlab>
+##$VisuStudyNumber=1
+##$VisuExperimentNumber=2
+##$VisuProcessingNumber=2
+##$VisuSubjectPosition=Head_Supine
+##$VisuSeriesTypeId=( 65 )
+<DERIVED_OTHER>
+##END=

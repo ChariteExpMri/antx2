@@ -1,0 +1,47 @@
+##TITLE=Parameter List
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=nmrsu
+$$ Tue May  8 16:28:13 2012 CEST (UT+2h)  nmrsu
+$$ /opt/PV5.1/data/nmrsu/nmr/Matlab.dS1/subject
+##$SUBJECT_version_nr=2
+##$SUBJECT_id=( 60 )
+<Kiwi>
+##$SUBJECT_patient_instance_uid=( 65 )
+<2.16.756.5.5.100.2473242608.12179.1336487241.1544>
+##$SUBJECT_name_string=( 64 )
+<Testdata, Matlab>
+$$ @vis= SUBJECT_version_nr SUBJECT_id SUBJECT_patient_instance_uid
+##$SUBJECT_name=(<Testdata>, <Matlab>)
+##$SUBJECT_dbirth=( 12 )
+<>
+##$SUBJECT_type=Human
+##$SUBJECT_sex=( 8 )
+<female>
+$$ @vis= SUBJECT_name_string SUBJECT_name SUBJECT_dbirth SUBJECT_type
+##$SUBJECT_sex_human=Female
+##$SUBJECT_study_name=( 64 )
+<pvmatlab>
+##$SUBJECT_study_nr=1
+##$SUBJECT_study_instance_uid=( 65 )
+<2.16.756.5.5.100.2473242608.12179.1336487241.1545>
+$$ @vis= SUBJECT_sex SUBJECT_sex_human SUBJECT_study_name SUBJECT_study_nr
+##$SUBJECT_size=0.001
+##$SUBJECT_weight=5
+##$SUBJECT_purpose=( 2048 )
+<Define Data Samples to test Reading Data in Matlab>
+$$ @vis= SUBJECT_study_instance_uid SUBJECT_size SUBJECT_weight
+##$SUBJECT_pos_valid=Yes
+##$SUBJECT_location=( 64 )
+<B_TEMPLATES>
+##$SUBJECT_entry=SUBJ_ENTRY_HeadFirst
+##$SUBJECT_position=SUBJ_POS_Supine
+$$ @vis= SUBJECT_purpose SUBJECT_pos_valid SUBJECT_location SUBJECT_entry
+##$SUBJECT_date=( 21 )
+<16:27:21  8 May 2012>
+##$SUBJECT_abs_date=1336487241
+##$SUBJECT_study_coil_config_file=( 512 )
+<HWIDS_T11527V3_0030>
+$$ @vis= SUBJECT_position SUBJECT_date SUBJECT_abs_date SUBJECT
+##END=

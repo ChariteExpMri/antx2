@@ -1,0 +1,45 @@
+
+
+
+
+function displaykey2(img1,img2)
+% reorient 1st Image to 2nd image
+% img1='V:\MRI_testdata\T2w_nifti\s20150908_FK_C1M02_1_3_1\c1s20150908_FK_C1M02_1_3_1.nii,1';
+% img2='V:\MRI_testdata\T2w_nifti\s20150908_FK_C1M02_1_3_1\c3s20150908_FK_C1M02_1_3_1.nii'
+% displaykey2(img1,img2)
+% img1='C:\spm8_30apr15\spm8\canonical\single_subj_T1.nii'
+% img2='C:\spm8_30apr15\spm8\tpm\grey.nii'
+% displaykey2(img1,img2)
+
+
+matlabbatch={};
+matlabbatch{1}.spm.util.disp.data = {img1};
+spm_jobman('run',matlabbatch);
+displaykey(2);%without SPMhook
+
+
+% v='V:\MRI_testdata\T2w_nifti\s20150908_FK_C1M02_1_3_1\c3s20150908_FK_C1M02_1_3_1.nii'
+%% keyboard
+if ~isempty(img2)
+    keyb('ovl',img2)
+end
+
+%% add reortientIMages-TxtFile
+
+   hfigg    =findobj(0,'tag','Graphics')
+hbut =findobj(hfigg,'string','Reorient images...')
+iptaddcallback(hbut, 'Callback', @writeTXTfile);
+
+
+function writeTXTfile(h1,h2)
+'a'
+global st
+
+vector= (st.B)
+dlmwrite('reorientvec.txt',  vector,'delimiter','\t','delimiter','\t')
+
+
+ 
+
+
+

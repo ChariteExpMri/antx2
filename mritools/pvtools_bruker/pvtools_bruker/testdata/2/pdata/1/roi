@@ -1,0 +1,24 @@
+##TITLE=Parameter List
+##JCAMPDX=4.24
+##DATATYPE=Parameter Values
+##ORIGIN=Bruker BioSpin MRI GmbH
+##OWNER=nmrsu
+$$ Tue May  8 17:15:03 2012 CEST (UT+2h)  nmrsu
+$$ /opt/PV5.1/data/nmrsu/nmr/Matlab.dS1/2/pdata/1/roi
+##$ROI_version=( 20 )
+<Version 2.0>
+##$ROI_n=1
+##$ROI_par=( 1 )
+(RoiSquare, <>, 4, 0, 0, -1)
+##$ROI_dpar=( 4 )
+0.5 0.5 0.1 0.1
+##$ROI_dpar_off=( 1 )
+0
+##$ROI_cpar_off=( 1 )
+0
+##$ROI_ndx=0
+##$ROI_dpar_ndx=( 4 )
+0.5 0.5 0.1 0.1
+##$ROI_cpar_ndx=( 1 )
+<>
+##END=

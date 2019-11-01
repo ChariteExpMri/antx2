@@ -1,0 +1,11 @@
+function stack=readStack2dseq(path,RO,PE,scanno,recono,frame,type);
+%% readStack2dseq reads in many scans from one paravision study and creates a single stack
+% scanno/recono are vectors containing the scannumber and reco numbers,
+% path is the path to the studyfolder (ends with filesep, RO, PE are the dimensions in
+% readout/phase encoding, frame is a vector containing the slice to grab
+% for each scan, type is datatype (see read2dseq.m)
+
+data=zeros(RO,PE,length(scanno));
+for i=1:length(scanno)
+    read2dseq([path scanno(i) filesep 'pdata' recono(i)+filesep]
+end

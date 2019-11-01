@@ -1,0 +1,149 @@
+
+
+<!doctype hmtl>
+<html>
+<head>
+    <title>##subject##</title>
+    <!-- Do not display this at the momen-->
+    <meta http-equiv="refresh" content="5" >
+    
+    <style>
+        blink {
+        animation: blinker 2.0s linear infinite;
+        color: green;
+        }
+        @keyframes blinker {  
+        50% { opacity: 0; }
+        }
+        
+    </style>
+    
+    
+</head>
+<body>
+    <A NAME="codewordTOP">
+    <!-- ####################################################################-->
+    <h2 style="color:red; margin-bottom:0"              > #subject# </h2>
+    <h3 style="color:blue; margin-top:0;margin-bottom:0"> #path# </h3>
+    
+    
+    <hr>
+    0% processed <meter min="0" max="100"   value="0"></meter>. <blink>waiting</blink>
+    <font size="2">## start time: ;</font--> 
+    <font size="2">## end time: ;</font-->
+    <font size="2">## diff time: ;</font-->
+        <br>
+    <font size="2">last performed process: - </font><br>
+    <!-- ####################################################################-->
+    <!-- ###STARTHERE###-->
+    <!-- ###TOPJUMPS###-->
+    <font size="3">&nbsp;&nbsp;&nbsp;&nbsp;
+        <!--A HREF="#codewordTOP">[top]</A>&nbsp;&nbsp;&nbsp;&nbsp; <-->
+        <A HREF="#codeword_initialization">[initialization]</A>&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#codeword_coregistration">[coregistration]</A>&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#codeword_segmentation">[segmentation]</A>&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#codeword_warping">[warping]</A>&nbsp;&nbsp;&nbsp;&nbsp;
+    </b></font><br>
+    <!-- ###TOPJUMPSEND###-->    
+    
+    
+         
+        
+        
+     
+         
+       
+         
+     
+        
+    <br>
+     <!--font size="1">##EOF##</font--> 
+    <A NAME="codewordEND">
+    <br><br><font size="3"><A HREF="#codewordTOP">[top]</A></font><br>
+    <hr>
+    <!-- ####################################################################-->
+        
+    <!--font size="2">This is some text!</font-->    
+    <!--h5> bla bla </h5-->  
+    <script type="text/javascript">
+        function zoomimage()
+        {
+        var task = parseInt(arguments[0]);   // 0,1 ..smaller larger
+        var SIZE = parseInt(arguments[1]);  //var SIZE = 200;
+        var ID   = arguments[2];            //var ID   = "myImage";
+        
+        
+        
+        
+        
+        if (task == 2){            
+        var myImg = document.getElementById(ID);
+        var currWidth = myImg.clientWidth;
+        if(currWidth == 2000){
+        alert("Maximum zoom-in level reached.");
+        } else{
+        myImg.style.width = (currWidth + SIZE) + "px";
+        myImg.style.height= (currWidth + SIZE) + "px";
+        } 
+        } 
+        
+        else {
+        var myImg = document.getElementById(ID);
+        var currWidth = myImg.clientWidth;
+        if(currWidth-SIZE <= 150){
+        myImg.style.width = 100 + "px";
+        myImg.style.height= 100 + "px";
+        } else{
+        myImg.style.width = (currWidth - SIZE) + "px";
+        myImg.style.height = (currWidth -SIZE) + "px";
+        }
+        }
+        }
+    </script>      
+    <script>
+        function changeImage() {
+        
+        var ID      = arguments[0];
+        var BGimage = arguments[1]; //t2
+        var FGimage = arguments[2]; //c1t2
+        
+        var image = document.getElementById(ID);
+        if (image.src.match(FGimage)) {
+        image.src = BGimage;
+        }
+        else {
+        image.src = FGimage;
+        }
+        }
+    </script>
+    <script>
+        var minutesLabel = document.getElementById("minutes");
+        var secondsLabel = document.getElementById("seconds");
+        var totalSeconds = 0;
+        setInterval(setTime, 1000);
+        
+        function setTime() {
+        ++totalSeconds;
+        secondsLabel.innerHTML = pad(totalSeconds % 60);
+        minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
+        }
+        
+        function pad(val) {
+        var valString = val + "";
+        if (valString.length < 2) {
+        return "0" + valString;
+        } else {
+        return valString;
+        }
+        }
+    </script>       
+    
+    
+</body>
+</html>
+
+
+
+
+
+
