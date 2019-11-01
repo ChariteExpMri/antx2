@@ -1,12 +1,11 @@
 
-% documentation here
-% some infos
+% this installs/updates ANTx2-TBX
+
 
 function installfromgithub(varargin)
 
 if nargin==1
     if strcmp(varargin{1},'install')
-        
         intaller
         return
     end
@@ -45,7 +44,6 @@ if isempty(antupd.patempup)
     disp('instert selection here');
 end
 
-disp('hallo');
 disp(which('installfromgithub.m'));
 
 if exist(fullfile(antupd.patempup,'antx2'))==7
@@ -65,7 +63,9 @@ if exist(fullfile(antupd.patempup,'antx2'))==7
         try; disp(pwd);    end
         drawnow;
         disp('..cloning repository from GITHUB..');
-        git clone https://github.com/pstkoch/antx2
+        %git clone https://github.com/pstkoch/antx2
+        git(['clone ' gitrepository]);
+        
         %fprintf(['installation..done t=%2.3f min\n'],toc(atime)/60);
         cd(fullfile(antupd.patempup,'antx2'));
     end
@@ -83,7 +83,8 @@ if exist(fullfile(antupd.patempup,'antx2'))==7
 else % no antx2-dir here
     if 1
         disp('..cloning repository from GITHUB..');
-        git clone https://github.com/pstkoch/antx2
+        %git clone https://github.com/pstkoch/antx2
+        git(['clone ' gitrepository]);
         fprintf(['installation..done t=%2.3f min\n'],toc(atime)/60);
     end
     if 0 
@@ -110,8 +111,12 @@ installfromgithub;
 
 
 end
+%% ________________________________________________________________________________________________
 
-
+function https=gitrepository
+https='https://github.com/ChariteExpMri/antx2.git';
+end
+%% ________________________________________________________________________________________________
 
 function initialize
 p.pwd        = pwd;
@@ -124,7 +129,6 @@ if ~isempty(p.antxpath); antlink(0);end
 end
 
 function pbclose(e,e2)
-
 global antupd;
 cd(antupd.updatepath);
 tmpfile=fullfile(antupd.updatepath,'temp_installfromgithub.m');
@@ -234,7 +238,8 @@ if updatecode==3
     fprintf(['creating/restore ".git"..please wait..\n']);
     git init
     %Add your remote repository (published on GitHub):
-    git remote add origin https://github.com/pstkoch/antx2
+    %git remote add origin https://github.com/pstkoch/antx2
+    git(['remote add origin ' gitrepository]);
     git pull origin master
     
     %Or you can simply clone the existing remote repository as suggested in the above comments:
@@ -249,7 +254,8 @@ if updatecode==5 %hard reset
     git reset --hard HEAD;
     git init
     %Add your remote repository (published on GitHub):
-    git remote add origin https://github.com/pstkoch/antx2
+    %git remote add origin https://github.com/pstkoch/antx2
+    git(['remote add origin ' gitrepository]);
     git pull origin master
     fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
 end
