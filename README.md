@@ -19,7 +19,7 @@ LINK: https://github.com/pstkoch/antx2
     just follow instructions and keep the proposed properties when ask for
 - browse to LINK: https://github.com/pstkoch/antx2
 - select "installfromgithub.m" and click [RAW]-button 
-  or copyNpaste this link: https://raw.githubusercontent.com/pstkoch/antx2/master/installfromgithub.m
+  or copyNpaste this link: https://raw.githubusercontent.com/ChariteExpMri/antx2/master/installfromgithub.m
 - select "save as" (cmd+s or ctrl+s) and save file as "installfromgithub.m"
 - copy "installfromgithub.m" to the location where antx toolbox should be installed.
   ..please don't create a folder with name "antx2", this folder will be created later on
