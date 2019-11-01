@@ -105,6 +105,7 @@ else % no antx2-dir here
 end
 
 if ~isempty(findobj(gcf,'tag','ant'))
+    disp('..linking paths');
     thispa=pwd;
     cd(antupd.updatepath);
     antlink(1);
