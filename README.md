@@ -2,6 +2,7 @@
 
 
 # ANTx2
+#### https://github.com/ChariteExpMri/antx2
 
 ANTx2 stands for **A** tlas **N** ormalization **T** oolbox using elasti **x**. It is a MATLAB toolbox for image registration of mouse magnetic resonance imaging data developed for research laboratories/departments.
 
@@ -12,14 +13,12 @@ ANTx2 stands for **A** tlas **N** ormalization **T** oolbox using elasti **x**. 
 - MATLAB, version R2015b/16a were tested, versions above 2018b should work
 
 ## [OPTION-A] Installation via GITHUB uisng GIT
-ADVANTAGE: update feature
-LINK: https://github.com/pstkoch/antx2
-         
+ADVANTAGE: update feature         
 - download & install GIT client --> https://git-scm.com/downloads
     just follow instructions and keep the proposed properties when ask for
-- browse to LINK: https://github.com/pstkoch/antx2
+- browse to LINK: https://github.com/ChariteExpMri/antx2
 - select "installfromgithub.m" and click [RAW]-button 
-  or copyNpaste this link: https://raw.githubusercontent.com/ChariteExpMri/antx2/master/installfromgithub.m
+  or go to here: https://raw.githubusercontent.com/ChariteExpMri/antx2/master/installfromgithub.m
 - select "save as" (cmd+s or ctrl+s) and save file as "installfromgithub.m"
 - copy "installfromgithub.m" to the location where antx toolbox should be installed.
   ..please don't create a folder with name "antx2", this folder will be created later on
