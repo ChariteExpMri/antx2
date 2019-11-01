@@ -267,6 +267,17 @@ if updatecode==5 %hard reset
     %git remote add origin https://github.com/pstkoch/antx2
     git(['remote add origin ' gitrepository]);
     git pull origin master
+    
+    
+    if ~isempty(findobj(0,'tag','ant'))
+        disp('..linking paths');
+        thispa=pwd;
+        cd(antupd.updatepath);
+        antlink(1);
+        cd(thispa);
+        antcb('update');
+    end
+    
     fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
 end
 
@@ -327,7 +338,7 @@ function mkgui()
 try;  delete(findobj(0,'tag','fupd')); end
 figure; set(gcf,'color','w','units','normalized','menubar','none',...
     'position',[0.3750    0.3544    0.2896    0.2289],'tag','fupd',...
-    'name', [mfilename]);
+    'name', [mfilename],'NumberTitle','off');
 set(gcf,'CloseRequestFcn',{@pbclose});
 
 hp=uicontrol('style','text','units','norm','string','status: --','fontsize',9);
