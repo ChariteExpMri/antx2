@@ -16,8 +16,8 @@ end
 if strcmp(mfilename,'installfromgithub')
     try
         copyfile(which('installfromgithub.m'), fullfile(fileparts(which('installfromgithub.m')),'temp_installfromgithub.m'),'f');
-%         global antupd;
-%         antupd.tempfile=fullfile(fileparts(which('installfromgithub.m')),'temp_installfromgithub.m');
+        %         global antupd;
+        %         antupd.tempfile=fullfile(fileparts(which('installfromgithub.m')),'temp_installfromgithub.m');
         %try; delete(which('installfromgithub.m')); end
     end
     temp_installfromgithub;
@@ -62,7 +62,7 @@ if exist(fullfile(antupd.patempup,'antx2'))==7
         try;     rmdir(fullfile(antupd.patempup,'antx2'),'s'); end
         try; disp(pwd);    end
         drawnow;
-        disp('..cloning repository from GITHUB..');
+        disp('..cloning repository from GITHUB..please wait..');
         %git clone https://github.com/pstkoch/antx2
         git(['clone ' gitrepository]);
         
@@ -74,11 +74,11 @@ if exist(fullfile(antupd.patempup,'antx2'))==7
         if exist(fullfile(antupd.patempup,'installfromgithub.m'))
             %disp('..deleting "installfromgithub.m" from upper directory ');
             try; delete(fullfile(antupd.patempup,'installfromgithub.m'));   end
-            try; delete(fullfile(antupd.patempup,'temp_installfromgithub.m'));   end  
+            try; delete(fullfile(antupd.patempup,'temp_installfromgithub.m'));   end
         end
     end
     try; fprintf(['installation..done t=%2.3f min\n'],toc(atime)/60);end
-
+    
     
 else % no antx2-dir here
     if 1
@@ -87,7 +87,7 @@ else % no antx2-dir here
         git(['clone ' gitrepository]);
         fprintf(['installation..done t=%2.3f min\n'],toc(atime)/60);
     end
-    if 0 
+    if 0
         mkdir(fullfile(antupd.patempup,'antx2'))
         copyfile(fullfile(antupd.patempup,'installfromgithub.m'),fullfile(antupd.patempup,'antx2','installfromgithub.m'),'f')
     end
@@ -95,13 +95,13 @@ else % no antx2-dir here
     
     if isfield(antupd, 'patempup')
         if exist(fullfile(antupd.patempup,'installfromgithub.m'))
-           % disp('..deleting "installfromgithub.m" from upper directory ');
+            % disp('..deleting "installfromgithub.m" from upper directory ');
             try; delete(fullfile(antupd.patempup,'installfromgithub.m'));   end
         end
     end
-    try; delete(fullfile(antupd.patempup,'temp_installfromgithub.m'));   end  
-     try; delete(antupd.tempfile);   end  
-     try; fprintf(['installation..done t=%2.3f min\n'],toc(atime)/60);end
+    try; delete(fullfile(antupd.patempup,'temp_installfromgithub.m'));   end
+    try; delete(antupd.tempfile);   end
+    try; fprintf(['installation..done t=%2.3f min\n'],toc(atime)/60);end
 end
 
 
@@ -155,7 +155,7 @@ if isfield(antupd,'patempup')
         delete(fullfile(antupd.patempup,'installfromgithub.m'));
         disp('..removed temporary "installfromgithub"-file from upper dir');
         
-        try; delete(fullfile(antupd.patempup,'temp_installfromgithub.m'));   end  
+        try; delete(fullfile(antupd.patempup,'temp_installfromgithub.m'));   end
         
     end
 end
@@ -190,14 +190,14 @@ if updatecode==1 %check before
     %git diff master origin/master
     %     git diff --compact-summary master origin/master
     %[msg st]=git('diff --compact-summary master origin/master');
-   % [msg st]=git('diff --stat master origin/master');
+    % [msg st]=git('diff --stat master origin/master');
     [msg st]=git(' diff --name-only master origin/master');
-%     git diff --name-only 
+    %     git diff --name-only
     
     if isempty(msg);
-        disp('no changes/no updates');
-         setstatus(2,'no updates found');
-         return
+        disp('no changes/no updates found');
+        setstatus(2,'no updates found');
+        return
     else
         disp(['####### CHANGES #######']);
         disp(msg);
@@ -230,6 +230,8 @@ if updatecode==2
         git pull;
     end
     fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
+    setstatus(2,'updates finished');
+    return
 end
 
 if updatecode==3
@@ -262,11 +264,13 @@ end
 
 if updatecode==4
     
-     global antupd;
-     antupd.tempfile=which('temp_installfromgithub.m');%fullfile(fileparts(which('installfromgithub.m')),'temp_installfromgithub.m');
-        
+    global antupd;
+    antupd.tempfile=which('temp_installfromgithub.m');%fullfile(fileparts(which('installfromgithub.m')),'temp_installfromgithub.m');
     
-    pa=uigetdir(pwd,'select path to install "antx2"');
+    disp('====== FRESH INSTALLATION =====================================================');
+    msg_uigetdir=['# Please select the local destination path for "antx2"'];
+    disp([msg_uigetdir ]);
+    pa=uigetdir(pwd,msg_uigetdir );
     if isnumeric(pa);        return ;    end
     
     [pa2 pa1]=fileparts(pa);
@@ -283,43 +287,9 @@ if updatecode==4
         copyfile(fullfile(antupd.updatepath,'installfromgithub.m'), fullfile(antupd.patempup,'installfromgithub.m'),'f');
     end
     
+    disp(['..selected path: "' fullfile(pa,'antx2')  '"']);
     disp([' Click hyperlink to install from GITHUB": <a href="matlab: cd(''' antupd.patempup ''');installfromgithub(''install'');">install</a>']);
-    %     installfromgithub('install');
     
-    
-    %     F:\github\fromGITHUB\antx2
-    %     F:\github\fromGITHUB
-    
-    
-    %     setstatus(1,'installing..');
-    
-    %     [paup pamain]=fileparts(pa);
-    %     if strcmp(pamain,'antx2') || exist((fullfile(pa,'antx2')))==7
-    %
-    %         if exist((fullfile(pa,'antx2')))==7
-    %             paup=pa;
-    % %         elseif strcmp(pamain,'antx2')
-    % %             paup=
-    %         end
-    %
-    %
-    %         cd(pa)
-    %         rename()
-    %     else
-    %         git clone https://github.com/pstkoch/antx2
-    %     end
-    
-    %     % need to initialize a new Git repository in your machine:
-    %     cd(fileparts(antupd.updatepath));
-    %     fprintf(['creating/restore ".git"..please wait..\n']);
-    %
-    %
-    %     git init .
-    %     git remote add origin https://github.com/pstkoch/antx2
-    %     git pull origin master
-    %
-    %     cd(antupd.updatepath);
-    %     fprintf(['..done t=%2.3f min\n'],toc(atime)/60);
 end
 
 
@@ -339,7 +309,7 @@ cd(p.prevdir);
 disp('..updated');
 
 
-edit(fullfile(paantx,'README.txt'));
+% edit(fullfile(paantx,'README.txt'));
 
 end
 
