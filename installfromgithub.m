@@ -104,7 +104,7 @@ else % no antx2-dir here
     try; fprintf(['installation..done t=%2.3f min\n'],toc(atime)/60);end
 end
 
-if ~isempty(findobj(gcf,'tag','ant'))
+if ~isempty(findobj(0,'tag','ant'))
     disp('..linking paths');
     thispa=pwd;
     cd(antupd.updatepath);
