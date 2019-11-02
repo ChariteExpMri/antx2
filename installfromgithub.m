@@ -148,7 +148,12 @@ end
 if ~isempty(antupd.antxpath); antlink(1);
     disp('..set antx2-path again');
     if ~isempty(findobj(0,'tag','ant'))
+        global an
+        try
+            antcb('load',[regexprep(an.configfile,'.m$','') '.m']);
+        catch
         antcb('reload');
+        end
         disp('..reopen antgui..reloading project');
     end
 end
