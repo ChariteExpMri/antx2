@@ -1810,7 +1810,7 @@ elseif strcmp(task,'contact')
         hlpfun={' ..visit ANTx2 Repositiory (GITHUB)'};
         return ;
     end
-    github='https://github.com/pstkoch/antx2';
+    github='https://github.com/ChariteExpMri/antx2';
     if ismac
         system(['open ' github]);
     elseif isunix
