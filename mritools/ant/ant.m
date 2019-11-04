@@ -1811,6 +1811,7 @@ elseif strcmp(task,'contact')
         hlpfun={' ..visit ANTx2 Repositiory (GITHUB)'};
         return ;
     end
+    statusMsg(1,' visiting GITHUB');
     github='https://github.com/ChariteExpMri/antx2';
     if ismac
         system(['open ' github]);
@@ -1823,7 +1824,7 @@ elseif strcmp(task,'contact')
             [r1 r2]= system(['who']);
             ulist=strsplit(r2,char(10))';
             lastuser=strtok(char(ulist(1)),' ');
-            [r1 r2]=system(['sudo -u ' lastuser ' xdg-open ' github '&'])
+            [r1 r2]=system(['sudo -u ' lastuser ' xdg-open ' github '&']);
             
         end
         
@@ -1831,6 +1832,7 @@ elseif strcmp(task,'contact')
         system(['start ' github]);
     
     end   
+    statusMsg(0);
  elseif strcmp(task,'openGdrive')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun={' get templates from googledrive'};
@@ -1840,7 +1842,7 @@ elseif strcmp(task,'contact')
         hlpfun{end+1,1}=['  copy unzipped template folder to "anttemplates" dir'];
         return ;
     end
-    
+    statusMsg(1,' visiting Gdrive');
     gdrive='https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM';
     if ismac
         system(['open ' gdrive]);
@@ -1854,7 +1856,7 @@ elseif strcmp(task,'contact')
             [r1 r2]= system(['who']);
             ulist=strsplit(r2,char(10))';
             lastuser=strtok(char(ulist(1)),' ');
-            [r1 r2]=system(['sudo -u ' lastuser ' xdg-open ' gdrive '&'])
+            [r1 r2]=system(['sudo -u ' lastuser ' xdg-open ' gdrive '&']);
             
         end
         
@@ -1862,6 +1864,7 @@ elseif strcmp(task,'contact')
         system(['start ' gdrive]);
         
     end
+    statusMsg(0);
 elseif strcmp(task,'checkUpdateGithub')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun={' check for updates/changes in GITHUB repository'};
