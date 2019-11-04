@@ -64,7 +64,8 @@ if exist(fullfile(antupd.patempup,'antx2'))==7
         drawnow;
         disp('..cloning repository from GITHUB..please wait..');
         %git clone https://github.com/pstkoch/antx2
-        git(['clone ' gitrepository]);
+        %git(['clone ' gitrepository]);
+        git(['clone --depth=1 ' gitrepository]);
         
         %fprintf(['installation..done t=%2.3f min\n'],toc(atime)/60);
         cd(fullfile(antupd.patempup,'antx2'));
@@ -84,7 +85,8 @@ else % no antx2-dir here
     if 1
         disp('..cloning repository from GITHUB..');
         %git clone https://github.com/pstkoch/antx2
-        git(['clone ' gitrepository]);
+        %git(['clone ' gitrepository]);
+        git(['clone --depth=1 ' gitrepository]);
         fprintf(['installation..done t=%2.3f min\n'],toc(atime)/60);
     end
     if 0
