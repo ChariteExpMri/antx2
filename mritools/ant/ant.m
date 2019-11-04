@@ -1,6 +1,6 @@
 
 
-% #b [ANT]-TOOLBOX MAINGUI
+% #b [ANT]-TOOLBOX MAIN GUI
 % #wg                                                                   #k
 % #wg              *         *      *   * * * * * *                     #k
 % #wg            *   *       * *    *        *                          #k
