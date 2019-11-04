@@ -416,7 +416,17 @@ if ispc
 elseif ismac
    system(['open ' ps.page]) ; 
 elseif isunix
-    system(['xdg-open ' ps.page]) ;
+    %system(['xdg-open ' ps.page]) ;
+    
+    [r1 r2]= system(['xdg-open ' ps.page]);
+    if  ~isempty(strfind(r2,'no method available'))
+        
+        [r1 r2]= system(['who']);
+        ulist=strsplit(r2,char(10))';
+        lastuser=strtok(char(ulist(1)),' ');
+        [r1 r2]=system(['sudo -u ' lastuser ' xdg-open ' ps.page '&']);
+        
+    end
 end
 
 %===============================================
