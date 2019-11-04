@@ -9,13 +9,13 @@ ANTx2 stands for **A** tlas **N** ormalization **T** oolbox using elasti **x**. 
 ## **Requirements**
 - Windows (tested: Windows 10)
 - Linux (tested: Ubuntu 16.04.6 LTS, MINT17)
-- MAC (tested: OS X El Capital v10.11.6)
-- MATLAB, version R2015b/16a were tested, versions above 2018b should work
+- MAC (tested: OS X El Capitan v10.11.6)
+- MATLAB, version R2015b/16a were tested, versions above 2018b should work ()
 
-## [OPTION-A] Installation via GITHUB uisng GIT
-ADVANTAGE: update feature         
+## [OPTION-A] Installation via GITHUB using GIT
+ADVANTAGE: updates can be made via toolbox         
 - download & install GIT client --> https://git-scm.com/downloads
-    just follow instructions and keep the proposed properties when ask for
+    just follow instructions and keep the default properties
 - browse to LINK: https://github.com/ChariteExpMri/antx2
 - select "installfromgithub.m" and click [RAW]-button 
   or go to here: https://raw.githubusercontent.com/ChariteExpMri/antx2/master/installfromgithub.m
@@ -24,12 +24,12 @@ ADVANTAGE: update feature
   ..please don't create a folder with name "antx2", this folder will be created later on
 - set MATLAB's current working dir to the location of "installfromgithub.m" 
 - type installfromgithub to open the installer/check updates window
-- select [FRESH INSTALL] ...than select the hyperlink "install" ..wait..and hit [close] to close the window 
+- select [FRESH INSTALL] ...next, select the hyperlink "install" Matlab's in ..wait..and hit [close] to close the window 
    
 ### <ins> Start Ant Gui  </ins> ###
 - set MATLAB's current working dir to "antx2" dir 
 - type antlink to link paths
-- type ant to open ant-gui 
+- type "ant" to open ant-gui 
 ### <ins> Check For Updates </ins> ###
  - To check for updates select EXTRAS/CHECK FOR UPATES (GITHUB) from the ant main gui
 ### <ins> Download Templates </ins> ###
@@ -40,7 +40,14 @@ ADVANTAGE: update feature
  - unzip downloaded template file
  - create folder "anttemplates" located at the same hierarchical level as antx2-folder is located
    ..this is easier to obtain the respective template 
-- copy unzipped template folder to "anttemplates" dir
+ - copy unzipped template folder to "anttemplates" dir
+    -the "anttemplates"-folder should now contain a folder (such as "mouse_hikishima") with the templates
+         Examplary tree if "mouse_hikishima" template is used:
+           mydir
+             ???antx2
+             ???anttemplates
+                  ???mouse_hikishima            
+                   
 ____________________________________________________________________________________________
 ## [OPTION-B] just download via clone-button (GITHUB)
 ADVANTAGE     : more simple installation
@@ -49,8 +56,8 @@ DISADVANTAGE: no update feature
 - select [Download ZIP]
 - unzip folder & copy entire "antx2"-folder to desired location
 
-### <ins> IMPORTANT </ins> ###
-for how to "Start Ant Gui" and "Download Templates" see above...
+### <ins> Start Ant Gui  </ins> ###
+ see [OPTION-A] --> Start Ant Gui and --> Download Templates for information
 ____________________________________________________________________________________________
 ## [OPTION-C] Installation via googledrive
 DISADVANTAGE: older versions & no update feature
