@@ -373,20 +373,21 @@ if figexist==0
 %    set(b1,'value',0);
    set(b1,'units','pixels');
     
-      %----------------------------------
+     %----------------------------------
     %     main functions
     %----------------------------------
     if exist('showfun.m')==2
-        p=showfun;
-        p=cellfun(@(a) {[a '.m']},p);
-        b1 = uicontrol('Style', 'popupmenu', 'string',p,'fontsize',7,...%'pushbutton'
-            'units','normalized','TooltipString','help for other functions ','tag','helpMainfunctions',...
-            'Position', [0.265 -.001 .14 .039], 'Callback', @helpMainfunctions,...
-            'backgroundcolor',[     0.8627    0.8627    0.86277],'ForegroundColor',[0 .5 0]);
-        % if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
-        %    set(b1,'value',0);
-        set(b1,'units','pixels');
- 
+        if isempty(findobj(gcf,'tag','helpMainfunctions'))
+            p=showfun;
+            p=cellfun(@(a) {[a '.m']},p);
+            b1 = uicontrol('Style', 'popupmenu', 'string',p,'fontsize',7,...%'pushbutton'
+                'units','normalized','TooltipString','help for other functions ','tag','helpMainfunctions',...
+                'Position', [0.265 -.001 .14 .039], 'Callback', @helpMainfunctions,...
+                'backgroundcolor',[     0.8627    0.8627    0.86277],'ForegroundColor',[0 .5 0]);
+            % if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
+            %    set(b1,'value',0);
+            set(b1,'units','pixels');
+        end
     end
    
 end
