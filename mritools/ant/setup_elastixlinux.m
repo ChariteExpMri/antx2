@@ -16,15 +16,36 @@ disp('# The installation of MRICRON requires an internet connection');
 disp('  and will take a couple of minutes');
 
 
-inp=input('DO YOU WANT TO CONTINUE [y,n]: ' ,'s');
-inp=num2str(inp);
-if isempty(regexpi(inp, 'y'))
-   disp('..canceled..' ) ; return
-end
+
+
+% ==============================================
+%%   yes/no-gui
+% ===============================================
+msglnx=['Elastix was not found on system path                                      ' char(10) ...
+    'INSTALL ELASTIX OR LINUX NOW? ' char(10) ...
+    '..Note, this step is mandatory..' char(10)...
+    '--------------------------------------------------' char(10) ...
+    'The installation of ELASTIX requires admin-rights.' char(10) ...
+     '  A sudo password is required to copy all necessary elastix-files.!' char(10) ...
+     'The installation of MRICRON requires an internet connection' char(10)...
+     '  and will take a couple of minutes.' char(10)...
+    ];
+button = questdlg(msglnx,'ELASTIX for LINUX','install now','Cancel','str3');
+
+if strcmp(button,'Cancel') || isempty(button)
+    disp('..Elastix not installed...installation cancelled...'); return; end
+
+
+
+% inp=input('DO YOU WANT TO CONTINUE [y,n]: ' ,'s');
+% inp=num2str(inp);
+% if isempty(regexpi(inp, 'y'))
+%    disp('..canceled..' ) ; return
+% end
 disp('..continuing..' );
 
 %=======================================================
-
+%% STEPS
 tic;
 disp('. ');
 disp('.. ');

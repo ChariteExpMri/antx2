@@ -340,12 +340,13 @@ if isunix
         
         [~,msg]=evalc('system(''elastix'')');
         if msg~=0
-            warning on;
-            warning('..ELASTIX is not installed') ;
-            padinfo=fullfile(fileparts(which('ant.m')),'docs');
-            info  ='readme_LINUX.txt';
-            showinfo2('..for help please inspect ', fullfile(padinfo,info));
-            disp('..use "setup_elastixlinux" to install ELASTIX and MRICRON');
+            setup_elastixlinux;
+%             warning on;
+%             warning('..ELASTIX is not installed') ;
+%             padinfo=fullfile(fileparts(which('ant.m')),'docs');
+%             info  ='readme_LINUX.txt';
+%             showinfo2('..for help please inspect ', fullfile(padinfo,info));
+%             disp('..use "setup_elastixlinux" to install ELASTIX and MRICRON');
         end
     end
     
@@ -1814,7 +1815,18 @@ elseif strcmp(task,'contact')
     if ismac
         system(['open ' github]);
     elseif isunix
-        system(['xdg-open ' github]);
+       % system(['xdg-open ' github]);
+        
+         [r1 r2]= system(['xdg-open ' github]);
+        if  ~isempty(strfind(r2,'no method available'))
+            
+            [r1 r2]= system(['who']);
+            ulist=strsplit(r2,char(10))';
+            lastuser=strtok(char(ulist(1)),' ');
+            [r1 r2]=system(['sudo -u ' lastuser ' xdg-open ' github '&'])
+            
+        end
+        
     elseif ispc
         system(['start ' github]);
     
@@ -1833,7 +1845,19 @@ elseif strcmp(task,'contact')
     if ismac
         system(['open ' gdrive]);
     elseif isunix
-        system(['xdg-open ' gdrive]);
+        %system(['xdg-open ' gdrive]);
+        
+        
+        [r1 r2]= system(['xdg-open ' gdrive]);
+        if  ~isempty(strfind(r2,'no method available'))
+            
+            [r1 r2]= system(['who']);
+            ulist=strsplit(r2,char(10))';
+            lastuser=strtok(char(ulist(1)),' ');
+            [r1 r2]=system(['sudo -u ' lastuser ' xdg-open ' gdrive '&'])
+            
+        end
+        
     elseif ispc
         system(['start ' gdrive]);
         
@@ -1916,8 +1940,11 @@ if ispc
     try; evalc('!start explorer '); end
 elseif ismac
     system('osascript -e ''tell application "Finder" to close windows''');
-else
-    ('linux: hav to be implmented');
+else %LINUX
+    try
+        [r1 r2]=system(['xdg-mime query default inode/directory']);
+        system([strtok(r2,'.') ' -q']);
+    end
 end
 
 
