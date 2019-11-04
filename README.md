@@ -57,8 +57,10 @@ DISADVANTAGE: no update feature
 - unzip folder & copy entire "antx2"-folder to desired location
 
 ### <ins> Start Ant Gui  </ins> ###
- see [OPTION-A] --> Start Ant Gui and --> Download Templates for information
-____________________________________________________________________________________________
+ see [OPTION-A] --> Start Ant Gui 
+### <ins> Download Templates  </ins> ###
+ see [OPTION-A] --> Download Templates
+_________________________________________________________________________________________________________________________
 ## [OPTION-C] Installation via googledrive
 DISADVANTAGE: older versions & no update feature
 LINK: https://drive.google.com/drive/u/1/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM
