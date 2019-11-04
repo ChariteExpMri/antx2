@@ -1,16 +1,21 @@
 
-% #yg uhelp: display a function's HELP or a CELL array in text window.
-% ###  use [+/-]key to change fontsize
-% #b   use [ctrl+c] to copy selection
-% #b   use [b] to scroll to begin
-% #b   use [e] to scroll to end
-% #b   [left/right arrows] to decrease/increase fontsize
+% #ko [uhelp] isplay a function's HELP or a CELL array in text window.
+% 
+% #wo _SHORTCUTS_ #k    available only in READMODE (RM) not in EDITMODE (EM)
+% #g [+/-]        #n change fontsize
+% #g [ctrl+c]     #n copy selection (allowed in EDITMODE)
+% #g [b] or [e]   #n  scroll to begin or end
+% #g [left/right] #n scroll up/scroll down
+% #g [1]          #n position help window to left side with 50% screensize
+% #g [2]          #n position help window to left side with 75% screensize
+% #g [3]          #n position help window to right side with 50% screensize
+% #g [4]          #n position help window to right side with 75% screensize
+% #g [5]          #n home position of help window (below ant-window)
+% 
 % ##  see also contextmenu
 %
-% #### =====================================================================================
-% ####  UHELP ... INPUT PARAMETER
-% #### =====================================================================================
-%
+% #k =====================================================================================
+% #wo _INPUT PARAMETER_  
 % uhelp additional infos
 % 2nd arg : 0/1 to make a new window(1) or overwrite the old one
 % additional pairwise infows
@@ -248,7 +253,7 @@ if isempty(varargin) ||  varargin{1}==0
     else
        % disp('####  new fig');
         hfig=figure(335);
-        set(hfig,  'visible','off','units','normalized');
+        set(hfig,  'visible','off','units','normalized','position',[0.5757    0.0822    0.3889    0.4667]);
 %         
 %     hfig=findobj(0,'Number', 335);
 %         set(hfig,'visible','off','units','normalized','position',posfig);
@@ -293,7 +298,7 @@ if figexist==0
         e2, 'tag','txt','max',2,...
         'backgroundcolor',[1 1 1],'fontsize',8);%,'fontname','Courier New');
     if ~isempty(posfig)
-        set(hfig,'position',posfig);
+        %set(hfig,'position',posfig);
     end
     set(hfig,'WindowKeyPressFcn',@keyx)
 else
@@ -302,28 +307,29 @@ else
     set(hlb,'string',e2);
 end
 
-if figexist==0
-    try
-        set(ui,'FontName',  x.FontName,'FontAngle',x.FontAngle,...
-            'FontWeight',x.FontWeight,'fontsize',x.fontsize);
-        set(ui,'backgroundcolor','w');
-        
-    end
-    if isfield(paras,'position');
-        set(hfig,'position',paras.position);
-    else
-        try
-            if isempty(varargin) || varargin{1}==0
-                set(hfig,'position',posfig); % previous pos
-            end
-        catch
-            set(hfig,'position',x.fgpos);
-        end
-    end
-    drawnow;
-    try;     aot(x.aot);aot(x.aot);  end %AOT
-    set(hfig,'toolbar','none');
-end
+% PUT AT THE END-orig
+% if figexist==0
+%     try
+%         set(ui,'FontName',  x.FontName,'FontAngle',x.FontAngle,...
+%             'FontWeight',x.FontWeight,'fontsize',x.fontsize);
+%         set(ui,'backgroundcolor','w');
+%         
+%     end
+%     if isfield(paras,'position');
+%         set(hfig,'position',paras.position);
+%     else
+%         try
+%             if isempty(varargin) || varargin{1}==0
+%                 set(hfig,'position',posfig); % previous pos
+%             end
+%         catch
+%             set(hfig,'position',x.fgpos);
+%         end
+%     end
+%     drawnow;
+%     try;     aot(x.aot);aot(x.aot);  end %AOT
+%     set(hfig,'toolbar','none');
+% end
 
 
 
@@ -334,30 +340,55 @@ if figexist==0
     %----------------------------------
     b1 = uicontrol('Style', 'checkbox', 'String', '','fontsize',8,...%'pushbutton'
         'units','normalized','TooltipString','toggle: alway on top',...
-        'Position', [0 0 .03 .035], 'Callback', @ontop,'backgroundcolor',[1 1 1]);
+        'Position', [0 0 .03 .032], 'Callback', @ontop,'backgroundcolor',[1 1 1]);
     if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
     set(b1,'units','pixels');
     %----------------------------------
     %         window-resize button
     %----------------------------------
-    b1 = uicontrol('Style', 'pushbutton', 'String', 'aW','fontsize',8,...%'pushbutton'
+    b1 = uicontrol('Style', 'togglebutton', 'String', 'aW','fontsize',8,...%'pushbutton'
         'units','normalized','TooltipString','adjust window to text',...
-        'Position', [0.045 0 .04 .035], 'Callback', @adjustwindow,'backgroundcolor',[1 1 1]);
+        'Position', [0.055 0 .04 .035], 'Callback', @adjustwindow,'backgroundcolor',[1 1 1]);
    % if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
    set(b1,'value',0);
    set(b1,'units','pixels');
    
+    %----------------------------------
+    %         editor-mode button
+    %----------------------------------
+    b1 = uicontrol('Style', 'togglebutton', 'String', 'EM','fontsize',8,...%'pushbutton'
+        'units','normalized','TooltipString','toogle READMODE/EDITORMODE[EM]',...
+        'Position', [0.095 0 .04 .035], 'Callback', @editormode,'backgroundcolor',[1 1 1]);
+   % if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
+   set(b1,'value',0);
+   set(b1,'units','pixels');
    
     %----------------------------------
     %      text lineNumber
     %----------------------------------
     b1 = uicontrol('Style', 'text', 'String', '1','fontsize',7,...%'pushbutton'
         'units','normalized','TooltipString','selected line','tag','txtline',...
-        'Position', [0.085 0 .13 .035], 'Callback', @txtline,'backgroundcolor',[     0.8627    0.8627    0.86277]);
+        'Position', [0.135 0 .13 .035], 'Callback', @txtline,'backgroundcolor',[     0.8627    0.8627    0.86277]);
    % if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
 %    set(b1,'value',0);
    set(b1,'units','pixels');
     
+      %----------------------------------
+    %     main functions
+    %----------------------------------
+    if exist('showfun.m')==2
+        p=showfun;
+        p=cellfun(@(a) {[a '.m']},p);
+        b1 = uicontrol('Style', 'popupmenu', 'string',p,'fontsize',7,...%'pushbutton'
+            'units','normalized','TooltipString','help for other functions ','tag','helpMainfunctions',...
+            'Position', [0.265 -.001 .14 .039], 'Callback', @helpMainfunctions,...
+            'backgroundcolor',[     0.8627    0.8627    0.86277],'ForegroundColor',[0 .5 0]);
+        % if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
+        %    set(b1,'value',0);
+        set(b1,'units','pixels');
+ 
+    end
+   
 end
 
 if figexist==0
@@ -367,7 +398,7 @@ if figexist==0
     %----------------------------------
     b2 = uicontrol('Style', 'pushbutton', 'String', '','fontsize',8,...%'pushbutton'
         'units','normalized','TooltipString','help; see also CONTEXTMENU',...
-        'Position', [0.02 0 .03 .03], 'Callback', {@gcontext, 6},'backgroundcolor',[1 1 1]);
+        'Position', [0.025 0 .03 .035], 'Callback', {@gcontext, 6},'backgroundcolor',[1 1 1]);
     a2=[0 1 0.0313725490196078 0.32156862745098 1 1 1 1 1 1 1 1 1 1 0.83921568627451 0.741176470588235 0.968627450980392 0.905882352941176 0.741176470588235 0.968627450980392 0.776470588235294 0.258823529411765 0.776470588235294 0.0627450980392157 0.0313725490196078 1 0 0 0 0 0 0;0 1 0.0470588235294118 0.333333333333333 1 1 1 1 1 1 1 1 1 1 0.811764705882353 0.729411764705882 0.952941176470588 0.890196078431373 0.713725490196078 0.937254901960784 0.745098039215686 0.235294117647059 0.764705882352941 0.0627450980392157 0.0313725490196078 1 0 0 0 0 0 0;0 1 0.0627450980392157 0.290196078431373 0 0.290196078431373 0.32156862745098 0.352941176470588 0.517647058823529 0.611764705882353 0.67843137254902 0.83921568627451 0.870588235294118 0.968627450980392 0 0.0941176470588235 0.223529411764706 0.258823529411765 0.0941176470588235 0.290196078431373 0.290196078431373 0.0627450980392157 0.741176470588235 0.0627450980392157 0.0313725490196078 1 0 0 0 0 0 0]';
     aa2=[25 25 25 25 25 25 25 21 25 25 25 25 25 25 25 25;25 25 25 25 25 25 25 21 25 25 25 25 25 25 25 25;25 25 25 25 25 25 25 25 25 25 21 25 25 25 25 25;25 25 21 25 25 21 21 21 21 25 25 25 25 25 25 25;25 25 25 25 21 20 16 19 17 21 21 25 25 25 25 25;25 25 25 21 15 11 13 8 5 14 14 21 21 24 24 25;25 25 25 21 18 12 1 10 5 5 4 4 21 1 1 2;21 21 25 21 18 12 1 4 7 21 21 4 21 22 22 2;25 25 25 21 18 9 7 5 5 5 4 4 21 3 3 2;25 25 25 21 18 6 4 4 4 18 18 21 21 2 23 25;25 25 25 25 21 18 18 18 18 21 21 25 25 25 25 25;25 25 21 25 25 21 21 21 21 25 25 25 25 25 25 25;25 25 25 25 25 25 25 25 25 25 21 25 25 25 25 25;25 25 25 25 25 25 25 21 25 25 25 25 25 25 25 25;25 25 25 25 25 25 25 21 25 25 25 25 25 25 25 25;25 25 25 25 25 25 25 25 25 25 25 25 25 25 25 25]';
     set(b2,'cdata',   ind2rgb(uint8(aa2),a2),'visible','on');
@@ -399,7 +430,7 @@ if figexist==0
     item6 = uimenu(cmenu, 'Label','help',   'Callback', {@gcontext, 6});%help
     item7 = uimenu(cmenu, 'Label','see in Matlabs Help browser',   'Callback', {@gcontext,7});%help
     
-    item20 = uimenu(cmenu, 'Label','toggle: [NM] normal mode [IM] InlineSelectionMODE ',   'Callback', {@gcontext,20});%switch mode
+    item20 = uimenu(cmenu, 'Label','toggle: [RM] Read Mode [EM] Editor Mode ',   'Callback', {@gcontext,20});%switch mode
     
     drawnow;
    
@@ -443,7 +474,38 @@ if isfield(paras,'cursor');
     %   else
 end
 
-% 'ssss'
+if figexist==0 %selection color listbox
+    highlightedcolorLB();
+end
+
+% PUT AT THE END-orig-shifted
+if figexist==0
+    try
+        set(ui,'FontName',  x.FontName,'FontAngle',x.FontAngle,...
+            'FontWeight',x.FontWeight,'fontsize',x.fontsize);
+        set(ui,'backgroundcolor','w');
+        
+    end
+    if isfield(paras,'position');
+        set(hfig,'position',paras.position);
+    else
+        try
+            if isempty(varargin) || varargin{1}==0
+                set(hfig,'position',posfig); % previous pos
+            end
+        catch
+            set(hfig,'position',x.fgpos);
+        end
+    end
+    drawnow;
+    try;     aot(x.aot);aot(x.aot);  end %AOT
+    set(hfig,'toolbar','none');
+else
+    if isfield(paras,'position')
+        set(hfig,'position',paras.position);
+    end
+end
+
 
 set(hfig,'visible','on');
 
@@ -461,9 +523,85 @@ txtline([],[]);
 % embedded functions
 %%%••••••••••••••••••••••••••••••••••••••••••••••
 
-function keyx(h,e)
+function helpMainfunctions(e,e2)
 
-if strcmp(e.Character,'j')
+tx= findobj(gcf,'tag','txt');
+if strcmp(get(tx,'style'),'listbox')==0;
+    errordlg('select READ MODE first ','HELP FCTn');
+   return 
+end
+
+hc=findobj(gcf,'tag','helpMainfunctions');
+va=get(hc,'value');
+li=get(hc,'string');
+hlpfun=li{va};
+
+a=help([hlpfun ]);
+a=strsplit2(a,char(10))';
+mT=[{[' #yk [' upper(hlpfun) '.m] ']}];%        __________________________________________________________________']}];
+msg2=[{}; mT; a] ;
+
+
+msg3=uhelp(msg2,[],'export',1); %to HTML
+set(tx,'value',1,'string',msg3,'ListboxTop',1);
+
+us=get(gcf,'userdata');
+us.e0=msg2;
+us.e2=msg3;
+set(gcf,'userdata',us);
+drawnow;
+
+
+
+function highlightedcolorLB
+tx=findobj(gcf,'tag', 'txt');
+
+if strcmp(get(tx,'style'),'listbox')
+    try
+        % jListbox = findjobj(tx);
+        % jListbox=jListbox.getViewport.getComponent(0);
+        % jListbox.setSelectionAppearanceReflectsFocus(0);
+        
+        % drawnow;
+        jScrollPane = findjobj(tx); % get the scroll-pane object
+        jListbox = jScrollPane.getViewport.getComponent(0);
+        jListbox.setSelectionAppearanceReflectsFocus(0);
+        %
+        v2=[ 0 0 0];%color
+        v=[ 0.98    0.98    0.98];
+        % v=uisetcolor
+        set(jListbox, 'SelectionForeground',java.awt.Color(v2(1),v2(2),v2(3))); % java.awt.Color.brown)
+        % set(jListbox, 'SelectionForeground',java.awt.Color(v(1),v(2),v(3))); % java.awt.Color.brown)
+        set(jListbox, 'SelectionBackground',java.awt.Color(v(1),v(2),v(3))); % option #2
+    end
+end
+
+
+
+function keyx(h,e)
+tx=findobj(gcf,'tag', 'txt');
+if strcmp(get(tx,'style'),'edit'); return; end
+
+
+% positioning
+if strcmp(e.Character,'1')
+    set(gcf,'position',[0    0.0706         0.5    0.8983]);
+elseif strcmp(e.Character,'2')
+    set(gcf,'position',[0    0.0706    0.75    0.8983]);
+elseif strcmp(e.Character,'3')
+    set(gcf,'position',[0.4743    0.0728    0.5    0.8961]);
+elseif strcmp(e.Character,'4')
+    set(gcf,'position',[ 0.2486    0.0717    0.75    0.8961]);
+    
+elseif strcmp(e.Character,'5')    
+    posant=get(findobj(0,'tag','ant'),'position');
+    height=0.35;
+    set(gcf,'position',[posant(1) posant(2)-height   posant(3)  height-.03]);
+    
+elseif strcmp(e.Character,'j')
+    
+    
+    
     try
         %         us=get(get(h,'parent'),'userdata');
         us=get(h,'userdata');
@@ -505,9 +643,13 @@ elseif strcmp(e.Character,'-')
 elseif strcmp(e.Key,'e')  % go to END
     lb1=findobj(h,'tag','txt');
     set(lb1, 'value',size(get(lb1,'string'),1)  );
+    uicontrol(lb1);
+    %'ee'
 elseif strcmp(e.Key,'b')  %go to begin
     lb1=findobj(h,'tag','txt');
     set(lb1, 'value',1 );
+    uicontrol(lb1);
+    %'bbb'
 end
 
 if strcmp(e.Modifier,'control') %copy selection
@@ -574,7 +716,7 @@ try
     if strcmp(get(tx,'style'),'listbox')
         val=(get(tx,'value'));
         minval=min(val);
-        tag='NM';
+        tag='RM';
     else
         
         jhEdit = findjobj(tx);
@@ -596,7 +738,7 @@ try
             minval=max(minval)+1;
         end
         val=unique([minval  min(find(ichar>=sel(end)))]);
-        tag='IM';
+        tag='EM';
         
     end
     
@@ -611,13 +753,13 @@ end
 function adjustwindow(v,v2)
 
 
-% val=get(v,'value');
-% if val==1 && isempty(get(v,'userdata'))
-%    us2.figposition= get(gcf,'position');
-%    set(v,'userdata',us2);
-% end
+val=get(v,'value');
+if val==1 && isempty(get(v,'userdata'))
+   us2.figposition= get(gcf,'position');
+   set(v,'userdata',us2);
+end
 
-% if val==1
+if val==1
     lb=findobj(gcf,'tag', 'txt');
     fs=get(lb,'fontsize');
     
@@ -640,16 +782,28 @@ function adjustwindow(v,v2)
     px=(sil*fs)*0.9;
     set(gcf,'position',[pos(1:2) px pos(4)]);
     set(gcf,'units','normalized');
+else
+    if ~isempty(get(v,'userdata'))
+        us2=get(v,'userdata');
+       pos=get(gcf,'position');
+       set(gcf,'position',[pos(1:2) us2.figposition(3)  pos(4)]);
+    end
+    
+end
+
+%----------------------------------
+%           adjust window
+%----------------------------------
+function editormode(v,v2)
+
+gcontext([],[], 20);
+% val=get(v,'value');
+% if val==1
+%     
 % else
-%     if ~isempty(get(v,'userdata'))
-%         us2=get(v,'userdata');
-%        pos=get(gcf,'position');
-%        set(gcf,'position',[pos(1:2) us2.figposition(3)  pos(4)]);
-%     end
+%     
 %     
 % end
-
-
 
 
 
@@ -661,7 +815,8 @@ function adjustwindow(v,v2)
 function fontsize(src,evnt)
 x=get(gcf,'userdata');
 
-% evnt.Modifier
+tx=findobj(gcf,'tag', 'txt');
+if strcmp(get(tx,'style'),'edit'); return; end
 
 if strcmp(evnt.Modifier,'control'); %[control]+mousewheel
     x.evntModifier=1; %if [control]-key is pressed..
@@ -687,7 +842,7 @@ else
     curlinTop=get(tx,'ListboxTop');
     if strcmp(evnt.Key,'leftarrow');
        % ixnewtop=vecnearest2(vec,curlinTop)-1;
-        ixnewtop=find(vec<curlinTop-1);
+        ixnewtop=max(find(vec<curlinTop-1));
         if ixnewtop>0
             set(tx,'ListboxTop', vec(ixnewtop)  )  ;
         end
@@ -698,7 +853,7 @@ else
         end 
       elseif strcmp(evnt.Key, 'w')   
          % 'adjustWindow'
-       adjustwindow([],[]);
+%       adjustwindow([],[]);
         
     end
     
@@ -975,7 +1130,7 @@ elseif mode==11
 elseif mode==20 %SWITCH DO EDIT MODE
     tx= findobj(gcf,'tag','txt');
     
-    if strcmp(get(tx,'style'),'listbox')
+    if strcmp(get(tx,'style'),'listbox') % change to EDITMODE
          s1=get(tx,'string');
         val=get(tx,'value');
         lbtop=get(tx,'ListboxTop');
@@ -1013,8 +1168,10 @@ elseif mode==20 %SWITCH DO EDIT MODE
         cartposnew=min(cartposnew+1);
         % min(find(ichar>cartline))
         r.repaint;
-        r.setCaretPosition(cartposnew);
-        r.setSelectionEnd(cartposnew+10);
+        try
+            r.setCaretPosition(cartposnew);
+            r.setSelectionEnd(cartposnew+10);
+        end
           r.repaint;
         % jVScroll.setValue(cartposnew);
           jVScroll = jhEdit.getVerticalScrollBar;
@@ -1024,19 +1181,21 @@ elseif mode==20 %SWITCH DO EDIT MODE
 %       
         txtline([],[]);
         set( findobj(gcf,'tag','txtline'),'backgroundcolor' ,[1 1 0]);
-    else
+    else                  % CHANGE TO READMODE
           us=get(gcf,'userdata');
           set(tx,'string',us.e2);
           set(tx,'style','listbox');
           
           ht=findobj(gcf,'tag','txtline');
-          currline=str2num(regexprep(strtok(get(ht,'string'),'/'),'\D','')) ;
- 
-          set(tx,'value',currline);
+          try
+              currline=str2num(regexprep(strtok(get(ht,'string'),'/'),'\D','')) ;
+              set(tx,'value',currline);
+          end
           txtline([],[]);
           
           set( findobj(gcf,'tag','txtline'),'backgroundcolor' ,[0.8627    0.8627    0.8628]);
           
+          highlightedcolorLB();
     end
     
     
@@ -1203,7 +1362,7 @@ x.fontsize=[8];
 x.FontName='Courier New';
 x.FontAngle='normal';
 x.FontWeight='normal';
-x.fgpos=[0.011111     0.16222     0.59063     0.72556];
+x.fgpos=[0.34931     0.14556     0.55382     0.29889];
 x.aot=[0];
 %***setup-end   %ANCHOR-DO NOT REMOVE THIS
 

@@ -37,10 +37,10 @@
 % #ra 29 Oct 2019 (23:28:16)
 %   starting GITHUB REPO : https://github.com/pstkoch/antx2
 %  modif. files [cfg_getfile2], [uhelp]
-% 
-%
-%
-%
+% #ra 04 Nov 2019 (11:35:28)
+% set up GITHUB repository #bw https://github.com/ChariteExpMri/antx2/
+% -primary checks macOS, Linux MINT
+% - updated [uhelp]
 %
 %
 %

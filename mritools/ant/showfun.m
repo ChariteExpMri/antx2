@@ -4,7 +4,7 @@
 %   click on the [ed]-hyperlink to open this function
 %  showfun/ showfun(dosort), where dosort=[0|1] to sort functions 
 
-function showfun(dosort)
+function varargout=showfun(dosort)
 f={ 'ant'
     'antcb'
     'antfun'
@@ -58,16 +58,26 @@ f2={'xseldirs'
 
 
 if exist('dosort')==0
-    dosort=1
+    dosort=1;
 end
 if dosort==1
     f=sort(f);
 end
 
+if nargout==1
+    outfun=[f;f2];
+    varargout{1}=outfun;
+    return
+end
+
+
+
 disp(' ');
 displaythat(2,f2);
 displaythat(1,f);
 disp([' show showfuns ordering by : <a href="matlab: showfun(0)">' '[date]' '</a> <a href="matlab: showfun">' '[alphabetical]' '</a>']);
+
+
 
 function displaythat(modus,f)
 format compact

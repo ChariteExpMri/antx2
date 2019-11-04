@@ -1176,10 +1176,10 @@ else
             end  % more than one listbox found...BUGGY
         end
         msg3=uhelp(msg2,[],'export',1); %to HTML
-        set(hlptx,'value',1,'string',msg3);
-        
+        set(hlptx,'value',1,'string',msg3,'ListboxTop',1);
         us=get(helpfig,'userdata');
         us.e0=msg2;
+        us.e2=msg3;
         set(helpfig,'userdata',us);
         drawnow;
         
