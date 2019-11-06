@@ -389,9 +389,9 @@ p={...
     %
     %'inf100'      [repmat('=',[1,50])]                           '' ''
     %
-    'inf101'      [repmat('—',[1,100])]                                    ''  ''
+    'inf101'      [repmat('=',[1,100])]                                    ''  ''
     'inf1'      '  [1] SUFFIXES of MOUSE DIRECTORY NAME (added to "SubjectId")         '                                    ''  ''
-    'inf102'      [repmat('—',[1,100])]                                    ''  ''
+    'inf102'      [repmat('=',[1,100])]                                    ''  ''
     'StudNo_Dir'        0        'VisuStudyNumber (bool)'  'b'
     'ExpNo_Dir'         0        'VisuExperimentNumber (parent folder of "pdata"),(bool)'  'b'
     'PrcNo_Dir'         0        'VisuProcessingNumber/ReconstructionNumber(subfolder of "pdata"),(bool)'  'b'
@@ -401,16 +401,16 @@ p={...
     'suffixLetter'  0          'add first letter of suffix variable name prior to variable value (bool); e.g: "s20141009_01sr_s1e2p1" vs "s20141009_01sr_1_2_1" '  'b'
     %
     %
-    'inf200'      [repmat('—',[1,100])]                                    ''  ''
+    'inf200'      [repmat('=',[1,100])]                                    ''  ''
     'inf22'      ' [2] SUFFIXES of FILENAMES  (added to "protocoll-name")        '                                    ''  ''
-    'inf201'      [repmat('—',[1,100])]                                    ''  ''
+    'inf201'      [repmat('=',[1,100])]                                    ''  ''
     'ExpNo_File'     0        'VisuExperimentNumber (parent folder of "pdata"),(bool)'  'b'
     'PrcNo_File'     1        'VisuProcessingNumber/ReconstructionNumber(subfolder of "pdata"),(bool)'  'b'
     'renameFiles'   ''   'rename files   -->via GUI'  {@renamefiles,protocol,[]}
     %
-    'inf300'      [repmat('—',[1,100])]                                    ''  ''
+    'inf300'      [repmat('=',[1,100])]                                    ''  ''
     'inf32'      '  [3] ADDITIONAL OPTIONS       '                                    ''  ''
-    'inf301'      [repmat('—',[1,100])]               ''  ''
+    'inf301'      [repmat('=',[1,100])]               ''  ''
     'origin'       'brukerOrigin'        'define center(origin) of volume'  {'brukerOrigin' 'volumeCenter'}
     };
 
