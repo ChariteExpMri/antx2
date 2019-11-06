@@ -490,9 +490,9 @@ for i=1:size(files,1)
         [pa fi]=fileparts(brukerfile);
         waitbar(i/size(files,1),h,[' convert2nifti:  ' num2str(i) '/' num2str(size(files,1)) ]);
         
-        %———————————————————————————————————————————————
+        %%===============================================
         %% MAKE DIRS AND FILENAMES
-        %———————————————————————————————————————————————
+        %%===============================================
         
         %% MAKE MOUSE-FOLDER-name  [mfold outdir]
         delimiter=z.delimiter;
@@ -538,9 +538,9 @@ for i=1:size(files,1)
         %disp([pnum(i,4) '] create <a href="matlab: explorer('' ' outdir '  '')">' fpname '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(files{i}) '  '')">' files{i}  '</a>']);% show h<perlink
         
         %==============================================================================
-        %———————————————————————————————————————————————
+        %%===============================================
         %%   EXTRACT DTA
-        %———————————————————————————————————————————————
+        %%===============================================
         [ni bh  da]=getbruker(brukerfile);
         
         % BUG -first 2Dims are mixed
@@ -567,7 +567,7 @@ for i=1:size(files,1)
         %     visu          = readBrukerParamFile(fullfile(pa,'visu_pars'));
         %       dtest   = readBruker2dseq(brukerfile,visu);
         
-        %———————————————————————————————————————————————
+        %%===============================================
         %%   PREPARE NIFTI
         %  hh   = struct('fname',outfile ,...
         %         'dim',   {dim(1:3)},...
@@ -575,7 +575,7 @@ for i=1:size(files,1)
         %         'pinfo', {[1 0 0]'},...
         %         'mat',   {mat},...
         %         'descrip', {['x']});
-        %———————————————————————————————————————————————
+        %%===============================================
         hh         = ni.hd;
         hh.fname   = fpname;
         hh.descrip = ['source: ' brukerfile];
@@ -584,9 +584,9 @@ for i=1:size(files,1)
         %hh.dt         = [16 0]  ;%'float32'
         hh.dt         = [64 0]  ;%'float64'
         
-        %———————————————————————————————————————————————
+        %===============================================
         %%  SAVE NIFTI (3d/4d)
-        %———————————————————————————————————————————————
+        %%===============================================
         fclose('all');
         
         if 0 %% TEST
