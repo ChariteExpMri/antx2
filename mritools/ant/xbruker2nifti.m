@@ -43,7 +43,7 @@ if 0
     sequence=1;  % sequence: 0: all sequences,   1:RARE,     , 2:FLASH,  3:FISP,  other sequence coded as string
     trmb     = 1 %lower Mbyte threshold  to skeep datasets for fast recursive file/methods-search [in MB!]
 end
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 %% missing inputs
 % using defaults
 gui1     =0;
@@ -112,8 +112,7 @@ if size(pain,1)>1
     end
 end
 
-
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 if size(pain,1)>1
     pain0=cellstr(pain)
     files={}; dirs={};
@@ -148,8 +147,7 @@ if 0
         files=files(1:100);
     end
 end
-
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 %% skipp files below Mbyte-threshold (trmb)
 for i=1:size(files,1);     k(i)=dir(files{i});end
 mbytes=cell2mat({k(:).bytes}')/1e6;
@@ -160,7 +158,7 @@ mbytes(del)         =[];
 files(del)             =[];
 daterec(del)       =[];
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 %% get sequence
 
 % seq=cell(length(files),1);
@@ -228,7 +226,7 @@ for i=1:length(files)
         fclose('all');
     end
 end
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 %% add parrams
 addparanames={
     'VisuSubjectId'
@@ -277,7 +275,7 @@ addparanamesShort=regexprep(addparanamesShort,'^Processing','Prc'); % shortParam
 addparanamesShort=regexprep(addparanamesShort,'Number',     'No'); % shortParametername for listbox
 
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 %%keep parameters
 mbytes = mbytes(ikeep)   ;
 files  = files(ikeep)   ;
@@ -296,7 +294,7 @@ if ~isempty(sequence)
     daterec     =daterec(id);
 end
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 %% selectionGUI
 % tb=[strrep(files,[pain filesep],'') cellstr(num2str(mbytes)) daterec seq];
 % id=selector(tb,'Columns:  file, sizeMB, date, MRsequence');
@@ -370,13 +368,13 @@ protocol=protocol(id);
 dx=d(id,:);
 
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 %%  PARAMETER-gui
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 if exist('x')~=1;        x=[]; end
 showgui=1
 p={...
-    'inf97'      [repmat('•',[1,50])]                           '' ''
+    'inf97'      [repmat('=',[1,100])]                           '' ''
     'inf98'       '              *** BrukerIMPORT  ***              '                        ,'' ''
     'inf99'       ' -define names of output-dirs and imported filenames '                    ,'' ''
     'inf991'      ' -the suffixes for ExperimentNumber (ExpNo_Dir/ExpNo_File) and ProcessingNumber (PrcNo_Dir/PrcNo_File)   will critically determine the existence & location of a generated file ','' ''
@@ -389,10 +387,10 @@ p={...
     'inf998'      '    SOLUTION:  (1) if there is only one RECONSTRUCTION for the same protocol: PrcNo_Dir/PrcNo_File is not necessary   ','' ''
     'inf999'      '    SOLUTION:  (2) if there are multiple RECONSTRUCTIONS for the same protocol: either PrcNo_Dir or PrcNo_File is necessary   ','' ''
     %
-    'inf100'      [repmat('•',[1,50])]                           '' ''
+    %'inf100'      [repmat('=',[1,50])]                           '' ''
     %
     'inf101'      [repmat('—',[1,100])]                                    ''  ''
-    'inf1'      ' ••• [1] SUFFIXES of MOUSE DIRECTORY NAME (added to "SubjectId")         '                                    ''  ''
+    'inf1'      '  [1] SUFFIXES of MOUSE DIRECTORY NAME (added to "SubjectId")         '                                    ''  ''
     'inf102'      [repmat('—',[1,100])]                                    ''  ''
     'StudNo_Dir'        0        'VisuStudyNumber (bool)'  'b'
     'ExpNo_Dir'         0        'VisuExperimentNumber (parent folder of "pdata"),(bool)'  'b'
@@ -404,14 +402,14 @@ p={...
     %
     %
     'inf200'      [repmat('—',[1,100])]                                    ''  ''
-    'inf22'      ' ••• [2] SUFFIXES of FILENAMES  (added to "protocoll-name")        '                                    ''  ''
+    'inf22'      ' [2] SUFFIXES of FILENAMES  (added to "protocoll-name")        '                                    ''  ''
     'inf201'      [repmat('—',[1,100])]                                    ''  ''
     'ExpNo_File'     0        'VisuExperimentNumber (parent folder of "pdata"),(bool)'  'b'
     'PrcNo_File'     1        'VisuProcessingNumber/ReconstructionNumber(subfolder of "pdata"),(bool)'  'b'
     'renameFiles'   ''   'rename files   -->via GUI'  {@renamefiles,protocol,[]}
     %
     'inf300'      [repmat('—',[1,100])]                                    ''  ''
-    'inf32'      ' ••• [3] ADDITIONAL OPTIONS       '                                    ''  ''
+    'inf32'      '  [3] ADDITIONAL OPTIONS       '                                    ''  ''
     'inf301'      [repmat('—',[1,100])]               ''  ''
     'origin'       'brukerOrigin'        'define center(origin) of volume'  {'brukerOrigin' 'volumeCenter'}
     };
@@ -422,9 +420,9 @@ p=paramadd(p,x);%add/replace parameter
 fn=fieldnames(z);
 z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 %% RENAME AFTER PROTOCOL
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 % keyboard
 
 
@@ -476,7 +474,7 @@ tbrename(:,2)=regexprep(tbrename(:,2),{'[\s&$%,\\.;:()[]{}<>"!?=/}@#+*]'},{''});
 
 
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 %% BRUKER IMPORT
 warning off;
 mkdir(paout);
@@ -521,7 +519,7 @@ for i=1:size(files,1)
         outdir=fullfile(paout,mfold);%% make DIR
         mkdir(outdir);
         
-        %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+        %==============================================================================
         %% MAKE FILENAME  [fname fpname]
         idrename=find(strcmp(tbrename(:,1),protocol{i}));
         fname=[ tbrename{idrename,2}];
@@ -539,7 +537,7 @@ for i=1:size(files,1)
         fpname=fullfile(outdir, fname );
         %disp([pnum(i,4) '] create <a href="matlab: explorer('' ' outdir '  '')">' fpname '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(files{i}) '  '')">' files{i}  '</a>']);% show h<perlink
         
-        %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+        %==============================================================================
         %———————————————————————————————————————————————
         %%   EXTRACT DTA
         %———————————————————————————————————————————————
@@ -666,14 +664,14 @@ drawnow;
 antcb('update');
 fprintf('[done]\n');
 
-%•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 %%  SUBS
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%==============================================================================
 
 
 function makebatch(z,pain,trmb,sequence)
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
 
 
 if isempty(num2str(sequence));  sequence=0;    end
@@ -694,10 +692,10 @@ catch
 end
 
 hh={};
-hh{end+1,1}=('% ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
+hh{end+1,1}=('%===================================================');
 hh{end+1,1}=[ '% BATCH:        [' [mfilename '.m' ] ']' ];
 hh{end+1,1}=[ '% descr:' hlp];
-hh{end+1,1}=('% ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
+hh{end+1,1}=('%===================================================');
 hh=[hh; struct2list(z)];
 hh(end+1,1)={call} ;%{[mfilename '(' { 'guidir'    fileparts(pain)} , sequence,trmb, ',z' ')' ]};
 % disp(char(hh));
