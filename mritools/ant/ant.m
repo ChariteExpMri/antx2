@@ -1947,6 +1947,7 @@ else %LINUX
     try
         [r1 r2]=system(['xdg-mime query default inode/directory']);
         system([strtok(r2,'.') ' -q']);
+        system([strtok(r2,'-') ' -q']);
     end
 end
 
