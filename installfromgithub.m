@@ -111,7 +111,7 @@ if 1
     
      
     if 1
-        disp('..cloning repository from GITHUB..please wait');
+        disp('..cloning repository from GITHUB..please wait...');
         %git clone https://github.com/pstkoch/antx2
         %git(['clone ' gitrepository]);
         [msg]=git(['clone --depth=1 ' gitrepository]);
