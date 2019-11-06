@@ -230,7 +230,7 @@ delete(findobj(gcf,'tag','fupd')); %close WINDOW
 if isfield(antupd,'patempup')
    % keyboard
     if exist(fullfile(antupd.patempup,'installfromgithub.m'))==2
-      if 0 %show  QUESTION and ask
+      if 1 %show  QUESTION and ask
         try
             %% [QUESTION] DELETE "installfromgithub" -
             warning off;
