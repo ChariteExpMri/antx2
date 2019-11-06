@@ -3,7 +3,6 @@
 <!---
   ANTX2 : tbx, charite,germany
 -->
-[//]: # internal comment
 
 
 # construction site #
