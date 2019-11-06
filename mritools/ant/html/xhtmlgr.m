@@ -421,7 +421,7 @@ elseif isunix
     [r1 r2]= system(['xdg-open ' ps.page]);
     if  ~isempty(strfind(r2,'no method available'))
         
-        [r1 r2]= system(['who']);
+        [r1 r2]= system(['whoami']);
         ulist=strsplit(r2,char(10))';
         lastuser=strtok(char(ulist(1)),' ');
         [r1 r2]=system(['sudo -u ' lastuser ' xdg-open ' ps.page '&']);
