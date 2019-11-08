@@ -68,17 +68,18 @@ DISADVANTAGE: no update feature (or you have to install the GIT client post hoc)
 ###### &nbsp; &nbsp; &nbsp; For more information see http://help.brain-map.org/display/mouseconnectivity/API <br> &nbsp; &nbsp; &nbsp; Please visit also the online interactive atlas: http://atlas.brain-map.org/atlas#atlas=1 ######
 
 ---
-- unzip downloaded template file: 
- - create folder "anttemplates" located at the same hierarchical level as antx2-folder is located
-   ..this is easier to obtain the respective template 
- - copy unzipped template folder to "anttemplates" dir
-    -the "anttemplates"-folder should now contain a folder (such as "mouse_Allen2017HikishimaLR") with templates
-         Examplary tree if "mouse_Allen2017HikishimaLR" template is used:
+- unzip the downloaded template(s) file
+- create folder "anttemplates" located at the same hierarchical level as antx2-folder is located
+  (this is easier to obtain the respective template)
+- copy/move unzipped template folder(s) to the "anttemplates" folder
+- The "anttemplates"-folder should now contain a folder (such as "mouse_Allen2017HikishimaLR") with templates
+       
 <pre>
-           mydir
+  Examplary tree if "mouse_Allen2017HikishimaLR" template is used:
+           mydir (directory of your choice)
              |---antx2
              |---anttemplates
-                   |---mouse_Allen2017HikishimaLR   
+                      |---mouse_Allen2017HikishimaLR   
 </pre>         
                    
 
