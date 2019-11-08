@@ -45,7 +45,7 @@ DISADVANTAGE: no update feature (or you have to install the GIT client post hoc)
 - select [Download ZIP]
 - unzip folder & copy entire "antx2"-folder to desired location
 
-### <ins> Start Ant Gui  </ins> ###
+### Start Ant Gui ###
 <pre>
 - set MATLAB's current working dir to "antx2" directory 
 - type antlink to link paths 
