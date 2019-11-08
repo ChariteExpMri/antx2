@@ -50,17 +50,20 @@ ADVANTAGE: updates can be made via toolbox
    https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
    or from subfolder "anttemplates" from LINK:
    https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM 
- - unzip downloaded template file
+
+- ![#c5f015](https://placehold.it/15/c5f015/000000?text=+) `#c5f015` For C57BL/6 mice we suggest to use latest mouse Atlas from the Allen Institute ( Atlas 2017(CCFv3), "mouse_Allen2017HikishimaLR").
+ - unzip downloaded template file: 
  - create folder "anttemplates" located at the same hierarchical level as antx2-folder is located
    ..this is easier to obtain the respective template 
  - copy unzipped template folder to "anttemplates" dir
-    -the "anttemplates"-folder should now contain a folder (such as "mouse_hikishima") with the templates
-         Examplary tree if "mouse_hikishima" template is used:
+    -the "anttemplates"-folder should now contain a folder (such as "mouse_Allen2017HikishimaLR") with templates
+         Examplary tree if "mouse_Allen2017HikishimaLR" template is used:
            mydir
-             ???antx2
-             ???anttemplates
-                  ???mouse_hikishima            
+             |---antx2
+             |---anttemplates
+                   |---mouse_Allen2017HikishimaLR            
                    
+
 ____________________________________________________________________________________________
 ## [OPTION-B] just download via clone-button (GITHUB)
 ADVANTAGE     : more simple installation
