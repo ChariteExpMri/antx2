@@ -114,7 +114,7 @@ ANTx2 also includes the pvmatlab package of Bruker BioSpin GmbH, which is intend
 
 ## **Citation policy**
 * When using ANTx2 in publications please use the following citation: <br>
-  &nbsp; &nbsp; &nbsp; _Koch et al. &quot;Atlas registration for edema-corrected MRI lesion volume in mouse stroke models &quot;, JCBFM, 2017.
+  &nbsp; &nbsp; &nbsp; _Koch et al. &quot;Atlas registration for edema-corrected MRI lesion volume in mouse stroke models &quot;, JCBFM, 2017._
 * When using the Allen mouse brain atlas please cite: <br>
   &nbsp; &nbsp; &nbsp; _Hübner et al. &quot;The connectomics of brain demyelination: Functional and structural patterns in the cuprizone mouse model&quot;, NeuroImage, 2017, Volume 146, Pages 1-18. <br>
   &nbsp; &nbsp; &nbsp; _Lein et al. &quot;_ _Genome-wide atlas of gene expression in the adult mouse brain__&quot;, Nature, 2006, Volume 445, pages 168-176.
