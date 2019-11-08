@@ -17,14 +17,14 @@
 # ANTx2
 ANTx2 stands for **A** tlas **N** ormalization **T** oolbox using elasti **x**. It is a MATLAB toolbox for image registration of mouse magnetic resonance imaging data developed for research laboratories/departments.
 
-# **Requirements**
+## **Requirements**
 - Windows (tested: Windows 10)
 - Linux (tested: Ubuntu 16.04.6 LTS, MINT17)
 - MAC (tested: OS X El Capitan v10.11.6)
 - MATLAB, version R2015b/16a were tested, versions above 2018b should work ()
 
-# Installation
-## [OPTION-A] Installation via GITHUB using GIT
+## Installation
+### [OPTION-A] Installation via GITHUB using GIT
 ADVANTAGE: updates can be made via toolbox         
 - download & install GIT client --> https://git-scm.com/downloads
     just follow instructions and keep the default properties
