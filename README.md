@@ -92,37 +92,38 @@ If you use it and find it useful please give us a note.
 
 ## **Included software**
 
-This toolbox uses the packages [SPM](http://www.fil.ion.ucl.ac.uk/spm/), 
+This toolbox uses and included the following packages [SPM](http://www.fil.ion.ucl.ac.uk/spm/), 
 [elastix](http://elastix.isi.uu.nl/), [mricron](https://www.nitrc.org/projects/mricron),
 [PCNN3D](https://sites.google.com/site/chuanglab/software/3d-pcnn), 
 [nii](https://de.mathworks.com/matlabcentral/fileexchange/8797-tools-for-nifti-and-analyze-image), 
 [findjobj](https://de.mathworks.com/matlabcentral/fileexchange/14317-findjobj-find-java-handles-of-matlab-graphic-objects)
 [cbrewer](https://de.mathworks.com/matlabcentral/fileexchange/34087-cbrewer---colorbrewer-schemes-for-matlab), 
 [screen capture](https://de.mathworks.com/matlabcentral/fileexchange/24323-screencapture-get-a-screen-capture-of-a-figure-frame-or-component), 
-[windowapi](https://de.mathworks.com/matlabcentral/fileexchange/31437-windowapi) and the 
-[Allen mouse brain atlas](http://mouse.brain-map.org/), which are included in this repository. Please respect the licenses and copyright of these software packages.
+[windowapi](https://de.mathworks.com/matlabcentral/fileexchange/31437-windowapi).
+
+Note that the templates are not included in this repository. The templates can be downloaded from https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9).
+Please consult the respective 'readme.txt' file in each templated folder regarding data origin and citation policiy. 
+
+Please respect the licenses and copyright of these software packages.
+
+<!---
 Scripts in the freiburgLight directory using SPM functions underly the GNU General Public License version 2 or (at your opinion) any later version. All other scripts in the FreiburgLight directory are owned by the Department of Radiology, Medical Physics, University Medical Center Freiburg and are free for academic and non-commercial use. Redistribution without consent of Department of Radiology, Medical Physics, University Medical Center Freiburg (contact persons [Marco Reisert](mailto:marco.reisert@uniklinik-freiburg.de) and [Dominik von Elverfeldt](mailto:dominik.elverfeldt@uniklinik-freiburg.de)) is not permitted.
-ANTX also includes the pvmatlab package of Bruker BioSpin GmbH, which is intended for Bruker users only. Please respect the legal issues in the manual within the pvtools\_bruker directory and request permission to use the package by Bruker&#39;s preclinical MRI software customer support before using ANTX. Otherwise please delete the directory pvtools\_bruker.
+-->
+
+ANTx2 also includes the pvmatlab package of Bruker BioSpin GmbH, which is intended for Bruker users only. Please respect the legal issues in the manual within the pvtools\_bruker directory and request permission to use the package by Bruker&#39;s preclinical MRI software customer support before using ANTX. Otherwise please delete the directory pvtools\_bruker.
 
 ## **Citation policy**
-
-When using ANTX in publications you are obliged to cite the following primary publications:
-
+When using ANTx2 in publications please use the following citation:
 _Koch et al. &quot;Atlas registration for edema-corrected MRI lesion volume in mouse stroke models &quot;, JCBFM, 2017_
-
-_HÃ¼bner et al. &quot;The connectomics of brain demyelination: Functional and structural patterns in the cuprizone mouse model&quot;, NeuroImage, 2017, Volume 146, Pages 1-18_
-
+When using the Allen mouse brain atlas please cite:
+_Hübner et al. &quot;The connectomics of brain demyelination: Functional and structural patterns in the cuprizone mouse model&quot;, NeuroImage, 2017, Volume 146, Pages 1-18_
 _Lein et al. &quot;_ _Genome-wide atlas of gene expression in the adult mouse brain__&quot;, Nature, 2006, Volume 445, pages 168-176_
 
 ## **License**
-
 Copyright (C) 2017 Stefan Koch &lt; [stefan.koch@charite.de](mailto:stefan.koch@charite.de)&gt; and Philipp Boehm-Sturm &lt; [philipp.boehm-sturm@charite.de](mailto:philipp.boehm-sturm@charite.de)&gt;
-
-ANTX is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any later version.
-
-ANTX is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with ANTX. If not, see &lt; [http://www.gnu.org/licenses/old-licenses/gpl-2.0](http://www.gnu.org/licenses/old-licenses/gpl-2.0)&gt;.
+ANTx2 is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any later version.
+ANTx2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+You should have received a copy of the GNU General Public License along with ANTx2. If not, see &lt; [http://www.gnu.org/licenses/old-licenses/gpl-2.0](http://www.gnu.org/licenses/old-licenses/gpl-2.0)&gt;.
 
 
 
