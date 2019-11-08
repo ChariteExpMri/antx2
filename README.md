@@ -54,12 +54,14 @@ DISADVANTAGE: no update feature (or you have to install the GIT client post hoc)
 - type "ant" to open ant-gui 
 </pre>
 ### <ins> Check For Updates </ins> ###
- - To check for updates select EXTRAS/CHECK FOR UPATES (GITHUB) from the ant main gui
+ - To check for updates select EXTRAS/"CHECK FOR UPATES (GITHUB)" from the ant main gui
 ### <ins> Download Templates </ins> ###
- - download one/more templates (zip files) from LINK: 
-   https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
-   or from subfolder "anttemplates" from LINK:
-   https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM 
+ - download one or more templates (zip-files) from here (googledrive): https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
+  
+<!---
+ or from subfolder "anttemplates" from LINK: https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM 
+-->
+
 ---
   ![#1589F0](https://placehold.it/15/1589F0/000000?text=+) For C57BL/6 mice we suggest to use the latest Atlas from the Allen Institute (Atlas-2017,CCFv3), in googledrive prepared as "mouse_Allen2017HikishimaLR".
 - see http://help.brain-map.org/display/mouseconnectivity/API
