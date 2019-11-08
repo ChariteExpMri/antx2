@@ -64,9 +64,9 @@ ADVANTAGE: updates can be made via toolbox
          Examplary tree if "mouse_Allen2017HikishimaLR" template is used:
 <pre>
            mydir
-           <br>  |---antx2
-           <br>  |---anttemplates
-           <br>          |---mouse_Allen2017HikishimaLR   
+             |---antx2
+             |---anttemplates
+                   |---mouse_Allen2017HikishimaLR   
 </pre>         
                    
 
