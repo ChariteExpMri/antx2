@@ -37,11 +37,22 @@ ADVANTAGE: updates can be made via toolbox
 - set MATLAB's current working dir to the location of "installfromgithub.m" 
 - type installfromgithub to open the installer/check updates window
 - select [FRESH INSTALL] ...next, select the hyperlink "install" Matlab's in ..wait..and hit [close] to close the window 
-   
+
+### [OPTION-B] just download via clone-button (GITHUB)
+ADVANTAGE     : more simple installation
+DISADVANTAGE: no update feature (or you have to install the GIT client post hoc) 
+- select [Clone & download button]
+- select [Download ZIP]
+- unzip folder & copy entire "antx2"-folder to desired location
+
 ### <ins> Start Ant Gui  </ins> ###
-- set MATLAB's current working dir to "antx2" dir 
-- type antlink to link paths
+<pre>
+- set MATLAB's current working dir to "antx2" directory 
+- type antlink to link paths 
+  Alternatively, you can create a hyperlink that occurs each time Matlab is started.. (see "__startup.m" file
+  in the antx2-directory for more information) 
 - type "ant" to open ant-gui 
+</pre>
 ### <ins> Check For Updates </ins> ###
  - To check for updates select EXTRAS/CHECK FOR UPATES (GITHUB) from the ant main gui
 ### <ins> Download Templates </ins> ###
@@ -70,12 +81,7 @@ ADVANTAGE: updates can be made via toolbox
                    
 
 ____________________________________________________________________________________________
-## [OPTION-B] just download via clone-button (GITHUB)
-ADVANTAGE     : more simple installation
-DISADVANTAGE: no update feature
-- select [Clone & download button]
-- select [Download ZIP]
-- unzip folder & copy entire "antx2"-folder to desired location
+
 
 ### <ins> Start Ant Gui  </ins> ###
  see [OPTION-A] --> Start Ant Gui 

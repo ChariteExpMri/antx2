@@ -1,8 +1,9 @@
 %% potential startup file
 % can be copied to matlabroot or matlab's userpath or another path 
-% - userpath or another path must be saved in the matlab's path  list to take effect
-% - please modify antpath in this function
-% -don't forget to rename this function to "startup.m"
+% the copy must be renamed to "startup.m"
+% - userpath or another path must be added & saved in the matlab's path list to take effect
+% - please modify antpath-variable in this new "startup.m" file (do not modify the orig file "__startup.m")
+% see also: https://de.mathworks.com/help/matlab/ref/startup.html?requestedDomain=de.mathworks.com
 
  
 function startup
