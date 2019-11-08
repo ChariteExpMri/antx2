@@ -114,13 +114,13 @@ ANTx2 also includes the pvmatlab package of Bruker BioSpin GmbH, which is intend
 
 ## **Citation policy**
 * When using ANTx2 in publications please use the following citation: <br>
-###### &nbsp; &nbsp; &nbsp;  _Koch et al. &quot;Atlas registration for edema-corrected MRI lesion volume in mouse stroke models &quot;, JCBFM, 2017_
+  &nbsp; &nbsp; &nbsp; _Koch et al. &quot;Atlas registration for edema-corrected MRI lesion volume in mouse stroke models &quot;, JCBFM, 2017_
 * When using the Allen mouse brain atlas please cite: <br>
-###### &nbsp; &nbsp; &nbsp;  _Hübner et al. &quot;The connectomics of brain demyelination: Functional and structural patterns in the cuprizone mouse model&quot;, NeuroImage, 2017, Volume 146, Pages 1-18_
-###### &nbsp; &nbsp; &nbsp;  _Lein et al. &quot;_ _Genome-wide atlas of gene expression in the adult mouse brain__&quot;, Nature, 2006, Volume 445, pages 168-176_
+  &nbsp; &nbsp; &nbsp; _Hübner et al. &quot;The connectomics of brain demyelination: Functional and structural patterns in the cuprizone mouse model&quot;, NeuroImage, 2017, Volume 146, Pages 1-18_
+  &nbsp; &nbsp; &nbsp; _Lein et al. &quot;_ _Genome-wide atlas of gene expression in the adult mouse brain__&quot;, Nature, 2006, Volume 445, pages 168-176_
 
 ## **License**
-Copyright (C) 2017 Stefan Koch &lt; [stefan.koch@charite.de](mailto:stefan.koch@charite.de)&gt; and Philipp Boehm-Sturm &lt; [philipp.boehm-sturm@charite.de](mailto:philipp.boehm-sturm@charite.de)&gt;
+Copyright (C) 2019 Stefan Koch &lt; [stefan.koch@charite.de](mailto:stefan.koch@charite.de)&gt; and Philipp Boehm-Sturm &lt; [philipp.boehm-sturm@charite.de](mailto:philipp.boehm-sturm@charite.de)&gt;
 ANTx2 is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any later version.
 ANTx2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with ANTx2. If not, see &lt; [http://www.gnu.org/licenses/old-licenses/gpl-2.0](http://www.gnu.org/licenses/old-licenses/gpl-2.0)&gt;.
