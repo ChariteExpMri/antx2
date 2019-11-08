@@ -53,7 +53,7 @@ ADVANTAGE: updates can be made via toolbox
 ---
   ![#1589F0](https://placehold.it/15/1589F0/000000?text=+) For C57BL/6 mice we suggest to use the latest Atlas from the Allen Institute (Atlas-2017,CCFv3), in googledrive prepared as "mouse_Allen2017HikishimaLR".
 - see http://help.brain-map.org/display/mouseconnectivity/API
-- the Atlas includes gray matter, fiber tract annotation and the ventricular system
+- the Atlas includes gray matter, fiber tract annotation and the ventricular system with 70µm isotropic resolution
 ---
 - unzip downloaded template file: 
  - create folder "anttemplates" located at the same hierarchical level as antx2-folder is located
