@@ -62,10 +62,10 @@ ADVANTAGE: updates can be made via toolbox
  - copy unzipped template folder to "anttemplates" dir
     -the "anttemplates"-folder should now contain a folder (such as "mouse_Allen2017HikishimaLR") with templates
          Examplary tree if "mouse_Allen2017HikishimaLR" template is used:
-           mydir
-             |---antx2
-             |---anttemplates
-                   |---mouse_Allen2017HikishimaLR            
+           mydir <br>
+           <br>  |---antx2
+           <br>  |---anttemplates
+           <br>        |---mouse_Allen2017HikishimaLR            
                    
 
 ____________________________________________________________________________________________
