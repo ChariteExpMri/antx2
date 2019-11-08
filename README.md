@@ -113,8 +113,8 @@ Scripts in the freiburgLight directory using SPM functions underly the GNU Gener
 ANTx2 also includes the pvmatlab package of Bruker BioSpin GmbH, which is intended for Bruker users only. Please respect the legal issues in the manual within the pvtools\_bruker directory and request permission to use the package by Bruker&#39;s preclinical MRI software customer support before using ANTX. Otherwise please delete the directory pvtools\_bruker.
 
 ## **Citation policy**
-* When using ANTx2 in publications please use the following citation:
-.._Koch et al. &quot;Atlas registration for edema-corrected MRI lesion volume in mouse stroke models &quot;, JCBFM, 2017_
+* When using ANTx2 in publications please use the following citation
+  .._Koch et al. &quot;Atlas registration for edema-corrected MRI lesion volume in mouse stroke models &quot;, JCBFM, 2017_
 
 When using the Allen mouse brain atlas please cite:
 
