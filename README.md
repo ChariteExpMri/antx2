@@ -93,7 +93,8 @@ If you use it and find it useful please give us a note.
 ## **Included software**
 
 This toolbox uses and included the following packages [SPM](http://www.fil.ion.ucl.ac.uk/spm/), 
-[elastix](http://elastix.isi.uu.nl/), [mricron](https://www.nitrc.org/projects/mricron),
+[Elastix](http://elastix.isi.uu.nl/), 
+[MRIcron](https://www.nitrc.org/projects/mricron),
 [PCNN3D](https://sites.google.com/site/chuanglab/software/3d-pcnn), 
 [nii](https://de.mathworks.com/matlabcentral/fileexchange/8797-tools-for-nifti-and-analyze-image), 
 [findjobj](https://de.mathworks.com/matlabcentral/fileexchange/14317-findjobj-find-java-handles-of-matlab-graphic-objects)
