@@ -39,7 +39,7 @@ ADVANTAGE: updates can be made via toolbox
 - select [FRESH INSTALL] ...next, select the hyperlink "install" Matlab's in ..wait..and hit [close] to close the window 
 
 ### [OPTION-B] just download via clone-button (GITHUB)
-ADVANTAGE     : more simple installation
+ADVANTAGE     : more simple installation <br>
 DISADVANTAGE: no update feature (or you have to install the GIT client post hoc) 
 - select [Clone & download button]
 - select [Download ZIP]
