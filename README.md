@@ -102,7 +102,7 @@ This toolbox uses and included the following packages [SPM](http://www.fil.ion.u
 [screen capture](https://de.mathworks.com/matlabcentral/fileexchange/24323-screencapture-get-a-screen-capture-of-a-figure-frame-or-component), 
 [windowapi](https://de.mathworks.com/matlabcentral/fileexchange/31437-windowapi).
 
-Note that the templates are not included in this repository. The templates can be downloaded [here](https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9).
+Note that the templates are not included in this repository and must be downloaded from [google-drive](https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9).
 Please consult the respective 'readme.txt' file in each templated folder regarding data origin and citation policiy. 
 
 Please respect the licenses and copyright of these software packages.
@@ -124,7 +124,7 @@ ANTx2 also includes the pvmatlab package of Bruker BioSpin GmbH, which is intend
 Copyright (C) 2019 Stefan Koch &lt; [stefan.koch@charite.de](mailto:stefan.koch@charite.de)&gt; and Philipp Boehm-Sturm &lt; [philipp.boehm-sturm@charite.de](mailto:philipp.boehm-sturm@charite.de)&gt;
 ANTx2 is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any later version. 
 ANTx2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License along with ANTx2. If not, see &lt; [http://www.gnu.org/licenses/old-licenses/gpl-2.0](http://www.gnu.org/licenses/old-licenses/gpl-2.0)&gt;.
+You should have received a copy of the GNU General Public License along with ANTx2. For more information see [here](http://www.gnu.org/licenses/old-licenses/gpl-2.0](http://www.gnu.org/licenses/old-licenses/gpl-2.0).
 
 
 
