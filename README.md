@@ -65,8 +65,8 @@ DISADVANTAGE: no update feature (or you have to install the GIT client post hoc)
 ---
   ![#1589F0](https://placehold.it/15/1589F0/000000?text=+) For C57BL/6 mice we suggest to use the latest Atlas from the Allen Institute (Atlas-2017,CCFv3), in googledrive prepared as "mouse_Allen2017HikishimaLR".
 - the Atlas (70µm isotropic resolution) includes gray matter regions, fiber tracts and the ventricular system
-...######    for more information see http://help.brain-map.org/display/mouseconnectivity/API ######
-...######   Please visit also the online interactive atlas: http://atlas.brain-map.org/atlas#atlas=1 ######
+######...  for more information see http://help.brain-map.org/display/mouseconnectivity/API ######
+######  ... Please visit also the online interactive atlas: http://atlas.brain-map.org/atlas#atlas=1 ######
 
 ---
 - unzip downloaded template file: 
