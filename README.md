@@ -21,7 +21,7 @@ ANTx2 stands for **A** tlas **N** ormalization **T** oolbox using elasti **x**. 
 - Windows (tested: Windows 10)
 - Linux (tested: Ubuntu 16.04.6 LTS, MINT17)
 - MAC (tested: OS X El Capitan v10.11.6)
-- MATLAB, version R2015b/16a were tested, versions above 2018b should work ()
+- MATLAB, version R2015b/16a were tested, versions above 2018b should work (..not fully tested)
 
 ## Installation ##
 ### [OPTION-A] Installation via GITHUB using GIT
