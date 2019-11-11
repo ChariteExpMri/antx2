@@ -72,15 +72,20 @@ DISADVANTAGE: no update feature (or you have to install the GIT client post hoc)
 - unzip the downloaded template(s) file
 - create a folder "anttemplates" located at the same hierarchical level as the antx2-folder
   (This is easier to obtain the respective template.)
-- copy/move unzipped template folder(s) to the "anttemplates" folder
-- The "anttemplates"-folder should now contain a folder (such as "mouse_Allen2017HikishimaLR") with templates
+- copy/move unzipped template folder(s) to the "anttemplates" folder. If unzipping creates a nested folder within the unzipped folder, than copy/move this folder.
+- The "anttemplates"-folder should now contain a folder (such as "mouse_Allen2017HikishimaLR") with templates.
        
 <pre>
   Examplary tree if "mouse_Allen2017HikishimaLR" template is used:
            mydir (directory of your choice)
              |---antx2
              |---anttemplates
-                      |---mouse_Allen2017HikishimaLR   
+                      |---mouse_Allen2017HikishimaLR  
+                                   |---AVGT.nii (file)  
+                                   |---ANO.nii (file)  
+                                   |      ...
+                                   |---readme.txt (file)  
+ 
 </pre>         
                    
 
