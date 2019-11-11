@@ -56,9 +56,10 @@ DISADVANTAGE: no update feature (or you have to install the GIT client post hoc)
 </pre>
 ### <ins> Check For Updates </ins> ###
  - To check for updates select EXTRAS/"CHECK FOR UPATES (GITHUB)" from the ant main gui
+
 ### <ins> Download Templates </ins> ###
- - download one or more templates (zip-files) from here (googledrive): https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
-  
+  Templates are not included in this repository.  and must be downloaded from [google-drive](https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9).
+   
 <!---
  or from subfolder "anttemplates" from LINK: https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM 
 -->
