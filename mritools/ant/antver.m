@@ -41,7 +41,8 @@
 % set up GITHUB repository #bw https://github.com/ChariteExpMri/antx2/
 % -primary checks macOS, Linux MINT
 % - updated [uhelp]
-% #ra 13 Nov 2019 (00:47:38) [maskgenerator] added online link to compare selected regions
+% #ra 13 Nov 2019 (00:47:38) 
+% [maskgenerator] added region-lection list and online link to compare selected regions
 %
 %
 %
