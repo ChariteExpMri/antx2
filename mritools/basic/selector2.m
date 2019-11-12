@@ -721,9 +721,15 @@ function keypress(h,ev)
 
 %% BUTTONS
 function selectallButton(dum,dum2)
+set(findobj(findobj(0,'tag','selector'),'tag','txtbusy'),'visible','on');drawnow;
 selectthis([],1);
+set(findobj(findobj(0,'tag','selector'),'tag','txtbusy'),'visible','off');drawnow;
+
 function deselectallButton(dum,dum2)
+set(findobj(findobj(0,'tag','selector'),'tag','txtbusy'),'visible','on');drawnow;
 selectthis([],0);
+set(findobj(findobj(0,'tag','selector'),'tag','txtbusy'),'visible','off');drawnow;
+
 
 function sorter(dum,dum2)
 sortlist
@@ -1138,7 +1144,7 @@ selectthis([],2);
 function selectthis(t,mode)
 
 % set(findobj(gcf,'tag','txtbusy'),'visible','on');
-
+set(findobj(findobj(0,'tag','selector'),'tag','txtbusy'),'visible','on');drawnow;
  
 us=get(gcf,'userdata');
 t=us.Table; %t=findobj(gcf,'tag','lb1');

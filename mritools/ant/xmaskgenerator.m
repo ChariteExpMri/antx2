@@ -449,8 +449,51 @@ atl.s2  =atl.h2  ;       % ANO-2d RGB SELECTION of regions RESET TO BG-image
 
 
 
-% idx=100;
+%% slow version 
+% tic
+% logs={''};
+% logs(end+1,1)={['<HTML><FONT color="Maroon"><b>' 'SELECTED REGIONS' '</FONT></HTML>']};
+% for i=1:length(idx)
+%     idthis=idx(i);
+%     id=atl.tb{idthis,4};
+%     ch=atl.tb{idthis,5};
+%     idall=[id;ch(:)];
+%     idall(isnan(idall))=[];
+%     idall=sort(idall);
+%     
+%     ico = ismember(atl.a2, idall);
+%     ix=find(ico>0);
+%     %     logs(end+1,1)={[ num2str(i) ') ' atl.tb{idthis,1}  ' [' num2str(id) ']']};
+%     
+%     logs(end+1,1)= {['<HTML><FONT color="grey">' num2str(i)  ') <FONT color="blue"><b>' atl.tb{idthis,1}  ' [' num2str(id) ']'  '</FONT></HTML>']};
+%     logs(end+1,1)={['   Childs: '  regexprep(num2str(ch(:)'),'\s+', ',') ]};
+%     if length(ix)>0
+%         %logs(end+1,1)={['    Nvox  : '  num2str(length(ix))]};
+%         logs(end+1,1)= {['<HTML><FONT color="green">'  '&nbsp;&nbsp;&nbsp;'  'Nvox  : '  num2str(length(ix))  '</FONT></HTML>']};
+%     else
+%         logs(end+1,1)= {['<HTML><FONT color="red">'    '&nbsp;&nbsp;&nbsp;'   'Nvox  : '  num2str(length(ix))  '</FONT></HTML>']};
+%     end
+%     
+%     atl.s2(ix,1)=atl.c2(ix,1);
+%     atl.s2(ix,2)=atl.c2(ix,2);
+%     atl.s2(ix,3)=atl.c2(ix,3);
+%     atl.selected(ix,1)=i;
+% end
+% if size(logs,1)==2; %EMPTY MSG
+%     logs(end+1,1)= {['<HTML><FONT color="Orange">' '   EMPTY..no regions selected- '   '</FONT></HTML>']};
+% end
+% toc
+%% end
 
+
+%% faster version 
+% tic
+logs={''};
+logs(end+1,1)={['<HTML><FONT color="Maroon"><b>' 'SELECTED REGIONS' '</FONT></HTML>']};
+
+AT=atl.a2;
+inozero=find(AT>0);
+AT=AT(inozero);
 for i=1:length(idx)
     idthis=idx(i);
     id=atl.tb{idthis,4};
@@ -459,15 +502,50 @@ for i=1:length(idx)
     idall(isnan(idall))=[];
     idall=sort(idall);
     
-    ico = ismember(atl.a2, idall);
-    ix=find(ico>0);
+%     ico = ismember(atl.a2, idall);
+%     ix=find(ico>0);
+%     length(ix)
+    
+    ico2 = ismember(AT, idall);
+%     %ix2   =inozero(ico2);
+%     length(ix2)
+%     sum(abs(ix-ix2))
+    ix   =inozero(ico2);
+
+    
+
+    %     logs(end+1,1)={[ num2str(i) ') ' atl.tb{idthis,1}  ' [' num2str(id) ']']};
+    
+    logs(end+1,1)= {['<HTML><FONT color="grey">' num2str(i)  ') <FONT color="blue"><b>' atl.tb{idthis,1}  ' [' num2str(id) ']'  '</FONT></HTML>']};
+    logs(end+1,1)={['   Childs: '  regexprep(num2str(ch(:)'),'\s+', ',') ]};
+    if length(ix)>0
+        %logs(end+1,1)={['    Nvox  : '  num2str(length(ix))]};
+        logs(end+1,1)= {['<HTML><FONT color="green">'  '&nbsp;&nbsp;&nbsp;'  'Nvox  : '  num2str(length(ix))  '</FONT></HTML>']};
+    else
+        logs(end+1,1)= {['<HTML><FONT color="red">'    '&nbsp;&nbsp;&nbsp;'   'Nvox  : '  num2str(length(ix))  '</FONT></HTML>']};
+    end
     
     atl.s2(ix,1)=atl.c2(ix,1);
     atl.s2(ix,2)=atl.c2(ix,2);
     atl.s2(ix,3)=atl.c2(ix,3);
-    
     atl.selected(ix,1)=i;
 end
+if size(logs,1)==2; %EMPTY MSG
+    logs(end+1,1)= {['<HTML><FONT color="Orange">' '   EMPTY..no regions selected- '   '</FONT></HTML>']};
+end
+% toc
+
+%% end
+
+
+
+
+
+
+
+
+
+
 
 % -------------------------------
 ff=atl.s2;
@@ -479,7 +557,17 @@ f5(:,:,3) = montageout(permute(f4(:,:,:,3),[1 2 4 3]));
 
 % return
 if isempty(findobj(0,'tag','maskimg'))
-    figure(11);set(gcf,'tag','maskimg','color','k','units','norm','position',[ 0.4309    0.3994    0.3889    0.4667]);
+    figure(11);
+    set(gcf,'tag','maskimg','color','k','units','norm',...
+        'position',[ 0.4309    0.3994    0.3889    0.4667],...
+        'NumberTitle','off');
+    
+
+    h = uitabgroup; drawnow;
+    t1 = uitab(h, 'title', 'REGIONS','ButtonDownFcn',{@tab,1});
+    a = axes('parent', t1); surf(peaks);
+
+    
     im=image(f5);
     set(im,'tag','mask');
     axis image
@@ -509,11 +597,56 @@ if isempty(findobj(0,'tag','maskimg'))
         NaN   NaN   NaN   NaN   NaN   NaN   NaN   NaN   NaN   NaN   NaN   NaN   NaN   NaN   NaN   NaN];
     set(gcf,'Pointer','custom');
     set(gcf,'PointerShapeCData',cr);
+    
+    t2 = uitab(h, 'title', 'LABELS','ButtonDownFcn',{@tab,2});
+    hv=uicontrol(t2, 'style','listbox','units','normalized','position',[0 0 1 1]);
+    set(hv,'tag','lbmaskgen','string',logs,'value',1);
+     c = uicontextmenu;
+     m1 = uimenu(c,'Label','show selected region online -Browser (Allen Mouse Atlas only)','Callback',{@showWEB,1});
+     m2 = uimenu(c,'Label','show selected region online -MATLAB Browser (Allen Mouse Atlas only)','Callback',{@showWEB,2});
+    set(hv,'UIContextMenu',c)
+    
 else
     im=findobj(0,'tag','mask');
     set(im,'cdata',single(f5));
+   set( findobj(0,'tag','lbmaskgen')    ,'string',logs,'value',1);
 end
 
+function tab(e,e2,arg)
+if arg==1
+    set(gcf,'WindowButtonMotionFcn',@figmotion);
+else
+    set(gcf,'WindowButtonMotionFcn',[]);
+    set(gcf,'name','go to contextmenu to compare with ALLEN ATLAS online');
+end
+
+function showWEB(e,e2,arg)
+hl=findobj(0,'tag','lbmaskgen');
+li=get(hl,'string');
+va=get(hl,'value');
+
+try
+    in=0;
+    do=1;
+    while do==1
+        va2=va+in;
+        str=li{va2};
+        if isempty(regexpi(str,'>\d+)'));
+            in=in-1;
+        else
+            do=0;
+        end
+    end
+    str=li{va2};
+    id=char(regexprep(regexpi(str,'\[\d+\]','match'),{'[',']'},{''}));
+    
+    html=['http://atlas.brain-map.org/atlas#atlas=1&plate=100960301&structure=' id '&x=5279.875&y=3743.875&zoom=-3&resolution=16.75&z=6'];
+    if arg==1
+        web(html,'-browser') ;
+    else
+        web(html);web(html);
+    end
+end
 % ________________________________________________________________________________________________
 function figmotion(h,e)
 try
