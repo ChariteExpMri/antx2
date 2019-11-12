@@ -5,6 +5,8 @@
 % % fileout=sub_atlaslabel2xls(pp,z)
 % pp:struct with paramters
 % z: struct
+%
+% added: note for mask from templateFolder
 function fileout=sub_atlaslabel2xls(pp,z)
 
 
@@ -54,6 +56,11 @@ infox=struct2list(v);
 
 infox(regexpi2(infox,'z.inf\d'))=[];
 infox=[{['*** ATLAS LABELING: ' z.project   ' ***  ' ]}; infox ];
+
+infox=[infox;{' '}];
+infox=[infox;{'%NOTE: if (and only if) a mask from template folder is used, it is assumed that the mask (roi) is in standard space.'}];
+infox=[infox;{'Hence, when using the same mask in native space, the mask file is warped to native space. Afterwards, the warped mask'}];
+infox=[infox;{'% is used in combination with the native image file'}];
 
 infox=[infox;{' '}];
 % infox=[infox;{' '}];
@@ -236,9 +243,11 @@ else
     isexcel=0;
 end
 
-%???????????????????????????????????????????????
+% ==============================================
 %%   [1a] EXCEL EXISTS
-%???????????????????????????????????????????????
+% ===============================================
+
+
 
 if isexcel==1  % EXCEL EXISTS
     %====================================================================================================
@@ -313,9 +322,10 @@ if isexcel==1  % EXCEL EXISTS
     
     
 else
-    %???????????????????????????????????????????????
+
+    % ==============================================
     %%   [1b] EXCEL DOES NOT EXIST
-    %???????????????????????????????????????????????
+    % ===============================================
     
     global an
     bkan5=an;
@@ -429,7 +439,7 @@ if isexcel==1
                 end
                 
             end
-            % �����freeze��������������������������������������������������������������������������������������������
+            % ========================
             %     ihead=[lx{1} '1:' lx{icol} '1'];
             %     cells.Select;
             % %  Range('A10').Select
@@ -449,7 +459,7 @@ if isexcel==1
             % e.Range(ihead).Borders.Item('xlEdgeLeft').LineStyle = 1;
             % e.Range(ihead).Borders.Item('xlEdgeLeft').Weight = -4138;
             
-            %% ��� Delete sheets����������������������������������������������������������������������������������������������
+            % ======================== Delete sheets
             % try    e.ActiveWorkbook.Worksheets.Item([sheetName '1']).Delete;end
             % try   e.ActiveWorkbook.Worksheets.Item([sheetName '2']).Delete;end
             % try   e.ActiveWorkbook.Worksheets.Item([sheetName '3']).Delete;end
@@ -476,6 +486,5 @@ end% isexcel
 % % % % end
 
 % disp('..DONE');
-
 
 

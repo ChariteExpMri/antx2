@@ -1,7 +1,7 @@
 
 
 %% #yk xgetlabels4: get anatomical labels
-
+% a mask from template folder can be used
 
 
 function [z varargout] = xgetlabels4(showgui,x)
@@ -28,7 +28,7 @@ p={...
     'inf11'        '__________[ FILES/MASKS]________________________________________________________'    '' ''
     
     'files'      ''                                                           'files used for calculation' ,  {@selectfile,v,'single'} ;%'mf'
-    'masks'      ''                                                           '<optional> maskfiles (order is irrelevant)', {@selectfile,v,'single'} % ,'mf' ...
+    'masks'      ''                                                           '<optional> corresponding maskfiles (order is irrelevant)or mask from templates folder', {@selectfileMask,v,'single'} % ,'mf' ...
     %
     
     'inf33'        '________________________________________________________________________________'    '' ''
@@ -92,7 +92,11 @@ for i=1:length(s.files)
     if isempty(s.masks)
         s2.masks='';
     else
-        s2.masks=s.masks{i};
+        if s.isMskinOtherDir==1
+            s2.masks=s.masks{1};
+        else
+            s2.masks=s.masks{i};
+        end
     end
     dum=extractdata(s2);   % extrat data
     dx(   :,:,i)  =dum.tb   ;   % cube: [regs x params x subjects]
@@ -379,7 +383,23 @@ end
 
 %% MASK OR SET THRESHOLD
 if ~isempty(mask)
-    [hm m]=    rreslice2target(mask, w.hano, [], 0);
+    if s.isMskinOtherDir==0
+         [hm m]=    rreslice2target(mask, w.hano, [], 0);
+    elseif s.isMskinOtherDir==1
+        if strcmp(s.space,'standard')
+         [hm m]=    rreslice2target(mask, w.hano, [], 0);
+        elseif strcmp(s.space,'native')
+            %have to warp the file first in local drive
+          % maskinverse= replacefilepath(stradd(mask,'ix_',1), fileparts(file))
+         % fis=doelastix(-1, [],source ,0,'local' ) ; %,struct('source','intern'));  
+         disp('..transform mask to native-space');            
+         po.source =  'extern';
+         fis=doelastix(-1, {fileparts(file)},{mask},0,'local' ,po);
+         [hm m]=    rreslice2target(fis{1}, w.hano, [], 0);   
+            
+        end
+    end
+   
     m(m<1)=nan;  %m(m~=1)=nan;
     ac=ac.*(m);
 else
@@ -810,6 +830,30 @@ else
     files2=files;
     masks2={};
 end
+%=======================================================================
+% check if templates mask-file is used
+isMskinOtherDir=0;
+if length(masks)==1
+    if exist(masks{i})==2
+        if ~isempty(strfind(masks{1},[filesep 'templates' filesep]));% in templates folder
+           isMskinOtherDir=1; 
+        else %another source
+            ix=min(find(~cellfun('isempty',strfind(files, fileparts(masks{1}))))); %not in dat-folder
+            if isempty(ix)
+             isMskinOtherDir=1;    
+            end
+        end
+    end
+end
+if isMskinOtherDir==1
+    files2=files;
+    masks2=masks;
+end
+
+s.isMskinOtherDir=isMskinOtherDir;
+%=======================================================================
+
+
 if isempty(files2) &&  isempty(masks2)
     error('## no matching input files anf maskfiles found');
 end
@@ -951,6 +995,30 @@ if ~isempty(h1)
     he=cellstr(h1);
 end
 
+function he=selectfileMask(v,selectiontype)
+he='';
+choice = questdlg('Where are/is the mask located?', ...
+'Select mask location', ...
+'animal folder(s)','templates folder','cancel','animal folder(s)');
+
+if strcmp(choice, 'animal folder(s)')
+    he='';
+    h1=selector2(v.tb,v.tbh,...%'iswait',0,...
+        'out','col-1','selection',selectiontype);
+    if ~isempty(h1)
+        he=cellstr(h1);
+    end
+elseif strcmp(choice, 'templates folder')
+    pat=fullfile(pwd,'templates');
+    if exist(pat)~=7
+        pat=pwd;
+    end
+    [fi pa]=uigetfile(fullfile(pat,'*.nii'),'select a maskfile from templates-folder');
+    if isnumeric(fi); he=''; end
+    he=cellstr(fullfile(pa,fi));
+else
+    he=''
+end
 
 
 
@@ -1087,7 +1155,6 @@ end
 s.atlastype          = atlastype;
 s.atlastypestr       = atlastypestr;
 s.atlaslabelsource   = atlaslabelsource;
-
 
 
 
