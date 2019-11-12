@@ -1,6 +1,9 @@
-
-%% import files from outerdir to mouse-dir via mouse-dir-name-correspondence
-
+%% import files or folder content from outside via dir2dir-correspondence
+% #r name of source-directory (to copy from) and target-directory (to copy to)
+% #r must match (directory-directory-correspondence)
+% 'importIMG' : > select file(s) here from GUI
+%             : or type 'all' to copy the entire content of source
+%             directory
 
 function ximportdir2dir(showgui,x)
 
@@ -10,10 +13,10 @@ function ximportdir2dir(showgui,x)
 %———————————————————————————————————————————————
 if 0
     %% example
-    % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+    %============================================
     % BATCH:        [ximportdir2dir.m]
     % descr:  import files from outerdir to mouse-dir via mouse-dir-name-correspondence
-    % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+    %============================================
     z.importIMG={ '2_T2_ax_mousebrain_1.nii'
         'MSME-T2-map_20slices_1.nii'
         'MSME-T2-map_20slicesmodified_1.nii'
@@ -46,17 +49,22 @@ end
 %———————————————————————————————————————————————
 %%   get files to import
 %———————————————————————————————————————————————
-    msg={'Folders With Files TO IMPORT'
-        'select those mouse-folder which contain files to import' 
-        ''};
+%     msg={'Folders With Files TO IMPORT'
+%         'select those mouse-folder which contain files to import' 
+%         ''};
+    msg2='select folders to import files or content';
+    disp(msg2); %MAC issue
+    
     %     [maskfi,sts] = cfg_getfile2(inf,'image',msg,[],prefdir,'img');
-    [pa2imp,sts] = cfg_getfile2(inf,'dir',msg,[],prefdir,'.*');
+    %[pa2imp,sts] = cfg_getfile2(inf,'dir',msg,[],prefdir,'.*');
+    [pa2imp,sts] = spm_select(inf,'dir',msg2,[],prefdir,'.*');
+    pa2imp=cellstr(pa2imp);
     if isempty(char(pa2imp)); return ; end
        pa2imp=regexprep(pa2imp,[ '\' filesep '$'],''); %remove trailing filesep
        
        %%check whether first 2 dirs are upper-root-dirs
     deldir(1)=sum(cell2mat(strfind(pa2imp,pa2imp{1})))>1;
-    deldir(2)=sum(cell2mat(strfind(pa2imp,pa2imp{2})))>1;
+    try;deldir(2)=sum(cell2mat(strfind(pa2imp,pa2imp{2})))>1;end
     pa2imp(find(deldir==1))=[];
        
 %———————————————————————————————————————————————
@@ -125,7 +133,7 @@ if exist('x')~=1;        x=[]; end
 p={...
     'inf98'      '*** IMPORT Files from Folders                 '                         '' ''
     'inf100'     '-------------------------------'                          '' ''
-    'importIMG'     ''    'import these files'        {@selector2,li2,li2h,'out','col-1','selection','multi'}
+    'importIMG'     ''    'import selected files or us "all" to import entire folder-content'        {@selector2,li2,li2h,'out','col-1','selection','multi'}
     %'renamestring'   ''    'renamefile to (without extention)'             '' 
     };
 
@@ -135,7 +143,10 @@ p=paramadd(p,x);%add/replace parameter
 % %% show GUI
 
 if showgui==1
-    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .8 .3 ],'title','PARAMETERS: LABELING','info',{'sss'});
+     hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
+    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .8 .3 ],...
+    'title',[mfilename],'info',hlp);
+    if isempty(z); return; end
     fn=fieldnames(z);
     z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
 else
@@ -149,35 +160,67 @@ end
 
 
 %———————————————————————————————————————————————
-%%   ok-import that stuff
+%%   ok-import files
 %———————————————————————————————————————————————
-
-for i=1:size(tb,1)
-    for j=1:size(z.importIMG,1)
-        
-        %check existence of this file in this folder
-          f1=fullfile(tb{i,1},tb{i,2} , z.importIMG{j} );
-          f2=fullfile(tb{i,4}       , z.importIMG{j}  );
-          
-          if exist(f1)==2
-            copyfile(f1,f2,'f');
-            disp([pnum(i,4) '] imported file <a href="matlab: explorer('' ' fileparts(f2) '  '')">' f2 '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(f1) '  '')">' f1  '</a>']);% show h<perlink
-          end
-    end 
+if ischar(z.importIMG)
+    z.importIMG=cellstr(z.importIMG)
 end
+
+if size( z.importIMG,1)==1 && strcmp(z.importIMG{1},'all')
+  %COPY FOLDER WITH ALL CONTENTS
+   for i=1:size(tb,1)
+       pafrom=fullfile(tb{i,1},tb{i,2})
+       k=dir(pafrom);
+       content={k(:).name}';
+       content(find(strcmp(content,'.')))=[];
+       content(find(strcmp(content,'..')))=[]; %remove upperDirs
+       
+       
+        for j=1:size(content,1)
+            
+            %check existence of this file in this folder
+            f1=fullfile(tb{i,1},tb{i,2} , content{j} );
+            f2=fullfile(tb{i,4}        , content{j}  );
+            
+            if exist(f1)~=0
+                copyfile(f1,f2,'f');
+                disp([pnum(i,4) '] imported file <a href="matlab: explorer('' ' fileparts(f2) '  '')">' f2 '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(f1) '  '')">' f1  '</a>']);% show h<perlink
+            end
+        end
+    end
+  
+  
+    
+else
+    %COPY SELECTED FILES
+    for i=1:size(tb,1)
+        for j=1:size(z.importIMG,1)
+            
+            %check existence of this file in this folder
+            f1=fullfile(tb{i,1},tb{i,2} , z.importIMG{j} );
+            f2=fullfile(tb{i,4}       , z.importIMG{j}  );
+            
+            if exist(f1)==2
+                copyfile(f1,f2,'f');
+                disp([pnum(i,4) '] imported file <a href="matlab: explorer('' ' fileparts(f2) '  '')">' f2 '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(f1) '  '')">' f1  '</a>']);% show h<perlink
+            end
+        end
+    end
+end
+
 
 
 makebatch(z);
 
 
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ============================================
 %% subs
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ============================================
 
 function makebatch(z)
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+ 
 
 try
 hlp=help(mfilename);
@@ -187,10 +230,10 @@ catch
 end
 
 hh={};
-hh{end+1,1}=('% ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
+hh{end+1,1}=('% ============================================');
 hh{end+1,1}=[ '% BATCH:        [' [mfilename '.m' ] ']' ];
 hh{end+1,1}=[ '% descr:' hlp];
-hh{end+1,1}=('% ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
+hh{end+1,1}=('% ============================================');
 hh=[hh; struct2list(z)];
 hh(end+1,1)={[mfilename '(' '1',  ',z' ')' ]};
 % disp(char(hh));
@@ -247,11 +290,31 @@ hlp{end+1,1}='  -check rough matching of "IMPORT-DIR" and "Target-DIR"';
 hlp{end+1,1}='  -if "Nth-DIR-assignment" >1 the  "IMPORT-DIR"  is assigned to more than ONE "Target-DIR" ';
 hlp{end+1,1}='    ..than you have to decide whether is is ok or not ';
 hlp{end+1,1}='select all files to import';
+
+nfileseps=findstr(tb3{1},filesep); % path to long
+if length(nfileseps)>6
+    tb3short=tb3;
+    nDirs2keep=4;
+    for i=1:size(tb3short,1)
+        shortpath=tb3short{i,1};
+        tb3short{i,1}=['..' shortpath(nfileseps(length(nfileseps)-nDirs2keep+1):end)];
+    end
+    id=selector2(tb3short,{'IMPORT-ROOT-DIR(abbrev.)' '' 'IMPORT-DIR' 'Target-DIR' ,'Nth-DIR-assignment'},...
+    'iswait',1,'help',hlp);
+    
+else
 id=selector2(tb3,{'IMPORT-ROOT-DIR' '' 'IMPORT-DIR' 'Target-DIR' ,'Nth-DIR-assignment'},...
     'iswait',1,'help',hlp);
-if isempty(id)
-    tb=[];
-else
-    tb=tb3(id,:);
 end
 
+
+
+if isempty(id)  
+    tb=[];
+else
+    try
+    tb=tb3(id,:);
+    catch
+    tb=[];
+    end
+end
