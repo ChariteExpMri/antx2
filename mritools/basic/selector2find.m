@@ -130,6 +130,7 @@ uv.list=list;
 uv.fig2=hfig2;
 set(hs,'userdata',uv);
 updatecolumnlist;
+uicontrol(findobj(gcf,'tag','edsearch'));
 
 function motio(e,e2,id)
 try

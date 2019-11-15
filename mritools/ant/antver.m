@@ -43,7 +43,8 @@
 % - updated [uhelp]
 % #ra 13 Nov 2019 (00:47:38) 
 % [maskgenerator] added region-lection list and online link to compare selected regions
-%
+% #ra 15 Nov 2019 (02:14:16)
+% [maskgenerator] added find panel
 %
 %
 

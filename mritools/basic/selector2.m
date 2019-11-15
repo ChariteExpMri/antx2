@@ -1279,7 +1279,10 @@ end
 % end
 ltop=get(t,'ListboxTop');
 % disp('LTOP used')
+
+
 set(t,'string',us.tb2);
+
 % ---------remember scrolling-II--------------------
 % try
 %     drawnow; % without this drawnow the following line appeared to do nothing

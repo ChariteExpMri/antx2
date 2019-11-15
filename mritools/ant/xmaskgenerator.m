@@ -232,19 +232,35 @@ end
 
 function selectlabels(e,e2)
 % he=[];
-
-
+ 
 [s ss]=paramgui('getdata');
 global atl
 global an
-s1=fullfile(fileparts(an.datpath),'templates',ss.atlas);
+
+msg_noprojLoaded='WARNING: project not loaded..using templates from curr. path''s templates folder';
+
+if isfield(an,'datpath')
+   s1=fullfile(fileparts(an.datpath),'templates',ss.atlas);
+else
+    patemplates=fullfile(pwd,'templates');
+    patemplates2=fullfile(fileparts(pwd),'templates' );
+    if exist(patemplates)==7
+        cprintf([0.87 0.5 0], [msg_noprojLoaded  '\n']);
+        s1=fullfile(patemplates,ss.atlas);
+    elseif exist(patemplates2)==7
+        cprintf([0.87 0.5 0], [msg_noprojLoaded  '\n']);
+        s1=fullfile(patemplates2,ss.atlas);
+    else
+       error('project not loaded / current path does not adress a templates-folder');
+    end
+end
+
 s2=atl.atlas;
 if strcmp(s1,s2)==0
     pop_prepatatlas;
     disp('loading atlas' );
 end
-
-
+ 
 
 
 global atl
@@ -309,14 +325,28 @@ prepatatlas(atlas);
 
 %% ________________________________________________________________________________________________
 function prepatatlas(atlas)
-
-atlas=char(atlas);
+ atlas=char(atlas);
+msg_noprojLoaded='WARNING: project not loaded..using templates from curr. path''s templates folder';
 
 global atl
 [pa fi ext]=fileparts(atlas);
 if isempty(pa)
     global an
+    if isfield(an,'datpath')
     atl.atlas=fullfile(fileparts(an.datpath),'templates','ANO.nii');
+    else
+        patemplates=fullfile(pwd,'templates');
+        patemplates2=fullfile(fileparts(pwd),'templates' );
+        if exist(patemplates)==7
+           cprintf([0.87 0.5 0], [msg_noprojLoaded  '\n']);
+            atl.atlas=fullfile(patemplates,'ANO.nii');
+        elseif exist(patemplates2)==7
+            cprintf([0.87 0.5 0], [msg_noprojLoaded  '\n']);
+            atl.atlas=fullfile(patemplates2,'ANO.nii');
+        else
+            error('no project loaded or current path has no access to the templates folder')
+        end
+    end
 else
     atl.atlas=char(atlas);
 end
@@ -380,8 +410,7 @@ atl.tb=tb;
 %% make RGB COLUME
 atl.anoRGB =rgbvolume(atl.ano,tb);%build RGB volume buildColLabeling2
 
-
-%% ________________________________________________________________________________________________
+ %% ________________________________________________________________________________________________
 function v3rgb =rgbvolume(ANO,tb)%buildColLabeling2
 ANO(isnan(ANO)) = 0;
 id=cell2mat(tb(:,4));
@@ -412,6 +441,7 @@ v3rgb = reshape(cmap(w+1,:),[size(ANO) 3]);
 %———————————————————————————————————————————————
 
 function showx(idx)
+
 
 if exist('idx')~=1
     us=get(gcf,'userdata');
@@ -527,9 +557,17 @@ for i=1:length(idx)
         logs(end+1,1)= {['<HTML><FONT color="red">'    '&nbsp;&nbsp;&nbsp;'   'Nvox  : '  num2str(length(ix))  '</FONT></HTML>']};
     end
     
+%     if 1
     atl.s2(ix,1)=atl.c2(ix,1);
     atl.s2(ix,2)=atl.c2(ix,2);
     atl.s2(ix,3)=atl.c2(ix,3);
+%     end
+%     if 0
+%         atl.s2(ix,1)=(atl.c2(ix,1)+atl.s2(ix,1))./2;
+%         atl.s2(ix,2)=(atl.c2(ix,2)+atl.s2(ix,2))./2;
+%         atl.s2(ix,3)=(atl.c2(ix,3)+atl.s2(ix,3))./2;
+%     end
+    
     atl.selected(ix,1)=i;
 end
 if size(logs,1)==2; %EMPTY MSG
@@ -567,7 +605,14 @@ if isempty(findobj(0,'tag','maskimg'))
 
     h = uitabgroup; drawnow;
     t1 = uitab(h, 'title', 'REGIONS','ButtonDownFcn',{@tab,1});
-    a = axes('parent', t1); surf(peaks);
+    
+    hsl=uicontrol(t1,'style','slider','units','norm');
+    set(hsl,'position',[0.01 .5   .025 .3],'string','alpha',...
+        'TooltipString','alpha parameter to fuse forground and background images','value',1,...
+        'tag','slidalpha','callback',@slidalpha);
+    
+
+    a = axes('parent', t1); %surf(peaks);
   
 
     
@@ -615,6 +660,39 @@ else
     set(im,'cdata',single(f5));
    set( findobj(0,'tag','lbmaskgen')    ,'string',logs,'value',1);
 end
+
+% add bg image as 3d
+if isfield(atl,'bg2d')==0
+    dum=atl.h2;
+    dum=rot90(permute(reshape(dum,[si 3 ]),[1 3 2 4]));
+    % f5=[];
+    fb(:,:,1) = montageout(permute(dum(:,:,:,1),[1 2 4 3]));
+    fb(:,:,2) = montageout(permute(dum(:,:,:,2),[1 2 4 3]));
+    fb(:,:,3) = montageout(permute(dum(:,:,:,3),[1 2 4 3]));
+    atl.bg2d=fb;
+end
+% if isfield(atl,'fg2d')==0
+    atl.fg2d=f5;
+% end
+
+hslid=findobj(0,'tag','slidalpha');
+if get(hslid,'value')~=1
+    hgfeval(get(hslid,'callback'));
+end
+
+
+function slidalpha(e,e2)
+global atl
+e=findobj(0,'tag','slidalpha');
+val=get(e,'value');
+tr=val;
+trb=1-tr;
+
+f6=((atl.bg2d*trb)+(atl.fg2d*tr));
+% disp([min(f6(:)) max(f6(:))  sum(isnan(f6(:))) sum(isinf(f6(:)))]);
+% fg, image(f6)
+im=findobj(0,'tag','mask');
+set(im,'cdata',single(f6));
 
 function tab(e,e2,arg)
 if arg==1
