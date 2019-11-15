@@ -81,7 +81,7 @@ sheetname    ='atlas'   ;
 
 tb2=tb;
 ch  =tb2(:,5);
-ch2 =cellfun(@(a) { regexprep( num2str(a'),'\s+',';') } ,ch);
+ch2 =cellfun(@(a) { regexprep( num2str(a(:)'),'\s+',';') } ,ch);
 tb2(:,5)=ch2;
 tbh={ 'Region'    'colHex'    'colRGB'    'ID'  'Children'} ;
 

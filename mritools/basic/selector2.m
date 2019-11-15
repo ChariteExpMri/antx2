@@ -82,7 +82,7 @@ warning off;
 
 % us.raw=tb;
 us.showinbrowser=0;
-us.header=[{'ID'} ; header(:)];
+us.header=[{'Idx'} ; header(:)];
 us.tb0=tb;
 tb=[header(:)'; tb];
 
@@ -360,24 +360,23 @@ p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .
 set(p,'string','deselect all','callback',{@deselectallButton},'fontsize',fontsize);
 p=uicontrol('Style','popupmenu','units','normalized',         'Position' ,[.55 .01 .1 .02],'tag','pb4','tag','pop');
 
+%% FIND-Btn
+px=uicontrol('Style','pushbutton','units','normalized',         'Position',[.65 .03 .1 .02],'tag','finderwindow');
+set(px,'string','find','callback',{@finderwindow},'fontsize',fontsize);
+
+
 if params.finder==1
     px=uicontrol('Style','pushbutton','units','normalized',         'Position',[.65 .05 .1 .02],'tag','pb10');
     set(px,'string','select specific','callback',{@selectspecificButton},'fontsize',fontsize);
 end
 
-sortstr=['selectedID'; 'ID' ; header(:);];
+sortstr=['selection'; 'Idx' ; header(:);];
 sortstr=cellfun(@(a,b) {['sort after [c' num2str(b) '] [' a ']' ]}, [sortstr ], num2cell([1:length(sortstr) ]'));
 sortstr(end+1,1)= {'sort after my specification'};
-
- 
- 
- 
 set(p,'string',sortstr,'callback',{@sorter},'fontsize',fontsize);
 
 % set(p,'string',cellfun(@(a) {['sort after [' a ']' ]}, ['selectedID'; 'ID' ; header(:)]) ,'callback',{@sorter},'fontsize',fontsize);
 
-p=uicontrol('Style','checkbox','units','normalized',         'Position' ,[.52 .01 .02  .02],'tag','pb4','backgroundcolor','w',...
-    'tooltipstring', '[check this] to descend sorting','tag','cbox1','callback',{@sorter});
 
 % p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .01 .1 .02],'tag','pb4');
 % set(p,'string','help','callback',{@help},'fontsize',fontsize);
@@ -388,9 +387,10 @@ txtinfo{end+1,1}=[' '];
 txtinfo{end+1,1}=['highlighted objects: 1'];
 txtinfo{end+1,1}=['selectionType: '  upper(params.selection) '-selection'];
 
-
-
 set(p,'position',[0 0 .5 .1]);
+
+pc=uicontrol('Style','checkbox','units','normalized',         'Position' ,[.525 .008 .025  .02],'tag','pb4','backgroundcolor','w',...
+    'tooltipstring', '[check this] to descend sorting','tag','cbox1','callback',{@sorter});
 
 if exist('colinfo'); if ischar(colinfo)    txtinfo{2}=colinfo   ;end;end
 addi={};
@@ -427,11 +427,24 @@ jScrollPane = findjobj(findobj(gcf,'tag','lb1')); % get the scroll-pane object
 jListbox = jScrollPane.getViewport.getComponent(0);
 
 %%
-v=[ 0.4667    0.6745    0.1882];%color
+% v=[ 0.4667    0.6745    0.1882];%color
+v=[0 0 1];%color
+v2=[ 1 0 1];
 % v=uisetcolor
 set(jListbox, 'SelectionForeground',java.awt.Color(v(1),v(2),v(3))); % java.awt.Color.brown)
 % set(jListbox, 'SelectionForeground',java.awt.Color(v(1),v(2),v(3))); % java.awt.Color.brown)
-set(jListbox, 'SelectionBackground',java.awt.Color(v(1),v(2),v(3))); % option #2
+set(jListbox, 'SelectionBackground',java.awt.Color(v2(1),v2(2),v2(3))); % option #2
+
+if 0
+    v1=[0 0 1];
+    %     v1=[0.9373    0.8824    0.4667]; v2=[0 0 1];
+    %
+    set(jListbox, 'SelectionForeground',java.awt.Color(v1(1),v1(2),v1(3))); % option #2
+    %
+    %     set(jListbox, 'SelectionBackground',java.awt.Color(v2(1),v2(2),v2(3))); % option #2
+    
+    
+end
 
 
 us.jTable=jListbox;
@@ -578,6 +591,9 @@ params=us.params;
     end
 
 %% ________________________________________________________________________________________________
+
+
+
 function sliderSinc(h,e)
 hfigselector=findobj(0,'tag','selector');
 us=get(hfigselector,'userdata');
@@ -635,19 +651,32 @@ if strcmp(mode,'normal')%% update HIGHLIGHTED
     set(htx,'tooltipstr',sprintf(strjoin('\n',tx)));
     
 elseif strcmp(mode,'open')
-    try
+  try
         lbval=get(findobj(gcf,'tag','lb1'),'value');
         if get(findobj(gcf,'tag','lb1'),'value')==lbval
             %      fprintf(1,'\nI am doing a DOUBLE-click.\n\n');
             keypress([],struct('Key','s','Character',''));
+        end
+   end
+end
+
+function finderwindow(e,e2)
+selector2find;
+
+
+function keypress(h,ev)
+
+ if strfind(class(ev),'matlab.ui.eventdata')==1
+    if ~isempty(ev.Modifier)
+        if strcmp(ev.Modifier{1},'control')==1 && strcmp(ev.Key, 'f')
+            selector2find;
+            return
         end
     end
 end
 
 
 
-
-function keypress(h,ev)
     % Callback to parse keypress event data to print a figure
     if ev.Character == '+'
         lb=findobj(gcf,'tag','lb1');
@@ -684,23 +713,23 @@ function keypress(h,ev)
         elseif us.showinbrowser==0; us.showinbrowser=1;
         end
         set(gcf,'userdata',us);
- elseif strcmp(ev.Key,'f') %find
-        findAndSelect
+%     elseif strcmp(ev.Key,'f') %find
+%         findAndSelect
     elseif strcmp(ev.Key,'rightarrow')
         us=get(gcf,'userdata');
         r1=get(us.jlb1,'HorizontalScrollBar');
         val=get(r1,'Value');
         set(r1,'Value',val+150);
         sliderSinc
-     elseif strcmp(ev.Key,'leftarrow')
+    elseif strcmp(ev.Key,'leftarrow')
         us=get(gcf,'userdata');
         r1=get(us.jlb1,'HorizontalScrollBar');
         val=get(r1,'Value');
         set(r1,'Value',val-150);
-        sliderSinc     
-       elseif strcmp(ev.Key,'return') || strcmp(ev.Key,'f2')   %RETURN 
+        sliderSinc
+    elseif strcmp(ev.Key,'return') || strcmp(ev.Key,'f2')   %RETURN
         hgfeval(get(findobj(gcf,'tag','pb1'),'callback'));
-
+        
     end
     
     
@@ -747,7 +776,20 @@ dat=[num2cell(us.sel) us.raw ];
 
 sortlist=get(pop,'string');
 if cellfun('isempty',regexpi(sortlist(sortcol), 'my specification' ));
-    [~, ix]=sortrows(dat,sortcol);
+   % [~, ix]=sortrows(dat,sortcol);%old
+    
+ 
+        if isnumeric(dat{1,sortcol})
+            [~, ix]=sortrows(dat,sortcol);
+        else
+            strcleaned=regexprep(dat(:,sortcol),'.*>&nbsp','');
+            strnumeric=str2num(char(strcleaned));
+            if isempty(strnumeric) %strings
+                [~, ix]=sortrows(strcleaned,1);
+            else %numeric
+                [~, ix]=sortrows(strnumeric,1);
+            end
+        end    
 else
     
     prompt =upper( {'enter one/more column-indizes (numeric values) to sort the data '});
@@ -763,10 +805,13 @@ else
     num_lines = 1;
     defaultans = {''};
     answer = inputdlg(prompt2,dlg_title,num_lines,defaultans);
-    if isempty(answer{1}); return; end
-    sortcol=str2num(answer{1});
-    [~, ix]=sortrows(dat,sortcol);
-    
+    try
+        if isempty(answer{1}); return; end
+        sortcol=str2num(answer{1});
+        [~, ix]=sortrows(dat,sortcol);
+    catch
+        return;
+    end
     
     
 end
@@ -777,15 +822,16 @@ info='ascending';
 if get(cbox,'value')==1
     us.raw=flipud(us.raw);
     ix=flipud(ix);
-  info='descending';  
+    info='descending';
 else
-
+%     us.raw=flipud(us.raw);
+%     ix=flipud(ix);
 end
 us.tbsel   =us.tbsel(ix);
 us.tbunsel =us.tbunsel(ix);
 us.tb2     =us.tb2(ix);
 try
- us.tb     =us.tb(ix);
+    us.tb     =us.tb(ix);
 end
 us.sel     =us.sel(ix);
 
@@ -1269,6 +1315,20 @@ if isfield(us.params,'selfun')
 end
 
 set(findobj(findobj(0,'tag','selector'),'tag','txtbusy'),'visible','off');
+
+
+
+% ==============================================
+%%   
+% ===============================================
+
+
+
+
+
+
+
+
 
 
 

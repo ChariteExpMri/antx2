@@ -267,13 +267,15 @@ lenlab=size(char(atl.tb(:,1)),2);
 %     ]}, atl.tb(:,1),atl.tb(:,2)  );
 
 labs=cellfun(@(a,col){[...
-    ['<style bgcolor=#' col '><font weight="normal">' repmat('&nbsp ',[1 1]) a  repmat('&nbsp ',[1 lenlab-length(a)]) ]...
+    ['<span style="background-color:#' col ';"><font weight="normal">' repmat('&nbsp;',[1 1]) a  repmat('&nbsp;',[1 lenlab-length(a)]) ]...
     ]}, atl.tb(:,1),atl.tb(:,2)  );
 
 % labs=atl.tb(:,1);
 id=cellfun(@(a){ num2str(a) },atl.tb(:,4));
-tb=[id  labs]; tbh={'ID'   'label'};
+tb=[id  labs]; tbh={'labelID'   'label'};
 ix = selector2(tb,tbh,'selfun',{@showx},'iswait',1,'position',[0.0778  0.0772  0.4  0.8644]);
+
+
 
 % ix=showlist();
 try; close(11); end
@@ -566,6 +568,7 @@ if isempty(findobj(0,'tag','maskimg'))
     h = uitabgroup; drawnow;
     t1 = uitab(h, 'title', 'REGIONS','ButtonDownFcn',{@tab,1});
     a = axes('parent', t1); surf(peaks);
+  
 
     
     im=image(f5);
@@ -576,6 +579,7 @@ if isempty(findobj(0,'tag','maskimg'))
     set(gcf,'menubar','none');
     set(gcf,'toolbar','figure');
     axis off;
+      set(gca,'tag','axlabels');
     
     %% courcour
     cr=[...
@@ -650,7 +654,8 @@ end
 % ________________________________________________________________________________________________
 function figmotion(h,e)
 try
-    pos=get(gca,'CurrentPoint');
+    
+    pos=get(findobj(gcf,'tag','axlabels'),'CurrentPoint');
     pos=round(pos(1,1:2));
     pos=fliplr(pos);
     d= (get(findobj(gcf, 'type','image'),'cdata'));;

@@ -1829,7 +1829,8 @@ elseif strcmp(task,'contact')
         end
         
     elseif ispc
-        system(['start ' github]);
+        %system(['start ' github]);
+         web(gdrive,'-browser');
     
     end   
     statusMsg(0);
@@ -1843,7 +1844,8 @@ elseif strcmp(task,'contact')
         return ;
     end
     statusMsg(1,' visiting Gdrive');
-    gdrive='https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM';
+    %gdrive='https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM';
+    gdrive='https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9';
     if ismac
         system(['open ' gdrive]);
     elseif isunix
@@ -1861,7 +1863,8 @@ elseif strcmp(task,'contact')
         end
         
     elseif ispc
-        system(['start ' gdrive]);
+        %system(['start ' gdrive]);
+         web(gdrive,'-browser');
         
     end
     statusMsg(0);
