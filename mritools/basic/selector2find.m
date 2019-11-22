@@ -101,7 +101,7 @@ v=double(v)/255;
 
 hp=uicontrol('style','pushbutton','units','norm','position',   pos,'tag', 'pbmovepan');
 set(hp,'position',[pos(1)+pos(3)-.03*2  pos(2)+.03 .03 hig-.005],'string','',...
-    'CData',v);%, 'callback', {@changecolumn,-1} );
+    'CData',v,'tooltipstr',['shift panel position' char(10) 'left mouseclick+move mouse/trackpad pointer position' ]);%, 'callback', {@changecolumn,-1} );
 je = findjobj(hp); % hTable is the handle to the uitable object
 set(je,'MouseDraggedCallback',{@motio,1}  );
 

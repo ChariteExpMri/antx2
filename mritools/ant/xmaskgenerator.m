@@ -591,9 +591,9 @@ end
 ff=atl.s2;
 f4=rot90(permute(reshape(ff,[si 3 ]),[1 3 2 4]));
 % f5=[];
-f5(:,:,1) = montageout(permute(f4(:,:,:,1),[1 2 4 3]));
-f5(:,:,2) = montageout(permute(f4(:,:,:,2),[1 2 4 3]));
-f5(:,:,3) = montageout(permute(f4(:,:,:,3),[1 2 4 3]));
+[f5(:,:,1) montsiz] = montageout(permute(f4(:,:,:,1),[1 2 4 3]));
+f5(:,:,2)           = montageout(permute(f4(:,:,:,2),[1 2 4 3]));
+f5(:,:,3)           = montageout(permute(f4(:,:,:,3),[1 2 4 3]));
 
 % return
 if isempty(findobj(0,'tag','maskimg'))
@@ -606,11 +606,16 @@ if isempty(findobj(0,'tag','maskimg'))
     h = uitabgroup; drawnow;
     t1 = uitab(h, 'title', 'REGIONS','ButtonDownFcn',{@tab,1});
     
-    hsl=uicontrol(t1,'style','slider','units','norm');
+    hsl=uicontrol(t1,'style','slider','units','norm'); %SLIDER
     set(hsl,'position',[0.01 .5   .025 .3],'string','alpha',...
         'TooltipString','alpha parameter to fuse forground and background images','value',1,...
         'tag','slidalpha','callback',@slidalpha);
     
+    hpd=uicontrol(t1,'style','popupmenu','units','norm'); %PANEL-ROWS
+    set(hpd,'position',[0.001 .165   .06 .3],...
+        'string',cellstr(num2str([1:montsiz(1)]')),....
+        'TooltipString','number of panel rows','value', montsiz(1)  ,...
+        'tag','panelrows','callback',@panelrows);
 
     a = axes('parent', t1); %surf(peaks);
   
@@ -674,11 +679,45 @@ end
 % if isfield(atl,'fg2d')==0
     atl.fg2d=f5;
 % end
+if isfield(atl,'montsiz')==0
+    atl.montsiz=montsiz;% montageSize
+end
 
 hslid=findobj(0,'tag','slidalpha');
 if get(hslid,'value')~=1
     hgfeval(get(hslid,'callback'));
 end
+
+function panelrows(e,e2)
+global atl
+e=findobj(0,'tag','panelrows');
+axes(get(findobj(0,'tag','mask'),'parent'));
+li=get(e,'string');
+va=get(e,'value');
+gridsi=str2num(char(li(va)));
+
+si1=size(atl.bg2d);
+stp=[si1(1)./atl.montsiz(1) si1(2)./atl.montsiz(2)];
+
+do=[stp(1)*[1:atl.montsiz(1)]-stp(1)+1]';
+do(:,2)=do+stp(1)-1;
+
+ri=[stp(2)*[1:atl.montsiz(2)]-stp(2)+1]';
+ri(:,2)=ri+stp(2)-1;
+
+vd=size(do,1)/2.+[-gridsi gridsi]./2 ;
+vr=size(ri,1)/2.+[-gridsi gridsi]./2 ;
+if mod(gridsi,2)==1; vd(1)=vd(1)+1; end
+if mod(gridsi,2)==1; vr(1)=vr(1)+1; end
+vd=[ceil(vd(1))  floor(vd(2))];
+vr=[ceil(vr(1))  floor(vr(2))];
+% length(vd(1):vd(2));
+% length(vr(1):vr(2));
+xl=[ri(vr(1),1) ri(vr(2),2)];
+yl=[do(vd(1),1) do(vd(2),2)];
+ xlim(xl);
+ ylim(yl);
+
 
 
 function slidalpha(e,e2)

@@ -44,8 +44,10 @@
 % #ra 13 Nov 2019 (00:47:38) 
 % [maskgenerator] added region-lection list and online link to compare selected regions
 % #ra 15 Nov 2019 (02:14:16)
-% [maskgenerator] added find panel
-%
+% [maskgenerator] added "find" region-panel
+% #ra 22 Nov 2019 (11:37:49)
+% [maskgenerator] added alpha-transparency slider and display number-of-rows pull down
+% checked regions of new Allen2017Hikishima template
 %
 
 
