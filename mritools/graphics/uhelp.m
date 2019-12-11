@@ -403,13 +403,16 @@ if figexist==0
     set(b2,'cdata',   ind2rgb(uint8(aa2),a2),'visible','on');
     set(b2,'units','pixels');
     %----------------------------------
-    %         context
+    %%         context
     %----------------------------------
    
     cmenu = uicontextmenu;
     
     item4 = uimenu(cmenu, 'Label','copy  selection', 'Callback', {@gcontext, 4});%copy
-    item8 = uimenu(cmenu, 'Label','save table as Figure (reloadable)', 'Callback', {@gcontext, 8});%save
+    item41 = uimenu(cmenu, 'Label','copy  vertical selection', 'Callback', {@gcontext, 41},'tag' ,'copyverticalselection','enable','off');%copyverticalSelection
+    item42 = uimenu(cmenu, 'Label','copy  column'            , 'Callback', {@gcontext, 42},'tag' ,'copycolumn','enable','off');%copy columnwise
+    
+    item8 = uimenu(cmenu, 'Label','save table as Figure (reloadable)', 'Callback', {@gcontext, 8},'separator','on');%save
     
     item9 = uimenu(cmenu, 'Label','load table (Figure)', 'Callback', {@gcontext, 9});%open
     
@@ -1180,6 +1183,9 @@ elseif mode==20 %SWITCH DO EDIT MODE
 %       
         txtline([],[]);
         set( findobj(gcf,'tag','txtline'),'backgroundcolor' ,[1 1 0]);
+        
+        set(findobj(gcf,'tag','copyverticalselection'),'enable','on');
+        set(findobj(gcf,'tag','copycolumn'),'enable','on');
     else                  % CHANGE TO READMODE
           us=get(gcf,'userdata');
           set(tx,'string',us.e2);
@@ -1195,9 +1201,66 @@ elseif mode==20 %SWITCH DO EDIT MODE
           set( findobj(gcf,'tag','txtline'),'backgroundcolor' ,[0.8627    0.8627    0.8628]);
           
           highlightedcolorLB();
+          
+          set(findobj(gcf,'tag','copyverticalselection'),'enable','off');
+          set(findobj(gcf,'tag','copycolumn'),'enable','off');
+    end
+  
+elseif mode==41 %copy vertical selection   
+    % ==============================================
+    %%   copy vertical/or columnwise selection
+    % ===============================================
+    if strcmp(get(obj,'tag'),'copycolumn')==1
+        iscopycol=1;
+    else
+        iscopycol=0;
     end
     
     
+    he=findobj(gcf,'tag','txt');
+    if strcmp(get(he,'style'),'edit')~=1; return; end %edit MODE ONLY
+    hj=findjobj(he);
+    drawnow;
+    r2 = hj.getComponent(0).getComponent(0);
+    %%   extract text
+    range=[get(r2,'SelectionStart') get(r2,'SelectionEnd')];
+    tx=char(r2.getText);
+    
+ 
+    txdum=regexprep(tx,'\d','v'); 
+    if range(1)==0; range(1)=1; end
+    if double(txdum(range(1)))~=10
+    txdum(range(1))=num2str(1); 
+    else
+      txdum(range(1)+1)=num2str(1);   
+    end
+    txdum(range(2))=num2str(2);
+    
+    tx2=strsplit(tx,char(10))';
+    txdum2=strsplit(txdum,char(10))';
+    
+    cr=[regexpi(txdum2,'1') regexpi(txdum2,'2')];
+    
+    row=[find(~cellfun('isempty',cr(:,1))) find(~cellfun('isempty',cr(:,2)))];
+    lin=[cr{row(1),1} cr{row(2),2}];
+    lin=[lin(1)+1 lin(2)];
+    s1=[row(1) lin(1)];
+    s2=[row(2) lin(2)];
+    if s2(2)<s1(2);         s2(2)=s1(2);       end
+    if iscopycol==1 %columnwise copy
+        s1(1)=1;  s2(1)=size(tx2,1);
+    end
+    %disp(s1); disp(s2); %DISP
+    tx3=char(tx2(s1(1):s2(1)));
+    try    ;tx4=tx3(:,s1(2):s2(2));
+    catch  ;tx4=tx3(:,s1(2):end);
+    end
+    
+    mat2clip(tx4); %COPY TO CLIPBOARD
+%     disp(tx4);
+  
+elseif mode==42 %copycolumn 
+    gcontext(obj, event, 41);
     
 end
 

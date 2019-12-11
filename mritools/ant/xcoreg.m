@@ -887,16 +887,14 @@ function [t t2]=initialize(z,pa)
 %===========================================
 
 
-F1=@(a)   cellstr(char(a));
-F2=@(a,b)  regexprep(a,b,'');
-F3=@(a)  a(~cellfun('isempty',a));
-F4=@(a,b) [F1(a); F3(F2(F1(b),F1(a)))]; %merge & soucre in on top % remove douplets
+% F1=@(a)   cellstr(char(a));
+% F2=@(a,b)  regexprep(a,b,'');
+% F3=@(a)  a(~cellfun('isempty',a));
+% F4=@(a,b) [F1(a); F3(F2(F1(b),F1(a)))]; %merge & soucre in on top % remove douplets
 
-% [F1(z.sourceImg1); F3(F2(F1(z.applyImg1),F1(z.sourceImg1)))]
-% F2    =@(a,b) unique([F2cell(a);F2cell(b) ]); %cast2cell+merge+unique
-%% source always on top, merge with apply without douplets
-% F3=[F2cell(z.sourceImg1) ; unique(regexprep(F2cell(z.applyImg1),F2cell(z.sourceImg1),'') )];
-% F3  =@(a,b) [ unique(regexprep( (b), (a),'') )];
+ 
+F4=@(a,b) unique([cellstr(char(a)) ; cellstr(char(b))],'stable'); % CELL with z.sourceImg and z.applyImg(s) in that order, i.e. sourceIMG always on top of list
+
 
 
 t=[ %each row is a BLOCK
@@ -927,6 +925,11 @@ for i=1:size(pa,1) %PATH
                 pbnum  =  i;
                 fname  =  fullfile(pa{i},s2) ;
                 isexist=  exist(fname)==2    ;
+                
+                if isexist==0
+                    disp(['file not found: : <a href="matlab: explorer(''' fileparts(fname) ''')">' fname '</a>']);
+                end
+                
                 shortIMGname=s2;
                 if j==1      ; aim='t'  ; imgno=1;
                 elseif j==2  ; aim='s'  ; imgno=t{blk,col(j)+1};
