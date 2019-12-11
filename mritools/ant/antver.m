@@ -48,8 +48,9 @@
 % #ra 22 Nov 2019 (11:37:49)
 % [maskgenerator] added alpha-transparency slider and display number-of-rows pull down
 % checked regions of new Allen2017Hikishima template
-%
-
+% #ra 11 Dec 2019 (14:41:37)
+% [xcoreg] fix filename bug; display in case of missing files
+% [uhelp]: allows column-wise/selectionwise copying 
 
 function antver()
 
