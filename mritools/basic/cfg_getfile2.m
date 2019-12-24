@@ -161,7 +161,7 @@ if nargin > 0 && ischar(varargin{1})
             [t sts] = listfiles(varargin{2}, filt); % (sts is subdirs here)
             sts = sts(~(strcmp(sts,'.')|strcmp(sts,'..'))); % remove '.' and '..' entries
             if regexpi(varargin{1}, 'fplist') % return full pathnames
-                direc = guiselect('cpath', varargin{2});
+                direc = cfg_getfile2('cpath', varargin{2});
                 % remove trailing path separator if present
                 direc = regexprep(direc, [filesep '$'], '');
                 if ~isempty(t)
@@ -174,12 +174,12 @@ if nargin > 0 && ischar(varargin{1})
             end
         case {'fplistrec', 'extfplistrec'}
             % list directory
-            [f1 d1] = guiselect(varargin{1}(1:end-3),varargin{2:end});
+            [f1 d1] = cfg_getfile2(varargin{1}(1:end-3),varargin{2:end});
             f2 = cell(size(d1));
             d2 = cell(size(d1));
             for k = 1:numel(d1)
                 % recurse into sub directories
-                [f2{k} d2{k}] = guiselect(varargin{1}, d1{k}, ...
+                [f2{k} d2{k}] = cfg_getfile2(varargin{1}, d1{k}, ...
                     varargin{3:end});
             end
             t = vertcat(f1, f2{:});
@@ -693,7 +693,9 @@ if ishandle(sel),
         t = {''};
     elseif sfilt.code == -1
         % canonicalise non-empty folder selection
-        t = cellfun(@(t1)cpath(t1, pwd), t, 'UniformOutput',false);
+        %t = cellfun(@(t1)cpath(t1, pwd), t, 'UniformOutput',false);
+        t=get(sel,'String');
+        t=cellfun(@(a){[ regexprep(a,{['\\$'],['/$']},{''} )]} ,t);%{'d:\MATLAB\' ;'d:/MATLAB/' }
     end;
     ok = 1;
 end;
