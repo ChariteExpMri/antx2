@@ -51,7 +51,8 @@
 % #ra 11 Dec 2019 (14:41:37)
 % [xcoreg] fix filename bug; display missing files
 % [uhelp]: allows column-wise/selectionwise copying 
-
+% #ra 07 Jan 2020 (15:40:52)
+% matlab19b fix: cfg_getfiles2: data from server
 function antver()
 
 % r=preadfile(which('antver.m')); r=r.all;
