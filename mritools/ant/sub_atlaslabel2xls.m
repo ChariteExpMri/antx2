@@ -7,6 +7,7 @@
 % z: struct
 %
 % added: note for mask from templateFolder
+% workaround: if xlfile not working
 function fileout=sub_atlaslabel2xls(pp,z)
 
 
@@ -333,21 +334,34 @@ else
     
     %clear an ;% cler global here, because an as global  is destroyed using javaddoath
     %%  EXCEL not available
-    disp('..excel is not available..using package excelpackage from Alec de Zegher ');
-    pa2excel=fullfile(fileparts(which('xlwrite.m')),'poi_library');
-    javaaddpath(fullfile(pa2excel,'poi-3.8-20120326.jar'));
-    javaaddpath(fullfile(pa2excel,'poi-ooxml-3.8-20120326.jar'));
-    javaaddpath(fullfile(pa2excel,'poi-ooxml-schemas-3.8-20120326.jar'));
-    javaaddpath(fullfile(pa2excel,'xmlbeans-2.3.0.jar'));
-    javaaddpath(fullfile(pa2excel,'dom4j-1.6.1.jar'));
-    javaaddpath(fullfile(pa2excel,'stax-api-1.0.1.jar'));
-    xlwrite(fileout, infox,  'INFO'   )  ;
-    for i=1:length(pp.paramname)
-        tbx=[...
-            pp.Eheader
-            [pp.Elabel num2cell(squeeze(pp.tb(:,i,:)))]
-            ];
-        xlwrite(fileout, tbx,  pp.paramname{i}    )  ;
+    try
+        disp('..excel is not available..using package excelpackage from Alec de Zegher ');
+        pa2excel=fullfile(fileparts(which('xlwrite.m')),'poi_library');
+        javaaddpath(fullfile(pa2excel,'poi-3.8-20120326.jar'));
+        javaaddpath(fullfile(pa2excel,'poi-ooxml-3.8-20120326.jar'));
+        javaaddpath(fullfile(pa2excel,'poi-ooxml-schemas-3.8-20120326.jar'));
+        javaaddpath(fullfile(pa2excel,'xmlbeans-2.3.0.jar'));
+        javaaddpath(fullfile(pa2excel,'dom4j-1.6.1.jar'));
+        javaaddpath(fullfile(pa2excel,'stax-api-1.0.1.jar'));
+        xlwrite(fileout, infox,  'INFO'   )  ;
+        for i=1:length(pp.paramname)
+            tbx=[...
+                pp.Eheader
+                [pp.Elabel num2cell(squeeze(pp.tb(:,i,:)))]
+                ];
+            xlwrite(fileout, tbx,  pp.paramname{i}    )  ;
+        end
+    catch
+        disp('..excel is not available..using "writetable" ');
+        writetable(table(infox),fileout,'Sheet','INFO')
+        for i=1:length(pp.paramname)
+            tbx=[...
+                pp.Eheader
+                [pp.Elabel num2cell(squeeze(pp.tb(:,i,:)))]
+                ];
+            T=cell2table(tbx(2:end,:),'VariableNames',tbx(1,:));
+            writetable(T,fileout,'Sheet',pp.paramname{i} );
+        end
     end
     
     global an
