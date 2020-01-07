@@ -53,6 +53,7 @@
 % [uhelp]: allows column-wise/selectionwise copying 
 % #ra 07 Jan 2020 (15:40:52)
 % matlab19b fix: cfg_getfiles2: data from server
+% sub_atlaslabel2xls: added writetable if xlwrite not working (matlab2017 upwards issue)
 function antver()
 
 % r=preadfile(which('antver.m')); r=r.all;
