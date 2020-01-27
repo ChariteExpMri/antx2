@@ -788,7 +788,9 @@ mh2 = uimenu(mh,'Label',' manipulate header',                                   
 mh2 = uimenu(mh,'Label',' replace header (older version)',                                 'Callback',{@menubarCB, 'replaceheader'},'Separator','off');
 
 mh2 = uimenu(mh,'Label',' image calculator',                                               'Callback',{@menubarCB, 'calc0'},'Separator','on');
-mh2 = uimenu(mh,'Label',' Mask-Generator',                                                 'Callback',{@menubarCB, 'maskgenerate'},'Separator','on');
+mh2 = uimenu(mh,'Label',' Mask-Generator (GUI)',                                           'Callback',{@menubarCB, 'maskgenerate'},'Separator','on');
+mh2 = uimenu(mh,'Label',' make mask from Excelfile',                                       'Callback',{@menubarCB, 'maskgenerateFromExcelfile'},'Separator','off');
+
 
 mh = uimenu(f,'Label','2D');
 mh2 = uimenu(mh,'Label','<html><font color="black"> extract slice        <font color="red"><i> *',                                           'Callback',{@menubarCB, 'extractslice'});
@@ -1442,7 +1444,18 @@ elseif strcmp(task,'maskgenerate')
     statusMsg(1,' Mask-Generator');
     xmaskgenerator(1);
     statusMsg(0);
+
+    %________________________________________________
     
+elseif strcmp(task,'maskgenerateFromExcelfile')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xexcel2atlas';
+        return ;
+    end
+    
+    statusMsg(1,' generate mask from excelfile');
+    xexcel2atlas(1);
+    statusMsg(0);
     
     %________________________________________________
     

@@ -100,6 +100,11 @@ zz=dum;
 
 sizx=size(char(zz),2);
 zz=cellfun(@(a,b) {[a repmat(' ' ,1,sizx-size(a,2)) b ]}, zz,ph);
+
+% REMOVE [inv]-fields
+iinf=regexpi2(zz,'^[A-z].inf\d+\s{0,1000}=');
+zz(iinf)=[];
+
 hh=[hh; zz];
 % ----------
 hh(end+1,1)={[callerfile '(' '1',  ',z' ');' ]};

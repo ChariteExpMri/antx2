@@ -54,6 +54,13 @@
 % #ra 07 Jan 2020 (15:40:52)
 % matlab19b fix: cfg_getfiles2: data from server
 % sub_atlaslabel2xls: added writetable if xlwrite not working (matlab2017 upwards issue)
+% #ra 27 Jan 2020 (09:43:48)
+% [xexcel2atlas.m]: create atlas from excelfile, excelfile is a modified version of the ANO.xlsx
+% [sub_write2excel_nopc]: subfun: write excel file for mac/linux
+
+
+
+
 function antver()
 
 % r=preadfile(which('antver.m')); r=r.all;
