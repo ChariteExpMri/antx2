@@ -735,36 +735,122 @@ inovolorig=find(cell2mat(xx(:,[ivolorig]))==0);
 inovolnew =find(cell2mat(xx(:,[ivolnew]))==0);
 isel        =sort(regexpi2(hxx,['^oldlabel$' '|' '^oldID$'  ])) ;
 
+
+
+i2ID       =find(strcmp(hTBreduced,'ID'));
+i2Children =find(strcmp(hTBreduced,'Children'));
+
 % inovolnew=[inovolnew ;1]
 % inovolorig=[];
 % inovolnew=[];
 
+if ~isempty(inovolorig) %check L/R-doublettes
+  dum3= [inovolorig  [xx{inovolorig,isel(2)}]'] ;
+    [~, iuni]=unique(dum3(:,2)); %REMOVE DOUBLETTS;idices of  unique IDS (not doublettes from right hemisphere);
+    inovolorig=inovolorig(iuni);
+end
+
+lg0=[' #ky WARNING  ';...
+    { 'explanation: line consist of [ID in ATLAS],[infovector] and the LABEL' };...
+    { '[infovector] element-1:  {0|1} Is ID found in ATLAS?  ' };...
+    { '[infovector] element-2:  {0|1} IS ID found in the excelfile in the ID-column ' };...
+    { '[infovector] element-3:  if element-2 is true: {0|1} Does this ID have children  ' };...
+    { ' #b EXAMPLE1 [0 1 0]: ID is not found in atlas, but found in the  ID-column in the excelfile,' };...
+    { ' #b    this ID has no childs' };...
+    { ' #b EXAMPLE2 [0 1 1]: same as before, but now childs are found #r THAT MEANS THAT ' };...
+    { '  #r EVERYTHING IS OK WITH THIS ID, because mostlikely the ID''s children have been found' };...
+    { '  #r  and incorporated into the ATLAS' };...
+    ];
 if ~isempty([(inovolorig(:)) ;(inovolnew(:))])
     lg={};lgm='';
     if ~isempty(inovolorig)
         for i=1:length(inovolorig)
-            lg=[lg; {['[ID ' num2str(xx{inovolorig(i),isel(2)}) '] ' xx{inovolorig(i),isel(1)} ]}];
+            
+            
+            
+            foundInATL  =0;
+            ismother    =0;
+            hasChildren =0;
+            
+            nvox=length(find(a==xx{inovolorig(i),isel(2)}));
+            if nvox>0; foundInATL=1; end
+            
+            inode=find(cell2mat(TBreduced(:,i2ID))==xx{inovolorig(i),isel(2)});
+            if ~isempty(inode); 
+                ismother=1;
+            end
+            if ismother==1
+                childs=TBreduced{inode,i2Children};
+               if ~isnumeric(childs)
+                 childs=str2num(childs);  
+               end
+               nchild=length(find(~isnan(childs)));
+               if nchild>0; hasChildren=1; end
+            end
+            info3=[regexprep(num2str([nvox ismother hasChildren]),'\s+',' ')];
+            
+      
+             spac=repmat('.', [1 15-length(['[ID ' num2str(xx{inovolorig(i),isel(2)}) ']'])]);    
+            dumx= {['[ID ' num2str(xx{inovolorig(i),isel(2)}) ']' spac '[' info3 '] ' xx{inovolorig(i),isel(1)} ]};
+            lg=[lg;dumx];
         end
-        lgm=['REGIONS/IDs found with "Zero" INPUT-Volume.';...
-            ' The following regions will not appear in the new Atlas:'; ...
+        lgm=[' #wg REGIONS/IDs not found in the INPUT-Volume.';...
+            ''; ...
             unique(lg,'rows')];
     end
     
     iadd=setdiff([inovolnew],[inovolorig ]);
     lg2={}; lgm2='';
     if ~isempty(iadd)
+        dum3= [iadd  [xx{iadd,isel(2)}]'] ;
+        [~, iuni]=unique(dum3(:,2)); %REMOVE DOUBLETTS;idices of  unique IDS (not doublettes from right hemisphere);
+        iadd=iadd(iuni);
+        
+        
         for i=1:length(iadd)
-            lg2=[lg2; {['[ID ' num2str(xx{iadd(i),isel(2)}) '] ' xx{iadd(i),isel(1)} ]}];
+            
+            foundInATL  =0;
+            ismother    =0;
+            hasChildren =0;
+            
+            nvox=length(find(a==xx{iadd(i),isel(2)}));
+            if nvox>0; foundInATL=1; end
+            
+            inode=find(cell2mat(TBreduced(:,i2ID))==xx{iadd(i),isel(2)});
+            if ~isempty(inode);
+                ismother=1;
+            end
+            if ismother==1
+                childs=TBreduced{inode,i2Children};
+                if ~isnumeric(childs)
+                    childs=str2num(childs);
+                end
+                nchild=length(find(~isnan(childs)));
+                if nchild>0; hasChildren=1; end
+            end
+            info3=[regexprep(num2str([nvox ismother hasChildren]),'\s+',' ')];
+            
+            
+            nvox=length(find(a==xx{iadd(i),isel(2)}));
+            if nvox>0; foundInATL='1'; else; foundInATL='0'; end
+            spac=repmat('.', [1 15-length(['[ID ' num2str(xx{iadd(i),isel(2)}) ']'])]);
+           dumx= {['[ID ' num2str(xx{iadd(i),isel(2)}) ']' spac '[' info3 '] ' xx{iadd(i),isel(1)} ]};
+          % dumx={['[ID ' num2str(xx{iadd(i),isel(2)}) '] ' xx{iadd(i),isel(1)} ]}
+            lg2=[lg2; dumx];
         end
         lgm2=['  ';...
-            'REGIONS/IDs found with final "Zero" OUTPUT-Volume.';...
-            ' ..because other parental regions stole this region.'; ...
-            ' This following regions will not appear in the new Atlas:'; ...
+            ' #wg  REGIONS/IDs/CHILDREN have with final "Zero" OUTPUT-Volume.';...
+            '  REASONS:'
+            ' (1) ID/CHILD not found in ATLAS (NIFTI-file) ';...
+            ' (2) other parental regions stole this region '; ...
+            ' (3) is parental node, while childs are found '; ...
+            ' Thus, regions with [0 1 0] vector do not appear in the new Atlas:'; ...
             unique(lg2,'rows')];
     end
-    msg=[[lgm; lgm2]];
+    msg=[[lg0; lgm; lgm2]];
     
-    warndlg(msg);
+    %     h=warndlg(msg);
+    uhelp(plog([],[msg],'style=1'),1);
     
     fileout=fullfile( z.outputDir, [ z.nameout '_WARNING.txt']);
     pwrite2file(fileout ,msg );
