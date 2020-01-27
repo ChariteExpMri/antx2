@@ -585,8 +585,8 @@ end
 % %     z.outputDir=fileparts(z.excelfile);
 % % end
 % % [~,z.nameout]=fileparts(z.outputName);
-fileout=fullfile( z.outputDir, [ z.nameout '.nii']);
-rsavenii(fileout, ha,(reshape(s,ha.dim)));
+niftifile=fullfile( z.outputDir, [ z.nameout '.nii']);
+rsavenii(niftifile, ha,(reshape(s,ha.dim)));
 
 % ==============================================
 %%   make FINAL  INFO Table
@@ -684,12 +684,41 @@ else
     sub_write2excel_nopc(fileout,'INFO',hxx,xx);
 end
 
+%———————————————————————————————————————————————
+%%  save [2] new ID table (reduced version)
+%———————————————————————————————————————————————
+allnewIDs=cell2mat(xx(:,1));
+[newIDsuni, io]=unique(allnewIDs);
+
+yy=xx(io,1:2);
+newIDsuni=cell2mat(yy(:,1));
+
+[hac ac]=rgetnii(niftifile);
+ac=ac(:);
+
+counts=histc(ac,newIDsuni);
+volreg=voxvol.*counts;
+% counts2=zeros(length(newIDsuni) ,1);
+% for i=1:length(newIDsuni)
+%    counts2(i,1)= length(find(ac==newIDsuni(i)));
+% end
+% disp(['diff in countMethods: ' num2str(sum(abs([counts-counts2])))]);
+
+TB4 =[yy num2cell(volreg)];
+hTB4=[hxx(1:2) 'volume'];
+
+if isexcel==1
+    pwrite2excel(fileout,{2 'NEW_IDS' },hTB4,[],TB4);
+else
+    sub_write2excel_nopc(fileout,'NEW_IDS',hTB4,TB4);
+end
+
 % ==============================================
-%%   save [2] stealer Table
+%%   save [3] stealer Table
 % ===============================================
 if isexcel==1
     try
-        pwrite2excel(fileout,{2 'RegionStealer' },hstealerTB,[],stealerTB);
+        pwrite2excel(fileout,{3 'RegionStealer' },hstealerTB,[],stealerTB);
     end
 else
    try
@@ -698,7 +727,7 @@ else
 end
 
 % ==============================================
-%%   save [3] reduced INPUT table
+%%   save [4] reduced INPUT table
 % ===============================================
 hTBreduced=he;
 TBreduced=tb2;
@@ -707,17 +736,17 @@ TBreduced=tb2;
 %
 % end
 if isexcel==1
-    pwrite2excel(fileout,{3 'INPUT' },hTBreduced,[],sortrows( TBreduced,z.columnNewID ));
+    pwrite2excel(fileout,{4 'INPUT' },hTBreduced,[],sortrows( TBreduced,z.columnNewID ));
 else
     sub_write2excel_nopc(fileout,'INPUT',hTBreduced,sortrows( TBreduced,z.columnNewID ));
 end
     
 % ==============================================
-%%   save [4] OUTPUT tables
+%%   save [5-6] OUTPUT tables
 % ===============================================
 if isexcel==1
-    pwrite2excel(fileout,{4 'output1' },{' SET to FONT to "COURIER NEW" to modify'},[],txt);
-    pwrite2excel(fileout,{5 'output2' },hb2,[],b2);
+    pwrite2excel(fileout,{5 'output1' },{' SET to FONT to "COURIER NEW" to modify'},[],txt);
+    pwrite2excel(fileout,{6 'output2' },hb2,[],b2);
 else
     sub_write2excel_nopc(fileout,'output1',[],[{'SET to FONT to "COURIER NEW" to modify'};txt]);
     sub_write2excel_nopc(fileout,'output2',['ID' hb2(2:end)],[b2]);
@@ -728,6 +757,20 @@ end
 %%   warning DLG
 % ===============================================
 warning off;
+
+% -------------------check NEW IDS and their volume--------------------------
+lg3={};
+volnewIDS=cell2mat(TB4(:,3));   %NEW ID get VOLUME TO check if nonfinder-newDs found in new ATLAS
+inovol   =find(volnewIDS==0);
+if ~isempty(inovol)
+    lg3={' #kr PROBLEM  '};
+    for i=1:length(inovol)
+        lg3{end+1,1}=  [ 'newID[' num2str(TB4{inovol(i),1}) '] "' num2str(TB4{inovol(i),2}) '" has no volume!'];
+    end
+    lg3=[lg3; ['  ...please inspect "' [ z.nameout '_INFO.xlsx'] '" to find the reason']];
+end
+% -----------------------------------------------------------------
+
 
 ivolorig=find(strcmp(hxx,'VOLorig'));
 ivolnew =find(strcmp(hxx,'VOLnew'));
@@ -847,7 +890,7 @@ if ~isempty([(inovolorig(:)) ;(inovolnew(:))])
             ' Thus, regions with [0 1 0] vector do not appear in the new Atlas:'; ...
             unique(lg2,'rows')];
     end
-    msg=[[lg0; lgm; lgm2]];
+    msg=[[lg3; lg0; lgm; lgm2]];
     
     %     h=warndlg(msg);
     uhelp(plog([],[msg],'style=1'),1);
