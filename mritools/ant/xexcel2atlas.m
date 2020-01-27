@@ -765,6 +765,10 @@ if ~isempty([(inovolorig(:)) ;(inovolnew(:))])
     msg=[[lgm; lgm2]];
     
     warndlg(msg);
+    
+    fileout=fullfile( z.outputDir, [ z.nameout '_WARNING.txt']);
+    pwrite2file(fileout ,msg );
+    
 end
 
 % ==============================================
