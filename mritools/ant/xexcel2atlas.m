@@ -895,8 +895,14 @@ if ~isempty([(inovolorig(:)) ;(inovolnew(:))])
     %     h=warndlg(msg);
     uhelp(plog([],[msg],'style=1'),1);
     
-    fileout=fullfile( z.outputDir, [ z.nameout '_WARNING.txt']);
-    pwrite2file(fileout ,msg );
+   % fileout=fullfile( z.outputDir, [ z.nameout '_WARNING.txt']);
+   % pwrite2file(fileout ,msg );
+    
+    if isexcel==1
+        pwrite2excel(fileout,{7 'WARNING' },{'importantNote'},[],msg);
+    else
+        sub_write2excel_nopc(fileout,'WARNING',{'importantNote'},msg);
+    end
     
 end
 
