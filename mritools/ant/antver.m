@@ -57,7 +57,8 @@
 % #ra 27 Jan 2020 (09:43:48)
 % [xexcel2atlas.m]: create atlas from excelfile, excelfile is a modified version of the ANO.xlsx
 % [sub_write2excel_nopc]: subfun: write excel file for mac/linux
-
+% #ra 28 Jan 2020 (10:14:11)
+% [xexcel2atlas.m]: added information
 
 
 
