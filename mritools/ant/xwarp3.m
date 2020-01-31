@@ -120,7 +120,10 @@ success=    0;
 if isempty(ext) %% only path was given-->link t2
     s.t2=     fullfile(s.t2,'t2.nii');
     s.pa=     fileparts(s.t2);
-    if exist(s.t2,'file')~=2;             return                      ;    end
+    if exist(s.t2,'file')~=2;   
+        disp([ ' missing file : '  char(s.t2)   '   ... premature abortion']);
+        return                    
+    end
 end
 clear pa fi ext
 % get ID
