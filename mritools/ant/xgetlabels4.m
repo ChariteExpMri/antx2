@@ -1,7 +1,86 @@
 
 
-%% #yk xgetlabels4: get anatomical labels
-% a mask from template folder can be used
+%% #yk xgetlabels4: get regionwise parameter for an image
+%
+%% #ko readout parameter: 'frequency', 'percOverlapp','volref','vol','mean','std','median','min','max'    
+%  'percOverlapp': regionwise percent overlap with a mask ('masks'-must be defined, otherwise "100%")
+%                 or regionwise percent survived above threshold-value  
+%  'vol'        : volume of the region mask/threshold-dependent
+%  'volref'     : volume of the region mask/threshold-independent --> reference value
+%  'mean',  'std','median','min','max'  : parmaeter value within a region, mask/threshold-dependent
+% #b: OUTPUT: excelfile with parameter values for the selected animal(s)..stored in the "results"-folder
+%  
+%
+%% #ko PARAMETER
+% 'files'   (read-out image) NIFTI file used for regionwise calculation of the readout parameter
+%          - i.e. the resulting output: frequncies/intensities/mean... is extracted from this file
+% 'masks'  (optional) a corresponding mask file. #b For instance a lesion mask file.
+%         - order is irrelevant
+%         - it is assumed that the mask-file is located in the animal's folder
+%         - For space-parameter is "native" and "standard" : The masksfile
+%           can be locate in another folder (templates folder)
+%         
+% ________________________________________________________________
+% #r ADDITIONAL FILES FOR "OTHER SPACE". NECESSARY IF "OTHER SPACE"-SCENARIO
+% Irrelevant for "native" and "standard" space.
+% "OTHER SPACE" (see parameter below) describes the situation where the image is not in standard space (i.e. templates space)
+% and not in the native space ("t2.nii"-space). 
+% Examplary situation: The aim is to keep the read-out image in the original space. This space differs from native space:
+% In this case, the atlas and hemisphere image is transformed from standard to native space and than further transformed
+% (e.g. by registration) to the space of the read-out image. In this case the "OTHER SPACE" refers to the space of the 
+% read-out image.
+% 
+% 'atlasOS'     The atlas in "other space". This is IMPORTANT ONLY IF "SPACE"-PARAMER IS SET TO "other"
+% 'hemimaskOS'  The hemisphere mask in "other space". This is IMPORTANT ONLY IF "SPACE"-PARAMER IS SET TO "other"
+% 
+% #r NOTE: 'files', 'atlasOS' and 'hemimaskOS' are obligatory for "OTHER SPACE". It is also assumed that these images are in register
+% ________________________________________________________________
+% 
+% PARAMETER
+% 'atlas'       select atlas here (default: ANO.nii), atlas has to be the standard space  
+% 'space'       calculation from images in "standard space", "native space" or "other space": 'standard','native','other'
+%                 'standard':  read out from images in templates space
+%                 'native'  :  read out from images space of the "t2.nii"
+%                 'other'   :  see above
+% 'hemisphere'  hemisphere to use:  {'left','right','both'}
+%                 'left' : read out of left hemisphere only
+%                 'right': read out of right hemisphere only
+%                 'both' : read out of both hemisphere (united)
+% 'threshold'   - lower intensity threshold value (values >=threshold will be excluded); 
+%               - #r leave this field empty when using a mask ('masks'-parameter)
+%% #ko RUN
+% select animal(s) from gui before
+% xgetlabels4: open gui, parmaeter will be defined via gui
+% xgetlabels4(1,x); %open gui, use predfined struct-filed
+% xgetlabels4(0,x); %no gui, use predfined struct-filed
+%% #ko BATCH
+% type "anth" or select [anth]-button from main-gui
+%
+%% =====================================================
+%% #wg EXAMPLE-1 image from "STANDARD" SPACE with standard atlas
+%% =====================================================
+% x=[]
+% x.files        =  { 'x_t2.nii' };	% files used for calculation
+% x.masks        =  {''};	% <optional> corresponding maskfiles (order is irrelevant)or mask from templates folder
+% x.atlas        =  'ANO.nii';	% select atlas here (default: ANO.nii), atlas has to be the standard space atlas
+% x.space        =  'standard';	% calculation in standard space or native space {"standard","native"} 
+% x.hemisphere   =  'both';	% hemisphere used: [left,right or both]
+% x.threshold    =  '';	% lower intensity threshold value (values >=threshold will be excluded); leave field empty when using a mask
+% xgetlabels4(0,x);  % NO GUI
+%% =====================================================
+%% #wg EXAMPLE-2 image from "OTHER SPACE" with special atlas
+%% =====================================================
+% x=[]
+% x.files        =  { 'newSpace_t2.nii' };	% files used for calculation
+% x.masks        =  {'newSpace_ix_caudoputamen.nii'};	% <optional> corresponding maskfiles (order is irrelevant)or mask from templates folder
+% x.atlasOS      =  { 'newSpace_ix_pseudoANO.nii' };	% The atlas in "other space". IMPORTANT ONLY IF "SPACE"-PARAMER IS SET TO "other">
+% x.hemimaskOS   =  { 'newSpace_ix_AVGThemi.nii' };	% The hemispher mask in "other space". IMPORTANT ONLY IF "SPACE"-PARAMER IS SET TO "other">
+% x.atlas        =  'D:\Paul\data1\LabelsOtherSpace\templates\pseudoANO.nii';	% select atlas here (default: ANO.nii), atlas has to be the standard space atlas
+% x.space        =  'other';	% calculation in standard space or native space {"standard","native"} 
+% x.hemisphere   =  'both';	% hemisphere used: [left,right or both]
+% x.threshold    =  '';	% lower intensity threshold value (values >=threshold will be excluded); leave field empty when using a mask
+% xgetlabels4(1,x);  % gui pops up
+
 
 
 function [z varargout] = xgetlabels4(showgui,x)
@@ -25,16 +104,24 @@ p={...
     'inf98'      '*** GET ANATOMICAL LABELS             '                         '' ''
     'inf100'     '==================================='                          '' ''
     
-    'inf11'        '__________[ FILES/MASKS]________________________________________________________'    '' ''
+    'inf11'        '____[ FILES/MASKS]________________________________________________________'    '' ''
     
     'files'      ''                                                           'files used for calculation' ,  {@selectfile,v,'single'} ;%'mf'
     'masks'      ''                                                           '<optional> corresponding maskfiles (order is irrelevant)or mask from templates folder', {@selectfileMask,v,'single'} % ,'mf' ...
+    
+    
+    'inf133'        '________________________________________________________________________________'    '' ''
+    'inf12'        '   ADDITIONAL FILES FOR "OTHER SPACE". Irrelevant for "native" and "standard" space. '    '' ''
+
+    'atlasOS'    ''             'The atlas in "other space". IMPORTANT ONLY IF "SPACE"-PARAMER IS SET TO "other">' ,  {@selectfile,v,'single'} ;%'mf'
+    'hemimaskOS' ''             'The hemispher mask in "other space". IMPORTANT ONLY IF "SPACE"-PARAMER IS SET TO "other">' ,  {@selectfile,v,'single'} ;%'mf'
+
     %
     
     'inf33'        '________________________________________________________________________________'    '' ''
     'inf3'      ' % PARAMETERS ' ''  ''
     'atlas'       'ANO.nii'     'select atlas here (default: ANO.nii), atlas has to be the standard space atlas' {@selectAtlas,v}
-    'space'      'standard'     'calculation in standard space or native space {"standard","native"} '      {'standard' 'native'}
+    'space'      'standard'     'calculation in standard space or native space {"standard","native"} '      {'standard' 'native' 'other'}
     'hemisphere'  'both'        'hemisphere used: [left,right or both]'                                     {'left','right','both'}
     
     'threshold'    ''     'lower intensity threshold value (values >=threshold will be excluded); leave field empty when using a mask' {'' 0}
@@ -181,38 +268,21 @@ elseif strcmp(s.space,'native')==1
         w.hano =fullfile(pt,['ix_' fis ext]);
     end
     w.hfib =fullfile(pa,'ix_FIBT.nii');
+
+elseif strcmp(s.space,'other')==1  %other space
+    
+    w.hhemi=fullfile(pa, char(s.hemimaskOS));
+    w.hmask =[];%fullfile(pa,'ix_AVGTmask.nii');
+    w.hano =fullfile(pa, char(s.atlasOS));
+     
 end
 
 % ==============================================
 %%  always check wether atlas  it is in the mouse folder
 % ===============================================
 
-source  = strrep(w.hano,[filesep 'ix_'],[filesep ]) ;
-[ pat, atlasname, ext ]=fileparts(source);
-
-if strcmp(pat,pa)==0  %external atlas
-      %check existence in the mouse folder
-    atlas_inDir=    fullfile( pa,[ atlasname, ext ]);
-    if exist(atlas_inDir)~=2
-        copyfile(source,atlas_inDir,'f' );
-    end
-    if strcmp(s.space,'standard')==1 
-        w.hano=atlas_inDir;
-    elseif strcmp(s.space,'native')==1 
-        w.hano=stradd(atlas_inDir,'ix_',1);
-    end
-end
-
-% ==============================================
-%%  always check existence of FIB-atlas, and wether it is in the mouse folder
-% ===============================================
-
-useFIB=0;
-if size(s.atlasTB,1)>1200 %workarounf to indentify that FIBT should be used
-    
-    source  = strrep(w.hfib,[filesep 'ix_'],[filesep ]) ;
-    
-    
+if  strcmp(s.space,'other')==0
+    source  = strrep(w.hano,[filesep 'ix_'],[filesep ]) ;
     [ pat, atlasname, ext ]=fileparts(source);
     
     if strcmp(pat,pa)==0  %external atlas
@@ -222,70 +292,97 @@ if size(s.atlasTB,1)>1200 %workarounf to indentify that FIBT should be used
             copyfile(source,atlas_inDir,'f' );
         end
         if strcmp(s.space,'standard')==1
-            w.hfib=atlas_inDir;
+            w.hano=atlas_inDir;
         elseif strcmp(s.space,'native')==1
-            w.hfib=stradd(atlas_inDir,'ix_',1);
+            w.hano=stradd(atlas_inDir,'ix_',1);
         end
-    elseif strcmp(pat,pa)==1  %internal atlas
-        atlas_inDir=    fullfile( pa,[ atlasname, ext ]);
-        source=fullfile(s.patemp,[ atlasname, ext ]);
-        if exist(atlas_inDir)~=2
-            if exist(source)==2
+    end
+end
+% ==============================================
+%%  always check existence of FIB-atlas, and wether it is in the mouse folder
+% ===============================================
+
+useFIB=0;
+
+if  strcmp(s.space,'other')==0
+    if size(s.atlasTB,1)>1200 %workarounf to indentify that FIBT should be used
+        
+        source  = strrep(w.hfib,[filesep 'ix_'],[filesep ]) ;
+        
+        
+        [ pat, atlasname, ext ]=fileparts(source);
+        
+        if strcmp(pat,pa)==0  %external atlas
+            %check existence in the mouse folder
+            atlas_inDir=    fullfile( pa,[ atlasname, ext ]);
+            if exist(atlas_inDir)~=2
                 copyfile(source,atlas_inDir,'f' );
             end
-        end
-        if exist(atlas_inDir)==2
             if strcmp(s.space,'standard')==1
                 w.hfib=atlas_inDir;
             elseif strcmp(s.space,'native')==1
                 w.hfib=stradd(atlas_inDir,'ix_',1);
             end
+        elseif strcmp(pat,pa)==1  %internal atlas
+            atlas_inDir=    fullfile( pa,[ atlasname, ext ]);
+            source=fullfile(s.patemp,[ atlasname, ext ]);
+            if exist(atlas_inDir)~=2
+                if exist(source)==2
+                    copyfile(source,atlas_inDir,'f' );
+                end
+            end
+            if exist(atlas_inDir)==2
+                if strcmp(s.space,'standard')==1
+                    w.hfib=atlas_inDir;
+                elseif strcmp(s.space,'native')==1
+                    w.hfib=stradd(atlas_inDir,'ix_',1);
+                end
+            end
+        end
+        
+        fib_inDir=    fullfile( pa,[ atlasname, ext ]);
+        if exist(fib_inDir)==2
+            useFIB = 1;
         end
     end
-    
-    fib_inDir=    fullfile( pa,[ atlasname, ext ]);
-    if exist(fib_inDir)==2
-        useFIB = 1;
-    end
-end
-
+end  % NATIVE/STANDARD-SPACE ONLY
 
 
 
 % ==============================================
 %%   check existence of masks in mouse folder
 % ===============================================
-
-% IF [AVGTmask.nii] does not exist, take it from the templates folder
-source  = strrep(w.hmask,[filesep 'ix_'],[filesep ])  ;
-[ pat fis ext ]=fileparts(source);
-if exist(replacefilepath(source,pa))~=2
-    fistempl=fullfile(s.patemp,[fis ext]);
-    if exist(fistempl)==2
-        fano=strrep(w.hano,[filesep 'ix_'],[filesep ]);
-        rreslice2target(fistempl, fano, source, 0);
-    end 
-end
+if  strcmp(s.space,'other')==0
+    % IF [AVGTmask.nii] does not exist, take it from the templates folder
+    source  = strrep(w.hmask,[filesep 'ix_'],[filesep ])  ;
+    [ pat fis ext ]=fileparts(source);
+    if exist(replacefilepath(source,pa))~=2
+        fistempl=fullfile(s.patemp,[fis ext]);
+        if exist(fistempl)==2
+            fano=strrep(w.hano,[filesep 'ix_'],[filesep ]);
+            rreslice2target(fistempl, fano, source, 0);
+        end
+    end
     
- % IF [AVGThemi.nii] does not exist, take it from the templates folder
-source  = strrep(w.hhemi,[filesep 'ix_'],[filesep ])  ;
-[ pat fis ext ]=fileparts(source);
-if exist(replacefilepath(source,pa))~=2
-    fistempl=fullfile(s.patemp,[fis ext]);
-    if exist(fistempl)==2
-        fano=strrep(w.hano,[filesep 'ix_'],[filesep ]);
-        rreslice2target(fistempl, fano, source, 0);
-    else % BEFORE UPDATE SITUATION for ALLENMOUSE
-        
-        AVmaskTPL=fullfile(s.patemp,'AVGTmask.nii');   %make HEMI-MASK in TEMPLATE-FOLDER
-        AVhemiTPL=makeAVGThemi(AVmaskTPL);
-        
-        fano=strrep(w.hano,[filesep 'ix_'],[filesep ]); %RESLCE HEMI_MASK IN MOUSE-FOLDER
-        rreslice2target(AVhemiTPL, fano, source, 0);
-    end 
-end   
-
-
+    % IF [AVGThemi.nii] does not exist, take it from the templates folder
+    source  = strrep(w.hhemi,[filesep 'ix_'],[filesep ])  ;
+    [ pat fis ext ]=fileparts(source);
+    if exist(replacefilepath(source,pa))~=2
+        fistempl=fullfile(s.patemp,[fis ext]);
+        if exist(fistempl)==2
+            fano=strrep(w.hano,[filesep 'ix_'],[filesep ]);
+            rreslice2target(fistempl, fano, source, 0);
+        else % BEFORE UPDATE SITUATION for ALLENMOUSE
+            
+            AVmaskTPL=fullfile(s.patemp,'AVGTmask.nii');   %make HEMI-MASK in TEMPLATE-FOLDER
+            AVhemiTPL=makeAVGThemi(AVmaskTPL);
+            
+            fano=strrep(w.hano,[filesep 'ix_'],[filesep ]); %RESLCE HEMI_MASK IN MOUSE-FOLDER
+            rreslice2target(AVhemiTPL, fano, source, 0);
+        end
+    end
+    
+end  % NATIVE/STANDARD-SPACE ONLY
 
 
 % ==============================================
@@ -349,6 +446,31 @@ if strcmp(s.space,'native')==1
 end
 
 
+% ==============================================
+%%   OTHER SPACE
+% ===============================================
+
+if strcmp(s.space,'other')==1 
+    
+   
+    [pas filename ext]=fileparts(w.hhemi);
+    if ~isempty(strfind(filename,'hemi'));
+        filename=regexprep(filename,'hemi','mask');
+    else
+        filename=[filename 'mask'];
+    end
+    w.hmask=fullfile(pas,[filename ext]);
+    
+    %if exist(w.hmask)~=2
+        [ht t]=rgetnii(w.hhemi);
+        t(t>0)=1;
+        rsavenii(w.hmask,ht,t);
+    %end
+    clear pas filename ext ht t
+    
+end
+
+
 
 % ==============================================
 %%   read data
@@ -396,7 +518,8 @@ if ~isempty(mask)
          po.source =  'extern';
          fis=doelastix(-1, {fileparts(file)},{mask},0,'local' ,po);
          [hm m]=    rreslice2target(fis{1}, w.hano, [], 0);   
-            
+        elseif strcmp(s.space,'other') 
+            error('mask must be in animal''s directory for space=="other"');
         end
     end
    

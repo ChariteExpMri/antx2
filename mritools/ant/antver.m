@@ -59,8 +59,8 @@
 % [sub_write2excel_nopc]: subfun: write excel file for mac/linux
 % #ra 28 Jan 2020 (10:14:11)
 % [xexcel2atlas.m]: added information
-
-
+% #ra 31 Jan 2020 (14:07:48): 
+% [xgetlabels4]: allowing readout from "other Space"
 
 function antver()
 
