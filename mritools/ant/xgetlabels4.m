@@ -121,7 +121,7 @@ p={...
     'inf33'        '________________________________________________________________________________'    '' ''
     'inf3'      ' % PARAMETERS ' ''  ''
     'atlas'       'ANO.nii'     'select atlas here (default: ANO.nii), atlas has to be the standard space atlas' {@selectAtlas,v}
-    'space'      'standard'     'calculation in standard space or native space {"standard","native"} '      {'standard' 'native' 'other'}
+    'space'      'standard'     'use images from "standard","native" or "other" space '               {'standard' 'native' 'other'}
     'hemisphere'  'both'        'hemisphere used: [left,right or both]'                                     {'left','right','both'}
     
     'threshold'    ''     'lower intensity threshold value (values >=threshold will be excluded); leave field empty when using a mask' {'' 0}
