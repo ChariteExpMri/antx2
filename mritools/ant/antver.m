@@ -61,6 +61,8 @@
 % [xexcel2atlas.m]: added information
 % #ra 31 Jan 2020 (14:07:48): 
 % [xgetlabels4]: allowing readout from "other Space"
+% #ra 04 Feb 2020 (18:03:15)
+% rat-brain segmentation accelerated
 
 function antver()
 

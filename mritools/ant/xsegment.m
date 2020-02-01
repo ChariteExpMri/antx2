@@ -11,12 +11,15 @@
 %                             'O:\harms1\koeln\dat\s20150701_BB1\reorient.mat'}
 % xsegment(t2,template)
 
-function xsegment(t2,template,job)
+function xsegment(t2,template,param)
 
+if exist('param')~=1
+    param=struct();
+end
 
 spmversion=spm('ver');
 if strcmp(spmversion,'SPM12')
-    runsegmSPM12(t2,template);
+    runsegmSPM12(t2,template,param);
 elseif strcmp(spmversion,'SPM8')
     runsegmSPM8(t2,template);
 end
@@ -25,7 +28,7 @@ end
 % ==============================================
 %%  SPM-12
 % ===============================================
-function runsegmSPM12(t2,template);
+function runsegmSPM12(t2,template,param);
 t2destpath=fileparts(t2);
 
 
@@ -136,6 +139,54 @@ job.opts.biasreg = 1.0000e-04;
 job.opts.biasfwhm= 5;
 job.opts.samp    = 0.1000;
 job.opts.msk     = {''};
+
+% ==============================================
+%%   check params (s-struct)
+% ===============================================
+if isfield(param,'species')==1
+    % ==============================================
+    %%  override parameter for "RAT"
+    % ===============================================
+    if strcmp(param.species,'rat')
+        
+        job.opts.warpco  = 3.75  ;
+        job.opts.samp    = 0.25  ;
+        
+        [t2pathorig subdir]=fileparts(fileparts(t2));
+        msk1=fullfile(t2pathorig,'_msk.nii');
+        if exist(msk1)==2
+            [h,d ]=rreslice2target(msk1, t2, [], 0,[2 0])  ;
+            msk2=fullfile(t2pathorig,subdir,[ '_mskBin.nii']);
+            rsavenii(msk2, h,d>0,[2 0]);
+            job.opts.msk=msk2;
+        end
+    end% override for "rat"
+end
+
+% ==============================================
+%%   OVERRIDE-parameters
+% ===============================================
+if 1
+    paoverride=fileparts(fileparts(fileparts(fileparts(t2))));
+    overridefun=fullfile(paoverride,'override.m');
+    if exist(overridefun)
+        pabef=pwd;
+        cd(paoverride);
+        parm=override();
+        cd(pabef);
+        if isfield(parm,'segm') && isfield(parm.segm,'opts')
+           fields=fieldnames(parm.segm.opts);
+           disp('overriding parameters from "override.m"-function');
+           for i=1:length(fields)
+              job.opts= setfield(job.opts,  fields{i}   ,getfield(parm.segm.opts,fields{i}) );
+           end
+        end 
+    end
+end
+
+% ==============================================
+%%   run job
+% ===============================================
 
 spm_run_preproc_spm8(job);  % spm8-function
 

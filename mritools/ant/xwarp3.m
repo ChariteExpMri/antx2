@@ -543,7 +543,7 @@ if find(s.task==3)
     
     if isfield(s,'fastSegment')==0; s.fastSegment=1; end   % check param
     %s.fastSegment=1;
-    
+
     if s.fastSegment==1
         fastsegMethod=2;        % [1] using '_msk.nii',[2] using _b1gray/_b2white/_b3csf.nii
         disp([ 'fastsegmentation..method-' num2str(fastsegMethod) ]);
@@ -555,23 +555,40 @@ if find(s.task==3)
             spm fmri;drawnow;
         end
         loadspmmouse;drawnow;
-        xsegment(t2,template); %
+        xsegment(t2,template,s); %
         
         fastsegment(s.pa, 'post','subdir','segm');
         
-        %check result
+        %check result- CHECK WHETHER MASK IS PART OF THE BORDER
         
         fc12mask=fullfile(s.pa,'segm','c1c2mask.nii');
         [ha a]=rgetnii(fc12mask);
-        zb=ones(size(a)-4);
-        zb=~padarray(zb,[2 2 2]);
-        zm=round((zb.*a))+round(a);
+        
+        % [OLD] all dimensions
+        if 0
+            zb=ones(size(a)-4);
+            zb=~padarray(zb,[2 2 2]);
+            zm=round((zb.*a))+round(a);
+        end
+        
+        %[NEW]  IGNORE SLICE_DIMENSION for checking mask at borders
+        si=size(a);
+        sldim=find(si==min(si));               % slice-dimension is min-size-dimension
+        if length(sldim)>1; sldim=3; end       % otherwise the 3rd dim
+        
+        pldim=setdiff(1:3,sldim)               ;% in-planeDims
+        sinew=[[sldim si(sldim)  0]]           ;%make tabel with "dimNum","reduced size","padarrayValue"
+        sinew=[sinew; [pldim' si(pldim)'-4   [2 2]'   ] ];
+        sinew=sortrows(sinew,1)              ;%sort accord dim-num
+        
+        zb=ones(sinew(:,2)');                %reduzed version of mask
+        zb=~padarray(zb,[sinew(:,3)']);      % make border
+        zm=round((zb.*a))+round(a);          % overlap of border-image and mask
+        
         if round(sum(zm(:)==2))>0
             disp('..fastsegmentation failed..doing conventional segmentation');
             s.fastSegment=0;
         end
-        
-        
     end
     
     
@@ -586,7 +603,7 @@ if find(s.task==3)
             spm fmri;drawnow;
         end
         loadspmmouse;drawnow;
-        xsegment(s.t2,template); %
+       xsegment(t2,template,s); %
     end
     
     
