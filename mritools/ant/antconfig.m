@@ -76,7 +76,7 @@ p={...
     'inf31'   '_________TEMPLATE_________________________________________________________________________' '' ''
 
     'wa.refpath'     r.refpa         'PATH of the used reference system (such as "O:\anttemplates\mouse_spmmouse" for "mouse_spmmouse" )'  { @referencefolder }
-    'wa.species'     'mouse'         'animal species to investigate {mouse or rat}'  {'mouse' 'rat' }
+    'wa.species'     'mouse'         'animal species to investigate {mouse or rat}'  {'mouse' 'rat' 'etruscianshrew'}
     
 %     'wa.refTPM'      r.refTPM    'c1/c2/c3-compartiments (reference)' ,'mf'
 %     'wa.ano'         r.ano       'reference anotation-image' 'f'

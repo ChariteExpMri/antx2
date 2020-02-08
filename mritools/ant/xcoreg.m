@@ -31,6 +31,9 @@
 %                  [10]: centering only   : only centering (set origin to midpoint of the Ref-image,
 %                        this step is automatically done in [2]&[20])
 %                                           -this is a necessary step for warping using elastix
+%                  [100]: elastix registration (without SPM coregistration), with multiple paramter
+%                        files (regid&|affine&|bspline) 
+% 
 %                  example combinations: [=combinations of one registration task AND visualization task]
 %                   [1 2 3]  : affine registration, but show registration befor AND afterwards
 %                     [2 3]  : affine registration, but show registration only      afterwards
@@ -39,6 +42,7 @@
 %                              registration befor AND afterwards 
 %                  not valid combinations: [=combinations of multiple registration-task ARE NOT ALLOWED]
 %                  [10 20] or [2 20] ...     
+%               
 %     z.targetImg1:    THE ONE TARGET-IMAGE , example: { 'c_2_T2_ax_mousebrain_1.nii' };                                                                 
 %     z.sourceImg1:    THE ONE SOURCE-IMAGE , (this image should be "transformed" to the target-image )
 %                        example: { 'c_nan2neu_2.nii' };                                                                            
@@ -187,7 +191,8 @@ p={...
     '[1+2+3] display & coregister & displayResult'  '[1+2] display & coregister' ...
     '[1+3] display & displayResult' '[1+3] coregister & displayResult' ...
     '[20] coregister with previous manual registering byHand' ...
-    '[10] centering only'};
+    '[10] centering only'...
+    '[100] noSPMregistration, only elastix'};
     %
     'targetImg1'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
     'sourceImg1'      {''}                'source image [t2], (moved image)'             {@selector2,li,{'SourceImage'},'out','list','selection','single'}
@@ -209,9 +214,9 @@ p={...
     
     'inf2001'       [ '% NONLINEAR WARPING  (OPTIONAL) '    repmat('_',[1,90])]   '' ''
     'warping'       [0]                                  'do subsequent nonlinear warping [0|1],  ' ,'b'
-    'warpParamfile'  fullfile(fileparts(fileparts(which('ant.m'))),'elastix','paramfiles' ,'p33_bspline.txt')      'parameterfile used for warping'  ''
-    'warpPrefix'   'bspline'                            'prefix out the output file after warping (if empty, it will overwrite the output of the previously affine registered file)'  ''
-         
+    'warpParamfile'  fullfile(fileparts(fileparts(which('ant.m'))),'elastix','paramfiles' ,'p33_bspline.txt')      'parameterfile used for warping'  {@getparmfiles }
+    'warpPrefix'   'c_'                            'prefix out the output file after warping (if empty, it will overwrite the output of the previously affine registered file)'  ''
+    'cleanup'      [1]  'remove interim steps'  'b'      
 
     %
     %     'inf200'      [repmat('�',[1,100])]                            '' ''
@@ -297,6 +302,9 @@ if find(task==20)
 elseif find(task==10)
     [t t2]=initialize(z,pa);
     do_coregister(t2,z,'centering_only');
+elseif find(task==100)
+    [t t2]=initialize(z,pa);
+    do_coregister(t2,z,'noSPMregistration');
 end
 
 %% SHOW AFTERWARDS
@@ -408,7 +416,7 @@ for i=1:length(nprocs)
         
         
         
-        if strcmp(modus,'centering_only')==0
+        if strcmp(modus,'centering_only')==0 &&  strcmp(modus,'noSPMregistration')~=1
             matlabbatch=[];
             matlabbatch{1}.spm.util.exp_frames.files = {[char(s.sc) ,',' num2str(s.snum) ]}  ;%{'O:\data\karina_v2\dat\2014_test\nan_2.nii,1'};
             matlabbatch{1}.spm.util.exp_frames.frames = Inf;
@@ -558,7 +566,8 @@ for i=1:length(nprocs)
             pout  =fullfile(fileparts(moimg),'regwarp'); mkdir(pout);
             
             [infox rimg, trafofile]=evalc('run_elastix( fximg, moimg,    pout  ,pfile,  [],[]    ,[],[],[])');
-
+            trafofile  =cellstr(trafofile);
+            trafofile2 =trafofile{end};
             
             for jj=1:size(s.ac,1);  % TRANSFORM
                 timg=s.ac{jj};
@@ -569,19 +578,21 @@ for i=1:length(nprocs)
                 else
                     interporder=0;
                 end
-                set_ix(trafofile,'FinalBSplineInterpolationOrder',interporder);
+                set_ix(trafofile2,'FinalBSplineInterpolationOrder',interporder);
                 
-                [infox im2,tr2]= evalc( 'run_transformix(timg,[],trafofile,pout,'''')'     );
+                [infox im2,tr2]= evalc( 'run_transformix(timg,[],trafofile2,pout,'''')'     );
                 [pa2 fis ext]=fileparts(timg);
                 
-                newfile=fullfile( pa2,[ z.warpPrefix  fis ext  ] );
+                newfile=fullfile( pa2,[ z.warpPrefix  regexprep(fis,'^c_','') ext  ] );
                 movefile(im2,newfile ,'f');
 %                 try; showinfo2(' warped images',s.t{1},newfile); end
                 %fprintf(['.. \b\b\b [done] ..ELA ' sprintf('%2.2fmin',toc(atic)/60) '\n']);
             end
             
             %% clean up warping
-            try; rmdir(pout, 's'); end
+            if z.cleanup~=1
+                try; rmdir(pout, 's'); end
+            end
             try; delete(refvol3d); end  % delete 3d refVOL
         end%warping
         
@@ -927,7 +938,9 @@ for i=1:size(pa,1) %PATH
                 isexist=  exist(fname)==2    ;
                 
                 if isexist==0
+                    if ~isempty(s2)
                     disp(['file not found: : <a href="matlab: explorer(''' fileparts(fname) ''')">' fname '</a>']);
+                    end
                 end
                 
                 shortIMGname=s2;
@@ -1017,3 +1030,19 @@ end
 for i=1:length(f1)
     copyfile(f1{i}, f2{i} ,'f');
 end
+
+
+function he=getparmfiles(li,lih)
+%     'warpParamfile'  fullfile(fileparts(fileparts(which('ant.m'))),'elastix','paramfiles' ,'p33_bspline.txt')      'parameterfile used for warping'  @getparmfiles
+
+he=[];
+pap=fileparts(which('trafoeuler2.txt'));
+msg='select one/more Parameter file for rigid/affine/bspline transformation (in that order)"';
+[t,sts] = spm_select(inf,'any',msg,'',pap,'.*.txt','');
+t=cellstr(t);
+if isempty(t); return; end
+% t=cellstr(t);
+% [s ss]=paramgui('getdata')
+% paramgui('setdata','x.wa.orientelxParamfile',[t ' % rem'])
+he=t;
+return

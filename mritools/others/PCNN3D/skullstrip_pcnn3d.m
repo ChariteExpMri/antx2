@@ -33,11 +33,18 @@ pmouse.species      ='rat';
 prat.brainSize      = [300 500 ]; %rat but scaled via scalefactor
 prat.scalefactor    = (5.^(1/3)) ;  % --> 5.^(1/3) % rat 5 times larger than mouse
 
+shrew.species      ='etruscianshrew';
+shrew.brainSize    = [55 80]; %shrew
+shrew.scalefactor  = [1];
+
+
 if exist('params')~=1
     pp=pmouse;
 else
     if isfield(params,'species') && strcmp(params.species,'rat')
         pp=prat;
+    elseif isfield(params,'species') && strcmp(params.species,'etruscianshrew')
+        pp=shrew;    
     elseif isfield(params,'species') && strcmp(params.species,'mouse')
         pp=pmouse;
     else
@@ -46,7 +53,7 @@ else
     end
 end
 
-
+disp(['skullstripping with parameters of [' pp.species ']']);
 
 
 

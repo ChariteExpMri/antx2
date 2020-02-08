@@ -63,6 +63,11 @@
 % [xgetlabels4]: allowing readout from "other Space"
 % #ra 04 Feb 2020 (18:03:15)
 % rat-brain segmentation accelerated
+% #ra 17 Feb 2020 (12:32:00)
+% set-up pipeline for etruscian shrew
+% [xcoreg]: enables elastix registration with multiple paramter files (regid&|affine&|bspline) and
+% without spm-registration, (set "task" to [100])
+
 
 function antver()
 

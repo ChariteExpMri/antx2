@@ -269,7 +269,8 @@ if find(s.task==1)
         fprintf('     ...do skullstripping..');
         
         
-        if isfield(s,'species') && strcmp(s.species,'rat')  % ##-RAT-##
+        %if isfield(s,'species') && strcmp(s.species,'rat')  % ##-RAT-##
+        if isfield(s,'species') && (strcmp(s.species,'rat') || strcmp(s.species,'etruscianshrew'))   
             skparam.species = s.species;
             evalc('skullstrip_pcnn3d(s.t2, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip'' ,skparam  )'); ;
         else

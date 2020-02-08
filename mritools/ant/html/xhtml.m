@@ -246,8 +246,15 @@ elseif strcmp(ps.section,'warping')
     f2=fullfile(pa,'x_t2.nii');
     [filesOKbool mi]=checkfiles({},{f1 f2});
     if filesOKbool==1
+        try
         [d ds]=getslices(f1     ,2,['12 20 20'],[],0 );
         [o os]=getslices({f1 f2},2,['12 20 20'],[],0 );
+        catch
+        [d ds]=getslices(f1     ,2,['3'],[],0 );
+        [o os]=getslices({f1 f2},2,['3'],[],0 );    
+        end
+        
+        
         gifs   = saveslices_gif({d,ds},{o os}, 1,ps.outpath);
         msg=[' overlay: [' gifs{1} '] and [' gifs{2} '] '] ;
         mi{1,1}=['<b><font size="2"><span style="background-color:rgb(255,215,0);"> ' msg  '</span></font></b><br>'];

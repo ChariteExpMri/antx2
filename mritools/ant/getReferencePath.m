@@ -4,17 +4,17 @@
 
 function [ref ]=getReferencePath
 ref=[];
-makefigure;
+
+us.animals= {'mouse' ,'rat','etruscianshrew'};
+makefigure(us);
 
 uiwait(gcf);
 % -------------
 us=get(findobj(gcf,'tag','setAtlasReference'),'userdata') ;
-% % if isfield(us,'isOK')==1     %% [x]close pressed
-% %     ref=[]; 
-% % end
 
-% disp( 'us.isOK');
-% disp( us.isOK);
+
+
+
 
 if ~isempty(us) && isfield(us,'isOK')==1 && us.isOK==1
     
@@ -113,7 +113,7 @@ set(gcf,'userdata',us);
 
 
 
-function makefigure
+function makefigure(us)
 
 try; delete(findobj(gcf,'tag','species')); end
 
@@ -246,11 +246,14 @@ end
     % set(hu,'position',[.3 .2, .65 .06],'string','"other reference" from ant-tbx');
 
 % ==============================================
-%%   
+%%   animal
 % ===============================================
+animals=us.animals;
+ 
 
 hu=uicontrol('style','popupmenu','units','norm');
-set(hu,'position',[.1 .1, .4 .1],'string',{'mouse' ,'rat'},'TooltipString','select species here');
+
+set(hu,'position',[.1 .1, .4 .1],'string',animals,'TooltipString','select species here');
 set(hu,'tag','species','fontsize',fs);
 set(hu,'position',[.005 .02, .25 .08]);
 
