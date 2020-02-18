@@ -67,7 +67,8 @@
 % set-up pipeline for etruscian shrew
 % [xcoreg]: enables elastix registration with multiple paramter files (regid&|affine&|bspline) and
 % without spm-registration, (set "task" to [100])
-
+% #ra 19 Feb 2020 (15:15:55)
+% [xdraw.m]: manual drawing tool to create masks  ->>Tools/"draw mask"
 
 function antver()
 
