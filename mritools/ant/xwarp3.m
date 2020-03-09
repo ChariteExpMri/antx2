@@ -278,6 +278,13 @@ if find(s.task==1)
             evalc('skullstrip_pcnn3d(s.t2, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip''   )'); ;
         end
         fprintf('done.\n ');
+    elseif s.usePriorskullstrip==2 % dirty maskingApproach
+        
+        fprintf('     ...do skullstripping [method-2]..');
+%         skullstrip2(s.t2,5,[3:7],20,1,0,1);
+         skullstrip2(s.t2,5,[3],1,20,1,0,1);
+        fprintf('done.\n ');
+        
     else
         fprintf('     ...remove Background..');
         mskfile=fullfile(s.pa,'_msk.nii');

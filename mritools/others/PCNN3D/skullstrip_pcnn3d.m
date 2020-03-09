@@ -53,7 +53,7 @@ else
     end
 end
 
-disp(['skullstripping with parameters of [' pp.species ']']);
+% disp(['skullstripping with parameters of [' pp.species ']']);
 
 
 

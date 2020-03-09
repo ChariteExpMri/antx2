@@ -69,7 +69,9 @@
 % without spm-registration, (set "task" to [100])
 % #ra 19 Feb 2020 (15:15:55)
 % [xdraw.m]: manual drawing tool to create masks  ->>Tools/"draw mask"
-
+% #ra 09 Mar 2020 (12:31:52)
+% etrucian-shrew modified templates --> not finalized jet
+% [approach_60] t2.nii to "sample"-registration
 function antver()
 
 % r=preadfile(which('antver.m')); r=r.all;
