@@ -611,7 +611,7 @@ if find(s.task==3)
             spm fmri;drawnow;
         end
         loadspmmouse;drawnow;
-       xsegment(t2,template,s); %
+       xsegment(s.t2,template,s); %
     end
     
     

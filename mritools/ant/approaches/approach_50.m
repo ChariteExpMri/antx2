@@ -1,4 +1,4 @@
-% #ok approach_10: 
+% #ok approach_50: 
 % #b DETAILS: 
 % #k moving IMAGE brainmask:  - using gray & white TPM,
 % #k                          - fill holes in mask
