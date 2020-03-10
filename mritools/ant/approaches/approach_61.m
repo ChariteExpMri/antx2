@@ -142,7 +142,7 @@ if exist(fisample0)~=2;
     error('"sample.nii" not found in templates-path');
 end
 
-[he e =rreslice2target(fisample0, ref, [], 1);
+[he e] =rreslice2target(fisample0, ref, [], 1);
 % [hf f] =rgetnii(fisample1);
 % [he e] =rgetnii(fullfile(s.pa, 'AVGT.nii'));
 % [he e] =rgetnii(fullfile(s.templatepath, 'sample.nii'));
