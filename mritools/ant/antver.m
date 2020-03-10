@@ -73,7 +73,9 @@
 % etrucian-shrew modified templates --> not finalized jet
 % [approach_60] t2.nii to "sample"-registration: register t2.nii to another t2.nii-sample in standard space
 % Par0033bspline_EM3.txt: bspline-paramter file works well with "sample"-registration
-% 
+% #ra 11 Mar 2020 (17:28:49)
+% [xsegmenttube]: segment several animals from the same image /tube
+% [xsplittubedata]: split data-sets based on tube-segementation
 
 function antver()
 

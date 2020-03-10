@@ -52,8 +52,8 @@
 //(Metric "AdvancedMattesMutualInformation")
 //(Metric "AdvancedNormalizedCorrelation")
 
-//(Metric "AdvancedNormalizedCorrelation" "TransformBendingEnergyPenalty")
-(Metric "AdvancedMattesMutualInformation" "TransformBendingEnergyPenalty")
+(Metric "AdvancedNormalizedCorrelation" "TransformBendingEnergyPenalty")
+//(Metric "AdvancedMattesMutualInformation" "TransformBendingEnergyPenalty")
 
 // ***************** Transformation **************************
 

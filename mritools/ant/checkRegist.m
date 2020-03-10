@@ -391,7 +391,11 @@ else
             fis=fullfile(pas,us.tb{mode,1});            % 'coreg.jpg'
             [a map]=imread(fis);
             si= (size(a));
-            hs=imagesc(a);
+            if size(a,3)==3
+                hs=image(a);
+            else
+                hs=imagesc(a);
+            end
             %     hs=imagesc(a(1:round(si.*.6),:  ,:));
         catch
             hs=imagesc(permute([0.9294    0.6941    0.1255], [3 1 2 ])) ;

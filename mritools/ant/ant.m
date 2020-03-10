@@ -793,6 +793,9 @@ mh2 = uimenu(mh,'Label',' make mask from Excelfile',                            
 
 mh2 = uimenu(mh,'Label',' draw mask',                                            'Callback',{@menubarCB, 'drawmask'},'Separator','on');
 
+mh2 = uimenu(mh,'Label',' [1] segment tube',                                         'Callback',{@menubarCB, 'segmenttube'},'Separator','on');
+mh2 = uimenu(mh,'Label',' [2] split tube data',                                   'Callback',{@menubarCB, 'splittubedata'},'Separator','off');
+
 
 
 mh = uimenu(f,'Label','2D');
@@ -1470,6 +1473,28 @@ elseif strcmp(task,'drawmask')
 %     statusMsg(1,' generate mask from excelfile');
 %     xexcel2atlas(1);
 %     statusMsg(0);    
+elseif strcmp(task,'segmenttube')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xsegmenttube';
+        return ;
+    end
+    
+  
+    statusMsg(1,' segment tube');
+    xsegmenttube;
+    statusMsg(0);     
+
+elseif strcmp(task,'splittubedata')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xsplittubedata';
+        return ;
+    end
+    
+  
+    statusMsg(1,' split tube data');
+    xsplittubedata;
+    statusMsg(0);  
+    
     
     %________________________________________________
     
