@@ -188,6 +188,33 @@ if isfield(s,'create_anopcol')==1
     end
 end
 
+%===================================================================================================
+% ==============================================
+%%   copy other files
+% ===============================================
+try
+    kk=dir(patpl);
+    kk([kk(:).isdir])=[];
+    fidone={kk(:).name}';
+    
+    kk=dir(s.refpath);
+    kk([kk(:).isdir])=[];
+    firef={kk(:).name}';
+    
+    fimiss=setdiff(firef,fidone);
+    fimiss( ismember(fimiss,{'sANO.nii', 'sAVGT.nii' }) ) =[];
+
+    f0=stradd(fimiss,[s.refpath filesep ],1);
+    f1=stradd(fimiss,[  patpl   filesep ],1);
+    
+    for i=1:length(f0)
+        disp(['..copying '  fimiss{i}])
+        copyfile(f0{i},f1{i},'f');
+    end
+catch ME
+    ME
+end
+    
 
 %-------------------------------------------------------------------------------------------
 % f1=fullfile(fileparts(f1),'_sample2.nii');

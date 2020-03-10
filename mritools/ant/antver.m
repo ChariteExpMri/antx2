@@ -71,7 +71,10 @@
 % [xdraw.m]: manual drawing tool to create masks  ->>Tools/"draw mask"
 % #ra 09 Mar 2020 (12:31:52)
 % etrucian-shrew modified templates --> not finalized jet
-% [approach_60] t2.nii to "sample"-registration
+% [approach_60] t2.nii to "sample"-registration: register t2.nii to another t2.nii-sample in standard space
+% Par0033bspline_EM3.txt: bspline-paramter file works well with "sample"-registration
+% 
+
 function antver()
 
 % r=preadfile(which('antver.m')); r=r.all;

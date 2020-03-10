@@ -668,7 +668,7 @@ for i=1:length(parafilesinv)
     copyfile(parafiles{i},parafilesinv{i},'f');
     pause(.01)
     rm_ix(parafilesinv{i},'Metric'); pause(.1) ;
-    set_ix(parafilesinv{i},'Metric','DisplacementMagnitudePenalty'); %SET DisplacementMagnitudePenalty
+    set_ix3(parafilesinv{i},'Metric','DisplacementMagnitudePenalty'); %SET DisplacementMagnitudePenalty
 end
 
 trafofile=dir(fullfile(z.outforw,'TransformParameters*.txt')); %get Forward TRAFOfile
