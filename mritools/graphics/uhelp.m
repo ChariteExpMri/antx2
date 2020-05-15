@@ -570,7 +570,8 @@ if strcmp(get(tx,'style'),'listbox')
         jListbox.setSelectionAppearanceReflectsFocus(0);
         %
         v2=[ 0 0 0];%color
-        v=[ 0.98    0.98    0.98];
+%         v=[ 0.98    0.98    0.98];
+        v=[0.9451    0.9686    0.9490];
         % v=uisetcolor
         set(jListbox, 'SelectionForeground',java.awt.Color(v2(1),v2(2),v2(3))); % java.awt.Color.brown)
         % set(jListbox, 'SelectionForeground',java.awt.Color(v(1),v(2),v(3))); % java.awt.Color.brown)

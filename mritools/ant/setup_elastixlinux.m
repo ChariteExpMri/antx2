@@ -1,10 +1,37 @@
 % setup_elastixlinux.m -   SETUP ELASTIX AND MRICRON in LINUX
-function setup_elastixlinux()
+% If this function fails please install elstix/mricron manually via linus terminal
+%
+% ==============================================
+%%   manual installytion, (if this function fails)
+% ===============================================
+% (1) ### ELASTIX  ####
+% (1.1) copy files
+% from folder .../antx2/mritools/elastix/elastix_linux64_v4.7/bin
+% copy  'elastix'      to local folder: /usr/bin/
+% copy  'transformix'  to local folder: /usr/bin/
+% from folder .../antx2/mritools/elastix/elastix_linux64_v4.7/bin
+% copy  'libANNlib.so' to local folder: /usr/lib/
+% (1.2) set changing file permission rights in terminal
+% sudo chmod 777 /usr/bin/elastix
+% sudo chmod 777 /usr/bin/transformix
+% sudo chmod 777 /usr/lib/libANNlib.so
+% (2) ### MRICRON  ####
+% in terminal type: sudo apt install mricron
+% follow intructions
+% ===============================================
 
+
+function setup_elastixlinux()
+clc;
+disp(['running function: ' mfilename]);
+help setup_elastixlinux
 
 %% SETUP ELASTIX AND MRICRON in LINUX
 % ====================================
-clc;
+
+
+
+
 disp('===========================================');
 disp('  SETUP ELASTIX AND MRICRON in LINUX       ');
 disp('===========================================');
@@ -99,7 +126,7 @@ disp(['=== FINAL PERSMISSION STATUS OF ELASIX FILES ====']);
 
 %% =========================================================
 %% CHECK
-[r r2]=system('elastix');
+[r r2]=system('elastix'); 
 if r~=0
     disp('### 1/2: ELASTIX setup failed!                ¯\_(ツ)_/¯ ');
     disp([ ' ...' char(cellstr(r2))]);
@@ -118,7 +145,8 @@ disp('  STEP-2/2: MRICRON INSTALLATION   ');
 disp('===================================');
 disp('..please wait this will take some minutes..');
 
-[r r2]=system('sudo apt install mricron');
+eval('!sudo apt install mricron'); % used this because "system" command fails (due to userInput)
+[r r2]=system('sudo apt install mricron');% this ist just to check if installation was succesfull
 if r~=0
     disp('### 2/2: MRICRON setup failed!                ¯\_(ツ)_/¯ ');
 else

@@ -76,6 +76,21 @@
 % #ra 11 Mar 2020 (17:28:49)
 % [xsegmenttube]: segment several animals from the same image /tube
 % [xsplittubedata]: split data-sets based on tube-segementation
+% #ra 20 Mar 2020 (12:30:38)
+% [case-filematrix]: export selected files from selected folders
+% % #ra 14 May 2020 (14:14:07)
+% [elastix_checkinstallation] addeed (extras/troubleshoot)  .. fct to check installation of elastix-program
+% [uhelp.m] modified: selection color  
+% [checkRegist] modified: changed image2clipboard function 
+% [summary_export] added (available via context menu of "PR"-radio in ANT-main window) 
+% .. export HTML-summary (ini/coreg/segm/warp) structure to exporting folder
+% #ra 15 May 2020 (17:33:52)
+% [setup_elastixlinux.m] modified-->solved problem: stucked installation of MRICRON 
+%
+%
+%----- EOF
+%
+
 
 function antver()
 

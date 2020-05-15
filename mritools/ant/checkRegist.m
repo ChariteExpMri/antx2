@@ -738,7 +738,8 @@ else
 end
 
 try
-    print(newFig,'-clipboard',fmt);
+%     print(newFig,'-clipboard',fmt);
+    hgexport(newFig,'-clipboard');
 catch
     try
         hgexport(newFig,'-clipboard');

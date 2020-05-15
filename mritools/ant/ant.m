@@ -183,6 +183,7 @@ h = uicontrol('style','radiobutton','units','normalized','position',[.94 .65 .08
 c = uicontextmenu;
 plotline.UIContextMenu = c;
 m1 = uimenu(c,'Label','show HTML summary now','Callback',@showHTMLsummary);
+m1 = uimenu(c,'Label','export HTML summary','Callback',@fun_summary_export);
 set(h,'UIContextMenu',c);
 
 %====INDICATE LAST UPDATE-DATE ========================
@@ -787,6 +788,9 @@ mh2 = uimenu(mh,'Label',' delete files',                                        
 mh2 = uimenu(mh,'Label',' manipulate header',                                              'Callback',{@menubarCB, 'manipulateheader'},'Separator','on'  );
 mh2 = uimenu(mh,'Label',' replace header (older version)',                                 'Callback',{@menubarCB, 'replaceheader'},'Separator','off');
 
+
+
+
 mh2 = uimenu(mh,'Label',' image calculator',                                               'Callback',{@menubarCB, 'calc0'},'Separator','on');
 mh2 = uimenu(mh,'Label',' Mask-Generator (GUI)',                                           'Callback',{@menubarCB, 'maskgenerate'},'Separator','on');
 mh2 = uimenu(mh,'Label',' make mask from Excelfile',                                       'Callback',{@menubarCB, 'maskgenerateFromExcelfile'},'Separator','off');
@@ -851,8 +855,13 @@ mh2 = uimenu(mh,'Label','documentations (docs)',                                
 
 mh2 = uimenu(mh,'Label','display main functions',                                       'Callback',{@menubarCB, 'dispmainfun'});
 mh2 = uimenu(mh,'Label','ant-settings',                                                 'Callback',{@menubarCB, 'antsettings'},'separator','on');
-mh2 = uimenu(mh,'Label','version',                                                      'Callback',{@menubarCB, 'version'},'separator','on');
-mh2 = uimenu(mh,'Label','contact',                                                      'Callback',{@menubarCB, 'contact'});
+mh2 = uimenu(mh,'Label','version',                                                 'Callback',{@menubarCB, 'version'},'separator','on');
+mh2 = uimenu(mh,'Label','contact',                                                 'Callback',{@menubarCB, 'contact'});
+% mh2 = uimenu(mh,'Label','troubleshoot',                                            'Callback',{@menubarCB, 'troubleshoot'});
+ 
+mh2   = uimenu(mh,'Label','troubleshoot' );
+msub1 = uimenu(mh2,'Label','check ELASTIX installation',                          'Callback',{@menubarCB, 'check_ELASTIX_installation'});
+
 
 mh2 = uimenu(mh,'Label','visit ANTx2 repository (Github)',                                  'Callback',{@menubarCB, 'visitGITHUB'},'separator','on');
 mh2 = uimenu(mh,'Label','get templates from googledrive',                                  'Callback',{@menubarCB, 'openGdrive'},'separator','off');
@@ -1825,6 +1834,15 @@ elseif strcmp(task,'version')
     
     antver;
     %________________________________________________
+elseif strcmp(task,'check_ELASTIX_installation')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='elastix_checkinstallation';
+        return ;
+    end
+       
+    
+    elastix_checkinstallation;
+    %________________________________________________
 elseif strcmp(task,'antsettings')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='antsettings';
@@ -2019,6 +2037,12 @@ end
 if exist(page)==2
     xhtmlgr('show','page',page);
 end
+
+function fun_summary_export(e,e2)
+
+summary_export();
+
+
 
 function showCommandHistory(e,e2)
 

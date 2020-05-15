@@ -210,6 +210,7 @@ e=e0(2:end,:);
 
 %remove NAN-columns;
 idel=find(strcmp(he,'NaN'));
+idel(idel<=max([z.columnNewID z.columnHemispherType]))=[]; %do not remove empty cell-columns preceeding newID/hemi-column
 he(idel) =[];
 e(:,idel)=[];
 
@@ -218,12 +219,30 @@ ireg=regexpi2(he,['^' 'region' '$']);
 e(:,ireg)=cellfun(@(a){ [num2str(a)]},e(:,ireg));  %convert to string (no 'NAN')
 e(find(strcmp(e(:,ireg),'NaN')),:) =[];            %remove NAN-rows
 
+
 % GET NECESSARY COLUMNS
 v.iregion=regexpi2(he,['^' 'region' '$']);
 v.ichild=regexpi2(he,['^' 'children' '$']);
 v.iID   =regexpi2(he,['^' 'ID' '$']);
 v.inewID          =z.columnNewID;
 v.ihemisphereType =z.columnHemispherType;
+
+%========================= check typos
+fx=e(:,v.inewID );
+fx=cellfun(@(a){ [num2str(a)]}, fx);
+fx(cellfun(@isempty, fx))={'NaN'};
+fx=regexprep(fx,{'^\s+$' },{'NaN'});
+fx=cellfun(@(a){ [str2num(a)]}, fx);
+e(:,v.inewID )=fx;
+
+fx=e(:,v.ihemisphereType );
+fx=cellfun(@(a){ [num2str(a)]}, fx);
+fx(cellfun(@isempty, fx))={'NaN'};
+fx=regexprep(fx,{'^\s+$' },{'NaN'});
+fx=cellfun(@(a){ [str2num(a)]}, fx);
+e(:,v.ihemisphereType )=fx;
+
+%========================
 
 %% get NEW IDS
 newIDCOL=e(:,v.inewID);
@@ -750,6 +769,32 @@ if isexcel==1
 else
     sub_write2excel_nopc(fileout,'output1',[],[{'SET to FONT to "COURIER NEW" to modify'};txt]);
     sub_write2excel_nopc(fileout,'output2',['ID' hb2(2:end)],[b2]);
+end
+
+% ==============================================
+%%   save [7] OUTPUT analogon to ANO.xlsx
+% ===============================================
+fileout2=fullfile( z.outputDir, [ z.nameout '.xlsx']);
+hg={'Region'	'colHex'	'colRGB'	'ID'	'Children'};
+cols   =[b2(:,3),b2(:,4),b2(:,5)];
+cols   =cellfun(@(a){ [round(a)]}, cols);
+colhex =cellfun(@(a,b,c){[    sprintf('%02X',[a b c])  ]}, cols(:,1),cols(:,2),cols(:,3));
+colrgb =cellfun(@(a,b,c){[ num2str(a) ' ' num2str(b)  ' ' num2str(c)  ]}, cols(:,1),cols(:,2),cols(:,3));
+chnew  =repmat({['']},[size(b2,1) 1]);
+g=[b2(:,2) colhex colrgb   b(:,1)  chnew ];
+
+% uhelp(plog([],[hg;g]),1);
+
+try; 
+    delete(fileout2);
+end
+if isexcel==1
+    pwrite2excel(fileout2,{1 'atlas' },hg,[],g);
+else
+    sub_write2excel_nopc(fileout2,'atlas',hg,g);
+    cprintf([1 0 1],['WARNING\n']);
+    disp(['warning: for "' fileout2 '"']);
+    disp(['  remove default sheets (sheet1-3; tabelle1-3): such that the "atlas"-sheet is the first sheet']);
 end
 
 

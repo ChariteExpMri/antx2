@@ -124,7 +124,10 @@ for i=1: length(pas)
         end
     end
 end
-% toc
+% delete files from list
+idel=find(sum(ma,2)==0); % not directly in mdir-folder
+filesuni(idel)=[];
+ma(idel,:)=[];
 
 
 %plot
@@ -174,10 +177,18 @@ set(ht,'fontsize',7,'interpreter','none');
 %
 % set([ht  ht2],'interpreter','none');
 set(gca,'ytick',[]);
-cases=regexprep(pas,['.*'  '\' filesep ''],'');
+% cases=regexprep(pas,['.*'  '\' filesep ''],'');
+[~,cases]=fileparts2(pas);
 set(gca,'xtick',[1: size(ma,2)], 'xticklabels',strrep(cases,'_',''),'fontweight','bold');
 
-try; xticklabel_rotate([],55,strrep(cases,'_',''),'HorizontalAlignment','right','fontsize',6);
+try;
+%     xticklabel_rotate([],55,strrep(cases,'_',''),'HorizontalAlignment','right','fontsize',6);
+   hx= xticklabel_rotate([],55,cases,'HorizontalAlignment','right','fontsize',6);
+   for i=2:2:length(hx)
+      set(hx(i),'color',[0 0 1]) ;
+   end
+   set(hx(i),'fonweight','bold') ;
+ 
 catch
     try
         set(gca,'xTickLabelRotation',55);
@@ -281,10 +292,228 @@ set(findobj(gcf,'style','radiobutton'),'units','norm','fontunits','norm');
 % set(gcf,'position',[0.0021    0.0689    0.5365    0.8989]);
 % drawnow;
 % set(gcf,'position',[0.0017    0.0689    0.5424    0.8989]);
-drawnow;
 
+%-------------------------- USERDATA
+u.cases    =cases;
+u.filesuni =filesuni;
+u.pas      =pas;
+set(gcf,'userdata',u);
+%--------------------------
+
+casefile_exportfiles();
+drawnow;
 % label=repmat({'ee'},[100 1])
 % set(datacursormode(gcf), 'DisplayStyle','datatip', 'SnapToDataVertex','off','Enable','on', 'UpdateFcn',{@showlabel,label});
+
+
+function casefile_exportfiles
+
+pos=get(gca,'position');
+set(gca,'tag','ax1');
+ax1=findobj(gcf,'tag','ax1');
+%% ====================
+% ax2=axes('position',[0 0 .001 .001],'tag','seletfile')
+pos2=pos; pos2(1)=0; pos2(3)=.025;
+% set(ax2,'position',pos2);
+%
+%
+% yl=get(ax1,'ylim'); yl=[floor(yl(1))  ceil(yl(2))]
+% set(ax2,'ylim',yl,'box','on')
+% axes(ax2)
+% hv=hline([1: round(max(yl))],'color','k','hittest','off')
+
+%% ====================
+him=findobj(ax1,'type','Image');
+dd=get(him,'cdata');
+% axes(ax2)
+% him2=image(dd(:,1,:))
+
+tx=findobj(ax1,'type','text','-and','tag','files');
+txpos=cell2mat(get(tx,'position'));
+
+%% ====================
+% hc=uicontrol('style','radio','units','normalized','tag','rbselect')
+%% ==================== set rb.buttons
+delete(findobj(gcf,'tag','rbselect'));
+% set(ax2,'ydir','reverse')
+% ucstep=(pos2(4)-pos2(2))/(size(tx,1))+.0045
+ucstep=pos2(4)/size(tx,1); 
+rbhigh2=ucstep; %used for files-RB
+for i=1:size(tx,1)
+    hc=uicontrol('style','radio','units','normalized','tag','rbselect');
+    set(hc,'position',[pos2(1)   pos2(2)+i*ucstep-ucstep  pos2(3) ucstep]);
+    set(hc,'tooltipstring', get(tx(i),'string') ,'fontsize',2 );
+%     col=squeeze(dd(end+1-i,1,:));
+    col=get(tx(i),'Color');
+    set(hc,'BackgroundColor',col);
+%      if sum(col)==3; set(hc,'visible','off'); end
+    set(hc,'userdata',get(tx(i),'string'));
+end
+% ==================== select all files button
+i=-1;
+delete(findobj(gcf,'tag','rbselectall'));
+hc=uicontrol('style','radio','units','normalized','tag','rbselectall');
+set(hc,'position',[pos2(1)   pos2(2)+i*ucstep-ucstep  pos2(3)*2 ucstep]);
+set(hc,'tooltipstring', 'select all files' ,'fontsize',6,'string','all files' );
+col=[1.0000    0.8431         0];
+set(hc,'BackgroundColor',col);
+set(hc,'userdata','allselect');
+set(hc,'callback',@selectallfiles);
+set(hc,'userdata',0)
+% ==================== export button
+i=-3;
+delete(findobj(gcf,'tag','pbexport'));
+hc=uicontrol('style','pushbutton','units','normalized','tag','pbexport');
+set(hc,'position',[pos2(1)   pos2(2)+i*ucstep-ucstep  pos2(3)*3 ucstep*1.5]);
+set(hc,'tooltipstring', 'export files' ,'fontsize',7,'string','export');
+set(hc,'callback',@exportfiles);
+%% ====================  
+%% file-selection
+%% ====================  
+ax1=findobj(gcf,'tag','ax1');
+u=get(gcf,'userdata');
+
+%% ==================== set rbselectdirs
+delete(findobj(gcf,'tag','rbselectdirs'));
+pos3=pos; pos3([2 4])=[0 .02];
+ucstep=pos3(3)/length(u.cases);
+for i=1:length(u.cases)
+    hc=uicontrol('style','radio','units','normalized','tag','rbselectdirs');
+    set(hc,'position',[pos3(1)+i*ucstep-ucstep pos3(2)  ucstep.*.99 rbhigh2]);
+    set(hc,'tooltipstring', u.cases{i} ,'fontsize',2 );
+%     col=[1 1 1];%[ 0.9922    0.9176    0.7961];
+   
+%      if sum(col)==3; set(hc,'visible','off'); end
+    set(hc,'userdata',u.cases{i});
+    if mod(i,2)==0
+        set(hc,'BackgroundColor',[0 0 1]);
+    else
+         set(hc,'BackgroundColor',[0.4941    0.4941    0.4941]);
+    end
+end
+
+%% ==================== select all-dirs button
+i=-1;
+delete(findobj(gcf,'tag','rbselectalldirs'));
+hc=uicontrol('style','radio','units','normalized','tag','rbselectalldirs');
+ set(hc,'position',[pos3(1)+i*ucstep-ucstep/2 pos3(2)  ucstep.*.95 rbhigh2]);
+set(hc,'tooltipstring', 'select all animal directories' ,'fontsize',6,'string','all dirs' );
+col=[1.0000    0.8431         0];
+set(hc,'BackgroundColor',col);
+set(hc,'callback',@selectalldirs);
+set(hc,'userdata',0);
+
+function selectalldirs(e,e2)
+disp('select all dirs');
+hs=findobj(gcf,'tag','rbselectalldirs');
+val=~get(hs,'userdata');
+set(hs,'userdata',val);
+
+hf=findobj(gcf,'tag','rbselectdirs','-and','visible','on');
+set(hf,'value',val);
+
+
+function selectallfiles(e,e2)
+% disp('select all files');
+hs=findobj(gcf,'tag','rbselectall');
+val=~get(hs,'userdata');
+set(hs,'userdata',val);
+
+hf=findobj(gcf,'tag','rbselect','-and','visible','on');
+set(hf,'value',val);
+ 
+
+
+function exportfiles(e,e2)
+% disp('export files');
+[outdir]=uigetdir(pwd,'select export folder');
+if isnumeric(outdir);disp('no export-folder selected...cancel'); return; end
+
+%-----dirs-------
+% mdir=antcb('getsubjects');
+hd   =findobj(gcf,'tag','rbselectdirs','-and','visible','on','-and','value',1);
+if isempty(hd); disp('no folders selected...cancel');return; end
+names=get(hd,'userdata'); names=cellstr(names);
+u=get(gcf,'userdata');
+mdir=stradd(names,[ fileparts(u.pas{1}) filesep ] ,1 ); 
+ 
+%-----files-------
+hf   =findobj(gcf,'tag','rbselect','-and','visible','on','-and','value',1);
+hfall=findobj(gcf,'tag','rbselect','-and','visible','on');
+if isempty(hf); disp('no files selected...cancel');return; end
+
+
+if length(hfall)==length(hf)
+   exportmode=1; %COPY ENTIRE FOLDER
+else
+   exportmode=2;
+end
+
+
+if isempty(hf); return; end
+%% ===================================
+if exportmode==1
+    %% ===================================
+   for i=1:length(mdir)
+       [~,name]=fileparts(mdir{i});
+       cprintf([0 .5 0],...
+           ['..exporting [' num2str(i) '/' num2str(length(mdir)) '] ' name '\n'] );
+       newdir=fullfile(outdir,name);
+       copyfile(mdir{i}, newdir,'f');
+   end
+    
+%% ===================================
+elseif exportmode==2
+    %% ===================================
+    
+    files={};
+    for i=1:length(hf)
+        files(end+1,1)={get(hf(i),'userdata')};
+    end
+    % regexprep({'     ee rr    '},{'^\s+' '\s+$'},{''})
+    files=regexprep(files,{'^\s+' '\s+$'},{''});
+    
+    tb=allcomb(mdir,files);
+    allfiles=cellfun(@(a,b) {[a filesep b]},tb(:,1),tb(:,2));
+    
+    
+    for i=1:length(allfiles)
+        
+            [px,fname,ext]=fileparts(allfiles{i});
+            [ ~,mname    ]=fileparts(px);
+            fname2=[fname,ext];
+           
+            if exist(allfiles{i})==2
+                cprintf([0 .5 0],...
+                    ['..exporting [' num2str(i) '/' num2str(length(allfiles))...
+                    '] ' mname ' : ' fname2 '\n'] );
+                newdir=fullfile(outdir,mname);
+                if exist(newdir)~=7;
+                    mkdir(newdir);
+                end
+                newfile=fullfile(newdir,fname2);
+                copyfile(allfiles{i}, newdir,'f');
+            else
+                cprintf([1 0 1],...
+                    ['..WARNING.. [' num2str(i) '/' num2str(length(allfiles))...
+                    '] ' mname ' : ' fname2 '...>file not found\n'] );
+            end
+    end
+end
+
+showinfo2(['export-folder'],outdir) ;
+
+
+
+
+
+
+
+
+
+
+
+
 
 function foldertask(h,e)
 hsel=findobj(gcf,'tag','selected');

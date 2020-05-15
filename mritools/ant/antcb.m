@@ -1717,6 +1717,12 @@ fp    = stradd(md,[an.datpath filesep],1);                %fullpath mouseDirs
 matmd =['{';stradd(stradd(md,'     ''',1),'''',2) ; '};'];%mouseDirs matlabcell
 matfp =['{';stradd(stradd(fp,'     ''',1),'''',2) ; '};'];%fullpath mouseDirs matlabcell
 
+
+hgfeval(get(lb3,'callback'),lb3);
+% hl=findobj(findobj(0,'tag','ant'),'tag','lb3')
+% hgfeval(get(hl,'callback'),hl)
+% hgfeval(hc,hl)
+
 % out={md fp matmd matfp};
 out={};
 
