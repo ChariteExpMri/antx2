@@ -86,7 +86,8 @@
 % .. export HTML-summary (ini/coreg/segm/warp) structure to exporting folder
 % #ra 15 May 2020 (17:33:52)
 % [setup_elastixlinux.m] modified-->solved problem: stucked installation of MRICRON 
-%
+% #ra 29 May 2020 (14:45:41)
+% [xstatlabels] bugfixed 
 %
 %----- EOF
 %

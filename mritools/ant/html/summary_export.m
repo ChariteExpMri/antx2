@@ -90,6 +90,7 @@ for j=1:length(w.pa_animals)
     [~,mdir]=fileparts(w.pa_animals{j});
     fT=fullfile(w.pa_export,'dat',mdir ,'summary');
     try
+        mkdir(fT); % linux needs this
         copyfile(fS,fT,'f');
         cprintf([0 .5 0], [ '  .. [' num2str(j) ']' mdir '\n']);
     catch

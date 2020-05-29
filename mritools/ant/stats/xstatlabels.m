@@ -109,7 +109,23 @@
 % v.task        =   'export';       % % export the result (data must have been processed before)
 % v.exportfile   =  fullfile(pwd, '__result123.xlsx'); % %save result as... 
 % xstatlabels(v);     % % RUN statistic
-
+%% example2
+% v = [];
+% v.data         =  'F:\data1\bug_labelbasedStatistic\adc_labels_other_both_28May2020_10-35-56.xlsx';          % % excel data file
+% v.dataSheet    =  'median';          % % sheetname of excel data file
+% v.aux          =  'F:\data1\bug_labelbasedStatistic\Manuskript_IL6_sham_group_ assignment.xlsx';          % % excel group assignment file
+% v.auxSheet     =  'Tabelle1';          % % sheetname of excel group assignment file
+% v.id           =  'Animal MRI-ID';          % % name of the column containing the animal-id in the auxSheet
+% v.f1           =  'genotype Cx30/FlexIL6';          % % name of the column containing the group-assignment in the auxSheet
+% v.f1design     =  [0];          % % type of test: [0]between, [1]within
+% v.typeoftest1  =  'ttest2';          % % applied  statistical test (such as "ranksum" or "ttest2")
+% v.regionsfile  =  '';          % % <optional> excelfile containing regions, only this regions will be tested
+% v.qFDR         =  [0.05];          % % q-threshold of FDR-correction (default: 0.05)
+% v.isfdr        =  [1];          % % use FDR correction: [0]no, [1]yes
+% v.showsigsonly =  [0];          % % show significant results only:  [0]no, show all, [1]yes, show signif. results only
+% v.issort       =  [0];          % % sort results according the p-value: [0]no, [1]yes,sort 
+% v.process      =  [0];          % % calculate statistic [0]no, [1]yes, (simulates pressing the [process]-button) 
+% xstatlabels(v);     % % RUN statistic
 
 
 function xstatlabels(varargin)
@@ -163,7 +179,7 @@ try; delete(findobj(0,'tag','stat')); end
 
 
 figure;
-set(gcf,'tag','stat','color','w','name','stat','NumberTitle','off');
+set(gcf,'tag','stat','color','w','name',['stat [' mfilename ']'],'NumberTitle','off');
 set(gcf,'menubar','none','units','normalized','position',[0.5594    0.4122    0.3889    0.4667]);
 
 
@@ -269,9 +285,9 @@ h=uicontrol('style','pushbutton','units','norm','position', [0 .45 .2 .05],'stri
     'TooltipString', 'load excelfile with regions of interest');
 
 
-h=uicontrol('style','pushbutton','units','norm','position', [0 .4 .2 .05],'string','regions',...
+h=uicontrol('style','pushbutton','units','norm','position', [0 .4 .2 .05],'string',' select regions',...
     'tag','regions','backgroundcolor','w','callback',@regions,...
-    'TooltipString', 'select specific anatomical regions');
+    'TooltipString', 'select specific anatomical regions','fontsize',8);
 %process
 h=uicontrol('style','pushbutton','units','norm','position',[0.2 .4 .2 .05],'string','process',...
     'tag','process','backgroundcolor','w','callback',@process,'fontweight','bold',...
@@ -289,6 +305,12 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.6 .4 .2 .05],...
 
 h=uicontrol('style','pushbutton','units','norm','position',[0.8 .4 .15 .05],...
     'string','get batch','tag','xbatch','callback',@xbatch,'backgroundcolor','w','tooltipstring','get code to re-run');
+
+h=uicontrol('style','pushbutton','units','norm','position',[0.9 .5 .1 .025],...
+    'string','code snippet','tag','xbatch','callback',@codesnippet,'fontsize',4,...
+    'backgroundcolor','w',...
+    'tooltipstring',['code snippet to check the result ' char(10) ' ..modify and test the snippet']);
+
 
 
 us.dummy       =1;
@@ -408,6 +430,7 @@ li=get(e,'string');
 val=get(e,'value');
 us.dataSheet=li{val};
 set(gcf,'userdata',us);
+set(e,'backgroundcolor',[0.8392    0.9098    0.8510]);
 updatelistbox;
 
 function call_auxcheet(e,e2)
@@ -416,6 +439,7 @@ sheet=li{get(e,'value')};
 if strcmp(sheet,'select sheet');
     return
 end
+
 
 us=get(gcf,'userdata');
 [~,collab]=xlsread(us.aux,sheet,'A1:Z1');
@@ -426,6 +450,8 @@ set(gcf,'userdata',us);
 set(findobj(gcf,'tag','popID'),'string',collab);
 set(findobj(gcf,'tag','popgroupF1'),'string',collab);
 set(findobj(gcf,'tag','popgroupF2'),'string',[collab '*none*']);
+set(e,'backgroundcolor',[0.8392    0.9098    0.8510]);
+
 updatelistbox;
 
 
@@ -435,6 +461,8 @@ li=get(e,'string');
 val=get(e,'value');
 us.id=li{val};
 set(gcf,'userdata',us);
+set(e,'backgroundcolor',[0.8392    0.9098    0.8510]);
+
 updatelistbox;
 
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
@@ -444,6 +472,8 @@ li=get(e,'string');
 val=get(e,'value');
 us.f1=li{val};
 set(gcf,'userdata',us);
+set(e,'backgroundcolor',[0.8392    0.9098    0.8510]);
+
 updatelistbox;
 
 function call_f1design(e,e2)
@@ -489,12 +519,13 @@ updatelistbox;
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 
 function process(e,e2)
-% disp('process');
+disp('..wait...');
 hfig=findobj(0,'tag','stat');
 us=get(hfig,'userdata');
 % figure(hfig);
 loadExcelatlas
 % save('us','us');
+us=get(hfig,'userdata');
 a2_sub(us)
 
 
@@ -506,7 +537,7 @@ fig1=findobj(0,'tag','stat');
 us=get(fig1,'userdata');
 
 if isfield(us,'anat')==0
-    disp('load labels');
+    disp('load labels...');
     
     try
         xl = actxserver('excel.application'); %open activex server
@@ -546,20 +577,129 @@ if isfield(us,'anat')==0
         
     end
     
-    us.anat.labels =labx;
-    us.anat.colhex =colhex;
+    iuse=find(~cellfun(@isempty,labx));
+    us.anat.labels =labx(iuse);
+    us.anat.colhex =colhex(iuse);
+    
+    us.anat.labels =us.anat.labels(2:end);
+    us.anat.colhex =us.anat.colhex(2:end);
+ 
     set(fig1,'userdata',us);
 end
 
 
 function regions(e,e2)
-loadExcelatlas;
-
+disp('...select specific regions ...loading labels..wait...');
 warning off;
 fig1=findobj(0,'tag','stat');
 us=get(fig1,'userdata');
+if isfield(us,'regionsfile')
+    us=rmfield(us,'regionsfile'); %
+    try; 
+        us=rmfield(us,'regions');
+    end
+    set(fig1,'userdata',us);
+end
+
+loadExcelatlas;
+
+
+us=get(fig1,'userdata');
 
 o=a3_listbox(us.anat.labels,us.anat.colhex,'iswait',0,'submit',1);
+
+% ADD regions on right side, if selected before
+if isfield(us,'regions')
+    regions2addRight=us.regions;
+    if ~isempty(regions2addRight)
+        lb1=findobj(findobj(0,'tag','listselect'),'tag','lb1');
+        
+        %---move IDS to right LB
+         ix=[];
+        for i=1:size(regions2addRight,1)
+            try
+            tp=cell2mat(regions2addRight(i,2)); tp=tp(:);
+            catch
+             tp=cell2mat(regions2addRight{i,2}); tp=tp(:);   
+            end
+            ix=[ix;tp];
+        end
+        set(lb1,'value',ix);
+        b1=findobj(findobj(0,'tag','listselect'),'tag','b1');
+        hgfeval(get(b1,'callback'));
+        
+        % find combined labels
+        lb2=findobj(findobj(0,'tag','listselect'),'tag','lb2');
+        s0=get(lb2,'string');
+        s1=s0;
+        for i=1:size(regions2addRight,1)
+            if isempty(strfind(regions2addRight{i,1},'@')) %single
+                lab=regions2addRight{i,1};
+                ix=unique([...
+                        regexpi2(s0,[lab '&nbsp;'])
+                        regexpi2(s0,[lab '$'])
+                        ]);
+                s1(ix)=s0(ix)  ;  
+            else %combined region
+                lab=regions2addRight{i,3};
+                ix=[];
+                for j=1:length(lab)
+                    is=unique([...
+                        regexpi2(s0,[lab{j} '&nbsp;'])
+                        regexpi2(s0,[lab{j} '$'])
+                        ]);
+                    ix=[ix is(:)'];
+                end
+               s1(ix)=regexprep(s1(ix),['<html>'],['<html>' regions2addRight{i,1}]);
+                
+            end
+        end
+        set(lb2,'string',s1);
+        
+        
+%         
+%         
+%         
+%         
+%         for i=1:size(regions2addRight,1)
+%             if isempty(strfind(regions2addRight{i,1},'@'))
+%                 ix=regions2addRight{i,2};
+%                 set(lb1,'value',ix);
+%                 b1=findobj(findobj(0,'tag','listselect'),'tag','b1');
+%                 hgfeval(get(b1,'callback'));
+%             else %combined regions
+%                try; 
+%                    ix=cell2mat(regions2addRight{i,2}); 
+%                end
+%                 
+%             end
+%             
+%             
+%         end
+%         
+%         
+%         
+%         
+%         
+%         lb1=findobj(findobj(0,'tag','listselect'),'tag','lb1');
+%         
+%         ix=[];
+%         for i=1:size(regions2addRight,1)
+%             try
+%             tp=cell2mat(regions2addRight(i,2)); tp=tp(:);
+%             catch
+%              tp=cell2mat(regions2addRight{i,2}); tp=tp(:);   
+%             end
+%             ix=[ix;tp];
+%         end
+%         
+%         set(lb1,'value',ix);
+%         
+%         b1=findobj(findobj(0,'tag','listselect'),'tag','b1');
+%         hgfeval(get(b1,'callback'));
+    end
+end
+
 % if isempty(o)
 %     try;  us=rmfield(us.reg,'regions');end
 %     try;  us=rmfield(us,'regions');end
@@ -793,6 +933,8 @@ us.idf1=aaa(2:end,[us.cid us.cf1 us.cf2]);
 he=aaa(1,:);
 ids=cellfun(@(a){[ num2str(a)]},he);
 
+aaa(strcmp(cellfun(@(a) {[num2str(a)]}, aaa(:,1) ),'NaN'),:)=[]; %remove ending NAN-rows
+aaa(1,:)=[];%remove Header
 
 if 0
     
@@ -922,6 +1064,12 @@ if isfield(us,'regionsfile')
     if exist(us.regionsfile)==2
         [~,~,rf]=xlsread(us.regionsfile);
         rf=rf(:,1:2);
+        
+        temp=cellfun(@(a) {[ num2str(a)]}, rf(:,1)); %determine&REMOVE NAN and empty-row
+        iuse=cellfun(@isempty, regexpi(temp,'NaN')) & cellfun(@isempty, regexp(temp,'^$','emptymatch'))        ;
+        rf=rf(iuse,:);
+        rf(1,:)=[] ;%remove HEADER;
+        
         rf=cellfun(  @(a)  {num2str(a)}      ,rf );
        % rf(find(cellfun('isempty',regexpi(rf(:,1),'Nan'))==0),:)=[];%del nans
         rf(:,2)=(cellfun(  @(a)  {str2num(a)}      ,rf(:,2) ));
@@ -1078,12 +1226,19 @@ if us.f1design==0 %between
 %                 disp('-------------');
 %                 disp(aaa(ids,1));
                 
-                if ~isnumeric(ids); ids=cell2mat(ids) ;  end
+                if ~isnumeric(ids); 
+                    ids=cell2mat(ids) ;  
+                end
                 
                 if length(ids)==1;
                     x(j,:)=cell2mat(aaa(ids,  cell2mat(tb(i1,end))));
                     y(j,:)=cell2mat(aaa(ids,  cell2mat(tb(i2,end))));
-                    labsgrouped{j,1}=[''];
+                    if isnumeric(ilab{j})
+                        labsgrouped{j,1}=[''];
+                    else
+                        labsgrouped{j,1}=[  strjoin(aaa(ids,1),' ,')  ];% single region but addressed as "combined"-->to obtain the label in the output
+                    end
+                        
                 else
                    
                     x(j,:)= nanmean(cell2mat(  (aaa(ids,  cell2mat(tb(i1,end))))    ),1)  ;
@@ -1672,10 +1827,15 @@ end
 
 fs=7;
 
+% ==============================================
+%%   
+% ===============================================
+
 out=[];
 delete(findobj(0,'tag','listselect'));
 figure;
 set(gcf,'menubar','none','units','norm','tag','listselect','color','w');
+set(gcf,'name','Region selection','NumberTitle','off');
 set(gcf,'position',[ 0.0049    0.0800    0.4000    0.8844]);
 h1=uicontrol('style','listbox','units','norm','position',[0    .1 .48 .9],...
     'string','','tag','lb1','fontsize',fs);
@@ -1683,12 +1843,38 @@ h2=uicontrol('style','listbox','units','norm','position',[.52   .1 .48 .9],...
     'string','','tag','lb2','fontsize',fs);
 
 
-r2=cellfun(@(a,b){[['<html><body bgcolor="#' b '">' a repmat('&nbsp;',[1 size(char(labx),2)+0-length(a)] ) ]   ]},labx,colhex);
+
+% r2=cellfun(@(a,b){[['<html><body bgcolor="#' b ';fontcolor=red">' a repmat('&nbsp;',[1 size(char(labx),2)+0-length(a)] ) ]   ]},labx,colhex);
+% r2=cellfun(@(a,b){[['<html><body bgcolor="#' b ';">  <p style="color:red"> &#9830 ' a repmat('&nbsp;',[1 size(char(labx),2)+0-length(a)] ) ]   ]},labx,colhex);
+
+% r2=cellfun(@(a,b){[['<html><font color="black"> &#9830 ' ' <font color="black"> ' a repmat('&nbsp;',[1 size(char(labx),2)+0-length(a)] ) ]   ]},labx,colhex);
+r2=cellfun(@(a,b){[['<html><font color="' b '"> &#9632 <font color="black"> ' a repmat('&nbsp;',[1 size(char(labx),2)+0-length(a)] ) ]   ]},labx,colhex);
+
+
 set(h1,'string',r2)
 % set(h1,'fontname','courier new')
 % set(h1,'fontsize',10)
 set(h1,'Max',2);
 set(h2,'max',2);
+% ==============================================
+%%   
+% ===============================================
+
+
+% drawnow;
+if 0
+    jScrollPane = findjobj(h1); % get the scroll-pane object
+    jListbox = jScrollPane.getViewport.getComponent(0);
+    jListbox.setSelectionAppearanceReflectsFocus(0);
+    %
+    v2=[ 0 0 0];%color
+    %         v=[ 0.98    0.98    0.98];
+    v=[0.9451    0.9686    0.9490];
+    % v=uisetcolor
+    set(jListbox, 'SelectionForeground',java.awt.Color(v2(1),v2(2),v2(3))); % java.awt.Color.brown)
+    % set(jListbox, 'SelectionForeground',java.awt.Color(v(1),v(2),v(3))); % java.awt.Color.brown)
+    set(jListbox, 'SelectionBackground',java.awt.Color(v(1),v(2),v(3))); % option #2
+end
 
 set(gcf,'WindowKeyPressFcn', @keys);
 
@@ -1718,10 +1904,24 @@ ed=uicontrol('style','edit','units','norm','position',[0.15 0.06 .3 .02],...
     'string','','tag','ed1','callback',@findstrx);
 
 %OK/cancel
-ed=uicontrol('style','pushbutton','units','norm','position',[.7 0.01 .1 .04],...
-    'string','OK','tag','ok','callback',@ok);
-ed=uicontrol('style','pushbutton','units','norm','position',[.6 0.01 .1 .04],...
-    'string','Cancel','tag','cancel','callback',@cancel);
+ed=uicontrol('style','pushbutton','units','norm','position',[.85 0.01 .1 .025],...
+    'string','OK','tag','ok','callback',@ok,...
+      'tooltipstr',...
+      ['submit region selection' char(10) ...
+          'after pressing [submit button] select [process] button in main window to analyze selected regions']);
+ed=uicontrol('style','pushbutton','units','norm','position',[.6 0.01 .1 .025],...
+    'string','Cancel','tag','cancel','callback',@cancel,...
+      'tooltipstr','close window');
+
+ed=uicontrol('style','pushbutton','units','norm','position', [.7 0.08 .08 .02],...
+    'string','clear list','tag','clearList','callback',@clearList, 'fontsize',7,...
+    'tooltipstr','clear selected list (..right panel)');
+
+ed=uicontrol('style','pushbutton','units','norm','position', [.3 0.01 .1 .025],...
+    'string','help','tag','Help_regselect','callback',@Help_regselect, 'fontsize',7,...
+    'tooltipstr','help region selection');
+% set(ed,'position', [.3 0.01 .1 .025]);
+
 
 % 'a'
 % v.labx  =labx;
@@ -1738,7 +1938,9 @@ set(h1,'userdata',v);
 % lb3=findobj(findobj(0,'tag','ant'),'tag','lb3');
 
 ContextMenu=uicontextmenu;
-uimenu('Parent',ContextMenu, 'Label','group objects',   'callback', {@contextfun,'1' });% ,'ForegroundColor',[0 .5 0]);
+uimenu('Parent',ContextMenu, 'Label','group objects',   'callback', {@contextfun,'group' });% ,'ForegroundColor',[0 .5 0]);
+uimenu('Parent',ContextMenu, 'Label','ungroup objects',   'callback', {@contextfun,'ungroup' });% ,'ForegroundColor',[0 .5 0]);
+
 set(h2,'UIContextMenu',ContextMenu);
 counterupdate;
 
@@ -1781,10 +1983,10 @@ if isempty(s0)
     out={};
 else
     s0=regexprep(s0,'.*#8592','');
-    t0=[regexprep(s0,{'.*>' '&nbsp;'},{'' ''})  num2cell(w.id)];
+    t0=[regexprep(s0,{'.*>' '&nbsp;' '^\s*'},{'' '' ''})  num2cell(w.id)];
     
     
-    grp=regexpi(str,'">@\d+');
+    grp=regexpi(str,'>@\d+');
     invigrp=find(cellfun('isempty',grp)==1);
     t=t0(invigrp,:);
     
@@ -1807,8 +2009,15 @@ else
 end
 
 
+function clearList(e,e2)
 
+lb2=findobj(findobj(0,'tag','listselect'),'tag','lb2');
+set(lb2,'value',[1:size(get(lb2,'string'),1)])
+b2=findobj(findobj(0,'tag','listselect'),'tag','b2');
+hgfeval(get(b2,'callback'));
 
+hok=findobj(findobj(0,'tag','listselect'),'tag','ok');
+hgfeval(get(hok,'callback'));
 
 
 function ok(e,e2)
@@ -1823,12 +2032,35 @@ if ~isempty(s.p.submit)
     
     hfig=findobj(0,'tag','stat');
     us=get(hfig,'userdata');
-    us.regions=out;
+    if isempty(out)
+        try
+            us=rmfield(us,'regions');
+        end
+        try
+          nregions=[ '(Nregions=' num2str(length(us.anat.labels)) ')' ] ;
+        catch
+          nregions='';  
+        end   
+        disp(['all regions deleted from selection-list .. using original List ' nregions]);
+        
+    else
+        us.regions=out;
+       
+         try
+          nregions=[ '(Nregions=' num2str(size(us.regions,1)) ')' ] ;
+        catch
+          nregions='';  
+        end   
+        disp(['using selection-list ' nregions]);
+        
+        
+    end
     set(hfig,'userdata',us);
 end
 
 % disp('check:ok.function line 153');
 get(findobj(0,'tag','stat'),'userdata');
+disp('..hit [process] button to proceed');
 
 
 % s.p.submit=['']
@@ -1858,25 +2090,37 @@ set(findobj(gcf,'tag','count2'),'string',['# ' num2str(nc2) '/' num2str(nc1+nc2)
 
 function contextfun(e,e2,task)
 
-if task==1
+if strcmp(task,'group')
     h2=findobj(gcf,'tag','lb2');
     va=get(h2,'value');
     li=get(h2,'string');
+    symbol='&#9632';
     
     x = inputdlg('Enter Grouping Number',             'Sample', [1 50]);
     if isempty(x); return; end
     
     grp = str2num(x{:});
     if isempty(grp)
-        liva=li(va);
-        liva=regexprep(liva,['">@\d+' '&#8592'],'">');
+        return
+%         keyboard
+%         liva=li(va);
+%         liva=regexprep(liva,['">@\d+' '&#9632'],'">');
     else
         liva=li(va);
-        liva=regexprep(liva,['">@\d+' '&#8592'],'">');
-        liva=cellfun(@(a){[  strrep(a,'">',['">' '@' [pnum(grp,2) '&#8592'] ])  ]},liva);
+        liva= regexprep(liva,['<html>@\d+'],['<html>']); %remove NUMBER
+        liva= regexprep(liva,['<html>'],['<html>' '@' pnum(grp,2)]); %add NUMBER
+        
     end
     li(va)=liva;
     set(h2,'string',li);
+elseif strcmp(task,'ungroup')
+    h2=findobj(gcf,'tag','lb2');
+    va=get(h2,'value');
+    li=get(h2,'string');
+    liva=li(va);
+        liva= regexprep(liva,['<html>@\d+'],['<html>']); %remove NUMBER
+    li(va)=liva;
+    set(h2,'string',li);  
 end
 
 % liva=regexprep(liva,'">@\d+_','">')
@@ -2012,11 +2256,11 @@ function keys(e,e2)
 
 
 
-if strcmp(e2.Key,'g')
-    contextfun([],[],1);
-elseif strcmp(e2.Key,'f')
-    uicontrol(findobj(gcf,'tag','ed1'));
-end
+% if strcmp(e2.Key,'g')
+%     contextfun([],[],1);
+% elseif strcmp(e2.Key,'f')
+%     uicontrol(findobj(gcf,'tag','ed1'));
+% end
 
 if strcmp(e2.Character,'+')
     h1=findobj(gcf,'tag','lb1'); fs=get(h1,'fontsize'); set(h1,'fontsize',fs+1);
@@ -2051,6 +2295,152 @@ set(gcf,'userdata',us);
 function xhelp(e,e2)
 uhelp(mfilename);
 
+function Help_regselect(e,e2)
+w=preadfile('xstatlabels.m'); w=w.all;
+i1=max(regexpi2(w,'anker_Help_regselect_start'));
+i2=max(regexpi2(w,'anker_Help_regselect_stop'));
+w=w(i1+1:i2-1);
+uhelp(w,1);
+
+
+return
+%% anker_Help_regselect_start
+% #bo REGION SELECTION
+% select regions from left listbox (LB) via [>] button
+% selected regions appear in the right LB
+% deselect regions via [<] button
+% #r GROUP REGIONS
+% (1) select regions in right LB ..use right context menu-> "group regions"
+% (2) enter a number (1-99) as indicator for the grouped regions
+% #r UNGROUP REGIONS
+% (1) select regions in right LB ..use right context menu-> "ungroup regions"
+% #b SUBMIT
+% Use [SUBMIT] button (main window) to submit the selected regions. 
+% Thereafter, click [Prosess]-button to analyze the selected regions.
+%
+% #b Clear LIST
+% clears the selected list
+% #m If you want to analyze the original regions instead of selected regions, 
+% #m hit the [Clear LIST] button or 
+% #m clear the right LB manually and hit the [submit]-button.
+ 
+
+%
+%% anker_Help_regselect_stop
+
+
+
+
+function codesnippet(e,e2)
+
+w=preadfile('xstatlabels.m'); w=w.all;
+i1=max(regexpi2(w,'anker_codesnippet_start'));
+i2=max(regexpi2(w,'anker_codesnippet_stop'));
+w=w(i1+1:i2-1);
+uhelp(w,1);
+
+
+return
+%% anker_codesnippet_start
+
+% #ry CODE SNIPPET to validate the OUTPUT of a region or a combination of regions
+%% % copy the below lines and modify the "MUST BE MODIFIED" inputs accordingly
+% ================================================================
+
+clear
+
+%% % DATA ======================================
+dfile      ='adc_labels_other_both_28May2020_10-35-56.xlsx'; % MUST BE MODIFIED: THE DATA-FILE
+sheet2read ='median';                    % MUST BE MODIFIED: THE SHEETNAME
+[~,~,dx]   =xlsread(dfile,sheet2read );
+dx(strcmp(cellfun(@(a) {[num2str(a)]}, dx(:,1) ),'NaN'),:)=[]; %remove empty rows
+hd =dx(1,:);    %header
+d  =dx(2:end,:); %data
+
+%% % AUX-FILE ======================================
+auxfile='Manuskript_IL6_sham_group_ assignment.xlsx'; % MUST BE MODIFIED: THE NAME OF THE GROUP-FILE (EXCEL-FILE)
+[a asheet]=xlsfinfo(auxfile);
+[~,~,ax]=xlsread(auxfile,'Tabelle1' );    % MUST BE MODIFIED: THE SHEETNAME
+
+%% % GROUP DEFINITION ======================================
+ig1=find(strcmp(ax(:,2),'A'));     % MUST BE MODIFIED: THE COLUMN AND CLASS-LABEL IN EXCELFILE 
+ig2=find(strcmp(ax(:,2),'B'));     % MUST BE MODIFIED: THE COLUMN AND CLASS-LABEL IN EXCELFILE 
+s.g1=ax(ig1,1);
+s.g2=ax(ig2,1);
+s.info={'g1..A; g2..B'};
+s.length=[ length(s.g1)  length(s.g2) ];
+
+% get groupassignment of animals
+s.ic='grp-columIDX in d/hd'
+s.ic1=find(ismember(hd,s.g1));
+s.ic2=find(ismember(hd,s.g2));
+
+%% % LABEL ======================================
+%% #yk use either option-A: single region or option-B: combination of region
+
+% OPTION-A: GET DATA FROM SINGLE LABEL (chose either option-A or option-B)
+label='R_Globus_pallidus_external_segment';     % MUST BE MODIFIED: THE REGION-NAME TO TEST
+
+% OPTION-B: GET DATA FROM COMBINED LABELS (chose either option-A or option-B)
+if 0
+    label={ ...
+        'R_Central_amygdalar_nucleus'
+        'R_Medial_amygdalar_nucleus'};             % MUST BE MODIFIED: THE REGION-NAME TO TEST
+end
+   
+label=cellstr(label);
+if size(label)==1
+    il=find(strcmp(d(:,1),label));
+    labeltag=['SINGLE REGION: ' label{1}];
+else
+    il=find(ismember(d(:,1),label));
+    labeltag=['AVERAGE OVER REGIONS: ' strjoin(label,' & ')];
+end
+
+
+% get data (average )
+d1= mean(cell2mat(d(il,s.ic1))',2);
+d2= mean(cell2mat(d(il,s.ic2))',2);
+
+disp('--------------------------------------------------------');
+disp(['file   : '  dfile]);
+disp(['sheet  : '  sheet2read ]);
+disp('--------------------------------------------------------');
+disp(['label  : ' labeltag]);
+disp(['N  1,2 : '   num2str([length(d1)    length(d2)]) ]);
+disp(['ME 1,2 : '   num2str([mean(d1,1)    mean(d2,1)]) ]);
+disp(['SD 1,2 : '   num2str([std(d1,[],1) std(d2,[],1)]) ]);
+
+% [h,p,~,st]=ttest(d1,d2);%pared-Ttest
+[h,p,~,st]=ttest2(d1,d2);%2sample-Ttest
+disp(['2sampleTtest(g1,g2) p,T: '   num2str([ p st.tstat ]) ]);
+
+%% % ============================================================
+%% % EXAMPLE OUTPUT: SINGLE REGION
+%% % --------------------------------------------------------
+% file   : adc_labels_other_both_28May2020_10-35-56.xlsx
+% sheet  : median
+% --------------------------------------------------------
+% label  : SINGLE REGION: R_Globus_pallidus_external_segment
+% N  1,2 : 6  7
+% ME 1,2 : 0.00066861   0.0006667
+% SD 1,2 : 1.0519e-05  9.3157e-06
+% 2sampleTtest(g1,g2) p,T: 0.73414     0.34837
+
+%% % ============================================================
+%% % EXAMPLE OUTPUT: AVERAGE OF COMBINED REGIONS
+%% % --------------------------------------------------------
+% file   : adc_labels_other_both_28May2020_10-35-56.xlsx
+% sheet  : median
+% --------------------------------------------------------
+% label  : AVERAGE OVER REGIONS: R_Central_amygdalar_nucleus & R_Medial_amygdalar_nucleus
+% N  1,2 : 6  7
+% ME 1,2 : 0.00071718  0.00070321
+% SD 1,2 : 1.6064e-05  1.5781e-05
+% 2sampleTtest(g1,g2) p,T: 0.14288      1.5779
+
+
+%% anker_codesnippet_stop
 
 
 
