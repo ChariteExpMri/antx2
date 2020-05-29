@@ -4,6 +4,7 @@
 % #wo _SHORTCUTS_ #k    available only in READMODE (RM) not in EDITMODE (EM)
 % #g [+/-]        #n change fontsize
 % #g [ctrl+c]     #n copy selection (allowed in EDITMODE)
+% #g [ctrl+f]     #n find string ... (all shortcuts are disabled when finder panel is visible)
 % #g [b] or [e]   #n  scroll to begin or end
 % #g [left/right] #n scroll up/scroll down
 % #g [1]          #n position help window to left side with 50% screensize
@@ -388,6 +389,7 @@ if figexist==0
         end
     end
    
+    finder_ini();
 end
 
 if figexist==0
@@ -571,7 +573,8 @@ if strcmp(get(tx,'style'),'listbox')
         %
         v2=[ 0 0 0];%color
 %         v=[ 0.98    0.98    0.98];
-        v=[0.9451    0.9686    0.9490];
+%         v=[0.9451    0.9686    0.9490];
+        v=[0.8941    0.9412    0.9020];
         % v=uisetcolor
         set(jListbox, 'SelectionForeground',java.awt.Color(v2(1),v2(2),v2(3))); % java.awt.Color.brown)
         % set(jListbox, 'SelectionForeground',java.awt.Color(v(1),v(2),v(3))); % java.awt.Color.brown)
@@ -579,6 +582,19 @@ if strcmp(get(tx,'style'),'listbox')
     end
 end
 
+% function f_find()
+% 'sss'
+% hs=findobj(gcf,'tag','txt')
+% type=get(hs,'style');
+% if strcmp(type,'listbox')
+%     'lb'
+%     tx=get(hs,'string')
+%     iv=regexpi2(tx,'mean');
+%     set(hs,'value',iv)
+%     
+% elseif strcmp(type,'edit')
+%     'ed'
+% end
 
 
 function keyx(h,e)
@@ -658,8 +674,13 @@ end
 if strcmp(e.Modifier,'control') %copy selection
     if strcmp(e.Key,'c')
         gcontext([], [], 4);
+    elseif strcmp(e.Key,'f')  
+        finder_MAIN_OpenPanel([],[]);
     end
 end
+
+
+
 
 %----------------------------------
 %         AOT/ontop
@@ -1413,6 +1434,386 @@ function id=regexpi2(cells, str,varargin)
 %same as regexpi but jelds indizes of mathing cells , instead of empty cells ('I'm tired to code this again and again)
 id=regexpi(cells,str,varargin{:});
 id=find(cellfun('isempty',id)==0);
+
+
+
+function finder_ini()
+
+w(:,:,1) =...
+   [ 0    0  154  156  151  144  144  128  119   87   45    0    0    0    0    0
+    0    0  157  255  255  245  222  196  170  126   68   65    0    0    0    0
+    0    0  154  255  255  255  250  234  217  161  131  175   49    0    0    0
+    0    0  154  223   99  100   99   99   99   61  153  208  155   65    0    0
+    0    0  146  255  255  255  250  194  182  154  158  240  208  109   29    0
+    0    0  145  227  105  123  127   79   99  119  108   45   81  136   24    0
+    0    0  128  255  255  104   82  169  174  161  161   98  205  181   16    0
+    0    0  124  231  108   85  171  255  191  187  211  152  125  215   11    0
+    0    0  103  255  184   90  172  190  208  222  227  209  177  238    8    0
+    0    0   96  225   74   98  154  176  218  222  255  206  117  242    6    0
+    0    0   96  255  249  113  158  192  217  253  255   75  235  231    5    0
+    0    0   83  222  110   58   53  159  197  253   76  151  222  198    5    0
+    0    0   83  255  245  255  247  113  113   76  235  145  255  222   33    0
+    0    0   83  238   97   96  103  111  116  107  100   75  145  255  222    0
+    0    0   59  255  255  255  255  255  255  255  255  255  246  145  255  222
+    0    0   59   59   59   59   59   59   59   59   59   59   59   36  145  145];
+w(:,:,2) =...
+    [0    0  184  184  180  175  174  167  160  135  101    0    0    0    0    0
+    0    0  186  255  255  246  229  213  194  165  123  119    0    0    0    0
+    0    0  184  255  255  255  252  237  229  192  168  197  109    0    0    0
+    0    0  184  230  133  134  133  133  132   98  186  225  182  119    0    0
+    0    0  177  255  255  255  251  198  181  161  186  248  225  151   90    0
+    0    0  177  232  138  142  137  113  140  157  120   75  122  172   85    0
+    0    0  161  255  255  118  137  224  218  217  217  106  209  205   80    0
+    0    0  159  237  125  116  222  255  222  224  253  188  135  229   76    0
+    0    0  145  255  182  131  216  218  234  248  253  228  176  246   74    0
+    0    0  144  233   91  137  198  210  248  245  255  208  136  249   71    0
+    0    0  144  255  249  119  214  235  250  255  255   97  223  251   70    0
+    0    0  132  227  144   81   69  208  245  255   91  112   95  192   70    0
+    0    0  132  255  248  255  241  119  119   91  228   91  251   95   59    0
+    0    0  132  238  131  129  135  145  150  139  143   75   91  255   95    0
+    0    0  113  255  255  255  255  255  255  255  255  255  209   91  255   95
+    0    0  113  113  113  113  113  113  113  113  113  113  113   62   91   91];
+w(:,:,3) =...
+   [0    0  200  204  198  195  194  191  187  159  141    0    0    0    0    0
+    0    0  200  255  255  248  240  222  213  190  154  157    0    0    0    0
+    0    0  200  255  255  255  252  237  235  211  185  212  148    0    0    0
+    0    0  200  242  189  190  188  187  191  156  205  229  204  156    0    0
+    0    0  196  255  252  255  248  207  198  179  204  249  229  179  134    0
+    0    0  198  245  194  185  176  184  204  208  160  135  173  192  129    0
+    0    0  186  255  255  165  214  251  242  246  246  142  220  217  125    0
+    0    0  177  252  167  186  252  255  241  242  255  204  172  237  122    0
+    0    0  172  255  195  196  246  240  248  254  255  233  190  250  120    0
+    0    0  173  249  141  196  242  236  254  250  255  219  191  248  120    0
+    0    0  173  255  243  152  248  251  255  255  255  169  210  255  117    0
+    0    0  163  243  200  143  114  220  246  255  146   89    0  184  117    0
+    0    0  163  255  248  255  236  152  152  146  217   47  174    0   84    0
+    0    0  163  250  185  184  188  197  200  190  204  113   47  182    0    0
+    0    0  148  255  255  255  255  255  255  255  255  255  194   47  193    0
+    0    0  148  148  148  150  150  150  150  150  150  148  148   93   47   47];
+
+hb=uicontrol('Style','pushbutton', 'Position',[25 25 16, 16], ...
+    'CData',w./255,    'BackgroundColor','w');
+set(hb,'units','norm'); 
+set(hb,'position',[.405 0 .027 .03]);
+set(hb,'callback',{@finder_MAIN_OpenPanel});
+set(hb,'tooltipstring','find string');
+set(hb,'units','pixel');
+
+
+function  finder_MAIN_OpenPanel(e,e2)
+% uhelp('mean.m',1);
+%=======================
+hfig=gcf;
+figure(hfig);
+delete(findobj(gcf,'userdata','ipn1')); delete(findobj(gcf,'userdata','ipn2')); delete(findobj(gcf,'userdata','ipn3'));  delete(findobj(gcf,'tag','mission'))
+
+units=get(gcf,'units');
+set(gcf,'units','norm');
+pos=[.6 .05];
+finder_makepanel(1,[pos ]);
+
+function finder_makepanel(ipn,tp)
+set(gcf,'WindowKeyPressFcn',[]);
+hm=findobj(gcf,'tag','mission');
+p=get(hm,'userdata');
+
+id=['ipn'  num2str(ipn)];
+
+v=uint8(finder_geticon('hand'));
+v(v==v(1,1))=255;
+if size(v,3)==1; v=repmat(v,[1 1 3]); end
+v=double(v)/255;
+%% ________________________________________________________________________________________________
+s=v; n=0;        % HAND
+hb=uicontrol('Style','pushbutton', 'Position',[25 25 16, 16], ...
+    'CData',s,'tag','move',...
+    'BackgroundColor','w','userdata',id);
+set(hb,'units','norm'); pos=get(hb,'position');
+pos2=[tp(1)+pos(3)*n tp(2)+pos(4) pos(3:4)];  set(hb,'position',pos2);
+set(hb,'tooltipstring','move floating panel to another position ');
+
+
+% TEXT
+hb=uicontrol('Style','text', 'Position',[25 25 16, 16], ...
+    'string',['find string'],'fontsize',6,...
+    'BackgroundColor','w','userdata',id);
+set(hb,'units','norm'); pos=get(hb,'position');
+pos2=[tp(1)+pos(3)*1 tp(2)+pos(4)*1.5 .1 pos(4)];  set(hb,'position',pos2);
+set(hb,'foregroundcolor',[0.8706    0.4902  0],'fontweight','bold');
+%% ===============================================
+
+v=uint8(finder_geticon('arrow'));
+s=v; n=n+1;
+
+%%   edit
+s=v;
+hb=uicontrol('Style','edit', 'Position',[25 25 16, 16], ...
+    'fontsize',7,       'tag','ed_findstring',...
+    'BackgroundColor','w','userdata',id,'string', '' );
+set(hb,'units','norm'); pos=get(hb,'position');
+pos2=[tp(1)+pos(3)*n tp(2)+pos(4) pos(3)*10  pos(4)];  set(hb,'position',pos2);
+set(hb,'callback',{@finder_cb_find,1},'horizontalalignment','left');
+hedit=hb;
+
+posedit=get(hb,'position');
+%% REMOVE FINDER
+hb=uicontrol('Style','pushbutton', 'Position',[25 25 16, 16], ...
+    'fontsize',10,       'tag','ed_clear',...
+    'BackgroundColor','w','userdata',id,'string', 'x' );
+set(hb,'units','norm'); pos=get(hb,'position');
+pos2=[sum(posedit([1 3])) posedit(2) pos(3)  pos(4)];  set(hb,'position',pos2);
+set(hb,'callback',{@finder_cb_removefinder,id},'horizontalalignment','left');
+set(hb,'tooltipstring','close finder');
+set(hb,'FontName','courier','string','X');
+
+wid=pos(3);
+s=v;
+%% ____________________DOWN____________________________________________________________________________
+s=rot90(v);n=n+1;
+hb=uicontrol('Style','pushbutton', 'Position',[25 25 16, 16], ...
+    'Callback',@(a,b)disp(['+1 smiley' num2str(i)]), 'CData',s,...
+    'BackgroundColor','w','userdata',id);
+set(hb,'units','norm'); pos=get(hb,'position');
+pos2=[tp(1)+pos(3)*n tp(2) pos(3:4)];  set(hb,'position',pos2);
+set(hb,'callback',{@finder_cb_find,1});
+set(hb,'tooltipstring','find next');
+
+%% __________________UP______________________________________________________________________________
+s=flipud(rot90(v));n=n+1;
+% s=double(imread(fullfile(matlabroot,'/toolbox/matlab/icons/view_zoom_in.gif')));
+% s=s./max(s(:));
+% s=repmat(s,[1 1 3]);
+% s=load(fullfile(matlabroot,'/toolbox/matlab/icons/zoom.mat'));
+% s=imread('iconfinder_Text_preview_132630.png');
+% s=s.zoomCData;
+hb=uicontrol('Style','pushbutton', 'Position',[25 25 16, 16], ...
+    'Callback',@(a,b)disp(['+1 smiley' num2str(i)]), 'CData',s,...
+    'BackgroundColor','w','userdata',id);
+set(hb,'units','norm'); pos=get(hb,'position');
+pos2=[tp(1)+pos(3)*n tp(2) pos(3:4)];  set(hb,'position',pos2);
+set(hb,'callback',{@finder_cb_find,-1});
+set(hb,'tooltipstring','find previous');
+
+
+%% __________________all______________________________________________________________________________
+s=flipud(rot90(v));n=n+1;
+hb=uicontrol('Style','pushbutton', 'Position',[25 25 16, 16], ...
+    'Callback',@(a,b)disp(['+1 smiley' num2str(i)]),  ...
+    'BackgroundColor','w','userdata',id);
+set(hb,'units','norm'); pos=get(hb,'position');
+pos2=[tp(1)+pos(3)*n tp(2) pos(3:4)];  set(hb,'position',pos2);
+set(hb,'callback',{@finder_cb_find,0});
+set(hb,'tooltipstring','highlight all found entries', 'string','A');
+
+%% ________________________________________________________________________________________________
+
+hp=findobj(gcf,'tag','move');
+je = findjobj(hp); % hTable is the handle to the uitable object
+set(je,'MouseDraggedCallback',{@finder_motio,id}  );
+set(findobj(gcf,'userdata',id),'units','pixels');
+
+uicontrol(hedit);%focus
+
+function finder_cb_removefinder(e,e2,id)
+hp  =findobj(gcf,'userdata',id);
+delete(hp);
+set(gcf,'WindowKeyPressFcn',@keyx);
+
+function finder_cb_find(e,e2,par)
+hf=gcf;
+hed=findobj(hf,'tag','ed_findstring');
+string=get(hed,'string');
+hs=findobj(hf,'tag','txt');
+type=get(hs,'style');
+if strcmp(type,'listbox')  % 'lb';
+    tx=get(hs,'string');
+    iv=regexpi2(tx,string);
+    if isempty(iv)
+        set(hed,'backgroundcolor',[1.0000    0.8431         0]);
+        set(hed,'string',['"' string '"' ' NOT FOUND !!!' ]);
+        pause(.1);
+        set(hed,'string',[ string   ]);
+        set(hed,'backgroundcolor',[1 1 1]);
+        return
+    end
+    sel=get(hs,'value');
+    if length(sel)>1; sel=sel(1); end
+    
+    if par==1
+        if sel>=max(iv);
+            return
+            sel=0;
+        end
+        sel=iv(min(find(iv>sel)));
+        set(hs,'value',sel);
+    elseif par==-1
+        if sel<=min(iv);
+            return
+            sel=max(iv)+1;
+        end
+        sel=iv(max(find(iv<sel)));
+        set(hs,'value',sel);
+    elseif par==0
+        set(hs,'value',iv);
+    end
+elseif strcmp(type,'edit')
+    tx=get(hs,'string');
+    jhEdit = findjobj(hs);
+    r = jhEdit.getComponent(0).getComponent(0);
+    txt=char(r.getText);
+    sel=r.getSelectionStart;
+    
+    uicontrol(hs);
+    iv=cell2mat(regexpi(cellstr(txt),string));
+    if isempty(iv)
+        set(hed,'backgroundcolor',[1.0000    0.8431         0]);
+        set(hed,'string',['"' string '"' ' NOT FOUND !!!' ]);
+        pause(.1);
+        set(hed,'string',[ string   ]);
+        set(hed,'backgroundcolor',[1 1 1]);
+        return
+    end
+    if par==1 %select forward
+        if sel>=max(iv);
+            return
+            sel=0;
+        end
+        sel=iv(min(find(iv>sel+1)));
+        if isempty(sel);
+            return; end
+        r.select(sel-1,sel-1+length(string));
+    elseif par==-1 %select backward
+        if sel<=min(iv);
+            return
+            sel=max(iv)+1;
+        end
+        sel=iv(max(find(iv<sel)));
+        r.select(sel-1,sel-1+length(string));
+    elseif par==0 %SELECT ALL
+        drawnow
+        jEditbox = findjobj(hs);
+        jEditbox = handle(jEditbox.getViewport.getView, 'CallbackProperties');
+        highlighter = jEditbox.getHighlighter;
+        thehighlighter=jEditbox.getHighlighter();
+        Ncolored=thehighlighter.getHighlights;
+        length(Ncolored);
+        if length(Ncolored)>1
+            thehighlighter.removeAllHighlights;
+            return
+        end
+        if isempty(iv); return; end
+        yellowHighlighter = javaObject(...
+            'javax.swing.text.DefaultHighlighter$DefaultHighlightPainter', java.awt.Color.yellow);
+        thehighlighter.removeAllHighlights;
+        for i=1:length(iv)
+            thehighlighter.addHighlight(iv(i)-1,iv(i)-1+length(string),yellowHighlighter);
+        end
+    end
+end
+
+
+function finder_motio(e,e2,id)
+set(findobj(gcf,'userdata',id),'units','norm');
+try
+    units=get(0,'units');
+    set(0,'units','norm');
+    mp=get(0,'PointerLocation');
+    set(0,'units',units);
+    fp  =get(gcf,'position');
+    hp  =findobj(gcf,'tag','move', '-and' ,'userdata',id);
+    pos =get(hp,'position');
+    mid=pos(3:4)/2;
+    newpos=[(mp(1)-fp(1))./(fp(3))  (mp(2)-fp(2))./(fp(4))];
+    if newpos(1)-mid(1)<0; newpos(1)=mid(1); end
+    if newpos(2)-mid(2)<0; newpos(2)=mid(2); end
+    if newpos(1)-mid(1)+pos(3)>1; newpos(1)=1-pos(3)+mid(1); end
+    if newpos(2)-mid(2)+pos(4)>1; newpos(2)=1-pos(4)+mid(2); end
+    df=pos(1:2)-newpos+mid;
+    hx=findobj(gcf,'userdata',id);%'ipn1');
+    pos2=cell2mat(get(hx,'position'));
+    for i=1:length(hx)
+        pos3=[ pos2(i,1:2)-df   pos2(i,[3 4])];
+        set(hx(i),'position', pos3);
+    end
+end
+set(findobj(gcf,'userdata',id),'units','pixels');
+
+function v=finder_geticon(name)
+if strcmp(name,'arrow')
+    v(:,:,1) =[
+        0    0    0    0    1    6   56   97   97   57    8    1    0    0    0    0
+        0    0    0   10  127  207  177  149  145  156  176  117   12    0    0    0
+        0    0   18  189  138   90   94   90  125  162   92  103  145   22    0    0
+        0    9   81   85   79  117  255  254   78   81   81   78   81  117   11    0
+        1   99   72   66  106  255  255  254   64   72   72   65   72   71   69    1
+        4  141   53   82  255  255  255  254   50   58   58   50   58   58   72    6
+        33   96   72  255  255  255  255  255  254  254  254  254  253   45   46   25
+        50   61  255  255  255  255  255  255  255  255  255  255  254   32   33   20
+        43   44  209  255  255  255  255  255  255  255  255  255  254   19   20   12
+        22   37    1  209  255  255  255  255  208  208  208  208  207    5    6    5
+        1   44    0    2  209  255  255  254    0    1    1    1    1    0    0    3
+        0   29    0    0    2  209  255  254    0    0    0    0    0    0    1    0
+        0    0    0    0    0    2  238  207    0    0    0    0    0    0    0    0
+        0    0    0   10    0    0    1    1    1   69    0    0    0    0    0    0
+        0    0    0    0    4    1    0    0    0    0    0    0    0    0    0    0
+        0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0];
+    v(:,:,2) =[
+        0    0    0    0    8   44  113  147  147  113   44    8    0    0    0    0
+        0    0    0   61  173  241  241  233  232  236  233  169   60    0    0    0
+        0    0   76  226  227  210  210  209  219  229  211  218  212   75    0    0
+        0   56  202  204  202  213  255  255  202  205  205  202  205  201   56    0
+        7  162  196  194  207  255  255  255  193  196  196  193  196  199  147    7
+        36  225  186  195  255  255  255  255  184  188  188  185  188  188  191   37
+        93  211  188  255  255  255  255  255  255  255  255  255  254  178  183   89
+        123  192  255  255  255  255  255  255  255  255  255  255  255  171  174  104
+        117  183  242  255  255  255  255  255  255  255  255  255  255  163  166   98
+        84  179  114  242  255  255  255  255  241  242  242  242  241  154  159   76
+        28  176  148  114  242  255  255  254  113  113  113  113  113  151  152   29
+        5  122  151  149  114  242  255  255  146  151  151  147  151  154  116    5
+        0   35  152  151  149  114  248  241  147  152  152  147  152  147   38    0
+        0    0   46  145  154  151  151  149  150  179  147  154  147   50    0    0
+        0    0    0   35  103  149  156  154  154  154  153  113   36    0    0    0
+        0    0    0    0    5   24   64   82   83   66   24    4    0    0    0    0];
+    v(:,:,3) =[
+        0    0    0    0    0    0   32   77   77   33    0    0    0    0    0    0
+        0    0    0    0  110  203  174  144  140  152  171  100    0    0    0    0
+        0    0    1  183  133   84   88   84  119  159   87   99  138    2    0    0
+        0    0   76   80   73  112  255  254   73   76   76   73   76  109    0    0
+        0   85   68   62  103  255  255  254   60   68   68   61   68   68   56    0
+        1  136   49   79  255  255  255  254   45   53   53   46   53   54   66    0
+        19   92   68  255  255  255  255  255  254  254  254  254  253   42   44   13
+        39   57  255  255  255  255  255  255  255  255  255  255  254   30   32    9
+        34   43  205  255  255  255  255  255  255  255  255  255  254   18   19    4
+        14   36    1  205  255  255  255  255  204  204  204  204  203    4    5    0
+        0   41    0    2  205  255  255  254    0    1    1    1    1    0    0    0
+        0   26    0    0    2  205  255  254    0    0    0    0    0    0    0    0
+        0    0    0    0    0    2  238  203    0    0    0    0    0    0    0    0
+        0    0    0    9    0    0    1    1    1   69    0    0    0    0    0    0
+        0    0    0    0    3    1    0    0    0    0    0    0    0    0    0    0
+        0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0];
+    
+elseif strcmp(name,'hand')
+    v=[129	129	129	129	129	129	129	0	0	129	129	129	129	129	129	129
+        129	129	129	0	0	129	0	215	215	0	0	0	129	129	129	129
+        129	129	0	215	215	0	0	215	215	0	215	215	0	129	129	129
+        129	129	0	215	215	0	0	215	215	0	215	215	0	129	0	129
+        129	129	129	0	215	215	0	215	215	0	215	215	0	0	215	0
+        129	129	129	0	215	215	0	215	215	0	215	215	0	215	215	0
+        129	0	0	129	0	215	215	215	215	215	215	215	0	215	215	0
+        0	215	215	0	0	215	215	215	215	215	215	215	215	215	215	0
+        0	215	215	215	0	215	215	215	215	215	215	215	215	215	0	129
+        129	0	215	215	215	215	215	215	215	215	215	215	215	215	0	129
+        129	129	0	215	215	215	215	215	215	215	215	215	215	215	0	129
+        129	129	0	215	215	215	215	215	215	215	215	215	215	0	129	129
+        129	129	129	0	215	215	215	215	215	215	215	215	215	0	129	129
+        129	129	129	129	0	215	215	215	215	215	215	215	0	129	129	129
+        129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129
+        129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129];
+end
+
+
+
+
 
 % #############################################################
 %----------------------------------

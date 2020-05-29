@@ -88,6 +88,7 @@
 % [setup_elastixlinux.m] modified-->solved problem: stucked installation of MRICRON 
 % #ra 29 May 2020 (14:45:41)
 % [xstatlabels] bugfixed 
+% [uhelp] added finder panel 
 %
 %----- EOF
 %
