@@ -1640,13 +1640,22 @@ if strcmp(type,'listbox')  % 'lb';
     if length(sel)>1; sel=sel(1); end
     
     if par==1
+         sel=get(hs,'value');
+        if length(sel)>1; sel=sel(1)-1; end
         if sel>=max(iv);
-            return
-            sel=0;
+            if   strcmp(get(e,'tag'),'ed_findstring'); % if in editbox, cursor ends..go back to begin
+                sel=0;
+            else
+                return
+                sel=0;
+            end
         end
+       
         sel=iv(min(find(iv>sel)));
         set(hs,'value',sel);
     elseif par==-1
+        sel=get(hs,'value');
+        if length(sel)>1; sel=sel(end)+1; end
         if sel<=min(iv);
             return
             sel=max(iv)+1;
@@ -1674,14 +1683,22 @@ elseif strcmp(type,'edit')
         return
     end
     if par==1 %select forward
-        if sel>=max(iv);
+        if sel>=max(iv)
             return
             sel=0;
         end
         sel=iv(min(find(iv>sel+1)));
         if isempty(sel);
-            return; end
+            if strcmp(get(e,'tag'),'ed_findstring')==1
+                sel=min(iv);
+            else
+                return;
+            end
+        end
         r.select(sel-1,sel-1+length(string));
+        if strcmp(get(e,'tag'),'ed_findstring')==1
+            %uicontrol(e);
+        end
     elseif par==-1 %select backward
         if sel<=min(iv);
             return
@@ -1702,8 +1719,10 @@ elseif strcmp(type,'edit')
             return
         end
         if isempty(iv); return; end
+        col=java.awt.Color( 0.9294,0.6941,0.1255);%(.8,.9,.9);
+        %col=java.awt.Color.gray;
         yellowHighlighter = javaObject(...
-            'javax.swing.text.DefaultHighlighter$DefaultHighlightPainter', java.awt.Color.yellow);
+            'javax.swing.text.DefaultHighlighter$DefaultHighlightPainter', col);
         thehighlighter.removeAllHighlights;
         for i=1:length(iv)
             thehighlighter.addHighlight(iv(i)-1,iv(i)-1+length(string),yellowHighlighter);
