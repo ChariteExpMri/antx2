@@ -580,11 +580,29 @@ for i=1:length(z.files)
         movefile(im4,fileout   );
     end
     
+    %     if z.direction==-1 && ~isempty(z.M)  %apply TRAFO in BACKWARD-DIR
+    %         v=  spm_vol(fileout);
+    %         spm_get_space(fileout,      (z.M) * v.mat);
+    %         rreslice2target(fileout,fullfile(fileparts(fileout),'t2.nii') , fileout  , 0);
+    %     end
+    
     if z.direction==-1 && ~isempty(z.M)  %apply TRAFO in BACKWARD-DIR
         v=  spm_vol(fileout);
         spm_get_space(fileout,      (z.M) * v.mat);
-        rreslice2target(fileout,fullfile(fileparts(fileout),'t2.nii') , fileout  , 0);
+        doreslice=1;
+        
+        if isfield(z.params,'resolution'); % userdefined resolution (dim/voxsize) for output in native space
+            doreslice=0;
+            %disp('temp: no-reslicing');
+        end
+        
+        if doreslice==1
+            rreslice2target(fileout,fullfile(fileparts(fileout),'t2.nii') , fileout  , 0);
+            %disp('temp: reslicing');
+        end
     end
+    
+    
     
     
     %===========================================================================================

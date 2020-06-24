@@ -119,7 +119,7 @@ try; delete(findobj(gcf,'tag','species')); end
 
 fg;
 set(gcf,'menubar','none','units','norm','position',[0.5222    0.5489    0.3646    0.2972]);%[ 0.4573    0.5694    0.2365    0.2972]);
-set(gcf,'name','template-reference path','NumberTitle','off','tag','setAtlasReference');
+set(gcf,'name',['template-reference path [' mfilename ']' ],'NumberTitle','off','tag','setAtlasReference');
 us.isOK   =0;
 us.pathSTR0  ='Reference: <empty>';
 us.pathSTR   ='Reference: ';
@@ -189,21 +189,34 @@ if exist(paextern)
         % ==============================================
         %%
         % ===============================================
+        j=1;
+        do=0.025;
+        ri=.5;
+
         
         if ~isempty(dirs)
             k=length(dirs);
+            downlowest=0.1600;
+            nbuts=k+1 ;% atlases+select other button
+            %nbuts=13
+            ncols=(nbuts-mod(nbuts,2))/2-1;
+            if mod(nbuts,2)==1; ncols=ncols+1; end
+            
+            %stepdown=0.05;
+            stepdown=((.42+do)-downlowest)./ncols;
             
             delete(findobj(gcf,'tag','pbref'));
             for j=1:k
                 if mod(j,2)==1; ri=.005; else ri=0.5; end
                 
                 hu2=uicontrol('style','push','units','norm','tag','pbref');
-                set(hu2,'position',[ri .42+do, .49 .08],'string',[' [' num2str(j) '] ' dirsshort{j} ] ,...
+                set(hu2,'position',[ri .42+do, .49 stepdown],'string',[' [' num2str(j) '] ' dirsshort{j} ] ,...
                     'callback' ,{@useotherref,0});
                 set(hu2,'TooltipString',['<html>' 'use this reference template/atlas' '<br /><i><b><font color="green">' dirs{j}  '</font></b></i></html>'])
-                set(hu2,'userdata',dirs{j},'fontsize',fs);
+                set(hu2,'userdata',dirs{j},'fontsize',fs-1);
+               % set(hu2,'HorizontalAlignment','left');
                 % [' [' num2str(j) '] -' char(70+round(rand(1,10)*10)) ]
-                if mod(j,2)==0; do=do-.08;end
+                if mod(j,2)==0; do=do-stepdown;end
             end
         end
         % ==============================================
@@ -221,12 +234,12 @@ end
 j=j+1;
 if mod(j,2)==1; ri=.005; else ri=0.5; end
 hu2=uicontrol('style','push','units','norm','tag','pbref');
-set(hu2,'position',[ri .42+do, .49 .08],'string', 'select another reference' ,...
-    'callback' ,{@useotherref,1},'fontsize',fs);
+set(hu2,'position',[ri .42+do, .49 stepdown],'string', 'select another reference' ,...
+    'callback' ,{@useotherref,1},'fontsize',fs-1,'foregroundcolor','b');
 set(hu2,'TooltipString',['select reference folder manually'])
 
 % [' [' num2str(j) '] -' char(70+round(rand(1,10)*10)) ]
-if mod(j,2)==0; do=do-.08;end
+if mod(j,2)==0; do=do-stepdown;end
 if 0
     hu=uicontrol('style','push','units','norm');
     set(hu,'position',[.05 .3, .45 .1],'string','"choose reference"','callback' ,{@useotherref,0});

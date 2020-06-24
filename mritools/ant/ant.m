@@ -815,6 +815,8 @@ mh2 = uimenu(mh,'Label',' show cases-file-matrix',                              
 mh2 = uimenu(mh,'Label',' GUI overlay image',                                              'Callback',{@menubarCB, 'overlayimageGui'});
 mh2 = uimenu(mh,'Label',' GUI overlay image2',                                             'Callback',{@menubarCB, 'overlayimageGui2'});
 mh2 = uimenu(mh,'Label',' fastviewer',                                                     'Callback',{@menubarCB, 'fastviewer'});
+mh2 = uimenu(mh,'Label',' 3D-volume',                                                      'Callback',{@menubarCB, 'x3dvolume'});
+
 
 
 mh = uimenu(f,'Label','Study');
@@ -1637,6 +1639,15 @@ elseif strcmp(task,'fastviewer')
     end
     
     xfastview;
+    %________________________________________________
+elseif strcmp(task,'x3dvolume')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xvol3d';
+        return ;
+    end
+    
+    xvol3d();    
+    
     %________________________________________________
     
 elseif strcmp(task,'makeANOpseudocolors')

@@ -584,6 +584,11 @@ ra=repmat(r1,[1 1 3]);
 % end
 
 val=unique(u.b); val(val==0)=[];
+if length(val)>size(u.colmat,1)
+    u.colmat=distinguishable_colors(length(val),[1 1 1; 0 0 0]);
+    set(hf1,'userdata',u);
+end
+
 r2v=r2(:);
 rb=reshape(zeros(size(ra)), [ size(ra,1)*size(ra,2) 3 ]);
 for i=1:length(val)
