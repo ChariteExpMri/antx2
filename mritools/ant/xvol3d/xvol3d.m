@@ -1224,25 +1224,25 @@ prepareWindow;
 loadatlas();
 
 
-function loadatlas(file)
+function loadatlas(atlasfile)
 prepareWindow;
-if exist('file')==0; file=[]; end
+if exist('atlasfile')==0; atlasfile=[]; end
 hs=findobj(0,'tag','xvol3d'); u=get(hs,'userdata');
-if isfield(u,'atlas')==0  || ~isempty(file)
+if isfield(u,'atlas')==0  || ~isempty(atlasfile)
     fprintf('..loading atlas');
     
-    if exist(file)==0
+    if exist(atlasfile)==0
         [fi pa]=uigetfile(fullfile(pwd,'*.nii'),'select "ANO.nii"');
         if isnumeric(pa); return; end
-        file=fullfile(pa,fi);
+        atlasfile=fullfile(pa,fi);
         
     end
-    u.atlas=fullfile(file);
+    u.atlas=fullfile(atlasfile);
     [ha a]=rgetnii(u.atlas);
     u.atl =a;
     u.hatl=ha;
     
-    u.lut =strrep(file,'.nii','.xlsx');
+    u.lut =strrep(atlasfile,'.nii','.xlsx');
     fprintf('..loading LUT(excelfile)');
     if exist(u.lut)
     [~,~,lu]=xlsread(u.lut);
@@ -1398,22 +1398,23 @@ sub_plotregions;
 function cb_loadbrainmask(e,e2)
 loadbrainmask();
 
-function loadbrainmask(file)
+function loadbrainmask(maskfile)
 prepareWindow
-if exist('file')==0; file=[]; end
+if exist('file')==0; maskfile=[]; end
 hs=findobj(0,'tag','xvol3d'); u=get(hs,'userdata');
-if isfield(u,'mask')==0  || ~isempty(file)
+if isfield(u,'mask')==0  || ~isempty(maskfile)
     fprintf('..loading brain mask');
     
-    if exist(file)==0
+    if exist('file')~=1
         [fi pa]=uigetfile(fullfile(pwd,'*.nii'),'select "AVGTmask.nii"');
         if isnumeric(pa); return; end
-        file=fullfile(pa,fi);
+        maskfile=fullfile(pa,fi);
     end
-    u.mask=fullfile(file);
+    u.mask=fullfile(maskfile);
     set(hs,'userdata',u);
     disp('..saving mask');
 end
+
 
 hbrain=findobj(hs,'tag','brain');
 if ~isempty(hbrain)
