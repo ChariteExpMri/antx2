@@ -765,22 +765,45 @@ hs=findobj(0, 'tag','winselection');
 hr=findobj(hs, 'tag','rblight');
 if isempty(hs) ; return; end
 if exist('param') && strcmp(param,'updateRadio')
-    
-    
     hl=findobj(findobj(0,'tag','xvol3d'),'type','light');
     if isempty(hl);      set(hr,'value',0) ;
     else;                set(hr,'value',1) ;
     end
     return
 end
-if get(hr,'value')==1
-    hl=findobj(findobj(0,'tag','xvol3d'),'type','light');
-    delete(hl);
-    axes(findobj(findobj(0,'tag','xvol3d'),'tag','ax0'));
-    camlight('headlight');
-else
-    delete(findobj(findobj(0,'tag','xvol3d'),'type','light'));
+if ~isempty(e) && ischar(e) && strcmp(e,'on')  ;%  setLight('on')
+    set(hr,'value',1) ;
+elseif ~isempty(e) && ischar(e) && strcmp(e,'off')%  setLight('off')
+    set(hr,'value',0) ;
 end
+
+
+if get(hr,'value')==1
+%     hl=findobj(findobj(0,'tag','xvol3d'),'type','light');
+%     delete(hl);
+    axes(findobj(findobj(0,'tag','xvol3d'),'tag','ax0'));
+    %camlight('headlight');
+    c=findobj(findobj(0,'tag','xvol3d'),'tag','camlight');
+    if isempty(c)
+        c = camlight('headlight');    % Create light
+        set(c,'style','infinite','tag','camlight');    % Set style
+        h = rotate3d;                 % Create rotate3d-handle
+        h.ActionPostCallback = @RotationCallback; % assign callback-function
+        h.Enable = 'on';              % no need to click the UI-button
+    else
+        set(c,'visible','on');
+    end  
+else
+    %delete(findobj(findobj(0,'tag','xvol3d'),'type','light'));
+    c=findobj(findobj(0,'tag','xvol3d'),'tag','camlight');
+    set(c,'visible','off');
+    h = rotate3d; 
+    h.ActionPostCallback =[];
+end
+
+function RotationCallback(~,~)
+c=findobj(findobj(0,'tag','xvol3d'),'tag','camlight');
+c = camlight(c,'headlight');    % Create light
 
 
 function plottr(par)
@@ -1094,10 +1117,11 @@ warning off
 hf=findobj(0,'tag','xvol3d');
 figure(hf);
 % delete(findobj(hf,'type','light
-hl=findobj(hf,'type','light');
+% hl=findobj(hf,'type','light');
 hw=findobj(0,'tag','winselection');
-hl2=[];
-if length(hl)>1; hl2=hl(1); ; else; hl2=hl; end
+% hl2=[];
+% hl=findobj(hf,'tag','camlight');
+% if length(hl)>1; hl2=hl(1); ; else; hl2=hl; end
 
 azstep     =str2num(get(findobj('tag','rotazstep'),'string'));
 elstep     =str2num(get(findobj('tag','rotelstep'),'string'));
@@ -1123,13 +1147,15 @@ for i = 1:str2num(get(findobj('tag','rotdur'),'string'));
     %    figure(findobj(0,'tag','xvol3d'));
     camorbit(azstep,elstep,'data',[   0 0 1]);
     
-%     if ~isempty(hl2);   
-%         camlight(hl2,'left');
-%     end
+    %     if ~isempty(hl2);
+    %         camlight(hl2,'left');
+    %     end
     if get(findobj(hw,'tag','rblight'),'value')==1
-        hl=findobj(findobj(0,'tag','xvol3d'),'type','light');
-        delete(hl);
-        camlight('headlight');  
+        %         hl=findobj(findobj(0,'tag','xvol3d'),'type','light');
+        %         delete(hl);
+        
+        c=findobj(findobj(0,'tag','xvol3d'),'tag','camlight');
+        camlight(c,'headlight');
     end
     
     
@@ -1412,7 +1438,8 @@ axis tight;
 % daspect([1,1,.4]);
 daspect([1,1,1]);
 % colormap(gray(100));
-camlight;
+% camlight;
+setLight('on');
 lighting gouraud;
 set(p1,'FaceAlpha',.05);
 hold on;
