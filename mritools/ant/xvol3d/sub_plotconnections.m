@@ -422,87 +422,117 @@ set(hk,'tag','plotconnections','NumberTitle','off','name',['regions' ' [' mfilen
 % hp=uipanel('units','norm','title','v');
 % set(hp,'position',[0 .9 1 .1]);
 
+% -------------LABEL&co----------------------------------------------------------------------------------
+%node label
+hb=uicontrol('style','radio','units','norm','string','label','value',0);
+set(hb,'position',[.25 .935 .09 .032],'tag','nodelabel','callback',{@select,'nodelabel'},'backgroundcolor','w');
+set(hb,'tooltipstring','show node label','fontsize',8,'fontweight','bold');
+% label props
+hb=uicontrol('style','pushbutton','units','norm','string','label prop');
+set(hb,'position',[.25 .9 .09 .032],'tag','labelprop','callback',@labelprop,'backgroundcolor','w');
+set(hb,'tooltipstring','set label properties','fontsize',8,'fontweight','bold');
+
+% frame
+hb=uicontrol('style','frame','units','norm','string','label prop');
+set(hb,'position',[.24 .89 .11 .1],'backgroundcolor','w');
+uistack(hb,'bottom');
+
+% -----------------------------------------------------------------------------------------------
 
 %select all nodes
 hb=uicontrol('style','radio','units','norm','string','all nodes','value',1);
 set(hb,'position',[.0 .9 .1 .032],'tag','allnodes','callback',{@select,'allnodes'},'backgroundcolor','w');
-set(hb,'tooltipstring','select/deselect all nodes','fontsize',6,'fontweight','bold');
+set(hb,'tooltipstring','select/deselect all nodes','fontsize',8,'fontweight','bold');
+
+
+% %select nodes color
+% hb=uicontrol('style','pushbutton','units','norm','string','node COL');
+% set(hb,'position',[.1 .9 .06 .032],'tag','nodecol','callback',{@select,'nodecol'},'backgroundcolor','w');
+% set(hb,'tooltipstring','set node color','fontsize',8,'fontweight','bold');
+% %select nodes Radius
+% hb=uicontrol('style','pushbutton','units','norm','string','node RAD');
+% set(hb,'position',[.16 .9 .06 .032],'tag','noderad','callback',{@select,'noderad'},'backgroundcolor','w');
+% set(hb,'tooltipstring','set node radius','fontsize',8,'fontweight','bold');
+% %select nodes Transparency
+% hb=uicontrol('style','pushbutton','units','norm','string','node TRA');
+% set(hb,'position',[.22 .9 .06 .032],'tag','nodetra','callback',{@select,'nodetra'},'backgroundcolor','w');
+% set(hb,'tooltipstring','set node transparency','fontsize',8,'fontweight','bold');
+% 
+
 %select nodes color
 hb=uicontrol('style','pushbutton','units','norm','string','node COL');
-set(hb,'position',[.1 .9 .05 .032],'tag','nodecol','callback',{@select,'nodecol'},'backgroundcolor','w');
-set(hb,'tooltipstring','set node color','fontsize',6,'fontweight','bold');
+set(hb,'position',[.1 .964 .08 .032],'tag','nodecol','callback',{@select,'nodecol'},'backgroundcolor','w');
+set(hb,'tooltipstring','set node color','fontsize',8,'fontweight','bold');
 %select nodes Radius
 hb=uicontrol('style','pushbutton','units','norm','string','node RAD');
-set(hb,'position',[.15 .9 .05 .032],'tag','noderad','callback',{@select,'noderad'},'backgroundcolor','w');
-set(hb,'tooltipstring','set node radius','fontsize',6,'fontweight','bold');
+set(hb,'position',[.1 .932 .08 .032],'tag','noderad','callback',{@select,'noderad'},'backgroundcolor','w');
+set(hb,'tooltipstring','set node radius','fontsize',8,'fontweight','bold');
 %select nodes Transparency
 hb=uicontrol('style','pushbutton','units','norm','string','node TRA');
-set(hb,'position',[.2 .9 .05 .032],'tag','nodetra','callback',{@select,'nodetra'},'backgroundcolor','w');
-set(hb,'tooltipstring','set node transparency','fontsize',6,'fontweight','bold');
+set(hb,'position',[.1 .90 .08 .032],'tag','nodetra','callback',{@select,'nodetra'},'backgroundcolor','w');
+set(hb,'tooltipstring','set node transparency','fontsize',8,'fontweight','bold');
 
 
-%node label
-hb=uicontrol('style','radio','units','norm','string','label','value',0);
-set(hb,'position',[.1 .932 .05 .032],'tag','nodelabel','callback',{@select,'nodelabel'},'backgroundcolor','w');
-set(hb,'tooltipstring','show node label','fontsize',6,'fontweight','bold');
-% label props
-hb=uicontrol('style','pushbutton','units','norm','string','label prop');
-set(hb,'position',[.15 .932 .05 .032],'tag','labelprop','callback',@labelprop,'backgroundcolor','w');
-set(hb,'tooltipstring','set label properties','fontsize',6,'fontweight','bold');
+
 
 
 %select all links
 hb=uicontrol('style','radio','units','norm','string','all links','value',1);
-set(hb,'position',[.7 .9 .07 .032],'tag','alllinks','callback',{@select,'alllinks'},'backgroundcolor','w');
-set(hb,'tooltipstring','select/deselect all links','fontsize',6,'fontweight','bold');
+set(hb,'position',[.65 .9 .09 .032],'tag','alllinks','callback',{@select,'alllinks'},'backgroundcolor','w');
+set(hb,'tooltipstring','select/deselect all links','fontsize',8,'fontweight','bold');
+
 %select link color
 hb=uicontrol('style','pushbutton','units','norm','string','link COL');
-set(hb,'position',[.8 .9 .05 .032],'tag','linkcol','callback',{@select,'linkcol'},'backgroundcolor','w');
-set(hb,'tooltipstring','set link color','fontsize',6,'fontweight','bold');
+set(hb,'position',[.74 .964 .08 .032],'tag','linkcol','callback',{@select,'linkcol'},'backgroundcolor','w');
+set(hb,'tooltipstring','set link color','fontsize',8,'fontweight','bold');
 %select link Radius
 hb=uicontrol('style','pushbutton','units','norm','string','link RAD');
-set(hb,'position',[.85 .9 .05 .032],'tag','linkrad','callback',{@select,'linkrad'},'backgroundcolor','w');
-set(hb,'tooltipstring','set link radius','fontsize',6,'fontweight','bold');
+set(hb,'position',[.74 .932 .08 .032],'tag','linkrad','callback',{@select,'linkrad'},'backgroundcolor','w');
+set(hb,'tooltipstring','set link radius','fontsize',8,'fontweight','bold');
 %select link Transparency
 hb=uicontrol('style','pushbutton','units','norm','string','link TRA');
-set(hb,'position',[.9 .9 .05 .032],'tag','linktra','callback',{@select,'linktra'},'backgroundcolor','w');
-set(hb,'tooltipstring','set link transparency','fontsize',6,'fontweight','bold');
+set(hb,'position',[.74 .90 .08 .032],'tag','linktra','callback',{@select,'linktra'},'backgroundcolor','w');
+set(hb,'tooltipstring','set link transparency','fontsize',8,'fontweight','bold');
 
 % ==============================================
 %%   intensity to color
 % ===============================================
 
 %con intensity color
-hb=uicontrol('style','radio','units','norm','string','CS2col','value',0);
-set(hb,'position',[.8 .932 .07 .032],'tag','linkintensity','callback',{@select,'linkintensity'},'backgroundcolor','w');
-set(hb,'tooltipstring','show colorized connection strength/linkintensity','fontsize',6,'fontweight','bold');
+hb=uicontrol('style','radio','units','norm','string','CS2COL','value',0);
+set(hb,'position',[.84 .932 .09 .032],'tag','linkintensity','callback',{@select,'linkintensity'},'backgroundcolor','w');
+set(hb,'tooltipstring','show colorized connection strength/linkintensity','fontsize',7,'fontweight','bold');
 
 
+% colormapeditorString = fileread(which('colormapeditor.m'));
+% % colormapeditorString = fileread(strcat(matlabroot,'\toolbox\matlab\graph3d\colormapeditor.m'));
+% posStart = strfind(colormapeditorString,'stdcmap(maptype');
+% posEnd = strfind(colormapeditorString(posStart:end),'end') + posStart;
+% stdcmapString = colormapeditorString(posStart:posEnd);
+% split = strsplit(stdcmapString, '(mapsize)');
+% list = cellfun(@(x)x(find(x==' ', 1,'last'):end), split,'uni',0);
+% list(end) = [];
+% list=regexprep(list,' ','');
 
-colormapeditorString = fileread(strcat(matlabroot,'\toolbox\matlab\graph3d\colormapeditor.m'));
-posStart = strfind(colormapeditorString,'stdcmap(maptype');
-posEnd = strfind(colormapeditorString(posStart:end),'end') + posStart;
-stdcmapString = colormapeditorString(posStart:posEnd);
-split = strsplit(stdcmapString, '(mapsize)');
-list = cellfun(@(x)x(find(x==' ', 1,'last'):end), split,'uni',0);
-list(end) = [];
-list=regexprep(list,' ','');
-
+hg=findobj(0,'tag','winselection');
+list=get(findobj(hg,'tag','scmap'),'string');
 %con intensity color
-hb=uicontrol('style','popupmenu','units','norm','string',list,'value',size(list,1));
-set(hb,'position',[.87 .932 .07 .032],'tag','linkcolormap','backgroundcolor','w');
-set(hb,'tooltipstring','set colormap of connection strength','fontsize',6,'fontweight','bold','callback',{@select,'linkcolormap'});%
+hb=uicontrol('style','popupmenu','units','norm','string',list,'value',1);
+set(hb,'position',[.93 .932 .07 .04],'tag','linkcolormap','backgroundcolor','w');
+set(hb,'tooltipstring','set colormap of connection strength','fontsize',7,'fontweight','bold',...
+    'callback',{@select,'linkcolormap'});%
 
 % ==============================================
 %%   intensity to connectionThickness
 % ===============================================
 hb=uicontrol('style','radio','units','norm','string','CS2RAD','value',0);
-set(hb,'position',[.8 .964 .07 .032],'tag','CS2RAD','callback',{@select,'CS2RAD'},'backgroundcolor','w');
-set(hb,'tooltipstring','connection thickness defined by connection strength/linkintensity','fontsize',6,'fontweight','bold');
+set(hb,'position',[.84 .964 .09 .032],'tag','CS2RAD','callback',{@select,'CS2RAD'},...
+    'backgroundcolor','w','fontsize',7);
+set(hb,'tooltipstring','connection thickness defined by connection strength/linkintensity','fontsize',8,'fontweight','bold');
 
 hb=uicontrol('style','edit','units','norm','string','*1.5+.3');
-set(hb,'position',[.87 .967 .035 .025],'tag','CS2RADexpression','callback',{@select,'CS2RADexpression'},'backgroundcolor','w');
-set(hb,'fontsize',6,'fontweight','bold','tooltipstring',...
+set(hb,'position',[.93 .967 .07 .032],'tag','CS2RADexpression','callback',{@select,'CS2RADexpression'},'backgroundcolor','w');
+set(hb,'fontsize',7,'fontweight','normal','tooltipstring',...
     ['math expression to adjust connection thickness defined by' char(10) ...
     'connection strength/linkintensity' char(10) ...
     'NOTE: First, the absulute conection strength is used and normalized by it''s maximum  ' char(10) ...
@@ -518,28 +548,42 @@ set(hb,'fontsize',6,'fontweight','bold','tooltipstring',...
 %load excelfile
 hb=uicontrol('style','pushbutton','units','norm','string','load data');
 set(hb,'position',[.4 .9 .075 .03],'tag','conload','callback',@conload);
-set(hb,'tooltipstring','load excel data','fontsize',7,'fontweight','bold');
+set(hb,'tooltipstring','load excel data','fontsize',8,'fontweight','bold');
 
 
 %PLOT
 hb=uicontrol('style','pushbutton','units','norm','string','plot');
 set(hb,'position',[.5 .9 .05 .03],'tag','conplot','callback',@conplot);
-set(hb,'tooltipstring','plot nodes and links','fontsize',7,'fontweight','bold');
+set(hb,'tooltipstring','plot nodes and links','fontsize',8,'fontweight','bold');
 
 %clear
 hb=uicontrol('style','pushbutton','units','norm','string','clear');
 set(hb,'position',[.5 .95 .05 .03],'tag','conclear','callback',@conclear);
-set(hb,'tooltipstring','clear node and links','fontsize',7,'fontweight','bold');
+set(hb,'tooltipstring','clear node and links','fontsize',8,'fontweight','bold');
 
 %help
 hb=uicontrol('style','pushbutton','units','norm','string','help');
 set(hb,'position',[.55 .95 .05 .03],'tag','conhelp','callback',@conhelp);
-set(hb,'tooltipstring','get some help','fontsize',7,'fontweight','bold');
+set(hb,'tooltipstring','get some help','fontsize',8,'fontweight','bold');
+
+
+% frame
+hb=uicontrol('style','frame','units','norm','string','label prop');
+set(hb,'position',[.39 .89 .25 .1],'backgroundcolor','w');
+uistack(hb,'bottom');
 
 %USERDATA
 u.dummi=1;
 set(hk,'userdata',u);
-labeldefauls();
+labeldefaults();
+
+
+% ==============================================
+%%   OS-dependency
+% ===============================================
+if isunix==1 && ismac==0
+    set(findobj(gcf,'type','uicontrol'),'fontsize',7);
+end
 
 
 % set(get(gcf,'children'),'units','pixels');
@@ -547,7 +591,7 @@ labeldefauls();
 %%   label properties
 % ===============================================
 
-function labeldefauls()
+function labeldefaults()
 hf=findobj(0,'tag','plotconnections');
 u=get(hf,'userdata');
 
@@ -593,10 +637,8 @@ u.lab.needlelength  =str2num(answer{5});
 u.lab.needlecol     =str2num(answer{6});
 
 set(hf,'userdata',u);
-% ==============================================
-%%
-% ===============================================
 
+select([],[],'nodelabel');
 
 
 % ==============================================
@@ -681,7 +723,8 @@ if get(findobj(ht,'tag','linkintensity'),'value')==1 % LINK inteinsity
     intens=str2num(char(d(:,regexpi2(cname,'cs'))));
     hc=findobj(ht,'tag','linkcolormap');
     va=get(hc,'value');  li=get(hc,'string');
-    cmap=colormap(li{va});
+    cmap=(li{va});
+    cmap=sub_intensimg('getcolor',cmap);
     intens2=intens;
     intens2=intens2-min(intens2);
     intens2=round((intens2./max(intens2))*(size(cmap,1)-1)+1);

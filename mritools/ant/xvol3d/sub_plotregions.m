@@ -10,7 +10,7 @@ function sub_plotregions(varargin)
 % sub_plotregions('clear')
 % sub_plotregions('transp',0.5); %set region transparency
 
-if nargin~=0;
+if nargin~=0
 %     if length(varargin)==1
 %         par=struct();
 %         par=setfield(par,varargin{1},varargin{1});
@@ -130,7 +130,8 @@ set(gcf,'userdata',u);
 
 delete(findobj(gcf,'tag','sortx'));
 for i=1:size(tv,2)
-    hw=uicontrol('style','pushbutton','units','norm','string',['sort-' columnname{i}],'fontsize',5);
+    hw=uicontrol('style','pushbutton','units','norm',...
+        'string',['sort-' columnname{i}],'fontsize',7);
     set(hw,'tag','sortx','position',[  [i]*0.15-.15 .9 .15 .05 ]);
     set(hw,'callback',@sortx,'userdata',i)
 end
@@ -142,26 +143,63 @@ set(gcf,'userdata',u);
 % ==============================================
 %%   facealpha
 % ===============================================
-hw=uicontrol('style','edit','units','norm','string','0.2','fontsize',5);
-set(hw,'tag','alpha','position',[  [6]*0.15-.15 .9 .05 .02 ]);
-set(hw,'tooltipstr','region transparency current region');
+try
+    transdefault=get(findobj(findobj(0,'tag','winselection'),'tag','regiontransparency'),'string');
+catch
+    transdefault='0.2' ;
+end
 
-hw=uicontrol('style','edit','units','norm','string','0.2','fontsize',5);
-set(hw,'tag','alphaall','position',[  [6]*0.15-.15+.05 .9 .05 .02 ]);
-set(hw,'tooltipstr','region transparency all region','callback',@settransparencyAllregs);
+hw=uicontrol('style','edit','units','norm','string',transdefault,'fontsize',8);
+set(hw,'tag','alpha','position',[  [6]*0.15-.15 .9 .05 .03 ]);
+set(hw,'tooltipstr','region transparency used when selected');
+
+hw=uicontrol('style','edit','units','norm','string',transdefault,'fontsize',8);
+set(hw,'tag','alphaall','position',[  [6]*0.15-.15+.05 .9 .05 .03 ]);
+set(hw,'tooltipstr','set region transparency for all regions','callback',@settransparencyAllregs);
 
 % ==============================================
 %%   select all
 % ===============================================
+
 hw=uicontrol('style','radio','units','norm');
-set(hw,'tag','selectallregions','position',[  .9 .9 .05 .03 ],'fontsize',5,'string','all regs');
+set(hw,'tag','selectallregions','position',[  .9 .9 .15 .03 ],...
+    'fontsize',8,'string','all regs');
 set(hw,'tooltipstr','select/unselect all regions','backgroundcolor','w');%,
 set(hw,'callback',{@selectallregions});
 
 hw=uicontrol('style','pushbutton','units','norm');
-set(hw,'tag','deselectallregions','position',[  .9 .93 .05 .03 ],'fontsize',5,'string','deselect regs');
+set(hw,'tag','deselectallregions','position',[  .9 .94 .08 .04 ],...
+    'fontsize',8,'string','deselect all');
 set(hw,'tooltipstr','deselect all regions','backgroundcolor','w');%,
 set(hw,'callback',{@selectallregions,'deselectAll'});
+
+% LABEL
+%Label 
+hw=uicontrol('style','togglebutton','units','norm');
+set(hw,'tag','lab','position',[  .76 .94 .04 .04 ],...
+    'fontsize',7,'string','Lab');
+set(hw,'tooltipstr','show region labels','backgroundcolor','w');%,
+set(hw,'callback',{@showlabel});
+try
+    val=get(findobj(findobj(0,'tag','xvol3d'),'tag','showlabel'),'value');
+    set(hw,'value',val);
+end
+
+
+%Label prop
+hw=uicontrol('style','pushbutton','units','norm');
+set(hw,'tag','labelprop','position',[  .8 .94 .04 .04 ],...
+    'fontsize',7,'string','Lprop');
+set(hw,'tooltipstr','set region label properties','backgroundcolor','w');%,
+set(hw,'callback',{@labelprop});
+
+
+% ==============================================
+%%   OS-dependency
+% ===============================================
+if isunix==1 && ismac==0
+    set(findobj(findobj(0,'tag','regionselect'),'type','uicontrol'),'fontsize',7);
+end
 
 % ==============================================
 %%   color pre-selected regions
@@ -174,10 +212,90 @@ for i=1:length(ix)
     regcol =str2num(u.tv{ix(i),5});
     
     
-    disp(['..painting: ' label]);
+    cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label]);
     task=1;
     paintregion(task,regID,label,regcol)
 end
+
+
+
+labeldefaults();
+
+
+% ==============================================
+%%   showlabels
+% ===============================================
+function showlabel(e,e2)
+hf=findobj(0,'tag','xvol3d');
+figure(hf);
+hr=findobj(0,'tag','regionselect');
+if get(findobj(hr,'tag','lab'),'value')==1
+    xvol3d('regionlabels','on')
+else
+    xvol3d('regionlabels','off');
+end
+% figure(hr);
+
+% ==============================================
+%%   label properties
+% ===============================================
+
+function labeldefaults()
+hf=findobj(0,'tag','xvol3d');
+u=get(hf,'userdata');
+
+if isfield(u,'lab'); 
+    return; 
+end
+
+if isfield(u,'lab')==0; u.lab.dummi=1; end
+if isfield(u.lab,'fs')           ==0;  u.lab.fs=7        ; end
+if isfield(u.lab,'fcol')         ==0;  u.lab.fcol=[0 0 0]  ; end
+if isfield(u.lab,'fhorzal')      ==0;  u.lab.fhorzal=2  ; end
+
+if isfield(u.lab,'needlevisible')==0;  u.lab.needlevisible=1; end
+if isfield(u.lab,'needlelength')==0;   u.lab.needlelength=20; end
+if isfield(u.lab,'needlecol')   ==0;   u.lab.needlecol=[0 0 0]  ; end
+set(hf,'userdata',u);
+
+function labelprop(e,e2)
+hf=findobj(0,'tag','xvol3d');
+u=get(hf,'userdata');
+
+
+% ==============================================
+%%   GUI
+% ===============================================
+
+prompt = {'fontsize (numeric)',        'font color [R,G,B]'...
+    'Horizontal Alignment (1)left,(2)center,(3)right' ...
+    'needle visible [0]no,[1]yes' 'needle length' ,'needle color  [R,G,B]'};
+dlg_title = 'label properties';
+num_lines = 1;
+defaultans = {...
+    num2str(u.lab.fs), ...
+    num2str(u.lab.fcol), ....
+    num2str(u.lab.fhorzal), ...
+    num2str(u.lab.needlevisible), ...
+    num2str(u.lab.needlelength),...
+    num2str(u.lab.needlecol),...
+    };
+answer = inputdlg(prompt,dlg_title,num_lines,defaultans);
+if isempty(answer); return; end
+u.lab.fs            =str2num(answer{1});
+u.lab.fcol          =str2num(answer{2});
+u.lab.fhorzal       =str2num(answer{3});
+u.lab.needlevisible =str2num(answer{4});
+u.lab.needlelength  =str2num(answer{5});
+u.lab.needlecol     =str2num(answer{6});
+
+set(hf,'userdata',u);
+
+
+%select([],[],'nodelabel');
+
+
+
 
 
 
@@ -238,6 +356,9 @@ function settransparencyAllregs(e,e2);
 regs=findobj(findobj(0,'tag','xvol3d'),'tag','region');
 set(regs,'facealpha',str2num(get(e,'string')));
 
+set(findobj(findobj(0,'tag','winselection'),'tag','regiontransparency'),...
+    'string',get(e,'string'));
+
 
 function CellSelectionCallback(e,e2)
 
@@ -255,11 +376,13 @@ try
         regcol=str2num(dat{ic(1),5});%./255;
         
         if stat==1
-            disp(['..painting: ' label]);
+              %disp(['..painting: ' label]);
+              cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label ' [ID: ' num2str(regID) ']' ]);
             task=1;
             paintregion(task,regID,label,regcol)
         else
-            disp(['..unpainting: ' label]);
+            %disp(['..unpainting: ' label]);
+            cprintf([ 0.8510    0.3294    0.1020],['..unpainting: ' label  ' [ID: ' num2str(regID) ']' ]);
             task=0;
             paintregion(task,regID,label,regcol)
         end
@@ -267,6 +390,7 @@ try
         setcolor(ic);
     end
 end
+cprintf([ 0.8510    0.3294    0.1020],['\n']);
 % ==============================================
 %% SETCOLOR
 % ==============================================
@@ -366,7 +490,9 @@ for i=1:length(ix)
     regcol =str2num(u.tv{ix(i),5});
     
     
-    disp([msg label]);
+%     disp([msg label]);
+% ' [ID: ' num2str(regID) ']' 
+cprintf([ 0.8510    0.3294    0.1020],[msg label ' [ID: ' num2str(regID) '] \n']);
 
     paintregion(task,regID,label,regcol);
 end
@@ -401,15 +527,15 @@ lusel =u.selectedRegion(ilu,1);
 % u.lu(ilu,:)
 % ans = 
 %   Columns 1 through 3
-%     'Primary somatosen…'    [188064]    '0.094118 0.50196 …'
+%     'Primary somatosenï¿½'    [188064]    '0.094118 0.50196 ï¿½'
 %   Columns 4 through 5
-%     [329]    '981;201;1047;1070…'
+%     [329]    '981;201;1047;1070ï¿½'
 % tb(itb,:)
 % ans = 
 %   Columns 1 through 4
-%     [1]    'Primary somatosen…'    '329'    'c'
+%     [1]    'Primary somatosenï¿½'    '329'    'c'
 %   Column 5
-%     '0.094118 0.50196 …'
+%     '0.094118 0.50196 ï¿½'
 % else
 %     disp('same');
 % end
@@ -456,8 +582,8 @@ if task==1
     end
     d2 = smooth3(d2);
        
-    if unique(r(:))==0; 
-       disp('..not FOUND IN ATLAS') ;
+    if unique(r(:))==0
+         cprintf([ 0.8510    0.3294    0.1020],['..not FOUND IN ATLAS']);
        return
     end
     

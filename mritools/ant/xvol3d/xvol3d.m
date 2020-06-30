@@ -8,60 +8,72 @@
 % #wg BUTTONS
 % [load brain mask]: load brain mask (example "AVGThemi.nii") ... has to be done first
 % [load atlas]     : load an atlas or a volume with rois to display. Example: "ANO.nii"
-%                    If the atlas (example: "ANO.nii") is accompanied by a excelfile ("ANO.xlsx") 
+%                    If the atlas (example: "ANO.nii") is accompanied by a excelfile ("ANO.xlsx")
 %                    with the same structure as used for the atlases of the tbx, region labels and
 %                    colors will be used. If not, pseudo-region names and random colors will be used
 %                    to display the regions.
-% #r           NOTE: [load atlas] only loads the atlas/Rois. Use [plot regions] to display the regions.                     
+% #r           NOTE: [load atlas] only loads the atlas/Rois. Use [plot regions] to display the regions.
 % [plot regions]    : Displays the regions, previously loaded via [load atlas]
 %                    Select the regions in the new table window to visualize them.
 % [load selected regions]: an Excel file analoge to  'ANO.xlsx' with an additional column with name #b 'selection'
 %                    The 'selection' column contains a '1' for regions that should be preselected, otherwise
-%                    keep cells of 'selection' column empty!  
+%                    keep cells of 'selection' column empty!
 %                    The selection file can be shortened to the the regions that should be preselected. The order
 %                    of the regions can be arbitrary.
 % [Reg vis]          : radio, show/hide selected regions
-% [edit: 0.05]       : set transparency of selected and currently visualized regions  (range: 0-1)
-% 
+% [edit: 0.2]       : set transparency of selected and currently visualized regions  (range: 0-1)
+%
 % [by ID]            : userinput: vector of IDs (as contained in the atlas/Roivolume) for preselection
-%                      example: for Allen Mouse Atlas: [985 672] to preselect "primary motor area" and 
+%                      example: for Allen Mouse Atlas: [985 672] to preselect "primary motor area" and
 %                      "caudoputamen". These IDs will be preselected in the region table window opend
 %                      via [plot regions]
 % #b STAISTICAL IMAGE
-% [load stat img]   : Load a statistical image (SI) via gui. Examples: volumes containing T-values, 
+% [load stat img]   : Load a statistical image (SI) via gui. Examples: volumes containing T-values,
 %                     incidence maps etc.
 % [pulldown menu]   : (located below [load stat img]). Select a previously loaded image.
 %                      Several different SI can be loaded, selected from the pulldown menu and displayed.
 % [remove img]      : remove visualization of the selected image
 %
-%  #k There are two ways to visualize SI: intensity cluster #b ([plot-CL]) #k or via threshold #b ([plot-TR])
-% [plot-CL]          : cluster an image into N-intensity cluster/classes. Use pulldow-menu to set 
-%                      the number of classes. 
+%  #k There are 3 ways to visualize SI:
+%               #b  -intensity cluster #r [plot-CL] #k or 
+%               #b  -threshold #r [plot-TR]  #k or 
+%               #b  -via slice function #r [plot-SL]  
+%% ________________________________________________________________________________________________
+% #g [plot-CL]          : cluster an image into N-intensity cluster/classes. Use pulldow-menu to set
+%                      the number of classes.
 %                      Optional: Use left edit field [nan nan] to first set a lower and upper threshold
-%                      before clustering into N classes: (examples: [nan nan]..no threshold; [0 nan]...only 
+%                      before clustering into N classes: (examples: [nan nan]..no threshold; [0 nan]...only
 %                      lower threshold is used).
-% [plot-TR]          : threshold SI based on a set threshold. The threshold can be changed in the left edit
+%% ________________________________________________________________________________________________
+% #g [plot-TR]          : threshold SI based on a set threshold. The threshold can be changed in the left edit
 %                      field ([90])
 % #b Transpatency & colormap
 % [parula]       : pulldownmenu to select the colormap for current SI
-% [nan nan]      : optional, set lower/upper color range limits 
-% [def]          : set default color range limits 
-% [labm]         : radio, display either a 2-tick or N-tick colorbar
-% [labs]         : radio, show/hide region labels
+% [nan nan]      : optional, set lower/upper color range limits
+% [def]          : set default color range limits
+% [Cbar]       : radio, show/hide region colorbar
+% [c-ticks]      : radio, display colorbar with either 2-ticks or n-ticks
 % [a1]           : pulldown, select different transparency settings
 % [edit]         : edit field to set the transparency. For [plot-CL] you can chose as many transparency  values
 %                  as classes/clusters (example:  3 classes:  "0.1 0.5 1.0" for incidency maps, with increasing
 %                  transparency from inside to outside to display an intensity "core").
+%% ________________________________________________________________________________________________
+% #g [plot-SL]           : plot Intensity Image using slice function 
+% [colormap]          : select colormap
+% [transparent value] : this intensity value is set transparent (default 0: i.e. '0'-values become transparent)
+% [nan nan]           : optional, set lower/upper color range limits 
+% [transparency]      : set transparency value; {range 0-1}
+%% ________________________________________________________________________________________________
 % #b Brain & materila & light
 % [nodes & links] : display connections/connection strength --> see help there
 % [arrow]         : shwo/hide orthogonal arrows
 % [0.01]            :  set brain mask transparency (range: 0-1)
 % [Bcol]            :  set brain mask color
-% [Bdot]            :  radio, show brain mask as dotfield          
+% [Bdot]            :  radio, show brain mask as dotfield
 % [dull]            :  pulldown,select light-interacting material type
 % [light]           :  set light. To obtain the light from the viewers location (headlight), select [light] btn twice.
 % #b Movie
-% [ROT]            : click [ROT] to rotate the volume; click again to stop rotation
+% [ROT]            :  click [ROT] to rotate the volume; click again to stop rotation or stop saving movie
 % [iteration]      : (default value: 120) number of iterations to rotate (iteration>0 or inf )
 % [azimut step]    : (default value: 3) azimuth step-size   (small/large: produces slow/fast rotations)
 % [elevation step] : (default value: 0) elevation step-size (small/large: produces slow/fast rotations)
@@ -77,23 +89,32 @@
 %------------------------------------------------
 % #b Example: show preselected regions, use preselection from excelfile
 % cf
-% xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii')); %load brain mask
+% xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii')); % load brain mask
 % xvol3d('loadatlas','ANO.nii');            % load atlas
 % xvol3d('regions','myselection3.xlsx');    % (optional) load excel-file with preselect regions
 % xvol3d('regions','plot');                 % opens regions selection table & plot preselected regions
+% xvol3d('regionlabels','on')               % show labels
 % ------------------------------------------------
-% #b Example: show preselected regions, use region IDs for preselection 
+% #b Example: show preselected regions, use region IDs for preselection
 % cf
-% xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii')); %load brain mask
+% xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii')); % load brain mask
 % xvol3d('loadatlas','ANO.nii');            % load atlas
 % xvol3d('regions',[672 320]);              %  preselect regions by ID (here "cauoputamne" and "prim. motor area, layer 1")
 % xvol3d('regions','plot');                 % opens regions selection table; plot preselected regions
+%
+% #b Example: show regions by ID and display labels
+% cf
+% xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii'));   % load brain mask
+% xvol3d('loadatlas','ANO.nii');                          % load atlas
+% xvol3d('regions',[802   672   844   648   943   320]);  %  preselect regions by ID
+% xvol3d('regions','plot');                               % opens regions selection table; plot preselected regions
+% xvol3d('regionlabels','on');                            % show labels
 %
 % #b plot intensity volume via #r cluster method
 % xvol3d('plotclust'); use default options
 %% use 'plotclust' as first input followed by pairwise inputs
 % xvol3d('plotclust','cmap','jet','nclasses',3,'transp',[.05 .2 1],'thresh',[nan nan]);
-% 
+%
 % #b plot intensity volume via #r threshold
 % xvol3d('plotthresh');
 %% use 'plotthresh' as first input followed by pairwise inputs
@@ -103,29 +124,43 @@
 % sub_plotregions('transp',0.5);  % set region transparency
 %
 % #b USING 'set' followed by pairwise parameters..pairwise paramters can be combined
-% xvol3d('set','material','dull'); %% set material to 'dull'
-% xvol3d('set','showarrows',1); % show arrows
-% xvol3d('set','light','on'); % show light
-% xvol3d('set','braindot',1); % show brain as dot field
+% xvol3d('set','material','dull');  % set material to 'dull'
+% xvol3d('set','showarrows',1);     % show arrows
+% xvol3d('set','light','on');       % show light
+% xvol3d('set','braindot',1);       % show brain as dot field
 % xvol3d('set','braincolor',[1 0 1]); % set brain color
-% xvol3d('set','brainalpha',1); % set alpha transparency
+% xvol3d('set','brainalpha',1);     % set alpha transparency
 % xvol3d('set','material','metal','braincolor',[1 1 0]);  % example to combine parameter
-% 
+%
 % #b Example: plot two intensity images
 % cf
-% xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii')); %load brain mask
-% xvol3d('statimage','INCMAP_HR_n6.nii'); % load intensity image --> image1
-% xvol3d('statimage','incmap_right.nii'); % load intensity image --> image2
-% xvol3d('imagefocus',1); % set foucs to image-1
-% xvol3d('plotthresh','transp',[1],'cmap','@blue','thresh',50); %display image1 via thresholding
-% xvol3d('imagefocus',2); % set foucs to image-1
-% xvol3d('plotclust','cmap','jet','nclasses',5,'transp',[.2],'thresh',[nan nan]);% %display image2 via clustering
-% 
-%  
+% xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii')); % load brain mask
+% xvol3d('statimage','INCMAP_HR_n6.nii');               % load intensity image1
+% xvol3d('statimage','incmap_right.nii');               % load intensity image2
+% xvol3d('imagefocus',1);                               % set foucs to image-1
+% xvol3d('plotthresh','transp',[1],'cmap','@blue','thresh',50); % display image1 via thresholding
+% xvol3d('imagefocus',2);                               % set foucs to image-1
+% xvol3d('plotclust','cmap','jet','nclasses',5,'transp',[.2],'thresh',[nan nan]); % display image2 via clustering
+%
+% #b Example: plot via slice-command (plot-SL)
+% xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii'));  % load brain mask
+% xvol3d('statimage','INCMAP_HR_n6.nii');                % load intensity image --> image1
+% xvol3d('plotslice','cmap','hot','nanval',0,'transp',[.05],'thresh',[-2 120]); % plot via slice
+%
+% #b Example: plot two intensity images via slice-command (plot-SL) with two different colormaps
+% cf
+% xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii')); % load brain mask
+% xvol3d('statimage','INCMAP_HR_n6.nii');               % load intensity image1
+% xvol3d('statimage','incmap_right.nii');               % load intensity image2
+% xvol3d('imagefocus',1);                               % set foucs to image-1
+% xvol3d('plotslice','cmap','hot','nanval',0,'transp',[.05],'thresh',[-2 120]); % plot via slice
+% xvol3d('imagefocus',2);                               % set foucs to image-2
+% xvol3d('plotslice','cmap','jet','nanval',0,'transp',[.04],'thresh',[nan nan]); % plot via slice
 
 
 function varargout=xvol3d(varargin)
 
+format compact;
 addpath(genpath(fileparts(which('xvol3d.m'))));
 if exist('smoothpatch.m')~=2
     addpath(fullfile(fileparts(which('xvol3d')),'smoothpatch_version1b'));
@@ -133,13 +168,16 @@ end
 
 if 0
     cf
-    xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii'))
-    xvol3d('loadatlas','ANO.nii')
+    xvol3d('loadbrainmask',fullfile(pwd,'AVGT.nii'))
+    xvol3d('loadatlas','ROI4_sm.nii')
+    xvol3d('regions',[7 8]);
+    xvol3d('regions','plot');
+    
     xvol3d('statimage',fullfile(pwd,'ROI4_sm.nii'));
     
-    xvol3d('regions','myselection.xlsx')
+    xvol3d('regions','_testNodes2.xlsx')
     
-    xvol3d('regions','myselection2.xlsx')
+    %xvol3d('regions','myselection2.xlsx')
     
     % ==============================================
     %%
@@ -153,6 +191,14 @@ if 0
     
     
     cf
+    xvol3d('loadbrainmask',fullfile(pwd,'AVGT.nii')); %load brain mask
+    xvol3d('loadatlas','ROI4_sm.nii');            % load atlas
+    xvol3d('regions',[7 8]);                  %  preselect regions by ID (here "cauoputamne" and "prim. motor area, layer 1")
+    xvol3d('regions','plot');                 % opens regions selection table; plot preselected regions
+    
+    
+    
+    cf
     xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii')); %load brain mask
     xvol3d('loadatlas','ANO.nii');            % load atlas
     xvol3d('regions',[672 320]);                  %  preselect regions by ID (here "cauoputamne" and "prim. motor area, layer 1")
@@ -160,8 +206,8 @@ if 0
     %    % ==============================================
     cf
     xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii')); %load brain mask
-    xvol3d('statimage','INCMAP_HR_n6.nii'); % load intensity image --> image1 
-    xvol3d('statimage','incmap_right.nii'); % load intensity image --> image2 
+    xvol3d('statimage','INCMAP_HR_n6.nii'); % load intensity image --> image1
+    xvol3d('statimage','incmap_right.nii'); % load intensity image --> image2
     xvol3d('imagefocus',1); % set foucs to image-1
     xvol3d('plotthresh','transp',[1],'cmap','@blue','thresh',50); %display image1 via thresholding
     xvol3d('imagefocus',2); % set foucs to image-1
@@ -169,7 +215,7 @@ if 0
     
     %%
     % ===============================================
-
+    
     xvol3d('plottr',.3);%plot-TR at threshold .3
     xvol3d('arrows','on');%show hide arrows
     
@@ -179,6 +225,7 @@ if 0
     
     xvol3d('updateIMGparams',4)
     xvol3d('set','material','shiny');
+    xvol3d('regionlabels','on');%show/hide labels
     
 end
 
@@ -214,32 +261,36 @@ end
 if nargin~=0;
     
     
+    if isfield(par,'regionlabels');
+        showlabel_ext(par);
+    end
+    
     if isfield(par,'updateIMGparams');
         updateIMGparams(      par.updateIMGparams);
         return
     end
     
-    if isfield(par,'imagefocus');      
-        setimageFocus(par.imagefocus);      
-    end
-  
-    if isfield(par,'loadbrainmask');      
-        buttonwindow
-        loadbrainmask(par.loadbrainmask);      
-    end
-    if isfield(par,'loadatlas');     
-        buttonwindow
-        loadatlas(    par.loadatlas);          
+    if isfield(par,'imagefocus');
+        setimageFocus(par.imagefocus);
     end
     
-    if isfield(par,'regions');   
+    if isfield(par,'loadbrainmask');
+        buttonwindow
+        loadbrainmask(par.loadbrainmask);
+    end
+    if isfield(par,'loadatlas');
+        buttonwindow
+        loadatlas(    par.loadatlas);
+    end
+    
+    if isfield(par,'regions');
         if isnumeric(par.regions)
             cb_selectbyID([],[],par.regions); %select by IDs
         else
             if strcmp(par.regions,'plot')==1  %plot regions
                 selectRegions();
             elseif strcmp(par.regions,'clear')==1  %deselect all regions
-                sub_plotregions('clear')     
+                sub_plotregions('clear')
                 
             else
                 buttonwindow               %select using Excel
@@ -253,33 +304,34 @@ if nargin~=0;
     if isfield(par,'set');         setparameter(par) ;  end
     if isfield(par,'plotclust');   plotclust(par) ;     end
     if isfield(par,'plotthresh');  plotthresh(par) ;    end
-  
-     
+    if isfield(par,'plotslice');   plotslice(par) ;    end
     
-    if isfield(par,'updateIMGparams'); 
+    
+    
+    if isfield(par,'updateIMGparams');
         buttonwindow
-        updateIMGparams(      par.updateIMGparams);      
+        updateIMGparams(      par.updateIMGparams);
     end
-    if isfield(par,'statimage');      
-       % buttonwindow
-        statimage(      par.statimage);        
-    end
-    
-    
-    if isfield(par,'plottr');        
-        plottr(      par);              
+    if isfield(par,'statimage');
+        % buttonwindow
+        statimage(      par.statimage);
     end
     
-     if isfield(par,'arrows');        
-        showarrows(      par);              
-     end
     
-      if isfield(par,'light');        
-        slight(      par);              
-      end
+    if isfield(par,'plottr');
+        plottr(      par);
+    end
     
-      if isfield(par,'brainalpha');        
-        brainalpha(      par);              
+    if isfield(par,'arrows');
+        showarrows(      par);
+    end
+    
+    if isfield(par,'light');
+        slight(      par);
+    end
+    
+    if isfield(par,'brainalpha');
+        brainalpha(      par);
     end
     
 end
@@ -290,9 +342,9 @@ hw=findobj(0,'tag','winselection');
 hc=findobj(hw,'tag','currentimg');
 li=get(hc,'string');
 if isnumeric(par)
-  if par(1)<=length(li) && par(1)>=1  
-      set(hc,'value',par);
-  end
+    if par(1)<=length(li) && par(1)>=1
+        set(hc,'value',par);
+    end
     
 end
 
@@ -320,7 +372,7 @@ if isfield(par,'transp')
     set(hc,'string',num2str(par.transp));
 end
 
- cb_plotimg ([],[],2);
+cb_plotimg ([],[],2);
 
 
 function plotclust(par)
@@ -348,12 +400,12 @@ if isfield(par,'transp')
     set(hc,'string',num2str(par.transp));
 end
 
- cb_plotimg ([],[],1);
+cb_plotimg ([],[],1);
 
 return
 
 
-function setparameter(par) 
+function setparameter(par)
 hw=findobj(0,'tag','winselection');
 if isfield(par,'material')
     %% xvol3d('set','material','shiny'); %set material
@@ -437,13 +489,13 @@ set(hb,'callback',@cb_selectRegions);
 set(hb,'tooltipstring','opens a gui to select regions to display');
 
 hb=uicontrol(hs,'style','pushbutton','units','norm');
-set(hb,'position',[0.01 .75 .4 .05],'string','load selected regions');
-set(hb,'callback',@cb_loadselectRegions,'fontsize',5);
+set(hb,'position',[0.01 .75 .5 .05],'string','load selection');
+set(hb,'callback',@cb_loadselectRegions,'fontsize',8);
 set(hb,'tooltipstring','select external file (excel file) with preselected regions');
 
 hb=uicontrol(hs,'style','pushbutton','units','norm');
-set(hb,'position',[0.4 .75 .2 .05],'string','by IDs','tag','preselectByID');
-set(hb,'callback',@cb_selectbyID  ,'fontsize',5);
+set(hb,'position',[0.7 .75 .2 .05],'string','by IDs','tag','preselectByID');
+set(hb,'callback',@cb_selectbyID  ,'fontsize',8);
 set(hb,'tooltipstring','preselected regions by ID');
 
 
@@ -451,9 +503,9 @@ set(hb,'tooltipstring','preselected regions by ID');
 %% __________________________________________________________________________________________________
 % REGIONS visible
 hb=uicontrol(gcf,'style','radio','units','norm');
-set(hb,'position',[0.01 .7 .25 .05],'string','Reg vis','backgroundcolor','w');
-set(hb,'tooltipstring','regions visible on/off');
-set(hb,'callback',{@regionpara,'visible'},'fontsize',6);
+set(hb,'position',[0.01 .7 .3 .05],'string','Reg vis','backgroundcolor','w');
+set(hb,'tooltipstring','regions on');
+set(hb,'callback',{@regionpara,'visible'},'fontsize',8);
 hp=findobj(findobj(0,'tag','xvol3d'),'tag','region');
 if ~isempty(hp)
     if strcmp(get(hp(1),'visible'),'on'); set(hb,'value',1);
@@ -464,32 +516,32 @@ else
 end
 % REGIONS alpha
 hb=uicontrol(gcf,'style','edit','units','norm');
-set(hb,'position',[0.26 .7 .15 .04],'string','','backgroundcolor','w');
-set(hb,'tooltipstring','transparency');
-set(hb,'callback',{@regionpara,'alpha'},'fontsize',6);
+set(hb,'position',[0.4 .7 .15 .04],'string','','backgroundcolor','w');
+set(hb,'tooltipstring','region transparency','tag','regiontransparency');
+set(hb,'callback',{@regionpara,'alpha'},'fontsize',8);
 hp=findobj(findobj(0,'tag','xvol3d'),'tag','region');
 if ~isempty(hp)
     set(hb,'string', num2str(get(hp(1),'facealpha'))  );
 else
-    set(hb,'string',.05);
+    set(hb,'string',.2);
 end
 %% ____INTENS IMAGE______________________________________________________________________________________________
 
 hb=uicontrol(gcf,'style','pushbutton','units','norm');
-set(hb,'position',[0.01 .6 .5 .035],'string','load stat img');
+set(hb,'position',[0.01 .61 .5 .035],'string','load stat img');
 set(hb,'callback',@cb_loadstatimg);
 set(hb,'tooltipstring','load an image=NIFTI-file (incidence map/statisit)');
 
-hb=uicontrol(gcf,'style','pushbutton','units','norm');
-set(hb,'position',[0.7 .6 .3 .035],'string','remove img');
+hb=uicontrol(gcf,'style','pushbutton','units','norm','fontsize',8);
+set(hb,'position',[0.7 .61 .3 .035],'string','remove img');
 set(hb,'callback',@cb_deletestatimg);
 set(hb,'tooltipstring','remove image from from figure');
 
 
 
 hb=uicontrol(gcf,'style','popupmenu','units','norm');
-set(hb,'position',[0.01 .565 .5 .035],'string',{'empty'},'tag','currentimg');
-set(hb,'tooltipstring','currently selected ..');
+set(hb,'position',[.001 .58 .65 .03],'string',{'empty'},'tag','currentimg');
+set(hb,'tooltipstring','currently selected ..','fontsize',8);
 set(hb,'callback',@cb_currentimg);
 updateImagelist();
 
@@ -505,19 +557,22 @@ set(hb,'position',[.0 .52 .3 .03],'string','nan nan');
 set(hb,'tooltipstring','threshold (2 values), not necessary','tag','cthresh1');
 
 hb=uicontrol(gcf,'style','popupmenu','units','norm'); %CLASSes
-set(hb,'position',[.3 .52 .2 .03],'string',cellfun(@(a){ [ num2str(a) ]}, [num2cell([1:20]) 'user'] )');
+set(hb,'position',[.3 .53 .3 .03],'string',cellfun(@(a){ [ num2str(a) ]}, [num2cell([1:20]) 'user'] )');
 % set(hb,'callback',{@cb_plotimg,1});
 set(hb,'tooltipstring','number of classes (otsu method)','tag','cnclasses','value',3);
 
+hb=uicontrol(gcf,'style','frame','units','norm');
+set(hb,'position',[0.0 .5085 1 .005],'foregroundcolor',[0    0.4510    0.7412]);
+
 % ----------------------METH2
 hb=uicontrol(gcf,'style','pushbutton','units','norm');
-set(hb,'position',[.7 .48 .3 .03],'string','plot-TR');
+set(hb,'position',[.7 .475 .3 .03],'string','plot-TR');
 set(hb,'callback',{@cb_plotimg,2});
 set(hb,'tooltipstring','plot via thresholding method');
 
 
 hb=uicontrol(gcf,'style','edit','units','norm');
-set(hb,'position',[0 .48 .3 .03],'string','90');
+set(hb,'position',[0 .475 .3 .03],'string','90');
 set(hb,'tooltipstring','threshold (1 value) for "plot-TR"','tag','cthresh2');
 
 
@@ -525,8 +580,8 @@ set(hb,'tooltipstring','threshold (1 value) for "plot-TR"','tag','cthresh2');
 % ----------------------
 % CMAP
 hb=uicontrol(gcf,'style','popupmenu','units','norm');
-set(hb,'position',[0.0 .43 .3 .035],'string','plot');
-set(hb,'tag','scmap');
+set(hb,'position',[0.01 .44 .45 .03],'string','plot');
+set(hb,'tag','scmap','fontsize',8);
 set(hb,'string',sub_intensimg('getcmap'));
 set(hb,'value',1);
 set(hb,'tooltipstring','colormap');
@@ -534,48 +589,115 @@ set(hb,'callback',{@setIMG,'scmap'});
 
 % cmap-range
 hb=uicontrol(gcf,'style','edit','units','norm');
-set(hb,'position',[.3 .43 .3 .035],'string','nan nan','fontsize',6);
+set(hb,'position',[.5 .43 .3 .035],'string','nan nan','fontsize',8);
 set(hb,'tooltipstring','set color-range (min,max); otherwise "nan nan" for default');
 set(hb,'tag','setCrange');
 set(hb,'callback',{@setCrange});
 
-% cmap-Bzttondefault
+% cmap-Bztton-default
 hb=uicontrol(gcf,'style','pushbutton','units','norm');
-set(hb,'position',[.6 .43 .07 .035],'string','def','fontsize',6);
+set(hb,'position',[.8 .43 .15 .035],'string','def','fontsize',8);
 set(hb,'tooltipstring','set default color-range');
 % set(hb,'tag','nan nan');
 set(hb,'callback',{@setCrangedefault});
 
-% cmap-Bzttondefault
-hb=uicontrol(gcf,'style','radio','units','norm');
-set(hb,'position',[.67 .43 .17 .035],'string','labm','fontsize',5);
-set(hb,'tooltipstring','set cbar-labelmode (2 ticks or n-ticks)','backgroundcolor','w');
-set(hb,'tag','cbarlabelmode','value',0);
-set(hb,'callback',{@cbarlabelmode});
 
-% cmap-Bzttondefault
-hb=uicontrol(gcf,'style','radio','units','norm');
-set(hb,'position',[.84 .43 .17 .035],'string','labshow','fontsize',5);
-set(hb,'tooltipstring','show/hide label','backgroundcolor','w');
-set(hb,'tag','cbarlabelshow','value',1);
-set(hb,'callback',{@cbarlabelshow});
-
-% ALPHA
-hb=uicontrol(gcf,'style','edit','units','norm');
-set(hb,'position',[.31 .395 .69 .035],'string','.02','fontsize',6);
-set(hb,'tooltipstring','transparency');
-set(hb,'tag','salpha');
-set(hb,'callback',{@setIMG,'alpha'});
 
 
 % ALPHA-'popup'
 hb=uicontrol(gcf,'style','popup','units','norm');
-set(hb,'position',[0 .395 .3 .035],'string',{'a','b'},'fontsize',6);
+set(hb,'position',[.01 .39 .35 .04],'string',{'a','b'},'fontsize',8);
 set(hb,'tooltipstring','transparency values');
 set(hb,'tag','spdalpha');
 set(hb,'callback',{@setIMGviaPulldown});
 rr=sub_intensimg('getalpha');
 set(hb,'string',rr);
+
+% ALPHA
+hb=uicontrol(gcf,'style','edit','units','norm');
+set(hb,'position',[.365 .39 .63 .035],'string','.02','fontsize',8);
+set(hb,'tooltipstring','transparency');
+set(hb,'tag','salpha');
+set(hb,'callback',{@setIMG,'alpha'});
+
+%frame
+hb=uicontrol(gcf,'style','frame','units','norm');
+uistack(hb,'bottom');
+set(hb,'position',[0 .38 1 .185],'foregroundcolor',[0.2314    0.4431    0.3373],...
+    'backgroundcolor',[ 0.8941    0.9412    0.9020]);
+% ================= method-3 slice
+
+%PB --------------
+hb=uicontrol(gcf,'style','pushbutton','units','norm');
+set(hb,'position',[.7 .345 .3 .03],'string','plot-SL');
+set(hb,'callback',{@cb_plotslice,'plot-SL'},'tag','plot-SL');
+set(hb,'tooltipstring','plot via slice-function',    'fontsize',8);
+% CMAP --------------
+hb=uicontrol(gcf,'style','popupmenu','units','norm');
+set(hb,'position',[0.01 .345 .45 .03],'string','plot');
+set(hb,'callback',{@cb_plotslice,'sliceCmap'},'tag','sliceCmap'); %@slice_cmap,...
+set(hb,'string' ,sub_intensimg('getcmap'), 'value',1);
+set(hb,'tooltipstring','colormap slice');
+set(hb, 'fontsize',8);
+%nan-value--------------
+hb=uicontrol(gcf,'style','edit','units','norm');
+set(hb,'position',[.454 .345 .12 .03],'string','0');
+set(hb,'callback',{@cb_plotslice,'sliceNaN'},'tag','sliceNaN');
+set(hb,'tooltipstring','this value becomes transparent (NaN) in slice mode; default 0',...
+    'fontsize',8);
+% LIMITS--------------
+hb=uicontrol(gcf,'style','edit','units','norm');
+set(hb,'position',[.0 .305 .3 .03],'string','nan nan');
+set(hb,'callback',{@cb_plotslice,'sliceThresh'},'tag','sliceThresh');
+set(hb,'tooltipstring','intensity threshold (2 values), not necessary', 'fontsize',8);
+% transparency--------------
+hb=uicontrol(gcf,'style','edit','units','norm');
+set(hb,'position',[.35 .305 .12 .03],'string','0.05');
+set(hb,'callback',{@cb_plotslice,'sliceTrans'},'tag','sliceTrans');
+set(hb,'tooltipstring','transparency/alpha','fontsize',8);
+
+%cb_plotslice: 'plot-SL' 'sliceCmap' 'sliceNaN' 'sliceThresh' 'sliceTrans'
+
+%frame
+hb=uicontrol(gcf,'style','frame','units','norm');
+uistack(hb,'bottom');
+set(hb,'position',[0 .3 1 .08],'foregroundcolor',[0.2314    0.4431    0.3373],...
+    'backgroundcolor',[ 0.8706    0.9216    0.9804]);
+
+
+
+% hb=uicontrol(gcf,'style','edit','units','norm');
+% set(hb,'position',[.0 .52 .3 .03],'string','nan nan');
+% set(hb,'tooltipstring','threshold (2 values), not necessary','tag','cthresh1');
+%
+% hb=uicontrol(gcf,'style','popupmenu','units','norm'); %CLASSes
+% set(hb,'position',[.3 .53 .3 .03],'string',cellfun(@(a){ [ num2str(a) ]}, [num2cell([1:20]) 'user'] )');
+% % set(hb,'callback',{@cb_plotimg,1});
+% set(hb,'tooltipstring','number of classes (otsu method)','tag','cnclasses','value',3);
+
+
+% ================
+
+
+% ==============================================
+%%
+% ===============================================
+
+
+% label show
+hb=uicontrol(gcf,'style','radio','units','norm');
+set(hb,'position',[.0 .25 .3 .035],'string','Cbar','fontsize',8);
+set(hb,'tooltipstring','show/hide colorbar','backgroundcolor','w');
+set(hb,'tag','cbarlabelshow','value',1);
+set(hb,'callback',{@cbarlabelshow});
+
+% cbar-labelmode
+hb=uicontrol(gcf,'style','radio','units','norm');
+set(hb,'position',[.3 .25 .3 .035],'string','c-ticks','fontsize',8);
+set(hb,'tooltipstring','set cbar-labelmode (2 ticks or n-ticks)','backgroundcolor','w');
+set(hb,'tag','cbarlabelmode','value',0);
+set(hb,'callback',{@cbarlabelmode});
+
 
 
 updateIMGparams();
@@ -595,9 +717,9 @@ end
 
 
 %show hide ARROW
-hb=uicontrol(hs,'style','radio','units','norm','string','arrow','value',1);
-set(hb,'position',[0    0.14 .2 .04],'tooltipstring','show/hide axis arrows');
-set(hb,'callback',{@showarrows},'tag','showarrows','fontsize',5,'backgroundcolor','w');
+hb=uicontrol(hs,'style','radio','units','norm','string','arrows','value',1);
+set(hb,'position',[0    0.14 .3 .04],'tooltipstring','show/hide axis arrows');
+set(hb,'callback',{@showarrows},'tag','showarrows','fontsize',8,'backgroundcolor','w');
 
 %% __________________________________________________________________________________________________
 %BRAIN
@@ -606,13 +728,14 @@ set(hb,'position',[0    0.1 .15 .04],'tooltipstring','brain alpha/transparency')
 set(hb,'callback',{@brainparam,'alpha'},'fontsize',8,'tag','brainalpha');
 
 hb=uicontrol(hs,'style','pushbutton','units','norm','string','Bcol');
-set(hb,'position',[0.15 0.1 .15 .04],'tooltipstring','brain color');
-set(hb,'callback',{@brainparam,'color'},'fontsize',7,'tag','braincolor');
+set(hb,'position',[0.15 0.1 .15 .04],'tooltipstring','set brain color');
+set(hb,'callback',{@brainparam,'color'},'fontsize',8,'tag','braincolor');
 
 % braindot
 hb=uicontrol(hs,'style','radio','units','norm','string','Bdot');
-set(hb,'position',[0.30 0.1 .15 .04],'tooltipstring','brain using dots');
-set(hb,'callback',{@braindot},'fontsize',5,'backgroundcolor','w');
+set(hb,'position',[0.30 0.1 .3 .04],'tooltipstring',...
+    'show brain using dots field');
+set(hb,'callback',{@braindot},'fontsize',8,'backgroundcolor','w');
 set(hb,'tag','braindot');
 set(hb,'value',0);
 bd=findobj(findobj(0,'tag','xvol3d'),'tag','braindot');
@@ -621,63 +744,122 @@ if ~isempty(bd)
 end
 
 
-% mATERIAL
+% MATERIAL
 hb=uicontrol(hs,'style','popupmenu','units','norm','string',{'dull' 'shiny' 'metal'});
-set(hb,'position',[0 0.04 .3 .04],'tooltipstring','material (dull|shiny|metal)','tag' ,'material');
+set(hb,'position',[0.01 0.05 .4 .035],'tooltipstring','material (dull|shiny|metal)',...
+    'tag' ,'material','value',2);
 set(hb,'callback',{@materialparam,''},'fontsize',8);
 
 
 
 % LIGHT
 hb=uicontrol(gcf,'style','radio','units','norm','string','light');
-set(hb,'position',[0.3 0.04 .25 .04],'tooltipstring','light ON/OFF');
-set(hb,'callback',{@setLight},'fontsize',6,'backgroundcolor','w','tag','rblight');
+set(hb,'position',[0.45 0.04 .25 .04],'tooltipstring','light ON/OFF');
+set(hb,'callback',{@setLight},'fontsize',8,'backgroundcolor','w','tag','rblight');
 
 setLight([],[],'updateRadio');
 
-
-%rotate
+% --------------------------------------
+%Rotate
 hb=uicontrol(gcf,'style','togglebutton','units','norm','string','ROT','value',0);
-set(hb,'position',[0 0 .15 .04],'tooltipstring','rotate now');
-set(hb,'callback',{@autorot},'fontsize',7);
+set(hb,'position',[0 0 .15 .04],'tooltipstring','start/stop rotation/saving movie');
+set(hb,'callback',{@autorot},'fontsize',8);
 
 hb=uicontrol(gcf,'style','edit','units','norm','string','120');
 set(hb,'position',[.15 0 .15 .04],'tooltipstring','iteration','tag','rotdur');
-set(hb,'fontsize',7);
+set(hb,'fontsize',8);
 %AZIMUT-STP
 hb=uicontrol(gcf,'style','edit','units','norm','string','3');
 set(hb,'position',[.3 0 .15 .04],'tooltipstring','azimuth step','tag','rotazstep');
-set(hb,'fontsize',7);
+set(hb,'fontsize',8);
 %AZIMUT-STP
 hb=uicontrol(gcf,'style','edit','units','norm','string','0');
 set(hb,'position',[.45 0 .15 .04],'tooltipstring','elevation step','tag','rotelstep');
-set(hb,'fontsize',7);
+set(hb,'fontsize',8);
 %pause
 hb=uicontrol(gcf,'style','edit','units','norm','string','.1');
 set(hb,'position',[.6 0 .15 .04],'tooltipstring','sleep between rotations','tag','rotsleep');
-set(hb,'fontsize',7);
+set(hb,'fontsize',8);
 %save movie
 hb=uicontrol(gcf,'style','radio','units','norm','string','save','value',0);
-set(hb,'position',[.75 0 .2 .04],'tooltipstring','save as movie','tag','rotsave');
-set(hb,'fontsize',7);
+set(hb,'position',[.75 0 .5 .04],'tooltipstring','save as movie','tag','rotsave');
+set(hb,'fontsize',8,'backgroundcolor','w');
 
 % NODES AND CONNECTIONS
 hb=uicontrol(gcf,'style','pushbutton','units','norm','string','nodes&links');
 set(hb,'position',[.0 .2 .4 .04],'tooltipstring','plot nodes & links','tag','nodesandlinks');
-set(hb,'fontsize',7,'callback', @nodesandlinks);
+set(hb,'fontsize',8,'callback', @nodesandlinks);
 
 
+% ==============================================
+%%   OS-dependency
+% ===============================================
+if isunix==1 && ismac==0
+    set(findobj(findobj(0,'tag','winselection'),'type','uicontrol'),'fontsize',7);
+end
+
+%MENU
+set(gcf,'DockControls','off');
+f = uimenu('Label','Aux');
+f2= uimenu(f,'Label','display available colormaps','Callback',@Colormaps_showAll);
+
+
+
+   
+    
+function Colormaps_showAll(e,e2)
+% show available colormaps
+hw=findobj(0,'tag','winselection');
+hc=findobj(hw,'tag','scmap');
+li=get(hc,'string');
+li(regexpi2(li,'user'))=[];
+maps=ones([ length(li)  64 3 ]);
+for i=1:length(li)
+    cm=sub_intensimg('getcolor',li{i});
+    cm2=permute(cm,[3 1 2]);
+    if size(cm2,2)~=64
+        cm2=imresize(cm2,[1 64]);
+    end
+    maps(i,:,:)=cm2;
+    %disp([i size(cm,1)]);
+end
+% ==============================================
+%%   
+% ===============================================
+nb(2)=[ 3];
+nb(1)=ceil(size(maps,1)./nb(2));
+fg;
+set(gcf,'menubar','none','NumberTitle','off','name','available ColorMaps');
+for i=1:size(maps,1)
+    subplot(nb(1),nb(2),i);
+    image(maps(i,:,:));
+    t=text(1,0.5,li{i});
+    set(t,'position',[34 1],'horizontalAlignment','center','fontsize',8);
+    set(gca,'xtick',[],'ytick',[]);
+end
+hb=uicontrol(gcf,'style','pushbutton','units','norm');
+set(hb,'position',[.3 .95 .4 .05]);
+set(hb,'string','Colormaps','fontsize',9,'fontweight','bold','backgroundcolor','w');
+
+
+% ==============================================
+%%   
+% ===============================================
+
+
+        
+        
 function cb_help(e,e2);
 uhelp([mfilename '.m']);
 
 function nodesandlinks(e,e2)
 
 hf=findobj(0,'tag','xvol3d');
-if isempty(hf); 
-    h = msgbox(['ERROR' char(10) 'please load a mask before plotting nodes & links']); 
+if isempty(hf);
+    h = msgbox(['ERROR' char(10) 'please load a mask before plotting nodes & links']);
     return
 end
-    
+
 sub_plotconnections();
 
 
@@ -779,8 +961,8 @@ end
 
 
 if get(hr,'value')==1
-%     hl=findobj(findobj(0,'tag','xvol3d'),'type','light');
-%     delete(hl);
+    %     hl=findobj(findobj(0,'tag','xvol3d'),'type','light');
+    %     delete(hl);
     axes(findobj(findobj(0,'tag','xvol3d'),'tag','ax0'));
     %camlight('headlight');
     c=findobj(findobj(0,'tag','xvol3d'),'tag','camlight');
@@ -792,12 +974,12 @@ if get(hr,'value')==1
         h.Enable = 'on';              % no need to click the UI-button
     else
         set(c,'visible','on');
-    end  
+    end
 else
     %delete(findobj(findobj(0,'tag','xvol3d'),'type','light'));
     c=findobj(findobj(0,'tag','xvol3d'),'tag','camlight');
     set(c,'visible','off');
-    h = rotate3d; 
+    h = rotate3d;
     h.ActionPostCallback =[];
 end
 
@@ -825,6 +1007,84 @@ if isfield(par,'plottr');
     
 end
 
+function plotslice (v)
+
+% xvol3d('plotslice','cmap','cool','transp',[.2],'thresh',[0 100],'nanval',0);
+hs=findobj(0, 'tag','winselection');
+if isfield(v,'cmap')
+    hc=findobj(hs,'tag','sliceCmap');
+    li=get(hc,'string');
+    va=find(strcmp(li,v.cmap));
+    if va>1 & va<=length(li)
+        set(hc,'value',va);
+    else
+        set(hc,'value',1);
+        disp('colormap must be of string-tybe e.g. "jet")');
+    end
+end
+if isfield(v,'transp')
+    set(findobj(hs,'tag','sliceTrans'),       'string',num2str(v.transp));
+end
+if isfield(v,'thresh')
+    set(findobj(hs,'tag','sliceThresh'),       'string',num2str(v.thresh));
+end
+if isfield(v,'nanval')
+    set(findobj(hs,'tag','sliceNaN'),       'string',num2str(v.nanval));
+end
+cb_plotslice();
+
+
+
+function cb_plotslice (e,e2,setpara)
+num=getIMGnum();%: 1
+hf=findobj(0,'tag','xvol3d');
+hs=findobj(0, 'tag','winselection');
+h3=findobj(hf,'tag',['img' num2str(num) ],'-and','type','surface');
+if exist('setpara')==1
+    if ~isempty(h3) && strcmp(setpara,'sliceTrans')
+        val=str2num(get(findobj(hs,'tag','sliceTrans'),'string'));
+        set(h3,'facealpha',val);
+        return
+    end
+    %      if ~isempty(h3) && strcmp(meth,'sliceCmap')
+    %          hc=findobj(hs,'tag','sliceCmap');
+    %          va=get(hc,'value');li=get(hc,'string');    cmap=li{va};
+    %          axes(findobj(hf,'tag','ax0'));
+    %          cmap2=sub_intensimg('getcolor',cmap);
+    %          colormap(cmap2);
+    %
+    %
+    %        return
+    %     end
+end
+
+hr=findobj(hs, 'tag','currentimg');
+li=get(hr,'string');  va=get(hr,'value');    c=li{va};
+
+hc=findobj(hs,'tag','sliceCmap');
+va=get(hc,'value');li=get(hc,'string');    cmap=li{va};
+
+v=struct();
+v.meth   =3;%: 3
+v.num    =num;
+v.file   =regexprep(c , '\d{1,10}]\s*','');
+v.cmap   =cmap;%: [64x3 double]
+v.tresh  =str2num(get(findobj(hs,'tag','sliceThresh'),'string'));%: [NaN NaN]
+v.nanval =str2num(get(findobj(hs,'tag','sliceNaN'),'string'));% 0
+v.alpha  =str2num(get(findobj(hs,'tag','sliceTrans'),'string'));%0.0500
+
+if exist('setpara')==1
+    v.set=setpara;
+else
+    v.set='plot-SL';
+end
+% disp(setpara);
+% return
+sub_intensimg('show',v);
+
+% sliceCmap, sliceThresh,sliceNaN,plot-SL
+
+
 function cb_plotimg (e,e2,meth)
 
 num=getIMGnum();
@@ -835,10 +1095,9 @@ hs=findobj(0, 'tag','winselection');
 hr=findobj(hs, 'tag','currentimg');
 li=get(hr,'string');va=get(hr,'value');
 c=li{va};
-% file=regexprep({'1]     F:\da'} , '\d{1,10}]\s*','')
 v.file=regexprep(c , '\d{1,10}]\s*','');
 
-
+sub_intensimg('delete',num);
 
 %    v.num=2
 %     v.cmap =summer;
@@ -865,7 +1124,7 @@ if meth==1
     
     v.nclass= nclass;
     v.tresh= tr;
-    v.alpha='rampup'
+    v.alpha='rampup';
 elseif meth==2
     ht=findobj(hs,'tag','cthresh2');
     tr=str2num(get(ht,'string'));
@@ -878,6 +1137,26 @@ elseif meth==2
         v.alpha=max(v.alpha);
         set(hal,'string', num2str(v.alpha));
     end
+elseif meth==3 %SLICE
+    %     keyboard;
+    
+    ht=findobj(hs,'tag','cthresh2');
+    tr=str2num(get(ht,'string'));
+    if isempty(tr); tr=[0 ]; end
+    v.tresh3= tr;
+    hal=findobj(hs,'tag','salpha'); %alpha
+    v.alpha=str2num(get(hal,'string'));
+    if isnumeric( v.alpha)
+        if length(v.alpha)>1;
+            v.alpha=v.alpha(1);
+            set(hal,'string',num2str(v.alpha));
+        end
+    end
+    if isempty(v.alpha)
+        v.alpha=0.05;
+        set(hal,'string',num2str(v.alpha));
+    end
+    
 end
 
 
@@ -887,7 +1166,7 @@ v.cmap= (li{va});
 
 
 
-disp(v);
+% disp(v);
 % return
 sub_intensimg('delete',num);
 sub_intensimg('show',v);
@@ -923,6 +1202,10 @@ ax=findobj(findobj(0,'tag','xvol3d'),'tag',['ax' num2str(numx)]);
 if isempty(ax); return; end
 
 num=numx;
+
+h3=findobj(hf,'tag',['img' num2str(num) ],'-and','type','surface');  %PLOT-SLICE
+if ~isempty(h3); return; end
+
 % update'alpha'-----------------------------
 % set(hb,'tag','salpha');
 hp=findobj(findobj(0,'tag','xvol3d'),'tag',['img' num2str(num)]);
@@ -933,7 +1216,11 @@ try
     trans=cellfun(@(a){ [ sprintf('%.3f',a) ]}, msg );
 catch
     msg={get(hp,'facealpha')};
-    trans=cellfun(@(a){ [ sprintf('%.3f',a) ]}, msg );
+    try
+        trans=cellfun(@(a){ [ sprintf('%.3f',a) ]}, msg );
+    catch
+        trans=cellfun(@(a){ [ sprintf('%.3f',a) ]}, msg{1} );
+    end
 end
 trans=regexprep(trans,'0\.','.');
 trans=strjoin(trans,' ');
@@ -971,6 +1258,17 @@ if strcmp(par,'scmap')
 elseif strcmp(par,'alpha')
     %     va=str2num(get(e,'string'));
     va= (get(e,'string'));
+    
+    hp2=findobj(findobj(0,'tag','xvol3d'),'tag',['img' num2str(num) ],'type','surface') ;
+    if ~isempty(hp2) %slice/surface
+        va2=str2num(va);
+        if length(va2)>1; va2=va2(1); set(e,'string',num2str(va2));end
+        if isempty(va2); va2=0.05; set(e,'string',num2str(va2));end
+        set(hp2,'FaceAlpha',(va2));
+        uicontrol(e);
+        return
+    end
+    
     sub_intensimg('setalpha',struct('num',num,'alpha',va));
     uicontrol(e);
 end
@@ -1003,9 +1301,9 @@ if exist('par')==0
     if isnumeric(pa); return; end
     file=fullfile(pa,fi);
 else
-  [pw name ext]=fileparts(par); 
-  if isempty(pw); pw=pwd; end
-  file=fullfile(pw,[name ext]);
+    [pw name ext]=fileparts(par);
+    if isempty(pw); pw=pwd; end
+    file=fullfile(pw,[name ext]);
 end
 
 
@@ -1110,86 +1408,178 @@ if strcmp(para,'visible')
     end
 elseif strcmp(para,'alpha')
     set(hp,'facealpha',str2num(get(e,'string')));
+    
+    %set alpha in regionTable
+    try %if exist
+        set(findobj(findobj(0,'tag','regionselect'),'tag','alphaall'),'string',get(e,'string'))
+    end
+    
 end
+
+
 
 function autorot(e,e2)
 warning off
 hf=findobj(0,'tag','xvol3d');
-figure(hf);
-% delete(findobj(hf,'type','light
-% hl=findobj(hf,'type','light');
 hw=findobj(0,'tag','winselection');
-% hl2=[];
-% hl=findobj(hf,'tag','camlight');
-% if length(hl)>1; hl2=hl(1); ; else; hl2=hl; end
 
-azstep     =str2num(get(findobj('tag','rotazstep'),'string'));
-elstep     =str2num(get(findobj('tag','rotelstep'),'string'));
-sleeptime  =str2num(get(findobj('tag','rotsleep'),'string'));
-dosave     =       (get(findobj('tag','rotsave'),'value'));
-if dosave==1
-    outname= uiputfile('*.mp4','select Name');
-    try
-        fprintf('..wait..saving movie');
-        v = VideoWriter([outname   ],'MPEG-4');
-        open(v);
-    catch
-        fprintf('..error..cancelled\n');
-        dosave=0;
+if get(e,'value')==0
+    set(e,'backgroundcolor',[0.9400    0.9400    0.9400]);drawnow;
+else
+    if get(findobj(hw,'tag','rotsave'),'value')==1
+        set(e,'backgroundcolor',[1 0 0]); drawnow;
+           rotHideControls(1);
+    else
+        set(e,'backgroundcolor',[1 1 0]);drawnow;
     end
 end
 
-% if ~isempty(hl2)
-%     % h = camlight('left');
-%     camlight(hl2,'left');
-% end
-for i = 1:str2num(get(findobj('tag','rotdur'),'string'));
-    %    figure(findobj(0,'tag','xvol3d'));
-    camorbit(azstep,elstep,'data',[   0 0 1]);
-    
-    %     if ~isempty(hl2);
-    %         camlight(hl2,'left');
-    %     end
-    if get(findobj(hw,'tag','rblight'),'value')==1
-        %         hl=findobj(findobj(0,'tag','xvol3d'),'type','light');
-        %         delete(hl);
-        
-        c=findobj(findobj(0,'tag','xvol3d'),'tag','camlight');
-        camlight(c,'headlight');
-    end
-    
-    
-    pause(sleeptime) ;
-    if dosave==1
-        axis tight
-        posx(i,:)=get(gca,'position');
-        frame = getframe(gcf);
-        %         drawnow;
-        if i==1
-            siz=size(frame.cdata);
-        else
-            frame.cdata= imresize(frame.cdata,[siz(1:2)]);
-        end
-        writeVideo(v,frame);
-    end
-    
-    
-    if get(e,'value')==0
+
+
+azstep     =str2num(get(findobj(hw,'tag','rotazstep'),'string'));
+elstep     =str2num(get(findobj(hw,'tag','rotelstep'),'string'));
+sleeptime  =str2num(get(findobj(hw,'tag','rotsleep'),'string'));
+dosave     =       (get(findobj(hw,'tag','rotsave'),'value'));
+u=get(hf,'userdata');
+if ~isfield(u,'hmovie'); u.hmovie=[];   set(hf,'userdata',u); end
+
+
+figure(hf);
+ax0=findobj(hf,'tag','ax0');
+
+% ==============================================
+%%  OFF-setting..stop movie
+% ===============================================
+
+if get(e,'value')==0
+    if isfield(u,'hmovie')
         drawnow
         delete(findobj(findobj(0,'tag','winselection'),'type','axes'));
-        if dosave==1;     
-            close(v) ;  
-             fprintf('..finished.\n');
-             showinfo2('new movie',outname);
+        if dosave==1
+            close(u.hmovie) ;
+            outname=fullfile(u.hmovie.Path,u.hmovie.Filename);
+            u=get(hf,'userdata');         u.hmovie=[];         set(hf,'userdata',u);
+%             fprintf('..finished.\n');
+%             showinfo2('new movie',outname);
         end
-        break
     end
+    set(e,'backgroundcolor',[0.9400    0.9400    0.9400]);
+    rotHideControls(0);
+    %disp('stop-1');
+    return
 end
-set(e,'value',0);
-if dosave==1;   
-    close(v) ; 
-    fprintf('..finished.\n');
-    showinfo2('new movie',outname);
+
+
+
+% ==============================================
+%%
+% ===============================================
+if get(e,'value')==1
+    if dosave==1 && isempty(u.hmovie)==1
+        %filter = {'*.mp4';'*.avi';'*.*'};
+        [fi pa]= uiputfile('*.*','select movie Name');
+        if isnumeric(fi); 
+            set(e,'value',0); 
+            return; 
+        end
+        outname=fullfile(pa,fi);
+        [pa fi ext]=fileparts(outname);
+        outname=fullfile(pa,[fi]);
+        
+        try
+            fprintf('..wait..saving movie');
+            try % WIN/MAC
+                v = VideoWriter([outname   ],'MPEG-4');
+            catch %linux
+                v = VideoWriter([outname   ],'Motion JPEG AVI');
+            end
+            open(v);
+            u=get(hf,'userdata');         u.hmovie=v;         set(hf,'userdata',u);
+        catch
+            fprintf('..error..cancelled\n');
+            set(e,'backgroundcolor',[0.9400    0.9400    0.9400]);
+            dosave=0;
+            u=get(hf,'userdata');         u.hmovie=[];         set(hf,'userdata',u);
+            disp('stop-2');
+        end
+    end
+    
+    
+    if  get(e,'value')==1
+        iterat= str2num(get(findobj('tag','rotdur'),'string'));
+    else
+        iterat=0;
+    end
+    
+    for i = 1:iterat
+        %disp(i);
+        camorbit(azstep,elstep,'data',[   0 0 1]);
+        if get(findobj(hw,'tag','rblight'),'value')==1
+            c=findobj(findobj(0,'tag','xvol3d'),'tag','camlight');
+            camlight(c,'headlight');
+        end
+        
+        pause(sleeptime) ;
+        if dosave==1
+            axis tight
+            posx(i,:)=get(gca,'position');
+            frame = getframe(hf);
+            %         drawnow;
+            if i==1
+                siz=size(frame.cdata);
+            else
+                frame.cdata= imresize(frame.cdata,[siz(1:2)]);
+            end
+            try
+                writeVideo(u.hmovie,frame);
+            catch
+                set(e,'value',0);
+                break
+            end
+            
+        end
+        
+        
+        if get(e,'value')==0  % end movie
+            drawnow
+            delete(findobj(findobj(0,'tag','winselection'),'type','axes'));
+            if dosave==1;
+                close(u.hmovie) ;
+                outname=fullfile(u.hmovie.Path,u.hmovie.Filename);
+                u=get(hf,'userdata');         u.hmovie=[];         set(hf,'userdata',u);
+                fprintf('..finished.\n');
+                showinfo2('new movie',outname);
+                rotHideControls(0);
+            end
+            break
+        end
+    end
+    set(e,'value',0);
+    
+    if get(e,'value')==0  % end movie
+        drawnow
+        delete(findobj(findobj(0,'tag','winselection'),'type','axes'));
+        set(e,'backgroundcolor',[0.9400    0.9400    0.9400]);
+        %disp('stop-3');
+        if dosave==1;
+            close(u.hmovie) ;
+            outname=fullfile(u.hmovie.Path,u.hmovie.Filename);
+            u=get(hf,'userdata');         u.hmovie=[];         set(hf,'userdata',u);
+            fprintf('..finished.\n');
+            showinfo2('new movie',outname);
+            rotHideControls(0);
+        end
+        return
+    end
+    
+end
+
+function rotHideControls(mode)
+hf=findobj(0,'tag','xvol3d');
+tags={'explodeview' 'exploderenew'  'showbrain'  'showlabel'};
+if mode==1;     do='off'; else;  do='on';  end
+for i=1:length(tags); 
+    set(findobj(hf,'tag',tags{i}),'visible',do);
 end
 
 
@@ -1245,7 +1635,7 @@ if isfield(u,'atlas')==0  || ~isempty(atlasfile)
     u.lut =strrep(atlasfile,'.nii','.xlsx');
     fprintf('..loading LUT(excelfile)');
     if exist(u.lut)
-    [~,~,lu]=xlsread(u.lut);
+        [~,~,lu]=xlsread(u.lut);
     else
         lu=atlasWithoutExcel(u.atlas);
     end
@@ -1290,8 +1680,13 @@ prepareWindow;
 hs=findobj(0,'tag','xvol3d'); u=get(hs,'userdata');
 
 if exist('IDs')==0
-    ids= input('select IDs : ', 's');
-    ids=str2num(ids)'
+    %ids= input('select IDs : ', 's');
+    
+    prompt = {'Enter IDs/ROI-indices to preselect'};
+    title = 'Preselect Regions';
+    definput = {''};
+    answer = inputdlg(prompt,title,[1 40],definput);
+    ids    = str2num(char(answer));
 else
     ids= IDs;
 end
@@ -1299,18 +1694,20 @@ end
 idall=cell2mat(u.lu(:,regexpi2(u.hlu,'ID')));
 ixID=zeros(length(ids),1);
 for i=1:length(ids)
-   ixID(i,1)= find(idall==ids(i));
+    ixID(i,1)= find(idall==ids(i));
 end
 iuse=find(ixID~=0);
 ids =ids(iuse);
 isel=ixID(iuse);
 
 % isel=find(cell2mat(cellfun(@(a){ [str2num(num2str(a))]}, reg(:,isel1) ))==1); %selected rows
-u.selectedRegion=zeros(size(u.lu,1),1);
+if ~isfield(u,'selectedRegion')
+    u.selectedRegion=zeros(size(u.lu,1),1);
+end
 u.selectedRegion(isel)=1;
 
-   
-%     
+
+%
 % if ~isempty(icol2)  %UPDATE COLOR IN LU-table
 %     for i=1:length(isel)
 %         id   =cell2mat(reg(isel(i)   ,iID1 ));
@@ -1323,7 +1720,7 @@ u.selectedRegion(isel)=1;
 % end
 set(hs,'userdata',u);
 disp('..saving selected regions');
- 
+
 
 
 
@@ -1333,12 +1730,12 @@ disp('..saving selected regions');
 
 function regions(file)
 prepareWindow;
-if exist('file')==0; file=[]; end
+if exist('file')~=1; file=[]; end
 hs=findobj(0,'tag','xvol3d'); u=get(hs,'userdata');
 if isfield(u,'atlas')==1  %|| ~isempty(file)
     fprintf('..loading selected regions');
     
-    if exist(file)==0
+    if exist('file')~=1 || isempty(file)
         [fi pa]=uigetfile(fullfile(pwd,'*.xlsx'),'select "your selected region file"');
         if isnumeric(pa); return; end
         file=fullfile(pa,fi);
@@ -1400,12 +1797,12 @@ loadbrainmask();
 
 function loadbrainmask(maskfile)
 prepareWindow
-if exist('file')==0; maskfile=[]; end
+if exist('maskfile')~=1; maskfile=[]; end
 hs=findobj(0,'tag','xvol3d'); u=get(hs,'userdata');
 if isfield(u,'mask')==0  || ~isempty(maskfile)
     fprintf('..loading brain mask');
     
-    if exist('file')~=1
+    if exist('maskfile')~=1 || isempty(maskfile)
         [fi pa]=uigetfile(fullfile(pwd,'*.nii'),'select "AVGTmask.nii"');
         if isnumeric(pa); return; end
         maskfile=fullfile(pa,fi);
@@ -1505,28 +1902,39 @@ set(hs,'userdata',v);
 
 hb=uicontrol('style','radio','value',0,'units','norm','tag','explodeview');
 set(hb,'position',[0 0 .1 .05],'backgroundcolor','w','fontsize',5);
-set(hb,'string','explode','tooltipstring',' show region in explode view');
+set(hb,'string','Explode','tooltipstring', [ 'show regions in explode view' char(10) '..atlas regions must be loaded and displayed before']);
 set(hb,'callback',@explodeview);
 hb=uicontrol('style','pushbutton','value',0,'units','norm','tag','exploderenew');
 set(hb,'position',[0.075 0.005 .05 .035],'backgroundcolor','w','fontsize',5);
-set(hb,'string','renew','tooltipstring',' renew explode view in another perspective');
+set(hb,'string','Renew','tooltipstring', ['renew "explode view" from another perspective' char(10) '..atlas regions must be loaded and displayed before']);
 set(hb,'callback',@exploderenew);
 hb=uicontrol('style','togglebutton','value',1,'units','norm','tag','showbrain');
 set(hb,'position',[0.075+.05 0.005 .05 .035],'backgroundcolor','w','fontsize',5);
-set(hb,'string','brain','tooltipstring',' show/hide brain');
+set(hb,'string','Brain','tooltipstring', [' show/hide brain mask' char(10) '..brain/brainmask must be loaded and displayed before']);
 set(hb,'callback',@showbrain);
 
 hb=uicontrol('style','togglebutton','value',0,'units','norm','tag','showlabel');
 set(hb,'position',[0.075+2*.05 0.005 .05 .035],'backgroundcolor','w','fontsize',5);
-set(hb,'string','label','tooltipstring',' show/hide labels');
+set(hb,'string','Label','tooltipstring',['show/hide atlas region labels' char(10) '..atlas regions must be loaded and displayed before']);
 set(hb,'callback',@showlabel);
 
 
 
-    % ==============================================
-    %%   show labels
-    % ===============================================
-    
+function showlabel_ext(par)
+hf=findobj(0,'tag','xvol3d');
+hr=findobj(hf,'tag','showlabel');
+if strcmp(par.regionlabels,'on')==1; 
+    val=1;
+else
+    val=0;
+end
+set(hr,'value',val);
+showlabel([],[]);
+
+% ==============================================
+%%   show labels
+% ===============================================
+
 function showlabel(e,e2)
 hf=findobj(0,'tag','xvol3d');
 hr=findobj(hf,'tag','showlabel');
@@ -1534,7 +1942,32 @@ ha=findobj(hf,'tag','ax0');
 
 delete(findobj(ha,'tag','txline'));
 delete(findobj(ha,'tag','txlabel2')),
-    
+
+try
+    hreg=findobj(0,'tag','regionselect');
+    set(findobj(hreg,'tag','lab'),'value',get(hr,'value'));
+end
+
+
+labelhorzal={'left','center','right'};
+u=get(hf,'userdata');
+%  if plotlabel==1
+%             
+%             df=c1-ce;
+%             dfn=df./(sqrt(sum(df.^2)));
+%             ct=c1+dfn*(u.lab.needlelength)    ;%
+%             cn=c1+dfn*(u.lab.needlelength+2)  ;%
+%             
+%             %             ct=c1-(sign(ce-c1)*u.lab.needlelength)    ;%
+%             %             cn=c1-(sign(ce-c1)*(u.lab.needlelength+2));%
+%             te=text(cn(:,1),cn(:,2),cn(:,3), d{i,regexpi2(cname,'label1')},'fontsize',u.lab.fs,'Color',u.lab.fcol);
+%             set(te,'userdata',['nodetxt' num2str(i) 'a'],'HorizontalAlignment',labelhorzal{u.lab.fhorzal});
+%             if u.lab.needlevisible==1
+%                 hp=plot3([c1(1) ct(1)],[c1(2) ct(2)],[c1(3) ct(3)],'k','color',u.lab.needlecol);
+%                 set(hp,'userdata',['needletxt' num2str(i) 'a']);
+%             end
+%         end
+
 if get(hr,'value')==1
     % ==============================================
     %   get brain-patch
@@ -1544,6 +1977,7 @@ if get(hr,'value')==1
     mn=mean([ min(get(hb,'xdata'),[],2)  min(get(hb,'ydata'),[],2)  min(get(hb,'zdata'),[],2)],1);
     mx=mean([ max(get(hb,'xdata'),[],2)  max(get(hb,'ydata'),[],2)  max(get(hb,'zdata'),[],2)],1);
     sizp=mx-mn;
+    cent=sizp/2;
     % ==============================================
     %%
     % ===============================================
@@ -1551,47 +1985,92 @@ if get(hr,'value')==1
     modi=[];
     for i=1:length(hp);
         try
-        ub=getappdata(hp(i),'store') ;
-        modi(i,1)=ub.mode;
+            ub=getappdata(hp(i),'store') ;
+            modi(i,1)=ub.mode;
         catch
-         modi(i,1)=0;   
+            modi(i,1)=0;
         end
         if strcmp(get(hp(i),'visible'),'off')==1;
-           modi(i,1)=1; 
+            modi(i,1)=1;
         end
     end
     hp=hp(find(modi==0));
     
-
+    
     for i=1:length(hp)
         
         hi=hp(i);
-        x=get(hi,'xdata');
-        y=get(hi,'ydata');
-        z=get(hi,'zdata');
-        co=[mean(x(:))  mean(y(:))  mean(z(:)) ];
         
-        df=(co-ce);
-        %ds=(mean(abs(df)./((mx-mn)./2)*1));
-        spacefac=1;
+%         x=get(hi,'xdata');
+%         y=get(hi,'ydata');
+%         z=get(hi,'zdata');
+%         co=[mean(x(:))  mean(y(:))  mean(z(:)) ];
+%         co=[mean(x(:))  max(y(:))  mean(z(:)) ];
         
-        txfac=spacefac+.1;
-        tp =co+df*spacefac;
-        tx=co+df*txfac;
         
-        hl=plot3([tp(1) co(1) ],[tp(2)  co(2) ],[tp(3)  co(3)],'k-');
-        set(hl,'tag','txline');
+        cv=get(hi,'vertices');
+        il=find(cv(:,2)< sizp(2)/2);
+        ir=find(cv(:,2)>=sizp(2)/2);
+        nlr=[length(il) length(ir)];% # left/right
+        imax=find(nlr==max(nlr));
+        if imax==1
+            cv=cv(il,:);
+            co=mean( cv(find(cv(:,2)==min(cv(:,2))),:),1); %external left
+        else
+            cv=cv(ir,:);
+            co=mean( cv(find(cv(:,2)==max(cv(:,2))),:),1); %external right
+        end
+%         cn=mean(cv,1);% mean coordinate , but not neccessary inside object
+%         dist=sum((cv-repmat(cn,[size(cv,1) 1])).^2,2);
+%         imindist=min(find(dist==min(dist)));
+%         co=cv(imindist,:);
+      dist=sqrt(sum((cv-repmat(co,[size(cv,1) 1])).^2,2  ));
+      iball=find(dist<10);
+      c1=mean(cv(iball,:)); %within spherePath
+
+%         c1=co;
+        df=(c1-cent);
+        
+        
+        %df=c1-ce;
+        dfn=df./(sqrt(sum(df.^2)));
+        ct=c1+dfn*(u.lab.needlelength)    ;%
+        cn=c1+dfn*(u.lab.needlelength+5)  ;%
         
         label=getappdata(hi,'label');
-        te=text(tx(1),tx(2),tx(3),label);
-        set(te,'fontsize',4,'interpreter','none');
-        set(te,'HorizontalAlignment','center','tag','txlabel2');
+        te=text(cn(:,1),cn(:,2),cn(:,3), label,...
+            'fontsize',u.lab.fs,'Color',u.lab.fcol);
+        set(te,'HorizontalAlignment',labelhorzal{u.lab.fhorzal});
+        set(te,'tag','txlabel2','interpreter','none');
+        if u.lab.needlevisible==1
+            hl=plot3([c1(1) ct(1)],[c1(2) ct(2)],[c1(3) ct(3)],'k','color',u.lab.needlecol);
+            set(hl,'linewidth',.1,'tag','txline');
+        end
+
         
-%         perc=mean(co./ce*100);
-%         disp(label);
-%         disp(1./(mean(abs(df)./((mx-mn)./2)*1)));
+        
+        
+        
+%         %ds=(mean(abs(df)./((mx-mn)./2)*1));
+%         spacefac=1;
+%         
+%         txfac=spacefac+.1;
+%         tp =co+df*spacefac;
+%         tx=co+df*txfac;
+%         
+%         hl=plot3([tp(1) co(1) ],[tp(2)  co(2) ],[tp(3)  co(3)],'k-');
+%         set(hl,'tag','txline');
+%         
+%         label=getappdata(hi,'label');
+%         te=text(tx(1),tx(2),tx(3),label);
+%         set(te,'fontsize',4,'interpreter','none');
+%         set(te,'HorizontalAlignment','center','tag','txlabel2');
+        
+        %         perc=mean(co./ce*100);
+        %         disp(label);
+        %         disp(1./(mean(abs(df)./((mx-mn)./2)*1)));
     end
-    set(findobj(ha,'tag','txline'),'linewidth',.1);
+%     set(findobj(ha,'tag','txline'),'linewidth',.1);
 end
 
 
@@ -1603,9 +2082,9 @@ function showbrain(e,e2)
 hf=findobj(0,'tag','xvol3d');
 hr=findobj(hf,'tag','showbrain');
 if get(hr,'value')==1
-    set(findobj(hf,'tag','brain'),'visible','on');   
+    set(findobj(hf,'tag','brain'),'visible','on');
 else
-   set(findobj(hf,'tag','brain'),'visible','off');  
+    set(findobj(hf,'tag','brain'),'visible','off');
 end
 
 function exploderenew(e,e2)
@@ -1619,7 +2098,11 @@ hp=findobj(ha,'tag','region');
 modi=[];
 for i=1:length(hp);
     ub=getappdata(hp(i),'store') ;
+    try
     modi(i,1)=ub.mode;
+    catch
+        return
+    end
 end
 hpx=hp(find(modi==1));
 
@@ -1672,13 +2155,13 @@ if exist('thishp')==1
         do(find(ra),1)=1;
     end
     
-        
+    
     if length(thishp)==1
-%     ub=getappdata(hp(find(do)),'store') 
-     ub=getappdata(hp(min(find(do))),'store') ;
-     mode=~ub.mode;
+        %     ub=getappdata(hp(find(do)),'store')
+        ub=getappdata(hp(min(find(do))),'store') ;
+        mode=~ub.mode;
     else
-       mode=1; 
+        mode=1;
     end
     
 else
@@ -1696,31 +2179,31 @@ mx=mean([ max(get(hb,'xdata'),[],2)  max(get(hb,'ydata'),[],2)  max(get(hb,'zdat
 sizp=mx-mn;
 facresize=1.1;
 % if mode==1
-    delete(findobj(ha,'tag','circle'));
-    delete(findobj(ha,'tag','txlabel'));
-         % ----------
-        [az el]=view;
-        az=deg2rad(az); el=deg2rad(el);
-        [x,y,z] = sph2cart(az,el,10);
-        nx=[y x z];
-    center=ce;
-    normal=nx;
-    radius=mean(sizp).*facresize;
-    theta=0:0.01:2*pi;
-    v=null(normal);
-    pointslin=repmat(center',1,size(theta,2))+radius*(v(:,1)*cos(theta)+v(:,2)*sin(theta));
+delete(findobj(ha,'tag','circle'));
+delete(findobj(ha,'tag','txlabel'));
+% ----------
+[az el]=view;
+az=deg2rad(az); el=deg2rad(el);
+[x,y,z] = sph2cart(az,el,10);
+nx=[y x z];
+center=ce;
+normal=nx;
+radius=mean(sizp).*facresize;
+theta=0:0.01:2*pi;
+v=null(normal);
+pointslin=repmat(center',1,size(theta,2))+radius*(v(:,1)*cos(theta)+v(:,2)*sin(theta));
 %     pl=plot3(pointslin(1,:),pointslin(2,:),pointslin(3,:),'r-');
 %     set(pl,'tag','circle');
-    
-    
-    np=length(hp);
-    theta=linspace(0,2*pi,np+1);%0:0.01:2*pi;
-    theta=theta(1:np);
-    v=null(normal);
-    points=repmat(center',1,size(theta,2))+radius*(v(:,1)*cos(theta)+v(:,2)*sin(theta));
-    
-    txradius=mean(sizp).*facresize*1.5;
-    txpoints=repmat(center',1,size(theta,2))+txradius*(v(:,1)*cos(theta)+v(:,2)*sin(theta));
+
+
+np=length(hp);
+theta=linspace(0,2*pi,np+1);%0:0.01:2*pi;
+theta=theta(1:np);
+v=null(normal);
+points=repmat(center',1,size(theta,2))+radius*(v(:,1)*cos(theta)+v(:,2)*sin(theta));
+
+txradius=mean(sizp).*facresize*1.5;
+txpoints=repmat(center',1,size(theta,2))+txradius*(v(:,1)*cos(theta)+v(:,2)*sin(theta));
 % end
 
 % ==============================================
@@ -1731,7 +2214,7 @@ facresize=1.1;
 for i=1:length(hp)
     hi=hp(i);
     
-%     disp(i);
+    %     disp(i);
     
     uv.xdata   =get(hi,'xdata');
     uv.ydata   =get(hi,'ydata');
@@ -1845,20 +2328,20 @@ for i=1:length(hp)
         end
         
         
-       
         
-%          %----label
-%             label=getappdata(hi,'label');
-%             te=text(txpoints(1,i),txpoints(2,i),txpoints(3,i),label);
-%             set(te,'fontsize',4,'interpreter','none');
-%             set(te,'HorizontalAlignment','center','tag','txlabel');
-       
+        
+        %          %----label
+        %             label=getappdata(hi,'label');
+        %             te=text(txpoints(1,i),txpoints(2,i),txpoints(3,i),label);
+        %             set(te,'fontsize',4,'interpreter','none');
+        %             set(te,'HorizontalAlignment','center','tag','txlabel');
+        
         
     end%mode
     
-%      ut=getappdata(hi,'store');
-%      disp(['ut-mode: ' num2str(ut.mode)]);
-%      disp(['radio  : ' num2str(mode)]);
+    %      ut=getappdata(hi,'store');
+    %      disp(['ut-mode: ' num2str(ut.mode)]);
+    %      disp(['radio  : ' num2str(mode)]);
 end %hp
 
 % TEXT
@@ -1868,11 +2351,11 @@ for i=1:length(hp);
     ub=getappdata(hp(i),'store') ;
     modi(i,1)=ub.mode;
     if ub.mode==1
-         %----label
-            label=getappdata(hp(i),'label');
-            te=text(txpoints(1,i),txpoints(2,i),txpoints(3,i),label);
-            set(te,'fontsize',4,'interpreter','none');
-            set(te,'HorizontalAlignment','center','tag','txlabel');
+        %----label
+        label=getappdata(hp(i),'label');
+        te=text(txpoints(1,i),txpoints(2,i),txpoints(3,i),label);
+        set(te,'fontsize',4,'interpreter','none');
+        set(te,'HorizontalAlignment','center','tag','txlabel');
     end
 end
 % disp('modi');
@@ -1881,6 +2364,6 @@ end
 % circle
 delete(findobj(ha,'tag','circle'));
 if sum(modi)>0
-     pl=plot3(pointslin(1,:),pointslin(2,:),pointslin(3,:),'r-');
-     set(pl,'tag','circle');  
+    pl=plot3(pointslin(1,:),pointslin(2,:),pointslin(3,:),'r-');
+    set(pl,'tag','circle');
 end

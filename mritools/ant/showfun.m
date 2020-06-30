@@ -50,6 +50,7 @@ f={ 'ant'
     'xregisterCT'
     'manuorient3points'
     'getorientation'
+    'xvol3d'
 };
 
 f2={'xseldirs'

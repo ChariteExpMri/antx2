@@ -91,10 +91,12 @@
 % [uhelp] added finder panel 
 % % #ra 23 Jun 2020 (17:01:21)
 % [doelastix.m] update, backward transformation now possible with userdefined voxel or dim-size
-% % #ra 23 Jun 2020 (17:13:43)
+% #ra 23 Jun 2020 (17:13:43)
 % 3D-volume visualization added (main menu .. grahics/3D-volume): allows to 3D-visualize atlas regions,
 % nodes & links (connections/~strength) and statistical images/intensity images [xvol3d.m]
-% -main features can be made via command line
+% -main features can be accessed via command line
+% #ra 30 Jun 2020 (23:15:45)
+% [xvol3d.m] -updated, tested Linux/MAX/WIN, added more options  and label properties
 %
 %----- EOF
 %
