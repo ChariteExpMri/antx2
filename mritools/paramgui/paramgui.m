@@ -388,7 +388,8 @@ pos=v.editorpos;%[0.001 0.001 1 1];
 delete(findobj(0,'tag','paramgui'));
 % figure
 if isempty(v.hfig)
-    figure('visible','off','color','w','menubar','none','toolbar','none','tag','paramgui', 'name',upper(v.title)  );
+    figure('visible','off','color','w','menubar','none','toolbar','none','tag','paramgui', 'name',(v.title),...
+        'NumberTitle','off');
 else
     figure(v.hfig)
     set(v.hfig,'tag','paramgui');

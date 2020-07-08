@@ -97,7 +97,9 @@
 % -main features can be accessed via command line
 % #ra 30 Jun 2020 (23:15:45)
 % [xvol3d.m] -updated, tested Linux/MAX/WIN, added more options  and label properties
-%
+% #ra 08 Jul 2020 (13:37:00)
+% [dtistat]: revised; for DTI-connectivities allows input data from MRtrix; new command line access;
+% new COIfile;  
 %----- EOF
 %
 

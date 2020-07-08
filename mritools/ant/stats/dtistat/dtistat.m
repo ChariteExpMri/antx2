@@ -1,18 +1,33 @@
-%
 %% #by DTIstatistik for DSIstudio-RESULTS (DTIparameters & DTIconnectivity)
+% This function can be used for post-hoc analysis after processing DTI data
+% using #b DSI-studio #n or #b MRtrix.
+% Statistical tests can be done for group-differences regarding: 
+%     (1) DTI-parameters: such as FA, ADC, AXIAL/RADIAL DIFFUSIVITY
+%  or (2) DTI-connectivity metrics: i.e. metrics concerning structural links between regions.
+% #r ------------------------------------------------------------------------
+% #r NOTE: Access via command line has been changed (apologies for this).
+% #r ------------------------------------------------------------------------
+% 
+%% #ky INPUT FILE TYPES
+% FUNCTION DEALS WITH ONE OF THE FOLLOWING INPUT FILE TYPES:
+% DTI parameter   - ascii-files (example: "##_dti_parameter_stat.txt") #b (DSI-studio) 
+% DTI connectivity - mat-files   (example: "__dti_1000K_seed_rk4_end.mat") #b (DSI-studio) 
+%                  - csv-filess  (example: connectome_di_sy_length.csv) #b (MRtrix)  
 %
-%% #r FUNCTION DEALS WITH ONE OF THE FOLLOWING FILE-TYPES
-% DTIparameters   - ascii-file (example: "##_dti_parameter_stat.txt")
-% DTIconnectivity - mat-file   (example: "__dti_1000K_seed_rk4_end.mat")
+%% #ky  GROUP-ASSIGNMENT
+% - An excelfile must be prepared with mouseIDs and group-assignment.
+% - #r The GROUP-ASSIGNMENT excelfile is mandatory for "DTI parameter" and "DTI connectivities".
+% - The excelfile must contain 2 columns (mouse-id & groupassignment) in the first excel-sheet
+% - [mouseID]        : 1st column contains mouseIDS/names 
+%                      -The mouseIDs must match animal folders names or must be part of the filename.                      are part of the filename).
+% - [groupassignment]: 2nd column contains subgroup labels such that each mouse is assigned to a group.
+%                      -The groupassignment label can be arbitrarily chosen.
+%                      -Example: "treatment"/"control" or "A"/"B"/"C".
+% -  It is possible to assign more than two groups in the Group-column (example: "A","B","C").
+% - #r The first row is thought to represent the header (column names can be arbitrarily chosen).
 %
-%% #r GROUP-ASSIGNMENT
-% - an excelfile must be prepared with mouseIDs and group-assignment
-% - the excelfile must contain 2 columns (mouse-id & groupassignment) in the first excel-sheet
-% - [mouseID]:  1st column contains mouseIDS/names
-% - [groupassignment]: 2nd column contains subgroup labels such that each mouse is assigned to a group
-% - * the first row is thought to represent the header (column names can be arbitrarily chosen)
-%% #g EXAMPLE of the GROUP-ASSIGNMENT with 2 subgroups (1wt2ko,1ko2ko)
-%         MRI Animal-ID              GROUP    (1rst row is contains the header)
+%%     #g EXCEL-GROUP-ASSIGNMENT-EXAMPLE with 2 subgroups (1wt2ko,1ko2ko)
+%         MRI Animal-ID              GROUP    (1rst row represents the header)
 %         20161215TM_M6590          1wt2ko
 %         20170112TM_M6615          1wt2ko
 %         20170112TM_M7067          1wt2ko
@@ -28,166 +43,474 @@
 %         20170113TM_M7068          1ko2ko
 %         20170113TM_M7338          1ko2ko
 %         20170223TM_M9515          1ko2ko
-%         20170224TM_M9536echte     1ko2ko
 %         20170224TM_M9536          1ko2ko
 %         20170224TM_M9539          1ko2ko
+%
+%_________________________________________________________________________________________________
+%% #ry HOW TO PROCESS (SEQUENCE OF MANUAL STEPS)
+% 
+% There are two different pipelines (1) DTI-parameters and (2) DTI-connectivity.
+% #b  (1) DTI-parameter 
+% set matlab's current path to the directory of the data
+% use [load group assignment] (button) to load the group assignment
+% use [load DTI parameter] (button) to select the data files
+% modify toggles (within, test, FDR etc.) to adjust the paramter (type of test etc..)
+% use [stat DTI parameter] (button) to calculate statistics for DTI-PARAMETER
+% use [show Results] (button) to show/redisplay results 
+% use [plot data] (button) to plot data/results (use right pulldown to select the type of plotting)
+% use [export data] (button) to export results (excel-file)
+% 
+% #b  (2) DTI-connectivity
+% set matlab's current path to the directory of the data
+% use [load group assignment] (button) to load the group assignment
+% select from [DTIstudio/MRtrix] (pulldown), depending which processing software was used for DTI connectivity data 
+% use [load DTI connectivities] (button) to select the  DTI-CONNECTIVITY FILES
+% OPTIONAL: use [make COI file] (button) and/or [load COI file](button) to make a COI/load a COI-file 
+% modify toggles (within, test, FDR etc.) to adjust the paramter (type of test etc..)
+% use [stat Connectivity] (button) to calculate the statistics for DTI-CONNECTIVITY FILES. 
+% OPTIONAL: use [save calculation] (button) to save the calculation (mat-file, for time-consuming jobs)
+%          This allows to just start dtistat.m the next time, modify some of the toggles (FDR etc.) and reload
+%          a calculation via [load calculation]
+% use [show Results] (button) to show/redisplay results 
+% use [plot data] (button) to plot data/results (use right pulldown to select the type of plotting)
+% use [export data] (button) to export results (excel-file)
+% use [export4xvol3d] (button) to export connections for xvol3d-visualization
 %_________________________________________________________________________________________________
 %% #ry GUI (controls and behaviour)
-% [load group assignment] (button)   : load excelfile with group assignment
-% [load DTI parameter]    (button)   : load DTI-PARAMETER FILES (*.txt files)
-% [load DTI connectities] (button)   : load DTI-CONNECTIVITY FILES (*.mat files)
-% [load COI file]         (button)   : optional, load Connections of Interest  (excelfile file)
-% [make COI file]         (button)   : optional, create an excel file with connections as blanko file
-%                                      this file can than be used to make a COI-file (excelfile file), by manually indicating with connections are of interest..   (excelfile file)
-% [within]                (checkbox) : [] between-design (2-sample problem), [x] paired-design (repeated measures)
-% [tests]                 (pulldown) : select the prefered test here (depends on the design)
-%                              # for between-design: select one of the following tests:
-%                                    ttest2 (2sample ttest),
-%                                    WST(Wilcoxon rank sum test),
-%                                    permutation
-%                                    permutation2
-% [use FDR]               (checkbox) : if selected, FDR correction is performed
-% [qFDR]                  (edit)     : desired false discovery rate (default: 0.05)
-% [show SIGS only]        (checkbox) : if selected, only significant results will be reported
-% [sort Results]          (chckbox)  : if selected, results will be ordered after p-value
-% [reverse contrast]      (chckbox)  : default group-comparison is A>B, if selected B>A comparison is done (changes the sign of the test statistic, usefull for DTI-visulaization)
-% [noSeeds]               (edit)     : number of seeds,  connectivity-matrizes (weights) will be normalized by noSeeds prior calculation of connectivity metrics
-%
-% [stat DTI parameter]    (button)   : run statistic for DTI-PARAMETER FILES (DTI-PARAMETER FILES must be loaded before)
-% [stat Connectivity]     (button)   : run statistic for DTI-CONNECTIVITY FILES (DTI-CONNECTIVITY FILES must be loaded before)
-% [redisplay data]        (button)   : redisplay data without re-calculation of the statistic 
-%                                      (usefull for FDR/qFDR/showSigsonly/sortResult)
-% [plot data]             (button)   : plot data/results (use right pulldown to select the type of plotting)
-% [export data]           (button)   : export results
-%_________________________________________________________________________________________________
-%% #ry AUTOMATIZATION PARAMETERS
-% - use pairwise inputs
-% - dtistat(parametername1, parametervalue1,...,...,parameternameN, parametervalueN)
-% #b PARAMETERS
-% 'groupfile'     : fullpath name of the excelfile with the group assignment
-% 'confiles'      : cellarray with fullpath names of connectivity files
-% 'paramfiles'    : cellarray with fullpath names of DTI-parameter files
-% 'f1design'      : typ of design, [0] between test ,[1] within test
-% 'typeoftest1'   : type of test depending  on f1design
-%                    -for between-design: ttest2 (2sample ttest), WST(Wilcoxon rank sum test), permutation or permutation2
-%                    -for within-design: #r not implemented yet
-% 'isfdr'         : use FDR correction ,(0|1)
-% 'qFDR'          : q-value (desired false discovery rate) for FDR corection (default: 0.05)
-% 'issort'        : sort results according pvalue (0|1)
-% 'showsigsonly'  : show only significant results (0|1)
-% 'reversecontrast: reverse group contrast (0|1); where [0] is A>B group, while [1] is B>A
-% 'noSeeds'       : number of seeds,  connectivity-matrizes (weights) will be normalized by noSeeds prior calculation of connectivity metrics
-%
-% 'runstat'       : run statistic over:   ('dti') DTI-parameter or ('con')  connectivity data
-% 'outvar'        : workspace varable name, this variable contains the results
-% 'export'        : fullpath-filename of the excelfile of the results (a gui will open if the parameter value is empty )
-% 'reset'         : [1/0]: [1] reset the GUI,set all parameters to default and clear all inputs 
-% 'show'          : show/redisplay results again (used after changes of FDR/sorting-parameters )
-% 'roifile'       : load a roi/coi file (an excel-file that specifies the connections of interest )
-%_________________________________________________________________________________________________
-%% #ry AUTOMATIZATION EXAMPLE
-%% #b this example investigates two groups using 2sample-Ttest
-%% #b here DTIparameter-files (paramfiles) and Connectivity-files (confiles) are loaded but only the Connectivity-files will be analyzed
-%% #b to analyze the DTIparameter-files change 'runstat' from 'con' to 'dti'
-%
-% paramfiles={'O:\data2\x01_maritzen\Maritzen_DTI\M6590_dti_parameter_stat.txt'  % %DTI-PARAMETER FILES
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M6591_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M6615_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M6617_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M7065_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M7067_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M7068_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M7070_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M7334_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M7338_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M9513_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M9515_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M9533_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M9534_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M9535_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M9536_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M9536echte_dti_parameter_stat.txt'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\M9539_dti_parameter_stat.txt'};
-%
-% confiles={
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20161215TM_M6590_dti_1000K_seed_rk4_end.mat' % %DTI-CONNECTIVITY FILES
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20161215TM_M6591__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170112TM_M6615__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170112TM_M6617__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170112TM_M7065__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170112TM_M7067__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170113TM_M7068__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170113TM_M7070__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170113TM_M7334__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170113TM_M7338__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170223TM_M9513__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170223TM_M9515__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170223TM_M9533__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170223TM_M9534__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170223TM_M9535__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170224TM_M9536__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170224TM_M9536echte__dti_1000K_seed_rk4_end.mat'
-%     'O:\data2\x01_maritzen\Maritzen_DTI\20170224TM_M9539__dti_1000K_seed_rk4_end.mat'};
-%
-% pa='O:\data2\x01_maritzen\Maritzen_DTI'
-% dtistat('groupfile', fullfile(pa,'#groups_Animal_groups.xlsx'),...% % USE THIS GROUPASSIGNMENT-FILE
-%     'confiles',confiles,'paramfiles'  ,  paramfiles ,...       % % USE THIS  DTI-PARAMETER FILES & %DTI-CONNECTIVITY FILES
-%     'f1design',       0,'typeoftest1' ,    'Ttest2' ,...       % % BETWEEN DESIGN,  2-sample Ttest
-%     'isfdr'   ,       1,'qFDR'        ,       0.05  ,...       % % FDR CORRECTION, USING THIS FDR-Q-THRESHOLD
-%     'issort'  ,       1,'showsigsonly',          1  ,...       % % SORT ACCORDING P-VALUES, SHOW ONLY SIGNIFICANT RESULTS
-%     'noSeeds' ,     1e6,              ,              ...       % % for NW-metrics only-->normalize connecticity weights by number of seeds
-%     'runstat' ,   'con','outvar'      , 'results');            % % RUN STATISTIC FOR CONNECTIVITY data ('con'), results will be stored in workspace variabe 'results'
-%
 % 
-%% #ry other SNIPS
-% dtistat('export',fullfile(pwd,'_result3.xlsx')); % % eport results as excelfile
-% dtistat('show',1);                               % % show/redisplay results again (used after changes of FDR/sorting-parameters )
-% dtistat('reset',1);                              % % reset GUI and Parameters
-% dtistat('roifile',fullfile(pwd,'ROI_christian1.xlsx')); % %  load a specified ROI/COI file
-% dtistat('roifile','none');  % % reset: no ROIfile is used
-% dtistat('reversecontrast',1);  % % reverse group contrast
-
-
-
-
+% #b ______________GROUP ASSSIGNMENT___________________________________________________________________________________
+% 
+% [load group assignment] (button)   : Load excelfile with group assignment.
+% 
+% #b _______________DTI parameter or DTI connectivities________________________________________________________________
+% [load DTI parameter]    (button)   : Load DTI-PARAMETER FILES (see INPUT FILE TYPES) via GUI.
+% [load DTI connectivities] (button) : Load DTI-CONNECTIVITY FILES (see INPUT FILE TYPES)  via GUI.
+% [DTIstudio/MRtrix]    (pulldown)   : Depending on processing software for DTI connectivity data select 
+%                                       one of the input data:
+%                                             "DSIstudio" for DSI studio data, or
+%                                             "MRtrix"    for MRtrix data.
+%                                      Depending on the input data, the matching item must be selected from
+%                                      the pulldown before hitting the [load DTI connectivities] button.
+%                                      #r For "DTI connectivities" only.
+% #b _____________CONNECTIONS OF INTERESTS_____________________________________________________________________________
+% [load COI file]         (button)   : optional, load Connections-of-Interest/COI-file  (excelfile file). 
+%                                      This file has to be created first, using the [make COI file]-button. 
+%                                      #r For "DTI connectivities" only.
+%                                      #The COI-file can be loaded before, or after calculation. 
+%                                      Currently, the COI-file is used to reduce the number of region-by-region 
+%                                       pairs and thus improve the statistical output when dealing with 
+%                                      multiple comparisons (FDR approach).
+%                                      EXAMPLE: 308 seeds/regions produce 47278 region-by-region pairs (i.e. without
+%                                      combinations of itself and without redundant reorders such as "A--B" and "B--A").
+%                                      In this case it's unlikely that something survives FDR-correction. In this case
+%                                      use a COI-file with tagged connections-of-interest. SEE [make COI file].
+% [make COI file]         (button)   : optional, create an excel file with connections as blanko file.
+%                                      This file can than be used to make a COI-file (excelfile file) by manually
+%                                      denoting the connections of interest, see Instructions in the [make COI file]
+%                                      excelfile file.
+%                                      #r For "DTI connectivities" only.
+% #b ______________TOGGLES___________________________________________________________________________________
+% [within]                (checkbox) : Statisitcal design:
+%                                       [ ] between-design (2-sample problem)
+%                                       [x] paired-design (repeated measures)
+% [tests]                 (pulldown) : Select the prefered test. Tests are design-dependend. So first
+%                                      select the Statisitcal design.
+%                                      *Tests for between-design: One of the following tests:
+%                                          ttest2 (2sample ttest), WST(Wilcoxon rank sum test),
+%                                          permutation,permutation2
+%                                      *Tests for within-design: #r not implemented yet.
+% [use FDR]               (checkbox) : If selected, FDR correction is performed.
+% [qFDR]                  (edit)     : The desired false discovery rate (default: 0.05).
+% [show SIGS only]        (checkbox) : If selected, only significant results will be shown.
+% [sort Results]          (chckbox)  : if selected, results will be sorted by p-value.
+% [reverse contrast]      (chckbox)  : Default group-comparison is A>B, if selected B>A comparison is
+%                                      done (changes the sign of the test statistic, usefull for DTI-visulaization)
+% [noSeeds]               (edit)     : Number of seeds.  #r For "DTI connectivities" only.
+%                                      Connectivity-matrizes (weights) will be normalized by noSeeds
+%                                      prior calculation of connectivity metrics.
+% #b __________CALCULATION_______________________________________________________________________________________
+% [stat DTI parameter]    (button)   : Calculate statistic for DTI-PARAMETER.
+%                                      FILES (DTI-PARAMETER FILES must be loaded before.
+%                                      #r For "DTI parameter" only.
+% [stat Connectivity]     (button)   : Calculate statistic for DTI-CONNECTIVITY FILES. 
+%                                      DTI-CONNECTIVITY FILES must be loaded before.
+%                                      #r For "DTI connectivities" only.
+% [save calculation]      (button)   : Save a calculation (mat-file). This might be useful if statistical
+%                                      calculation for DTI connectivities is very time-consuming.
+%                                      (For more than 200 regions/nodes implying metric calculations for 40000 
+%                                      interconnections.). After calculation, use [save calculation] to 
+%                                      save the data as mat-file (GUI to select output filename).
+%                                      For later usage, open "dtistat" window, hit [load calculation] and select
+%                                      the previously saved calculation. If necessary, adjust the toggles (FDR etc.).
+%                                      #r Assumed for "DTI connectivities", but works also for "DTI parameter".
+% [load calculation]      (button)   : Load an existing calculation (mat-file). See [save calculation].  
+% 
+% #b _____________REPORT/EXPORT____________________________________________________________________________________
+% [show Results]          (button)   : Show/redisplay results without re-calculation.
+%                                      -Useful when changing the toggle states(FDR/qFDR/showSigsonly/sortResult etc) 
+%                                       or when using  [load calculation].
+% [plot data]             (button)   : plot data/results (use right pulldown to select the type of plotting)
+% [export data]           (button)   : Export results (excel-file).
+% [export4xvol3d]         (button)   : Export (significant) connections as excel-file. Use this option to
+%                                      visualize connections via xvol3d.  #r For "DTI connectivities" only. 
 %_________________________________________________________________________________________________
+%% #ry COMMAND LINE OPTIONS
+% #r ------------------------------------------------------------------------
+% #r NOTE: Access via command line has been changed (apologies for this).
+% #r ------------------------------------------------------------------------
+% Most commands can be set via command line.
+% All available commands must be declared as input argument of "dtistat.m"
+% Commands and subcommands are highlighted green in the tooltip of the respective button/checkbox/etc.
+% 
+% #b _____SET COMMAND____________________________________________________________________________________
+% SET: can be used to change state of toggles/pulldown menues/edit fields. First argument is 'set', 
+% followed by pairwise inputs. Subcommands of SET can be used in one set-command or splitted in several
+% set-commands
+% dtistat('set', arg1,val1, arg2,val2 ...); %pattern
+% SUBCOMMANDS and VALUES
+% 'inputsource'  : define input data        ; {see pulldown} ; #k EXAMPLE: dtistat('set','inputsource','MRtrix');
+% 'within'       : define statistical model ; {0,1} no/yes   ; #k EXAMPLE: dtistat('set','within',0);
+% 'test'         : used statistical test    ; {see pulldown} ; #k EXAMPLE: dtistat('set','test','WST');
+% 'FDR'          : toggle 'FDR'             ; {0,1}no/yes    ; #k EXAMPLE: dtistat('set','FDR',1);
+% 'qFDR'         : set the "qFDR" value     ; numeric        ; #k EXAMPLE: dtistat('set','qFDR',0.1);
+% 'showsigsonly' : show signif. results only; {0,1} no/yes   ; #k EXAMPLE: dtistat('set','showsigsonly',0);
+% 'sort'         : sort results             ; {0,1} no/yes   ; #k EXAMPLE: dtistat('set','sort',0);
+% 'rc'           : reverse contrast         ; {0,1}no/yes    ; #k EXAMPLE: dtistat('set','rc',0);
+% 'nseeds'       : number of seeds          ; numeric        ; #k EXAMPLE: dtistat('set','nseeds',1000);
+%
+% #k EXAMPLE TO COMBINE SET-SUBCOMMANDS:
+% dtistat('set','within',0,'test','ttest2','FDR',1,'qFDR',0.05,'showsigsonly',0,'sort',1,'rc',0,'nseeds',1000);
+%
+% #b _____OTHER COMMANDS____________________________________________________________________________________
+% 
+% dtistat('new');                                  % #g new dtistat-window
+% dtistat('group',excel-file);                     % #g load a group assignment; excel-file is the filename of the group assignment
+% dtistat('confiles',files,'labelfile',labelfile); % #g load connectivity files. #r FOR "DTI-connectivities" only.
+%                                                  % #g files is a cell of connectivity-files
+%                                                  % #g labelfile is a textfile with regions associated with the connectivity-files
+% 
+% dtistat('paramfiles',files);                     % #g load parameter files. #r FOR "DTI-parameter" only.
+%                                                  % #g files is a cell of parameter-files
+%
+% dtistat('calcconnectivity');                     % #g calculate statistic for DTI-connectivities
+% dtistat('calcparameter');                        % #g calculate statistic for DTI-parameter
+% 
+% dtistat('savecalc','__test1.mat');               % #g save calculations as '__test1.mat' in the current folder 
+% dtistat('loadcalc','__test1.mat');               % #g load a previous calculations, here '__test1.mat' from the current folder as 
+% dtistat('showresult');                           % #g show results
+% dtistat('export','_testExport3.xlsx');           % #g export results
+% dtistat('export4xvol3d');                        % #g export connection for xvol3d-visualization; with GUI. #g For silent mode
+%                                                  % #g  see example below,
+% %r COI-FILES
+% dtistat('loadcoi','coi_TEST1.xlsx');             % #g load a COI-file,connection-of-interest-file (excel-file); see GUI for more help
+% dtistat('makecoi','__COI_blanko.xlsx');          % #g save a COI-BLANKO-file (excel-file). Here, blanko '__COI_blanko.xlsx' is saved 
+%                                                  % #g the current folder
+%_________________________________________________________________________________________________
+%% #ky example command line: DTI-CONNECTIONS
+% cd('F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP')            % #g go to the main directory
+% dtistat('new');                                                        % #g new dtistat-window
+% dtistat('set','inputsource','MRtrix');                                 % #g input data source in MRatrix
+% dtistat('set','within',0,'test','ttest2','FDR',1,'qFDR',0.05,'showsigsonly',0,'sort',1,'rc',0,'nseeds',10000); % #g some toggle sets
+% dtistat('group','groupAssign.xlsx');                                   % #g load group-assignment (file 'groupAssign.xlsx' is in current directory)
+% [files] = spm_select('FPListRec',pwd,'.*.csv'); files=cellstr(files);  % #g recursively select all csv-files found in this directory
+% dtistat('confiles',files,'labelfile','lutSIM.txt');                    % #g load confiles and use label-file (here: 'lutSIM.txt', stored in current directory)
+% dtistat('calcconnectivity');                                           % #g calculate statistic for connectivity
+% dtistat('savecalc','__test1.mat');                                     % #g save calculation in pwd as '__test1.mat'
+% 
+% dtistat('new');                                                        % #g make new "dtistat"-window
+% dtistat('loadcalc','__test1.mat');                                     % #g load previous calculation '__test1.mat' from pwd 
+% dtistat('set','inputsource','MRtrix','FDR',1,'qFDR',0.05,'showsigsonly',0,'sort',1); % #g restore some toggle settings
+% dtistat('showresult');                                                 % #g show results
+% 
+% dtistat('export','_testExport3.xlsx');                                 % #g export results as '_testExport3.xlsx' in current folder
+% dtistat('export4xvol3d');                                              % #g export data for xvol3d with GUI
+%_________________________________________________________________________________________________
+%% #ky example command line: Export DTI-connections for xvol3d 
+% % #k For silent mode: set x.gui to [0];
+% x=[];
+% x.ano        =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\ANO.nii';	   % #g select corresponding Atlas (Nifti-file); such as "ANO.nii"
+% x.hemi       =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\AVGThemi.nii';  % #g select corresponding Hemisphere Mask (Nifti-file); such as "AVGThemi.nii"
+% x.cs         =  'diff';	         % #g connection strength (cs) or other parameter to export/display via xvol3d
+% x.outputname =  'DTIconnections';	 % #g output name string
+% x.contrast   =  'A > B';	         % #g constrast to save (see list (string) or numeric index/indices)
+% x.keep       =  'all';	         % #g connections to keep in file {'all' 'FDR' 'uncor'}
+% x.underscore =  [0];               % #g underscores in atlas labels:  {0} remove or {1} keep
+% x.LRtag      =  [0];               % #g left/right hemispheric tag in atlas labels:  {0} remove or {1} keep
+% x.gui        =  [1];               % #g show paramter GUi;  {1}silent mode (no GUI); {0} show gui
+% dtistat('export4xvol3d',x);        % #g export data for xvol3d with GUI with pre-selected parameter
+% 
+%_________________________________________________________________________________________________
+%% #ky example command line: DSIstudio-DTI Parameter
+% cd('O:\data2\x01_maritzen\Maritzen_DTI') ;                           % #g go to the main directory
+% dtistat('new');                                                      % #g new dtistat-window
+% dtistat('set','inputsource','DSIstudio','within',0,'test','ttest2'); % #g set toggle states
+% dtistat('group','#groups_Animal_groups.xlsx');                       % #g load group assignment (excel file)
+% [files] = spm_select('FPListRec',pwd,'.*.stat.txt'); files=cellstr(files); % #g select DSIstudio DTI-Parameter files
+% dtistat('paramfiles',files);                                         % #g load DTI-Parameter files
+% dtistat('calcparameter');                                            % #g calculate statistics
+% dtistat('showresult');                                               % #g show results
+% dtistat('savecalc','__test1.mat');                                   % #g save calculation in pwd as '__test1.mat'
+% 
+% dtistat('new');                                                      % #g make new "dtistat"-window
+% dtistat('loadcalc','__test1.mat');                                   % #g load previous calculation '__test1.mat' from pwd 
+% dtistat('set','inputsource','DSIstudio','within',0,'test','ttest2'); % #g reset some toggle states
+% dtistat('showresult');                                               % #g show results again
+% 
+% 
 
 
+
+
+% ==============================================
+%%   TODO's
+% ===============================================
+
+%WHY 308*308/2-47278 --->154
+% automatize
+% xvol3d-link
+% ==============================================
+%%
+% ===============================================
 
 
 function dtistat(varargin)
 
-
-
-
-if 0
-    dtistat('groupfile', fullfile(pa,'#groups_Animal_groups.xlsx'),...% % USE THIS GROUPASIGNMENT-FILE
-        'confiles',confiles,'paramfiles',paramfiles        ,...       % % USE THIS  DTI-PARAMETER FILES & %DTI-CONNECTIVITY FILES
-        'f1design',  0,        'typeoftest1' ,    'Ttest2' ,...       % % BETWEEN DESIGN,  2-sample Ttest
-        'isfdr',     1,        'qFDR'        ,     0.05    ,...       % % FDR CORRECTION, USING THIS FDR-Q-THRESHOLD
-        'issort',    1,        'showsigsonly',      1      ,...       % % SORT ACCORDING P-VALUES, SHOW ONLY SIGNIFICANT RESULTS
-        'runstat','con')                          % % RUN STATISITC FOR CONNECTIVITY
-    
-    
-    dtistat('groupfile', fullfile(pa,'#groups_Animal_groups.xlsx'),...% % USE THIS GROUPASIGNMENT-FILE
-        'confiles',confiles,'paramfiles',paramfiles        ,...       % % USE THIS  DTI-PARAMETER FILES & %DTI-CONNECTIVITY FILES
-        'f1design',  0,        'typeoftest1' ,    'Ttest2' ,...       % % BETWEEN DESIGN,  2-sample Ttest
-        'isfdr',     1,        'qFDR'        ,     0.05    ,...       % % FDR CORRECTION, USING THIS FDR-Q-THRESHOLD
-        'issort',    1,        'showsigsonly',      1      ,...       % % SORT ACCORDING P-VALUES, SHOW ONLY SIGNIFICANT RESULTS
-        'runstat','con','outvar', 'results')                          % % RUN STATISITC FOR CONNECTIVITY
-    
-end
-
 hf=findobj(0,'tag','dtistat');
-if isempty(hf)
-    createGui;
+if isempty(hf);     createGui; end
+
+% ==============================================
+%%   inputs
+% ===============================================
+
+if nargin~=0
+   
+    if mod(length(varargin),2)==0
+        par=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+    else % odd
+        par=cell2struct(varargin(3:2:end),varargin(2:2:end),2);
+        par=setfield(par,varargin{1}, varargin{1});
+    end
+    commandline(par);
+    return
+else
+   createGui();
 end
-inputs(varargin);
+
+function commandline(p)
+% createGui();
+hf=findobj(0,'tag','dtistat');
+
+% ==============================================
+%%   set
+% ===============================================
+
+if isfield(p,'set')
+    if isfield(p,'inputsource')
+        hc=findobj(hf,'tag','inputsource');
+        li=get(hc,'string'); va=get(hc,'value');
+        if isnumeric(p.inputsource)
+            set(hc,'value' ,p.inputsource );
+        else
+            set(hc,'value' ,find(strcmp(li,p.inputsource )) );
+        end
+    end
+    % --within----------------------------------------------
+    if isfield(p,'within')
+        hc=findobj(hf,'tag','F1design');
+        set(hc,'value',p.within) ;
+        hgfeval(get(hc,'callback'),hc);
+    end
+ % --test----------------------------------------------
+    if isfield(p,'test')
+        hc=findobj(hf,'tag','typeoftest1');
+        li=get(hc,'string'); va=get(hc,'value');
+        if isnumeric(p.test)
+            set(hc,'value' ,p.test );
+        else
+            set(hc,'value' ,find(strcmp(li,p.test )) );
+        end
+    end
+  % --FDR----------------------------------------------
+    if isfield(p,'FDR')
+        hc=findobj(hf,'tag','isfdr');
+        set(hc,'value' ,p.FDR );
+    end
+      % --FDR-qvalue----------------------------------------------
+    if isfield(p,'qFDR')
+        hc=findobj(hf,'tag','qFDR');
+        set(hc,'string' ,num2str(p.qFDR) );
+    end
+      % --showsigsonly----------------------------------------------
+    if isfield(p,'showsigsonly')
+        hc=findobj(hf,'tag','showsigsonly');
+        set(hc,'value' ,p.showsigsonly );
+    end
+    % --sort results----------------------------------------------
+    if isfield(p,'sort')
+        hc=findobj(hf,'tag','issort');
+        set(hc,'value' ,p.sort );
+    end
+        % --sort results----------------------------------------------
+    if isfield(p,'rc')
+        hc=findobj(hf,'tag','reversecontrast');
+        set(hc,'value' ,p.rc );
+    end
+            % --sort results----------------------------------------------
+    if isfield(p,'nseeds')
+        hc=findobj(hf,'tag','noSeeds');
+        set(hc,'string' , num2str(p.nseeds ));
+    end 
+    
+end
+
+% ==============================================
+%%   other command line args
+% ===============================================
+if isfield(p,'group')
+    groupfile(p.group);
+    return
+end
+if isfield(p,'confiles')
+    confiles(p);
+    return
+end
+if isfield(p,'calcconnectivity')
+    runstat(2);
+    return
+end
+if isfield(p,'savecalc')
+    run_calcSave(p);
+    return
+end
+if isfield(p,'loadcalc')
+    run_calcLoad(p);
+    return
+end
+if isfield(p,'new')
+   delete(findobj(0,'tag','dtistat'));
+    dtistat();
+    return
+end
+if isfield(p,'showresult')
+ redisplay();
+  return
+end
+if isfield(p,'export')
+ export2excel(p);
+  return
+end
+if isfield(p,'export4xvol3d')
+ export4xvol3d(p);
+  return
+end
+if isfield(p,'loadcoi')
+    loadroi(p);
+    return
+end
+if isfield(p,'makecoi')
+    makeROIfile_run(p);
+    return
+end
+
+
+
+%-----------------DTI Paramter addon
+if isfield(p,'paramfiles')
+    paramfiles(p);
+    return
+end
+if isfield(p,'calcparameter')
+    runstat(1);
+    return
+end
+
+
+% ==============================================
+%%   command LINE TESTS REAL DATA-308 nodes
+% ===============================================
+if 0
+    cd('F:\data1\DTI_mratrix\dti_mratrix');
+    dtistat('new');
+    dtistat('set','inputsource','MRtrix','within',0,'test','ttest2','FDR',1,'qFDR',0.05,'showsigsonly',0,'sort',1);
+    dtistat('group','Manuskript_IL6_sham_group_ assignment.xlsx');
+    [files] = spm_select('FPListRec',pwd,'.*.csv'); files=cellstr(files);
+    dtistat('confiles',files,'labelfile','atlas_lut.txt');
+    %%% dtistat('calcconnectivity');
+    %%% dtistat('savecalc','__test1.mat');
+    
+    dtistat('new');
+    dtistat('loadcalc','test_308nodes.mat');
+    dtistat('set','inputsource','MRtrix','within',0,'test','ttest2','FDR',1,'qFDR',0.05,'showsigsonly',1,'sort',1);
+    dtistat('showresult');
+    
+    %%%% dtistat('export','_testExport3.xlsx');
+    %%%% dtistat('export4xvol3d','r');
+end
+
+% ==============================================
+%%   command LINE TESTS MRtrix
+% ===============================================
+if 0
+    dtistat('new');
+    dtistat('set','within',0,'test','ttest2','FDR',1,'qFDR',0.05,'showsigsonly',0,'sort',1,'rc',0,'nseeds',50);
+    dtistat('group','groupAssign.xlsx');
+    [files] = spm_select('FPListRec',pwd,'.*.csv'); files=cellstr(files);
+    dtistat('confiles',files,'labelfile','lutSIM.txt');
+    dtistat('calcconnectivity');
+    
+    dtistat('savecalc','__test1.mat');
+    dtistat('new');
+    dtistat('loadcalc','__test1.mat');
+    dtistat('set','FDR',1,'qFDR',0.05,'showsigsonly',0,'sort',1);
+    dtistat('showresult');
+    
+    dtistat('export','_testExport3.xlsx');
+    dtistat('export4xvol3d','r');
+    
+    
+    x=[];            	 
+    x.ano        =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\ANO.nii';	% select corresponding Atlas (Nifti-file); such as "ANO.nii"
+    x.hemi       =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\AVGThemi.nii';	% select corresponding Hemisphere Mask (Nifti-file); such as "AVGThemi.nii"
+    x.cs         =  'diff';	% connection strength (cs) or other parameter to export/display via xvol3d
+    % ##
+    x.outputname =  'DTIconnections';	% output name string
+    x.contrast   =  'A > B';	% constrast to save (see list (string) or numeric index/indices)
+    x.keep       =  'all';	% connections to keep in file {'all' 'FDR' 'uncor'}
+    x.underscore =  [0];	% {0,1} underscores in atlas labels:  {0} remove or {1} keep
+    x.LRtag      =  [0];	% {0,1} left/right hemispheric tag in atlas labels:  {0} remove or {1} keep
+    x.gui        =  [1];    % {0,1}  show paramter GUi;  {1}silent mode; {0} show gui
+    dtistat('export4xvol3d',x);
+    
+end
+% ==============================================
+%%   command LINE TESTS DSIstudio-DTI Parameter
+% ===============================================
+if 0
+    cd('O:\data2\x01_maritzen\Maritzen_DTI')
+    dtistat('new');
+    dtistat('set','inputsource','DSIstudio','within',0,'test','ttest2');
+    dtistat('group','#groups_Animal_groups.xlsx');
+    [files] = spm_select('FPListRec',pwd,'.*.stat.txt'); files=cellstr(files);
+    dtistat('paramfiles',files);
+    dtistat('calcparameter');
+    dtistat('showresult');
+    dtistat('savecalc','__test1.mat');
+    
+    dtistat('new');
+    dtistat('set','inputsource','DSIstudio','within',0,'test','ttest2');
+    dtistat('loadcalc','__test1.mat');
+    dtistat('showresult');
+    
+end
+
+
+
 
 function createGui
-
+% hf=findobj(0,'tag','dtistat');
+% if isempty(hf);     createGui; end
 %% properties
- props.wst_stat ='z'  ; %WST-statistic:  'z' (z-statistic) or 'rs' (ranksum )
+props.wst_stat ='z'  ; %WST-statistic:  'z' (z-statistic) or 'rs' (ranksum )
 
 
 
@@ -206,11 +529,9 @@ us.reversecontrast =0;
 us.props=props;
 
 
-
-
-%———————————————————————————————————————————————
-%%   prepare GUI
-%———————————————————————————————————————————————
+% ==============================================
+%%     prepare GUI
+% ===============================================
 
 delete(findobj(0,'tag','dtistat'));
 hf=figure;
@@ -218,29 +539,66 @@ set(hf,'units','norm','color','w','tag','dtistat','menubar','none');
 set(hf,'position',[0.5892    0.4461    0.3889    0.4667]);
 set(hf,'name','dtistat','NumberTitle','off');
 
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 
+%----GROUP ASSIGNMENT
 h=uicontrol('style','pushbutton','units','norm','position',[0 .85 .2 .05],...
     'string','load group assignment','tag','loaddata','callback',@loadgroupassignment,...
-    'tooltipstring',['load excel-file with the group-assignment']);
-%•••••••• DTI parameter &  DTI connectities ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+    'tooltipstring',...
+    ['load excel-file with the group-assignment' char(10)...
+    '<font color="black">command: <b><font color="green">group</font>'...
+    ]);
+% ==============================================
+%%   DTI parameter &  DTI connectities
+% ===============================================
 
 h=uicontrol('style','pushbutton','units','norm','position',[0 .8 .2 .05],...
-    'string','load DTI parameter','tag','loaddata','callback',@loadDTIparameter);
+    'string','load DTI parameter','tag','loaddata','callback',@loadDTIparameter,...
+    'tooltipstring',...
+    ['load mouse-specific DTI-parameter files' char(10)...
+    'This data deal with parameter such as: FA, ADC, AXIAL/RADIAL DIFFUSIVITY.' char(10)...
+    '<font color="black">command: <b><font color="green">paramfiles</font>'...
+    ]);
+
 h=uicontrol('style','pushbutton','units','norm','position',[0.2 .8 .2 .05],...
-    'string','load DTI connectities','tag','loaddata','callback',@loadDTIConnectivity,...
-    'tooltipstring',['load mouse-specific matfiles with the connectivities ']);
+    'string','load DTI connectivities','tag','loaddata','callback',@loadDTIConnectivity,...
+    'tooltipstring',...
+    ['load mouse-specific DTI-connectivity files' char(10)...
+    'This data deal with connections between regions.' char(10)...
+    '<font color="black">command: <b><font color="green">confiles</font>'...
+    ]);
 
+%----inputsource
+source={'DSIstudio','MRtrix'};
+h=uicontrol('style','popupmenu','units','norm','position',[.22 .85 .18 .05],...
+    'string',source ,'tag','inputsource',...
+    'tooltipstring',...
+    ['select DTI input source' char(10)...
+    'Only for DTI-connectivities (not for DTI-parameter).' char(10) ...
+    '<font color="black">command: <b><font color="green">inputsource</font>'...
+    ]);
+set(h,'value',2);
 
-%••••••••  LOAD COIFILE ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ==============================================
+%%   LOAD COIFILE
+% ===============================================
 h=uicontrol('style','pushbutton','units','norm','position',[0.45 .8 .12 .05],...
     'string','load COIfile','tag','loadroifile','callback',@loadroifile,...
-    'tooltipstring','load excel-file with connections of interest (COI)');
+    'tooltipstring',[...
+    'load excel-file with connections of interest (COI)' char(10) ...
+    '<font color="black">command: <b><font color="green">loadcoi</font>'...
+    ]);
+% ==============================================
+%%   make COIFILE
+% ===============================================
 
-%••••••••  make COIFILE ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 h=uicontrol('style','pushbutton','units','norm','position',[0.57 .8 .12 .05],...
     'string','make COIfile','tag','makeROIfile','callback',@makeROIfile,...
-    'tooltipstring','create excel file with connections (blanko) to manually indicate the connections of interest (COI  of interest (COI)');
+    'tooltipstring',[...
+    'create excel file with connections (blanko) to manually indicate' char(10) ....
+    'the connections of interest (COI  of interest (COI)' char(10) ...
+    '<font color="black">command: <b><font color="green">makecoi</font>'...
+    ]);
 
 
 %help
@@ -255,15 +613,18 @@ h=uicontrol('style','pushbutton','units','norm','position',[.8 .8 .15 .05],...
     'tooltipstring','close open result windows');
 
 
-%between vs within
+%--------between vs within
 h=uicontrol('style','checkbox','units','norm','position',[.1 .65 .2 .05],'string','within',...
     'tag','F1design','backgroundcolor','w','callback',@call_f1design,...
     'tooltipstring',['testing type:' char(10) ...
     ' [ ] BETWEEN DESIGN: compare independent groups ' char(10) ...
     ' [x] WITHIN DESIGN:  compare same mice at different time points ' char(10) ...
+    '<font color="black">command: <b><font color="green">within</font>'...
     ]);
 
-%••••••••  type of test ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ==============================================
+%%   type of test
+% ===============================================
 h=uicontrol('style','popupmenu','units','norm','position',[.15 .65 .2 .05],...
     'string',{'ttest2' 'WST' 'permutation','permutation2'},'tag','testsbetween',...
     'position',[.2 .645 .1 .05],'tag','typeoftest1',...
@@ -274,76 +635,134 @@ h=uicontrol('style','popupmenu','units','norm','position',[.15 .65 .2 .05],...
     '   permutation/permutation2: two different permutation tests' char(10) ...
     '      ' char(10)...
     ' *** WITHIN DESIGN ' char(10) ...
-    '    ..not implemented so far'     ]);
+    '    ..not implemented so far'    char(10) ...
+    '<font color="black">command: <b><font color="green">test</font>'...
+    ]);
 
-
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ==============================================
+%%    FDR
+% ===============================================
 % FDR
-h=uicontrol('style','checkbox','units','norm','position',[.1 .7 .2 .05],'string','use FDR',...
-    'tag','isfdr','backgroundcolor','w','value',us.isfdr,...
-    'tooltipstring','use FDR for treatment of multiple comparisons (MCP)');%,'callback',@call_f2design);
-set(h,'position',[.01 .55 .2 .05],'fontsize',7);
+h=uicontrol('style','checkbox','units','norm','position',[.01 .55 .2 .05],'string','use FDR',...
+    'tag','isfdr','backgroundcolor','w','value',us.isfdr,'fontsize',7,...
+    'tooltipstring',...
+    ['use FDR for treatment of multiple comparisons (MCP)' char(10) ...
+    '<font color="black">command: <b><font color="green">FDR</font>'...
+    ]);
+
 % showSigs
-h=uicontrol('style','checkbox','units','norm','position',[.3 .7 .2 .05],'string','show SIGs only',...
-    'tag','showsigsonly','backgroundcolor','w','value',us.showsigsonly,...
-    'tooltipstring','show significant results only');%,'callback',@call_f2design);
-set(h,'position',[.15 .55 .2 .05],'fontsize',7);
+h=uicontrol('style','checkbox','units','norm','position',[.15 .55 .2 .05],'string','show SIGs only',...
+    'tag','showsigsonly','backgroundcolor','w','value',us.showsigsonly,'fontsize',7,...
+    'tooltipstring',...
+    ['show significant results only' char(10) ...
+    '<font color="black">command: <b><font color="green">showsigsonly</font>'...
+    ]);
+
 %sort
-h=uicontrol('style','checkbox','units','norm','position',[.45 .7 .2 .05],'string','sort Results',...
-    'tag','issort','backgroundcolor','w','value',us.issort,...
-    'tooltipstring','sort Results according p-value');%,'callback',@call_f2design);
-set(h,'position',[.32 .55 .2 .05],'fontsize',7);
+h=uicontrol('style','checkbox','units','norm','position',[.32 .55 .2 .05],'string','sort Results',...
+    'tag','issort','backgroundcolor','w','value',us.issort,'fontsize',7,...
+    'tooltipstring',...
+    ['sort Results according p-value' char(10) ...
+    '<font color="black">command: <b><font color="green">sort</font>'...
+    ]);
 
 %reverse contrast
-h=uicontrol('style','checkbox','units','norm','position',[.6 .7 .2 .05],'string','reverse contrast',...
-    'tag','reversecontrast','backgroundcolor','w','value',us.reversecontrast,...
+h=uicontrol('style','checkbox','units','norm','position',[.47 .55 .2 .05],'string','reverse contrast',...
+    'tag','reversecontrast','backgroundcolor','w','value',us.reversecontrast,'fontsize',7,...
     'tooltipstring',['Reverse Contrast/Groups:' char(10) ...
     '  [ ] A>B, where "A" and "B" are the groups to be compared ' char(10) ...
     '  [x] B>A, .. flip contrast ' char(10) ...
-   ]);
-set(h,'position',[.47 .55 .2 .05],'fontsize',7);
+    '<font color="black">command: <b><font color="green">rc</font>'...
+    ]);
+
 
 
 %% qvalue
 h=uicontrol('style','edit','units','norm','position',[.01 .52 .05 .03],'string',num2str(us.qFDR),...
-    'tag','qFDR','backgroundcolor','w','value',1,...
-    'tooltipstring','desired false discovery rate. {default: 0.05}','fontsize',7);
+    'tag','qFDR','backgroundcolor','w','value',1,'fontsize',7,...
+     'tooltipstring',...
+     ['desired false discovery rate. {default: 0.05}' char(10) ...
+    '<font color="black">command: <b><font color="green">qFDR</font>'...
+    ]);
+
+ 
 h=uicontrol('style','text','units','norm','position',[.06 .52 .05 .03],'string','qFDR',...
     'backgroundcolor','w');
 
 
-%% Node
-tt=[' number of seeds (noSeeds)' char(10) ' connectivity-matrizes (weights) will be normalized by noSeeds prior calculation of connectivity metrics'];
+%% noSeeds
+tt=[' number of seeds (noSeeds)' char(10) ...
+    ' connectivity-matrizes (weights) will be normalized by noSeeds prior calculation of connectivity metrics' char(10) ...
+    '<font color="black">command: <b><font color="green">nseeds</font>'...
+    ];
 h=uicontrol('style','edit','units','norm','position',[.8 .52 .1 .03],'string',num2str(us.noSeeds),...
     'tag','noSeeds','backgroundcolor','w','value',1,'HorizontalAlignment','left',...
     'tooltipstring',tt,'fontsize',7);
+
 h=uicontrol('style','text','units','norm','string','noSeeds',...
     'backgroundcolor','w','position',[.7 .52 .1 .03],'HorizontalAlignment','right', 'tooltipstring',tt);
 
-
-%••••••••  TYPE OF CALCULATION ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ==============================================
+%%   TYPE OF CALCULATION
+% ===============================================
 h=uicontrol('style','text','units','norm');
 set(h,'position',[0.1 .45 .2 .03],'backgroundcolor','w', 'string',' calculate..');
- 
 
-%process
+
+%DTI-PARAMETER
 h=uicontrol('style','pushbutton','units','norm','position',[0 .4 .2 .05],...
     'string','stat DTI parameter',...
-    'tag','statDTIparameter','backgroundcolor','w','callback',@statDTIparameter,...
-    'tooltipstring','calculate statistic for DTI parameter');
-
+    'tag','statDTIparameter','backgroundcolor',[0.8941    0.9412    0.9020],'callback',@statDTIparameter,...
+    'tooltipstring',...
+    ['calculate statistic for DTI parameter' char(10) ...
+    '<font color="black">command: <b><font color="green">calcparameter</font>'...
+    ]);
+%DTI-CONNECTIVITIES
 h=uicontrol('style','pushbutton','units','norm','position',[0.2 .4 .2 .05],...
     'string','stat Connectivity',...
-    'tag','statconnectivity','backgroundcolor','w','callback',@statconnectivity,...
-    'tooltipstring','calculate statistic for connectivity data');
+    'tag','statconnectivity','backgroundcolor',[0.8941    0.9412    0.9020],'callback',@statconnectivity,...
+    'tooltipstring',...
+    ['calculate statistic for connectivity data' char(10) ...
+    '<font color="black">command: <b><font color="green">calcconnectivity</font>'...
+    ]);
 
-%••••••••  redisplay data ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 
-h=uicontrol('style','pushbutton','units','norm','string','redisplay data',...
+
+
+% ==============================================
+%%   load/save calculation
+% ===============================================
+% LOADCALC
+h=uicontrol('style','pushbutton','units','norm','position',[0.43 .4 .15 .05],...
+    'string','load calculation',...
+    'tag','calcLoad','backgroundcolor','w','callback',@calcLoad,...
+    'tooltipstring',...
+    ['load a calculation' char(10) '..useful for timeconsuming calculations' char(10) ...
+    '<font color="black">command: <b><font color="green">loadcalc</font>'...
+    ]);
+
+%SAVECALC
+h=uicontrol('style','pushbutton','units','norm','position',[0.58 .4 .15 .05],...
+    'string','save calculation',...
+    'tag','calcSave','backgroundcolor','w','callback',@calcSave,...
+    'tooltipstring',...
+    ['save a calculation' char(10) '..useful for timeconsuming calculations' char(10) ...
+    '<font color="black">command: <b><font color="green">savecalc</font>'...
+    ]);
+% ==============================================
+%%   Show results
+% ===============================================
+
+h=uicontrol('style','pushbutton','units','norm','string','show Results',...
     'tag','redisplay','backgroundcolor','w','callback',@redisplay,'fontweight','bold');
 set(h,'position',[0.13 .35 .14 .05],'backgroundcolor','w');
-
-%••••••••  plot ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+set(h,'tooltipstring',...
+    ['Show tabled results' char(10) ...
+    '<font color="black">command: <b><font color="green">show</font>'...
+    ]);
+% ==============================================
+%%   plot results
+% ===============================================
 
 h=uicontrol('style','pushbutton','units','norm','position',[0.13 .3 .14 .05],...
     'string','plot Results',...
@@ -353,34 +772,131 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.13 .3 .14 .05],...
 h=uicontrol('style','popupmenu','units','norm','position',[0.27 .3 .15 .05],...
     'string',{'matrix' 'plot3d'},'tag','menuplot','backgroundcolor','w',...
     'tooltipstring','type of visualization to show');
-
-%••••••••  export ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ==============================================
+%%   export
+% ===============================================
 
 h=uicontrol('style','pushbutton','units','norm','position',[0.13 .25 .14 .05],...
     'string','export Results',...
     'tag','export','backgroundcolor','w','callback',@export,...
-    'tooltipstring','export results (excelfile)');
+    'tooltipstring',...
+    ['export results (excelfile)' char(10) ...
+    '<font color="black">command: <b><font color="green">export</font>'...
+    ]);
+
+h=uicontrol('style','pushbutton','units','norm','position',[0.13 .20 .14 .05],...
+    'string','export4xvol3d','fontsize',7,...
+    'tag','export4xvol3d_btn','backgroundcolor','w','callback',@export4xvol3d_btn,...
+    'tooltipstring',...
+    ['export results for xvol3d-visualization' char(10) ...
+    'Only for DTI-connectivities (not for DTI-parameter).' char(10) ...
+    '<font color="black">command: <b><font color="green">export4xvol3d</font>'...
+    ]);
+
+% 
 
 
-%••••••••  other stuff pulldown ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ==============================================
+%%   other stuff pulldown
+% ===============================================
 
-h=uicontrol('style','popupmenu','units','norm',...
-    'string',{...
-    '-info-'
-    'get code'  
-    'reload data and parameter'}, 'tag','otherfun','backgroundcolor','w','callback',@otherfun,...
-     'tooltipstring','..other stuff');
-set(h,'position',[.8 .75 .195 .05])
+% h=uicontrol('style','popupmenu','units','norm',...
+%     'string',{...
+%     '-info-'
+%     'get code'
+%     'reload data and parameter'}, 'tag','otherfun','backgroundcolor','w','callback',@otherfun,...
+%     'tooltipstring','..other stuff');
+% set(h,'position',[.8 .75 .195 .05])
 
 
 
+tooltip2html(); %make HTML-tooltips 
+% ==============================================
+%%     inputs
+% ===============================================
+% ==============================================
+%%   HTML tooltips
+% ===============================================
 
-%———————————————————————————————————————————————
-%%   inputs
-%———————————————————————————————————————————————
+function tooltip2html();
+%make HTML-tooltips 
+hf=findobj(0,'tag','dtistat');
+ch=get(hf,'children');
+for i=1:length(ch)
+    tt=get(ch(i),'tooltipstring');
+    if ~isempty(tt)
+        tt=['<html>' tt  '</html>'];
+        tt=regexprep(tt,char(10),'<br>');%replace char(10) using <br>
+        set(ch(i),'tooltipstring',tt);
+    end
+end
+
+% ==============================================
+%%   LOAD CALC
+% ===============================================
+function run_calcLoad(par)
+cprintf([.6 .6 .6],['Load an existing calculation [mat-file].\n']);
+hf=findobj(0,'tag','dtistat');
+% u=get(hf,'userdata');
+
+if exist('par')==1
+    if isfield(par,'loadcalc')==1;
+        if strcmp(par.loadcalc,'loadcalc')==0
+            file=par.loadcalc  ;
+        end
+    end
+end
+if exist('file')~=1
+    [fi pa]=uigetfile(fullfile(pwd,'*.mat'),'load a calculation [mat-file]');
+    if isnumeric(fi); disp('...calculation not loaded..cancelled'); return;end
+    file=fullfile(pa,fi);
+end
+[pax name ext]=fileparts(file);
+if isempty(pax); pax=pwd; end
+file=fullfile(pax,[name '.mat']);
+
+w=load(file);
+set(hf,'userdata',w.u);
+% disp(['loaded existing calculation: ' file]);
+cprintf([1 0 1],['loaded: '  strrep(file,filesep,[filesep filesep])  '\n' ]);
+% ==============================================
+%%    SAVE CALC
+% ===============================================
+
+function run_calcSave(par)
+cprintf([.6 .6 .6],['Save a calculation [mat-file].\n']);
+hf=findobj(0,'tag','dtistat');
+u=get(hf,'userdata');
+
+if exist('par')==1
+    if isfield(par,'savecalc')==1;
+        if strcmp(par.savecalc,'savecalc')==0
+            file=par.savecalc  ;
+        end
+    end
+end
+if exist('file')~=1
+    [fi pa]=uiputfile(fullfile(pwd,'*.mat'),'save a calculation [mat-file]');
+    if isnumeric(fi); disp('...calculation not saved..cancelled'); return;end
+    file=fullfile(pa,fi);
+end
+[pax name ext]=fileparts(file);
+if isempty(pax); pax=pwd; end
+file=fullfile(pax,[name '.mat']);
+
+   
+save(file,'u');
+% disp('calculation saved');
+showinfo2(['calculation saved: ' ] ,file );
+
+function calcLoad(e,e2)
+run_calcLoad();
+function calcSave(e,e2)
+run_calcSave();
+
 function inputs(args)
 % if nargin >0
-if ~isempty(args)    
+if ~isempty(args)
     %p=varargin{1}
     if isstruct(args{1})
         p=args{1};
@@ -466,9 +982,9 @@ if ~isempty(args)
         set(findobj(hfig,'tag','noSeeds') ,'string',num2str(ux.noSeeds));
     end
     
-     if isfield(p,'roifile')
-         loadroi(p.roifile);
-     end
+    if isfield(p,'roifile')
+        loadroi(p.roifile);
+    end
     
     
     figure(hfig);
@@ -479,14 +995,15 @@ if ~isempty(args)
     end
     
     if isfield(p,'export');
-        figure(findobj(0,'tag','dtistat'));
+        hf=findobj(0,'tag','dtistat');
+        figure(hf);
         drawnow;
-        us=get(gcf,'userdata');
+        us=get(hf,'userdata');
         export2excel(us,p.export) ;
     end
     
     if isfield(p,'show');
-       showresults(0) ;
+        showresults(0) ;
     end
     
     
@@ -528,12 +1045,13 @@ runstat(2);
 
 
 function call_f1design(e,e2)
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','dtistat');
+us=get(hf,'userdata');
 val=get(e,'value');
 us.f1design=val;
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 
-htests=findobj(gcf,'tag','typeoftest1');
+htests=findobj(hf,'tag','typeoftest1');
 if val==0 %between
     set(htests,'string',{'ttest2' 'WST' 'permutation' 'permutation2'});
 else
@@ -555,21 +1073,34 @@ confiles
 
 
 function groupfile(file)
-
-
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','dtistat');
+us=get(hf,'userdata');
+cprintf([1 0 1],['loading group-assignment (xls-file)...wait..' ]);
 if exist('file')==0
+    
     [fi pa]=uigetfile(pwd,'select group assignment file (excel file)','*.xls');
-    if pa==0; return; end
+    if pa==0;
+        cprintf([1 0 1],['process aborted.\n' ]);
+        return;
+    end
     file=fullfile(pa,fi);
 end
 
+
 us.groupfile=file;
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 
 %check groupsize
 [~,~,a]=xlsread(file);
-a(1,:)=[]
+cprintf([1 0 1],['done.\n' ]);
+a(1,:)=[];
+cprintf([0 .5 0],['==========================================\n' ]);
+cprintf([0 .5 0],['       group-assignment\n' ]);
+cprintf([.5 .5 .5],['The first two columns constitute the animal name and the group assignment, respectively. \n' ]);
+disp(a);
+cprintf([0 .5 0],['==========================================\n' ]);
+
+
 a=cellfun(@(a){[ num2str(a)]},a); % to string
 a(regexpi2(a(:,1),'NaN'),:)=[] ; %remove nan
 a(regexpi2(a(:,2),'NaN'),:)=[] ;
@@ -581,18 +1112,31 @@ for i=1:size(tb,1)
         gp=[gp ', '  ];
     end
 end
+
+cprintf([0 .5 0],['NOTE: It is assumed that the group-assignment-file (Excelfile) contains a header (1st. row).' '\n']);
 cprintf([0 .5 0],['Ncases found: '   num2str(sum(cell2mat(tb(:,2)))) '\n']);
 cprintf([0 .5 0],['subgroups   : '   gp '\n']);
 
 
-function paramfiles(files)
-%———————————————————————————————————————————————
+function paramfiles(par)
+% ==============================================
 %%   load DTI-PARAMETER
-%———————————————————————————————————————————————
-us=get(gcf,'userdata');
-if isempty(files); return; end
-if exist('files')==0
-    pa=pwd
+% ===============================================
+hf=findobj(0,'tag','dtistat');
+us=get(hf,'userdata');
+
+if exist('par')==1
+    if isfield(par,'paramfiles')
+        if sum(strcmp(par.paramfiles,'paramfiles'))==0
+            files=par.paramfiles;
+        end 
+    end
+end
+
+
+
+if exist('files')~=1
+    pa=pwd;
     % [files,dirs] = spm_select('FPListRec',pa,'.*.parameter_stat.txt');
     % if isempty(files);
     %     disp('no DTI-parameter files found');
@@ -600,11 +1144,24 @@ if exist('files')==0
     % end
     % fi=cellstr(files);
     
-    msg={'select DTI-parameter file (TXTfile)'
-        'select DTI-parameter file from DSI-studio'
-        ' -this data should be txt-files'
-        ' -select the folder that contains the DTI-parameter files'
-        ' -click [rec] to recursively find all files in the subdirs of the selected folder'};
+    msg={...
+        'Select DTI-parameter file from DSI-studio (TXTfile).'
+        ' -The selected files must be txt-files.'
+        ' Select the files (A) manually or do it (B) recursively:'
+        '  _____ (B) RECURSIVELY find files _____  '
+        '(1): Select the main folder containing all DTI-parameter files.'
+        '(2): Check/adjust the filter string in the filter edit field.'
+        '(3a): Click [Rec] button to recursively find all files with matching filter '
+        '     The found files will be listed in the lower listbox...examine the list carefully.. '
+        '     ..If needed prune the list (click onto file to remove it from selection). '
+        '____ If it''s more complicated follow steps below____'
+        '(3b): Click [RecList] button to obtain a list of all matching files recursively found in the main folder.'
+        '(4): In this SELECTOR window select the requested files from the list...hit [OK].'
+        '(5): Hit [Rec] button to recursively find all matching files.'
+        '(6): Check lower listbox. If needed prune the list (click onto file to remove it from selection).'
+        '(7): If needed, add other files using steps from (A) or (C).'
+        
+        };
     [fi,sts] = cfg_getfile2(inf,'any',msg,[],pa,'.*.parameter_stat.txt');
     if isempty(char(fi))
         disp('no DTI-parameter files selected');
@@ -618,7 +1175,7 @@ params={'Name' ...
     'fa mean' 'adc mean' 'axial_dif mean' 'radial_dif mean' ...
     'radial_dif1 mean'      'radial_dif2 mean'};
 
-
+cprintf([repmat(.6,[1 3])],['Reading DTI-paramter files ..wait..\n' ]);
 clear d2;
 for i=1:size(fi,1)
     cprintf([0 0 1],['[reading]: '   strrep(fi{i},[filesep],[filesep filesep])  '\n']);
@@ -650,49 +1207,160 @@ for i=1:size(fi,1)
     d.paramname=param';
     d.data     =dx;
     
-    %———————————————————————————————————————————————
-    %%
-    %———————————————————————————————————————————————
+    
     d2(i)=d;
 end
+cprintf([repmat(.6,[1 3])],['Done.\n' ]);
 
 
 us.dtiparameter=d2;
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
+
+% ==============================================
+%%     load connectivity files
+% ===============================================
+function confiles(par)
+hf=findobj(0,'tag','dtistat');
+us=get(hf,'userdata');
+
+% get source
+hf=findobj(0,'tag','dtistat');
+hsource=findobj(hf,'tag','inputsource');
+li=get(hsource,'string');
+va=get(hsource,'value');
+sourceinput=lower(li{va});
+
+if ~isempty(strfind(sourceinput,'dsi'));
+    source=1;
+else ~isempty(strfind(sourceinput,'trix'));
+    source=2;
+end
+
+% ==============================================
+%%  argin
+% ===============================================
+if exist('par')==1
+    if isfield(par,'confiles') ==1;     files    =cellstr(par.confiles);      end
+    if isfield(par,'labelfile')==1;     labelfile=cellstr(par.labelfile);      end 
+end
 
 
-%———————————————————————————————————————————————
-%%   load connectivity files
-%———————————————————————————————————————————————
-function confiles(files)
-us=get(gcf,'userdata');
+% ==============================================
+%%  CONFILES
+% ===============================================
 if exist('files')==0
-    msg={'select connectivity data (MATfile)'
-        'select connectivity data from DSI-studio'
-        ' -this data should be mat-files'
-        ' -select the folder that contains the connectivity data'
-        ' -click [rec] to recursively find all files in the subdirs of the selected folder'};
-    [fi,sts] = cfg_getfile2(inf,'mat',msg,[],pwd,'.*rk4_end.mat|.*_connectivities.mat');
-    if isempty(char(fi))
-        disp('no files selected');
-        return
+    cprintf([1 0 1],['Select DTI data..wait..' ]);
+    if  source==1; %DSI
+        msg1={...
+            'Select connectivity data processded by DSI-studio (MAT-files).'
+            '  This data should be mat-files (filter: "*.mat").'
+            };
+        dtype='mat';
+        flt  ='.*rk4_end.mat|.*_connectivities.mat';
+    elseif source==2 %mrtrix
+        msg1={...
+            'Select connectivity data processded by MRtrix (CSV-files)'
+            ' This data should be csv-files (filter: "*.csv").'
+            };
+        dtype='any';
+        flt  ='.*csv|connectome.*.csv';
     end
+    
+    msg2={ '        '
+        ' Select the files (A) manually or do it (B) recursively:'
+        '  _____ (B) RECURSIVELY find files _____  '
+        '(1): Select the main folder containing all connectivity data.'
+        '(2): Check/adjust the filter string in the filter edit field.'
+        '(3a): Click [Rec] button to recursively find all files with matching filter '
+        '     The found files will be listed in the lower listbox...examine the list carefully.. '
+        '     ..If needed prune the list (click onto file to remove it from selection). '
+        '____ If it''s more complicated follow steps below____'
+        '(3b): Click [RecList] button to obtain a list of all matching files recursively found in the main folder.'
+        '(4): In this SELECTOR window select the requested files from the list...hit [OK].'
+        '(5): Hit [Rec] button to recursively find all matching files.'
+        '(6): Check lower listbox. If needed prune the list (click onto file to remove it from selection).'
+        '(7): If needed, add other files using steps from (A) or (C).'
+        ''};
+    msg=[msg1; msg2];
+    
+    % [fi,sts] = cfg_getfile2(inf,'mat',msg,[],pwd,'.*rk4_end.mat|.*_connectivities.mat');
+    [fi,sts] = cfg_getfile2(inf,dtype,msg,[],pwd, flt);
+      
 else
     fi=files;
 end
+
+% ==============================================
+%%   LABEL-FILE
+% ===============================================
+if source==2 %mrtrix
+  if exist('labelfile')  ~=1
+    msg={'select one(!) label-file (*.txt) for MRtrix'};
+    [fi2,sts] = cfg_getfile2(1,'any',msg,[],pwd, '.*.txt');
+    labelfile=char(fi2);
+    if isempty(char(fi))
+        cprintf([1 0 1],['process aborted\n' ]);
+        return
+    end
+  end
+end
+
+% ==============================================
+%%   MRtrix-stuff
+% ===============================================
+if source==2
+    
+    % ==============================================
+    %%   label
+    % ===============================================
+    t=readtable(char(labelfile));
+    t=table2cell(t);
+    
+    
+    
+    % ==============================================
+    %%   get name tags MRtrix-files have the same name
+    % ===============================================
+    endtag={};
+    for i=1:size(fi)
+        r=strsplit(fi{i},filesep);
+        endtag{i,1}=r{end};
+    end
+    if size(unique(endtag),1)==length(fi) ;%all files have different names
+        namesMRtrix=regexprep(endtag,'.csv','');  %remove FMT
+    else
+        namesMRtrix={};
+        for i=1:size(fi)
+            r=strsplit(fi{i},filesep);
+            try
+                namesMRtrix{i,1}=r{find(strcmp(r,'dat'))+1};
+            catch
+                error('files must have different names or must be located in the studie''s animal-folders (dat/animalfolder_xyz)') ;
+            end
+        end
+    end
+end
+
+cprintf([1 0 1],['selection of DTI data done.\n' ]);
 
 
 con=[];
 names={};
 for i=1:size(fi,1)
     cprintf([0 0 1],['[reading]: '   strrep(fi{i},[filesep],[filesep filesep])  '\n']);
-    a=load(fi{i});
-    label=char(a.name);
-    label=strsplit(label,char(10))';
-    label(find(cellfun(@isempty,label)))=[] ;
     
-    [~,namex]=fileparts(fi{i});  %mousename
-    ac=a.connectivity;           %connectMAtrix
+    if source==1
+        a=load(fi{i});
+        label=char(a.name);
+        label=strsplit(label,char(10))';
+        label(find(cellfun(@isempty,label)))=[] ;
+        [~,namex]=fileparts(fi{i});  %mousename
+        ac=a.connectivity;           %connectMAtrix
+    elseif source==2
+        ac   =csvread(fi{i});
+        namex=namesMRtrix{i};
+        label=t(:,2);
+    end
     
     %% check
     %     ac=[0  1  2  3  4
@@ -729,6 +1397,7 @@ for i=1:size(fi,1)
     %% check
     % s=zeros(prod(si),1);s(ind)=val; s=reshape(s,[si]); s= s+s'
 end
+cprintf([0 0 1],['Done.\n']);
 
 c={};
 c.mousename=names;
@@ -742,12 +1411,14 @@ c.label      =label;
 
 us.con=c;
 
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 
 
 
 function runstat(param)
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','dtistat');
+figure(hf);
+us=get(hf,'userdata');
 
 
 if ischar(param)
@@ -761,18 +1432,16 @@ if ischar(param)
     end
 end
 
-
-%———————————————————————————————————————————————
-%%   loading groupassignment
-%———————————————————————————————————————————————
+% ==============================================
+%%    loading groupassignment
+% ===============================================
 [~,~,a]=xlsread(us.groupfile);
 a(1,:)=[];
 a=cellfun(@(a){[ num2str(a)]},a);
 a=a(:,1:2);
-
-%———————————————————————————————————————————————
+% ==============================================
 %%   check order
-%———————————————————————————————————————————————
+% ===============================================
 if param==1
     xx=us.dtiparameter;
     ids={xx(:).mousename}';
@@ -863,20 +1532,22 @@ disp('__________________________________________________')
 disp(a2);
 
 tb=[a a2(:,2)];
-%———————————————————————————————————————————————
-%%   group
-%———————————————————————————————————————————————
 
+
+% ==============================================
+%%   group
+% ===============================================
 
 grp=unique(a(:,2));
 
 % ## flip contrast-direction
-if get(findobj(gcf,'tag','reversecontrast'),'value')==1
+if get(findobj(hf,'tag','reversecontrast'),'value')==1
     grp=flipud(grp(:));
 end
-%———————————————————————————————————————————————
-%%   pairwisecomparisons
-%———————————————————————————————————————————————
+
+% ==============================================
+%%    pairwisecomparisons
+% ===============================================
 comb   =combnk(grp,2);
 combstr=cellfun(@(a,b){[ a ' > ' b]},comb(:,1),comb(:,2));
 
@@ -895,10 +1566,9 @@ us.grpnames=grp ;%comb;
 us.grpsize=grpsize;
 
 
-%———————————————————————————————————————————————
+% ==============================================
 %%   display group membership
-%———————————————————————————————————————————————
-
+% ===============================================
 % tb(12:18,3)={nan}
 
 gname={};
@@ -906,7 +1576,7 @@ len=[];
 nchar=[];
 for i=1:length(grp)
     is=regexpi2(tb(:,2),grp(i));
-    is=find(~isnan(cell2mat(tb(is,3)))); %NANS
+    % is=find(~isnan(cell2mat(tb(is,3)))); %NANS
     dum=tb(is,1);
     dum=[{['# GROUP-' grp{i} ' # (n=' num2str(length(is)) ')'] }; dum];
     gnames{1,i}=dum;
@@ -917,7 +1587,7 @@ end
 
 mxchar=max(nchar);
 disp('____________________________________________________________________________________________');
-disp('  GRPUP ASSIGNMENT --> PLEASE CHECK THIS');
+disp('  GROUP ASSIGNMENT --> PLEASE CHECK THIS');
 disp('____________________________________________________________________________________________');
 
 for i=1:max(len)
@@ -939,18 +1609,16 @@ disp('__________________________________________________________________________
 
 
 
-
-%———————————————————————————————————————————————
-%%   parameter
-%———————————————————————————————————————————————
-z.f1design    = get(findobj(gcf,'tag','F1design'),'value');
-z.typeoftest1 = get(findobj(gcf,'tag','typeoftest1'),'value');
-
+% ==============================================
+%%      parameter
+% ===============================================
+z.f1design    = get(findobj(hf,'tag','F1design'),'value');
+z.typeoftest1 = get(findobj(hf,'tag','typeoftest1'),'value');
 
 
-%———————————————————————————————————————————————
+% ==============================================
 %%   pairwise tests
-%———————————————————————————————————————————————
+% ===============================================
 
 if param==1
     nparams= xx(1).paramname;
@@ -1037,23 +1705,23 @@ if z.f1design==0 %between
                 [out hout]=getMESD(x,y,vartype);
                 
                 if regexpi(us.props.wst_stat,'Z','ignorecase')==1    % Z-SCORE
-                   for j=1:size(x,1)
+                    for j=1:size(x,1)
                         
-%                         d1=x(j,:); d2=y(j,:);
-%                         tr=2.5;
-%                         d1( find(d1>(mean(d1)+tr*std(d1)) | d1<(mean(d1)-tr*std(d1))  ) )=[];
-%                         d2( find(d2>(mean(d2)+tr*std(d2)) | d2<(mean(d2)-tr*std(d2))  ) )=[];
-%                        [p h st]=ranksum(d1,d2);
-%                         disp([length(d1)  length(d2)]);
-                          [p h st]=ranksum(x(j,:),y(j,:));
-                       try
-                           res(j,:)=[h p st.zval];
-                       catch
+                        %                         d1=x(j,:); d2=y(j,:);
+                        %                         tr=2.5;
+                        %                         d1( find(d1>(mean(d1)+tr*std(d1)) | d1<(mean(d1)-tr*std(d1))  ) )=[];
+                        %                         d2( find(d2>(mean(d2)+tr*std(d2)) | d2<(mean(d2)-tr*std(d2))  ) )=[];
+                        %                        [p h st]=ranksum(d1,d2);
+                        %                         disp([length(d1)  length(d2)]);
+                        [p h st]=ranksum(x(j,:),y(j,:));
+                        try
+                            res(j,:)=[h p st.zval];
+                        catch
                             res(j,:)=[h p nan];
-                       end
+                        end
                     end
                     res    =[ res          out];
-                    reshead=['H' 'p' 'zval' hout];  
+                    reshead=['H' 'p' 'zval' hout];
                 else                                                 % RS-SCORE
                     for j=1:size(x,1)
                         try
@@ -1097,8 +1765,11 @@ if z.f1design==0 %between
                 %             [p,T,cr,al]=mult_comp_perm_t2_nan(x(ix,:)',y(ix,:)',5000,0,.05);
                 
             end
-            %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-            %% deal with missings
+            
+            % ==============================================
+            %%   deal with missings
+            % ===============================================
+            
             xex =sum(~isnan(x),2)./size(x,2);
             yex =sum(~isnan(y),2)./size(y,2);
             ix=find((xex>.9)&(yex>.9)&(~isnan(h(:)))  );  %90% of data must exist
@@ -1147,7 +1818,7 @@ if z.f1design==0 %between
             n=n+1;
         end %params
     end %combs
-    set(gcf,'userdata',us);
+    set(hf,'userdata',us);
     drawnow;
     showresults(0);
     
@@ -1178,6 +1849,7 @@ else
     doexport=0;
 end
 
+cprintf([0 .5 0],['Show results ..wait..\n' ]);
 % [~,fi]=fileparts(us.data);
 %% GET PARAMETERS
 hfig=findobj(0,'tag','dtistat');
@@ -1200,11 +1872,6 @@ end
 
 
 sz={};
-% sz{end+1,1}=['                           '];
-% sz{end+1,1}=[' § *********************************************************************************************'];
-% sz{end+1,1}=[' §                 '    us.pw(1).mode                              ];
-% sz{end+1,1}=[' § *********************************************************************************************'];
-
 sz{end+1,1}=['_____________________________________________________________________________________________________________________'];
 sz{end+1,1}=[' #wr                 '    us.pw(1).mode                              ];
 sz{end+1,1}=['_____________________________________________________________________________________________________________________'];
@@ -1220,11 +1887,11 @@ else
     roifile='none';
 end
 sz{end+1,1}=['ROI/COI file:      '       roifile];
- 
+
 sz{end+1,1}=['groups (size):     '      grp];
 
 try
-sz{end+1,1}=['# pairwise nodes:  '      num2str(length(us.pw(1).lab))];
+    sz{end+1,1}=['# pairwise nodes:  '      num2str(length(us.pw(1).lab))];
 end
 
 
@@ -1233,13 +1900,13 @@ end
 sz{end+1,1}=['pairwise test:     '      us.pw(1).stattype];
 sz{end+1,1}=['FDR-correction:    '      regexprep(num2str(z.isfdr),{'1' '0'},{'yes','no'})];
 if z.isfdr==1
-sz{end+1,1}=['FDR-qValue:        '      num2str(z.qFDR)];
+    sz{end+1,1}=['FDR-qValue:        '      num2str(z.qFDR)];
 end
 sz{end+1,1}=['sorting:           '      regexprep(num2str(z.issort),{'1' '0'},{'yes','no'})];
 sz{end+1,1}=['showsigsonly:      '      regexprep(num2str(z.showsigsonly),{'1' '0'},{'yes','no'})];
 
 if strcmp(us.pw(1).mode,'DTI CONNECTIVITY')
-sz{end+1,1}=['noSeeds:           '      num2str(z.noSeeds)   ' (for NW-metrics only)'];
+    sz{end+1,1}=['noSeeds:           '      num2str(z.noSeeds)   ' (for NW-metrics only)'];
 end
 
 % char(sz)
@@ -1248,7 +1915,6 @@ end
 info2export=sz;
 
 
-%     sz{end+1,1}=['********************************************************************************'];
 if doexport==1
     if exist(file)==2
         try;
@@ -1267,6 +1933,7 @@ for i=1:size(us.pw,2)
     head=['Label' us.pw(i).tbhead];
     
     
+    % -----isFDR ----------------------------
     if z.isfdr==1
         
         ival=find(~isnan(sum(cell2mat(dat(:,2:3)),2)));
@@ -1290,11 +1957,18 @@ for i=1:size(us.pw,2)
     end
     
     dat(:,2)=num2cell(double(cell2mat(dat(:,2))));
-    isort=[1:size(dat,1)]';
-    if z.issort==1
-        [dat isort]= sortrows(dat,[3 2]);
-    end
     
+    % ----- SORT ACCORD p-VALUE  ----------------------------
+    %     isort=[1:size(dat,1)]';
+    %     if z.issort==1
+    %         [dat isort]= sortrows(dat,[3 2]);
+    %     end
+    if z.issort==1
+        ip=find(strcmp(head,'p'));
+        [dat isort]= sortrows(dat,ip);
+    end
+
+    % ----- showsigsonly  ----------------------------
     if z.showsigsonly==1
         dat= dat(find([dat{:,2}]==1),:);
     end
@@ -1311,7 +1985,6 @@ for i=1:size(us.pw,2)
     %     end
     
     if doexport==1
-        
         xlswrite( file, sx, us.pw(i).str);
         xlsAutoFitCol(file,us.pw(i).str,'A:Z');
     else
@@ -1381,8 +2054,8 @@ if strcmp(us.pw(1).parameter,'connectivity')
 end
 
 %%  next
-
-set(gcf,'userdata',us);
+hf=findobj(0,'tag','dtistat');
+set(hf,'userdata',us);
 out=sz;
 
 %% assgin output
@@ -1407,7 +2080,7 @@ if doexport==1
     disp(['created: <a href="matlab: system('''  [file] ''');">' [file] '</a>']);
 end
 
-
+cprintf([0 .5 0],['Done.\n' ]);
 
 
 
@@ -1699,26 +2372,15 @@ function xhelp(e,e2)
 uhelp([mfilename '.m']);
 
 
-
-
-
-%% 828 line
-% pairwise tests in dtistat: 770
 function [out expo]=calc_networkparameter(x,y, us,z)
 % out: output as text document
 % expo: output for export (cell)
 out=[];
-
 noSeeds=z.noSeeds;
-%     hf=findobj(0,'tag','dtistat');
-%     us=get(hf,'userdata');
 
-%
-%
-%     %———————————————————————————————————————————————
-%     %%   params
-%     %———————————————————————————————————————————————
-%
+% ==============================================
+%%    %%   params
+% ===============================================
 %     z.f1design   =0;
 %     z.typeoftest1=1;
 %     z.vartype    =1;
@@ -1728,40 +2390,92 @@ noSeeds=z.noSeeds;
 %
 
 
+% ==============================================
+%%   construct matrizes
+% ===============================================
 
+iv=[ones(1,size(x,2))   2*ones(1,size(y,2))];
+su=[x y];
 
-if 1
-    %———————————————————————————————————————————————
-    %%   %% construc matrizes
-    %———————————————————————————————————————————————
-    iv=[ones(1,size(x,2))   2*ones(1,size(y,2))];
-    su=[x y];
-    
-    si=us.con.size;
-    cmat=zeros([si length(iv)]);
-    for i=1:length(iv)
-        v=su(:,i);
-        s=zeros(prod(si),1);
-        s(us.con.index)=v;
-        s=reshape(s,[si]);
-        s2=s+s';
-        s2(isnan(s2))=0;
-        cmat(:,:,i)  =s2;
+si=us.con.size;
+cmat=zeros([si length(iv)]);
+for i=1:length(iv)
+    v=su(:,i);
+    s=zeros(prod(si),1);
+    s(us.con.index)=v;
+    s=reshape(s,[si]);
+    s2=s+s';
+    s2(isnan(s2))=0;
+    cmat(:,:,i)  =s2;
+end
+
+% ==============================================
+%%          get nw-parameter
+% ===============================================
+d=cmat./noSeeds;     % normalize weights by number of seeds (  %noSeeds=10^6;)
+% clc;
+disp('calc network metrics');
+cprintf([1 0 1],[' *** CALC NETWORK METRICS  ***  \n' ]);
+cprintf([0.4941    0.4941    0.4941],['..depending of the number of nodes..this process might take a while  \n' ]);
+cprintf([0.4941    0.4941    0.4941],['..use [save calculation] to save the calculation connectivity statistic afterwards..   \n' ]);
+cprintf([0.4941    0.4941    0.4941],['..use [load calculation] to load an already calculated connectivity statistic (i.e. omit re-calculation)   \n' ]);
+
+cprintf([0 0.45 0],[' ONSET: ' datestr(now,'HH:MM:SS') '; #ANIMAL: ' num2str(size(d,3))  ...
+    '; #NODES: '  num2str(size(d,1)) '\n' ]);
+
+%
+%==================================== select data /testbed  ===============================================================
+% d2=d(1:10,1:10,:); %check
+%  d2=d(1:50,1:50,:);%check
+%   d2=d(1:100,1:100,:);%check
+d2     = d; %FINAL
+label2 = us.con.label(1:size(d2,1));
+
+%==================================== Parallel PROC if [PCT] available  =============================================
+try
+    cpus=feature('numCores');
+    pp = gcp('nocreate');
+    if isempty(pp)
+        parpool( cpus);
+    else
+        %poolsize = p.NumWorkers
     end
-    
-    %———————————————————————————————————————————————
-    %%   get nw-parameter
-    %———————————————————————————————————————————————
-    d=cmat./noSeeds;     % normalize weights by number of seeds (  %noSeeds=10^6;)
-    
-    
-    
+    % delete(gcp('nocreate'))
+end
+%===================================== REFERENCE PROGRESSBAR================================================
+np =[];
+npv=[];
+tic
+N=size(d2,3) ;
+cprintf([0 0.45 0],['  TARGET STATE: ' ]);
+for i=1:N
+    cprintf([0 0.45 0],['.|']);
+end
+fprintf(1,'\n');
+
+%===================================== PARFOR LOOP================================================
+cprintf([0.9294 0.6941 0.1255],[' CURRENT STATE:  ' ]);
+parfor i=1:N
+    fprintf('\b.|\n');%fprintf(1,['.|']);
+    dx=d2(:,:,i);
+    ws= calcConnMetrics(dx);
+    np(:,i)    =ws.sc;   %SCALAR
+    npv(:,:,i) =ws.vec;  %VEC
+end
+vecml     ={'efficiency_wei(dx,1)'  'modularity_und(dx)' 'clustering_coef_wu(dx)' 'degrees_und(dx)'};
+paramlabel=['assortativity_wei(dx,0)'      'transitivity_wu(dx)'   'efficiency_wei(dx,0)'  vecml]';
+cprintf([0 0.45 0],[' calculation DONE (ET: ' sprintf('%2.2f',toc/60)  'min).\n' ]);
+
+% ==============================================
+%%  OLD - slow
+% ===============================================
+if 0
     % metricCommand={'output=efficiency_wei(W,0)','output=efficiency_wei(W,1)','[~,output]=modularity_und(W)',...
     %     'output=assortativity_wei(W,0)','output=clustering_coef_wu(W)','output=degrees_und(W)',...
     %     'output=transitivity_wu(W)'};
     np=[];
-    disp('calc network metrics');
-    for i=1:size(d,3)
+    
+    parfor i=1:size(d,3)
         fprintf(1,' %d ',i);
         dx=d(:,:,i);
         
@@ -1778,24 +2492,22 @@ if 1
         npv(:,:,i) =vec;  %VEC
     end
     fprintf(1,'\n');
-    %———————————————————————————————————————————————
-    %%   struct
-    %———————————————————————————————————————————————
-    nw.np       =np           ;
-    nw.nplabel  =paramlabel   ;
-    nw.npv      =npv          ;
-    nw.npvlabel  =vecml       ;
-    
-    nw.label     =us.con.label;
-    nw.grpidx    =iv         ;
-    
-    
 end
+% ==============================================
+%%   to struct
+% ===============================================
+nw.np        =np           ;
+nw.nplabel   =paramlabel   ;
+nw.npv       =npv          ;
+nw.npvlabel  =vecml        ;
 
-%———————————————————————————————————————————————
+nw.label     =label2       ;
+nw.grpidx    =iv           ;
+
+
+% ==============================================
 %%   statistic
-%———————————————————————————————————————————————
-
+% ===============================================
 % % %%
 % % if 1
 % %     nw=evalin('base','nw');
@@ -1809,12 +2521,14 @@ if z.f1design==0
     [out expo]= indepstat_nwparameter(nw,z);
 end
 
-%••••••••••••••••••••••••••	   [subs]      •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ==============================================
+%%   [subs]
+% ===============================================
 
 function [lg expo]=indepstat_nwparameter(nw, z)
-
+hf=findobj(0,'tag','dtistat');
 vartype=z.vartype;
-us=get(gcf,'userdata');
+us=get(hf,'userdata');
 
 
 
@@ -1859,7 +2573,7 @@ for jj=1:ntestchunks
         stattype='WRS';
         res=nan(size(x,1),[3]);
         [out hout]=getMESD(x,y,vartype);
-         
+        
         if regexpi(us.props.wst_stat,'Z','ignorecase')==1    % Z-SCORE
             for j=1:size(x,1)
                 [p h st]=ranksum(x(j,:),y(j,:));
@@ -2072,34 +2786,42 @@ end
 
 
 function export(e,e2)
-us=get(gcf,'userdata');
-export2excel(us);
+
+export2excel();
 
 
 % us      : userdata of dtistat
 % filename: optional use FP-filename otherwise gui opens ; example: fullfile(pwd,'_result.xlsx');
-function export2excel(us,filename)
+function export2excel(par)
 
-fprintf(' ... exporting results.. ');
+if exist('par')==1
+    if isfield(par,'export')
+        if strcmp(par.export,'export')==0
+            filename=par.export;
+        end
+        
+    end
+end
 
+hf=findobj(0,'tag','dtistat');
+us=get(hf,'userdata');
+
+% fprintf(' ... exporting results.. ');
+cprintf([1 0 1],['exporting results (excelfile) ..wait..' ]);
 
 
 %========== excel filename ===============================================================
-try
-    if isempty(filename) ; clear filename, end
-end
-if exist('filename')==0
+if exist('filename')~=1
     [fiout paout]=uiputfile(pwd,'save excelfile as (choose file or type a filenmane) ...' ,'*.xlsx');
     if fiout==0
-        disp('..cound not save to excelfile..no file/name chosen..');
+        cprintf([1 0 1],['.cound not proceed..no file/filename chosen.\n' ]);
         return
     end
     filename=fullfile(paout,fiout);
 end
-
-
-[pa fi ]=fileparts(filename); %force xlsx-format
-filename=fullfile(pa,[ fi '.xlsx']);
+[pax name ext]=fileparts(filename);
+if isempty(pax); pax=pwd; end
+filename=fullfile(pax,[name '.xlsx']);
 %=========================================================================
 try
     delete(filename);
@@ -2204,26 +2926,45 @@ for s=1:pws
     
 end
 
-fprintf(' [Done]\n ');
+cprintf([1 0 1],['done.\n' ]);
+% fprintf(' [Done]\n ');
 disp([' open xlsfile: <a href="matlab: system(''' filename ''')">' filename '</a>']);
 
 
+
+
+
+% ==============================================
+%%
+% ===============================================
+
+
+
 function loadroifile(e,e2)
- loadroi('gui');
-function loadroi(filename)
+loadroi('gui');
+
+function loadroi(par)
+
+if exist('par')==1
+    if isfield(par,'loadcoi')
+        if sum(strcmp(par.loadcoi,'loadcoi'))==0
+            filename=par.loadcoi;
+        end
+    end 
+end
+
 hf=findobj(0,'tag','dtistat');  figure(hf);
 hb=findobj(hf,'tag','loadroifile');
 us=get(hf,'userdata');    %### critical
 
-if isempty(filename); return; end
 
-if strcmp(filename,'gui')
+if exist('filename')~=1;%strcmp(filename,'gui')
     [fi pa]=uigetfile(fullfile(pwd,'*.xlsx'),'load ROI file (excel-format)');
     
-    if isnumeric(fi); 
+    if isnumeric(fi);
         disp(' no file selected - remove ROI dependency');
-       try; us=rmfield(us,'roifile')    ; end
-       try; us=rmfield(us,'roilabels')  ; end
+        try; us=rmfield(us,'roifile')    ; end
+        try; us=rmfield(us,'roilabels')  ; end
         set(hf,'userdata',us);
         return;
     end
@@ -2236,51 +2977,83 @@ if strcmp(filename,'none')
     set(hf,'userdata',us);
     return;
 else
-    fprintf(' ... reading ROI/COI file ');
+    cprintf([0   .5 0],['... reading COI-file ..wait..\n' ]);
     [~,~,x]=xlsread(filename);
 end
 
-roi=x(2:end,1:2); % label/connection x indicators
-roi=cellfun(@(a){[ num2str(a)  ]} , roi  );
+%% depending on old or new coi-file
+icoi=find(strcmp(x(1,:),'COI'));
+if icoi==2 %old COI-file
+    roi=x(2:end,1:2); % label/connection x indicators
+    roi=cellfun(@(a){[ num2str(a)  ]} , roi  );
+    
+    roi(regexpi2(roi(:,1),'NaN'),:) =[];
+    roi(regexpi2(roi(:,2),'NaN'),:) =[];
+    roi(:,2)=cellfun(@(a){[ 1  ]} , roi(:,2)  );  %everything-somehow tagged in cui-column becomes numeric-"1"
+elseif icoi==3 %new COI-file : separated regions of connections in coi-file
+    roi=x(2:end,[1 2 icoi]);
+    roi=cellfun(@(a){[ num2str(a)  ]} , roi  );
+    roi(regexpi2(roi(:,1),'NaN'),:) =[];
+    roi(regexpi2(roi(:,2),'NaN'),:) =[];
+    roi(regexpi2(roi(:,3),'NaN'),:) =[];
+    conlabels=cellfun(@(a,b){[a '--' b]}, roi(:,1),roi(:,2));
+    roi=[conlabels roi(:,3)];
+    roi(:,2)=cellfun(@(a){[ 1  ]} , roi(:,2)  ); %everything-somehow tagged in cui-column becomes numeric-"1"
+else
+    error('no "COI"-label found in header of COI-file');
+end
 
-roi(regexpi2(roi(:,1),'NaN'),:) =[];
-roi(regexpi2(roi(:,2),'NaN'),:) =[];
-roi(:,2)=cellfun(@(a){[ 1  ]} , roi(:,2)  );
-
-fprintf([' [' num2str(size(roi,1)) ' COIs found]' ]);
+cprintf([0   .5 0],[' [' num2str(size(roi,1)) ' COIs found]' '\n' ]);
 
 us.roilabels=roi;
 us.roifile  =filename;
 set(hf,'userdata',us);
-fprintf(' [Done]\n ');
+
+
+if 1 % calculated already done apply for calculated data
+    % line 1760
+    %% ROI
+    if isfield(us,'roifile')
+        if exist(us.roifile)==2
+            us=prunebyROIS(us);
+            set(hf,'userdata',us);
+        end
+    end
+    
+end
+cprintf([0   .5 0],['[Done]\n.' ]);
+
 
 
 function us=prunebyROIS(us)
- 
 %%  find connections of interest
-for s=1:length(us.pw)
-    % «¬­®¯
-    px=us.pw(s);
-    i_inlab={};
-    for i=1:size(us.roilabels,1)
-        i_inlab{i,1}=regexpi2(px.lab,['^' us.roilabels{i,1} '$']);
+if isfield(us,'pw')==1
+    for s=1:length(us.pw)
+        px=us.pw(s);
+        i_inlab={};
+        for i=1:size(us.roilabels,1)
+            i_inlab{i,1}=regexpi2(px.lab,['^' us.roilabels{i,1} '$']);
+        end
+        NmaxAssign=max(cell2mat(cellfun(@(a){[ length(a)  ]} , i_inlab  )));
+        %disp([' ['  px.str   ']' repmat('«',[1 50])]);
+        cprintf([1 0 1 ], ['---- Apply COI-file on contrast ['  px.str   '] ---- \n']);
+        disp(['roifile              : ' us.roifile ]);
+        disp(['max doublette nodes  : ' sprintf('%3.2d',NmaxAssign)         ' ; A value >1 is bad (same region-by-region label found more than once!).']);
+        disp(['keeping #node pairs  : ' sprintf('%3.2d',length(i_inlab))    ' ; COI-file reduced the number of node-pairs to this value.']);
+        
+        %% prune data and labels
+        if NmaxAssign~=1
+            disp('Problem: several similar node-pairs found');
+            keyboard
+        end
+        iuse=cell2mat(i_inlab);
+        px.lab=px.lab(iuse);
+        px.tb =px.tb(iuse,:);
+        
+        us.pw(s)=px;
     end
-    NmaxAssign=max(cell2mat(cellfun(@(a){[ length(a)  ]} , i_inlab  )));
-    disp([' ['  px.str   ']' repmat('«',[1 50])]);
-    disp(['roifile        : ' us.roifile ]);
-    disp(['max node degree: ' num2str(NmaxAssign)]);
-    disp(['# node pairs   : ' num2str(length(i_inlab))]);
-    
-    %% prune data and labels
-    if NmaxAssign~=1
-        disp('Problem: several similar node-pairs found');
-        keyboard
-    end
-    iuse=cell2mat(i_inlab);
-    px.lab=px.lab(iuse);
-    px.tb =px.tb(iuse,:);
-    
-    us.pw(s)=px;
+else
+    cprintf([0 .5 0],['INFO: COI-file not applied yet. Statistics not calculated yet.\n' ]);
 end
 
 function redisplay(e,e2)
@@ -2288,37 +3061,121 @@ showresults(0);
 
 
 function makeROIfile(e,e2)
+makeROIfile_run();
 
-[file,pa] = uiputfile('*.xlsx','SAVE Connections as blanko (excel file) to create a COI-file!!! specify filename');
-if file==0; return; end
-file= [ strrep(file,'.xlsx','') '.xlsx'];
-roifile=fullfile(pa,file);
-% roifile=fullfile(pwd,'_dum.xlsx');
+function makeROIfile_run(par)
 
 
 hf=findobj(0,'tag','dtistat');
 us=get(hf,'userdata');
-head={'connections' 'COI' 'info'};
+
+checklabels=0;
+if isfield(us,'con') && isfield(us.con,'conlabels')
+    checklabels=1;
+end
+if checklabels==0
+    uiwait(msgbox('some data/label file has to be loaded to make a COI-file', 'ERROR'));
+    return
+end
+
+    
+
+
+if exist('par')==1
+    if isfield(par,'makecoi')
+        if sum(strcmp(par.makecoi,'makecoi'))==0
+            filename=par.makecoi;
+        end
+    end 
+end
+
+cprintf([0 .5 0],['creating COI-blanko-file ..wait..' ]);
+
+if exist('filename')~=1
+    [file,pa] = uiputfile('*.xlsx','SAVE Connections as blanko (excel file) to create a COI-file!!! specify filename');
+    if isnumeric(file)==1;
+        cprintf([0 .5 0],['process aborted\n' ]);
+        return;
+    end
+    file= [ strrep(file,'.xlsx','') '.xlsx'];
+    filename=fullfile(pa,file);
+end
+[pax name ext]=fileparts(filename);
+if isempty(pax); pax=pwd; end
+filename=fullfile(pax,[name '.xlsx']);
+% roifile=fullfile(pwd,'_dum.xlsx');
+
+
+
+
 conlab=us.con.conlabels;
 
-tb=cell(size(conlab,1),3);
-tb(:,1)=conlab;
+% ========== OLD VERSION =================
+if 0
+    head={'connections' 'COI' 'info'};
+    tb=cell(size(conlab,1),3);
+    tb(:,1)=conlab;
+    tb=[head;tb];
+    tb{1,3} = '__INSTRUCTION: '   ;
+    tb{2,3} ='set Connection of Interests in column-2 (COI) to [1] ' ;
+    tb{3,3} ='do nothing for Connections of no interest!';
+    xlswrite(filename,[tb],'COI');
+    xlsAutoFitCol(filename,'COI','A:F');
+    
+    col=[0.7569    0.8667    0.7765
+        0.8941    0.9412    0.9020
+        0.9922    0.9176    0.7961];
+    xlscolorizeCells(filename,'COI', [1 1; 1 2; 1 3], col);
+end
+% ========== NEW VERSION =================
+
+% tic
+% [ca cb]=strtok(conlab,'--');
+% toc
+% tic
+s = regexp(conlab, '--', 'split');
+ca = cellfun(@(x)x(:,1), s);
+cb = cellfun(@(x)x(:,2), s);
+labs = [ca cb];
+
+
+head={'connectionA' 'connectionB' 'COI' 'INFO'};
+tb=cell(size(conlab,1),4);
+tb(:,1:2)=labs;
 tb=[head;tb];
-tb{1,3} = '__INSTRUCTION: '   ;
-tb{2,3} ='set Connection of Interests in column-2 (COI) to [1] ' ;
-tb{3,3} ='do nothing for Connections of no interest!';
+msg={...
+    'This COI-file is used denote the connections of Interest (COIs) and thereby reduces the number'
+    'of statistically tested connections. "dtistat.m" can read the COI-file and handle the'
+    'multiple comparisons problem (lots of tests reduced to fewer tests).'
+    ''
+    '___INSTRUCTION___'
+    '# The first two columns represent the connection between two regions (read it row-wise),'
+    '   i.e. fibre connections between "connectionA" (column-1) and "connectionB" (column-2).'
+    '# Please denote Connections of Interests in column-3 ("COI") by inserting the number "1" (without quote signs).' 
+    '# Leave all other cells in column-3 ("COI") blank, i.e. "connections of no interest" are not denoted!'
+    '# Rows can be reordered/sorted, but content of each row must be preserved (i.e. when sorting according column-A'
+    '   all other columns must be ordered in the same way.'
+    '# You can also delete some or even all rows that represent "connections of no interest", i.e. connections you'
+    '   are not interested in. In any case, "connections of interest" has to be marked in column-3 ("COI").'
+    };
+tb(2:size(msg,1)+1,4)=msg;
 
+xlswrite(filename,[tb],'COI');
+xlsAutoFitCol(filename,'COI','A:F');
 
-
-xlswrite(roifile,[tb],'COI');
-xlsAutoFitCol(roifile,'COI','A:F');
-
-col=[0.7569    0.8667    0.7765
+col=[...
+    0.7569    0.8667    0.7765
+    0.7569    0.8667    0.7765
     0.8941    0.9412    0.9020
     0.9922    0.9176    0.7961];
-xlscolorizeCells(roifile,'COI', [1 1; 1 2; 1 3], col);
+xlscolorizeCells(filename,'COI', [1 1; 1 2; 1 3; 1 4], col);
 
-disp(['COIfile blanko: <a href="matlab: system('''  [roifile] ''');">' [roifile] '</a>']);
+% ==========  =================
+
+cprintf([0 .5 0],['Done.\n' ]);
+disp(['COIfile blanko: <a href="matlab: system('''  [filename] ''');">' [filename] '</a>']);
+
+
 
 function otherfun(e,e2)
 task=get(e,'value');
@@ -2359,9 +3216,9 @@ elseif task==2
     disp('..code copied to clipboard');
     mat2clip(pstr);
     out=pstr;
-
     
-     
+    
+    
 elseif task==3
     
     out=run_otherfun(2); %get code
@@ -2369,7 +3226,330 @@ elseif task==3
     eval(strjoin(out,char(10)));
     
 end
+
+
+function [out]=calcConnMetrics(dx)
+
+vec   = ([efficiency_wei(dx,1)  modularity_und(dx) clustering_coef_wu(dx) degrees_und(dx)' ]);
+vecm  = mean(vec);
+sc    = [ assortativity_wei(dx,0)        transitivity_wu(dx)     efficiency_wei(dx,0)   vecm];
+out.sc =sc;
+out.vec=vec;
+
+
+
+
+
+function export4xvol3d_btn(e,e2)
+ export4xvol3d()
+
+
+
+
+
+function export4xvol3d(x)
+% ##HELP_export4dvol3d_on
+%HELP
+% #wb function to export connection and connection strength that can be used to visualize via xvol3d
+% #wb PARAMETER
+% 'ano'  : Select the corresponding Atlas (a Nifti-file) here. Mandatory to read the region locations.
+%          Example: path of "ANO.nii".
+% 'hemi' : Sselect corresponding Hemisphere Mask (a Nifti-file) here. Mandatory to sepearate regions
+%          into left and right hemishere. Example path of "AVGThemi.nii"'.
+% 'cs'   : Connection strength (cs) or another parameter to export and display via xvol3d.
+%          Default: 'diff' -paramter as this is the mean diff value between two groups.
+% 'outputname' : A string served as outputname. Default 'DTIconnections'.
+% 'contrast' : The contrast to save. Chose one from the list or select 'all' to export all contrasts
+%              -also possible to use the index/indices such as [1] or [2 3] depending if contrasts exist
+% 'keep'       : Decide which connections should be saved (default: 'all'). Choose from list.
+%                options:
+%                'all'   : save all connections (independent from its significance).
+%                'uncor' : save connections with p-value <0.05
+%                'FDR'   : save only connections with FDR corrected significances.
+% 'underscore': remove/keep underscores in atlas label strings:  {0} remove or {1} keep underscores
+%               in exported labels. Default: 0.
+% 'LRtag      : remove/keep left/right hemispheric tag in atlas label strings:  {0} remove or {1} keep
+%               left/right hemispheric tag
+% ##HELP_export4dvol3d_off
+
+cprintf([.7 .7 .7],['The exported excelfiles can be used for xvol3d (nodes&links)  .\n' ]);
+cprintf([1 0 1],['Export data to excelfile...please wait\n' ]);
+
+
+he=preadfile(which('dtistat.m'));
+he=he.all;
+hix=[regexpi2(he,'##HELP_export4dvol3d_on')+1 regexpi2(he,'##HELP_export4dvol3d_off')-1];
+hlp_export3dvol=he(hix(1):hix(2));
+hlp_export3dvol=regexprep(hlp_export3dvol,'^%','');%remove comment
+
+us=get(findobj(0,'tag','dtistat'),'userdata');
+try
+    hd=us.pw(1).tbhead;
+catch
+    cprintf([1 0 1],['DTI connectivities has to be loaded & calculated first ... process aborted\n' ]);
+    return
+end
+cslist={'diff' 'T' 'p'};
+cslist=[cslist setdiff(hd,cslist) ];
+
+contrastlist=['all' {us.pw.str}];
+
+% ==============================================
+%%   PARAMETER-gui
+% ===============================================
+if exist('x')==1
+    x=x.export4xvol3d;
+else
+    if isfield(us,'export4xvol3d')% load pre-assigned parameters
+        x=us.export4xvol3d;
+    end   
+end
+
+
+if exist('x')~=1;        x=[]; end
+p={...
+    'inf1'              'Importer for "xvol3d.m"            '                         '' ''
+    'ano'     ''        'select corresponding Atlas (Nifti-file); such as "ANO.nii"'  {'f'}
+    'hemi'    ''        'select corresponding Hemisphere Mask (Nifti-file); such as "AVGThemi.nii"'  {'f'}
+    'cs'     cslist{1}  'connection strength (cs) or other parameter to export/display via xvol3d'  cslist
     
     
+    'inf2'              '##'   '' ''
+    'outputname'    'DTIconnections'   'output name string'   {'DTIconnections'  'DTIoutput' 'DTI4xvol3d'}
+    'contrast'      contrastlist{2}   'constrast to save (see list (string) or numeric index/indices)' contrastlist
+    
+    'keep'       'all'    'connections to keep in file {''all'' ''FDR'' ''uncor''}'  {'all' 'FDR' 'uncor'}
+    
+    'underscore' 0   '{0,1} underscores in atlas labels:  {0} remove or {1} keep '                  'b'
+    'LRtag' 0   '{0,1} left/right hemispheric tag in atlas labels:  {0} remove or {1} keep '   'b'
+    };
+p=paramadd(p,x);
+
+if isfield(x,'gui')==0 || x.gui==1
+    showgui=1;
+else
+    showgui=0;
+end
+% %% show GUI
+if showgui==1
+    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .5 .3 ],...
+        'title',['export for xvol3d.m'],'info',{@uhelp,hlp_export3dvol});
+    try
+        fn=fieldnames(z);
+    catch
+        return
+    end
+    z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
+else
+    z=param2struct(p);
+end
+
+us.export4xvol3d=z;
+set(findobj(0,'tag','dtistat'),'userdata',us);
+
+
+% disp(z);
+% return
+% ==============================================
+%%   export for xvol3d
+% ===============================================
+us=get(findobj(0,'tag','dtistat'),'userdata');
+
+
+%---ATLAS
+fAno=char(z.ano); %fullfile(pwd,'templates','ANO.nii');
+[ha a mm]=rgetnii(fAno);
+fAnoxls=strrep(fAno,'.nii','.xlsx');
+[~,~,b]=xlsread(fAnoxls);
+del=find(strcmp(cellfun(@(a){[num2str(a)]}, b(:,1)),'NaN'));
+b(del,:)=[];
+hb      =b(1,:);
+b       =b(2:end,:);
+%---HEMI
+fhemi=z.hemi; %fullfile(fileparts(fAno),'AVGThemi.nii');
+[hm m]=rgetnii(fhemi);
+
+%---CONTRAST TO SAVE
+npw=length(us.pw);
+contrastlist=[ {us.pw.str}];
+if isnumeric(z.contrast)
+    num=(z.contrast(:)');
+else
+    num=find(strcmp(contrastlist,z.contrast));
+end
+if isempty(num)
+    if strcmp(z.contrast,'all')
+       num=1:npw;
+    end
+end
+
+
+for i=num% pws/contrasts
+    
+    hd=us.pw(i).tbhead;
+    d =us.pw(i).tb;
+    if isfield(us.pw(i),'fdr')==1
+        hd(1)={'Huncor'};
+        hd=['Hfdr' hd];
+        d=[us.pw(i).fdr(:) d];
+    else %NO FDR calculated--> calculate FDR
+        hf    =findobj(0,'tag','dtistat');
+        HqFDR =findobj(hf,'tag','qFDR');
+        qFDR  =str2num(get(HqFDR,'string'));
+        
+         [Hfdr]=fdr_bh( d(:,strcmp(hd,'p')) ,qFDR,'pdep','no');
+         us.pw(i).fdr=double(Hfdr);
+         hd(strcmp(hd,'H'))={'Huncor'};
+         hd=['Hfdr' hd];
+         d=[us.pw(i).fdr(:) d]; 
+    end
+    % -------------------------------------
+    % conection-strength or other paramter
+    % -------------------------------------    
+    cs=d(:, (strcmp(hd,  z.cs )));
+    hd=['cs' hd];
+    d =[cs   d ];
+    % uhelp(plog([],[hd;num2cell(d)],0,[ '' ]),1)
+    % ---------------------------------
+    % labels
+    % ---------------------------------
+    lab=us.pw(i).lab;
+    [Lab1 Lab2] =strtok(lab,'--');
+    Lab2=regexprep(Lab2,'^--','');
+    labm=[Lab1 Lab2];
+    % ---------------------------------
+    % 'keep' selection
+    % ---------------------------------
+    isurv=1:size(d,1);
+    if strcmp(z.keep,'FDR')  % {'all' 'FDR' 'uncor'}
+        isurv=find(d(:,find(strcmp(hd,'Hfdr'))));
+    elseif strcmp(z.keep,'uncor')
+        isurv=find(d(:,find(strcmp(hd,'Huncor'))));
+    end
+    d    = d(isurv,:);
+    labm = labm(isurv,:);
+    
+    
+   
+    
+    % ==============================================
+    %% get coordinates
+    % ===============================================
+    a2=a(:); m2=m(:);
+    aL=a2.*(m2==1); %LEftt
+    aR=a2.*(m2==2); %RIGHT
+
+    cords={};
+    for j1=1:size(labm,1)
+        for j2=1:size(labm,2)
+            labthis=labm{j1,j2};
+            
+            %hemispheric code
+            ishemis=[~isempty(regexpi(labthis,'^R_'))         ~isempty(regexpi(labthis,'^L_'))  ];
+            labthis2=labthis;
+            hem=0;
+            if sum(ishemis)
+                labthis2=regexprep(labthis,{'^L_' '^R_'},'');
+                hem=find(ishemis);
+            end
+            
+            %find label
+            il=regexpi2(b(:,1),['^' labthis2 '$|^' strrep(labthis2,'_',' ')  '$' ]);
+            if isempty(il)
+                disp('PROBLEM:LABEL NOT FOUND')
+                keyboard
+            end
+            ID=cell2mat(b(il,4));
+            CH=str2num(cell2mat(b(il,5)));
+            idall=[ID; CH(:)];
+            
+            %get voxel
+            if hem==0
+                r=find(ismember(a2,idall));
+            else
+                if hem==1
+                    r=find(ismember(aL,idall));
+                else
+                    r=find(ismember(aR,idall));
+                end
+            end
+            co=mean(mm(:,r),2)';
+            cords{j1,j2}=regexprep(num2str(co),'\s+' ,' ');
+        end
+    end
+    
+    % ---------------------------------
+    % keep/remove 'LRtag
+    % ---------------------------------
+    if z.LRtag==0
+        labm=regexprep(labm,'^L_|^R_',''); %remove L_/R_ left/right tage
+    end
+    % ---------------------------------
+    % keep/remove inderscore
+    % ---------------------------------
+    if z.underscore==0
+        labm=strrep(labm,'_',' '); %remove underScore
+    end
+    
+    
+    
+    
+    % ==============================================
+    %% write2excel
+    % ===============================================
+    % ---------------------------------
+    % data to save
+    % ---------------------------------
+    h2=['Label1' 'Label2'  'co1' 'co2'    hd        ];
+    d2=[labm                  cords      num2cell(d)];
+    
+    % ---------------------------------
+    % output name
+    % ---------------------------------
+    pa=fileparts(us.groupfile);
+    if isempty(pa)
+        pa=pwd;
+    end
+    outtag=us.pw(i).str;
+    outtag=regexprep(outtag,'<|>','_vs_');
+    %     regexprep('AYdede.:-_d012_=3499./()',{'[^a-zA-Z0-9_]'},{''});
+    outtag=regexprep(outtag,{'[^a-zA-Z0-9_]'},{''});
+    fileout=fullfile(pa,[z.outputname '_' outtag '.xlsx']);
+    
+    % ---------------------------------
+    % save
+    % ---------------------------------
+    try; delete(fileout); end
+    if exist(fileout)==2
+        [pax name ext]=fileparts(fileout);
+        msg=['File seems to be open ..no write permission!' char(10) ...
+            'FILE: ' [name ext] char(10) ...
+            'PATH: ' pax char(10) ...
+            'CLOSE file manually..than hit [OK]']
+      
+        h=(msgbox(msg,'WARNNG'));
+        
+        set(h,'units','norm')
+        hb=uicontrol(h,'style','edit','units','norm');
+        set(hb,'position',[0 0 1 1],'string',msg,'max',inf);
+        set(hb,'HorizontalAlignment','left','BackgroundColor',[repmat(0.74,[1 3])]);
+        uistack(findobj(h,'Style','pushbutton'),'top');
+        waitfor(h);
+        
+        try; delete(fileout); end
+        if exist(fileout)==2
+            cprintf([1 0 1],['..file still open.. no write permission..process aborted\n' ]);
+            return
+        end
+        
+    end
+    
+    pwrite2excel(fileout,{1 'nodes'},h2,[],d2);
+    showinfo2('saved: ',fileout);
+    
+    
+end% pws/contrasts
+cprintf([1 0 1],['Done.\n' ]);
+
 
 

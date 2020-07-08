@@ -3,7 +3,8 @@
 % show3d('createfig'); %createfigure (ha to be done only once)
 
 function show3d(varargin)
-warning off
+opengl hardwarebasic;
+warning off;
 
 list={'cmap'           'jet'          'colormap (jet,hot..)'
     'cmaplimits'      'auto'          'cmap limits (auto or [min max])'

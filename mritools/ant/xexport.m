@@ -27,6 +27,15 @@
 % x.keepSubdirStructure    [0] flattened hierarchy (no subdirs),
 %                          [1] the destination path contains a subfolder for each mouse
 %                          default: 1
+% x.animalsubdirs'       Preserve SUBFOLDERS WITHIN ANIMAL FOLDERS [1] or do not preserve [0].
+%                       #r ONLY USEFUL CASE: Exporting files from subfolders within animal folders 
+%                       # example: export the file my.txt from subfolders in animal007:  ../dat/animal007/subdir1/subdir2/my.txt
+%                       [1] Preserve SUBFOLDERS WITHIN ANIMAL FOLDERS: Depending on "keepSubdirStructure" parameter
+%                           the subfolder is preserved in the exporting folder structure (if "keepSubdirStructure" is [1])
+%                           or if "keepSubdirStructure" is [0] the subfolder is  part of the exporting filename.
+%                       [0] SUBFOLDERS WITHIN ANIMAL FOLDERS arenot preserved neither in export hierarchy nor
+%                           in filename (i.e. a file in an animal's subfolder appears as if it is located directly in
+%                       the animal folder)
 % x.prefixDirName=         adds mouse Dir/folder name as prefix to the new filename,
 %                          default: ''
 % x.renameString=          new file name (without extention), this works if only one file is
@@ -96,7 +105,6 @@ function xexport(showgui,x )
 
 
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 %% test-data
 %
 % if 0
@@ -132,48 +140,25 @@ end
 
 
 
+% ==============================================
+%% PARAMETER-gui
+% ===============================================
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%%  PARAMETER-gui
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 if exist('x')~=1;        x=[]; end
 
 %% import 4ddata
 para={...
-    'inf98'      '*** RENAME FILES                 '                         '' ''   %    'inf1'      '% PARAMETER         '                                    ''  ''
+    'inf98'      '*** EXPORT FILES                 '                         '' ''   %    'inf1'      '% PARAMETER         '                                    ''  ''
     'inf100'     '==================================='                          '' ''
-    'files'                ''           'files to export <required to fill> or use ''all'' or ''dirs'' '  'mf'
-    'destinationPath'      ''           'destination path to export files <required to fill>'  'd'
-    'keepSubdirStructure'   1            '[0,1], [0] flattened hierarchy (no subdirs), [1] the destination path contains the subfolders  '    'b'
-    'prefixDirName'         0            'adds mouse Dir/folder name as prefix to the new filename'      'b'
-    'renameString'         ''           'new file name (without extention), this works if only one file is copied per dir'  {'mask' 'raw' 'test'}
-    'addString'            ''           'add string as suffix to the new file name'                                                            ''
-    'reorient'             ''           ' <9 lement vector> reorient volume, default: []: do nothing; (nb: use [0 0 0 0 0 0 1 -1 1] if data came from DSIstudio)'  {'0 0 0 0 0 0 -1 1 1';'0 0 0 0 0 0 1 -1 1'; '0 0 0 0 0 0 -1 -1 1'}
+    'files'                ''          'files to export <required to fill> or use ''all'' or ''dirs'' '  'mf'
+    'destinationPath'      ''          'destination path to export files <required to fill>'  'd'
+    'keepSubdirStructure'   1          '[0,1]: [0] flattened hierarchy (no subdirs), [1] the destination path contains the subfolders  '    'b'
+    'animalsubdirs'         1          '[0,1]: [1] preserve SUBFOLDERS WITHIN ANIMAL FOLDERS in either output name or folder hierarchy or [0] do not preserve' 'b'
+    'prefixDirName'         0          'adds mouse Dir/folder name as prefix to the new filename'      'b'
+    'renameString'         ''          'replace file name with new file name (no file extention), !NOTE: files might be overwritten (same output name)'  {'mask' 'raw' 'test'}
+    'addString'            ''          'add string as suffix to the output file name'                                                            ''
+    'reorient'             ''          ' <9 lement vector> reorient volume, default: []: do nothing; (nb: use [0 0 0 0 0 0 1 -1 1] if data came from DSIstudio)'  {'0 0 0 0 0 0 -1 1 1';'0 0 0 0 0 0 1 -1 1'; '0 0 0 0 0 0 -1 -1 1'}
     };
-%show parameter
-% if nargin==0;
-%     pinfo={};
-%     for i=1:size(p,1)
-%         var=p{i,1}; if regexpi(var,'^inf\d'); var=''; else;  var=sprintf('%s\t\t\t' ,[var ': ' ]  ) ;end
-%         if isempty(var);des=p{i,2};defaults='@@' ; else  ; des=p{i,3};defaults=  p{i,2}    ;end
-%         if isnumeric(defaults); defaults=num2str(defaults);end
-%         if isempty('defaults'); defaults='''';end
-%          if strcmp(defaults,'@@'); defaults='';
-%              defaults='';
-%          else
-%              defaults=['(default: ' defaults ')'];
-% %         if ~strcmp(defaults,'_'); default=['(default: ' defaults ')'];else;default='';end
-%          end
-%
-%        pinfo{i,1}=[var des  defaults] ;
-%     end
-%
-%     eval(['help ' mfilename]);
-%     disp('__________________________________________________________________________________________');
-%     disp([' INPUT PARAMETERS of ' mfilename ' (must be arranged as struct) ***' ]);
-%    disp(char( pinfo(2:end)));
-%    return;
-% end
 
 p=paramadd(para,x);%add/replace parameter
 %     [m z]=paramgui(p,'uiwait',0,'close',0,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .7 .5 ],'title','PARAMETERS: LABELING');
@@ -195,44 +180,11 @@ xmakebatch(z,p, mfilename); % ## BATCH
 
 
 
-% if  exist('showgui')~=1 ; showgui=1; end
-% %% additional parameters
-% para=struct();
-% if ~isempty(varargin)
-%     para=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
-% end
 
+% ==============================================
+%%  start here
+% ===============================================
 
-
-
-
-% if isfield(para,'params') %%&& strcmp(getfield(para,'parameter'),'default') ==1
-%     p0=para.params;
-%     fn=fieldnames(p0);
-%     for i=1:length(fn)
-%         is=regexpi2(p(:,1),['^' fn{i} '$' ]);
-%         if ~isempty(is)
-%             p{is,2}=getfield(p0,fn{i});
-%         end
-%     end
-% end
-
-
-% %% show gui
-% if showgui==1
-%     hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
-%     [m z a params]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .8 .6 ],...
-%         'title','SETTINGS','pb1string','OK','info',hlp);
-% else
-%     z=[];
-%     for i=1:size(p,1)
-%         eval(['z.' p{i,1} '=' 'p{' num2str(i) ',2};']);
-%     end
-%     
-% end
-
- 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 if ischar(z.files); z.files=cellstr(z.files); end
 if isempty(z.files); 
     return; 
@@ -264,6 +216,9 @@ end
 %     return;
 %     end
 % end
+
+ 
+
 warning off;
 for i=1:length(z.files)
     f1=z.files{i};
@@ -271,16 +226,46 @@ for i=1:length(z.files)
     pa2=pa;
     
      [pas fis exs]=fileparts(z.destinationPath);
-    
-   if ~isempty(strfind(pas,':'))
-         padest= (z.destinationPath); 
-         mkdir(padest);
-    else
-      padest=fullfile(fileparts(an.datpath),z.destinationPath);
-      mkdir(padest);
-    end
+     
+     % ==============================================
+     %% Destination path
+     % ===============================================
+     if isempty(z.destinationPath)
+         error('no exporting/output folder specified...canceled'); return
+     end
+     if isempty(pas)==1;%short destination path is given
+         padest=fullfile(fileparts(an.datpath),z.destinationPath);
+     else
+         padest=z.destinationPath;
+     end
+     if strcmp(an.datpath,padest)==1
+        error('can''t copy into studie''s dat folder...canceled'); return 
+     end
+     
+ 
     filename=[fi ext];
     [~, subdir]=fileparts(pa);
+    
+    % the subDir-ISSUE
+    studyDir=fileparts(an.datpath);
+    splitdirs=strsplit(strrep(pa,studyDir,''),filesep );
+    splitdirs=cellstr(splitdirs);
+    splitdirs(cellfun(@isempty,splitdirs))=[];
+    
+    % SUBFOLDERS IN animal dirs
+    if z.animalsubdirs==0 % [0]:no subdirs in animalDirs,[1] keep subdirs in animalDirs
+        if strcmp(splitdirs{1},'dat')
+            splitdirs(3:end)=[];
+        end
+    end
+    
+    % KEEP STRUCTURE
+    if z.keepSubdirStructure==1
+        subdir=strjoin(splitdirs,filesep);
+    else
+       subdir=strjoin(splitdirs,'_');  
+    end
+    
     
     %% fileNamestring
     if ~isempty(z.renameString)
@@ -358,32 +343,21 @@ if copyall==1
     z.files='all';
 end
 
-%% copy BATCH
-if copyall==0 && copydirsonly==0
-    xbat=which('xfiles2subfolders.bat');
-    copyfile( xbat,replacefilepath( xbat, z.destinationPath) );
-end
+% %% copy BATCH
+% if copyall==0 && copydirsonly==0
+%     xbat=which('xfiles2subfolders.bat');
+%     copyfile( xbat,replacefilepath( xbat, z.destinationPath) );
+% end
 
 makebatch(z);
 
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-% %% coder
-% % disp('        ');
-% hh={};
-% hh{end+1,1}=('% ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
-% hh{end+1,1}=[ '% BATCH:        [' [mfilename '.m' ] ']' ];
-% hh{end+1,1}=('%    ..copy/evaluate the this section');
-% hh{end+1,1}=('% ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
-% hh=[hh; struct2list(z)];
-% hh(end+1,1)={[mfilename '(' '1', ',''params''' ,',z' ')' ]};
-% % disp(char(hh));
-% uhelp(hh,1);
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%••••••••••••••••••••  SUBS ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ==============================================
+%%   subs
+% ===============================================
 
+ 
 function makebatch(z)
 try
     hlp=help(mfilename);
@@ -393,10 +367,10 @@ catch
 end
 
 hh={};
-hh{end+1,1}=('% ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
+hh{end+1,1}=('% ==============================================');
 hh{end+1,1}=[ '% BATCH:        [' [mfilename '.m' ] ']' ];
 hh{end+1,1}=[ '% #b descr:' hlp];
-hh{end+1,1}=('% ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
+hh{end+1,1}=('% ==============================================');
 hh=[hh; 'z=[];' ];
 hh=[hh; struct2list(z)];
 hh(end+1,1)={[mfilename '(' '1',  ',z' ');' ]};
@@ -412,8 +386,7 @@ v=[v; hh; {'                '};{'                '}];
 assignin('base','anth',v);
 disp(['BATCH: <a href="matlab: uhelp(anth,1,''cursor'',''end'')">' 'show history' '</a>'  ]);
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-
+% ==============================================
 
 
 
