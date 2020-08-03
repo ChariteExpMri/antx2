@@ -293,7 +293,10 @@ if ~isempty(msg)
         cprintf([0.9294    0.6902    0.1294],'  ERRONEOUS UPDATE           \n');
         cprintf([0.9294    0.6902    0.1294],'-----------------------------\n');
         cprintf([ 0 0 0],'The following files were not updated successfully.\n');
-        cprintf([ 0 0 0],'Please hit [rebuild]-button to update those files.\n');
+        cprintf([ 0 0 0],'..REASONS: local files have been modified/deleted.\n');
+        cprintf([ 0 0 0],'Please hit '); 
+        cprintf([ 1 0 1],'[rebuild] '); 
+        cprintf([ 0 0 0],'button to update those files.\n');
         cprintf([ .5 .5 .5],msg);
         cprintf([ .5 .5 .5],'\n');
     end
