@@ -100,8 +100,9 @@
 % #ra 08 Jul 2020 (13:37:00)
 % [dtistat]: revised; for DTI-connectivities allows input data from MRtrix; new command line access;
 % new COIfile;  
-% #ra 03 Aug 2020 (12:50:16): debug Matlab19b error [xbruker2nifti].. in preadfile2: error occured due to
-% uncommented code after 'return' command (varargin issue)
+% #ra 03 Aug 2020 (12:50:16)
+% debug Matlab19b error [xbruker2nifti].. in preadfile2: error occured due to uncommented code 
+% after 'return' command (varargin issue)
 %
 %
 %----- EOF
