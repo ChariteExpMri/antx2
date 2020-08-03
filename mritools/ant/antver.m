@@ -103,7 +103,8 @@
 % #ra 03 Aug 2020 (12:50:16)
 % debug Matlab19b error [xbruker2nifti].. in preadfile2: error occured due to uncommented code 
 % after 'return' command (varargin issue)
-%
+% #ra 04 Aug 2020 (16:38:17)
+% [installfromgithub] small changes
 %
 %----- EOF
 %
