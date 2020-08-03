@@ -1,5 +1,5 @@
 
-function [dat]=preadfile(fil,varargin);
+function [dat]=preadfile(fil,varargin)
 %___________________________________________________________________________
 % % function [dat ]=preadfile(fil,varargin);
 %___________________________________________________________________________
