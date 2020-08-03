@@ -394,7 +394,7 @@ if updatecode==2
         git pull;
          [msg st]=antx_gitstatus('recheck');
     end
-    antcb('versionupdate');
+    try; antcb('versionupdate'); end
     fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
     setstatus(2,'updates finished');
     return
@@ -413,7 +413,7 @@ if updatecode==3
     
     %Or you can simply clone the existing remote repository as suggested in the above comments:
     %git clone https://your_repot_url
-    antcb('versionupdate');
+     try; antcb('versionupdate'); end
     fprintf(['..done t=%2.3f min\n'],toc(atime)/60);
 end
 if updatecode==5 %hard reset
@@ -438,7 +438,7 @@ if updatecode==5 %hard reset
         antlink(1);
         cd(thispa);
         antcb('update');
-        antcb('versionupdate');
+        try; antcb('versionupdate'); end
     end
     
     fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
