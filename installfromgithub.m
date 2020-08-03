@@ -300,7 +300,7 @@ if ~isempty(msg)
     
 else
     cprintf([ 1 0 1],'------------------------------------------------\n');
-    cprintf([ 1 0 1],' NO UPDATES FOUND ... NO MODIFIED GITHUB FILES  \n');
+    cprintf([ 1 0 1],' STATUS: UP-TO-DATE. NO NEWER UPDATES FOUND      \n');
     cprintf([ 1 0 1],'------------------------------------------------\n');
 end
 
