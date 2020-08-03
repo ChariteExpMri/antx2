@@ -15,6 +15,28 @@ elseif nargin==0
 end
 
 if strcmp(mfilename,'installfromgithub')
+    
+    %--------------------------------------------------------------------
+    %% first try to download the m-file from github
+    try
+        fiout=fullfile(fileparts(which('installfromgithub.m')), 'installfromgithub0.m') ;
+        url = 'https://raw.githubusercontent.com/ChariteExpMri/antx2/master/installfromgithub.m';
+        try
+            websave(fiout,url);
+        catch
+            urlwrite(url,fiout);
+        end
+        if exist(fiout)
+            k=dir(fiout);
+            if k.bytes>1000
+                disp('get "installfromgithub.m" from github...');
+                copyfile(which('installfromgithub0.m'),which('installfromgithub.m'),'f');
+            end
+        end
+    end
+    % ------------------------------------------------------------------------
+    
+    
     try
         copyfile(which('installfromgithub.m'), fullfile(fileparts(which('installfromgithub.m')),'temp_installfromgithub.m'),'f');
         %         global antupd;
