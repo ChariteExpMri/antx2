@@ -268,7 +268,45 @@ pbinstallfromgithub(updatecode);
 
 end
 
-function pbinstallfromgithub(updatecode);
+% --------- MESSAGE what is modified
+function [msg st]=antx_gitstatus(message)
+% [msg st]=git('diff --name-only');
+
+[msg st]=git('diff --name-only origin');
+msg=strsplit(msg,char(10))';
+msg=msg(cellfun('isempty',strfind(msg,'prevprojects.mat'))); % without 'prevprojects.mat' in list 
+msg=strjoin(msg,char(10));
+
+
+
+if ~isempty(msg)
+    if strcmp(message,'check')
+        cprintf([ 1 0 1],'-----------------------------\n');
+        cprintf([ 1 0 1],'  MODIFIED GITHUB FILES      \n');
+        cprintf([ 1 0 1],'-----------------------------\n');
+        cprintf([ 0 0 0],'The following files have been created or modified in GITHUB.\n');
+        cprintf([ 0 0 0],'Note that the list might contain also locally modified or deleted files.\n');
+        cprintf([ .5 .5 .5],msg);
+        cprintf([ .5 .5 .5],'\n');
+    elseif strcmp(message,'recheck')
+        cprintf([0.9294    0.6902    0.1294],'-----------------------------\n');
+        cprintf([0.9294    0.6902    0.1294],'  ERRONEOUS UPDATE           \n');
+        cprintf([0.9294    0.6902    0.1294],'-----------------------------\n');
+        cprintf([ 0 0 0],'The following files were not updated successfully.\n');
+        cprintf([ 0 0 0],'Please hit [rebuild]-button to update those files.\n');
+        cprintf([ .5 .5 .5],msg);
+        cprintf([ .5 .5 .5],'\n');
+    end
+    
+else
+    cprintf([ 1 0 1],'------------------------------------------------\n');
+    cprintf([ 1 0 1],' NO UPDATES FOUND ... NO MODIFIED GITHUB FILES  \n');
+    cprintf([ 1 0 1],'------------------------------------------------\n');
+end
+
+end
+
+function pbinstallfromgithub(updatecode)
 
 global antupd;
 atime=tic;
@@ -290,22 +328,24 @@ if updatecode==1 %check before
     %     git diff --compact-summary master origin/master
     %[msg st]=git('diff --compact-summary master origin/master');
     % [msg st]=git('diff --stat master origin/master');
-    [msg st]=git(' diff --name-only master origin/master');
+%     [msg st]=git(' diff --name-only master origin/master');
     %     git diff --name-only
+    [msg st]=antx_gitstatus('check');
     
     if isempty(msg);
-        disp('no changes/no updates found');
+        %disp('no changes/no updates found');
         setstatus(2,'no updates found');
         return
     else
-        disp(['####### CHANGES #######']);
-        disp(msg);
+        %disp(['####### CHANGES #######']);
+        %disp(msg);
         button = questdlg(['updates where found' char(10) 'Update toolbox now? '],'',...
             'YES, update now','Cancel','canel');
         if ~isempty(regexpi(button,'yes'))
             updatecode=2;
         else
-            disp('nothing updated');
+            %disp('nothing updated');
+            cprintf([ 1 0 1],' local package was not updated  \n');
             return
         end
     end
@@ -327,6 +367,7 @@ if updatecode==2
         end
     else
         git pull;
+         [msg st]=antx_gitstatus('recheck');
     end
     fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
     setstatus(2,'updates finished');
@@ -358,6 +399,8 @@ if updatecode==5 %hard reset
     %git remote add origin https://github.com/pstkoch/antx2
     git(['remote add origin ' gitrepository]);
     git pull origin master
+    
+    [msg st]=antx_gitstatus('recheck');
     
     
     if ~isempty(findobj(0,'tag','ant'))
@@ -1387,7 +1430,4 @@ function showDemo(majorVersion,minorVersion)
 % - Fix: Find workaround for multi-line quirks/limitations
 % - Fix: Non-\n-terminated segments are displayed as black
 % - Fix: Check whether the hyperlink fix for 7.1 is also needed on 7.2 etc.
-% - Enh: Add font support   
-
-
-end
+% - Enh: Add font support
