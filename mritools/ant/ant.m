@@ -187,10 +187,10 @@ m1 = uimenu(c,'Label','export HTML summary','Callback',@fun_summary_export);
 set(h,'UIContextMenu',c);
 
 %====INDICATE LAST UPDATE-DATE ========================
-vstring=strsplit(help('antver'),char(10))';
-idate=max(regexpi2(vstring,' \w\w\w 20\d\d (\d\d'));
-dateLU=['ANTx2  vers.' char(regexprep(vstring(idate), {' (.*'  '  #\w\w ' },{''}))];
-
+% vstring=strsplit(help('antver'),char(10))';
+% idate=max(regexpi2(vstring,' \w\w\w 20\d\d (\d\d'));
+% dateLU=['ANTx2  vers.' char(regexprep(vstring(idate), {' (.*'  '  #\w\w ' },{''}))];
+dateLU=antcb('version');
 h = uicontrol('style','pushbutton','units','normalized','position',[.94 .65 .08 .05],'tag','txtversion',...
     'string',dateLU,'fontsize',5,'fontweight','normal',...
     'tooltip',['date of last update' char(10) '..click to see last updates "antver"']);

@@ -7,6 +7,8 @@
 % antcb('makeproject')    % create a new project -->for HELP see antcb('makeproject','?')
 % antcb('load','proj_Harms3_lesionfill_20stack.m')   %load this project
 % antcb('reload')         % reload gui with project and previous mice-selection
+% antcb('version');       % get the last package version (1st output arg)
+% antcb('versionupdate'); % updates last package version string in ant-gui (used after github-update)
 % antcb('fontsize',8)              % set fontsize
 % antcb('status',1,'copy Images'); % change status-message :  antcb('status',0,'coffeTime')     statusUpdate
 % antcb('update');                 % update mouse directories
@@ -786,9 +788,23 @@ if strcmp(do, 'run2') || strcmp(do, 'run');
 end
 
 %====================================================================================================
-%           koad subjects
+%          version/versionupdate
 %====================================================================================================
+if strcmp(do, 'version');
+    vstring=strsplit(help('antver'),char(10))';
+    idate=max(regexpi2(vstring,' \w\w\w 20\d\d (\d\d'));
+    dateLU=['ANTx2  vers.' char(regexprep(vstring(idate), {' (.*'  '  #\w\w ' },{''}))];
+    varargout{1}=dateLU;
+    return
+end
 
+if strcmp(do, 'versionupdate');
+    hc=findobj(findobj(0,'tag','ant'),'tag','txtversion');
+    if isempty(hc); return; end
+    version=antcb('version');
+    set(hc,'string',version);
+    return
+end
 
 %====================================================================================================
 % gui-functions
