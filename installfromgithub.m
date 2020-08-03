@@ -30,7 +30,7 @@ if strcmp(mfilename,'installfromgithub')
             k=dir(fiout);
             if k.bytes>1000
                 disp('get "installfromgithub.m" from github...');
-                copyfile(which('installfromgithub0.m'),which('installfromgithub.m'),'f');
+                movefile(which('installfromgithub0.m'),which('installfromgithub.m'),'f');
             end
         end
     end
