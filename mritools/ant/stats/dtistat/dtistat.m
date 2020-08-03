@@ -19,7 +19,7 @@
 % - #r The GROUP-ASSIGNMENT excelfile is mandatory for "DTI parameter" and "DTI connectivities".
 % - The excelfile must contain 2 columns (mouse-id & groupassignment) in the first excel-sheet
 % - [mouseID]        : 1st column contains mouseIDS/names 
-%                      -The mouseIDs must match animal folders names or must be part of the filename.                      are part of the filename).
+%                      -The mouseIDs must match animal folders names or must be part of the filename.
 % - [groupassignment]: 2nd column contains subgroup labels such that each mouse is assigned to a group.
 %                      -The groupassignment label can be arbitrarily chosen.
 %                      -Example: "treatment"/"control" or "A"/"B"/"C".
@@ -78,11 +78,11 @@
 %_________________________________________________________________________________________________
 %% #ry GUI (controls and behaviour)
 % 
-% #b ______________GROUP ASSSIGNMENT___________________________________________________________________________________
+% #b ______________GROUP ASSSIGNMENT_______________________________________________________________
 % 
 % [load group assignment] (button)   : Load excelfile with group assignment.
 % 
-% #b _______________DTI parameter or DTI connectivities________________________________________________________________
+% #b _______________DTI parameter or DTI connectivities____________________________________________
 % [load DTI parameter]    (button)   : Load DTI-PARAMETER FILES (see INPUT FILE TYPES) via GUI.
 % [load DTI connectivities] (button) : Load DTI-CONNECTIVITY FILES (see INPUT FILE TYPES)  via GUI.
 % [DTIstudio/MRtrix]    (pulldown)   : Depending on processing software for DTI connectivity data select 
@@ -92,7 +92,7 @@
 %                                      Depending on the input data, the matching item must be selected from
 %                                      the pulldown before hitting the [load DTI connectivities] button.
 %                                      #r For "DTI connectivities" only.
-% #b _____________CONNECTIONS OF INTERESTS_____________________________________________________________________________
+% #b _____________CONNECTIONS OF INTERESTS_________________________________________________________
 % [load COI file]         (button)   : optional, load Connections-of-Interest/COI-file  (excelfile file). 
 %                                      This file has to be created first, using the [make COI file]-button. 
 %                                      #r For "DTI connectivities" only.
@@ -109,7 +109,7 @@
 %                                      denoting the connections of interest, see Instructions in the [make COI file]
 %                                      excelfile file.
 %                                      #r For "DTI connectivities" only.
-% #b ______________TOGGLES___________________________________________________________________________________
+% #b ______________TOGGLES_________________________________________________________________________
 % [within]                (checkbox) : Statisitcal design:
 %                                       [ ] between-design (2-sample problem)
 %                                       [x] paired-design (repeated measures)
@@ -128,7 +128,7 @@
 % [noSeeds]               (edit)     : Number of seeds.  #r For "DTI connectivities" only.
 %                                      Connectivity-matrizes (weights) will be normalized by noSeeds
 %                                      prior calculation of connectivity metrics.
-% #b __________CALCULATION_______________________________________________________________________________________
+% #b __________CALCULATION_________________________________________________________________________
 % [stat DTI parameter]    (button)   : Calculate statistic for DTI-PARAMETER.
 %                                      FILES (DTI-PARAMETER FILES must be loaded before.
 %                                      #r For "DTI parameter" only.
@@ -145,7 +145,7 @@
 %                                      #r Assumed for "DTI connectivities", but works also for "DTI parameter".
 % [load calculation]      (button)   : Load an existing calculation (mat-file). See [save calculation].  
 % 
-% #b _____________REPORT/EXPORT____________________________________________________________________________________
+% #b _____________REPORT/EXPORT____________________________________________________________________
 % [show Results]          (button)   : Show/redisplay results without re-calculation.
 %                                      -Useful when changing the toggle states(FDR/qFDR/showSigsonly/sortResult etc) 
 %                                       or when using  [load calculation].
@@ -153,7 +153,7 @@
 % [export data]           (button)   : Export results (excel-file).
 % [export4xvol3d]         (button)   : Export (significant) connections as excel-file. Use this option to
 %                                      visualize connections via xvol3d.  #r For "DTI connectivities" only. 
-%_________________________________________________________________________________________________
+%__________________________________________________________________________________________________
 %% #ry COMMAND LINE OPTIONS
 % #r ------------------------------------------------------------------------
 % #r NOTE: Access via command line has been changed (apologies for this).
@@ -162,7 +162,7 @@
 % All available commands must be declared as input argument of "dtistat.m"
 % Commands and subcommands are highlighted green in the tooltip of the respective button/checkbox/etc.
 % 
-% #b _____SET COMMAND____________________________________________________________________________________
+% #b _____SET COMMAND______________________________________________________________________________
 % SET: can be used to change state of toggles/pulldown menues/edit fields. First argument is 'set', 
 % followed by pairwise inputs. Subcommands of SET can be used in one set-command or splitted in several
 % set-commands
@@ -181,7 +181,7 @@
 % #k EXAMPLE TO COMBINE SET-SUBCOMMANDS:
 % dtistat('set','within',0,'test','ttest2','FDR',1,'qFDR',0.05,'showsigsonly',0,'sort',1,'rc',0,'nseeds',1000);
 %
-% #b _____OTHER COMMANDS____________________________________________________________________________________
+% #b _____OTHER COMMANDS___________________________________________________________________________
 % 
 % dtistat('new');                                  % #g new dtistat-window
 % dtistat('group',excel-file);                     % #g load a group assignment; excel-file is the filename of the group assignment
@@ -205,7 +205,7 @@
 % dtistat('loadcoi','coi_TEST1.xlsx');             % #g load a COI-file,connection-of-interest-file (excel-file); see GUI for more help
 % dtistat('makecoi','__COI_blanko.xlsx');          % #g save a COI-BLANKO-file (excel-file). Here, blanko '__COI_blanko.xlsx' is saved 
 %                                                  % #g the current folder
-%_________________________________________________________________________________________________
+%__________________________________________________________________________________________________
 %% #ky example command line: DTI-CONNECTIONS
 % cd('F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP')            % #g go to the main directory
 % dtistat('new');                                                        % #g new dtistat-window
@@ -224,12 +224,12 @@
 % 
 % dtistat('export','_testExport3.xlsx');                                 % #g export results as '_testExport3.xlsx' in current folder
 % dtistat('export4xvol3d');                                              % #g export data for xvol3d with GUI
-%_________________________________________________________________________________________________
+%__________________________________________________________________________________________________
 %% #ky example command line: Export DTI-connections for xvol3d 
 % % #k For silent mode: set x.gui to [0];
 % x=[];
-% x.ano        =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\ANO.nii';	   % #g select corresponding Atlas (Nifti-file); such as "ANO.nii"
-% x.hemi       =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\AVGThemi.nii';  % #g select corresponding Hemisphere Mask (Nifti-file); such as "AVGThemi.nii"
+% x.ano        =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\ANO.nii';	   % #g select Atlas (Nifti); such as "ANO.nii"
+% x.hemi       =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\AVGThemi.nii';  % #g select Hemisphere Mask (Nifti); such as "AVGThemi.nii"
 % x.cs         =  'diff';	         % #g connection strength (cs) or other parameter to export/display via xvol3d
 % x.outputname =  'DTIconnections';	 % #g output name string
 % x.contrast   =  'A > B';	         % #g constrast to save (see list (string) or numeric index/indices)

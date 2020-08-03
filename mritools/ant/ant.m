@@ -1143,9 +1143,53 @@ else
     %helpfig=findobj(0,'Number', 335); does not work on Mac-ML14
     
     helpfig=findobj(0,'tag','uhelp');
-    helpfig(helpfig==335);
+    %close help figure
+    for i=1:length(helpfig)
+        if ~isempty(getappdata(helpfig(i),'helphelp'))
+            close(helpfig(i));
+        end
+    end
+  helpfig=findobj(0,'tag','uhelp');
+    figID=find(helpfig==335) ;
+    if isempty(figID)
+        close(helpfig)
+    else
+         helpfig=helpfig(figID);
+        
+    end
+    
+    
+    %———————————————————————————————————————————————
+    %%   listing to run callback only once
+    %———————————————————————————————————————————————
+    persistent UHELP_OpenOnce_Flag0002
+    if isempty(UHELP_OpenOnce_Flag0002)
+        UHELP_OpenOnce_Flag0002 = 1;
+    end
+    
+%     if UHELP_OpenOnce_Flag0002==0
+%         'aa'
+%         return
+%     end
+    
+%      UHELP_RunOnce_Flag0002=1; %now running
+
+%re-check
+% if isempty(helpfig)
+%     
+%     helpfig=findobj(0,'tag','uhelp');
+%     helpfig(helpfig==335);
+%     drawnow
+%     pause(.1);
+% end
+
     
     if isempty(helpfig);
+        
+        if UHELP_OpenOnce_Flag0002==0
+            return
+        end
+        UHELP_OpenOnce_Flag0002=0;
         
         posant=get(findobj(0,'tag','ant'),'position');
         height=.3;
@@ -1155,13 +1199,19 @@ else
         
         uhelp(msg2,0,'position',[posant(1) posant(2)-height   posant(3)  height-.001]);
         set(findobj(0,'tag','uhelp'),'numbertitle','off','name','HELP');
+        global uhelp_properties
+        if ~isempty(uhelp_properties)
+            try; set(gcf,'position',uhelp_properties.fgpos); end
+        end
         drawnow;
+      
         %%reopen pulldown again
         if 1%isempty(helpfig)
-            figure(findobj(0,'tag','ant'));
+            hf=findobj(0,'tag','ant');
+            figure(hf);
             
             try
-                jFrame = get(gcf,'JavaFrame');
+                jFrame = get(hf,'JavaFrame');
                 try     % R2008a and later
                     jMenuBar = jFrame.fHG1Client.getMenuBar;
                 catch
@@ -1184,9 +1234,10 @@ else
                 end
             end%try
         end
-        
+          clear UHELP_OpenOnce_Flag0002
     else
-        
+        %disp(['roll-' num2str(rand(1)*100)]);
+%         return%for NOW
         hlptx=findobj(helpfig,'tag','txt')  ;
         if length(hlptx)>1
             try;
@@ -1201,7 +1252,7 @@ else
         us.e2=msg3;
         set(helpfig,'userdata',us);
         drawnow;
-        
+          clear UHELP_RunOnce_Flag0002;
     end
     %              figure(335);
     %              figure(findobj(0,'tag','ant'));
