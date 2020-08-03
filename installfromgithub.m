@@ -1431,3 +1431,5 @@ function showDemo(majorVersion,minorVersion)
 % - Fix: Non-\n-terminated segments are displayed as black
 % - Fix: Check whether the hyperlink fix for 7.1 is also needed on 7.2 etc.
 % - Enh: Add font support
+end
+
