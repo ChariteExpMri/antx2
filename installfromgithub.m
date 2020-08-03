@@ -325,7 +325,7 @@ if ~isempty(msg)
     
 else
     cprintf([ 0.4667    0.6745    0.1882],'------------------------------------------------\n');
-    cprintf([ 0.4667    0.6745    0.1882],' .STATUS: UP-TO-DATE. NO NEWER UPDATES FOUND      \n');
+    cprintf([ 0.4667    0.6745    0.1882],' :.STATUS: UP-TO-DATE. NO NEWER UPDATES FOUND      \n');
     cprintf([ 0.4667    0.6745    0.1882],'------------------------------------------------\n');
 end
 
