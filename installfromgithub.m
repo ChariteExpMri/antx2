@@ -605,6 +605,7 @@ hjLabel.setBackground(java.awt.Color(1,1,1));
 
 jFont = java.awt.Font('Tahoma', java.awt.Font.PLAIN, 12);
 hjLabel.setFont(jFont);
+drawnow;
  
 % Set the label's tooltip
 hjLabel.setToolTipText(['Visit Github repository ' url ' ']);
