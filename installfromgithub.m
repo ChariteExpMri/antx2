@@ -513,6 +513,8 @@ function mkgui()
 % ==============================================
 %%   
 % ===============================================
+butwid=.75;
+butx  =.1;
 
 % global antpd
 % figpos=[0.3750    0.3544    0.2896    0.2289];
@@ -541,8 +543,7 @@ set(hp,'horizontalalignment','left');
 setstatus(0);
 
 % UPDATE/UPDATE WITHOUT CHECK
-butwid=.75;
-butx  =.1;
+
 hp=uicontrol('style','pushbutton','units','norm','string','check for updates','fontsize',9);
 set(hp,'position',[butx .5 butwid .1],'callback',{@pbinstallfromgithubcall,1});
 set(hp,'tooltipstring',['..checks for updates from repository only']);
