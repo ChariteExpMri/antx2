@@ -593,17 +593,17 @@ set(hp,'tooltipstring',['..close window']);
 
 
 url = 'https://github.com/ChariteExpMri/antx2';
-labelStr = ['<html>visit <a href="">' url '</a></html>'];
+labelStr = ['<html>visit <a href="">' 'GitHUB' '</a></html>'];
 jLabel = javaObjectEDT('javax.swing.JLabel', labelStr);
 [hjLabel,hContainer] = javacomponent(jLabel, [10,10,250,20], gcf);
-set(hContainer,'units','norm','position',[.03 .13 1 .05]);%,'backgroundcolor',[0  1 1])
+set(hContainer,'units','norm','position',[.5 .02 6 .1]);%,'backgroundcolor',[0  1 1])
 %  http://undocumentedmatlab.com/articles/javacomponent-background-color
 
 % Modify the mouse cursor when hovering on the label
 hjLabel.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
 hjLabel.setBackground(java.awt.Color(1,1,1));
 
-jFont = java.awt.Font('Tahoma', java.awt.Font.PLAIN, 12);
+jFont = java.awt.Font('Tahoma', java.awt.Font.PLAIN, 15);
 hjLabel.setFont(jFont);
 drawnow;
  
