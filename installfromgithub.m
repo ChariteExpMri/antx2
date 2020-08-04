@@ -361,7 +361,7 @@ if updatecode==1 %check before
     
     if isempty(msg);
         %disp('no changes/no updates found');
-        setstatus(2,'no updates found');
+        setstatus(2,'Up-to-date. No updates found.');
         return
     else
         %disp(['####### CHANGES #######']);
