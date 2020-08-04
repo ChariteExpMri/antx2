@@ -545,7 +545,7 @@ set(hp,'backgroundcolor','w','foregroundcolor',[0.9294    0.6941    0.1255],'fon
 
 % STATUS
 hp=uicontrol('style','text','units','norm','string','status: -unknown-','fontsize',9);
-set(hp,'position',[butx 0.6 1.0-butx .2],'tag','msg','foregroundcolor',[.4 .4 .4],'backgroundcolor',[1 1 1]);
+set(hp,'position',[butx 0.6 1.0-butx-0.05 .2],'tag','msg','foregroundcolor',[.4 .4 .4],'backgroundcolor',[1 1 1]);
 set(hp,'horizontalalignment','left');
 setstatus(0);
 
