@@ -603,7 +603,7 @@ set(hContainer,'units','norm','position',[.03 .13 1 .05]);%,'backgroundcolor',[0
 hjLabel.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
 hjLabel.setBackground(java.awt.Color(1,1,1));
 
-jFont = java.awt.Font('Tahoma', java.awt.Font.PLAIN, 15);
+jFont = java.awt.Font('Tahoma', java.awt.Font.PLAIN, 12);
 hjLabel.setFont(jFont);
  
 % Set the label's tooltip
