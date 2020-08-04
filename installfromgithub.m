@@ -18,21 +18,23 @@ if strcmp(mfilename,'installfromgithub')
     
     %--------------------------------------------------------------------
     %% first try to download the m-file from github
-    try
-        fiout=fullfile(fileparts(which('installfromgithub.m')), 'installfromgithub0.m') ;
-        url = 'https://raw.githubusercontent.com/ChariteExpMri/antx2/master/installfromgithub.m';
+    if 1
         try
-            websave(fiout,url);
-        catch
-            urlwrite(url,fiout);
-        end
-        if exist(fiout) %replace file with downloaded version
-            pause(.2);
-            k=dir(fiout);
-            if k.bytes>1000
-                disp('get "installfromgithub.m" from github...');
-                movefile(which('installfromgithub0.m'),which('installfromgithub.m'),'f');
-                pause(.1);
+            fiout=fullfile(fileparts(which('installfromgithub.m')), 'installfromgithub0.m') ;
+            url = 'https://raw.githubusercontent.com/ChariteExpMri/antx2/master/installfromgithub.m';
+            try
+                websave(fiout,url);
+            catch
+                urlwrite(url,fiout);
+            end
+            if exist(fiout) %replace file with downloaded version
+                pause(.2);
+                k=dir(fiout);
+                if k.bytes>1000
+                    disp('get "installfromgithub.m" from github...');
+                    movefile(which('installfromgithub0.m'),which('installfromgithub.m'),'f');
+                    pause(.1);
+                end
             end
         end
     end
@@ -151,45 +153,39 @@ if 1
             end
             
         end
-        fprintf(['installation..done t=%2.3f min\n'],toc(atime)/60);
+        %fprintf(['installation..done t=%2.3f min\n'],toc(atime)/60);
     end
     if 0 % not needed..git creates the antx2-folder
         mkdir(fullfile(antupd.patempup,'antx2'))
         copyfile(fullfile(antupd.patempup,'installfromgithub.m'),fullfile(antupd.patempup,'antx2','installfromgithub.m'),'f')
     end
-    cd(fullfile(antupd.patempup,'antx2'));
-    
-% % % % %     if isfield(antupd, 'patempup')
-% % % % %         if exist(fullfile(antupd.patempup,'installfromgithub.m'))
-% % % % %             % disp('..deleting "installfromgithub.m" from upper directory ');
-% % % % % %             try;
-% % % % % %                 
-% % % % % %                 %% [QUESTION] DELETE "installfromgithub" -
-% % % % % %                 warning off;
-% % % % % %                 answer = questdlg(...
-% % % % % %                     ['\bf Delete used installtion file "installfromgithub.m" ?  \rm'  char(10) ...
-% % % % % %                     '  \diamondsuit If download/installation was successfull you don''t need ' char (10) ...
-% % % % % %                     '      the file anymore. Note that the folder "antx2" contains the file' char (10) ...
-% % % % % %                     '      "installfromgithub.m (used for updates and new installation)" ' char(10)...
-% % % % % %                     ' \diamondsuit If download/installation failed..you may keep that file.  ' ...
-% % % % % %                     ], ...
-% % % % % %                     'Delete installtion file' ,...
-% % % % % %                     'Yes,delete','No, keep file',struct('Interpreter','tex','Default',''));
-% % % % % %                 %% QUESTION off
-% % % % % %                 if ~isempty(strfind(answer,'Yes'))
-% % % % % %                    try;      delete(fullfile(antupd.patempup,'installfromgithub.m')); 
-% % % % % %                    catch;    disp(['failed to delete: ' fullfile(antupd.patempup,'installfromgithub.m')]) ;                  
-% % % % % %                    end
-% % % % % %                 end 
-% % % % % %             end
-% % % % %         end
-% % % % %     end
+    try
+        cd(fullfile(antupd.patempup,'antx2'));
+    end
+   
+ warning off;
+ success=0;
     try;    delete(fullfile(antupd.patempup,'temp_installfromgithub.m')); 
     catch;  disp(['failed to delete: ' fullfile(antupd.patempup,'temp_installfromgithub.m')]);
     end
     try; delete(antupd.tempfile);   end
-    try; fprintf(['installation..done t=%2.3f min\n'],toc(atime)/60);end
+    success=0;
+    if exist(fullfile(antupd.patempup,'antx2'))==7
+        if exist(fullfile(antupd.patempup,'antx2','ant.m'))==2
+            try
+                success=1;
+            end
+        end
+    end
 end
+
+if success==1
+    ELA=sprintf(['(t=%2.3f min)'],toc(atime)/60);
+    cprintf([0 .5 0],['Package installation done' ELA '.\n']);
+else
+    cprintf([1 0 0],['.. installation failure.. check network connection/proxy settings/firewall.\n']);
+end
+
 
 if ~isempty(findobj(0,'tag','ant'))
     disp('..linking paths');
@@ -668,7 +664,7 @@ function installLinux(antupd,gitrepository)
 
 if ispc || ismac==1; return; end
 
-clc
+% clc
 dowhile=1;
 % disp(['..']);
 % disp('=============================================');
@@ -702,19 +698,23 @@ while dowhile==1
     end
     
     if strcmp(char(answer),'1')
-        clc;
+       
         %disp('step[1]===================================================');
         cprintf(-[1,0,1], 'step[1]===================================================\n');
         disp(['please provide your/department''s proxy address and port' ]);
         disp(['..see "gitconfig"-document in Matlab editor']);
         disp([' Please enter a new line with your proxy and port below the "[http]"-tag' ]);
         disp([' If necessary, remove all other proxies/ports from this file.' ]);
+        disp('    ..or from shell: git config --global --edit');
+        disp('');
         disp('------------------------------------------------------------');
         disp(['  Here is an example how the file might look like.']);
         disp('------------------------------------------------------------');
         disp(['[http]']);
         disp(['   proxy = http://proxy.YOURPROXYSERVER:8080/']);
-        disp(['[https]']);
+        disp('------------------------------------------------------------');
+        disp(['[http]']);
+        disp(['   proxy = http://proxy.charite.de:8080/']);
         disp('------------------------------------------------------------');
         disp(['..where "http://proxy.YOURPROXYSERVER" is an examplatory proxy server' ]);
         disp(['..where "8080" is the PORT for HTTP protocol  (http)' ]);
@@ -724,12 +724,12 @@ while dowhile==1
         
         %         disp(['proxy = http://proxy.charite.de:8080/ ' ]);
         % msg
-        if exist('~/.gitconfig')==2
-            
+        %%if exist('~/.gitconfig')==2
+            !touch ~/.gitconfig
             %system('sudo xdg-open ~/.gitconfig');
             system('sudo chmod 777 ~/.gitconfig'); %compare with 755
             edit('~/.gitconfig');
-        end
+       
     end
     %   [~,gitconfig ]=system('readlink -f ~/.gitconfig')
     %   gitconfig=regexprep(gitconfig,char(10),'')
@@ -748,7 +748,7 @@ while dowhile==1
         %gitrepository='https://github.com/ChariteExpMri/antx2.git'; %temp
         disp('..please wait');
         [r1 r2]=system(['sudo git clone --depth=1 -v ' gitrepository ' ' pa2 ]);
-        clc;
+       
         cprintf(-[1,0,1], 'step[2]===================================================\n');
         %disp('step[2]===================================================');
         if isempty(strfind(r2,'done'))
