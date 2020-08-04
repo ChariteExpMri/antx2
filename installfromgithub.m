@@ -26,11 +26,13 @@ if strcmp(mfilename,'installfromgithub')
         catch
             urlwrite(url,fiout);
         end
-        if exist(fiout)
+        if exist(fiout) %replace file with downloaded version
+            pause(.2);
             k=dir(fiout);
             if k.bytes>1000
                 disp('get "installfromgithub.m" from github...');
                 movefile(which('installfromgithub0.m'),which('installfromgithub.m'),'f');
+                pause(.1);
             end
         end
     end
