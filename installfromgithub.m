@@ -528,9 +528,15 @@ hp=uicontrol('style','text','units','norm','string','Update from GITHUB reposito
     'fontsize',9,'fontweight','bold');
 set(hp,'position',[.01 0.8 .99 .17],'tag','txinfo','foregroundcolor',[0 0 1],'backgroundcolor',[1 1 1]);
 
+% STATUS-WARNING SIGN
+hp=uicontrol('style','text','units','norm','string','!','fontsize',9);
+set(hp,'position',[.01 0.6 .05 .2],'tag','msgwarn','foregroundcolor',[.4 .4 .4],'backgroundcolor',[1 1 1]);
+set(hp,'horizontalalignment','left');
+set(hp,'backgroundcolor','w','foregroundcolor',[0.9294    0.6941    0.1255],'fontweight','bold','fontsize',20)
+
 % STATUS
-hp=uicontrol('style','text','units','norm','string','status: --','fontsize',9);
-set(hp,'position',[.01 0.6 1.0 .2],'tag','msg','foregroundcolor',[.4 .4 .4],'backgroundcolor',[1 1 1]);
+hp=uicontrol('style','text','units','norm','string','status: -unknown-','fontsize',9);
+set(hp,'position',[butx 0.6 1.0 .2],'tag','msg','foregroundcolor',[.4 .4 .4],'backgroundcolor',[1 1 1]);
 set(hp,'horizontalalignment','left');
 setstatus(0);
 
