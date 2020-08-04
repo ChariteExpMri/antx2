@@ -400,7 +400,7 @@ if updatecode==2
     try; antcb('versionupdate'); end
     if isempty(msg)
         fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
-        setstatus(2,'updates finished');
+        setstatus(2,'Up-to-date. Updating finished');
     else
         setstatus(3,'updaiting failed..press [rebuild] button');
     end
@@ -436,6 +436,12 @@ if updatecode==5 %hard reset
     git pull origin master
     
     [msg st]=antx_gitstatus('recheck');
+    if isempty(msg)
+        fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
+        setstatus(2,'Up-to-date. Updating finished');
+    else
+        setstatus(3,'updaiting failed..try again or make fresh installation');
+    end
     
     
     if ~isempty(findobj(0,'tag','ant'))
