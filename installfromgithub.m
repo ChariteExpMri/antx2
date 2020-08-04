@@ -394,11 +394,16 @@ if updatecode==2
         end
     else
         git pull;
-         [msg st]=antx_gitstatus('recheck');
+         
     end
+    [msg st]=antx_gitstatus('recheck');
     try; antcb('versionupdate'); end
-    fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
-    setstatus(2,'updates finished');
+    if isempty(msg)
+        fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
+        setstatus(2,'updates finished');
+    else
+        setstatus(3,'updaiting failed..press [rebuild] button');
+    end
     return
     
 end
@@ -632,6 +637,8 @@ elseif arg==1
     set(findobj( findobj(0,'tag','fupd') ,'tag','msg'),'foregroundcolor',[1 0 1],'string',['[busy] ' msg]);
 elseif arg==2
     set(findobj( findobj(0,'tag','fupd') ,'tag','msg'),'foregroundcolor',[ 0.4667    0.6745    0.1882],'string',['[idle] ' msg]);
+elseif arg==3
+    set(findobj( findobj(0,'tag','fupd') ,'tag','msg'),'foregroundcolor',[ 1 0 0],'string',['[idle] ' msg]);
 end
 drawnow
 end
