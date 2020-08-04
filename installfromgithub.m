@@ -581,6 +581,38 @@ set(hp,'position',[.01 .01 .3 .1],'callback',{@pbclose},'foregroundcolor','k');
 set(hp,'tooltipstring',['..close window']);
 
 
+% WEB
+% hp=uicontrol('style','text','units','norm','string','visit Github','fontsize',7);
+% set(hp,'position',[.5 .01 .3 .1],'callback',{@pbvisitGithub},'backgroundcolor','w','foregroundcolor','b');
+% set(hp,'tooltipstring',['..visit GitHub repositiory online']);
+% set(hp,'string','<html><a href="">visit Github</a></html>','fontsize',5)
+% 
+% 
+% 
+
+
+
+url = 'https://github.com/ChariteExpMri/antx2';
+labelStr = ['<html>visit <a href="">' url '</a></html>'];
+jLabel = javaObjectEDT('javax.swing.JLabel', labelStr);
+[hjLabel,hContainer] = javacomponent(jLabel, [10,10,250,20], gcf);
+set(hContainer,'units','norm','position',[.03 .13 1 .05]);%,'backgroundcolor',[0  1 1])
+%  http://undocumentedmatlab.com/articles/javacomponent-background-color
+
+% Modify the mouse cursor when hovering on the label
+hjLabel.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
+hjLabel.setBackground(java.awt.Color(1,1,1));
+
+jFont = java.awt.Font('Tahoma', java.awt.Font.PLAIN, 15);
+hjLabel.setFont(jFont);
+ 
+% Set the label's tooltip
+hjLabel.setToolTipText(['Visit Github repository ' url ' ']);
+ 
+% Set the mouse-click callback
+set(hjLabel, 'MouseClickedCallback', @(h,e)web([url], '-browser'));
+
+
 
 % ==============================================
 %%   
@@ -588,7 +620,9 @@ set(hp,'tooltipstring',['..close window']);
 
 end
 
-
+function pbvisitGithub(e,e2)
+web('https://github.com/ChariteExpMri/antx2','-browser');
+end
 
 function setstatus(arg,msg)
 if arg==0
