@@ -509,40 +509,56 @@ end
 
 
 function mkgui()
+
+% ==============================================
+%%   
+% ===============================================
+
 % global antpd
+% figpos=[0.3750    0.3544    0.2896    0.2289];
+figpos=[0.5111    0.3567    0.1271    0.2289];
 try;  delete(findobj(0,'tag','fupd')); end
 figure; set(gcf,'color','w','units','normalized','menubar','none',...
-    'position',[0.3750    0.3544    0.2896    0.2289],'tag','fupd',...
+    'position',figpos,'tag','fupd',...
     'name', [mfilename],'NumberTitle','off');
 set(gcf,'CloseRequestFcn',{@pbclose});
 
+% HEAD
+hp=uicontrol('style','text','units','norm','string','Update from GITHUB repository',...
+    'fontsize',9,'fontweight','bold');
+set(hp,'position',[.01 0.8 .99 .17],'tag','txinfo','foregroundcolor',[0 0 1],'backgroundcolor',[1 1 1]);
+
+% STATUS
 hp=uicontrol('style','text','units','norm','string','status: --','fontsize',9);
-set(hp,'position',[.01 0.6 .4 .07],'tag','msg','foregroundcolor',[.4 .4 .4],'backgroundcolor',[1 1 1]);
+set(hp,'position',[.01 0.6 1.0 .2],'tag','msg','foregroundcolor',[.4 .4 .4],'backgroundcolor',[1 1 1]);
 set(hp,'horizontalalignment','left');
 setstatus(0);
 
+% UPDATE/UPDATE WITHOUT CHECK
+butwid=.75;
+butx  =.1;
 hp=uicontrol('style','pushbutton','units','norm','string','check for updates','fontsize',9);
-set(hp,'position',[.01 .5 .3 .1],'callback',{@pbinstallfromgithubcall,1});
+set(hp,'position',[butx .5 butwid .1],'callback',{@pbinstallfromgithubcall,1});
 set(hp,'tooltipstring',['..checks for updates from repository only']);
 
 hp=uicontrol('style','pushbutton','units','norm','string','update without check','fontsize',9);
-set(hp,'position',[.01 .4 .3 .1],'callback',{@pbinstallfromgithubcall,2});
+set(hp,'position',[butx .4 butwid .1],'callback',{@pbinstallfromgithubcall,2});
 set(hp,'tooltipstring',['..updates from repository without checking ' char(10) ...
     '        [duration]: fast (secs) ']);
 
 
-
+%REBUILD
 hp=uicontrol('style','pushbutton','units','norm','string','rebuild','fontsize',9);
-set(hp,'position',[.01 .3 .3 .1],'callback',{@pbinstallfromgithubcall,5});
+set(hp,'position',[butx .3 butwid .1],'callback',{@pbinstallfromgithubcall,5});
 set(hp,'tooltipstring',['..rebuild toolbox' char(10) ...
     ' * USED WHEN: '                        char(10) ...
     '   - files are missing / not updated' char(10)' ...
     '   - ".git"-folder is lost '          char(10)' ...
     '        [duration]: fast (secs) ']);
 
-
+%FRESH INSTALL
 hp=uicontrol('style','pushbutton','units','norm','string','fresh installation','fontsize',9);
-set(hp,'position',[.01 .2 .3 .1],'callback',{@pbinstallfromgithubcall,4},'foregroundcolor','r');
+set(hp,'position',[butx .2 butwid .1],'callback',{@pbinstallfromgithubcall,4},'foregroundcolor','r');
 set(hp,'tooltipstring',['..make FRESH INSTALLATION' char(10) ...
     ' * USED WHEN: '                                char(10) ...
     '   - toolbox was never installed before'       char(10)' ...
@@ -551,11 +567,15 @@ set(hp,'tooltipstring',['..make FRESH INSTALLATION' char(10) ...
     '        [duration]: slow (mins) ']);
 
 
-
 hp=uicontrol('style','pushbutton','units','norm','string','Close','fontsize',9);
-set(hp,'position',[.01 .05 .2 .1],'callback',{@pbclose},'foregroundcolor','k');
+set(hp,'position',[.01 .01 .3 .1],'callback',{@pbclose},'foregroundcolor','k');
 set(hp,'tooltipstring',['..close window']);
 
+
+
+% ==============================================
+%%   
+% ===============================================
 
 end
 
