@@ -249,7 +249,8 @@ figexist=0;
 if isempty(varargin) ||  varargin{1}==0
     
     hfig=findobj(0,'tag','uhelp');
-    hfig=hfig(find(cell2mat(get(hfig,'Number'))==335));
+    %hfig=hfig(find(cell2mat(get(hfig,'Number'))==335));
+    hfig=hfig(find(hfig==335));
     
     if ~isempty(hfig)   %~isempty(findobj(0,'Number', 335))
         figexist=1;
