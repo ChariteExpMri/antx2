@@ -44,8 +44,8 @@ function out = mat2clip(a, delim)
 % Copyright 2009 The MathWorks, Inc.
 %
 % Inspired by NUM2CLIP by Grigor Browning (File ID: 8472) Matlab FEX.
-
-error(nargchk(1, 2, nargin, 'struct'));
+warning off;
+% error(nargchk(1, 2, nargin, 'struct'));
 
 if ndims(a) ~= 2
   error('mat2clip:Only2D', 'Only 2-D matrices are allowed.');

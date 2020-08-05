@@ -105,6 +105,9 @@
 % after 'return' command (varargin issue)
 % #ra 04 Aug 2020 (16:38:17)
 % [installfromgithub] small changes
+% #ra 05 Aug 2020 (22:10:09)
+% solved issue: unintended interaction between help window (mouse-over main menu) and ant-history window 
+%
 %
 %----- EOF
 %

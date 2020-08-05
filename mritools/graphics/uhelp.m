@@ -7,12 +7,16 @@
 % #g [ctrl+f]       #n finder panel (use [ESC] or [x]-button to close finder panel)
 % #g [ctrl+"up"]    #n scroll to begin
 % #g [ctrl+"down"]  #n scroll to end
+% ------- #b Window Position #n --------------------
+% #g [ctrl+p]       #n toggle position help window to different locations
+%                   positioning order: below ant-window, left-50%, left-75%, right-50%, right-75%,
 % #g [ctrl+1]       #n position help window to left side with 50% screensize
 % #g [ctrl+2]       #n position help window to left side with 75% screensize
 % #g [ctrl+3]       #n position help window to right side with 50% screensize
 % #g [ctrl+4]       #n position help window to right side with 75% screensize
 % #g [ctrl+5]       #n home position of help window (below ant-window)
 % #g [ctrl+0]       #n position help window to left side with 50% screensize
+% ------- #b Other shortcuts #n --------------------
 % #g [ctrl+m]       #n toggle READMODE (RM) / EDITMODE (EM)
 % #g [ctrl+t]       #n adjust window to  text width
 % 
@@ -425,6 +429,9 @@ if figexist==0
     item41 = uimenu(cmenu, 'Label','copy  vertical selection', 'Callback', {@gcontext, 41},'tag' ,'copyverticalselection','enable','off');%copyverticalSelection
     item42 = uimenu(cmenu, 'Label','copy  column'            , 'Callback', {@gcontext, 42},'tag' ,'copycolumn','enable','off');%copy columnwise
     
+    
+     item20 = uimenu(cmenu, 'Label','toggle: [RM] Read Mode [EM] Editor Mode ',   'Callback', {@gcontext,20},'separator','on');%switch mode
+    
     item8 = uimenu(cmenu, 'Label','save table as Figure (reloadable)', 'Callback', {@gcontext, 8},'separator','on');%save
     
     item9 = uimenu(cmenu, 'Label','load table (Figure)', 'Callback', {@gcontext, 9});%open
@@ -444,9 +451,10 @@ if figexist==0
     
     item5 = uimenu(cmenu, 'Label','<html><font color=red>evaluate selection', 'Callback', {@gcontext, 5},'Separator','on');% evaluate
     item6 = uimenu(cmenu, 'Label','help',   'Callback', {@gcontext, 6});%help
-    item7 = uimenu(cmenu, 'Label','see in Matlabs Help browser',   'Callback', {@gcontext,7});%help
+    item7 = uimenu(cmenu, 'Label','<html><font color=green>see in Matlabs DOC browser',   'Callback', {@gcontext,7},'Separator','on');%help
+    item7 = uimenu(cmenu, 'Label','<html><font color=green>see in Matlabs WEB browser',   'Callback', {@gcontext,77});%help
     
-    item20 = uimenu(cmenu, 'Label','toggle: [RM] Read Mode [EM] Editor Mode ',   'Callback', {@gcontext,20});%switch mode
+   
     %====================================
     item3 = uimenu(cmenu, 'Label','save Config as global variable "uhelp_properties" (session-preserved)',...
         'Callback', @saveconfig_global,'Separator','on');
@@ -723,7 +731,7 @@ if strcmp(e.Modifier,'alt') %copy selection
    end
 end
 
-
+% e
 if strcmp(e.Modifier,'control') %copy selection
     % positioning
    if strcmp(e.Character      ,'1')  || strcmp(e.Character      ,'0')  || strcmp(e.Key      ,'f1')
@@ -731,7 +739,7 @@ if strcmp(e.Modifier,'control') %copy selection
     elseif strcmp(e.Character  ,'2') || strcmp(e.Character      ,'9')  || strcmp(e.Key      ,'f2')
         set(Huhelp,'position',[0    0.0706    0.75    0.8983]);
     elseif strcmp(e.Character  ,'3')                                   || strcmp(e.Key      ,'f3')
-        set(Huhelp,'position',[0.4743    0.0728    0.5    0.8961]) ;
+        set(Huhelp,'position',[0.5    0.0728    0.5    0.8961]) ;
     elseif strcmp(e.Character,  '4')                                   || strcmp(e.Key      ,'f4')
         set(Huhelp,'position',[ 0.2486    0.0717    0.75    0.8961]);
     elseif strcmp(e.Character,  '5')
@@ -744,6 +752,39 @@ if strcmp(e.Modifier,'control') %copy selection
         end
     elseif strcmp(e.Character,   '6')
         set(Huhelp,'position',[ 0.0028    0.0817    0.7500    0.4128]);
+    elseif strcmp(e.Key,'p')  %position  
+        hf=Huhelp;
+        us=get(hf,'userdata');
+        posall=...
+            [[0    0.0706         0.5    0.8983]
+            [0    0.0706    0.75    0.8983]
+            [0.5    0.0728    0.5    0.8961]
+            [ 0.2486    0.0717    0.75    0.8961]
+            ];
+        
+        if isfield(us,'fgposNumber')==0
+            us.fgposNumber=0;
+        else
+            us.fgposNumber=us.fgposNumber+1;
+            if us.fgposNumber>size(posall,1)
+                us.fgposNumber=0;
+            end
+        end
+        %disp(us.fgposNumber); %DISPLAYPOSIZION-NUMBER
+        if us.fgposNumber==0
+            posant=get(findobj(0,'tag','ant'),'position');
+            if ~isempty(posant)
+                height=0.35;
+                set(hf,'position',[posant(1) posant(2)-height   posant(3)  height-.03]);
+            else
+                set(hf,'position',[ 0.3049    0.4189    0.3889    0.4667]);
+            end
+        else
+            set(hf,'position',posall(us.fgposNumber,:));
+        end
+        set(hf,'userdata',us);
+        
+        
     elseif strcmp(e.Character,'j')
         try
             %         us=get(get(h,'parent'),'userdata');
@@ -1344,7 +1385,7 @@ elseif mode==6
     po([1 2])=po([1 2])-.1;
     set(hf2,'position',po,'name','HELP of HELP');
     setappdata(hf2,'helphelp',1)
-elseif mode==7  %BROWSER
+elseif mode==7 || mode==77 %BROWSER
     
     us=get(Huhelp,'userdata');
     %xx=x.fun;
@@ -1353,13 +1394,19 @@ elseif mode==7  %BROWSER
     if iscell(xx);     tx=strjoin(xx,char(10));
     else;                 tx=xx;
     end
-    
-    
     ta= regexprep(tx,{' #\w ' ,' #\w{1,2} ',' ## ' '&lt;'  '&gt;'},'');
     
-    try;
-        doc(ta);
+    if mode==7
+        try
+            doc(ta);
+        end
+    else
+        try
+            web(['text://<html><pre>' ta '</html>'],'-new');
+        end
     end
+    
+    
 elseif mode==8 %save as figure
     %     item8 = uimenu(cmenu, 'Label','save Figure', 'Callback', {@gcontext, 8});%save
     
@@ -1587,7 +1634,16 @@ elseif mode==20 %SWITCH DO EDIT MODE
           end
           
           % TEST_WRITEABLE-MODE
+          txt=regexprep(txt,[char(10) char(10)],[ char(10) ' ' char(10)]);
+          txt=regexprep(txt,[char(10) char(10)],[ char(10) ' ' char(10)]);
+          
+          
           e0=strsplit(txt,char(10))';
+          
+          
+          e0=regexprep(e0,[char(10) char(10)],[ char(10) 'X' char(10)]);
+          e0=regexprep(e0,[char(10) char(10)],[ char(10) 'X' char(10)]);
+          
           e2=htmlcolorize(e0)  ;
            set(tx,'string',e2); %%MODIFIED TEXT
           us.e2=e2;
@@ -1606,28 +1662,33 @@ elseif mode==20 %SWITCH DO EDIT MODE
              
           ichar=unique([1 ichar ichar(end)+10000]);
           value=unique([max(find(ichar<(1+cartline(1)))):max(find(ichar<(1+cartline(2))))]);
-          if isempty(value); value=1; end
+          if isempty(value);                  value=1; end
+           if value<1;                        value=1; end
+          if value>size(get(tx,'string'),1);  value=size(get(tx,'string'),1); end
+         
           set(tx,'value',value);
           %-------
           
             %----LISTBOX_TOP-PART2
-               for i=1:2
-                pause(0.05);
-                 drawnow
-                hEdit=findobj(HF,'tag','txt');
-                jhEdit = findjobj(hEdit);
-                jVScroll = jhEdit.getVerticalScrollBar;
-                drawnow;
-                tx= findobj(HF,'tag','txt');
-                %scrollDown=jVScroll.getValue;
-                r = jhEdit.getComponent(0).getComponent(0);
-                drawnow;
-                height=r.getHeight;
-                scrollDown2=round(perc*height);
-                %disp({nan scrollDown2 height perc});
-                jVScroll.setValue(scrollDown2);
-                drawnow;
-                r.repaint;
+            for i=1:2
+                try
+                    pause(0.05);
+                    drawnow
+                    hEdit=findobj(HF,'tag','txt');
+                    jhEdit = findjobj(hEdit);
+                    jVScroll = jhEdit.getVerticalScrollBar;
+                    drawnow;
+                    tx= findobj(HF,'tag','txt');
+                    %scrollDown=jVScroll.getValue;
+                    r = jhEdit.getComponent(0).getComponent(0);
+                    drawnow;
+                    height=r.getHeight;
+                    scrollDown2=round(perc*height);
+                    %disp({nan scrollDown2 height perc});
+                    jVScroll.setValue(scrollDown2);
+                    drawnow;
+                    r.repaint;
+                end
             end
           %----------------------------
           
@@ -1675,7 +1736,7 @@ elseif mode==20 %SWITCH DO EDIT MODE
         iscopycol=0;
     end
     
-    
+    HF=Huhelp;
     he=findobj(HF,'tag','txt');
     if strcmp(get(he,'style'),'edit')~=1; return; end %edit MODE ONLY
     hj=findjobj(he);

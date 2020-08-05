@@ -1080,6 +1080,10 @@ function showfunctionhelp(h,e,hm,hj)
 % return
 
 
+if ~isempty(strfind(get(hm,'label'),'obj'))
+%    keyboard 
+end
+
 settings=antsettings;
 hradiohelp=findobj(findobj(0,'tag','ant'),'tag','radioshowhelp');
 if get(hradiohelp,'value')==0; return; end
@@ -1210,14 +1214,12 @@ else
         %             pause(.1);
         %             drawnow;
         
-        uhelp(msg2,0,'position',[posant(1) posant(2)-height   posant(3)  height-.001]);
-        ch=get(0,'children');
-        helpfig=ch(1);
+        helpfig=uhelp(msg2,0,'position',[posant(1) posant(2)-height   posant(3)  height-.001]);
         set(helpfig,'numbertitle','off','name','HELP');
         global uhelp_properties
         if ~isempty(uhelp_properties)
             try; 
-                ch=findobj(0,'tag','uhelp','-and','name','HELP');
+                %ch=findobj(0,'tag','uhelp','-and','name','HELP');
                 %helpfig=ch(1);
 %                 figure(ch(1))
                 set(helpfig,'position',uhelp_properties.fgpos); 
@@ -1256,8 +1258,12 @@ else
         end
           clear UHELP_OpenOnce_Flag0002
     else
-        %disp(['roll-' num2str(rand(1)*100)]);
-%         return%for NOW
+        
+%         tic;
+        %       helpfig=uhelp(msg2);
+        %       disp(toc);
+        
+        %       if 1
         hlptx=findobj(helpfig,'tag','txt')  ;
         if length(hlptx)>1
             try;
@@ -1271,7 +1277,12 @@ else
         us.e0=msg2;
         us.e2=msg3;
         set(helpfig,'userdata',us);
+        %       end
         drawnow;
+%         disp(toc);
+        
+       
+        
           clear UHELP_RunOnce_Flag0002;
     end
     %              figure(335);
