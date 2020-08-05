@@ -1032,6 +1032,7 @@ end
 %========================================================
 function showfunctionhelp(h,e,hm,hj)
 
+
 % persistent atimer
 % persistent atime
 % if isempty(atime)
@@ -1142,19 +1143,28 @@ else
     
     %helpfig=findobj(0,'Number', 335); does not work on Mac-ML14
     
-    helpfig=findobj(0,'tag','uhelp');
+    %helpfig=findobj(0,'tag','uhelp');
+    helpfig=findobj(0,'tag','uhelp','-and','name','HELP');
     %close help figure
     for i=1:length(helpfig)
         if ~isempty(getappdata(helpfig(i),'helphelp'))
             close(helpfig(i));
         end
     end
-  helpfig=findobj(0,'tag','uhelp');
-    figID=find(helpfig==335) ;
-    if isempty(figID)
-        close(helpfig)
+    helpfig=findobj(0,'tag','uhelp','-and','name','HELP');
+    
+    if ~isempty(helpfig)
+        figID=1;
     else
-         helpfig=helpfig(figID);
+        figID=[];
+    end
+    
+    %figID=find(helpfig==335) ;
+    if isempty(figID)
+        %close(helpfig)
+        helpfig=[];
+    else
+        helpfig=helpfig(figID);
         
     end
     
@@ -1198,10 +1208,17 @@ else
         %             drawnow;
         
         uhelp(msg2,0,'position',[posant(1) posant(2)-height   posant(3)  height-.001]);
-        set(findobj(0,'tag','uhelp'),'numbertitle','off','name','HELP');
+        ch=get(0,'children');
+        helpfig=ch(1);
+        set(helpfig,'numbertitle','off','name','HELP');
         global uhelp_properties
         if ~isempty(uhelp_properties)
-            try; set(gcf,'position',uhelp_properties.fgpos); end
+            try; 
+                ch=findobj(0,'tag','uhelp','-and','name','HELP');
+                %helpfig=ch(1);
+%                 figure(ch(1))
+                set(helpfig,'position',uhelp_properties.fgpos); 
+            end
         end
         drawnow;
       
@@ -2028,13 +2045,17 @@ us=get(hcm,'userdata');
 va=get(hcm,'value');
 if strcmp(varargin{1},'help')
     if strfind(us{va,2},'xwarp')
-        uhelp('xwarp3.m');
+        hs=uhelp('xwarp3.m');
+        set(hs,'numbertitle','off','name','HELP');
     elseif strfind(us{va,2},'getlabels')
-        uhelp('xgetlabels4.m');
+        hs=uhelp('xgetlabels4.m');
+        set(hs,'numbertitle','off','name','HELP');
     elseif strfind(us{va,2},'deformSPM')
-        uhelp('xdeform2.m');
+        hs=uhelp('xdeform2.m');
+        set(hs,'numbertitle','off','name','HELP');
     elseif strfind(us{va,2},'deformELASTIX')
-        uhelp('doelastix.m');
+        hs=uhelp('doelastix.m');
+        set(hs,'numbertitle','off','name','HELP');
     end
 end
 
@@ -2113,15 +2134,28 @@ try
     his=evalin('base','anth');
 end
 
+% hf=findobj(0,'tag','uhelp','-and','name','[anth] command history');
+% if ~isempty(hf)
+%     close(hf); 
+% end
 % uhelp(his, 1, 'cursor' ,'end','lbpos',[0 0 .5 1] );
 uhelp(his, 1, 'cursor' ,'end','lbpos',[0 .05 1 .95] );
-set(gcf,'tag','history');
+% set(gcf,'tag','history');
 set(gcf,'NumberTitle','off','name','[anth] command history');
 
 h = uicontrol('style','pushbutton','units','normalized','position',[.95 .55 .05 .05],'tag','refreshhistory',...
     'string','refresh','fontsize',8,'fontweight','bold','tooltip','refreh history',...
     'callback',@refreshhistory);
-set(h,'position',[[0 0 .1 .04]],'units','pixels');
+ set(h,'position',[[0 0 .1 .04]],'units','pixels');
+ 
+ht=findobj(gcf,'tag','txtline'); 
+unitsref=get(ht,'units');
+set(ht,'units','norm');
+posref=get(ht,'position');
+set(h,'units','norm','position',[.85  posref(2)  posref(3:4)]);
+set(h,'units',unitsref);
+set(ht,'units',unitsref);
+
 
 function refreshhistory(e,e2)
 his={''; '<empty>'};
@@ -2130,7 +2164,8 @@ try
 end
 html=uhelp(his, 'dummy','export',1 );
 
-hf=findobj(0,'tag','history');
+% hf=findobj(0,'tag','history');
+hf=gcf;
 u=get(hf,'userdata');
 
 u.fun=his;

@@ -248,12 +248,12 @@ end
 figexist=0;
 if isempty(varargin) ||  varargin{1}==0
     
-    helpfig=findobj(0,'tag','uhelp');
-    helpfig(helpfig==335);
+    hfig=findobj(0,'tag','uhelp');
+    hfig=hfig(find(cell2mat(get(hfig,'Number'))==335));
     
-    if ~isempty(helpfig)   %~isempty(findobj(0,'Number', 335))
+    if ~isempty(hfig)   %~isempty(findobj(0,'Number', 335))
         figexist=1;
-        hfig=helpfig       ;%findobj(0,'Number', 335);
+        %hfig=helpfig       ;%findobj(0,'Number', 335);
     else
         % disp('####  new fig');
         % hfig=figure('visible','off');
@@ -337,6 +337,7 @@ end
 %     try;     aot(x.aot);aot(x.aot);  end %AOT
 %     set(hfig,'toolbar','none');
 % end
+
 
 
 
@@ -560,7 +561,7 @@ set(tx,'callback', @txtline);
 
 txtline([],[]);
 
-
+varargout{1}=hfig;
 
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 %% •••••••••••••••••••••••••••••  SUBFUNS      •••••••••••••••••••••••••••••••••••••••••••••••••••••••
@@ -572,7 +573,12 @@ txtline([],[]);
 function closeFig(e,e2)
 
 saveconfig_global();
-closereq();
+try
+    closereq();
+catch
+    set(gcf,'CloseRequestFcn','closereq');
+    close(gcf);
+end
 
 
 
@@ -681,10 +687,13 @@ end
 
 
 function keyx(h,e)
-tx=findobj(Huhelp,'tag', 'txt');
-% if strcmp(get(tx,'style'),'edit'); return; end
-
-
+try
+    tx=findobj(Huhelp,'tag', 'txt');
+    % if strcmp(get(tx,'style'),'edit'); return; end
+catch
+    return
+end
+    
  
 
 
