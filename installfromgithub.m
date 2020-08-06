@@ -207,7 +207,9 @@ else
     % ---------------------
     
     [msg st]=antx_gitstatus('recheck');
-    if ~isempty(msg)
+    if isempty(msg)
+        success=1;
+    else
         cprintf([1 0 0],['.. persisting installation failure.. check network connection/proxy settings/firewall.\n']);
     end
 end
@@ -222,8 +224,11 @@ if ~isempty(findobj(0,'tag','ant'))
     antcb('update');
 end
 
-
-setstatus(0);
+if success==1 %% SUCCESS
+    setstatus(2,'Instalation completed. Up-to-data.');
+else
+    setstatus(3,'Installation failed..check network connection/proxy settings/firewall');
+end
 installfromgithub;
 
 
