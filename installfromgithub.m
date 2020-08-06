@@ -415,7 +415,7 @@ if updatecode==2
             'YES, do it','Cancel','canel');
         git reset --hard HEAD;
         if ~isempty(regexpi(button,'yes'))
-            updatecode=3;
+            updatecode=4;
         else
             disp('..".git"-not found, .git not restored');
             return
@@ -432,7 +432,10 @@ if updatecode==2
     else
         setstatus(3,'updaiting failed..press [rebuild] button');
     end
-    return
+    
+    if updatecode==2
+        return
+    end
 end
 %% ==================== .GIT IS MISSING..UPDATE ========================================
 if updatecode==3
