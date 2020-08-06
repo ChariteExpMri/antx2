@@ -175,9 +175,11 @@ if 1
     catch;  disp(['failed to delete: ' fullfile(antupd.patempup,'temp_installfromgithub.m')]);
     end
     try; delete(antupd.tempfile);   end
+    
     success=0;
     if exist(fullfile(antupd.patempup,'antx2'))==7
-        if exist(fullfile(antupd.patempup,'antx2','ant.m'))==2
+        [msg st]=antx_gitstatus('recheck');
+        if isempty(msg)
             try
                 success=1;
             end
