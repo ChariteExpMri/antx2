@@ -86,7 +86,7 @@ if exist(fullfile(antupd.patempup,'antx2'))==7
     
     if isunix && ~ismac
         pa2=fullfile(antupd.patempup, 'antx2');
-        system(['sudo rm -r ' pa2]);
+        system(['sudo rm -r "' pa2 '"']);
     else
         try;     rmdir(fullfile(antupd.patempup,'antx2'),'s'); end
     end
