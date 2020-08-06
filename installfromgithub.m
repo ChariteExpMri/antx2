@@ -435,12 +435,22 @@ if updatecode==5 %hard reset
     fprintf(['hard reset,updating..please wait..\n']);
     %if exist(fullfile(pwd,'.git'))~=7
     %git clean -df
-    git reset --hard HEAD;
-    git init
+    
+    %PREV VERSION
+    %     git reset --hard HEAD;
+    %     git init
+    
+    % ---------------------
+    git fetch origin
+    git add -A
+    git reset --hard;
+    
     %Add your remote repository (published on GitHub):
     %git remote add origin https://github.com/pstkoch/antx2
-    git(['remote add origin ' gitrepository]);
+    try; git(['remote add origin ' gitrepository]); end
     git pull origin master
+    % ---------------------
+    
     
     [msg st]=antx_gitstatus('recheck');
     if isempty(msg)
