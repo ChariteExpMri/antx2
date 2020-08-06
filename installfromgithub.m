@@ -65,7 +65,7 @@ function installer
 atime=tic;
 mkgui();
 fprintf(['installation..please wait..\n']);
-setstatus(1,'fresh installation..');
+setstatus(1,'fresh installation..'); drawnow
 
 global antupd;
 if isempty(antupd.patempup);   error('global "antupd" is empty');end
