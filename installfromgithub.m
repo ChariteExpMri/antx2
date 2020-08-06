@@ -354,7 +354,7 @@ if exist('.git','dir')~=7
 end
 
 
-
+%% ==================== jeck UPDATES ..SHOW Y/N-update-POP ========================================
 if updatecode==1 %check before
     setstatus(1,'checking updates');
     git fetch
@@ -384,6 +384,9 @@ if updatecode==1 %check before
         end
     end
 end
+
+%% ==================== JUST UPDATE ========================================
+
 if updatecode==2
     setstatus(1,'updating..');
     fprintf(['updating using version control (".git")..please wait..\n']);
@@ -412,9 +415,8 @@ if updatecode==2
         setstatus(3,'updaiting failed..press [rebuild] button');
     end
     return
-    
 end
-
+%% ==================== .GIT IS MISSING..UPDATE ========================================
 if updatecode==3
     setstatus(1,'create ".git" & updating..');
     % need to initialize a new Git repository in your machine:
@@ -430,6 +432,8 @@ if updatecode==3
      try; antcb('versionupdate'); end
     fprintf(['..done t=%2.3f min\n'],toc(atime)/60);
 end
+
+%% ==================== HARD RESET ========================================
 if updatecode==5 %hard reset
     setstatus(1,'hard reset..');
     fprintf(['hard reset,updating..please wait..\n']);
@@ -471,7 +475,7 @@ if updatecode==5 %hard reset
         try; antcb('versionupdate'); end
     end
     
-    fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
+    %fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
     return
 end
 
