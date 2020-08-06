@@ -140,16 +140,22 @@ if 1
         disp('..cloning repository from GITHUB..please wait...');
         %git clone https://github.com/pstkoch/antx2
         %git(['clone ' gitrepository]);
-        [msg]=git(['clone --depth=1 ' gitrepository]);
-        if ~isempty(strfind(msg,'unable to access')) || (exist(fullfile(antupd.patempup,'antx2','.git'))~=7)
-               installLinux(antupd,gitrepository);
+        
+        %[msg]=git(['clone --depth=1 ' gitrepository]); % %CLONE-WITHOUT-PROGRESS
+        msg=git(['ls-remote --exit-code ' gitrepository]); %CHECK ACCESS
+        clonefun=['!git clone --depth=1 --progress ' gitrepository]; %CLONE-WITH-PROGRESS
+        eval(clonefun);
+        msg=git(['ls-remote --exit-code ' gitrepository]); %CHECK ACCESS
+        
+        if contains(msg,'unable to access') || (exist(fullfile(antupd.patempup,'antx2','.git'))~=7)
+            installLinux(antupd,gitrepository);
             if isunix && ~ismac
                 %system(['sudo git clone --depth=1 ' gitrepository])
                 installLinux(antupd,gitrepository);
             elseif ismac
-                error('mac issue -cloning');
+                error('mac issue -cloning (check newtork/firewall/proxy settings)');
             elseif ispc
-               error('PC issue -cloning');
+                error('PC issue -cloning (check newtork/firewall/proxy settings)');
             end
             
         end
