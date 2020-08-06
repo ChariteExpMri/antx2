@@ -187,11 +187,29 @@ if 1
     end
 end
 
-if success==1
+if success==1 %% SUCCESS
     ELA=sprintf(['(t=%2.3f min)'],toc(atime)/60);
     cprintf([0 .5 0],['Package installation done' ELA '.\n']);
 else
+    %% PROBLEM
     cprintf([1 0 0],['.. installation failure.. check network connection/proxy settings/firewall.\n']);
+    cprintf([1 0 0],['.. TESTING a possible solution...\n']);
+
+    % ---POTENTIAL SOLUTION------------------
+    git fetch origin
+    git add -A
+    git reset --hard;
+    
+    %Add your remote repository (published on GitHub):
+    %git remote add origin https://github.com/pstkoch/antx2
+    try; git(['remote add origin ' gitrepository]); end
+    git pull origin master
+    % ---------------------
+    
+    [msg st]=antx_gitstatus('recheck');
+    if ~isempty(msg)
+        cprintf([1 0 0],['.. persisting installation failure.. check network connection/proxy settings/firewall.\n']);
+    end
 end
 
 
