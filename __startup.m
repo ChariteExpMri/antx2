@@ -9,5 +9,5 @@
 function startup
 
 
-antpath='o:\antx2'  ;%replace path with yours
+antpath='o:\antx2'  ;%replace antx-path with your local path
 disp(['<a href="matlab: cd(''' antpath ''');antlink">' 'add paths of [ANTx2]' '</a>' ' ']);
