@@ -298,8 +298,9 @@ end
 function [msg st]=antx_gitstatus(message)
 % [msg st]=git('diff --name-only');
 
-[msg st]=git('diff --name-only origin');
-msg=strsplit(msg,char(10))';
+% [msg st]=git('diff --name-only origin');
+[msg st]=git('diff --name-only -G. origin'); %cont' check permission rights
+msg=strsplit(msg,char(10));
 msg=msg(cellfun('isempty',strfind(msg,'prevprojects.mat'))); % without 'prevprojects.mat' in list 
 msg=strjoin(msg,char(10));
 
