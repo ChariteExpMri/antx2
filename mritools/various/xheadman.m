@@ -58,12 +58,15 @@
 %                  -The [UIP]s from all other parameters must be set to 'true'
 % #r ============================================================================================================        
 % #r OTHERS
-% #g [data type]     #k choose the data type. If source is used the datatype won't change
-% #g [prefix]        #k enter a prefix (default is 'h') that will be prepend to the output image name
-%                      -it is recommended to define a prefix
-%                      -if empty the input file (source/apply image) file will be overwritten and is lost !!
-% #g [RUN]           #k hit [RUN] button to do the header manipulation for all images of the current set
-%                      - Note: if radio [run all sets] was selected, all sets will be processed by hitting the [RUN] button
+% #g [data type] #k choose the data type. If source is used the datatype won't change
+% #g [prefix]    #k enter a prefix (default is 'h') that will be prepend to the output image name
+%                 -it is recommended to define a prefix
+%                 -if empty the input file (source/apply image) file will be overwritten and is lost !!
+%                 -Alternative: define an explicit output name via $-character and a filename string
+%                   Example: if [prefix]-edit field contains "$test" or "$test.nii" the outout file name
+%                    is "test.nii"
+% #g [RUN]       #k hit [RUN] button to do the header manipulation for all images of the current set
+%                 - Note: if radio [run all sets] was selected, all sets will be processed by hitting the [RUN] button
 
 
 
@@ -76,6 +79,25 @@ function xheadman(task,pars)
 %     
 % end
 
+% ----------------------
+% run from commandline
+% assignin('base','pars',pars);
+% assignin('base','task',task);
+% ----------------------
+% what task ans pars contain ....
+% ----------------------
+% task
+% task =
+% setimage
+% pars = 
+%     list: {2x3 cell}
+% pars.list
+% ans = 
+%     'F:\data1\jose_mdc…'    ''    ''
+%     'F:\data1\jose_mdc…'    ''    ''
+% ----------------------
+
+    
 
 % delete(findobj(0,'tag','headman2'))
 hf=(findobj(0,'tag','headman'));
@@ -285,18 +307,22 @@ set(f ,'name',['header manipulation - Manin gui (' mfilename '.m)' ],'NumberTitl
 hu=uicontrol('style','text','tag','isource','units','norm');
 set(hu,'position', [.01 0.96 .5 .04 ],'string','SOURCE: -','HorizontalAlignment','left','backgroundcolor','w');
 set(hu,'fontsize',12,'fontweight','bold','foregroundcolor',[0    0.4980         0]);
+set(hu,'tooltipstring',['source: image header that should be changed']);
 
 hu=uicontrol('style','text','tag','iref','units','norm');
 set(hu,'position', [.501 0.96 .5 .04 ],'string','REF: -','HorizontalAlignment','left','backgroundcolor','w');
 set(hu,'fontsize',12,'fontweight','bold','foregroundcolor',[1 0         0]);
-
+set(hu,'tooltipstring',['reference header that should be used']);
 
 
 hu=uicontrol('style','text','tag','isource_info','units','norm');
 set(hu,'position', [.01 0.88 .5 .08 ],'string','SOURCE: -','HorizontalAlignment','left','backgroundcolor','w');
+set(hu,'tooltipstring',['source filename']);
+
 
 hu=uicontrol('style','text','tag','iref_info','units','norm');
 set(hu,'position', [.501 0.88 .5 .08 ],'string','REF: -','HorizontalAlignment','left','backgroundcolor','w');
+set(hu,'tooltipstring',['reference filename']);
 
 
 
@@ -304,6 +330,8 @@ set(hu,'position', [.501 0.88 .5 .08 ],'string','REF: -','HorizontalAlignment','
 hu=uicontrol('style','pushbutton','tag','zhelp','units','norm');
 set(hu,'position', [0.85 .65 .1 .025 ],'string','Help','HorizontalAlignment','left','backgroundcolor','w',...
     'callback',@zhelp);
+set(hu,'tooltipstring',['show help']);
+
 % -----------
 
 % hu=uicontrol('style','pushbutton','tag','check','units','norm');
@@ -314,6 +342,8 @@ set(hu,'position', [0.85 .65 .1 .025 ],'string','Help','HorizontalAlignment','le
 hu=uicontrol('style','pushbutton','tag','reset','units','norm');
 set(hu,'position', [0.45 .65 .1 .025 ],'string',['reset matrix'],'HorizontalAlignment','left','backgroundcolor','w',...
     'callback',@reset);
+set(hu,'tooltipstring',['reset apply matrix to default']);
+
 
 %% NEXT IMG
 hu=uicontrol('style','text','units','norm');
@@ -404,6 +434,7 @@ end
 
 he=uicontrol('style','text','units','norm','string','apply mat');
 set(he,'position',[0 0.72 .1 .015],'backgroundcolor','w','fontweight','bold');
+set(he,'tooltipstring',['apply matrix is multiplied with the orientation matrix of the source image']);
 
 
 
@@ -504,64 +535,93 @@ ipo=.56:-.025:0;
 %% applyMAT
 hu=uicontrol('style','radio','tag','applymat','units','norm','string','v');
 set(hu,'position',[ .5 ipo(1) .15 .025],'string','apply mat', 'value',1,'backgroundcolor','w');
+set(hu,'tooltipstring',['if true, apply matrix is multiplied with the orientation matrix of the source image']);
 
 %% useREF
 hu=uicontrol('style','radio','tag','useref','units','norm','string','v');
 set(hu,'position',[ .5 ipo(2) .15 .025],'string','use reference','backgroundcolor','w');
+set(hu,'tooltipstring',['if true, the reference image header is used']);
+
 
 %% remove flips
 hu=uicontrol('style','radiobutton','tag','rb_removeflips','units','norm','string','##');
 set(hu,'position',[ .5 ipo(3) .15 .025],'string','remove flips','value',1,'backgroundcolor','w',...
     'callback',@removeflips);
+set(hu,'tooltipstring',['if true, flips in source image will be removed' char 10 ...
+    ' flips here: negative valued voxel-sizes in source image']);
+
 
 %%  replace header
 hu=uicontrol('style','radiobutton','tag','rb_replacehdr','units','norm','string','##');
 set(hu,'position',[ .65 ipo(3) .15 .025],'string','replace HDR ','value',0,'backgroundcolor','w',...
     'callback',@replaceHDR);
+set(hu,'tooltipstring',['if true, header of the reference is used for the source image' char 10 ...
+    ' reference must be declared before in [xheadmanfiles.m]']);
 
 
 %% center2origin
 hu=uicontrol('style','radiobutton','tag','rb_origin2center','units','norm','string','##');
 set(hu,'position',[ .5 ipo(4) .15 .025],'string','center origin','value',0,'backgroundcolor','w');
+set(hu,'tooltipstring',['if true, volume midpoint will be become the origin of the image']);
+
 
 %% interactive
 hu=uicontrol('style','radiobutton','tag','rb_interactive','units','norm','string','##');
 set(hu,'position',[ .5 ipo(5) .15 .025],'string','interactive','value',0,'backgroundcolor','w');
+set(hu,'tooltipstring',['if true, an interactive window for header manipulation will pop up when hitting the run-button']);
+
 
 %% showfinal volume
 hu=uicontrol('style','radiobutton','tag','rb_showfinalvolume','units','norm','string','##');
 set(hu,'position',[ .5 ipo(6) .15 .025],'string','show final image','value',0,'backgroundcolor','w');
+set(hu,'tooltipstring',['if true, shows the output image when hitting the run-button']);
 
 
 %% RUN ALL SETS
 hu=uicontrol('style','radiobutton','tag','rb_runallsets','units','norm','string','##');
-set(hu,'position',[ .5 ipo(9) .15 .025],'string','run all sets','value',0,'backgroundcolor','w');
+set(hu,'position',[ .5 ipo(9) .15 .025],'string','run all sets','value',0,'backgroundcolor','w',...
+    'foregroundcolor','b');
+set(hu,'tooltipstring',['if true, header manipulation is done on all sets']);
+
 
 %% show-it mricron
 hu=uicontrol('style','radiobutton','tag','rb_showit','units','norm','string','##');
 set(hu,'position',[ .61 .3 .15 .025],'string','show it','value',0,'backgroundcolor','w','fontsize',6);
+set(hu,'tooltipstring',['if true, shows the output image in MRICRON when hitting the run-button']);
+
 
 %===================================================================
 %% RESIZE
 hu=uicontrol('style','radiobutton','tag','resl_resize','units','norm','string','##');
 set(hu,'position',[ .5 ipo(7) .15 .025],'string','resize','value',0,'backgroundcolor','w','callback',@resl_resize);
+set(hu,'tooltipstring',['if true, resizes the image' char(10) ...
+    ' note that resizing is linked with image interpolation']);
 
 
 hu=uicontrol('style','popupmenu','tag','resl_resize2what','units','norm','string','##');
 set(hu,'position',[ .57 ipo(7) .15 .025],...
     'string',{'to reference','to source + edit..' 'to ref. + edit..' },...
     'backgroundcolor','w','callback',@resl_resize2what)
+set(hu,'tooltipstring',['resizing option']);
+
 
 % ------BBOX1---
 hu=uicontrol('style','text' ,'tag','resl_txt',   'units','norm','string','##');
 set(hu,'position',[ .73 ipo(7) .03 .023],'string','BB1','value',0,'backgroundcolor','w');
+set(hu,'tooltipstring',['lower bounding box']);
+
 hu=uicontrol('style','edit','tag','resl_bbox1','units','norm','string','##');
 set(hu,'position',[ .76 ipo(7) .19 .023],'string','#BBOX-low###','value',0,'backgroundcolor','w');
+set(hu,'tooltipstring',['lower bounding box']);
+
 % ------BBOX2---
 hu=uicontrol('style','text',  'tag','resl_txt'   ,'units','norm','string','##');
 set(hu,'position',[ .73 ipo(7)-.023*1 .03 .023],'string','BB2','value',0,'backgroundcolor','w');
+set(hu,'tooltipstring',['upper bounding box']);
+
 hu=uicontrol('style','edit','tag','resl_bbox2','units','norm','string','##');
 set(hu,'position',[ .76 ipo(7)-.023*1 .19 .023],'string','#BBOX-high###','value',0,'backgroundcolor','w');
+set(hu,'tooltipstring',['upper bounding box']);
 
 %radios UIP
 hu=uicontrol('style','radio','tag','resl_bbox1UIP','units','norm','string','##','callback',@uip);
@@ -577,6 +637,7 @@ hu=uicontrol('style','text',  'tag','resl_txt',                     'units','nor
 set(hu,'position',[ .76 ipo(7)-.023*2 .03 .023],'string','vox','value',0,'backgroundcolor','w');
 hu=uicontrol('style','edit','tag','resl_voxsi','units','norm','string','##');
 set(hu,'position',[.79 ipo(7)-.023*2 .16 .023],'string','VOX','value',0,'backgroundcolor','w');
+set(hu,'tooltipstring',['voxel resolution (vox)']);
 
 %radios UIP
 hu=uicontrol('style','radio','tag','resl_voxsiUIP','units','norm','string','##','callback',@uip);
@@ -588,7 +649,7 @@ hu=uicontrol('style','text'     ,'tag','resl_txt',                'units','norm'
 set(hu,'position',[ .76 ipo(7)-.023*3 .03 .023],'string','dim','value',0,'backgroundcolor','w')
 hu=uicontrol('style','edit','tag','resl_dim','units','norm','string','##');
 set(hu,'position',[ .79 ipo(7)-.023*3 .16 .023],'string','DIM','value',0,'backgroundcolor','w');
-
+set(hu,'tooltipstring',['image size (dim)']);
 %radios UIP
 hu=uicontrol('style','radio','tag','resl_dimUIP','units','norm','string','##','callback',@uip);
 set(hu,'position',[ .95 ipo(7)-.023*3  .05 .023],'string','UIP','value',0,'backgroundcolor','w','fontsize',6,'value',1);
@@ -614,6 +675,11 @@ hu=uicontrol('style','text',       'tag','resl_txt',              'units','norm'
 set(hu,'position',[ .76 ipo(7)-.023*4 .03 .023],'string','inp','value',0,'backgroundcolor','w')
 hu=uicontrol('style','popupmenu','tag','resl_interp','units','norm','string','##');
 set(hu,'position',[ .79 ipo(7)-.023*4 .21 .023],'string',{'auto' ,'0','1'},'value',1,'backgroundcolor','w');
+set(hu,'tooltipstring',['image interpolation' char(10) ...
+                      '  auto: autodetect type of interpolation' char(10) ...
+                      '  0   : next neighbour interpolation' char(10) ...
+                      '  1   : higher order Lagrange (polynomial) interpolation' char(10) ...
+                      ]);
 
 
 
@@ -657,10 +723,22 @@ set(hu,'position',[ .79 ipo(7)-.023*4 .21 .023],'string',{'auto' ,'0','1'},'valu
 hu=uicontrol('style','pushbutton','tag','pb_showmatrix','units','norm','string','##');
 set(hu,'position',[.5 .3 .1 .025],'string','RUN','callback',@runthis,...
     'foregroundcolor',[0 .5 0],'fontweight','bold');
+set(hu,'tooltipstring',[...
+    'RUN..run header manipulaton on this set ' char(10) ...
+    ' or run over all sets if "run all sets"-radio is true)']);
+
 
 %% OVL
 hu=uicontrol('style','pushbutton','tag','pb_showovl','units','norm','string','v');
 set(hu,'position',[.65 .65 .1 .025],'string','show overlay','callback',{@show_ovl,1});
+set(hu,'tooltipstring',[...
+    'shows overlay of a set-specific source and reference images ' char(10) ...
+    'if no reference is specified a source-source image overlay is obtained ' char(10)...
+    ' interactive image changes (rotation/translation) will be displayed in the apply mat of the xheadman-window' char(10) ...
+    ' and can be used (if "apply mat"-radio is true)' char(10) ...
+    '' char(10) ...
+    ]);
+
 
 %% color
 r=[ 0.9922    0.9176    0.7961];
@@ -677,11 +755,16 @@ set(u.sm3(end-3:end-1),'backgroundcolor',r); set(u.sv3(1:3),'backgroundcolor',r)
 %% DATATYPE
 hu=uicontrol('style','text','units','norm');
 set(hu,'position',[ .0 .3 .08 .02],'string','dataType','backgroundcolor','w','HorizontalAlignment','right');
-
 hu=uicontrol('style','popupmenu','tag','ed_dt','units','norm');
 set(hu,'position',[ .08 .3 .1 .025],'string','##','backgroundcolor','w');
 types  = [    2      4       8          16     64       256      512           768];
 set(findobj(gcf,'tag','ed_dt'),'string',['source';'ref';cellstr(num2str(types'))]);
+
+set(hu,'tooltipstring',[...
+    'output datatype ' char(10) ...
+    'use datatype from sourse or reference image or the respective type (number)' char(10) ...
+    '' char(10) ...
+    ]);
 
 %% PREFIX
 hu=uicontrol('style','text','units','norm');
@@ -689,8 +772,25 @@ set(hu,'position',[ .0 .28 .08 .02],'string','prefix','backgroundcolor','w','Hor
 hu=uicontrol('style','edit','tag','ed_prefix','units','norm');
 set(hu,'position',[ .08 .28 .1 .025],'string','h','backgroundcolor','w');
 
+set(hu,'tooltipstring',[...
+%     'output filename prefix ' char(10) ...
+%     'A prefix (default "h") is added to the output filename ' char(10) ...
+%     'A prefix (default "h") is added to the output filename ' char(10) ...
+    ['<HTML>'] ...
+    ['<FONT color="black">'] ...
+    ['<b> output prefix filename </b> or <b> explicit filename </b>' '<br>' ] ...
+    ['  <b> 1) output prefix filename: </b> <br>' ] ...
+    [' A prefix (default: "h") is added to the output filename'  '<br>' ]...
+    ['<FONT color="red">' ' if empty (no string) source file is overwritten!!!'  '<FONT color="black">'  '<br>']...
+    ...
+    ['<b> 2) output explicit filename </b>' '<br>' ] ...
+    [' use $+string to make string the new output filename'  '<br>' ]...
+    ['<FONT color="green">' ' Example: '  '<FONT color="black">' '"$test1" or "$test1.nii"...resulting filename is "test1.nii" '  '<br>']...
+    ...
+    ]);
 
-%% infobox
+
+%% infobox 
 hu=uicontrol('style','listbox','units','norm');
 set(hu,'position',[0.001 0 .999 .26],'string','info','backgroundcolor','w','foregroundcolor','b','tag','info');
 
@@ -1138,6 +1238,9 @@ for jj=1:nimg
     
     if ~isempty(r.pref)                       % PREFIX assigned
         fout=stradd(source,  r.pref ,1);
+        if ~isempty(strfind(r.pref,'$'))  % explicit name vis '$'-name
+         fout=fullfile(fileparts(source), [regexprep([r.pref],{'\$','.nii'},{''}) '.nii']) ;  
+        end
     else
         fout=source;
     end

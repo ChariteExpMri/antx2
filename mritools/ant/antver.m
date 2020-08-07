@@ -107,8 +107,10 @@
 % [installfromgithub] small changes
 % #ra 05 Aug 2020 (22:10:09)
 % solved issue: unintended interaction between help window (mouse-over main menu) and ant-history window 
-%
-%
+% #ra 07 Aug 2020 (14:43:11)
+% [xheadman.m] explicit output filename, added tooltips
+% [skullstrip_pcnn3d]: added errorMSG  if vox-size is to large
+% [displaykey2.m]: bugfix with zooming
 %----- EOF
 %
 

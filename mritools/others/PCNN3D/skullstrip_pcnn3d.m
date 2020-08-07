@@ -76,7 +76,20 @@ vdim2        = vdim/pp.scalefactor;
 brainSize    = pp.brainSize;
 
 %[I_border, gi] = PCNN3D(  a , 4  , vdim, brainSize );
-[args ,I_border, gi] =  evalc('PCNN3D(  a , radelem  , vdim2, brainSize );');
+try
+    [args ,I_border, gi] =  evalc('PCNN3D(  a , radelem  , vdim2, brainSize );');
+catch
+    err=lasterr;%lasterror;
+    errmsg={ ...
+        ['         *** ERROR ***'   ]
+        ['STEP              : scullstripping [' mfilename '.m]'  ]
+        ['INPUT             : ' t2file ]
+        ['ERROR             : ' err]
+        ['Potential SOLUTION: '        sprintf('  VOXEL-size: [%2.2f %2.2f %2.2f] mm ..check voxelsize (might be to large)',vdim)
+        ]        };
+    error([strjoin(errmsg,char(10))]);
+    % rethrow(lasterror)
+end
 
 % disp(args);
 

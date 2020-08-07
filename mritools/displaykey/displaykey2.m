@@ -119,6 +119,22 @@ end
 iconpannel4spm; %iconbanner
 drawnow;
 
+% ------------------------------------------
+%% zoom issue: set zoom to "'Full Volume'" instead of (..2x2x2 issue vs)
+hc=findobj(gcf,'style','popupmenu');
+% hc=hc(cellfun(@iscell ,get(hc,'string')))
+currstring={};
+for jj=1:length(hc)
+    poplist=cellstr(get(hc(jj),'string'));
+    currstr{jj,1}=poplist{get(hc(jj),'value')};
+end
+hc=hc(~cellfun(@isempty,regexpi(currstr,'\dx\dx\dmm')));
+if ~isempty(hc)
+    set(hc,'value', size(get(hc,'string'),1));
+    spm_image('zoom');
+    spm_orthviews2('Redraw');
+end
+% ------------------------------------------
 if modality==1
     uiwait(gcf);
 end
