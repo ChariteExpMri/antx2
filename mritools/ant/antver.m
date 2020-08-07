@@ -111,6 +111,8 @@
 % [xheadman.m] explicit output filename, added tooltips
 % [skullstrip_pcnn3d]: added errorMSG  if vox-size is to large
 % [displaykey2.m]: bugfix with zooming
+% #T 07 Aug 2020 (17:36:56)
+% [doelastix] now possible, apply registration-trafo to 4D-data (example: BOLD-timeseries) (..not parallelized yet)
 %----- EOF
 %
 

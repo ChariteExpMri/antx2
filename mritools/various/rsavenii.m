@@ -14,8 +14,9 @@ function  filenameout=rsavenii(filename,h,d, dt)
 %% example
 % rsavenii('test',h,d )
 % rsavenii('test2.nii',h,d )
+% works with 4d
 
-
+warning off;
 
 [pa fi ext]= fileparts(filename);
 % if isempty(pa);     pa=''; end
@@ -30,9 +31,9 @@ if ndims(d)==3
     h=spm_write_vol(h,  d);
     filenameout=h.fname;
     
-else
+else % 4d-data
     
-    for k=1:size(h,1)
+    for k=1:size(d,4) ; %size(h,1)
         dum       = h(1);
         dum.n     = [k 1];
         dum.fname =fullfile(pa,[ fi  ext]);

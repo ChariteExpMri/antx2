@@ -2,14 +2,15 @@
 %..
 %% #yk doelastix
 % #k calculate transformation, apply transformation to other images
+% input image: calculation: 3d; transformation 3d or 4d 
 % doelastix( direction, path,images,interp,  localtransform ,params)
 % params.resolution: if defined, this parameter specifies the image output resolution.
 %                     - can be triple value of final volume dimension [200 200 50]
 %                     - or tripple of voxel size [.06 .05 .1]
-% params.source: either 'intern' or 'extern' 
-%                      'intern' or [1] {default}: the image is located in the dat-folder 
+% params.source: either 'intern' or 'extern'
+%                      'intern' or [1] {default}: the image is located in the dat-folder
 %                      - if 'intern': the parameter can be omitted
-%                      -'extern' or [2] : image is located somewhere else (for instance in the 
+%                      -'extern' or [2] : image is located somewhere else (for instance in the
 %                        template folder). In this case the paramter must be specified
 % _______________________________________________________________________________________________________________________________________________
 % #yk ..WHEN CALLED FROM ANT-GUI
@@ -92,61 +93,61 @@
 %% —————————————————————————————————————————————————————————————————————————————————————————————————
 %% OTHER TRANSFORMATION EXAMPLES
 %% —————————————————————————————————————————————————————————————————————————————————————————————————
-% 
+%
 %% =======[ INTERNAL SOURCE]=====================================================================================
 %% internal source: fullpath images, change output resolution
 %     fis=doelastix(1, 'O:\data4\recode2Rat_WHS2\dat\t_fastsegm','O:\data4\recode2Rat_WHS2\dat\t_fastsegm\c1t2.nii',4,'local');
-% 
-%% internal source: fullpath images, change output resolution 
+%
+%% internal source: fullpath images, change output resolution
 %     files = {'O:\data4\recode2Rat_WHS2\dat\t_fastsegm\c1t2.nii'
 %              'O:\data4\recode2Rat_WHS2\dat\test_uncut\c1t2.nii'};
 %     pp.source =  'intern';
-%     pp.resolution =  [0.1  0.1  0.1];  
+%     pp.resolution =  [0.1  0.1  0.1];
 %     fis=doelastix(1, [],files,4,'local' ,pp);
-% 
+%
 %% internal source: short image names (no full path)
 %     files={'c1t2.nii', 'c2t2.nii'};
 %     mdirs = {'O:\data4\recode2Rat_WHS2\dat\t_fastsegm'
 %              'O:\data4\recode2Rat_WHS2\dat\test_uncut'};
 %     pp.source =  'intern';
-%     fis=doelastix(1, mdirs,files,4,'local' ,pp);                
-% 
-%% internal source: apply for all pre-selected dirs
-%     files={'c1t2.nii', 'c2t2.nii'};  
-%     pp.source =  'intern';
-%     fis=doelastix(1, [],files,4,'local' ,pp); 
+%     fis=doelastix(1, mdirs,files,4,'local' ,pp);
 %
-%% internal source: the parameter 'source' can be omitted, for internal sources  
-%     files={'c1t2.nii', 'c2t2.nii'};  
-%     fis=doelastix(1, [],files,4,'local'); 
+%% internal source: apply for all pre-selected dirs
+%     files={'c1t2.nii', 'c2t2.nii'};
+%     pp.source =  'intern';
+%     fis=doelastix(1, [],files,4,'local' ,pp);
+%
+%% internal source: the parameter 'source' can be omitted, for internal sources
+%     files={'c1t2.nii', 'c2t2.nii'};
+%     fis=doelastix(1, [],files,4,'local');
 %
 %% =======[ EXTERNAL SOURCE]=====================================================================================
-  %%  external source
+%%  external source
 %     files = {'O:\anttemplates\rat_Waxholm\ANO_VH.nii'
 %              'O:\anttemplates\rat_Waxholm\#cut.nii' };
 %     mdirs = {'O:\data4\recode2Rat_WHS2\dat\t_fastsegm'
 %              'O:\data4\recode2Rat_WHS2\dat\test_uncut' };
 %     pp.source =  'extern';
 %     fis=doelastix(-1, mdirs,files,0,'local' ,pp);
-% 
-%%  external source: change output resolution                              
-%     files = {'O:\anttemplates\rat_Waxholm\#cut.nii'     
+%
+%%  external source: change output resolution
+%     files = {'O:\anttemplates\rat_Waxholm\#cut.nii'
 %              'O:\anttemplates\rat_Waxholm\ANO_VH.nii' };
 %     mdirs = {'O:\data4\recode2Rat_WHS2\dat\t_fastsegm'};
-%     pp.resolution =  [0.1  0.1  0.1];                   
-%     pp.source     =  'extern';                          
-%     fis=doelastix(-1, mdirs,files,0,'local' ,pp);       
+%     pp.resolution =  [0.1  0.1  0.1];
+%     pp.source     =  'extern';
+%     fis=doelastix(-1, mdirs,files,0,'local' ,pp);
 %
-%% external source: apply for all pre-selected dirs                               
-%     files = {'O:\anttemplates\rat_Waxholm\#cut.nii'     
+%% external source: apply for all pre-selected dirs
+%     files = {'O:\anttemplates\rat_Waxholm\#cut.nii'
 %              'O:\anttemplates\rat_Waxholm\ANO_VH.nii' };
 %     mdirs = [];
-%     pp.source     =  'extern';                          
-%     fis=doelastix(-1, mdirs,files,0,'local' ,pp);  
+%     pp.source     =  'extern';
+%     fis=doelastix(-1, mdirs,files,0,'local' ,pp);
 %% —————————————————————————————————————————————————————————————————————————————————————————————————
 % #bb calc forward only
 % - use struct: with field: 'calcforwardonly' =1
-% example: 
+% example:
 % doelastix('calculate' ,s.pa, {fixim movim}  ,parafiles2,[],struct('calcforwardonly',1)  )
 
 
@@ -165,14 +166,14 @@ out='';
 % %        arg2,
 % %        arg3
 % %        arg4
-% %        params 
+% %        params
 % %     %% —————————————————————————————————————————————————————————————————————————————————————————————————
 % %     %% EXTERN FILES
 % %     %    task =
 % %     %      1
 % %     % arg1 =
 % %     %      []
-% %     % arg2 = 
+% %     % arg2 =
 % %     %     'O:\anttemplates\rat_Waxholm\ANO_VH.nii'
 % %     % arg3 =
 % %     %      4
@@ -186,7 +187,7 @@ out='';
 % %     %      1
 % %     % arg1 =
 % %     %      []
-% %     % arg2 = 
+% %     % arg2 =
 % %     %     'O:\data4\recode2Rat_WHS2\dat\t_fastsegm\c1t2.nii'
 % %     %     'O:\data4\recode2Rat_WHS2\dat\test_uncut\c1t2.nii'
 % %     % arg3 =
@@ -196,7 +197,7 @@ out='';
 % %     % params =
 % %     %      []
 % %      %% —————————————————————————————————————————————————————————————————————————————————————————————————
-% % 
+% %
 % %     end
 
 
@@ -222,27 +223,27 @@ end
 % % %     f4=fullfile(pwd,'c1t2.nii')
 % % %     f5=fullfile(pwd,'c1c2mask.nii')
 % % %     path=pwd
-% % %     
+% % %
 % % %     %calculate
 % % %     fixim=fullfile(pwd, 'templateGMWM.nii')
 % % %     movim=fullfile(pwd, 'mouseGMWM.nii')
 % % %     parafiles={'V:\mritools\elastix\paramfiles\Par0025affine.txt'
 % % %         'V:\mritools\elastix\paramfiles\Par0033bspline_EM2.txt'}
 % % %     doelastix('calculate'  ,path, {fixim movim} ,parafiles)   ;
-% % %     
-% % %     
+% % %
+% % %
 % % %     % BACKWARD
 % % %     doelastix('transforminv'  , path,    {f1 f2} ,[3 -1]  )   ;%TPM with interp=-1' !!! (elastix:0-1 range not defined)
 % % %     doelastix('transforminv'  , path,    {f1 f2}   )    ;%if not specified interp=3
 % % %     doelastix('transforminv'  , path,    {f1 f2} ,[3]  )
-% % %     
+% % %
 % % %     %FORWARD
 % % %     doelastix('transform'  , path,    {f3 f4} ,[3 -1]  )   ;%TPM with interp=-1' !!! (elastix:0-1 range not defined)
 % % %     doelastix('transform'  , path,    { f4} ,[ -1]  )   ;%TPM with interp=-1'
 % % %     doelastix('transform'  , path,    { f5} ,[ 0]  )   ; %BINARYMASK with interp=0'
-% % %     
+% % %
 % % %     doelastix('transforminv'  , path,    {fullfile(path,'sAVGT.nii')} ,[] ,M ) %use reorientMAT from workspace
-% % %     
+% % %
 % % %     %%  forward, useLocalPath,  files2trafo from different Mousefolders , interp, use Locally stored ReorientMat
 % % %     doelastix(1    , [],      files                          ,3 ,      'local' );
 % % % end
@@ -272,7 +273,7 @@ switch task
             if isstruct(params)
                 z.pp=params;
             end
-        
+            
         end
         
         %         try;               timex('CALCULATE TRANSFORMATION: dt=');  end
@@ -305,7 +306,7 @@ switch task
         if isnumeric(z.params.source)
             if z.params.source==1;  z.params.source='intern';
             else                 ;  z.params.source='extern';
-            end 
+            end
         end
         
         if strcmp(z.params.source,'intern');    % ## USE FILENAMES FROM DAT-FOLDER
@@ -368,7 +369,7 @@ switch task
             end
         end
         
-  end
+end
 return
 
 
@@ -446,7 +447,15 @@ for i=1:length(z.files)
     % rm_ix(trafofile,'MovingInternalImagePixelType');
     % rm_ix(trafofile,'ResultImagePixelType');
     
-    v=  spm_vol(filename);
+    %———————————————————————————————————————————————
+    %%  run over 4d data
+    %———————————————————————————————————————————————
+    v0=  spm_vol(filename);
+    
+    
+    v=v0(1);
+    
+    
     if v.dt(1)<=100%32
         set_ix(trafofile,'FixedInternalImagePixelType','float');
         set_ix(trafofile,'MovingInternalImagePixelType','float');
@@ -478,132 +487,175 @@ for i=1:length(z.files)
     end
     %===========================================================================================
     
-    
-    %% work on templatefile, which is renamed after trafo
-    tempfile0=fullfile(z.path, '__tobewarped.nii' );% WE WORK ON THIS
-    copyfile(filename,tempfile0,'f'); %
-    
-    if z.direction==1 & ~isempty(z.M)  %apply TRAFO in FORWARD-DIR
-        v=  spm_vol(tempfile0);
-        spm_get_space(tempfile0,      inv(z.M) * v.mat);
-    end
-    
-    
-    %% —————————————————————————————————————————————————————————————————————————————————————————————————
-    %%    set size of IMAGE
-    %     if z.direction==   -1
-    % %         hh=spm_vol(fullfile(z.path,'t2.nii'));
-    % %         disp(['  check dim inverse: ' num2str(hh.dim)]);
-    % %         set_ix(trafofile,'Size',    hh.dim);
-    %     elseif z.direction==1
-    %         hh=spm_vol(fullfile(z.path,'_refIMG.nii')); %(Size 172 215 115)
-    %         disp(['  check dim forward: ' num2str(hh.dim)]);
-    %         set_ix(trafofile,'Size',    hh.dim);
-    %     end
-    %% —————————————————————————————————————————————————————————————————————————————————————————————————
-    %     edit(trafofile)
-    
-    
-    if z.interp(i)==-1 %TPMs -->between 0 and 1   ...ALTERNATIVE FOR 0-1-RANGE-DATA
-        [ha  a]=rgetnii( tempfile0);
-        range1=[min(a(:))  max(a(:))];
-        dt=ha.dt;
-        pinfo=ha.pinfo;
-        ha.dt=[16 0];
-        a=a.*10000;
-        tempfile=fullfile( z.path,['_elxTemp.nii']);
-        rsavenii(tempfile,  ha,a );
+    %———————————————————————————————————————————————
+    %%  run over 4d data
+    %———————————————————————————————————————————————
+    for jvol=1:length(v0)
+        
+        %% work on templatefile, which is renamed after trafo
+        if length(v0)==1 %3D
+            tempfile0=fullfile(z.path, '__tobewarped.nii' );% WE WORK ON THIS
+            copyfile(filename,tempfile0,'f'); %
+        else
+           tempfile0=fullfile(z.path, ['__tobewarped_'  pnum(jvol,4) '.nii'] );% WE WORK ON THIS
+           delete(tempfile0)
+           if jvol==1 %load data once
+               [hx x]=rgetnii(filename);
+           end
+           rsavenii(tempfile0,hx(1),x(:,:,:,jvol));
+        end
         
         
-        set_ix(trafofile,'FinalBSplineInterpolationOrder',    3);
-        % [im4,tr4] =        run_transformix(  tempfile ,[],trafofile,   z.path ,'');
-        [~,im4,tr4]=evalc('run_transformix(  tempfile ,[],trafofile,   z.path ,'''')');
-        
-        %% set original range
-        [hb  b]=rgetnii( im4);
-        b2=b./10000;
-        [pas fis ext]=fileparts(filename);
-        fileout=fullfile(z.path, [ z.prefix  fis ext ]);
-        %newfile=stradd(z.files{i},  z.prefix ,1 );
-        rsavenii(fileout,  hb,b2 );
-        try; delete(tempfile);end
-        try; delete(im4);       end
+        if z.direction==1 & ~isempty(z.M)  %apply TRAFO in FORWARD-DIR
+            v=  spm_vol(tempfile0);
+            spm_get_space(tempfile0,      inv(z.M) * v.mat);
+        end
         
         
-    else  %% USE ELASTIX INTERPOLATION
+        %% —————————————————————————————————————————————————————————————————————————————————————————————————
+        %%    set size of IMAGE
+        %     if z.direction==   -1
+        % %         hh=spm_vol(fullfile(z.path,'t2.nii'));
+        % %         disp(['  check dim inverse: ' num2str(hh.dim)]);
+        % %         set_ix(trafofile,'Size',    hh.dim);
+        %     elseif z.direction==1
+        %         hh=spm_vol(fullfile(z.path,'_refIMG.nii')); %(Size 172 215 115)
+        %         disp(['  check dim forward: ' num2str(hh.dim)]);
+        %         set_ix(trafofile,'Size',    hh.dim);
+        %     end
+        %% —————————————————————————————————————————————————————————————————————————————————————————————————
+        %     edit(trafofile)
         
-        %% ANO-check inverse-->problem with precission, since values are to large
-        [~, fi,ext]=fileparts(filename);
-        if strcmp([fi ext],'ANO.nii') && z.interp(i)==0
-            [dx dc]=rgetnii(tempfile0);
-            uni=unique(dc);
-            il=find(uni>1e6);
-            maxval=uni(min(il)-1);
-            valtrans=[uni(il)  [20000+[1:length(il)]]'   ];
+        
+        if z.interp(i)==-1 %TPMs -->between 0 and 1   ...ALTERNATIVE FOR 0-1-RANGE-DATA
+            [ha  a]=rgetnii( tempfile0);
+            range1=[min(a(:))  max(a(:))];
+            dt=ha.dt;
+            pinfo=ha.pinfo;
+            ha.dt=[16 0];
+            a=a.*10000;
+            tempfile=fullfile( z.path,['_elxTemp.nii']);
+            rsavenii(tempfile,  ha,a );
             
-            for j=1:size(valtrans,1)
-                dc(dc==valtrans(j,1))=valtrans(j,2);
+            
+            set_ix(trafofile,'FinalBSplineInterpolationOrder',    3);
+            % [im4,tr4] =        run_transformix(  tempfile ,[],trafofile,   z.path ,'');
+            [~,im4,tr4]=evalc('run_transformix(  tempfile ,[],trafofile,   z.path ,'''')');
+            
+            %% set original range
+            [hb  b]=rgetnii( im4);
+            b2=b./10000;
+            [pas fis ext]=fileparts(filename);
+            fileout=fullfile(z.path, [ z.prefix  fis ext ]);
+            %newfile=stradd(z.files{i},  z.prefix ,1 );
+            rsavenii(fileout,  hb,b2 );
+            try; delete(tempfile);end
+            try; delete(im4);       end
+            
+            
+        else  %% USE ELASTIX INTERPOLATION
+            
+            %% ANO-check inverse-->problem with precission, since values are to large
+            [~, fi,ext]=fileparts(filename);
+            if strcmp([fi ext],'ANO.nii') && z.interp(i)==0
+                [dx dc]=rgetnii(tempfile0);
+                uni=unique(dc);
+                il=find(uni>1e6);
+                maxval=uni(min(il)-1);
+                valtrans=[uni(il)  [20000+[1:length(il)]]'   ];
+                
+                for j=1:size(valtrans,1)
+                    dc(dc==valtrans(j,1))=valtrans(j,2);
+                end
+                rsavenii(tempfile0,dx,dc);
             end
-            rsavenii(tempfile0,dx,dc);
+            
+            
+            
+            %set_ix(trafofile,'ResultImagePixelType',    'float'); %'float' is default -->for ALLEN
+            set_ix(trafofile,'FinalBSplineInterpolationOrder',    z.interp(i));
+            
+            %% BUG: calculation and tranformation on DIFFERENT machines !!!!!!
+            if 1
+                initrafoParamFN=   get_ix(trafofile,'InitialTransformParametersFileName');
+                [pas fis exs]=fileparts(initrafoParamFN);
+                if strcmp(exs,'.txt')==1
+                    initrafoParamFN_neu=fullfile(trafopath, [fis exs]);
+                    set_ix(trafofile,'InitialTransformParametersFileName',initrafoParamFN_neu);
+                end
+            end
+            
+            % [im4,tr4] =       run_transformix(  tempfile0 ,[],trafofile, z.path ,'');
+            [~,im4,tr4]=evalc('run_transformix(  tempfile0 ,[],trafofile, z.path ,'''')');
+            
+            if strcmp([fi ext],'ANO.nii') && z.interp(i)==0
+                [dx dc]=rgetnii(im4);
+                for j=1:size(valtrans,1)
+                    dc(dc==valtrans(j,2))=valtrans(j,1);
+                end
+                rsavenii(im4,dx,dc,[64 0]);
+            end
+            
+            
+            
+            
+            if length(v0)==1 %3D
+                [pas fis ext]=fileparts(filename); %RENAME FILE
+                fileout=fullfile(z.path, [z.prefix fis ext]) ;
+                movefile(im4,fileout   );
+            else
+                fileout=im4;
+            end
+        end
+        
+        %     if z.direction==-1 && ~isempty(z.M)  %apply TRAFO in BACKWARD-DIR
+        %         v=  spm_vol(fileout);
+        %         spm_get_space(fileout,      (z.M) * v.mat);
+        %         rreslice2target(fileout,fullfile(fileparts(fileout),'t2.nii') , fileout  , 0);
+        %     end
+        
+        if z.direction==-1 && ~isempty(z.M)  %apply TRAFO in BACKWARD-DIR
+            v=  spm_vol(fileout);
+            spm_get_space(fileout,      (z.M) * v.mat);
+            doreslice=1;
+            
+            if isfield(z.params,'resolution'); % userdefined resolution (dim/voxsize) for output in native space
+                doreslice=0;
+                %disp('temp: no-reslicing');
+            end
+            
+            if doreslice==1
+                rreslice2target(fileout,fullfile(fileparts(fileout),'t2.nii') , fileout  , 0);
+                %disp('temp: reslicing');
+            end
         end
         
         
-        
-        %set_ix(trafofile,'ResultImagePixelType',    'float'); %'float' is default -->for ALLEN
-        set_ix(trafofile,'FinalBSplineInterpolationOrder',    z.interp(i));
-        
-        %% BUG: calculation and tranformation on DIFFERENT machines !!!!!!
-        if 1
-            initrafoParamFN=   get_ix(trafofile,'InitialTransformParametersFileName');
-            [pas fis exs]=fileparts(initrafoParamFN);
-            if strcmp(exs,'.txt')==1
-                initrafoParamFN_neu=fullfile(trafopath, [fis exs]);
-                set_ix(trafofile,'InitialTransformParametersFileName',initrafoParamFN_neu);
-            end
-        end
-        
-        % [im4,tr4] =       run_transformix(  tempfile0 ,[],trafofile, z.path ,'');
-        [~,im4,tr4]=evalc('run_transformix(  tempfile0 ,[],trafofile, z.path ,'''')');
-        
-        if strcmp([fi ext],'ANO.nii') && z.interp(i)==0
-            [dx dc]=rgetnii(im4);
-            for j=1:size(valtrans,1)
-                dc(dc==valtrans(j,2))=valtrans(j,1);
-            end
-            rsavenii(im4,dx,dc,[64 0]);
-        end
-        
-        
-        
+    end %4d-volume
+    
+    
+    if length(v0)>1 % 4D-DATA
         [pas fis ext]=fileparts(filename); %RENAME FILE
-        fileout=fullfile(z.path, [z.prefix fis ext]) ;
-        movefile(im4,fileout   );
-    end
-    
-    %     if z.direction==-1 && ~isempty(z.M)  %apply TRAFO in BACKWARD-DIR
-    %         v=  spm_vol(fileout);
-    %         spm_get_space(fileout,      (z.M) * v.mat);
-    %         rreslice2target(fileout,fullfile(fileparts(fileout),'t2.nii') , fileout  , 0);
-    %     end
-    
-    if z.direction==-1 && ~isempty(z.M)  %apply TRAFO in BACKWARD-DIR
-        v=  spm_vol(fileout);
-        spm_get_space(fileout,      (z.M) * v.mat);
-        doreslice=1;
+        fileout=fullfile(z.path, [z.prefix fis ext]);
+        for jvol=1:length(v0) %4D-data
+            warpedfile=fullfile(z.path, ['elx___tobewarped_'  pnum(jvol,4) '.nii']);
+            [hd4 d4dum]=rgetnii(warpedfile);
+            if jvol==1 %allocmem
+                d4= zeros([size(d4dum) length(v0)]);
+            end
+            d4(:,:,:,jvol)=d4dum;
+        end
+        rsavenii(fileout,hd4,d4);
         
-        if isfield(z.params,'resolution'); % userdefined resolution (dim/voxsize) for output in native space
-            doreslice=0;
-            %disp('temp: no-reslicing');
+        %clean-UP
+        for jvol=1:length(v0) %4D-data
+            interimfile=fullfile(z.path, ['elx___tobewarped_'  pnum(jvol,4) '.nii']);
+            warpedfile =fullfile(z.path, ['__tobewarped_'  pnum(jvol,4) '.nii']);
+            delete(interimfile);
+            delete(warpedfile);
         end
         
-        if doreslice==1
-            rreslice2target(fileout,fullfile(fileparts(fileout),'t2.nii') , fileout  , 0);
-            %disp('temp: reslicing');
-        end
-    end
-    
-    
-    
+    end % 4D-DATA
     
     %===========================================================================================
     %% change to original resolution
@@ -616,10 +668,10 @@ for i=1:length(z.files)
     % ==============================================
     %%   MESSAGE
     % ===============================================
-
+    
     if 1
         try
-           % disp([pnum(i,4) '] transformed file <a href="matlab: explorerpreselect(''' fileout ''')">' fileout '</a>'  ]);       
+            % disp([pnum(i,4) '] transformed file <a href="matlab: explorerpreselect(''' fileout ''')">' fileout '</a>'  ]);
             fpdir=fileparts(fileout);
             [~,ID, ImgName ]=fileparts(fpdir);
             showinfo2( ['[' pnum(i,4) '][' ID ']--> new image' ] ,fileout ,z.direction) ; drawnow;
@@ -781,8 +833,8 @@ else
         lg{end+1,1}=[ 'mdirs = ' '{' '''' s.path{1} ''''   ];
         dum=cellfun(@(a){[ repmat(' ',1, length(['mdirs = ' '{']) ) '''' a  ''' ' ]}, s.path(2:end));
         dum{end}=[dum{end} '};'];
-         lg=[lg;dum];
-         pathStr='mdirs';
+        lg=[lg;dum];
+        pathStr='mdirs';
     end
 end
 
@@ -807,7 +859,7 @@ end
 interp  =s.interp;
 if length(unique(interp))==1  %same interp used for all files
     interpStr=num2str(unique(interp));
-else   
+else
     lg{end+1,1}= [ 'interp = [' regexprep(num2str(interp),'\W+',' ') '];'];
     interpsStr='interp';
 end
@@ -817,7 +869,7 @@ lg{end+1,1}= ['fis=doelastix(' num2str(s.direction) ', ' pathStr ',' 'files' ','
 
 %
 % ==============================================
-%%   
+%%
 % ===============================================
 
 % lg{end+1,1}= ['fis=doelastix(' num2str(s.direction) ', [],' 'files' ',' interpStr ',''local'' ', paramsStr ');'];
@@ -830,7 +882,7 @@ lg{end+1,1}= ['fis=doelastix(' num2str(s.direction) ', ' pathStr ',' 'files' ','
 % else
 %     lg{end+1,1}=...
 %         ['fis=doelastix(' num2str(s.direction) ', [],' 'files' ',' num2str(s.interpx) ',''local'');'];
-%     
+%
 % end
 
 if 0 % TEST: run it
