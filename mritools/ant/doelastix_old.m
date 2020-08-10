@@ -2,17 +2,11 @@
 %..
 %% #yk doelastix
 % #k calculate transformation, apply transformation to other images
-% input image: calculation: 3d; transformation 3d or 4d
+% input image: calculation: 3d; transformation 3d or 4d 
 % doelastix( direction, path,images,interp,  localtransform ,params)
 % params.resolution: if defined, this parameter specifies the image output resolution.
 %                     - can be triple value of final volume dimension [200 200 50]
 %                     - or tripple of voxel size [.06 .05 .1]
-%                     -if omitted, default target resolution is used
-%                     -nan's can be used...than the respective target resolution is used for that dimension
-%                      example: [.1]  ...same as [.1 .1 .1] voxel-resolution
-%                               [nan .01 nan] ... use orig. target vox.resolution from 1st and 3rd dim and .01 for 2nd dim
-%                               [100] ...same as [100 100 100] image-dimension
-%                               [nan nan 100] ... use orig. target image-dimension from 1st and 2nd dim and 100 for 3rd-dim
 % params.source: either 'intern' or 'extern'
 %                      'intern' or [1] {default}: the image is located in the dat-folder
 %                      - if 'intern': the parameter can be omitted
@@ -387,30 +381,30 @@ return
 
 function out=trafo(z)
 %% check files (cell) and add interpolationMethod
-if ischar(z.files);                            z.files  = cellstr(z.files)                         ;end                                             % cell only
-if isempty(z.interp);                          z.interp = ones(1, length((z.files) ))*3            ; end                        % default interp if empty
-if length(z.files)~=length(z.interp);          z.interp = repmat(z.interp(1),[1 length(z.files)  ]); end   %replicate interp, if one interpvalue given for all files
+if ischar(z.files);                                          z.files  =  cellstr(z.files)   ;end                                             % cell only
+if isempty(z.interp);                                   z.interp=ones(1, length((z.files) ))*3  ; end                        % default interp if empty
+if length(z.files)~=length(z.interp);          z.interp =  repmat(z.interp(1),[1 length(z.files)  ]); end   %replicate interp, if one interpvalue given for all files
 
 
 z.path=char(z.path);
 %% get TRAFOFILE
 if ~isempty(z.path)
-    z.getPathInEachLoop=0;
-    z.trafopath=   fullfile(z.path,z.folder) ;
-    z.trafofile=   dir(fullfile(z.trafopath,'TransformParameters*.txt'));
-    z.trafofile=   fullfile(z.trafopath,z.trafofile(end).name);                                          %the last TRAFOFILE contains all infos
+    getPathInEachLoop=0;
+    trafopath=        fullfile(z.path,z.folder) ;
+    trafofile=          dir(fullfile(trafopath,'TransformParameters*.txt'));
+    trafofile=          fullfile(trafopath,trafofile(end).name);                                          %the last TRAFOFILE contains all infos
 else
-    z.getPathInEachLoop=1;
+    getPathInEachLoop=1;
 end
 
 %% check wether local REORIENT.MAT SHOULD BE JUSED (z.m='local')
 %% use local Reorient.mat
 if isstr(z.M) && ~isempty(z.M)
     if            strcmp(z.M,'local')
-        z.getReorientmatInEachLoop=1; %load in each ImageLoop
+        getReorientmatInEachLoop=1; %load in each ImageLoop
     end
 else
-    z.getReorientmatInEachLoop=0;
+    getReorientmatInEachLoop=0;
 end
 
 % makebatchTrafo(z)
@@ -420,15 +414,15 @@ for i=1:length(z.files)
     filename=z.files{i};
     
     %% use local path
-    if z.getPathInEachLoop==1;
-        z.path   = fileparts(filename);
-        z.trafopath= fullfile(z.path,z.folder) ;
-        z.trafofile= dir(fullfile(z.trafopath,'TransformParameters*.txt'));
-        z.trafofile= fullfile(z.trafopath,z.trafofile(end).name);                                          %the last TRAFOFILE contains all infos
+    if getPathInEachLoop==1;
+        z.path=fileparts(filename);
+        trafopath=        fullfile(z.path,z.folder) ;
+        trafofile=          dir(fullfile(trafopath,'TransformParameters*.txt'));
+        trafofile=          fullfile(trafopath,trafofile(end).name);                                          %the last TRAFOFILE contains all infos
     end
     
     %% load the local Reorient.mat
-    if z.getReorientmatInEachLoop==1
+    if getReorientmatInEachLoop==1
         Mpath=fullfile(z.path,'reorient.mat');
         if exist(Mpath)==2
             load(Mpath);
@@ -463,105 +457,218 @@ for i=1:length(z.files)
     
     
     if v.dt(1)<=100%32
-        set_ix(z.trafofile,'FixedInternalImagePixelType','float');
-        set_ix(z.trafofile,'MovingInternalImagePixelType','float');
-        set_ix(z.trafofile,'ResultImagePixelType','float');
+        set_ix(trafofile,'FixedInternalImagePixelType','float');
+        set_ix(trafofile,'MovingInternalImagePixelType','float');
+        set_ix(trafofile,'ResultImagePixelType','float');
     else
-        set_ix(z.trafofile,'FixedInternalImagePixelType','short');
-        set_ix(z.trafofile,'MovingInternalImagePixelType','short');
-        set_ix(z.trafofile,'ResultImagePixelType','float');
+        set_ix(trafofile,'FixedInternalImagePixelType','short');
+        set_ix(trafofile,'MovingInternalImagePixelType','short');
+        set_ix(trafofile,'ResultImagePixelType','float');
     end
     
     %===========================================================================================
     %% change resolution
-%     if isfield(z.params,'resolution')
-%         res={};
-%         res.size  = get_ix(z.trafofile,'Size');
-%         res.space = get_ix(z.trafofile,'Spacing');
-%         res.input=z.params.resolution;
-%         if sum(z.params.resolution>2)==3  % dims where given
-%             res.spaceNew =(res.size./res.input).*res.space;
-%             res.sizeNew =res.input;
-%         else  %voxelsize
-%             
-%             res.sizeNew =round((res.space./res.input).*res.size);
-%             res.spaceNew =res.input;
-%         end
-%         
-%         set_ix(z.trafofile,'Size'   , res.sizeNew );
-%         set_ix(z.trafofile,'Spacing', res.spaceNew );
-%     end
+    if isfield(z.params,'resolution')
+        res={};
+        res.size  = get_ix(trafofile,'Size');
+        res.space = get_ix(trafofile,'Spacing');
+        res.input=z.params.resolution;
+        if sum(z.params.resolution>2)==3  % dims where given
+            res.spaceNew =(res.size./res.input).*res.space;
+            res.sizeNew =res.input;
+        else  %voxelsize
+            
+            res.sizeNew =round((res.space./res.input).*res.size);
+            res.spaceNew =res.input;
+        end
+        
+        set_ix(trafofile,'Size'   , res.sizeNew );
+        set_ix(trafofile,'Spacing', res.spaceNew );
+    end
     %===========================================================================================
     
-    
-    % ==============================================
-    %%    %% TRANSFORM VOLUME INNER LOOP 3d/4d-DATA
-    % ===============================================
-    
-    %% BUG: calculation and tranformation on DIFFERENT machines !!!!!!
-    if 1
-        initrafoParamFN=   get_ix(z.trafofile,'InitialTransformParametersFileName');
-        [pas fis exs]=fileparts(initrafoParamFN);
-        if strcmp(exs,'.txt')==1
-            initrafoParamFN_neu=fullfile(z.trafopath, [fis exs]);
-            set_ix(z.trafofile,'InitialTransformParametersFileName',initrafoParamFN_neu);
+    %———————————————————————————————————————————————
+    %%  run over 4d data
+    %———————————————————————————————————————————————
+    for jvol=1:length(v0)
+        
+        %% work on templatefile, which is renamed after trafo
+        if length(v0)==1 %3D
+            tempfile0=fullfile(z.path, '__tobewarped.nii' );% WE WORK ON THIS
+            copyfile(filename,tempfile0,'f'); %
+        else
+           tempfile0=fullfile(z.path, ['__tobewarped_'  pnum(jvol,4) '.nii'] );% WE WORK ON THIS
+           delete(tempfile0)
+           if jvol==1 %load data once
+               [hx x]=rgetnii(filename);
+           end
+           rsavenii(tempfile0,hx(1),x(:,:,:,jvol));
         end
-    end
-    
-    
-    
-    if z.interp(i)==-1 %TPMs -->between 0 and 1   ...ALTERNATIVE FOR 0-1-RANGE-DATA
-        set_ix(z.trafofile,'FinalBSplineInterpolationOrder',    3);
-    else
-        set_ix(z.trafofile,'FinalBSplineInterpolationOrder',    z.interp(i));        
-    end
-    
-    
-    if length(v0)==1
-        for jvol=1:length(v0)
-            transformVolume(  filename,i, jvol, v0, z);
-        end %4d
-    else
-        parfor jvol=1:length(v0)
-            transformVolume(  filename,i, jvol, v0, z);
-        end %4d
-    end
-    
-    
-    
-    
-    %===========================================================================================
-    
-    [pas fis ext]=fileparts(filename); %RENAME FILE
-    fileout=fullfile(z.path, [z.prefix fis ext]);
-    for jvol=1:length(v0) %4D-data
-        warpedfile=fullfile(z.path,[z.folder],[ 'trans_' pnum(jvol,4)], 'elx___tobewarped.nii');
-        [hd4 d4dum]=rgetnii(warpedfile);
-        if jvol==1 %allocmem
-            d4= zeros([size(d4dum) length(v0)]);
+        
+        
+        if z.direction==1 & ~isempty(z.M)  %apply TRAFO in FORWARD-DIR
+            v=  spm_vol(tempfile0);
+            spm_get_space(tempfile0,      inv(z.M) * v.mat);
         end
-        d4(:,:,:,jvol)=d4dum;
-    end
-    try; delete(fileout); end
-    rsavenii(fileout,hd4,d4,v.dt);
-    %clean-UP
-    for jvol=1:length(v0) %4D-data
-        warpfolder=fullfile(z.path,[z.folder],[ 'trans_' pnum(jvol,4)]);
-        try;
-            rmdir(warpfolder,'s');
+        
+        
+        %% —————————————————————————————————————————————————————————————————————————————————————————————————
+        %%    set size of IMAGE
+        %     if z.direction==   -1
+        % %         hh=spm_vol(fullfile(z.path,'t2.nii'));
+        % %         disp(['  check dim inverse: ' num2str(hh.dim)]);
+        % %         set_ix(trafofile,'Size',    hh.dim);
+        %     elseif z.direction==1
+        %         hh=spm_vol(fullfile(z.path,'_refIMG.nii')); %(Size 172 215 115)
+        %         disp(['  check dim forward: ' num2str(hh.dim)]);
+        %         set_ix(trafofile,'Size',    hh.dim);
+        %     end
+        %% —————————————————————————————————————————————————————————————————————————————————————————————————
+        %     edit(trafofile)
+        
+        
+        if z.interp(i)==-1 %TPMs -->between 0 and 1   ...ALTERNATIVE FOR 0-1-RANGE-DATA
+            [ha  a]=rgetnii( tempfile0);
+            range1=[min(a(:))  max(a(:))];
+            dt=ha.dt;
+            pinfo=ha.pinfo;
+            ha.dt=[16 0];
+            a=a.*10000;
+            tempfile=fullfile( z.path,['_elxTemp.nii']);
+            rsavenii(tempfile,  ha,a );
+            
+            
+            set_ix(trafofile,'FinalBSplineInterpolationOrder',    3);
+            % [im4,tr4] =        run_transformix(  tempfile ,[],trafofile,   z.path ,'');
+            [~,im4,tr4]=evalc('run_transformix(  tempfile ,[],trafofile,   z.path ,'''')');
+            
+            %% set original range
+            [hb  b]=rgetnii( im4);
+            b2=b./10000;
+            [pas fis ext]=fileparts(filename);
+            fileout=fullfile(z.path, [ z.prefix  fis ext ]);
+            %newfile=stradd(z.files{i},  z.prefix ,1 );
+            rsavenii(fileout,  hb,b2 );
+            try; delete(tempfile);end
+            try; delete(im4);       end
+            
+            
+        else  %% USE ELASTIX INTERPOLATION
+            
+            %% ANO-check inverse-->problem with precission, since values are to large
+            [~, fi,ext]=fileparts(filename);
+            if strcmp([fi ext],'ANO.nii') && z.interp(i)==0
+                [dx dc]=rgetnii(tempfile0);
+                uni=unique(dc);
+                il=find(uni>1e6);
+                maxval=uni(min(il)-1);
+                valtrans=[uni(il)  [20000+[1:length(il)]]'   ];
+                
+                for j=1:size(valtrans,1)
+                    dc(dc==valtrans(j,1))=valtrans(j,2);
+                end
+                rsavenii(tempfile0,dx,dc);
+            end
+            
+            
+            
+            %set_ix(trafofile,'ResultImagePixelType',    'float'); %'float' is default -->for ALLEN
+            set_ix(trafofile,'FinalBSplineInterpolationOrder',    z.interp(i));
+            
+            %% BUG: calculation and tranformation on DIFFERENT machines !!!!!!
+            if 1
+                initrafoParamFN=   get_ix(trafofile,'InitialTransformParametersFileName');
+                [pas fis exs]=fileparts(initrafoParamFN);
+                if strcmp(exs,'.txt')==1
+                    initrafoParamFN_neu=fullfile(trafopath, [fis exs]);
+                    set_ix(trafofile,'InitialTransformParametersFileName',initrafoParamFN_neu);
+                end
+            end
+            
+            % [im4,tr4] =       run_transformix(  tempfile0 ,[],trafofile, z.path ,'');
+            [~,im4,tr4]=evalc('run_transformix(  tempfile0 ,[],trafofile, z.path ,'''')');
+            
+            if strcmp([fi ext],'ANO.nii') && z.interp(i)==0
+                [dx dc]=rgetnii(im4);
+                for j=1:size(valtrans,1)
+                    dc(dc==valtrans(j,2))=valtrans(j,1);
+                end
+                rsavenii(im4,dx,dc,[64 0]);
+            end
+            
+            
+            
+            
+            if length(v0)==1 %3D
+                [pas fis ext]=fileparts(filename); %RENAME FILE
+                fileout=fullfile(z.path, [z.prefix fis ext]) ;
+                movefile(im4,fileout   );
+            else
+                fileout=im4;
+            end
         end
-    end
-    %     end
+        
+        %     if z.direction==-1 && ~isempty(z.M)  %apply TRAFO in BACKWARD-DIR
+        %         v=  spm_vol(fileout);
+        %         spm_get_space(fileout,      (z.M) * v.mat);
+        %         rreslice2target(fileout,fullfile(fileparts(fileout),'t2.nii') , fileout  , 0);
+        %     end
+        
+        if z.direction==-1 && ~isempty(z.M)  %apply TRAFO in BACKWARD-DIR
+            v=  spm_vol(fileout);
+            spm_get_space(fileout,      (z.M) * v.mat);
+            doreslice=1;
+            
+            if isfield(z.params,'resolution'); % userdefined resolution (dim/voxsize) for output in native space
+                doreslice=0;
+                %disp('temp: no-reslicing');
+            end
+            
+            if doreslice==1
+                rreslice2target(fileout,fullfile(fileparts(fileout),'t2.nii') , fileout  , 0);
+                %disp('temp: reslicing');
+            end
+        end
+        
+        
+    end %4d-volume
+    
+    
+    if length(v0)>1 % 4D-DATA
+        [pas fis ext]=fileparts(filename); %RENAME FILE
+        fileout=fullfile(z.path, [z.prefix fis ext]);
+        for jvol=1:length(v0) %4D-data
+            warpedfile=fullfile(z.path, ['elx___tobewarped_'  pnum(jvol,4) '.nii']);
+            [hd4 d4dum]=rgetnii(warpedfile);
+            if jvol==1 %allocmem
+                d4= zeros([size(d4dum) length(v0)]);
+            end
+            d4(:,:,:,jvol)=d4dum;
+        end
+        rsavenii(fileout,hd4,d4);
+        
+        %clean-UP
+        for jvol=1:length(v0) %4D-data
+            interimfile=fullfile(z.path, ['elx___tobewarped_'  pnum(jvol,4) '.nii']);
+            warpedfile =fullfile(z.path, ['__tobewarped_'  pnum(jvol,4) '.nii']);
+            delete(interimfile);
+            delete(warpedfile);
+        end
+        
+    end % 4D-DATA
+    
     %===========================================================================================
     %% change to original resolution
-%     if isfield(z.params,'resolution')
-%         set_ix(z.trafofile,'Size'   , res.size   );
-%         set_ix(z.trafofile,'Spacing', res.space  );
-%     end
+    if isfield(z.params,'resolution')
+        set_ix(trafofile,'Size'   , res.size   );
+        set_ix(trafofile,'Spacing', res.space  );
+    end
     %===========================================================================================
+    
     % ==============================================
     %%   MESSAGE
     % ===============================================
+    
     if 1
         try
             % disp([pnum(i,4) '] transformed file <a href="matlab: explorerpreselect(''' fileout ''')">' fileout '</a>'  ]);
@@ -570,208 +677,17 @@ for i=1:length(z.files)
             showinfo2( ['[' pnum(i,4) '][' ID ']--> new image' ] ,fileout ,z.direction) ; drawnow;
         end
     end
+    
+    
     out{i,1}=fileout;
+    
 end% files
+
+
+
 %clean up
 try; delete(tempfile0);end
 try; delete(fullfile(z.path,'transformix.log'));end
-
-
-
-
-
-
-
-
-
-%% ################################################################################
-% transform volume, inner loop (3d/4d)--parfor
-%% ################################################################################
-function transformVolume(  filename,i, jvol, v0, z)
-
-
-
-
-%———————————————————————————————————————————————
-%%  run over 4d data
-%———————————————————————————————————————————————
-
-%% work on templatefile, which is renamed after trafo
-% if length(v0)==1 %3D
-%     tempfile0=fullfile(z.path, '__tobewarped.nii' );% WE WORK ON THIS
-%     copyfile(filename,tempfile0,'f'); %
-%     trafofile=z.trafofile;
-%     tpath=z.path;
-% else
-try; rmdir(tpath,'s'); end
-tpath=fullfile(z.path, z.folder, ['trans_' pnum(jvol,4)] );
-mkdir(tpath);
-tempfile0=fullfile(tpath, ['__tobewarped'  '.nii'] );% WE WORK ON THIS
-delete(tempfile0);
-%         if jvol==1 %load data once
-%             [hx x]=rgetnii(filename,jvol);
-%         end
-%         rsavenii(tempfile0,hx(1),x(:,:,:,jvol));
-
-[hx x]=rgetnii(filename,jvol);
-% if hx.dt(1)==2
-%     hx.dt(1)=64;
-% end
-rsavenii(tempfile0,hx(1),x);
-
-% trafofile
-[pa fis ext]=fileparts(z.trafofile);
-trafofile=fullfile(tpath,[regexprep(fis,'TransformParameters',['temptrafo'  ])  '.txt']);
-copyfile(z.trafofile, trafofile,'f');
-
-z.afftrafo=strrep(z.trafofile,'.1.txt','.0.txt');
-if exist(z.afftrafo)==2
-    [pa fis ext]=fileparts(z.afftrafo) ;
-    afftrafo=fullfile(tpath,[regexprep(fis,'TransformParameters',['temptrafo'  ])  '.txt']);
-    copyfile(z.afftrafo, afftrafo,'f');
-    set_ix(trafofile, 'InitialTransformParametersFileName',afftrafo)
-end
-
-
-if isfield(z.params,'resolution')
-    res={};
-    res.size  = get_ix(trafofile,'Size');
-    res.space = get_ix(trafofile,'Spacing');
-    res.input=z.params.resolution;
-    
-    changeResolution=0;
-    if sum(isnan(z.params.resolution)==1)==3 % "triple-NANs" [nan nan nan]-value
-        changeResolution=0;
-    elseif sum(isnan(z.params.resolution)==1)>=0 && length(z.params.resolution)==3  % one or two nans
-        changeResolution=1;  
-    elseif sum(isnan(z.params.resolution)==1)==0 && length(z.params.resolution)==1 % single-no-NAN-value
-        changeResolution=1;  
-    end
-    if  sum(isnan(z.params.resolution)==1)==1 && length(z.params.resolution)==1 ;% [nan]-value
-        changeResolution=0;
-    end
-    
-    if changeResolution==1
-        res.input=z.params.resolution;
-        if length(res.input)<3
-            res.input=repmat(res.input(1),[1 3]);
-        end
-        nanIDX=(isnan(res.input));
-        
-        if max(z.params.resolution)>20 % sum(z.params.resolution>2)==3  % DIMS  given
-            res.input(nanIDX)=res.size(nanIDX);
-            res.spaceNew =(res.size./res.input).*res.space;
-            res.sizeNew =res.input;
-        else                                 %voxelsize
-            res.input(nanIDX)=res.space(nanIDX);
-            res.sizeNew =round((res.space./res.input).*res.size);
-            res.spaceNew =res.input;
-        end
-        
-        set_ix(trafofile,'Size'   , res.sizeNew );
-        set_ix(trafofile,'Spacing', res.spaceNew );
-    end
-end
-
-
-
-
-
-if z.direction==1 && ~isempty(z.M)  %apply TRAFO in FORWARD-DIR
-    v=  spm_vol(tempfile0);
-    spm_get_space(tempfile0,      inv(z.M) * v.mat);
-end
-
-%% —————————————————————————————————————————————————————————————————————————————————————————————————
-%%    set size of IMAGE
-%     if z.direction==   -1
-% %         hh=spm_vol(fullfile(z.path,'t2.nii'));
-% %         disp(['  check dim inverse: ' num2str(hh.dim)]);
-% %         set_ix(trafofile,'Size',    hh.dim);
-%     elseif z.direction==1
-%         hh=spm_vol(fullfile(z.path,'_refIMG.nii')); %(Size 172 215 115)
-%         disp(['  check dim forward: ' num2str(hh.dim)]);
-%         set_ix(trafofile,'Size',    hh.dim);
-%     end
-%% —————————————————————————————————————————————————————————————————————————————————————————————————
-%     edit(trafofile)
-
-
-if z.interp(i)==-1 %TPMs -->between 0 and 1   ...ALTERNATIVE FOR 0-1-RANGE-DATA
-    [ha  a]=rgetnii( tempfile0);
-    range1=[min(a(:))  max(a(:))];
-    dt=ha.dt;
-    pinfo=ha.pinfo;
-    ha.dt=[16 0];
-    a=a.*10000;
-    tempfile=fullfile( tpath,['_elxTemp.nii']);
-    rsavenii(tempfile,  ha,a );
-    
-    
-    % set_ix(z.trafofile,'FinalBSplineInterpolationOrder',    3);
-    % [im4,tr4] =        run_transformix(  tempfile ,[],trafofile,   z.path ,'');
-    [~,im4,tr4]=evalc('run_transformix(  tempfile ,[],trafofile,   tpath ,'''')');
-    
-    %% set original range
-    [hb  b]=rgetnii( im4);
-    b2=b./10000;
-    %     [pas fis ext]=fileparts(tempfile);
-    fileout=fullfile(tpath, [ 'elx___tobewarped.nii']);
-    %newfile=stradd(z.files{i},  z.prefix ,1 );
-    rsavenii(fileout,  hb,b2 );
-    try; delete(tempfile);end
-    try; delete(im4);       end
-else  %% USE ELASTIX INTERPOLATION
-    
-    %% ANO-check inverse-->problem with precission, since values are to large
-    [~, fi,ext]=fileparts(filename);
-    if strcmp([fi ext],'ANO.nii') && z.interp(i)==0
-        [dx dc]=rgetnii(tempfile0);
-        uni=unique(dc);
-        il=find(uni>1e6);
-        maxval=uni(min(il)-1);
-        valtrans=[uni(il)  [20000+[1:length(il)]]'   ];
-        
-        for j=1:size(valtrans,1)
-            dc(dc==valtrans(j,1))=valtrans(j,2);
-        end
-        rsavenii(tempfile0,dx,dc);
-    end
-    
-    % [im4,tr4] =       run_transformix(  tempfile0 ,[],trafofile, z.path ,'');
-    [~,im4,tr4]=evalc('run_transformix(  tempfile0 ,[],trafofile, tpath ,'''')');  
-    if strcmp([fi ext],'ANO.nii') && z.interp(i)==0
-        [dx dc]=rgetnii(im4);
-        for j=1:size(valtrans,1)
-            dc(dc==valtrans(j,2))=valtrans(j,1);
-        end
-        rsavenii(im4,dx,dc,[64 0]);
-    end
-    fileout=im4;
-end
-
-if z.direction==-1 && ~isempty(z.M)  % TRAFO in BACKWARD-DIR
-    v=  spm_vol(fileout);
-    spm_get_space(fileout,      (z.M) * v.mat);
-    doreslice=1;
-    
-    if isfield(z.params,'resolution'); % userdefined resolution (dim/voxsize) for output in native space
-        doreslice=0;
-        %disp('temp: no-reslicing');
-    end
-    
-    if doreslice==1
-        rreslice2target(fileout,fullfile(z.path,'t2.nii') , fileout  , 0);
-        %disp('temp: reslicing');
-    end
-end
-
-
-
-
-
-
-
 
 %% ################################################################################
 

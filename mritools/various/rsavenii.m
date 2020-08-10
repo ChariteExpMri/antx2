@@ -27,6 +27,9 @@ if ndims(d)==3
     if exist('dt')==1 && length(dt)==2
         h.dt=dt;
     end
+     try; h=rmfield(h,'pinfo'); end
+     try; h=rmfield(h,'private');end
+    
     h=spm_create_vol(h);
     h=spm_write_vol(h,  d);
     filenameout=h.fname;
@@ -37,6 +40,13 @@ else % 4d-data
         dum       = h(1);
         dum.n     = [k 1];
         dum.fname =fullfile(pa,[ fi  ext]);
+        
+        if exist('dt')==1 && length(dt)==2
+            dum.dt=dt;
+        end
+        try; dum=rmfield(dum,'pinfo'); end
+        try; dum=rmfield(dum,'private');end
+        
         
         hh2(k,1)=dum;
         if k==1
