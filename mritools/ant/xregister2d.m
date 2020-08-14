@@ -152,6 +152,7 @@ p=paramadd(p,x);%add/replace parameter
 if showgui==1
     [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .5 .35 ],...
         'title','PARAMETERS: replaceheader','info',{@uhelp, 'xregister2d.m'});
+    if isempty(m); return; end
     fn=fieldnames(z);
     z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
 else

@@ -81,6 +81,33 @@ else
     rot=p.rot;
 end
 
+% check files
+filesOK=1;
+if isempty(p.ref)
+    filesOK=0;
+end
+if isempty(p.img)
+    filesOK=0;
+end
+
+if filesOK==0
+    %% this
+    errlog=[ 'examine orientation[' mfilename '.m] aborted..' char(10)...
+        'PROBLEM: source and reference image must be specified' char(10) ...
+        'SOLUTION:' char(10) ...
+        '  1) Check existence of the "templates"-folder in the study-folder.' char(10)...
+        '     otherwise: create templates (MAIN/create study templates)' char(10)...
+        '     The "AVGT.nii" image in the "templates"-folder is the reference-image per default.. thus, there is no need to specify the reference image.'  char(10)...
+        '  2) Select the proper source image (ie. a structural image such as "t2.nii").' char(10)...
+        ];
+   error(errlog ) ;
+   %% this end
+   id='';
+   rotstring='';
+   return
+end
+
+
 % ================================================================
 %% temporary 
 % if 0
