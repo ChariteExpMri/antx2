@@ -303,6 +303,9 @@ elseif find(task==10)
     [t t2]=initialize(z,pa);
     do_coregister(t2,z,'centering_only');
 elseif find(task==100)
+     if z.warping==0 % makes only sense if this is true
+        z.warping=1;
+     end
     [t t2]=initialize(z,pa);
     do_coregister(t2,z,'noSPMregistration');
 end

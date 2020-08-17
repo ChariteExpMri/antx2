@@ -687,7 +687,6 @@ set(gcf,'Resizefcn',@resizefun);%32-always,31-needed,30-depends
 try
     set(us.jCodePane, 'KeyPressedCallback',@keypress);
 end
-set(us.jCodePane,'MouseReleasedCallback',@mouseReleased);
 
 drawnow;
 set(gcf,'visible','on');  % #rp1
@@ -696,7 +695,7 @@ set(gcf,'visible','on');  % #rp1
 
 
 % us.jCodePane.setCaretPosition(1); %pos-1
-% us.jCodePane.requestFocus(); %set focus
+us.jCodePane.requestFocus(); %set focus
 
 % ==============================================
 %%    show all icons
@@ -775,28 +774,9 @@ set(gcf,'position',[posfig]); drawnow;
 
 us.origfigposition=get(gcf,'position');
 set(gcf,'userdata',us);  
-
-
-
-%% MORE-BUTTON
-pm=uicontrol('style','togglebutton',  'value',0,     'tag','pbmore',    'string',':','units','normalized',...
-    'position',[.12 -.005 .05 .045]);
-set(pm,'position',[.95 -.005 .025 .04]);
-set(pm,'units','pixels','callback',@morepanel,...
-    'TooltipString',['..show menu'],'backgroundcolor','w');%[.01 .93 .1 .04]
-
-hrun=findobj(gcf,'style','pushbutton','tag','pb1');
-posr=get(hrun,'position');
-
-set(gcf,'units','pixels');
-fpix=get(gcf,'position');
-set(gcf,'units','norm');
-% set(pm,'string','hallo')
-set(pm,'position',[fpix(3)-posr(3)/2 0 posr(3)/5.5 posr(4) ]);
-
 % drawnow;
 prepicon();
-% drawnow;
+drawnow;
 
 
 % if 1 %%TEST-number-of-ICONS
@@ -834,18 +814,38 @@ if us.mimic_oldstyle==1 ;% OLD single-icon STYLE
         set(r(1),'position',posini);
     end
 end
-% resizefun();
+resizefun();
 updateIconposition();drawnow;
-% us.jCodePane.setCaretPosition(1); %pos-1
-% us.jCodePane.requestFocus();
+us.jCodePane.setCaretPosition(1); %pos-1
+us.jCodePane.requestFocus();
+
+% 
+% us.jCodePane.setCaretPosition(1);
+
+
+%% MORE-BUTTON
+pm=uicontrol('style','togglebutton',  'value',0,     'tag','pbmore',    'string',':','units','normalized',...
+    'position',[.12 -.005 .05 .045]);
+set(pm,'position',[.95 -.005 .025 .04]);
+set(pm,'units','pixels','callback',@morepanel,...
+    'TooltipString',['..show menu'],'backgroundcolor','w');%[.01 .93 .1 .04]
+
+hrun=findobj(gcf,'style','pushbutton','tag','pb1');
+posr=get(hrun,'position');
+
+set(gcf,'units','pixels');
+fpix=get(gcf,'position');
+set(gcf,'units','norm');
+% set(pm,'string','hallo')
+set(pm,'position',[fpix(3)-posr(3)/2 0 posr(3)/5.5 posr(4) ]);
+
+drawnow;
 us.jCodePane.setCaretPosition(1); %pos-1
 us.jCodePane.requestFocus();
 
 posx=get(gcf,'position');
 set(gcf,'position',[posx(1:3) posx(4)+.001]);
 
-
-highlightSelectedIcon();
 % ==============================================
 %%   uiwait
 % ===============================================
@@ -1374,53 +1374,6 @@ else
     uhelp(info(:),1,'position',[.75 .5 .25 .4]);
 end
 
-
-
-function highlightSelectedIcon()
-try
-    us=get(gcf,'userdata');
-    %    get line
-    lastcurpos=us.jCodePane.getCaretPosition;
-    linenum=us.jCodePane.getLineFromPos(lastcurpos);
-    txcurrline=char(us.jCodePane.getLineText(linenum));
-    
-    r=findobj(gcf,'style','pushbutton');
-    iicons=[];
-    for i=1:length(r)
-        try
-            if strcmp(func2str(r(i).Callback),'pbcb')
-                iicons=[iicons i];
-            end
-        end
-    end
-    r=r(iicons);
-    
-    userdat=get(r,'userdata');
-    currvarname=regexprep(txcurrline,'\s*=.*','');
-    ibut=find(strcmp(userdat,currvarname)); %this button
-    hp=r(ibut);
-    
-   
-    if isfield(us,'selectedbutton')
-        hdesel=us.selectedbutton;
-        set(hdesel,'cdata',getappdata(hdesel,'icondef'));
-    else
-         hdesel=setdiff(r,hp);
-        for i=1:length(hdesel) % unselect
-            set(hdesel(i),'cdata',getappdata(hdesel(i),'icondef'));
-        end
-    end
-    
-    set(hp,'cdata',getappdata(hp,'iconsel'));
-    
-    us.selectedbutton=hp;
-    set(gcf,'userdata',us);
-    %drawnow;
-end
-
-function mouseReleased(e,e2)
-highlightSelectedIcon();
-
 function keypress(jEditbox, eventData)
 % The following comments refer to the case of Alt-Shift-b
 keyChar = get(eventData,'KeyChar');  % or: eventData.getKeyChar  ==> 'B'
@@ -1438,7 +1391,7 @@ modifiersDescription = char(eventData.getKeyModifiersText(modifiers));  % ==> 'A
 
 e=eventData;
 
-% e
+
 % arror-scroll
 if get(e,'KeyCode') ==40 || get(e,'KeyCode') ==38 % [40]down-arrow,[38]up-arrow
     % 'down'
@@ -1453,7 +1406,6 @@ if get(e,'KeyCode') ==40 || get(e,'KeyCode') ==38 % [40]down-arrow,[38]up-arrow
         us.lastYscroll=scroll;
         set(gcf,'userdata',us);
     end
-    highlightSelectedIcon();
     
 %     
 % elseif get(e,'KeyCode') ==38 % up-arrow
@@ -1463,18 +1415,8 @@ if get(e,'KeyCode') ==40 || get(e,'KeyCode') ==38 % [40]down-arrow,[38]up-arrow
 %     %       linum=us.jCodePane.getLineFromPos(us.jCodePane.getCaretPosition);
 %     updateIconposition();
 %     us.jCodePane.setCaretPosition(pos);
-%     return
+    
 end
-
-% if get(e,'KeyCode') ==10  %enter(10)
-%     updateIconposition();
-%     highlightSelectedIcon();
-%     return
-% end
-% if get(e,'KeyCode') ==8  %backspace(8)
-%     updateIconposition();
-%     return
-% end
 
 % if strcmp(get(e,'KeyChar'),'p')  %preferences
 if get(e,'ControlDown')==1 && get(e,'KeyCode') ==80 % 'p' 
@@ -1488,7 +1430,6 @@ end
 if (get(e,'MetaDown')==1 && get(e,'KeyCode') ==39)  ||...  % 'right-arrow' --> autowidth
    ( get(e,'ControlDown')==1 && get(e,'KeyCode') ==39)
     autowidth();
-    highlightSelectedIcon();
     return
      %get(e,'KeyCode')
 end
@@ -1496,8 +1437,7 @@ end
 
 if (get(e,'MetaDown')==1     && get(e,'KeyCode') ==40)  ||...  % 'down-arrow' --> autoHeight
    ( get(e,'ControlDown')==1 && get(e,'KeyCode') ==40)
-    autoheight();
-    highlightSelectedIcon();
+    autoheight()
     return
      %get(e,'KeyCode')
 end
@@ -1506,7 +1446,6 @@ if (get(e,'MetaDown')==1 && get(e,'KeyCode') ==38)  ||...  % 'up-arrow' --> last
         ( get(e,'ControlDown')==1 && get(e,'KeyCode') ==38)
     us=get(gcf,'userdata');
     set(gcf,'position',us.origfigposition);
-    highlightSelectedIcon();
     return
     %get(e,'KeyCode')
 end
@@ -1514,7 +1453,6 @@ if (get(e,'MetaDown')==1 && get(e,'KeyCode') ==37)  ||...  % 'left-arrow' --> au
         ( get(e,'ControlDown')==1 && get(e,'KeyCode') ==37)
     us=get(gcf,'userdata');
     set(gcf,'position',us.lastfigposition);
-    highlightSelectedIcon();
     return
     %get(e,'KeyCode')
 end
@@ -1796,7 +1734,7 @@ set(us.jhPanel,'MouseWheelMovedCallback',@mousescroll);
 
 us.scroll=scroll;
 set(gcf,'userdata',us);
-highlightSelectedIcon();
+
 return
 
 
@@ -2105,9 +2043,6 @@ end
 set(r(iuse),'visible','on');
 set(r(inotuse),'visible','off');
 
-
-% setappdata(p,'iconsel',es);
-
 % us.jCodePane.setCaretPosition(lastcurpos);
 
 % us.jCodePane.setCaretPosition(lastcurpos);
@@ -2339,20 +2274,6 @@ for i=1:length(tb)
         
         set(p,'cdata',e);
         
-        if 1  %create SELECTION-icon
-            
-            %selcol=[0.4706    0.6706    0.1882];%darkgreen
-            %selcol=[1 1 0];%yellow
-            %selcol=[0 0 1];%blue
-            selcol=[ 0.3020    0.7490    0.9294];%lightblue ##
-            %selcol=[ 1 1 1];%whith
-            %selcol=[ 1 0 0];%red
-            %selcol=[1 0 1];%margenta
-            es= repmat(permute(selcol,[3 1 2]),[size(e,1) size(e,2) 1]);
-            es(4:end-3,4:end-3,:)=e(4:end-3,4:end-3,:);
-            setappdata(p,'iconsel',es);
-            setappdata(p,'icondef',e);
-        end
     end
 end
 
@@ -2402,13 +2323,7 @@ y0=height/2;
 try
     [icon tooltip varnamefull]=getIcon;
 catch
-    try
-        if us.mimic_oldstyle==1
-            set(us.selectedbutton,'visible','off');
-        end
-    end
     return
-    
 end
 if isempty(icon); return; end
 screen=get(0,'MonitorPositions');
@@ -2457,7 +2372,6 @@ if isempty(p)
         e(e<=0.01)=nan;
     end
     set(p,'cdata',e);
-    disp(size(e));
     
 else
     set(p,'position',[0 y0+(29/4)-(i*29/2)-(yd/2)/3+scroll yd/2 yd/2 ]);
@@ -2522,34 +2436,8 @@ end
 
 delete(findobj(gcf,'tag','pulldown'));
 
-
-%% highlight selected icon
-if 0
-    
-    r=findobj(gcf,'style','pushbutton');
-    iicons=[];
-    for i=1:length(r)
-        try
-            if strcmp(func2str(r(i).Callback),'pbcb')
-                iicons=[iicons i];
-            end
-        end
-    end
-    r=r(iicons);
-    hdesel=setdiff(r,p);
-    
-    for i=1:length(hdesel) % unselect
-        set(hdesel(i),'cdata',getappdata(hdesel(i),'icondef'));
-    end
-    set(p,'cdata',getappdata(p,'iconsel'));
-    
-end
-
-
-
-
 if us.mimic_oldstyle==1
-    set(p,'visible','on');
+    set(p,'visible','on')
     
     r=findobj(gcf,'style','pushbutton');
     iicons=[];
@@ -2564,11 +2452,6 @@ if us.mimic_oldstyle==1
     set(setdiff(r,p),'visible','off');
 
 end
-
-%% show selected icons
-% 'a'
-% setappdata(p,'iconsel',es);
-
 
 
 
@@ -2805,13 +2688,10 @@ hgfeval(r2)
 %paul
 
 function pbcb(h,e)% ICON CLICKED
-
-
 drawnow;
 us=get(gcf,'userdata');
 r=us.jCodePane;
 tx=char(r.getText);
-
 
 % posvar=strfind(tx,get(h,'userdata'));
 posvar=regexpi(tx,[ get(h,'userdata') '\s*=' ]);
@@ -2824,7 +2704,6 @@ val=r.getLineFromPos(r.getCaretPosition())+1;
 % carpos=r.getLineFromPos(r.getCaretPosition())
 carpos=r.getCaretPosition();
 
-highlightSelectedIcon();
 %tx modiic
 ict=[0 strfind(tx,char(10)) length(tx) ];
 tx2={};
@@ -3515,11 +3394,10 @@ updatehistory();
 us.jCodePane.requestFocus();
 
 function resizefun(he,e)
-
+% clc
 
 set(gcf,'Resizefcn',[]);%32-always,31-needed,30-depends
-us=get(gcf,'userdata');
-curpos2=us.jCodePane.getCaretPosition;
+
 
 r=findobj(gcf,'style','pushbutton');
 iicons=[];
@@ -3698,8 +3576,7 @@ end
 try
     updateIconposition(); %drawnow;
 end
-us.jCodePane.setCaretPosition(curpos2);
-highlightSelectedIcon();
+
 
 %
 %
