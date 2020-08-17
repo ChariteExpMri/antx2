@@ -839,6 +839,12 @@ set(gcf,'units','norm');
 % set(pm,'string','hallo')
 set(pm,'position',[fpix(3)-posr(3)/2 0 posr(3)/5.5 posr(4) ]);
 
+drawnow;
+us.jCodePane.setCaretPosition(1); %pos-1
+us.jCodePane.requestFocus();
+
+
+
 % ==============================================
 %%   uiwait
 % ===============================================
