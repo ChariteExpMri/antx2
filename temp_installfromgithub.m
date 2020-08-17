@@ -470,11 +470,8 @@ if updatecode==5 %hard reset
     %     git reset --hard HEAD;
     %     git init
     
-    %% save temp_installfromgithub
     orig_tempfile  =which('temp_installfromgithub.m');
-    [patt tempfi]=fileparts(orig_tempfile);
-    moved_tempfile=fullfile(fileparts(patt),[tempfi '.m']);
-    copyfile(orig_tempfile,moved_tempfile,'f');
+    moved_tempfile=fileparts(fileparts(orig_tempfile))
     
     % ---------------------
     git fetch origin
@@ -506,11 +503,6 @@ if updatecode==5 %hard reset
         antcb('update');
         try; antcb('versionupdate'); end
     end
-    
-    
-    % put temp_installfromgithub back to folder, 
-    copyfile(moved_tempfile,orig_tempfile,'f'); % allows to use pbclose and GIT-www-button
-    
     
     %fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
     return
