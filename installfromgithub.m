@@ -500,7 +500,7 @@ if updatecode==5 %hard reset
         antcb('update');
         try; antcb('versionupdate'); end
     end
-    
+     installfromgithub;    
     %fprintf(['updating..done t=%2.3f min\n'],toc(atime)/60);
     return
 end
