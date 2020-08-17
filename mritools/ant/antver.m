@@ -122,7 +122,7 @@
 % [paramgui] new version, (multi-icon style, execution-history)
 % ..the old version is still available (via menu/preferences)
 %----- EOF
-%
+% [installfromgithub] BUG-solved:  after 'rebuilding'...gui could not close and workdir did not go prev. study path
 
 
 function antver()
