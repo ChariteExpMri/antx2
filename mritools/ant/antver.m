@@ -115,7 +115,12 @@
 % [doelastix] (deform volumes elastix) now possible, apply registration-trafo to 4D-data (example: BOLD-timeseries) (..not parallelized yet)
 % #ra 10 Aug 2020 (11:34:58)
 % [doelastix] (deform volumes elastix) parallelized for 4D-data
-%
+% #ra 14 Aug 2020 (12:57:03)
+% [getReferencePath] modified (layout with listbox, instead of buttons); recursive search for 'AVGT.nii' in (sub)/folder of ant-templates
+%  --> to overcome the (sub)/folder nestings in the ant-templates folder
+% #ra 17 Aug 2020 (16:49:32)
+% [paramgui] new version, (multi-icon style, execution-history)
+% ..the old version is still available (via menu/preferences)
 %----- EOF
 %
 

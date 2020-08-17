@@ -246,7 +246,7 @@ if exist(paextern)
             '</font></html>'
             ]);
          set(hb,'userdata',dirs,'callback' ,{@useotherref,0});
-        
+        hb_infocus=hb;
     end %non-empty-dir
     
     if 0 %old-button-style
@@ -376,4 +376,4 @@ set(hu,'position',[.55 .02, .15 .08],'string','Cancel','TooltipString','Cancel')
 set(hu,'callback',{@finish,0},'fontsize',fs);
 set(hu,'position',[.84 .02, .15 .08]);
 
-
+try; uicontrol(hb_infocus); end %set focus

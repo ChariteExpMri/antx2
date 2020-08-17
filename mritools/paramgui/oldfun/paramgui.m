@@ -2,7 +2,7 @@
 
 
 %% #b *PARAMGUI* -GUI to show/modify/add and apply parameters
-%% #b FAST WAY TO ADD PARAMETERS, WITHOUT SPENDING TO MUCH TIME IN DESIGN
+%% #b FAST WAY TO ADD PARAMETERS, WITHOUT SPENDING TO MUCH TIME IN THE DESIGN
 %% #by FEATURES
 %   -simple
 %   -allows to present more information
@@ -69,8 +69,8 @@
 % <alt>&<y> to -->change the parameter in the current line (toggle boolean if its a boolean,
 %         or open gui if parameter is defined as file/directory, or open a pulldown
 %         menu if its a cell-array)
-% <F1>: simulate RUN-button
-% <F3>: simulate click onto cursor-located button 
+% <F1>: icon-selection/toggle
+% <F3>: run-button
 %
 %% EXAMPLE
 %    p={...
@@ -123,15 +123,14 @@
 % ,'info','vline.m')
 % ,'info',{'Processing Parameters','-->see process1203.m'}
 %% DYNAMICALLY SET VARIABLE FIELD
-% -during runtime, variablename must exist,
-% -variable name must  come with struct-name use 'x.reorienttype' instead of 'reorienttype'
+% -during runtime, variablename must exist, 
+% -variable name must  come with struct-name use 'x.reorienttype' instead of 'reorienttype'  
 % example
 % paramgui('setdata','x.reorienttype','[]')
 % paramgui('setdata','x.reorienttype',{'ee' 'eeed' 'fgffd'})
 %
-%% #by SET PREFERENCES
-% Preferences are stored in the global variable:'paramguipref'.
-% To set preferences the first input of paramgui must be 'pref' followed by pairwise inputs
+%% SET PREFERENCES (stored in GOLOBAL VAR: 'paramguipref')
+% set preferences (as global var): 1st input is 'pref', followed by pairwise inputs
 % pairwise inputs: 
 %  useoldversion : [0,1];  [0] use old version,  [1] use new version
 %  mimic_oldstyle: [0,1];  [0] multi-icon stlye  [1] single-icon style 
@@ -171,68 +170,72 @@ if ischar(dat)
             else
                disp([' ...currently running the old version: ' which(mfilename)]); 
             end
+            
         end
         return
     end%pref
 end
 
-newpath=fullfile(fileparts(antpath),'paramgui');
-oldpath=fullfile(fileparts(antpath),'paramgui','oldfun');
-addpath(newpath);
+% newpath=fullfile(fileparts(antpath),'paramgui');
+% oldpath=fullfile(fileparts(antpath),'paramgui','oldfun');
+% addpath(newpath);
 
-
-global paramguipref
-if ~isstruct(paramguipref)
-    paramguipref=struct();
-end
-if isfield(paramguipref,'useoldversion')==0
-    paramguipref.useoldversion=0;
-end
-
-
-% ==============================================
-%%   use older paramgui-version
-% ===============================================
-
-if paramguipref.useoldversion==1 %USE OLD FUNCTION
-    addpath(oldpath);
-   [v1 v2 v3 v4]= deal([]);
-    if nargout==1
-        varargout{1}=paramgui( dat,varargin{:});
-    elseif nargout==2
-        [v1 v2]=paramgui_old( dat,varargin{:});
-        varargout{1}=v1;
-        varargout{2}=v2;
-    elseif nargout==3
-        [v1 v2 v3]=paramgui( dat,varargin{:});
-        varargout{1}=v1;
-        varargout{2}=v2;
-        varargout{3}=v3;
-    elseif nargout==4
-        [v1 v2 v3 v4]=paramgui( dat,varargin{:});
-        varargout{1}=v1;
-        varargout{2}=v2;
-        varargout{3}=v3;
-        varargout{4}=v4;
-    end
-    drawnow;
-    addpath(newpath);
-    drawnow;
-    return
-else % use new version
-    addpath(newpath);
-end
+% 
+% global paramguipref
+% if ~isstruct(paramguipref)
+%     paramguipref=struct();
+% end
+% if isfield(paramguipref,'useoldversion')==0
+%     paramguipref.useoldversion=1;
+% end
+% 
+% 
+% % ==============================================
+% %%   use older paramgui-version
+% % ===============================================
+% % 
+% % if paramguipref.useoldversion==1 %USE OLD FUNCTION
+% %     addpath(oldpath);
+% %    [v1 v2 v3 v4]= deal([]);
+% %     if nargout==1
+% %         varargout{1}=paramgui( dat,varargin{:});
+% %     elseif nargout==2
+% %         [v1 v2]=paramgui_old( dat,varargin{:});
+% %         varargout{1}=v1;
+% %         varargout{2}=v2;
+% %     elseif nargout==3
+% %         [v1 v2 v3]=paramgui( dat,varargin{:});
+% %         varargout{1}=v1;
+% %         varargout{2}=v2;
+% %         varargout{3}=v3;
+% %     elseif nargout==4
+% %         [v1 v2 v3 v4]=paramgui( dat,varargin{:});
+% %         varargout{1}=v1;
+% %         varargout{2}=v2;
+% %         varargout{3}=v3;
+% %         varargout{4}=v4;
+% %     end
+% %     drawnow;
+% %     addpath(newpath);
+% %     drawnow;
+% %     return
+% % else % use new version
+% %     addpath(newpath);
+% % end
 
 % ==============================================
 %%   
 % ===============================================
 
 
-
 pause(.1)
 drawnow;
 warning off;
 drawnow;
+
+
+
+
 
 varargout{4}=[];
 
@@ -386,10 +389,10 @@ if size(qw,2)>1
     x=[];
     for i=1:size(qw,1)
         eval(['x.' qw{i,1} '= qw{' num2str(i) ',2};']);
-        %         if   isnumeric(getfield(x, qw{i,1} )) & isempty(getfield(x, qw{i,1} ))
-        %             x=setfield(x, qw{i,1}, '[]' );
-        %
-        %         end
+%         if   isnumeric(getfield(x, qw{i,1} )) & isempty(getfield(x, qw{i,1} ))
+%             x=setfield(x, qw{i,1}, '[]' );
+%             
+%         end
     end
     qw2=struct2list(x);
 end
@@ -408,13 +411,13 @@ if ~isempty(ix)
         te=qq;
         te=strrep(te,infs,'<empty>');
         %qq=[te(1:i1-1) ; infs; te(i2:end) ];
-        %         pause
+%         pause
         
         qq=[te(1:i2-1) ; infs; te(i2:end) ];
         qq(strcmp(qq,'<empty>'))=[];
         [size(qw2) size(qq)];
     end
-    qw2=qq;
+    qw2=qq;    
 end
 
 
@@ -447,23 +450,19 @@ for i=1:length(id)
     if strcmp(dum(1),'%')
         dum=[ char(10)  '% ' strrep(dum,'%' ,'')];
     else
-        if isempty(regexprep(dum,{'%' '\s*'},''))
-            dum='       ';
-        else
-            dum=[  '% ' strrep(dum,'%' ,'')];
-        end
+        dum=[  '% ' strrep(dum,'%' ,'')];
     end
     qw3{id(i)}=dum;
 end
 
-qw3=makennicer(qw3);
+ qw3=makennicer(qw3);
 %qw3=makenicer2(qw3);
 
 b=qw3;
 b=[b;{'';''} ];
 b2=cell2line(b,1,'@999@');
 b3=regexprep(b2,'@999@',char(10));
-b3=[b3 ' ' char(9) ];
+b3=[b3 ' ' char(09) ];
 
 b3=makenicer2(b3);
 
@@ -551,9 +550,6 @@ us.hContainer=hContainer;
 us.ispulldownON=0;
 
 
-us.mimic_oldstyle=0 ;% OLD single-icon STYLE
-us.lastYscroll=inf;
-
 drawnow
 us.history{1}=b3;
 us.historyValue=1;
@@ -637,12 +633,18 @@ set(p4,'cdata',flipdim(e,2));
 % cancel
 p6=uicontrol('style','pushbutton',       'tag','pb6',    'string','cancel','units','normalized',...
     'position',[0.22 -.005 .1 .045],'units','pixels','callback',{@cancelate},...
-    'TooltipString','Cancel','backgroundcolor','w');%[.01 .93 .1 .04]
+    'TooltipString','REDU','backgroundcolor','w');%[.01 .93 .1 .04]
 
 % {v.pb1callback{1}, v.pb1callback{2:end}}
 
+%
+if 0
+    p=uicontrol('style','pushbutton','units','normalized' ,'position',[0 .98 .02 .02])
+end
 
-
+if 0
+    [r.getX() r.getY()]
+end
 % set(p,'string',b3)
 % pl=findjobj(p)
 % % pl.setContentType(codeType)
@@ -682,166 +684,36 @@ delete(findobj(gcf,'tag','pb5'));
 set(gcf,'Resizefcn',@resizefun);%32-always,31-needed,30-depends
 % set(us.hContainer,'units','pixels')
 
-
-
 try
-    set(us.jCodePane, 'KeyPressedCallback',@keypress);
+set(us.jCodePane, 'KeyPressedCallback',@keypress);
 end
 
-drawnow;
 set(gcf,'visible','on');  % #rp1
 
 % reformat; %reformat
 
 
-% us.jCodePane.setCaretPosition(1); %pos-1
+us.jCodePane.setCaretPosition(1); %pos-1
 us.jCodePane.requestFocus(); %set focus
 
-% ==============================================
-%%    show all icons
-% ===============================================
-%
-% drawnow;
-% prepicon();drawnow
-% updateIconposition();drawnow
-% 
-% us.jCodePane.setCaretPosition(1);
-if 0
-    [icon tooltip varnamefull]=getIcon2(7)
-    txt=us.jCodePane.getText;
-    lin_icons=find(~cellfun('isempty',qw(:,4)));
-    
-    CR=strfind(txt,char(10));
-    CR=[-1 CR];
-    for i=1:length(lin_icons)
-        us.jCodePane.setCaretPosition(CR(lin_icons(i))+1);
-        %     drawnow;
-        drawnow;
-    end
-    us.jCodePane.setCaretPosition(1);
-end
-
-% ==============================================
-%%   callback vertic.-scroll
-% ===============================================
-
-% *** get PORPERTIES ***
-% get(handle(us.jhPanel.VerticalScrollBar, 'CallbackProperties'))
-
-set(us.jhPanel,'MousePressedCallback','1');
-set(us.jhPanel,'MouseDraggedCallback','2');
-set(us.jhPanel,'MouseWheelMovedCallback',@mousescroll);
-set(us.jhPanel,'MouseReleasedCallback','5');
-set(us.jhPanel.VerticalScrollBar,'MouseReleasedCallback',@resizefun);
-% set(us.hContainer,'MouseReleasedCallback','66');
-%set(us.jhPanel.VerticalScrollBar,'AdjustmentValueChangedCallback',@updateIconposition_cb);
-
-%
-% jo = get(gcf,'JavaFrame')
-% jf = get(handle(gcf),'JavaFrame')
-% jClient = jf.fHG2Client
-% jframe = jClient.getWindow
-% cbo=handle(jframe,'callbackproperties')
-% set(jframe,'MouseReleasedCallback','777');
-% set(jframe,'ComponentResizedCallback','1888');
-% set(jframe,'PropertyChangeCallback','999');
-
-% ==============================================
-%%   preferences
-% ===============================================
-% global paramguipref
-% if ~isstruct(paramguipref)
-% paramguipref.mimic_oldstyle=us.mimic_oldstyle;
-if isfield(paramguipref,'hist')==0
-    paramguipref.hist.time={};
-    paramguipref.hist.list={};
-end
-% else
-if isfield(paramguipref,'mimic_oldstyle')
-    us.mimic_oldstyle =paramguipref.mimic_oldstyle;  %from global to current
-else
-    paramguipref.mimic_oldstyle=us.mimic_oldstyle;
-end
 
 
-  
-
-
-posfig=get(gcf,'position');
-set(gcf,'position',[posfig(1:3) posfig(4)+0.02]); drawnow;
-set(gcf,'position',[posfig]); drawnow;
-
-
-us.origfigposition=get(gcf,'position');
-set(gcf,'userdata',us);  
-% drawnow;
-prepicon();
-drawnow;
-
-
-% if 1 %%TEST-number-of-ICONS
-%      r=findobj(gcf,'style','pushbutton');
-%     iicons=[];
-%     for i=1:length(r)
-%         try
-%             if strcmp(func2str(r(i).Callback),'pbcb')
-%                 iicons=[iicons i];
-%             end
-%         end
-%     end
-%     r=r(iicons);
-%     disp(['nIcos:' num2str(length(r))]);
-% end
-
-
-
-if us.mimic_oldstyle==1 ;% OLD single-icon STYLE
-    r=findobj(gcf,'style','pushbutton');
-    iicons=[];
-    for i=1:length(r)
-        try
-            if strcmp(func2str(r(i).Callback),'pbcb')
-                iicons=[iicons i];
-            end
-        end
-    end
-    r=r(iicons);
-    % left distance of text-pane
-    if ~isempty(r)
-        iconpos= get(r(1),'position');
-        posini=get(r(1),'position');
-        posini(3)=15;
-        set(r(1),'position',posini);
-    end
-end
-resizefun();
-updateIconposition();drawnow;
-us.jCodePane.setCaretPosition(1); %pos-1
-us.jCodePane.requestFocus();
-
-% 
-% us.jCodePane.setCaretPosition(1);
-
-
-%% MORE-BUTTON
-pm=uicontrol('style','togglebutton',  'value',0,     'tag','pbmore',    'string',':','units','normalized',...
+%% change version-BUTTON
+pm=uicontrol('style','pushbutton',  'value',0,     'tag','changeVersion',    'string','v','units','normalized',...
     'position',[.12 -.005 .05 .045]);
 set(pm,'position',[.95 -.005 .025 .04]);
-set(pm,'units','pixels','callback',@morepanel,...
-    'TooltipString',['..show menu'],'backgroundcolor','w');%[.01 .93 .1 .04]
-
-hrun=findobj(gcf,'style','pushbutton','tag','pb1');
-posr=get(hrun,'position');
-
-set(gcf,'units','pixels');
-fpix=get(gcf,'position');
-set(gcf,'units','norm');
-% set(pm,'string','hallo')
-set(pm,'position',[fpix(3)-posr(3)/2 0 posr(3)/5.5 posr(4) ]);
-
+set(pm,'units','pixels','callback',@changeVersion,...
+    'backgroundcolor','w');%[.01 .93 .1 .04]
+ lg=[['<html>   <b><font color="green">'  'change paramgui-version (old,new)' '</font></b>' '<br>'] ...]
+                [  '<u><font color="red">'  'This is the old version.' '<br>'] ...
+                [  '</html>'] ...
+                ];
+set(pm,'TooltipString',lg);
+            
 % ==============================================
-%%   uiwait
+%%   wait
 % ===============================================
+
 if v.uiwait==1
     uiwait(gcf);
     
@@ -889,13 +761,6 @@ varargout{4}=params;
 %
 
 
-% 'showiconsall'
-%  return
-% cartpos=r.getCaretPosition;
-% ichar=regexpi(tx,char(10));
-% charbef=find(ichar>cartpos);
-% cartline=min(charbef);
-
 
 
 if us.v.close==1
@@ -904,385 +769,72 @@ if us.v.close==1
     drawnow;
 end
 
-
-function morepanel(e,e2)
-
-hb=findobj(gcf,'tag','pbmore');
-if get(hb,'value')==1 
-    m = uimenu(gcf,'label','more','tag','moremenu');
-    
-    hm = uimenu(m,'label','Help Paramgui');
-    set(hm,'callback',@paramguihelp);
-    
-    
-    hm = uimenu(m,'label','shortcuts Paramgui');
-    set(hm,'callback',@paramguishortcuts);
-    
-    
-     hm = uimenu(m,'label','History (get list of previous Paramgui-calls)');
-    set(hm,'callback',@paramguihistory);
-    
-    hm = uimenu(m,'label','Preferences');
-    set(hm,'foregroundcolor',[0.4706    0.6706    0.1882],'callback',@preferences_win);
-    
-    
-    
-else
-    delete(findobj(gcf,'tag','moremenu'));
-end
+function changeVersion(e,e2)
 
 
-function paramguishortcuts(e,e2)
-
-%% start
-% anker_shortcuts_on
-%  #Wo PARAMGUI SHORTCUTS
-%  #g [ctrl+p] or [cmd+p]  #n open preferences 
-%  #b WINDOW-SIZE
-%  #g [ctrl+upp]     #n original windows position/size 
-%  #g [ctrl+right]   #n window width fits content (width adapted to line with max characters)
-%  #g [ctrl+down]    #n window height fits content (height adapted to number of lines)
-%  #g [ctrl+left]    #n previous window position & size
-%  #r EXECUTION
-%  #g [F1]   #n  simulates "Run"/"START" button 
-%  #g [F3]   #n  simulates click onto cursor-located button 
-
-%  #b FOR PULLDOWN(PD) ONLY (cellmode)
-%  #g [left/right arrow]   #n  navigate through PD, for PD with n>2 items (sorry)
-%                              -PD remains open (use mouse or enter-key to lock item and close PD)
-%  #g [up/down arrow]      #n  toggle between first two items (PD will be closed after item-switch)
-%  #g [return]             #n  lock selected item and close PD
-%  #g [esc]                #n  close PD (no item is locked)
-% 
-% anker_shortcuts_off
-
-ms=preadfile('paramgui.m');
-ms=ms.all;
-
-idx=[min(regexpi2(ms,'% anker_shortcuts_on')) min(regexpi2(ms,'% anker_shortcuts_off'))];
-ms2=ms(idx(1)+1:idx(2)-1);
-ms3=regexprep(ms2,'^%','','once');
-
-uhelp(ms3,1);
-%uhelp(ms3);
-
-%% end
-
-
-function paramguihistory(e,e2)
-
-%% this
-us=get(gcf,'userdata');
-delete(findobj(gcf,'userdata','ipn1'));
-% delete(findobj(gcf,'tag','pgprev') );
-% delete(findobj(gcf,'tag','pgnext') );
-% delete(findobj(gcf,'tag','pgclose') );
-% delete(findobj(gcf,'tag','pgtime') );
-% delete(findobj(gcf,'tag','pglist') );
-% delete(findobj(gcf,'tag','pgdrag') );
+%% PREFS
 
 global paramguipref
-checkok=0;
-try
-    if size(paramguipref.hist.time,1)>0
-        checkok=1;
-    end
-catch
-    disp('no previous list-history found');
-    checkok=0;
-    return
-end
 
-if checkok==0; return; end 
-
-set(gcf,'units','pixel');
-pf=get(gcf,'position');
-set(gcf,'units','norm');
-
-%prev
-hr=findobj(gcf,'tag','pb3');%refernce pushbutton
-pr=get(hr,'position');
-
-
-p=[pf(3)/2 pf(4)*.9  pr(3:4)];
-
-%% close
-h3=uicontrol('style','pushbutton','units','pixel');
-p3=[p];
-set(h3,'position',p3, 'string','x','tooltipstring','close paramgui-history',...
-    'callback',{@paramguihistorychange,0},'tag','pgclose');
-set(h3,'userdata','ipn1');
-
-%% dragg
-v=[129	129	129	129	129	129	129	0	0	129	129	129	129	129	129	129
-    129	129	129	0	0	129	0	215	215	0	0	0	129	129	129	129
-    129	129	0	215	215	0	0	215	215	0	215	215	0	129	129	129
-    129	129	0	215	215	0	0	215	215	0	215	215	0	129	0	129
-    129	129	129	0	215	215	0	215	215	0	215	215	0	0	215	0
-    129	129	129	0	215	215	0	215	215	0	215	215	0	215	215	0
-    129	0	0	129	0	215	215	215	215	215	215	215	0	215	215	0
-    0	215	215	0	0	215	215	215	215	215	215	215	215	215	215	0
-    0	215	215	215	0	215	215	215	215	215	215	215	215	215	0	129
-    129	0	215	215	215	215	215	215	215	215	215	215	215	215	0	129
-    129	129	0	215	215	215	215	215	215	215	215	215	215	215	0	129
-    129	129	0	215	215	215	215	215	215	215	215	215	215	0	129	129
-    129	129	129	0	215	215	215	215	215	215	215	215	215	0	129	129
-    129	129	129	129	0	215	215	215	215	215	215	215	0	129	129	129
-    129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129
-    129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129];
-
-v(v==v(1,1))=255;
-if size(v,3)==1; v=repmat(v,[1 1 3]); end
-v=double(v)/255;
-
-h33=uicontrol('style','pushbutton','units','pixel','cdata',v);
-% p33=[p1(1)-p1(3)  p1(2)    p1(3:4)];
-p33=[p(1)+p(3) p(2:end)];
-set(h33,'position',p33, 'string','<>','tooltipstring','drag panel to another position ',...
-    'tag','pgdrag');
-je = findjobj(h33); % hTable is the handle to the uitable object
-    set(je,'MouseDraggedCallback',@paramguihistoryDarag  )
-    set(h33,'userdata','ipn1');
-
-%% prev
-h1=uicontrol('style','pushbutton','units','pixel');
-p1=[p(1)+3*p(3) p(2:end)];
-set(h1,'position',p1, 'cdata',get(hr,'cdata'),'tooltipstring','previous paramgui-call',...
-    'callback',{@paramguihistorychange,1},'tag','pgprev');
-set(h1,'userdata','ipn1');
-
-%% next
-hr=findobj(gcf,'tag','pb4');%refernce pushbutton
-pr=get(hr,'position');
-
-h2=uicontrol('style','pushbutton','units','pixel');
-p2=[p(1)+4*p(3) p(2:end)];
-set(h2,'position',p2, 'cdata',get(hr,'cdata'),'tooltipstring','next paramgui-call',...
-    'callback',{@paramguihistorychange,2},'tag','pgnext');
-set(h2,'userdata','ipn1');
-
-
-
-
-% timestamp
-h4=uicontrol('style','listbox','units','pixel','HorizontalAlignment','left');
-p4=[p(1)  p(2)-2*p(4)    p(3)*8 p(4)*2];
-set(h4,'position',p4, 'string','timestamp','tooltipstring','selected time stamp',...
-    'tag','pgtime');
-set(h4,'userdata','ipn1');
-
-%listbox
-h5=uicontrol('style','listbox','units','pixel');
-% p5=[p(1)  p(2)-10*p(4)    p(3)*8 p(4)*2];
-p5=[p4(1) 0+p(4)   p(3)*8 p(2)-p(4)*2];
-set(h5,'position',p5, 'cdata',get(hr,'cdata'),'tooltipstring','list of paramgui calls',...
-    'callback',{@paramguihistorychange,3},'tag','pglist');
-set(h5,'userdata','ipn1');
-
-% set(h4,'string','actuall list');
-
-lbtime=[...
-    paramguipref.hist.time 
-    'CURRENT CALL'];
-% set(h5,'string',lbtime);
-lblist=[...
-    paramguipref.hist.list;
-     (us.jCodePane.getText );
-    ];
-set(h5,'value',size(lbtime,1));
-set(findobj(gcf,'tag','pgnext'),'enable','off');
-
-
-li=lblist;
-line1={};
-for i=1:size(li,1)
-   cel=strsplit(char(li(i)),char(10))';
-   line1{i,1}= cel{1};
-   if isempty(line1{i,1})
-        line1{i,1}='empty';
-   end
-end
-[a1 same]=ismember(line1,unique(line1));
-
-ncolors=length(unique(same));
-colall= cbrewer('qual', 'Pastel1', ncolors+4);
-usecol=colall(same,:);
-isamenow=find(same==same(end));
-usecol(isamenow,:)=repmat([0.4706    0.6706    0.1882],[ length(isamenow) 1] );
-
-lbtime2={};
-for i=1:size(lbtime,1)
-   rgb=usecol(i,:);
-    hxcol=['#' reshape(sprintf('%02X',(round(255*rgb)).'),6,[]).'  ];
-    ms=['<html><p style="background-color:'  hxcol '">' lbtime{i}  '  #1)' line1{i}  repmat('&nbsp;',[1 50])];
-    lbtime2{i,1}=ms;
-end
-set(h5,'string',lbtime2);
-% set(gco,'value',1','string',{'<html><p style="background-color:red;">Hello World</h1>'})
-
-% currcal=lbtime2{end}
-% sep=strfind(currcal,'#1)');
-% currcal2=currcal(1:sep+30)
-set(h4,'string',lbtime2{end},'style','listbox');
-uicontrol(h5);
-
-
-% % paramguipref.hist.time
-us.paramhist.lbtime= (lbtime2);
-us.paramhist.lblist= (lblist);
-set(gcf,'userdata',us);
-
-
-function paramguihistoryDarag(e,e2)
-
-us=get(gcf,'userdata');
-set(gcf,'units','norm');
-% try
-units=get(0,'units');
-set(0,'units','norm');
-mp=get(0,'PointerLocation');
-set(0,'units',units);
-
-id='ipn1';
-hf=gcf;
-fp  =get(hf,'position');
-hp  =findobj(hf,'tag','pgdrag');
-set(findobj(hf,'userdata',id),'units','normalized');
-
-pos =get(hp,'position');
-mid=pos(3:4)/2;
-newpos=[(mp(1)-fp(1))./(fp(3))  (mp(2)-fp(2))./(fp(4))];
-if newpos(1)-mid(1)<0; newpos(1)=mid(1); end
-if newpos(2)-mid(2)<0; newpos(2)=mid(2); end
-if newpos(1)-mid(1)+pos(3)>1; newpos(1)=1-pos(3)+mid(1); end
-if newpos(2)-mid(2)+pos(4)>1; newpos(2)=1-pos(4)+mid(2); end
-df=pos(1:2)-newpos+mid;
-hx=findobj(hf,'userdata',id);%'ipn1');
-
-pos2=cell2mat(get(hx,'position'));
-for i=1:length(hx)
-    pos3=[ pos2(i,1:2)-df   pos2(i,[3 4])];
-    set(hx(i),'position', pos3);
-end
-set(findobj(hf,'userdata',id),'units','pixels');
-drawnow,
-return
-
-
-
-
-% ---------old
-us=get(gcf,'userdata');
-xy=us.jCodePane.getMousePosition;
-
-hp=findobj(gcf,'tag','pgdrag');
-pos=get(hp,'position'); 
-taglist={'pgclose' 'pgprev' 'pgnext' 'pglist' 'pgtime'};
-% for i=1:length(taglist)
-%     hs=findobj(gcf,'tag',taglist{i});
-%     set(hs,'visible','off');
-% end
-
-viewport=us.jhPanel.getViewport();
-startPoint = viewport.getViewPosition();
-size = viewport.getExtentSize();
-
-%--------
-set(gcf,'units','pixel');
-posf=get(gcf,'position');
-set(gcf,'units','norm');
-
-%--------
-
-
-try
-    df=pos(1:2)-[get(xy,'x') get(xy,'y')] ;%[xy.x xy.y];
-    df
-    pos2=get(hp,'position');
-    pos2(1)=pos2(1)-df(1);
-    df(2)=get(size ,'Height')+df(2);
-    pos2(2)=df(2)-pos2(2);
-    set(hp,'position',pos2);
-   
-    
-    for i=1:length(taglist)
-       
-        hs=findobj(gcf,'tag',taglist{i});
-%          get(hs,'units')
-        pos2=get(hs,'position');
-        pos2(1)=pos2(1)-df(1);
-        pos2(2)=df(2)-pos2(2);
-        set(hs,'position',pos2); 
-        set(hs,'position',pos2);
-        
-    end
-
-end
-  drawnow;
-  
-% for i=1:length(taglist)
-%     hs=findobj(gcf,'tag',taglist{i});
-%     set(hs,'visible','on');
-% end
-
-
-function paramguihistorychange(e,e2,arg)
- us=get(gcf,'userdata');
-
+hf=findobj(0,'tag','paramgui');
+prompt = {
+    [...
+    ' VERSION & ICON STYLE (0|1|2) ' char(10) ...
+    '   [0] use old version  ..use only if [1]or[2] does not run smooth' char(10) ...
+    '   [1] use new version + single-icon style' char(10) ...
+    '   [2] use new version + multi-icon style' char(10) ...
  
- 
-if arg==3 || arg==1 || arg==2 %change
-    hl=findobj(gcf,'tag','pglist');
-    li=get(hl,'string');
-    va=get(hl,'value');
-    if arg==1;             va=va-1;
-    elseif arg==2;         va=va+1;
-    end
-    if va==0;         va=1;          end
-    if va>length(li); va=length(li); end
-        
-    ht=findobj(gcf,'tag','pgtime');
-    %disp(['value: ' num2str(va)]);
-    set(ht,'string',li{va});
-    set(hl,'value',va);
-    
-    if va==1 
-        set(findobj(gcf,'tag','pgprev'),'enable','off');
-    else
-        set(findobj(gcf,'tag','pgprev'),'enable','on');
-    end
-    if va==length(li)
-        set(findobj(gcf,'tag','pgnext'),'enable','off');
-    else
-        set(findobj(gcf,'tag','pgnext'),'enable','on');
-    end
-    
-    list=us.paramhist.lblist(va);
-    us.jCodePane.setText(list);
-    drawnow;
-    updateIconposition();
-    drawnow;
-     updateIconposition();
-    uicontrol(findobj(gcf,'tag','pglist'));
-end
-if arg==0 %delete
-  
-delete(findobj(gcf,'tag','pgprev') );
-delete(findobj(gcf,'tag','pgnext') );
-delete(findobj(gcf,'tag','pgclose') );
-delete(findobj(gcf,'tag','pgtime') );
-delete(findobj(gcf,'tag','pglist') ); 
-delete(findobj(gcf,'tag','pgdrag') );
+    ]};
 
+% prompt='<html><font color="green"><b> Species'
+title = 'paramgui preferences';
+dims = [1 80];
+
+if ~isfield(paramguipref,'useoldversion')
+    paramguipref.useoldversion=1;
+end
+if ~isfield(paramguipref,'mimic_oldstyle')
+    paramguipref.mimic_oldstyle=0;
+end
+if paramguipref.useoldversion==1
+    versicon=0;
+else
+    versicon=~paramguipref.mimic_oldstyle+1;
 end
 
 
 
+definput = {num2str(versicon)};
+answer = inputdlg(prompt,title,dims,definput);
 
-%% that
+%% gui-off
+newpath=fullfile(fileparts(antpath),'paramgui');
+oldpath=fullfile(fileparts(antpath),'paramgui','oldfun');
+if isempty(answer); return; end
 
-function paramguihelp(e,e2)
-uhelp('paramgui.m');
+% carpos=us.jCodePane.getCaretPosition;
+if strcmp(answer{1},'0')  
+   paramguipref.useoldversion =1; %use OLD bersion
+   paramguipref.mimic_oldstyle=0;
+elseif strcmp(answer{1},'1') 
+    paramguipref.useoldversion =0; %use NEW bersion
+    paramguipref.mimic_oldstyle=1;
+    msgbox('The new version of paramgui is used when paramgui is executed the next time.','modal');
+    
+    addpath(newpath);
+    
+elseif strcmp(answer{1},'2')
+    paramguipref.useoldversion =0; %use NEW bersion+multi-icon
+    paramguipref.mimic_oldstyle=0;
+    msgbox('The new version of paramgui is used when paramgui is executed the next time.','modal');
+    
+    addpath(newpath);
+end
+
+
+
+
+
 
 function cancelate(e,e2)
 drawnow
@@ -1347,10 +899,10 @@ varargout{4}=params;
 
 function figkey(h,e)
 
-% if strcmp(e.Key,'f3')
-%     hbut=findobj(gcf,'tag','pb1');
-%     hgfeval(get(hbut,'Callback'));
-% end
+if strcmp(e.Key,'f3')
+    hbut=findobj(gcf,'tag','pb1');
+    hgfeval(get(hbut,'Callback'));
+end
 
 
 
@@ -1383,77 +935,9 @@ modifiersDescription = char(eventData.getKeyModifiersText(modifiers));  % ==> 'A
 % jPopup.showPopup();
 
 e=eventData;
-
-
-% arror-scroll
-if get(e,'KeyCode') ==40 || get(e,'KeyCode') ==38 % [40]down-arrow,[38]up-arrow
-    % 'down'
-    us=get(gcf,'userdata');
-    scroll=us.jCodePane.getY;
-    %disp(scroll);
-    if scroll~=us.lastYscroll
-        pos=us.jCodePane.getCaretPosition;
-        %       linum=us.jCodePane.getLineFromPos(us.jCodePane.getCaretPosition);
-        updateIconposition();
-        us.jCodePane.setCaretPosition(pos);
-        us.lastYscroll=scroll;
-        set(gcf,'userdata',us);
-    end
-    
-%     
-% elseif get(e,'KeyCode') ==38 % up-arrow
-%     %'up'
-%     us=get(gcf,'userdata');
-%     pos=us.jCodePane.getCaretPosition;
-%     %       linum=us.jCodePane.getLineFromPos(us.jCodePane.getCaretPosition);
-%     updateIconposition();
-%     us.jCodePane.setCaretPosition(pos);
-    
-end
-
-% if strcmp(get(e,'KeyChar'),'p')  %preferences
-if get(e,'ControlDown')==1 && get(e,'KeyCode') ==80 % 'p' 
-    preferences_win();
-    return
-end
-if get(e,'MetaDown')==1 && get(e,'KeyCode') ==80 % 'p' 
-    preferences_win();
-    return
-end
-if (get(e,'MetaDown')==1 && get(e,'KeyCode') ==39)  ||...  % 'right-arrow' --> autowidth
-   ( get(e,'ControlDown')==1 && get(e,'KeyCode') ==39)
-    autowidth();
-    return
-     %get(e,'KeyCode')
-end
-% get(e,'KeyCode')
-
-if (get(e,'MetaDown')==1     && get(e,'KeyCode') ==40)  ||...  % 'down-arrow' --> autoHeight
-   ( get(e,'ControlDown')==1 && get(e,'KeyCode') ==40)
-    autoheight()
-    return
-     %get(e,'KeyCode')
-end
-
-if (get(e,'MetaDown')==1 && get(e,'KeyCode') ==38)  ||...  % 'up-arrow' --> last/orig size
-        ( get(e,'ControlDown')==1 && get(e,'KeyCode') ==38)
-    us=get(gcf,'userdata');
-    set(gcf,'position',us.origfigposition);
-    return
-    %get(e,'KeyCode')
-end
-if (get(e,'MetaDown')==1 && get(e,'KeyCode') ==37)  ||...  % 'left-arrow' --> autowidth
-        ( get(e,'ControlDown')==1 && get(e,'KeyCode') ==37)
-    us=get(gcf,'userdata');
-    set(gcf,'position',us.lastfigposition);
-    return
-    %get(e,'KeyCode')
-end
-% us=get(gcf,'userdata');
-% us.lastfigposition=get(gcf,'position');
-
-
-
+%  'keypress-jbox'
+%
+% get(e)
 
 
 hp=findobj(gcf,'tag','pulldown');
@@ -1472,6 +956,7 @@ if ~isempty(hp)
         ps=get(findobj(gcf,'tag','pulldown'),'callback');
         ps2=[ps(1);{[]};{[]};ps(2:end)];
         hgfeval(ps2);
+        
     end
 end
 
@@ -1483,41 +968,14 @@ end
 
 %% F3 run-button
 if get(eventData,'KeyCode')==114;
-    %     hbut=findobj(gcf,'tag','pb1');
-    %     hgfeval(get(hbut,'Callback'));
-    %
-    
-    us=get(gcf,'userdata');
-    %    get line
-    lastcurpos=us.jCodePane.getCaretPosition;
-    linenum=us.jCodePane.getLineFromPos(lastcurpos);
-    txcurrline=char(us.jCodePane.getLineText(linenum));
-    
-    r=findobj(gcf,'style','pushbutton');
-    iicons=[];
-    for i=1:length(r)
-        try
-            if strcmp(func2str(r(i).Callback),'pbcb')
-                iicons=[iicons i];
-            end
-        end
-    end
-    r=r(iicons);
-    
-    userdat=get(r,'userdata');
-    currvarname=regexprep(txcurrline,'\s*=.*','');
-    ibut=find(strcmp(userdat,currvarname)); %this button
-    hbut=r(ibut);
-    hgfeval(get(hbut,'Callback'),hbut);
-    try
-        us.jCodePane.setCaretPosition(lastcurpos);
-    end
+    hbut=findobj(gcf,'tag','pb1');
+    hgfeval(get(hbut,'Callback'));
     
 end
 
-if  get(eventData,'KeyCode')==112
-    us=get(gcf,'userdata');
-    hp=findobj(gcf,'tag','pb1');
+if (isAltDown==1 && strcmp(keyChar,'y')  )  |   get(eventData,'KeyCode')==112
+    
+    hp=findobj(gcf,'tag','open');
     if ~isempty(hp)
         hgfeval(get(hp,'callback'));
     end
@@ -1569,716 +1027,8 @@ else
 end
 
 
-
-
-% ==============================================
-%%   updateIconposition_cb
-% ===============================================
-
-function updateIconposition_cb(e,e2)
-
-% us=get(gcf,'userdata');
-% drawnow
-% tx1=get_visibletext();
-% pos=us.jCodePane.getCaretPosition;
-%
-%
-% scroll=us.jCodePane.getY
-
-updateIconposition();
-
-% tx2=get_visibletext();
-
-% if strcmp(tx1,tx2)==1 %match
-% disp('match');
-% else
-%    disp('no-match');
-%    us.jCodePane.setCaretPosition(pos);
-% end
-%
-
-return
-
-persistent atime
-if isempty(atime)
-    atime=tic;
-end
-persistent check % Shared with all calls of pushbutton1_Callback.
-delay = .1; % Delay in seconds.
-% Count number of clicks. If there are no recent clicks, execute the single
-% click action. If there is a recent click, ignore new clicks.
-if isempty(check)
-    check = 1;
-    disp('Single click action');
-    %     set(us.jhPanel.VerticalScrollBar,'AdjustmentValueChangedCallback',[]);
-    %     updateIconposition();
-else
-    check = [];
-    drawnow;
-    %     pause(delay)
-    disp( ['moved ' num2str(toc(atime))      ]);
-    atime=tic;
-    %    set(us.jhPanel.VerticalScrollBar,'AdjustmentValueChangedCallback',@updateIconposition_cb);
-    updateIconposition();
-end
-return
-
-
-
-
-
-
-
-
-updateIconposition();
-
-
-
-function textselextion=get_visibletext()
-
-us=get(gcf,'userdata');
-
-
-viewport=us.jhPanel.getViewport();
-startPoint = viewport.getViewPosition();
-size = viewport.getExtentSize();
-
-startPoint=java.awt.Point(startPoint.x + 0, startPoint.y  );
-endPoint = java.awt.Point(startPoint.x + size.width, startPoint.y + size.height );
-
-%     endPoint = java.awt.Point(startPoint.x + size.width, startPoint.y + size.height);
-
-start=us.jCodePane.viewToModel( startPoint );
-ende =us.jCodePane.viewToModel( endPoint );
-tx=char(us.jCodePane.getText(start, ende - start));
-
-textselextion=tx;
-
-
-function flag=isMultipleCall()
-flag = false;
-% Get the stack
-s = dbstack();
-disp(numel(s));
-
-
-
-return
-if numel(s)<=2
-    % Stack too short for a multiple call
-    disp(numel(s));
-    return
-end
-% How many calls to the calling function are in the stack?
-names = {s(:).name};
-TF = strcmp(s(2).name,names);
-count = sum(TF);
-if count>1
-    % More than 1
-    flag = true;
-end
-disp(numel(s));
-
-function mousescroll(e,e2)
-
-us=get(gcf,'userdata');
-
-% if isempty(get(us.jhPanel,'MouseWheelMovedCallback'))
-%     sisp('....leer');
-% else
-%    disp( '...foll');
-% end
-
-scroll=us.jCodePane.getY;
-if scroll==0; return; end
-
-
-% disp(scroll);
-if ~isfield(us ,'scroll');
-    us.scroll=-1e6;
-    set(gcf,'userdata',us);
-end
-
-set(us.jhPanel,'MouseWheelMovedCallback',[]);
-drawnow;drawnow;drawnow;drawnow;drawnow;
-pause(.5);
-drawnow();
-
-% if isempty(get(us.jhPanel,'MouseWheelMovedCallback'))
-%     disp(['FF: empty' ]);
-% else
-%     disp(['EE:' func2str(get(us.jhPanel,'MouseWheelMovedCallback'))]);
-% end
-
-% updateIconposition();
-% drawnow;
-
-% if us.scroll~=scroll
-updateIconposition(); drawnow
-%      disp('update');
-% end
-
-cbfun=get(us.jhPanel,'MouseWheelMovedCallback');
-% disp(cbfun);
-% 'whel'
-set(us.jhPanel,'MouseWheelMovedCallback',@mousescroll);
-% us.wheel=us.wheel+1;
-% set(gcf,'userdata',us);
-
-us.scroll=scroll;
-set(gcf,'userdata',us);
-
-return
-
-
-disp(scroll);
-if ~isfield(us ,'scroll');
-    us.scroll=-1e6;
-    set(gcf,'userdata',us);
-end
-
-if us.scroll~=scroll
-    updateIconposition();
-    disp('update');
-end
-
-
-us.scroll=scroll;
-set(gcf,'userdata',us);
-
-
-
-
-
-return
-persistent returnFlag
-if ~isempty(returnFlag)
-    return
-end
-returnFlag=1;
-disp('do something');
-returnFlag=[];
-
-return
-
-persistent UHELP_RunOnce_Flag0001
-if isempty(UHELP_RunOnce_Flag0001)
-    UHELP_RunOnce_Flag0001 = 1;
-    disp('empty');
-end
-
-if UHELP_RunOnce_Flag0001==0
-    disp('0');
-    return
-end
-
-if UHELP_RunOnce_Flag0001==1
-    disp('1');
-    UHELP_RunOnce_Flag0001 = 0;
-end
-
-if UHELP_RunOnce_Flag0001==1
-    disp('do no');
-    UHELP_RunOnce_Flag0001=[];
-end
-
-
-
-
-return
-us=get(gcf,'userdata');
-if ~isfield(us ,'wheel');
-    us.wheel=1;
-    set(gcf,'userdata',us);
-end
-set(us.jhPanel,'MouseWheelMovedCallback',[]);
-
-
-if us.wheel==1
-    pause(.5);
-    drawnow();
-    
-    updateIconposition();
-    drawnow;
-    
-    cbfun=get(us.jhPanel,'MouseWheelMovedCallback');
-    disp(cbfun);
-    'whel'
-    set(us.jhPanel,'MouseWheelMovedCallback',@mousescroll);
-    us.wheel=us.wheel+1;
-    set(gcf,'userdata',us);
-else
-    
-end
-us.wheel
-
-% % 'wheel'
-%
-%
-%  flag=isMultipleCall() ;
-%
-% %  disp(flag)
-
-
-return
-
-
-% persistent atimer
-persistent atime
-if isempty(atime)
-    atimer=tic+1000;
-end
-
-thistime=toc(atimer);
-
-if thistime<atime+.2
-    disp([ '------'  ]);
-    pause(.2);
-else
-    disp(['++++++'   ]);
-end
-
-disp(rand(1));
-
-
-function preferences_win(e,e2)
-
-
-%% PREFS
-
-global paramguipref
-
-hf=findobj(0,'tag','paramgui');
-us=get(gcf,'userdata');
-% prompt = {'use old style (0); new style(1):'};
-% prompt = {
-%     [...
-%     ' VERSION & ICON STYLE (0|1|2) ' char(10) ...
-%     '   [0] use new version + multi-icon style' char(10) ...
-%     '   [1] use new version + single-icon style' char(10) ...
-%     '   [2] use old version  ..use only if [0]or[1] does not run smooth' char(10) ...
-%     ]};
-
-prompt = {
-    [...
-    ' VERSION & ICON STYLE (0|1|2) ' char(10) ...
-    '   [0] use old version  ..use only if [1]or[2] does not run smooth' char(10) ...
-    '   [1] use new version + single-icon style' char(10) ...
-    '   [2] use new version + multi-icon style' char(10) ...
- 
-    ]};
-
-% prompt='<html><font color="green"><b> Species'
-title = 'paramgui preferences';
-dims = [1 80];
-
-if isfield(paramguipref,'useoldversion')
-  if paramguipref.useoldversion==1
-      versicon=0;
-  else
-      versicon=~paramguipref.mimic_oldstyle+1; 
-  end 
-end
-
-definput = {num2str(versicon)};
-answer = inputdlg(prompt,title,dims,definput);
-
-%% gui-off
-if isempty(answer); return; end
-
-
-carpos=us.jCodePane.getCaretPosition;
-if strcmp(answer{1},'0')  
-   paramguipref.useoldversion =1; %use OLD bersion
-   us.mimic_oldstyle=0;
-   paramguipref.mimic_oldstyle=us.mimic_oldstyle;
-   msgbox('The old version of paramgui is used when paramgui is executed the next time.','modal');
-elseif strcmp(answer{1},'1') 
-    paramguipref.useoldversion =0; %use NEW bersion
-    us.mimic_oldstyle=1; 
-    paramguipref.mimic_oldstyle=us.mimic_oldstyle;
-elseif strcmp(answer{1},'2') 
-    paramguipref.useoldversion =0; %use NEW bersion
-    us.mimic_oldstyle=0; 
-    paramguipref.mimic_oldstyle=us.mimic_oldstyle;  
-    
-end
-set(gcf,'userdata',us);
-updateIconposition();
-us.jCodePane.setCaretPosition(carpos);
-
-
-function updateIconposition
-% us=get(gcf,'userdata');
-% txt=us.jCodePane.getText
-% CR=strfind(txt,char(10));
-% CR=[-1 CR];
-% curpos=us.jCodePane.getCaretPosition;
-% for i=1:length(CR)-1
-%     us.jCodePane.setCaretPosition(CR(i)+1);
-%     drawnow;
-% end
-% us.jCodePane.setCaretPosition(curpos);
-% 'updateIconposition'
-
-us=get(gcf,'userdata');
-% drawnow;
-tx=char(us.jCodePane.getText);
-
-%% visible text only
-if 1
-    % ==============================================
-    %%
-    % ===============================================
-    % us.jhPanel.setHorizontalScrollBarPolicy(32);
-    %   clc
-    viewport=us.jhPanel.getViewport();
-    startPoint = viewport.getViewPosition();
-    size = viewport.getExtentSize();
-    
-%   startPoint=java.awt.Point(startPoint.x + 0, startPoint.y + 34/2);
-%      endPoint = java.awt.Point(startPoint.x + size.width, startPoint.y + size.height-34);
-% %     
-
-yd=us.jCodePane.getLineHeight();
-startPoint=java.awt.Point(startPoint.x + 0, startPoint.y + yd/2);
-endPoint = java.awt.Point(startPoint.x + size.width, startPoint.y + size.height-yd);
-
-%     startPoint=java.awt.Point(startPoint.x + 0, startPoint.y +0);
-%     endPoint = java.awt.Point(startPoint.x + size.width, startPoint.y + size.height-0);
-%     
-
-    start=us.jCodePane.viewToModel( startPoint );
-    ende =us.jCodePane.viewToModel( endPoint );
-    try
-        tx=char(us.jCodePane.getText(start, ende - start)) ;
-    catch
-        tx=char(us.jCodePane.getText);
-    end;
-    
-    % ==============================================
-    %%
-    % ===============================================
-    
-end
-
-
-
-
-
-txall=char(us.jCodePane.getText);
-
-r=findobj(gcf,'style','pushbutton');
-iicons=[];
-for i=1:length(r)
-    try
-        if strcmp(func2str(r(i).Callback),'pbcb')
-            iicons=[iicons i];
-        end
-    end
-end
-r=r(iicons);
-% set(r,'visible','off');
-
-%sort iconandles
-lastcurpos=us.jCodePane.getCaretPosition;
-linenum=us.jCodePane.getLineFromPos(lastcurpos);
-
-   
-
-if us.mimic_oldstyle==1
-    txcurrline=char(us.jCodePane.getLineText(linenum));
-    currvarname=regexprep(txcurrline,'\s*=.*','');
-    ifind=find(strcmp(get(r,'userdata'),currvarname));
-    if ~isempty(ifind)
-        r=r([ setdiff(1:length(r),ifind)  ifind]);
-    end
-    if ~isempty(r)
-        r=r(end);
-    end
-end
-
-
-
-
-iuse   =[];
-inotuse=[];
-for j=1:length(r)
-    p=r(j);
-    % get(r(i),'position')
-    varname=get(p,'userdata');
-    carposIDX=regexpi(tx,[ varname '\s*=' ]);
-    
-    carposIDX2=regexpi(txall,[ varname '\s*=' ]);
-    
-    if ~isempty(carposIDX)
-        %         continue
-        %     end
-        %         set(p,'visible','on');
-        try
-            
-            us.jCodePane.setCaretPosition(carposIDX2);
-        end
-        drawnow
-        %         get(p,'userdata')
-        %                 pause(.5); drawnow
-        %         %        showIcon();
-        %              set(p,'visible','on');
-        iuse(end+1)=j;
-        %         CR=[-1 strfind(tx,char(10))];
-        %         carpos=max(find(CR<carposIDX))-1;
-    else
-        inotuse(end+1)=j;
-    end
-end
-
-
-set(r(iuse),'visible','on');
-set(r(inotuse),'visible','off');
-
-% us.jCodePane.setCaretPosition(lastcurpos);
-
-% us.jCodePane.setCaretPosition(lastcurpos);
-
-return
-
-height=us.jCodePane.getHeight();
-yd=us.jCodePane.getLineHeight();
-numli=us.jCodePane.getNumLines();
-
-
-screen=get(0,'MonitorPositions');
-if screen(3)>1600;
-    yd=yd*2;
-end
-% if ismac==1
-if ~ispc
-    if screen(3)>1300;
-        yd=yd*2;
-    end
-end
-
-
-% height
-
-for j=1:length(r)
-    p=r(j);
-    % get(r(i),'position')
-    varname=get(p,'userdata');
-    carposIDX=regexpi(tx,[ varname '\s*=' ]);
-    if ~isempty(carposIDX)
-        %         continue
-        %     end
-        set(p,'visible','on');
-        CR=[-1 strfind(tx,char(10))];
-        carpos=max(find(CR<carposIDX))-1;
-        %     carpos
-        
-        if carpos+1>numli; return; end
-        %     % return
-        %     tb=[];
-        %     n=0;
-        %     for i=1:(numli)
-        %         drawnow;
-        %         %pos=us.jCodePane.getLineFromPos(n)
-        %         nsign=us.jCodePane.getLineStart(n);
-        %         pnt= us.jCodePane.getPointFromPos(nsign);
-        %         xy=[pnt.x pnt.y];
-        %         tb(i,:)=[i nsign xy];
-        %         n=n+1;
-        %     end
-        %
-        %     idx=find(tb(:,1)==carpos)+1
-        %
-        %
-        %         scroll=us.jCodePane.getY;
-        %            scroll
-        %     scroll=-(scroll/2);
-        %     y0=height/2;
-        %
-        %
-        %     screen=get(0,'MonitorPositions');
-        %     if screen(3)>1600;
-        %         yd=yd*2;
-        %     end
-        %     if ~ispc
-        %         if screen(3)>1300;
-        %             yd=yd*2;
-        %         end
-        %     end
-        
-        % delete(findobj(gcf,'userdata',varnamefull));
-        %     i=carpos;
-        %     iconpos=[0 y0+(29/4)-(i*29/2)-(yd/2)/3+scroll yd/2 yd/2 ];
-        %     set(p,'position',[[0 tb(end,4)-tb(idx,4) yd/2 yd/2 ]]);
-        
-        %         [length(txall) length(tx)]
-        if length(txall)==length(tx)
-            set(p,'position',[[0 height/2-((yd/2)*(carpos+0))+yd/10 yd/2 yd/2 ]]);
-            
-            
-        else
-            set(us.hContainer,'units','pixel');
-            poscon=get(us.hContainer,'position');
-            
-            %         set(p,'position',[[0 height/2-((yd/2)*(carpos+0))+yd/4 yd/2 yd/2 ]]);
-            %posy=(1-(carpos+1)./length(CR))*poscon(4)+poscon(2)
-            posy=(1-(carpos+1)./length(CR))*(poscon(4)-poscon(2)-poscon(1))+poscon(1);
-            set(p,'position',[0 posy yd/2 yd/2]);
-            %             set(p,'position',[[0  ((1-(carpos+1)./length(CR))*poscon(4))+yd/8  yd/2 yd/2 ]]);
-            set(us.hContainer,'units','normalized');
-        end
-        
-    end
-end %j
-
-
-function autowidth(e,e2)
-us=get(gcf,'userdata');
-carposOrig=us.jCodePane.getCaretPosition;
-tx=char(us.jCodePane.getText);
-
-% if isfield(us,'lastfigposition')==0
-us.lastfigposition=get(gcf,'position');  %REMEMBER ############
-set(gcf,'userdata',us);
-% end
-
-% yd=us.jCodePane.getLineHeight()
-
-tc=strsplit(tx,char(10))';
-len=cell2mat(cellfun(@(a){length(a)},tc));
-cr=regexpi(tx,char(10));
-crdiff=diff(cr);
-imax=min(find(crdiff==max(crdiff))+1);
-
-caret=cr(imax)-1;
-us.jCodePane.setCaretPosition(caret);
-us.jCodePane.requestFocus();
-
-po=us.jCodePane.getPointFromPos(caret);
-if ispc; 
-    po.x=po.x/2;
-end
-
-% us.jCodePane.getBounds
-set(gcf,'units','pixels'); 
-pos=get(gcf,'position'); 
-pos2=pos;
-pos2(3)=po.x+40;
-screen=get(0,'ScreenSize');
-if pos2(1)+pos2(3)>screen(3)
-    pos2(1)=pos2(1)-((pos2(1)+pos2(3))-screen(3)+20);
-end
-if abs(pos2(1))+pos(3)>screen(3)
-    pos2(1)=0;
-    pos2(3)=screen(3);
-end
-set(gcf,'position',pos2);
-set(gcf,'units','norm');
-us.jCodePane.setCaretPosition(carposOrig);
-
-
-function autoheight(e,e2)
-
-%% autoheight
-us=get(gcf,'userdata');
-carposOrig=us.jCodePane.getCaretPosition;
-tx=char(us.jCodePane.getText);
-
-% if isfield(us,'lastfigposition')==0
-us.lastfigposition=get(gcf,'position');  %REMEMBER ############
-set(gcf,'userdata',us);
-% end
-%
-
-tc=strsplit(tx,char(10))';
-len=length(tc);
-
-yd=us.jCodePane.getLineHeight();
-if ispc; yd=yd/2; end
-
-
-% us.jCodePane.getBounds
-screenunits=get(0,'units');
-set(0,'units','pixels'); 
-
-set(gcf,'units','pixels'); 
-pos=get(gcf,'position'); 
-pos2=pos;
-pos2(4)=yd*len+3*yd;
-screen=get(0,'ScreenSize');
-% pos2(2)=pos2(2)+(pos2(4))/2;
-pos2(2)=screen(4)-(pos2(4)+screen(4)/10);
-% if pos2(2)+pos2(4)>screen(4)
-%     pos2(1)=pos2(1)-((pos2(1)+pos2(3))-screen(3)+20);
-% end
-set(gcf,'position',pos2);
-set(gcf,'units','norm');
-us.jCodePane.setCaretPosition(carposOrig);
-set(0,'units',screenunits);
-
-%%
-% ==============================================
-%%   prepicon
-% ===============================================
-function prepicon()
-drawnow
-us=get(gcf,'userdata');
-
-us.lastfigposition=get(gcf,'position');
-set(gcf,'userdata',us);
-
-
-txt=char(us.jCodePane.getText);
-tb=strsplit((txt),char(10))';
-for i=1:length(tb)
-    [icon tooltip varnamefull]=getIcon2(i);
-    if ~isempty(icon)
-        p=uicontrol('style','pushbutton','units','pixels' ,'position',[0 0 30 30 ],...
-            'tag','open','userdata',varnamefull,'visible','off');
-        set(p,'callback',@pbcb) ;%'delete(findobj(gcf,''tag'',''open''))'
-        %         drawnow;
-        %tooltip
-        try
-            itab=find(strcmp(us.dat(:,1),regexprep(varnamefull,'.*\.','')));
-            lg=[['<html>   <b><font color="green">'  varnamefull '</font></b>' '<br>'] ...]
-                [  char(us.dat(itab,3)) '<br>'] ...
-                [  '<u><font color="blue">'  'input type:'  '</font></u>' ' ' tooltip '<br>'] ...
-                [  '</html>'] ...
-                ];
-            tooltip2=lg;
-        catch
-            tooltip2=tooltip;
-        end
-        set(p,'TooltipString',tooltip2)% ps(i+1)=p;
-        
-        if ~isempty(regexpi(icon,'.gif$'))
-            [e map]=imread(icon)  ;
-            e=ind2rgb(e,map);
-            e(e<=0.01)=nan;
-        else
-            e=double(imread(icon));
-            e=e/max(e(:));
-            e(e<=0.01)=nan;
-            if ndims(e)==2
-                e=repmat(e,[1 1 3]);
-            end
-        end
-        
-        set(p,'cdata',e);
-        
-    end
-end
-
-%     us.jCodePane.setCaretPosition(1);
-
-% ==============================================
-%%   show icon
-% ===============================================
-
 function showIcon(he,e)
-% updateIconposition();
-drawnow;
+
 us=get(gcf,'userdata');
 if ~isempty(findobj(gcf,'tag','pulldown')) ; return; end
 
@@ -2291,30 +1041,33 @@ height=us.jCodePane.getHeight();
 yd=us.jCodePane.getLineHeight();
 numli=us.jCodePane.getNumLines();
 
-% carpos
 
 
 if carpos+1>numli; return; end
 % return
-% tb=[];
-% n=0;
-% for i=1:(numli)
-%     drawnow;
-%     %pos=us.jCodePane.getLineFromPos(n)
-%     nsign=us.jCodePane.getLineStart(n);
-%     pnt= us.jCodePane.getPointFromPos(nsign);
-%     xy=[pnt.x pnt.y];
-%     tb(i,:)=[i nsign xy];
-%     n=n+1;
-% end
+tb=[];
+n=0;
+for i=1:(numli)
+    drawnow;
+    %pos=us.jCodePane.getLineFromPos(n)
+    nsign=us.jCodePane.getLineStart(n);
+    pnt= us.jCodePane.getPointFromPos(nsign);
+    xy=[pnt.x pnt.y];
+    tb(i,:)=[i nsign xy];
+    n=n+1;
+end
 
 scroll=us.jCodePane.getY;
 scroll=-(scroll/2);
 y0=height/2;
+% yd;
 
-
+delete(findobj(gcf,'tag','open'));
+% ps=[]
+% for i=carpos%0:10%numli-1
+% %     if i+1==carpos+1
 try
-    [icon tooltip varnamefull]=getIcon;
+    [icon tooltip]=getIcon;
 catch
     return
 end
@@ -2324,82 +1077,34 @@ if screen(3)>1600;
     yd=yd*2;
 end
 % if ismac==1
-if ~ispc
+if ~ispc    
     if screen(3)>1300;
         yd=yd*2;
     end
 end
 
-% delete(findobj(gcf,'userdata',varnamefull));
 i=carpos+1;
-p=findobj(gcf,'userdata',varnamefull);
-if isempty(p)
-    p=uicontrol('style','pushbutton','units','pixels' ,'position',[0 y0+(29/4)-(i*29/2)-(yd/2)/3+scroll yd/2 yd/2 ],...
-        'tag','open','userdata',varnamefull);
-    % else
-    %     set(p,'position',[0 y0+(29/4)-(i*29/2)-(yd/2)/3+scroll yd/2 yd/2 ]);
-    % end
-    set(p,'callback',@pbcb) ;%'delete(findobj(gcf,''tag'',''open''))'
-    
-    %tooltip
-    try
-        itab=find(strcmp(us.dat(:,1),regexprep(varnamefull,'.*\.','')));
-        lg=[['<html>   <b><font color="green">'  varnamefull '</font></b>' '<br>'] ...]
-            [  char(us.dat(itab,3)) '<br>'] ...
-            [  '<u><font color="blue">'  'input type:'  '</font></u>' ' ' tooltip '<br>'] ...
-            [  '</html>'] ...
-            ];
-        tooltip2=lg;
-    catch
-        tooltip2=tooltip;
-    end
-    set(p,'TooltipString',tooltip2)% ps(i+1)=p;
-    
-    if ~isempty(regexpi(icon,'.gif$'))
-        [e map]=imread(icon)  ;
-        e=ind2rgb(e,map);
-        e(e<=0.01)=nan;
-    else
-        e=double(imread(icon));
-        e=e/max(e(:));
-        e(e<=0.01)=nan;
-    end
-    set(p,'cdata',e);
-    
+p=uicontrol('style','pushbutton','units','pixels' ,'position',[0 y0+(29/4)-(i*29/2)-(yd/2)/3+scroll yd/2 yd/2 ],...
+    'tag','open');
+set(p,'callback',@pbcb) ;%'delete(findobj(gcf,''tag'',''open''))'
+set(p,'TooltipString',tooltip)% ps(i+1)=p;
+%  myIcon = fullfile(matlabroot,'/toolbox/matlab/icons/warning.gif');
+%         jp = findjobj(p);
+%         jp.setIcon(javax.swing.ImageIcon(myIcon));
+%         set(p,'backgroundcolor','w');
+
+
+if ~isempty(regexpi(icon,'.gif$'))
+    [e map]=imread(icon)  ;
+    e=ind2rgb(e,map);
+    e(e<=0.01)=nan;
 else
-    set(p,'position',[0 y0+(29/4)-(i*29/2)-(yd/2)/3+scroll yd/2 yd/2 ]);
-    
-    try % if figure-Y-position is to small--> error
-    %% ALTERNATIVE-CURSOR
-    pos3=us.jCodePane.getCursorPercentFromTop();
-    
-    
-    ax1=findobj(gcf,'tag','axe1');
-    axpix=uni2uni(ax1,'position','pixels');
-    %  axpix=uni2uni(gcf,'position','pixels')
-    apix2=axpix(4);%yd*.75;
-    % ypos2=axpix(4)-axpix(4)*(pos3/100)
-    
-    nn=(pos3/100)*yd/2;
-    ypos2=(apix2-apix2*((pos3)/(100)))+nn;
-    set(p,'position',[0  ypos2-yd.*.6    yd/2 yd/2 ]);  %145
-    end
-    
+    e=double(imread(icon));
+    e=e/max(e(:));
+    e(e<=0.01)=nan;
 end
+set(p,'cdata',e);
 
-
-
-% %% ALTERNATIVE-CURSOR
-% pos3=us.jCodePane.getCursorPercentFromTop();
-% ax1=findobj(gcf,'tag','axe1');
-% axpix=uni2uni(ax1,'position','pixels');
-% %  axpix=uni2uni(gcf,'position','pixels')
-% apix2=axpix(4);%yd*.75;
-% % ypos2=axpix(4)-axpix(4)*(pos3/100)
-%
-% nn=(pos3/100)*yd/2;
-% ypos2=(apix2-apix2*((pos3)/(100)))+nn;
-% set(p,'position',[0  ypos2-yd/2    yd/2 yd/2 ]);  %145
 
 
 if 0
@@ -2418,8 +1123,44 @@ if 0
     height=us.jCodePane.getHeight()
     
     yw+yscroll
+    
+    
+    
+    
     set(p,'position',[0  145   yd/2 yd/2 ])  %145
+    
 end
+
+%     end
+%
+% end
+
+co = uni2uni(0,'PointerLocation','pixels');
+fpos=uni2uni(gcf,'Position','pixels');
+ypos=co(2)-fpos(2);
+xpos=co(1)-fpos(1);
+if 0
+    set(p,'position',[0  ypos-(yd/4)   yd/2 yd/2 ])  %145
+end
+% set(p,'position',[xpos-yd  ypos-(yd/4)   yd/2 yd/2 ])  %145
+
+%% ALTERNATIVE-CURSOR
+pos3=us.jCodePane.getCursorPercentFromTop();
+ax1=findobj(gcf,'tag','axe1');
+axpix=uni2uni(ax1,'position','pixels');
+%  axpix=uni2uni(gcf,'position','pixels')
+apix2=axpix(4);%yd*.75;
+% ypos2=axpix(4)-axpix(4)*(pos3/100)
+
+nn=(pos3/100)*yd/2;
+ypos2=(apix2-apix2*((pos3)/(100)))+nn;
+set(p,'position',[0  ypos2-yd/2    yd/2 yd/2 ]);  %145
+
+
+%  ax1=findobj(gcf,'tag','axe1');
+% axpix=uni2uni(ax1,'position','pixels')
+xpos=axpix(1)-yd/2;
+% set(p,'position',[xpos  ypos2-yd/2    yd/2 yd/2 ]);  %145
 
 
 
@@ -2429,26 +1170,6 @@ end
 
 delete(findobj(gcf,'tag','pulldown'));
 
-if us.mimic_oldstyle==1
-    set(p,'visible','on')
-    
-    r=findobj(gcf,'style','pushbutton');
-    iicons=[];
-    for i=1:length(r)
-        try
-            if strcmp(func2str(r(i).Callback),'pbcb')
-                iicons=[iicons i];
-            end
-        end
-    end
-    r=r(iicons);
-    set(setdiff(r,p),'visible','off');
-
-end
-
-
-
-% updateIconposition();
 
 %MOUSECLICK
 % import java.awt.Robot;
@@ -2458,20 +1179,19 @@ end
 % mouse.mousePress(InputEvent.BUTTON2_MASK);    //left click press
 % mouse.mouseRelease(InputEvent.BUTTON2_MASK);
 
-%  updateIconposition();
 
 
-function [icon tooltip varnamefull]=getIcon
+% ==============================================
+%%   callbacks
+% ===============================================
+
+function [icon tooltip]=getIcon
 us=get(gcf,'userdata');
-varname=[];
+
 
 r=us.jCodePane;
 tx=char(r.getText);
 val=r.getLineFromPos(r.getCaretPosition())+1;
-
-
-
-
 % carpos=r.getLineFromPos(r.getCaretPosition())
 % carpos=r.getCaretPosition();
 
@@ -2491,12 +1211,8 @@ tb{2,1}=[lin{1}(si1+1:si2-1) ];
 tb{3,1}=[lin{1}(si2:end) ];
 varname=char(  regexprep(tb(1),{'x\.' '='},'') );
 varname=deblank(varname);
-
-varnamefull=char(deblank(regexprep(tb(1),{'' '='},'')));
-
 %find index in OrigTable
 idx=find(strcmp(us.dat(:,1),varname));
-
 % tx3=tx2;
 try
     if strcmp(us.dat{idx,4},'col')
@@ -2550,127 +1266,10 @@ end
 
 
 
-function [icon tooltip varnamefull]=getIcon2(line)
-icon=[];tooltip=[];varnamefull=[];
-us=get(gcf,'userdata');
-varname=[];
-
-r=us.jCodePane;
-tx=char(r.getText);
-% val=r.getLineFromPos(r.getCaretPosition())+1;
-
-val=line;
-
-
-% carpos=r.getLineFromPos(r.getCaretPosition())
-% carpos=r.getCaretPosition();
-
-%tx modiic
-ict=[0 strfind(tx,char(10)) length(tx) ];
-tx2={};
-for i=1:length(ict)-1
-    tx2{end+1,1}=tx(ict(i)+1: ict(i+1)-1 );
-end
-
-lin=tx2(val);
-if isempty(lin{1}); return; end
-si1=min(cell2mat(strfind(lin,'=')));
-si2=min([min(cell2mat(strfind(lin,'%')))  length(lin{1})+1 ]);
-tb{1,1}=[lin{1}(1:si1) ];
-tb{2,1}=[lin{1}(si1+1:si2-1) ];
-tb{3,1}=[lin{1}(si2:end) ];
-varname=char(  regexprep(tb(1),{'x\.' '='},'') );
-varname=deblank(varname);
-
-varnamefull=char(deblank(regexprep(tb(1),{'' '='},'')));
-
-%find index in OrigTable
-idx=find(strcmp(us.dat(:,1),varname));
-
-% tx3=tx2;
-try
-    if strcmp(us.dat{idx,4},'col')
-        icon =which('color.gif'); %file_open.png');
-        tooltip='GET COLOR';
-    elseif strcmp(us.dat{idx,4},'f')
-        %     icon = fullfile(matlabroot,'/toolbox/matlab/icons/file_open.png'); %file_open.png');
-        %icon =which('file.gif');
-        icon = fullfile(matlabroot,'/toolbox/matlab/icons/book_link.gif');
-        tooltip='GET FILE';
-    elseif strcmp(us.dat{idx,4},'mf')
-        %     icon = fullfile(matlabroot,'/toolbox/matlab/icons/file_open.png'); %file_open.png');
-        %icon =which('file.gif');
-        icon = fullfile(matlabroot,'/toolbox/matlab/icons/book_mat.gif');
-        tooltip='GET MULTIPLE FILES';
-    elseif strcmp(us.dat{idx,4},'d')
-        %     icon = fullfile(matlabroot,'/toolbox/matlab/icons/dir.gif');%foldericon.gif');
-        %icon=which('dir.gif');
-        icon = fullfile(matlabroot,'/toolbox/matlab/icons/file_open.png');
-        tooltip='GET DIRECTORY';
-    elseif strcmp(us.dat{idx,4},'b')
-        icon = fullfile(matlabroot,'/toolbox/matlab/icons/tool_font_bold.png');
-        tooltip='BOOLEAN {0;1}';
-    elseif ~isempty(strfind(us.dat{idx,4},'{'))
-        icon=which('pulldown3.gif');
-        icon=which('curly-brackets.png');
-        %icon = fullfile(matlabroot,'/toolbox/matlab/icons/pageicon.gif');%tool_text_align_justify.png');
-        tooltip='pulldown';
-    else
-        icon=[];
-        tooltip='';
-    end
-end
-%    help_ex.png
-
-try
-    if iscell(us.dat{idx,4})
-        %         icon = fullfile(matlabroot,'/toolbox/matlab/icons/pageicon.png');
-        %icon=which('pulldown3.gif');
-        %icon=which('curly-brackets.png');
-        icon = fullfile(matlabroot,'/toolbox/matlab/icons/tool_legend.png');
-        tooltip='pulldown';
-        
-    end
-end
-%% CELL_FUNCTION HANDLE
-try
-    if  iscell(us.dat{idx,4})
-        w=us.dat{idx,4};
-        if strcmp(class(w{1}),'function_handle')
-            %      icon=which('pulldown3.gif');
-            icon = fullfile(matlabroot,'/toolbox/matlab/icons/help_gs.png');%tool_text_align_justify.png');
-            tooltip='external function';
-        end
-    end
-    
-end
-
-
-
-
-
-
 
 
 function pb1callback(h,e,v)
-
-us=get(gcf,'userdata');
-
-try % history saved
-    global paramguipref
-%     paramguipref.hist.time(end+1,1)={datestr(now)};
-%     paramguipref.hist.list(end+1,1)=us.jCodePane.getText;
-    try
-    paramguipref.hist.time=[paramguipref.hist.time; {datestr(now)} ];
-    paramguipref.hist.list=[paramguipref.hist.list; us.jCodePane.getText]; 
-    catch
-    paramguipref.hist.time=[  {datestr(now)} ];
-    paramguipref.hist.list=[  us.jCodePane.getText];     
-    end
-catch
-    disp('no history saved (paramguipref)');
- end
-uiresume(gcf);
+uiresume(gcf)
 
 function pb1CB(h,e,arg)
 r=get(h,'callback');
@@ -2681,19 +1280,10 @@ hgfeval(r2)
 %paul
 
 function pbcb(h,e)% ICON CLICKED
-drawnow;
 us=get(gcf,'userdata');
 r=us.jCodePane;
 tx=char(r.getText);
-
-% posvar=strfind(tx,get(h,'userdata'));
-posvar=regexpi(tx,[ get(h,'userdata') '\s*=' ]);
-r.setCaretPosition(posvar);
-showIcon();
-
 val=r.getLineFromPos(r.getCaretPosition())+1;
-
-
 % carpos=r.getLineFromPos(r.getCaretPosition())
 carpos=r.getCaretPosition();
 
@@ -2769,9 +1359,9 @@ elseif strcmp(us.dat{idx,4},'f')
         [fi]=  cfg_getfile2(1,'any',{'ee';'rrr'},{},prepwd,'.*' ,[]);
         fi=char(fi);
     catch
-        % [fi pa]=uigetfile([prepwd ],'D',[],'multiselect','off');
+       % [fi pa]=uigetfile([prepwd ],'D',[],'multiselect','off');
         [fi pa]=uigetfile([fullfile(prepwd,'*.*') ],['select file'],'multiselect','off');
-        
+
         fi=fullfile(pa,fi);
     end
     
@@ -2797,7 +1387,7 @@ elseif strcmp(us.dat{idx,4},'mf')
         if isempty(char(fi2)); return; end
     catch
         %[fi pa]=uigetfile([prepwd ],'select multiple files',[],'multiselect','on');
-        [fi pa]=uigetfile([fullfile(prepwd,'*.*') ],['select file(s)'],'multiselect','on');
+         [fi pa]=uigetfile([fullfile(prepwd,'*.*') ],['select file(s)'],'multiselect','on');
         if isnumeric(fi); return; end
         if ischar(fi); fi=cellstr(fi);; end
         if max(strfind(pa,filesep))==length(pa);
@@ -2854,26 +1444,17 @@ elseif   iscellmode>=1
     
     %% PULLDOWN
     pd=uicontrol('style','popupmenu','units','normalized','position',[0 0 .3 .1],'tag','pulldown',...
-        'string',pulldown,'backgroundcolor',[1 .8 .43 ]);
+        'string',pulldown);
     set(pd,'units','pixels');
-    %     hbut= findobj(gcf,'tag','open');
-    try
-    hbut=e.Source;
-    catch
-     hbut=h;   
-    end
+    hbut= findobj(gcf,'tag','open');
     pos=get(hbut,'position');
     pos2=[pos(1)+pos(3)  pos(2)-pos(4)    pos(4)*10 pos(4)  ];
-    set(pd,'position',pos2,...
-        'callback'    ,{@cbpulldown,tx3,tb,val,carpos,iscellmode  },...
-        'KeyPressFcn' ,{@pulldownkeypress,tx3,tb,val,carpos,iscellmode  });
-    uicontrol(pd);
+    set(pd,'position',pos2,'callback',{@cbpulldown,tx3,tb,val,carpos,iscellmode  },'KeyPressFcn',@pulldownkeypress);
+    
     set(gcf,'currentobject',findobj(gcf,'tag','pulldown'));
     try
         drawnow;%pause(.2)
         jPopup = findjobj(findobj(gcf,'Tag','pulldown'));
-        %jPopup.setEditable(true)
-        %drawnow
         % jPopup.hidePopup();
         jPopup.showPopup();
     end
@@ -2884,7 +1465,7 @@ elseif   iscellmode>=1
     
     set(findobj(gcf,'tag','open'),'KeyPressFcn',@pulldownBUTTONkeypress);
     
-   
+    
     return
     
 elseif   isfunmode==1
@@ -2911,16 +1492,10 @@ elseif   isfunmode==1
     
     
     try
-        list=hgfeval(func2eval);
+    list=hgfeval(func2eval);
     catch
-        hgfeval(func2eval);
-        updateIconposition();
-        
-        us.jCodePane.setCaretPosition(carpos);
-        us.jCodePane.requestFocus();
-        
-        
-        return
+       hgfeval(func2eval); 
+       return 
     end
     if isempty(list); list={''};end
     
@@ -3046,10 +1621,8 @@ r.setText(b3);
 try; r.setCaretPosition(carpos);end
 
 updatehistory();
-updateIconposition();
 
-us.jCodePane.setCaretPosition(carpos);
-us.jCodePane.requestFocus();
+
 
 
 function s2b=reformatline(s2, s1 ,s3)
@@ -3113,6 +1686,7 @@ end
 s2b=dum;
 % disp([char([s1;s2b;s3])]);
 % disp('lin-1141   reformatline');
+%����������������������������������������������������������������������������������������������������
 
 
 function reformat
@@ -3239,10 +1813,9 @@ else
 end
 
 
-
+function pulldownkeypress(h,e)
 
 function pulldownBUTTONkeypress(h,e)
-'b'
 % '1318-pulldownBUTTONkeypress'
 hp=findobj(gcf,'tag','pulldown');
 n=length(get(hp,'string'));
@@ -3264,36 +1837,7 @@ elseif  strcmp(e.Key,'return')
 end
 
 
-
-
-function pulldownkeypress(h,e,tx3,tb,val,carpos,iscellmode)
-% h
-
-% if strcmp(e.Key,'return') %close and lock answer
-%     'space'
-% end
-if strcmp(e.Key,'leftarrow') 
-   % 'le'
-    hpull=findobj(gcf,'tag','pulldown');
-    li=get(hpull,'string');
-    va=get(hpull,'value');
-    va=va-1;
-    if va<1; return; end
-    set(hpull,'value',va);
-    
-elseif strcmp(e.Key,'rightarrow')
-   % 'ri'
-     hpull=findobj(gcf,'tag','pulldown');
-    li=get(hpull,'string');
-    va=get(hpull,'value');
-    va=va+1;
-    if va>length(li); return; end
-    set(hpull,'value',va);
-end
-
 function cbpulldown(h,e,tx3,tb,val,carpos,iscellmode)
-
-
 
 % set(gcf,'currentobject',findobj(gcf,'tag','pulldown'))
 % return
@@ -3302,16 +1846,15 @@ pb=findobj(gcf,'tag','pulldown');
 li=cellstr(get(pb,'string'));
 va=get(pb,'value');
 us=get(gcf,'userdata');
-curpos=us.jCodePane.getCaretPosition;
 r=us.jCodePane;
 try
-    set(r,'CaretUpdateCallback','');
+set(r,'CaretUpdateCallback','');
 catch
     jTextAreaWA = handle(r,'CallbackProperties');
     set(jTextAreaWA,'CaretUpdateCallback','');
 end
 
-% return
+
 
 % carpos=r.getCaretPosition();
 
@@ -3365,7 +1908,6 @@ b=tx3;
 b2=cell2line(b,1,'@999@');
 b3=regexprep(b2,'@999@',char(10));
 b3=[b3 ' ' char(09) ];
-b3=makenicer2(b3);
 r.setText(b3);
 try
     r.setCaretPosition(carpos);
@@ -3383,205 +1925,34 @@ set(r,'CaretUpdateCallback',@showIcon);
 updatehistory();
 % icon=findobj(gcf,'tag','open');
 % set(icon,'userdata',char(li(va)));
- us.jCodePane.setCaretPosition(curpos);
-us.jCodePane.requestFocus();
+
+
 
 function resizefun(he,e)
-% clc
-
-set(gcf,'Resizefcn',[]);%32-always,31-needed,30-depends
-
-
-r=findobj(gcf,'style','pushbutton');
-iicons=[];
-for i=1:length(r)
-    try
-        if strcmp(func2str(r(i).Callback),'pbcb')
-            iicons=[iicons i];
-        end
-    end
-end
-r=r(iicons);
-set(r,'visible','off');
-updateIconposition();
-
-
-set(gcf,'Resizefcn',@resizefun);%32-always,31-needed,30-depends
-
-
-% us=get(gcf,'userdata');
-% persistent atime
-% if isempty(atime)
-%     atime=tic;
-% end
-% persistent check % Shared with all calls of pushbutton1_Callback.
-% delay = .01; % Delay in seconds.
-% % Count number of clicks. If there are no recent clicks, execute the single
-% % click action. If there is a recent click, ignore new clicks.
-% if isempty(check)
-%     check = 1;
-%     disp('Single click action');
-%     set(us.jhPanel.VerticalScrollBar,'AdjustmentValueChangedCallback',[]);
-%     drawnow
-% else
-%     check = [];
-%     drawnow;
-% %     pause(delay)
-%    disp( ['moved ' num2str(toc(atime))      ]);
-%    atime=tic;
-%    set(us.jhPanel.VerticalScrollBar,'AdjustmentValueChangedCallback',@updateIconposition_cb);
-%    drawnow;
-% end
-% return
-%  set(us.jhPanel.VerticalScrollBar,'AdjustmentValueChangedCallback',@updateIconposition_cb);
-
-
-
-
-
-% return
-% persistent returnFlag
-% if ~isempty(returnFlag)
-%     disp('...do nothing');
-%     return
-% end
-% returnFlag=1;
-% disp('...do something');
-% % returnFlag=[];
-%
-% return
-
-
-% flag = false;
-% % Get the stack
-% s = dbstack();
-% %   disp(['rin' num2str(numel(s))]);
-% if numel(s)<=2
-%     % Stack too short for a multiple call
-%     %    drawnow;
-%     return
-% end
-% % How many calls to the calling function are in the stack?
-% names = {s(:).name};
-% TF = strcmp(s(2).name,names);
-% count = sum(TF);
-% if count>1
-%     % More than 1
-%     flag = true;
-% end
-% % disp(count);
-%
-% return
-
-
-
-
-
-
-
-
-
-
-
-
 us=get(gcf,'userdata');
-curpos=us.jCodePane.getCaretPosition;
+p=findobj(gcf,'tag','open');
+if isempty(p); return; end
 
-% % highlim=0.15;
-% % fpos=get(gcf,'position');
-% % if fpos(4)<highlim;
-% %     fpos2=[fpos(1)  fpos(1)+fpos(3)-highlim   fpos(3)  highlim ];
-% %     set(gcf,'position',fpos2);
-% % end
-%
-% us=get(gcf,'userdata');
-% p=findobj(gcf,'tag','open');
-% if isempty(p); return; end
-%
-% yd=us.jCodePane.getLineHeight();
-% screen=get(0,'MonitorPositions');
-% if screen(3)>1600;
-%     yd=yd*2;
-% end
-%
-% %% ALTERNATIVE-CURSOR
-% pos3=us.jCodePane.getCursorPercentFromTop();
+yd=us.jCodePane.getLineHeight();
+screen=get(0,'MonitorPositions');
+if screen(3)>1600;
+    yd=yd*2;
+end
+
+%% ALTERNATIVE-CURSOR
+pos3=us.jCodePane.getCursorPercentFromTop();
+ax1=findobj(gcf,'tag','axe1');
+axpix=uni2uni(ax1,'position','pixels');
+%  axpix=uni2uni(gcf,'position','pixels')
+apix2=axpix(4);%yd*.75;
+%  ypos2=axpix(4)-axpix(4)*(pos3/100)
+ypos2=apix2-apix2*(pos3/100);
+set(p,'position',[0  ypos2-yd/2    yd/2 yd/2 ]);  %145
+%% set ICON on left border
 % ax1=findobj(gcf,'tag','axe1');
-% axpix=uni2uni(ax1,'position','pixels');
-% %  axpix=uni2uni(gcf,'position','pixels')
-% apix2=axpix(4);%yd*.75;
-% %  ypos2=axpix(4)-axpix(4)*(pos3/100)
-% ypos2=apix2-apix2*(pos3/100);
-% set(p,'position',[0  ypos2-yd/2    yd/2 yd/2 ]);  %145
-% %% set ICON on left border
-% % ax1=findobj(gcf,'tag','axe1');
-% % axpix=uni2uni(ax1,'position','pixels')
-% % xpos=axpix(1)-yd/2;
-% %  set(p,'position',[xpos  ypos2-yd/2    yd/2 yd/2 ]);  %145
-%
-% us.jCodePane.setCaretPosition(curpos);
-
-
-% %
-
-
-r=findobj(gcf,'style','pushbutton');
-iicons=[];
-for i=1:length(r)
-    try
-        if strcmp(func2str(r(i).Callback),'pbcb')
-            iicons=[iicons i];
-        end
-    end
-end
-r=r(iicons);
-% left distance of text-pane
-if ~isempty(r)
-    iconpos= get(r(1),'position');
-    units=get(us.hContainer,'units');
-    set(us.hContainer,'units','pixels');
-    posList=get(us.hContainer,'position');
-    set(us.hContainer,'position',[iconpos(3) posList(2:end) ]);
-    set(us.hContainer,'units',units);
-else
-    hh=findobj(gcf,'tag','pb2');
-    if isempty(hh)
-        iconpos(3)=1;
-    else
-        if strcmp(get(hh,'units'),'pixels')
-            iconpos=get(hh,'position');
-        else
-            unitsT=get(hh,'units');
-            set(hh,'units','pixels')
-            iconpos=get(hh,'position');
-            set(hh,'units',unitsT);
-        end
-    end
-    units=get(us.hContainer,'units');
-    set(us.hContainer,'units','pixels');
-    posList=get(us.hContainer,'position');
-    set(us.hContainer,'position',[iconpos(3) posList(2:end) ]);
-    set(us.hContainer,'units',units);
-    
-end
-
-
-try
-    updateIconposition(); %drawnow;
-end
-
-
-%
-%
-%
-%
-% carpos=us.jCodePane.getCaretPosition();
-% if carpos<1
-%     us.jCodePane.setCaretPosition(carpos+1);
-% else
-%     us.jCodePane.setCaretPosition(carpos-1);
-% end
-%  us.jCodePane.setCaretPosition(carpos);
+% axpix=uni2uni(ax1,'position','pixels')
+% xpos=axpix(1)-yd/2;
+%  set(p,'position',[xpos  ypos2-yd/2    yd/2 yd/2 ]);  %145
 
 
 function value = uni2uni(hObject,propName,unitType)
@@ -3919,7 +2290,7 @@ for i=1:size(fn,1)
     if isnumeric(d) | islogical(d)
         
         if size(d,1)==0
-            s2{end+1,1}= sprintf(['%s=' ntabs '[%s];'],fn{i} , '');
+           s2{end+1,1}= sprintf(['%s=' ntabs '[%s];'],fn{i} , '');
         elseif size(d,1)==1
             %             d2=sprintf('% 10.10g ' ,d);
             d2=regexprep(num2str(d),'\s+','  ');
@@ -4290,7 +2661,7 @@ v3=v2;
 for i=1:size(v2,1)
     if ~isnan(iq{i})
         ipo=regexpi(v2{i},'=','once');
-        v3{i}= regexprep(v2{i},'=',[ '=' repmat(' ',1,(imax+1)-ip(i))],'once' );
+      v3{i}= regexprep(v2{i},'=',[ '=' repmat(' ',1,(imax+1)-ip(i))],'once' );
     end
 end
 qw3=v3;
@@ -4306,8 +2677,8 @@ return
 %% improves readability of paramgui
 % input can be char or cell -->output is of input classtype
 % function out=makenicer2(in)
-% out=makenicer2(strsplit(tx4,char(10))');
-% out=makenicer2(tx4);
+% out=makenicer2(strsplit(tx4,char(10))');  
+% out=makenicer2(tx4);  
 
 function out=makenicer2(in)
 
@@ -4334,8 +2705,8 @@ for i=1:size(lin2)
     is1=regexpi(lin2{i},'\S=|\S\s+=','once');
     is2=regexpi(lin2{i},'=','once');
     
-    lin2{i} = ...
-        [lin2{i}(1:is1) repmat(' ',[1 max(w2)-w2(i)]) ' ='  lin2{i}(is2+1:end) ];
+  lin2{i} = ...
+  [lin2{i}(1:is1) repmat(' ',[1 max(w2)-w2(i)]) ' ='  lin2{i}(is2+1:end) ];
 end
 % char(lin2)
 lin=lin2;
@@ -4347,139 +2718,10 @@ lin2=lin;
 spac=repmat(' ',[1 2]);
 for i=1:size(lin2)
     is=regexpi(lin2{i},'=','once');
-    if i==1
+      if i==1
         extens=length([lin2{i}(1:is) spac]  );%used later for multiline
-    end
-    lin2{i} = [lin2{i}(1:is) spac   lin{i}(w1(i):end) ];
-end
-
-
-
-lin=lin2;
-%place back
-% set line with cell-one sign before
-for i=1:length(lin)
-    lino=lin{i};
-    curlon=min(regexpi(lino ,'{'));
-    if~isempty(curlon)
-        coment=min(regexpi(lino ,'%'));
-        if isempty(coment); coment=inf; end
-        if curlon<coment
-            if strcmp(lino(curlon-1),' ')
-                lino=regexprep(lino,'\s{','{','once');
-                lino=regexprep(lino,'{\s*','{','once');
-            end
-        end
-        
-    end
-    lin{i}=lino;
-end
-
-tx6=tx5;
-tx6(lincod)=lin;
-
-% COMMENT IN 1st line in MULTILINE
-for i=lincod(1):size(tx6,1)
-    if isempty(find(lincod==i))  % no first-line linecode or other stuff
-        dx=tx6{i};
-        if strcmp(regexpi(dx,'\S','match','once'),'%') ==0 ;% FIRST SIGN ASIDE SPACE is not COMMENTSIGN  regexpi(' ;%','\S','match','once')
-            dx=[repmat(' ',[1 extens+1]) regexprep(dx,'^\s+','','once')];
-            tx6{i}=dx;
-        end
-    end
-end
-
-%% cell-stuff again
-tx7=tx6;
-for i=1:length(lincod)
-    cmdnum=lincod(i);
-    lino=tx7{cmdnum};
-    curlon =min(regexpi(lino ,'{'));
-    curloff =min(regexpi(lino ,'}'));
-    if~isempty(curlon)
-        coment=min(regexpi(lino ,'%'));
-        if isempty(coment); coment=inf; end
-        if curloff>coment; curloff=[];end %  curl-off is in comment
-        
-        if curlon<coment && isempty(curloff)
-            try
-                %mors=tx7(cmdnum+1:lincod(i+1)-1);
-                idxout=cmdnum+1:lincod(i+1)-1;
-                mors=tx7(idxout);
-            catch
-                idxout=cmdnum+1:size(tx7,1);
-                mors=tx7(idxout);
-            end
-            
-            for j=1:size(mors,1)
-                thismor=mors{j};
-                try
-                    charsp=thismor(curlon+1);
-                catch
-                    charsp='Q' ; % short line/ info
-                end
-                coment2=min(regexpi(thismor ,'%'));
-                if isempty(coment2); coment2=inf; end
-                if strcmp(charsp,' ') && curlon+1<coment2
-                    
-                    thismor(curlon+1)=[]; % one space back
-                end
-                mors{j}=thismor;
-            end
-            tx7(idxout)=mors;
-        end
-    end
-end
-
-
-fin=tx7;
-if ischar(in)
-    out=strjoin(fin,char(10));
-else
-    out=fin;
-end
-
-function out=makenicer2_old(in)
-%% ________________________________________________________________________________________________
-% make nicer
-%% ________________________________________________________________________________________________
-
-if ischar(in)
-    tx5=strsplit(in,char(10))';
-else
-    tx5=in;
-end
-% lincod=regexpi2(tx5, ['x.' '\w+=|\w+\s+=']);
-lincod=regexpi2(tx5,'^x\.'); % #NEU
-lin=tx5(lincod);
-
-% set '='
-w1=regexpi(lin,'=','once')          ; %equal sign
-w2=regexpi(lin,'\S=|\S\s+=','once') ;% %last char of fieldname %regexpi({'w.e=3';'wer   =  33'},'\S=|\S\s+=','once')
-try; w1=cell2mat(w1); end
-try; w2=cell2mat(w2); end
-lin2=lin;
-for i=1:size(lin2)
-    is1=regexpi(lin2{i},'\S=|\S\s+=','once');
-    is2=regexpi(lin2{i},'=','once');
-    
-    lin2{i} = ...
-        [lin2{i}(1:is1) repmat(' ',[1 max(w2)-w2(i)]) ' ='  lin2{i}(is2+1:end) ];
-end
-% char(lin2)
-lin=lin2;
-
-%set field
-w1=regexpi(lin,'(?<==\s*)(\S+)','once'); %  look back for "= & space"
-try; w1=cell2mat(w1); end
-lin2=lin;
-spac=repmat(' ',[1 2]);
-for i=1:size(lin2)
-    is=regexpi(lin2{i},'=','once');
-    if i==1
-        extens=length([lin2{i}(1:is) spac]  );%used later for multiline
-    end
-    lin2{i} = [lin2{i}(1:is) spac   lin{i}(w1(i):end) ];
+      end
+      lin2{i} = [lin2{i}(1:is) spac   lin{i}(w1(i):end) ];
 end
 lin=lin2;
 
@@ -4492,9 +2734,9 @@ for i=lincod(1):size(tx6,1)
     if isempty(find(lincod==i))% no first-line linecode or other stuff
         dx=tx6{i};
         if strcmp(regexpi(dx,'\S','match','once'),'%') ==0 ;% FIRST SIGN ASIDE SPACE is not COMMENTSIGN  regexpi(' ;%','\S','match','once')
-            
-            dx=[repmat(' ',[1 extens+1]) regexprep(dx,'^\s+','','once')];
-            tx6{i}=dx;
+
+        dx=[repmat(' ',[1 extens+1]) regexprep(dx,'^\s+','','once')];
+        tx6{i}=dx;
         end
     end
     
@@ -4527,12 +2769,12 @@ ichar=regexpi(tx,char(10));
 charbef=find(ichar>cartpos);
 cartline=min(charbef);
 try
-    cartposnew=ichar(cartline-1)+3;
+cartposnew=ichar(cartline-1)+3;
 catch
-    cartposnew= 2; %set at the beginning
+   cartposnew= 2; %set at the beginning
 end
 % r.setCaretPosition(cartposnew)
-%%
+%% 
 
 %--------------------------------------------------
 %% get field and new data
@@ -4543,22 +2785,22 @@ replaceby=inp{2};
 
 %--------------------------------------------------
 % special characters -cases
-if     ischar(replaceby)
+if     ischar(replaceby)    
     if isempty(replaceby);
         replaceby='''''';
     else
         replaceby=['''' replaceby ''''];
     end
-elseif isnumeric(replaceby)
+elseif isnumeric(replaceby) 
     if ndims(replaceby)<3
-        w=struct();
-        w.r=replaceby;
-        w2=struct2list(w);
-        w2=strrep(strrep(w2,'w.r=',''),';','');
-        w2=regexprep(w2,'\s+',' ');
-        w3=strjoin(w2,char(10));
-        replaceby=w3;
-        
+    w=struct();
+    w.r=replaceby;
+    w2=struct2list(w);
+    w2=strrep(strrep(w2,'w.r=',''),';','');
+    w2=regexprep(w2,'\s+',' ');
+    w3=strjoin(w2,char(10));
+    replaceby=w3;
+    
     else % 3d
         
         wp={};
@@ -4579,44 +2821,44 @@ elseif isnumeric(replaceby)
     end
     
     
-    %     ndims(size(w.r))
-    %      if isempty(replaceby); replaceby='[]';
-    %         if numel(replaceby)==1
-    %         [regexprep(num2str(replaceby),'\s+','') ]
-    %         elseif size(replaceby,1)==1 & size(replaceby,1)==1
-    %            ['[' regexprep(num2str(replaceby),'\s+',' ') ']' ]
-    %     end
-elseif iscell(replaceby)
-    try;
+%     ndims(size(w.r))
+%      if isempty(replaceby); replaceby='[]';
+%         if numel(replaceby)==1
+%         [regexprep(num2str(replaceby),'\s+','') ]
+%         elseif size(replaceby,1)==1 & size(replaceby,1)==1
+%            ['[' regexprep(num2str(replaceby),'\s+',' ') ']' ]       
+%     end
+elseif iscell(replaceby) 
+    try; 
         replaceby{1};
         si=size(replaceby);
         if find(si>=1)
             dx=replaceby;
             for i=1:length(dx)
                 if ischar(dx{i})
-                    dx{i}=['''' dx{i} ''''] ;
+                   dx{i}=['''' dx{i} ''''] ;
                 end
             end
             replaceby=dx;
             
-            
+             
             dx=['{' strjoin(replaceby,char(10)) '}'];
-            dx=strrep(dx,[char(10)] ,[ char(10) ' ']);
+             dx=strrep(dx,[char(10)] ,[ char(10) ' ']);
             replaceby=dx;
         end
     catch
-        replaceby='{}';
+       replaceby='{}';
     end
 end
-
+    
 %--------------------------------------------------
 % REPLACE TEXT
 iv   =regexpi(tx,[ char(10) field '[=|\s*]'])  ;% find onset of  variable
 ichar=regexpi(tx,[ char(10) 'x.' '[\S+ \S+=]']);   %find chars
 
 if isempty(iv)
-    error('### could not found variable "field --> TYPO ???? ###"');
-    
+   error('### could not found variable "field --> TYPO ???? ###"');
+
     
 end
 
@@ -4638,16 +2880,16 @@ if ~isempty(d2)
     cr=strfind(ende,char(10));
     if ~isempty(cr)
         ende=ende(1:cr(1));
-        
-        %ende=ende(1:strfind(ende,char(10)));
+    
+    %ende=ende(1:strfind(ende,char(10)));
     end
     
     crt=strfind(insert,char(10));
     if ~isempty(crt)
         insert2=[insert(1:crt(1)-1) ['% ' ende(1:end-1)] insert(crt(1):end)  ];
-        tx3=[tx2(1:d1-1) insert2];
-    else
-        tx3=[tx2(1:d1-1) insert ende];
+        tx3=[tx2(1:d1-1) insert2];  
+    else   
+      tx3=[tx2(1:d1-1) insert ende];  
     end
     
     
@@ -4672,7 +2914,7 @@ r.setText(tx5);
 %--------------------------------------------------
 % set caretposition
 try
-    r.setCaretPosition(cartposnew);
+r.setCaretPosition(cartposnew);
 end
 
 
