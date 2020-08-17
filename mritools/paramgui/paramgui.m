@@ -843,7 +843,8 @@ drawnow;
 us.jCodePane.setCaretPosition(1); %pos-1
 us.jCodePane.requestFocus();
 
-
+posx=get(gcf,'posiiton');
+set(gcf,'position',[posx(1:3) posx+.001]);
 
 % ==============================================
 %%   uiwait
