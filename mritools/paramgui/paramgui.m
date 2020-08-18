@@ -1397,6 +1397,16 @@ try
     
     userdat=get(r,'userdata');
     currvarname=regexprep(txcurrline,'\s*=.*','');
+    if isempty(currvarname)
+        try
+            if us.mimic_oldstyle==1
+                set(us.selectedbutton,'visible','off');
+                drawnow;
+            end
+        end
+        return
+        
+    end
     ibut=find(strcmp(userdat,currvarname)); %this button
     hp=r(ibut);
     
@@ -2410,7 +2420,14 @@ catch
     return
     
 end
-if isempty(icon); return; end
+if isempty(icon); 
+    try
+        if us.mimic_oldstyle==1
+            set(us.selectedbutton,'visible','off');
+        end
+    end
+    return; 
+end
 screen=get(0,'MonitorPositions');
 if screen(3)>1600;
     yd=yd*2;
@@ -3519,6 +3536,10 @@ function resizefun(he,e)
 
 set(gcf,'Resizefcn',[]);%32-always,31-needed,30-depends
 us=get(gcf,'userdata');
+if isfield(us,'selectedbutton');
+    selbut=us.selectedbutton;
+end
+    
 curpos2=us.jCodePane.getCaretPosition;
 
 r=findobj(gcf,'style','pushbutton');
@@ -3699,7 +3720,15 @@ try
     updateIconposition(); %drawnow;
 end
 us.jCodePane.setCaretPosition(curpos2);
+
+drawnow;
+if isfield(us,'selectedbutton');
+    us.selectedbutton=selbut;
+    set(gcf,'userdata',us);
+end
+
 highlightSelectedIcon();
+
 
 %
 %
