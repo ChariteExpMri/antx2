@@ -3028,6 +3028,7 @@ elseif strcmp(us.dat{idx,4},'d')
     end
     
     [pa]=uigetdir('*.*',strjoin(msg,char(10)));
+    if isnumeric(pa); return; end
     newtag=pa;
     n=[tb{1} [ '''' newtag '''' ';' char(9) ] tb{3}];
     
