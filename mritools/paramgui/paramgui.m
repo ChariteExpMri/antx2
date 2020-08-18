@@ -1289,7 +1289,7 @@ end
 %% that
 
 function paramguihelp(e,e2)
-uhelp('paramgui.m');
+uhelp('paramgui.m',1);
 
 function cancelate(e,e2)
 drawnow
@@ -2368,6 +2368,21 @@ end
 
 %     us.jCodePane.setCaretPosition(1);
 
+
+
+function r=getButtons()
+r=findobj(gcf,'style','pushbutton');
+iicons=[];
+for i=1:length(r)
+    try
+        if strcmp(func2str(r(i).Callback),'pbcb')
+            iicons=[iicons i];
+        end
+    end
+end
+r=r(iicons);
+
+
 % ==============================================
 %%   show icon
 % ===============================================
@@ -2414,7 +2429,9 @@ try
 catch
     try
         if us.mimic_oldstyle==1
-            set(us.selectedbutton,'visible','off');
+            hbutts=getButtons();
+            set(hbutts,'visible','off');
+            %set(us.selectedbutton,'visible','off');
         end
     end
     return
@@ -2423,7 +2440,9 @@ end
 if isempty(icon); 
     try
         if us.mimic_oldstyle==1
-            set(us.selectedbutton,'visible','off');
+            hbutts=getButtons();
+            set(hbutts,'visible','off');
+            %set(us.selectedbutton,'visible','off');
         end
     end
     return; 
@@ -2540,44 +2559,21 @@ end
 delete(findobj(gcf,'tag','pulldown'));
 
 
-%% highlight selected icon
-if 0
-    
-    r=findobj(gcf,'style','pushbutton');
-    iicons=[];
-    for i=1:length(r)
-        try
-            if strcmp(func2str(r(i).Callback),'pbcb')
-                iicons=[iicons i];
-            end
-        end
-    end
-    r=r(iicons);
-    hdesel=setdiff(r,p);
-    
-    for i=1:length(hdesel) % unselect
-        set(hdesel(i),'cdata',getappdata(hdesel(i),'icondef'));
-    end
-    set(p,'cdata',getappdata(p,'iconsel'));
-    
-end
-
-
-
 
 if us.mimic_oldstyle==1
     set(p,'visible','on');
     
-    r=findobj(gcf,'style','pushbutton');
-    iicons=[];
-    for i=1:length(r)
-        try
-            if strcmp(func2str(r(i).Callback),'pbcb')
-                iicons=[iicons i];
-            end
-        end
-    end
-    r=r(iicons);
+%     r=findobj(gcf,'style','pushbutton');
+%     iicons=[];
+%     for i=1:length(r)
+%         try
+%             if strcmp(func2str(r(i).Callback),'pbcb')
+%                 iicons=[iicons i];
+%             end
+%         end
+%     end
+    r=getButtons();
+%     r=r(iicons);
     set(setdiff(r,p),'visible','off');
 
 end
