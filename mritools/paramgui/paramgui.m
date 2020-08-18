@@ -60,17 +60,22 @@
 % close      :{0,1} close figure afterwards (note: it makes  no sense to have both uiwait and
 %             close set to 0)
 % data       : just data to be used in the caller functions...stored in the fig''s userdata
-%  info      : show help (use bulb-icon to see help)
+% info       : show help (use bulb-icon to see help)
 %             examples:   ..'info',{@doc,'paramgui.m'},.   or  ..'info',{@uhelp,[ mfilename '.m']},..
 %
-%% KEYBOARD:
-% <alt>&<y>    : if some/all parameters are further specified by the 4th column of
-% <p>(e.g <type&definition>) one can move the cursor by arrowkeys and press
-% <alt>&<y> to -->change the parameter in the current line (toggle boolean if its a boolean,
-%         or open gui if parameter is defined as file/directory, or open a pulldown
-%         menu if its a cell-array)
+% #by KEYBOARD:
 % <F1>: simulate RUN-button
 % <F3>: simulate click onto cursor-located button 
+% for more shortcuts see Menu/Shortcuts
+% #by MENU
+%  * Help paramgui ..open help window
+%  * Shortcuts     ..open shortcuts window
+%  * History       ..open paramgui history panel
+%        -history panel shows previous calls of paramgui (history is updated via 'run'-button) 
+%        -history list is color coded: similar lists obtain the same color (based on comparison of the 1st line) 
+%        -previous calls with similar variable names (but different variable values; same color-code) can be
+%         modified and executed instead of the actual list
+%  * Preferences       ..open preferences window
 %
 %% EXAMPLE
 %    p={...
@@ -916,20 +921,20 @@ function morepanel(e,e2)
 
 hb=findobj(gcf,'tag','pbmore');
 if get(hb,'value')==1 
-    m = uimenu(gcf,'label','more','tag','moremenu');
+    m = uimenu(gcf,'label','Menu','tag','moremenu');
     
-    hm = uimenu(m,'label','Help Paramgui');
+    hm = uimenu(m,'label','Help paramgui');
     set(hm,'callback',@paramguihelp);
     
     
-    hm = uimenu(m,'label','shortcuts Paramgui');
+    hm = uimenu(m,'label','Shortcuts Paramgui [ctrl+s]');
     set(hm,'callback',@paramguishortcuts);
     
     
-     hm = uimenu(m,'label','History (get list of previous Paramgui-calls)');
+     hm = uimenu(m,'label','History (get list of previous Paramgui-calls) [ctrl+h]');
     set(hm,'callback',@paramguihistory);
     
-    hm = uimenu(m,'label','Preferences');
+    hm = uimenu(m,'label','Preferences [ctrl+p]');
     set(hm,'foregroundcolor',[0.4706    0.6706    0.1882],'callback',@preferences_win);
     
     
@@ -943,23 +948,28 @@ function paramguishortcuts(e,e2)
 
 %% start
 % anker_shortcuts_on
-%  #Wo PARAMGUI SHORTCUTS
-%  #g [ctrl+p] or [cmd+p]  #n open preferences 
-%  #b WINDOW-SIZE
-%  #g [ctrl+upp]     #n original windows position/size 
-%  #g [ctrl+right]   #n window width fits content (width adapted to line with max characters)
-%  #g [ctrl+down]    #n window height fits content (height adapted to number of lines)
-%  #g [ctrl+left]    #n previous window position & size
-%  #r EXECUTION
-%  #g [F1]   #n  simulates "Run"/"START" button 
-%  #g [F3]   #n  simulates click onto cursor-located button 
+% #Wo PARAMGUI SHORTCUTS
+% #g [ctrl+p] or [cmd+p]  #n open preferences 
+% #b WINDOW-SIZE
+% #g [ctrl+upp]     #n original windows position/size 
+% #g [ctrl+right]   #n window width fits content (width adapted to line with max characters)
+% #g [ctrl+down]    #n window height fits content (height adapted to number of lines)
+% #g [ctrl+left]    #n previous window position & size
+% #r EXECUTION
+% #g [F1]   #n  simulates "Run"/"START" button 
+% #g [F3]   #n  simulates click onto cursor-located button 
 
-%  #b FOR PULLDOWN(PD) ONLY (cellmode)
-%  #g [left/right arrow]   #n  navigate through PD, for PD with n>2 items (sorry)
+% #b OTHER
+% #g [ctrl+M]   #n  show/hide menu
+% #g [ctrl+H]   #n  show history (previous paramgui calls)
+% #g [ctrl+S]   #n  show shortcuts
+
+% #b FOR PULLDOWN(PD) ONLY (cellmode)
+% #g [left/right arrow]   #n  navigate through PD, for PD with n>2 items (sorry)
 %                              -PD remains open (use mouse or enter-key to lock item and close PD)
-%  #g [up/down arrow]      #n  toggle between first two items (PD will be closed after item-switch)
-%  #g [return]             #n  lock selected item and close PD
-%  #g [esc]                #n  close PD (no item is locked)
+% #g [up/down arrow]      #n  toggle between first two items (PD will be closed after item-switch)
+% #g [return]             #n  lock selected item and close PD
+% #g [esc]                #n  close PD (no item is locked)
 % 
 % anker_shortcuts_off
 
@@ -1000,7 +1010,14 @@ catch
     return
 end
 
-if checkok==0; return; end 
+if checkok==0;
+%     figname=get(gcf,'name');
+%     set(gcf,'name','   ..msg: empty paramgui history..');
+%     pause(.3);
+%     set(gcf,'name',figname);
+msgbox('no paramgui history/no previous paramgui calls','modal');
+return;
+end
 
 set(gcf,'units','pixel');
 pf=get(gcf,'position');
@@ -1476,6 +1493,8 @@ if get(e,'KeyCode') ==40 || get(e,'KeyCode') ==38 % [40]down-arrow,[38]up-arrow
 %     return
 end
 
+
+% e
 % if get(e,'KeyCode') ==10  %enter(10)
 %     updateIconposition();
 %     highlightSelectedIcon();
@@ -1486,7 +1505,26 @@ end
 %     return
 % end
 
-% if strcmp(get(e,'KeyChar'),'p')  %preferences
+
+%% show shortcuts
+if get(e,'ControlDown')==1 && get(e,'KeyCode') ==83 % 's' 
+    paramguishortcuts();
+end
+%% show history
+if get(e,'ControlDown')==1 && get(e,'KeyCode') ==72 % 'm' 
+    paramguihistory();
+end
+%% show/hide MENU
+if get(e,'ControlDown')==1 && get(e,'KeyCode') ==77 % 'm' 
+%     preferences_win();
+    hb=findobj(gcf,'tag','pbmore');
+    set(hb,'value',~get(hb,'value'));
+    hgfeval(get(hb,'callback'));
+    return
+end
+
+
+ %preferences
 if get(e,'ControlDown')==1 && get(e,'KeyCode') ==80 % 'p' 
     preferences_win();
     return
@@ -2906,15 +2944,24 @@ elseif strcmp(us.dat{idx,4},'f')
     else
         prepwd=pwd;
     end
+    
     try
-        [fi]=  cfg_getfile2(1,'any',{'ee';'rrr'},{},prepwd,'.*' ,[]);
+        ivar=find(strcmp(us.dat(:,1),varname)) ;
+        %msg={ ['Select single-file ' '[variable: "x.' us.dat{ivar,1} '"]   ..info: "' us.dat{ivar,3},'"'],['']}';
+        msg={ ['[type] Select single-file  *  [var] x.' us.dat{ivar,1} '  *  [info] "' us.dat{ivar,3},'"'],['']}';
+
+    catch
+        msg={ ['Select single-file '   ]}';
+    end
+    
+    try
+        [fi]=  cfg_getfile2(1,'any',msg,{},prepwd,'.*' ,[]);
         fi=char(fi);
     catch
-        % [fi pa]=uigetfile([prepwd ],'D',[],'multiselect','off');
-        [fi pa]=uigetfile([fullfile(prepwd,'*.*') ],['select file'],'multiselect','off');
-        
+        [fi pa]=uigetfile([fullfile(prepwd,'*.*') ],[strjoin(msg,char(10))],'multiselect','off');
         fi=fullfile(pa,fi);
     end
+    
     
     newtag=fi;
     n=[tb{1} [ '''' newtag '''' ';' char(9) ] tb{3}];
@@ -2933,12 +2980,20 @@ elseif strcmp(us.dat{idx,4},'mf')
     end
     
     try
+        ivar=find(strcmp(us.dat(:,1),varname)) ;
+        %msg={ ['Select multi-files ' '[variable: "x.' us.dat{ivar,1} '"]   ..info: "' us.dat{ivar,3},'"'],['']}';
+        msg={ ['[type] Select multi-file  *  [var] x.' us.dat{ivar,1} '  *  [info] "' us.dat{ivar,3},'"'],['']}';
+    catch
+        msg={ ['Select multi-files '   ]}';
+    end
+    
+    try
         %[maskfi,sts] = cfg_getfile2(inf,'any',msg,[],prefdir,'img|nii');
-        [fi2]=  cfg_getfile2(inf,'any',{'ee';'rrr'},[],prepwd,'.*');
+        [fi2]=  cfg_getfile2(inf,'any',msg,[],prepwd,'.*');
         if isempty(char(fi2)); return; end
     catch
         %[fi pa]=uigetfile([prepwd ],'select multiple files',[],'multiselect','on');
-        [fi pa]=uigetfile([fullfile(prepwd,'*.*') ],['select file(s)'],'multiselect','on');
+        [fi pa]=uigetfile([fullfile(prepwd,'*.*') ],strjoin(msg,char(10)),'multiselect','on');
         if isnumeric(fi); return; end
         if ischar(fi); fi=cellstr(fi);; end
         if max(strfind(pa,filesep))==length(pa);
@@ -2964,9 +3019,15 @@ elseif strcmp(us.dat{idx,4},'d')
         prepwd=pwd;
     end
     
+    try
+        ivar=find(strcmp(us.dat(:,1),varname)) ;
+        %msg={ ['Select multi-files ' '[variable: "x.' us.dat{ivar,1} '"]   ..info: "' us.dat{ivar,3},'"'],['']}';
+        msg={ ['[type] Select folder  *  [var] x.' us.dat{ivar,1} '  *  [info] "' us.dat{ivar,3},'"'],['']}';
+    catch
+        msg={ ['Select folder '   ]}';
+    end
     
-    
-    [pa]=uigetdir('*.*');
+    [pa]=uigetdir('*.*',strjoin(msg,char(10)));
     newtag=pa;
     n=[tb{1} [ '''' newtag '''' ';' char(9) ] tb{3}];
     
