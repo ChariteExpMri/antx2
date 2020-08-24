@@ -359,7 +359,14 @@ else
                 pp.Eheader
                 [pp.Elabel num2cell(squeeze(pp.tb(:,i,:)))]
                 ];
-            T=cell2table(tbx(2:end,:),'VariableNames',tbx(1,:));
+            try
+                T=cell2table(tbx(2:end,:),'VariableNames',tbx(1,:));
+            catch
+                %issue with VariableNames 'first character must be char')
+                i_numeric=regexpi2(tbx(1,:),'^\d|_') ;%indicate if 1st letter is numeric or 'underscore'
+                tbx(1,i_numeric)=cellfun(@(a){['s' a ]},tbx(1,i_numeric));
+                T=cell2table(tbx(2:end,:),'VariableNames',tbx(1,:));
+            end
             writetable(T,fileout,'Sheet',pp.paramname{i} );
         end
     end
