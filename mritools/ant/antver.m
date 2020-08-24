@@ -123,7 +123,9 @@
 % ..the old version is still available (via menu/preferences)
 %----- EOF
 % [installfromgithub] BUG-solved:  after 'rebuilding'...gui could not close and workdir did not go prev. study path
-
+% #ra 24 Aug 2020 (09:27:02)
+% tutorial: "tutorial_orientation_and_manucoreg.doc" added to ..\antx2\mritools\ant\docs
+% This tutorial deals with image orientation for to template registration and manual coregistration.
 
 function antver()
 
