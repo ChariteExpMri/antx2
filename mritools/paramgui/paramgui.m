@@ -252,6 +252,9 @@ if ischar(dat)
         
         setdata(varargin);
         return
+    elseif strcmp(dat,'setchoice');
+        setchoice(varargin);
+        return
     end
 end
 
@@ -1388,7 +1391,8 @@ elseif strfind(char(info{1}),'uhelp');
     %     hgfeval(info);
     uhelp(info{2});
 else
-    uhelp(info(:),1,'position',[.75 .5 .25 .4]);
+%     uhelp(info(:),1,'position',[.75 .5 .25 .4]);
+    uhelp(info(:),1);
 end
 
 
@@ -4725,6 +4729,22 @@ end
 
 
 
+%% setchoice: change choice e..g of cell-option
+function setchoice(varargin);
+inp=varargin{1};
+varnamefull   =inp{1};
+newchoice =inp{2};
+
+varname=regexprep(varnamefull,'^x.', '');
+
+us=get(gcf,'userdata');
+dx=us.dat;
+ivar=find(strcmp(dx(:,1),varname));
+dx{ivar,4}=newchoice;
+us.dat=dx;
+set(gcf,'userdata',us);
+
+return
 
 
 

@@ -131,7 +131,8 @@
 % variable names must match with Matlab variable style. This happens when animal names (such as "20130422_TF_001_m1_s3_e6_p1")
 % start with a numeric value instead of a character). SOLUTION: In such cases animals the animals in the excel table 
 % will be renamed (adding a prefix 's' such as "s20130422_TF_001_m1_s3_e6_p1").
-
+% #ra 27 Aug 2020 (15:42:11)
+% [xvol3d_convertscores]: new function for xvol3d...allows to 3d colorize user-specific regions by scores/values (percentages/statist scores) 
 
 function antver()
 

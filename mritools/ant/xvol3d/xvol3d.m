@@ -800,8 +800,10 @@ end
 
 %MENU
 set(gcf,'DockControls','off');
-f = uimenu('Label','Aux');
+f = uimenu('Label','Menu');
 f2= uimenu(f,'Label','display available colormaps','Callback',@Colormaps_showAll);
+
+f2= uimenu(f,'Label','convert regions with scores to "load selection" file ','Callback',@convert2loadleselection_cb);
 
 
 
@@ -1763,19 +1765,23 @@ if isfield(u,'atlas')==1  %|| ~isempty(file)
     IDvec2 =cell2mat(u.lu(:,iID2));
     
     isel=find(cell2mat(cellfun(@(a){ [str2num(num2str(a))]}, reg(:,isel1) ))==1); %selected rows
-    u.selectedRegion=zeros(size(u.lu,1),1);
-    u.selectedRegion(isel)=1;
+    u.selectedRegion=zeros(size(u.lu,1),1);              % zeros..selection..to be filled next..
     
-    if ~isempty(icol2)  %UPDATE COLOR IN LU-table
-        for i=1:length(isel)
-            id   =cell2mat(reg(isel(i)   ,iID1 ));
-            col  =cell2mat(reg(isel(i)   ,icol1));
-            ix=find(IDvec2==id);
-            if ~isempty(ix) %update color
-                u.lu{ix, icol2} = regexprep(num2str(str2num(col)/255),'\s+',' ');
+    %u.selectedRegion(isel)=1; %buggy
+    
+    for i=1:length(isel)
+        id   =cell2mat(reg(isel(i)   ,iID1 ));
+        
+        ix=find(IDvec2==id);
+        if ~isempty(ix) %update color
+            if ~isempty(icol2)  %UPDATE COLOR IN LU-table
+                col  =cell2mat(reg(isel(i)   ,icol1));
+                u.lu{ix, icol2} = regexprep(num2str(str2num(col)/255),'\s+',' '); %update color
             end
+            u.selectedRegion(ix,1)=1; %update region selection
         end
     end
+    %     end
     set(hs,'userdata',u);
     disp('..saving selected regions');
     disp('..click "plot regions to see regions"');
@@ -2367,3 +2373,12 @@ if sum(modi)>0
     pl=plot3(pointslin(1,:),pointslin(2,:),pointslin(3,:),'r-');
     set(pl,'tag','circle');
 end
+
+
+
+
+function convert2loadleselection_cb(e,e2)
+
+
+xvol3d_convertscores(1);
+
