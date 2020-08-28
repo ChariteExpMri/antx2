@@ -205,7 +205,13 @@ for i=length(it)-1:-1:1
 % ro='<div class="bg-yellow-light mb-2">   .text-gray-dark on .bg-yellow-light </div>';
 % ro2='<div class="text-purple">This text is purple, <a href="#" class="text-inherit">including the link</a></div>';
 % 
-%    l1=dv2{1};
+ l1=dv2{1};
+  idat=regexpi(l1,'\d\d \w\w\w');
+  dat=l1(idat:end);
+  col=l1(1:idat-1);
+  
+  dat2=[ {col}; { [ '```js' ]}; {dat} ; '```'];
+  dv2=[ dat2;  dv2 ];
 %    dv2=[{ro};{ro2}; dv2];
 
 
