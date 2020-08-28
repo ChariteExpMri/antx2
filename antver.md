@@ -3,7 +3,9 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Aug 2020 (10:43:27)**</ins>  
-  **[uhelp]** bug-fig: help-fig did not update fontsize and position after closing and reopening     
+  **[uhelp]** bug-fix: help-fig failed to update fontsize and fig-position after reopening    
+  - updates/changes (**[antver.m]**) can be inspected from the GITHUB webside.      
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**27 Aug 2020 (15:42:11)**</ins>  
   **[xvol3d_convertscores]**: new function for xvol3d...allows to 3d colorize user-specific regions by scores/values (percentages/statist scores)   
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Aug 2020 (12:08:22)**</ins>  
