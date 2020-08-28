@@ -8,7 +8,7 @@
 % #ok new version "ANTx2"
 %    - SPM-package: SPM12
 %    - templates were outsourced and can be downloaded from:
-%      https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM
+%      https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
 %    - linux/mac/windows
 % #ra 08 May 2019 (01:34:19)
 %  addedd icon panel [iconpannel4spm.m] for manual preregistration step to facilitate manual
@@ -35,7 +35,6 @@
 % #ra 17 Oct 2019 (22:04:14)
 % [xregisterCT/CTgetbrain_approach2]: added parameter "bonebrainvolume" for more robust cluster-identifaction
 % #ra 29 Oct 2019 (23:28:16)
-%   starting GITHUB REPO : https://github.com/pstkoch/antx2    **just a testbed...not used anymore**
 %  modif. files [cfg_getfile2], [uhelp]
 % #ra 04 Nov 2019 (11:35:28)
 % set up GITHUB repository #bw https://github.com/ChariteExpMri/antx2/

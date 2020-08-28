@@ -101,7 +101,6 @@
   -primary checks macOS, Linux MINT  
   -updated **[uhelp]**  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**29 Oct 2019 (23:28:16)**</ins>  
-    starting GITHUB REPO : https://github.com/pstkoch/antx2    **just a testbed...not used anymore**  
    modif. files **[cfg_getfile2]**, **[uhelp]**  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 Oct 2019 (22:04:14)**</ins>  
   **[xregisterCT/CTgetbrain_approach2]**: added parameter "bonebrainvolume" for more robust cluster-identifaction  
@@ -132,6 +131,6 @@
   ![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+)  new version "ANTx2"  
      - SPM-package: SPM12  
      - templates were outsourced and can be downloaded from:  
-       https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM  
+       https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9  
      - linux/mac/windows  
 <!---->
