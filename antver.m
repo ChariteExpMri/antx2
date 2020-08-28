@@ -200,7 +200,13 @@ for i=length(it)-1:-1:1
  dv2=regexprep(dv2, {'\[','\]'},{'**[',']**' }); %bold inside brackets
  
    %     dv2=cellfun(@(a) {[regexprep(a,tb{3,1},tb{3,2})]} ,dv2 ) ; %blue icon for #ra
-%     dv2=cellfun(@(a) {[regexprep(a,tb{2,1},tb{2,2})]} ,dv2 ) ; %green icon for #ok 
+%     dv2=cellfun(@(a) {[regexprep(a,tb{2,1},tb{2,2})]} ,dv2 ) ; %green icon for #ok
+
+ro='<div class="bg-yellow-light mb-2">   .text-gray-dark on .bg-yellow-light </div>';
+   l1=dv2{1};
+   dv2=[{ro}; l1];
+
+
     for j=1:size(tb,1)
        dv2=cellfun(@(a) {[regexprep(a,tb{j,1},tb{j,2})]} ,dv2 ) ; %green icon for #ok 
     end
