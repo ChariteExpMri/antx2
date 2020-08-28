@@ -40,7 +40,7 @@
 % set up GITHUB repository #bw https://github.com/ChariteExpMri/antx2/
 % -primary checks macOS, Linux MINT
 % -updated [uhelp]
-% #ra 13 Nov 2019 (00:47:38) 
+% #ra 13 Nov 2019 (00:47:38)
 % [maskgenerator] added region-lection list and online link to compare selected regions
 % #ra 15 Nov 2019 (02:14:16)
 % [maskgenerator] added "find" region-panel
@@ -203,7 +203,9 @@ for i=length(it)-1:-1:1
     dat=l1(idat:end);
     col=l1(1:idat-1);
     
-    dat2=[col ' <ins>**' dat '**</ins>' ]; %underlined+bold
+    dat2=[col ' <ins>**' dat '</ins>' ]; %underlined+bold
+    dat2=regexprep(dat2,')',')**');
+    
     
     dv2=[ dat2;  dv2(2:end) ];
     %    dv2=[{ro};{ro2}; dv2];

@@ -102,7 +102,7 @@
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**04 Feb 2020 (18:03:15)**</ins>  
   rat-brain segmentation accelerated  
 <!---->
-  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**31 Jan 2020 (14:07:48): **</ins>  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**31 Jan 2020 (14:07:48)**: </ins>  
   **[xgetlabels4]**: allowing readout from "other Space"  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Jan 2020 (10:14:11)**</ins>  
@@ -127,7 +127,7 @@
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**15 Nov 2019 (02:14:16)**</ins>  
   **[maskgenerator]** added "find" region-panel  
 <!---->
-  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**13 Nov 2019 (00:47:38) **</ins>  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**13 Nov 2019 (00:47:38)**</ins>  
   **[maskgenerator]** added region-lection list and online link to compare selected regions  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**04 Nov 2019 (11:35:28)**</ins>  
