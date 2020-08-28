@@ -196,8 +196,8 @@ tb(3,:)={ '#ok'   '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=
 s2=[];
 for i=length(it)-1:-1:1
     dv2=s1(it(i):it(i+1)-1);
-    dv2=cellfun(@(a) {[regexprep(a,tb{2,1},tb{2,2})]} ,dv2 ) ; %green icon for #ra
-    dv2=cellfun(@(a) {[regexprep(a,tb{3,1},tb{3,2})]} ,dv2 ) ; %blue icon for #ok
+    dv2=cellfun(@(a) {[regexprep(a,tb{3,1},tb{3,2})]} ,dv2 ) ; %blue icon for #ra
+    dv2=cellfun(@(a) {[regexprep(a,tb{2,1},tb{2,2})]} ,dv2 ) ; %green icon for #ok
     dv2=cellfun(@(a) {[a '  ']} ,dv2 ); % add two spaces for break <br>
     
     s2=[s2; dv2];
@@ -206,6 +206,9 @@ end
 
 head0={'## **ANTx2 Modifications**'};
 head1=head(regexpi2(head,'Antx2')+1:end);
+head1(regexpi2(head1,' CHANGES'))=[];%remove  '=== CHANGES ==' line
+head1=[head1; '** CHANGES **'];
+head1=cellfun(@(a) {[regexprep(a,'last modification:',[tb{1,2} 'last modification:']) ]} ,head1 ) ; %red icon for last modific
 head1=cellfun(@(a) {[a '  ']} ,head1 ); % add two spaces for break <br>
 
 w=[head0; head1; s2];
