@@ -121,7 +121,7 @@
 % #ra 17 Aug 2020 (16:49:32)
 % [paramgui] new version, (multi-icon style, execution-history)
 % ..the old version is still available (via menu/preferences)
-%----- EOF
+% 
 % [installfromgithub] BUG-solved:  after 'rebuilding'...gui could not close and workdir did not go prev. study path
 % #ra 24 Aug 2020 (09:27:02)
 % tutorial: "tutorial_orientation_and_manucoreg.doc" added to ..\antx2\mritools\ant\docs
@@ -133,6 +133,14 @@
 % will be renamed (adding a prefix 's' such as "s20130422_TF_001_m1_s3_e6_p1").
 % #ra 27 Aug 2020 (15:42:11)
 % [xvol3d_convertscores]: new function for xvol3d...allows to 3d colorize user-specific regions by scores/values (percentages/statist scores) 
+% #ra 28 Aug 2020 (10:43:27)
+% [uhelp] bug-fig: help-fig did not update fontsize and position after closing and reopening.   
+%
+% 
+% 
+
+%----- EOF
+
 
 function antver()
 

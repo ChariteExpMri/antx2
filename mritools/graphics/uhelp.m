@@ -2,14 +2,18 @@
 % #ko [uhelp] isplay a function's HELP or a CELL array in text window.
 % 
 % #wo _SHORTCUTS_   #k    available in READMODE (RM) AND EDITMODE (EM)
-% #g [ctrl+"+"]/[ctrl+"-"]     #n increase/decrease fontsize
+% #g [ctrl+"+"/"-"] #n increase/decrease fontsize
 % #g [ctrl+c]       #n copy selection 
 % #g [ctrl+f]       #n finder panel (use [ESC] or [x]-button to close finder panel)
-% #g [ctrl+"up"]    #n scroll to begin
-% #g [ctrl+"down"]  #n scroll to end
+% #g [ctrl+up/down]      #n scroll to begin/end
 % ------- #b Window Position #n --------------------
+% #g [ctrl+alt+left]   #n position help window to left side with 50% screensize
+% #g [ctrl+alt+right]  #n position help window to right side with 50% screensize
+% #g [ctrl+alt+up]     #n position help window to default position
+% #g [ctrl+alt+down]   #n position help window below ant-window (if available)
+%-------------------------
 % #g [ctrl+p]       #n toggle position help window to different locations
-%                   positioning order: below ant-window, left-50%, left-75%, right-50%, right-75%,
+%                    positioning order: below ant-window, left-50%, left-75%, right-50%, right-75%,
 % #g [ctrl+1]       #n position help window to left side with 50% screensize
 % #g [ctrl+2]       #n position help window to left side with 75% screensize
 % #g [ctrl+3]       #n position help window to right side with 50% screensize
@@ -18,7 +22,8 @@
 % #g [ctrl+0]       #n position help window to left side with 50% screensize
 % ------- #b Other shortcuts #n --------------------
 % #g [ctrl+m]       #n toggle READMODE (RM) / EDITMODE (EM)
-% #g [ctrl+t]       #n adjust window to  text width
+% #g [ctrl+t]       #n toggle adjust window to  textwidth
+% #g [alt+up/down]  #n change fonttype
 % 
 % ##  see also contextmenu
 %
@@ -510,24 +515,6 @@ end
 % ===============================================
 
 
-% ==============================================
-%%   loAD global defaults
-% ===============================================
-
-if figexist==0
-    global uhelp_properties
-    if ~isempty(uhelp_properties)
-        s=uhelp_properties;
-        tx= findobj(hfig,'tag','txt');
-        try; set(tx,'backgroundcolor', s.colbg); end
-        try; set(tx,'fontsize'       , s.fontsize); end
-        try; set(tx,'FontName'       , s.FontName); end
-        try; set(tx,'FontAngle'      , s.FontAngle); end
-        try; set(tx,'FontWeight'     , s.FontWeight); end
-        try; set(hfig,'position'     , s.fgpos);   end
-    end
-    
-end
 
 
 % ==============================================
@@ -557,9 +544,36 @@ if figexist==0
     try;     aot(x.aot);aot(x.aot);  end %AOT
     set(hfig,'toolbar','none');
 else
-    if isfield(paras,'position')
-        set(hfig,'position',paras.position);
+%     if isfield(paras,'position')
+%         set(hfig,'position',paras.position);
+%     end
+end
+
+
+
+% ==============================================
+%%   loAD global defaults -overriding -x-saved-stuff
+% ===============================================
+
+if figexist==0
+    global uhelp_properties
+    if ~isempty(uhelp_properties)
+        s=uhelp_properties;
+        tx= findobj(hfig,'tag','txt');
+        try; set(tx,'backgroundcolor', s.colbg); end
+        try; set(tx,'fontsize'       , s.fontsize); end
+        try; set(tx,'FontName'       , s.FontName); end
+        try; set(tx,'FontAngle'      , s.FontAngle); end
+        try; set(tx,'FontWeight'     , s.FontWeight); end
+        try; set(hfig,'position'     , s.fgpos);   end
     end
+end
+
+% ==============================================
+%%   explicit input argument -overrides all
+% ===============================================
+if isfield(paras,'position')
+    set(hfig,'position',paras.position);
 end
 
 
@@ -731,7 +745,10 @@ if strcmp(e.Modifier,'alt') %copy selection
    end
 end
 
-% e
+%  e
+
+ 
+ 
 if strcmp(e.Modifier,'control') %copy selection
     % positioning
    if strcmp(e.Character      ,'1')  || strcmp(e.Character      ,'0')  || strcmp(e.Key      ,'f1')
@@ -866,10 +883,31 @@ if strcmp(e.Modifier,'control') %copy selection
     end
     
     
-    if strcmp(e.Key,'leftarrow')
-        gcontext([], [], 4);
-    elseif strcmp(e.Key,'f')
+   
+ 
+    if strcmp(e.Key,'f')
         finder_MAIN_OpenPanel([],[]);
+    end 
+end
+
+
+if sum(ismember(e.Modifier,{'control','alt'}))==2
+    % ~isempty(find(strcmp(e.Modifier,'control'))) && ~isempty(find(strcmp(e.Modifier,'control')))
+    if strcmp(e.Key,'uparrow')
+        try
+            us=get(gcf,'userdata');
+            set(gcf,'position',us.fgpos);
+        end
+    elseif strcmp(e.Key,'downarrow')
+        try
+            hf=findobj(0,'tag','ant');
+            hfpos= get(hf,'position');
+            set(gcf,'position',[hfpos(1) 0.05 hfpos(3)  hfpos(2)-.08  ]);
+        end
+    elseif strcmp(e.Key,'leftarrow')
+        set(gcf,'position',[0 0.05 .5 1-0.08]);
+    elseif strcmp(e.Key,'rightarrow')
+        set(gcf,'position',[.5 0.05 .5 1-0.08]);
     end
 end
 
