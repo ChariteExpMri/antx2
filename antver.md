@@ -133,3 +133,18 @@
      - templates were outsourced and can be downloaded from:  
        https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM  
      - linux/mac/windows  
+
+```js
+  import { Component } from '@angular/core';
+  import { MovieService } from './services/movie.service';
+
+  @Component({
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css'],
+    providers: [ MovieService ]
+  })
+  export class AppComponent {
+    title = 'app works!';
+  }
+```
