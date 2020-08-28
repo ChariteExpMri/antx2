@@ -19,9 +19,8 @@
 % initial rigid registration (xwarp3) modified for more robust registration
 % [checkRegist.m]:     GUI to check registration of several images
 % [getorientation.m]: GUI to examine the apriory orientation (how animal is positioned in scanner)
-%  -run it without input arguments or use context menu from ANT animal listbox
-%  -the respective ID/number of orientation can be used to define the "orientType" in the projectfile 
-% [//]:
+%  - run it without input arguments or use context menu from ANT animal listbox
+%  - the respective ID/number of orientation can be used to define the "orientType" in the projectfile 
 % #ra 16 Oct 2019 (03:42:04)
 %  1) "create study templates"-step can be performed before running the normalization step
 %    ..see Main/Create Study Templates
@@ -40,8 +39,8 @@
 %  modif. files [cfg_getfile2], [uhelp]
 % #ra 04 Nov 2019 (11:35:28)
 % set up GITHUB repository #bw https://github.com/ChariteExpMri/antx2/
-% -primary checks macOS, Linux MINT
-% -updated [uhelp]
+% - primary checks macOS, Linux MINT
+% - updated [uhelp]
 % #ra 13 Nov 2019 (00:47:38) 
 % [maskgenerator] added region-lection list and online link to compare selected regions
 % #ra 15 Nov 2019 (02:14:16)
@@ -205,6 +204,7 @@ for i=length(it)-1:-1:1
     end
     
     dv2=cellfun(@(a) {[a '  ']} ,dv2 ); % add two spaces for break <br>
+    dv2(end+1,1)={'<a/>'}; %force end of list
     
     s2=[s2; dv2];
 end
