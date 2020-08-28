@@ -204,6 +204,7 @@ for i=length(it)-1:-1:1
     end
     
     dv2=cellfun(@(a) {[a '  ']} ,dv2 ); % add two spaces for break <br>
+    dv2=regexprep(dv2, {'\[','\]'},{'**[',']**' }); %bold inside brackets
     dv2(end+1,1)={'<!---->'}; %force end of list
     
     s2=[s2; dv2];
