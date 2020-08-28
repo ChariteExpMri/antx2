@@ -218,7 +218,7 @@ for i=length(it)-1:-1:1
 %     dv2{end}(end-1:end)=[]; %remove last two of list to avoid break ..would hapen anyway
 %   dv2(end+1,1)={'<!---->'}; %force end of list
 %     el=dv2{end};
-    if ~isempty(regexpi(dv2{end} ,'^\s*-\s|^\s*\(\d+)\s|^\s*\d+)\s'))
+    if ~isempty(regexpi(dv2 ,'^\s*-\s|^\s*\(\d+)\s|^\s*\d+)\s'))
         dv2(end+1,1)={'<!---->'}; %force end of list
     end
     s2=[s2; dv2];
