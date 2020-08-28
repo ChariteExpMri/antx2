@@ -203,8 +203,10 @@ for i=length(it)-1:-1:1
 %     dv2=cellfun(@(a) {[regexprep(a,tb{2,1},tb{2,2})]} ,dv2 ) ; %green icon for #ok
 
 ro='<div class="bg-yellow-light mb-2">   .text-gray-dark on .bg-yellow-light </div>';
+ro2='<div class="text-purple">This text is purple, <a href="#" class="text-inherit">including the link</a></div>';
+
    l1=dv2{1};
-   dv2=[{ro}; l1];
+   dv2=[{ro};{ro2}; dv2];
 
 
     for j=1:size(tb,1)
