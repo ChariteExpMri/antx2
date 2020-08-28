@@ -6,10 +6,10 @@
 %======= CHANGES ================================
 % #ra 07 May 2019 (14:16:48)
 % #ok new version "ANTx2"
-%    - SPM-package: SPM12
-%    - templates were outsourced and can be downloaded from:
-%      https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM
-%    - linux/mac/windows
+%    -SPM-package: SPM12
+%    -templates were outsourced and can be downloaded from:
+%     https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM
+%    -linux/mac/windows
 % #ra 08 May 2019 (01:34:19)
 %  addedd icon panel [iconpannel4spm.m] for manual preregistration step to facilitate manual
 %  registration step
@@ -39,8 +39,8 @@
 %  modif. files [cfg_getfile2], [uhelp]
 % #ra 04 Nov 2019 (11:35:28)
 % set up GITHUB repository #bw https://github.com/ChariteExpMri/antx2/
-% - primary checks macOS, Linux MINT
-% - updated [uhelp]
+% -primary checks macOS, Linux MINT
+% -updated [uhelp]
 % #ra 13 Nov 2019 (00:47:38) 
 % [maskgenerator] added region-lection list and online link to compare selected regions
 % #ra 15 Nov 2019 (02:14:16)
@@ -196,28 +196,22 @@ tb(4,:)={ '#bw'   '![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=
 s2=[];
 for i=length(it)-1:-1:1
     dv2=s1(it(i):it(i+1)-1);
-
- dv2=regexprep(dv2, {'\[','\]'},{'**[',']**' }); %bold inside brackets
- 
-   %     dv2=cellfun(@(a) {[regexprep(a,tb{3,1},tb{3,2})]} ,dv2 ) ; %blue icon for #ra
-%     dv2=cellfun(@(a) {[regexprep(a,tb{2,1},tb{2,2})]} ,dv2 ) ; %green icon for #ok
-
-% ro='<div class="bg-yellow-light mb-2">   .text-gray-dark on .bg-yellow-light </div>';
-% ro2='<div class="text-purple">This text is purple, <a href="#" class="text-inherit">including the link</a></div>';
-% 
- l1=dv2{1};
-  idat=regexpi(l1,'\d\d \w\w\w');
-  dat=l1(idat:end);
-  col=l1(1:idat-1);
-  
-dat2=[col ' <ins>**' dat '**</ins>' ];
-  
-  dv2=[ dat2;  dv2(2:end) ];
-%    dv2=[{ro};{ro2}; dv2];
-
-
+    
+    dv2=regexprep(dv2, {'\[','\]'},{'**[',']**' }); %bold inside brackets
+    
+    l1=dv2{1};
+    idat=regexpi(l1,'\d\d \w\w\w');
+    dat=l1(idat:end);
+    col=l1(1:idat-1);
+    
+    dat2=[col ' <ins>**' dat '**</ins>' ]; %underlined+bold
+    
+    dv2=[ dat2;  dv2(2:end) ];
+    %    dv2=[{ro};{ro2}; dv2];
+    
+    
     for j=1:size(tb,1)
-       dv2=cellfun(@(a) {[regexprep(a,tb{j,1},tb{j,2})]} ,dv2 ) ; %green icon for #ok 
+        dv2=cellfun(@(a) {[regexprep(a,tb{j,1},tb{j,2})]} ,dv2 ) ; %green icon for #ok
     end
     
     dv2=cellfun(@(a) {[a '  ']} ,dv2 ); % add two spaces for break <br>
@@ -231,7 +225,7 @@ end
 head0={'## **ANTx2 Modifications**'};
 head1=head(regexpi2(head,'Antx2')+1:end);
 head1(regexpi2(head1,' CHANGES'))=[];%remove  '=== CHANGES ==' line
-head1=[head1; '**CHANGES**'];
+head1=[head1; '------------------' ];%'**CHANGES**'
 head1=cellfun(@(a) {[regexprep(a,'last modification:',[tb{1,2} 'last modification:']) ]} ,head1 ) ; %red icon for last modific
 head1=cellfun(@(a) {[a '  ']} ,head1 ); % add two spaces for break <br>
 

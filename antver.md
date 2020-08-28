@@ -1,7 +1,7 @@
 ## **ANTx2 Modifications**
  ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   28 Aug 2020 (10:43:27)  
     
-**CHANGES**  
+------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Aug 2020 (10:43:27)**</ins>  
   **[uhelp]** bug-fig: help-fig did not update fontsize and position after closing and reopening     
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**27 Aug 2020 (15:42:11)**</ins>  
@@ -98,8 +98,8 @@
   **[maskgenerator]** added region-lection list and online link to compare selected regions  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**04 Nov 2019 (11:35:28)**</ins>  
   set up GITHUB repository ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  https://github.com/ChariteExpMri/antx2/  
-  - primary checks macOS, Linux MINT  
-  - updated **[uhelp]**  
+  -primary checks macOS, Linux MINT  
+  -updated **[uhelp]**  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**29 Oct 2019 (23:28:16)**</ins>  
     starting GITHUB REPO : https://github.com/pstkoch/antx2    **just a testbed...not used anymore**  
    modif. files **[cfg_getfile2]**, **[uhelp]**  
@@ -129,7 +129,7 @@
    registration step  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 May 2019 (14:16:48)**</ins>  
   ![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+)  new version "ANTx2"  
-     - SPM-package: SPM12  
-     - templates were outsourced and can be downloaded from:  
-       https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM  
-     - linux/mac/windows  
+     -SPM-package: SPM12  
+     -templates were outsourced and can be downloaded from:  
+      https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM  
+     -linux/mac/windows  
