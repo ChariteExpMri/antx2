@@ -101,7 +101,7 @@
   -primary checks macOS, Linux MINT  
   -updated [uhelp]  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  29 Oct 2019 (23:28:16)  
-    starting GITHUB REPO : https://github.com/pstkoch/antx2  
+    starting GITHUB REPO : https://github.com/pstkoch/antx2    **just a testbed...not used anymore**  
    modif. files [cfg_getfile2], [uhelp]  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  17 Oct 2019 (22:04:14)  
   [xregisterCT/CTgetbrain_approach2]: added parameter "bonebrainvolume" for more robust cluster-identifaction  
@@ -120,8 +120,9 @@
   initial rigid registration (xwarp3) modified for more robust registration  
   [checkRegist.m]:     GUI to check registration of several images  
   [getorientation.m]: GUI to examine the apriory orientation (how animal is positioned in scanner)  
-   - run it without input arguments or use context menu from ANT animal listbox  
-   - the respective ID/number of orientation can be used to define the "orientType" in the projectfile   
+   -run it without input arguments or use context menu from ANT animal listbox  
+   -the respective ID/number of orientation can be used to define the "orientType" in the projectfile   
+  [//]:  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  22 May 2019 (12:19:03)  
    addded: [xcoregmanu.m] - manually coregister images   
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  08 May 2019 (01:34:19)  

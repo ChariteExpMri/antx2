@@ -19,8 +19,9 @@
 % initial rigid registration (xwarp3) modified for more robust registration
 % [checkRegist.m]:     GUI to check registration of several images
 % [getorientation.m]: GUI to examine the apriory orientation (how animal is positioned in scanner)
-%  - run it without input arguments or use context menu from ANT animal listbox
-%  - the respective ID/number of orientation can be used to define the "orientType" in the projectfile 
+%  -run it without input arguments or use context menu from ANT animal listbox
+%  -the respective ID/number of orientation can be used to define the "orientType" in the projectfile 
+% [//]:
 % #ra 16 Oct 2019 (03:42:04)
 %  1) "create study templates"-step can be performed before running the normalization step
 %    ..see Main/Create Study Templates
@@ -35,7 +36,7 @@
 % #ra 17 Oct 2019 (22:04:14)
 % [xregisterCT/CTgetbrain_approach2]: added parameter "bonebrainvolume" for more robust cluster-identifaction
 % #ra 29 Oct 2019 (23:28:16)
-%   starting GITHUB REPO : https://github.com/pstkoch/antx2
+%   starting GITHUB REPO : https://github.com/pstkoch/antx2    **just a testbed...not used anymore**
 %  modif. files [cfg_getfile2], [uhelp]
 % #ra 04 Nov 2019 (11:35:28)
 % set up GITHUB repository #bw https://github.com/ChariteExpMri/antx2/
