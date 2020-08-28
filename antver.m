@@ -206,8 +206,8 @@ for i=length(it)-1:-1:1
     end
     
     dv2=cellfun(@(a) {[a '  ']} ,dv2 ); % add two spaces for break <br>
-    dv2{end}(end-1:end)=[]; %remove last two of list to avoid break ..would hapen anyway
-  dv2(end+1,1)={'<!---->'}; %force end of list
+%     dv2{end}(end-1:end)=[]; %remove last two of list to avoid break ..would hapen anyway
+%   dv2(end+1,1)={'<!---->'}; %force end of list
     
     s2=[s2; dv2];
 end
@@ -221,6 +221,8 @@ head1=cellfun(@(a) {[regexprep(a,'last modification:',[tb{1,2} 'last modificatio
 head1=cellfun(@(a) {[a '  ']} ,head1 ); % add two spaces for break <br>
 
 w=[head0; head1; s2];
+w=[ '<pre>' ;w; '</pre>'];
+
 fileout=fullfile(fileparts(which('antver.m')),'antver.md');
 pwrite2file(fileout,w);
 
