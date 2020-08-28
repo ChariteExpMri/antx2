@@ -133,7 +133,7 @@
 % #ra 27 Aug 2020 (15:42:11)
 % [xvol3d_convertscores]: new function for xvol3d...allows to 3d colorize user-specific regions by scores/values (percentages/statist scores) 
 % #ra 28 Aug 2020 (10:43:27)
-% [uhelp] bug-fix: help-fig failed to update fontsize and fig-position after reopening  
+% - [uhelp] bug-fix: help-fig failed to update fontsize and fig-position after reopening  
 % - updates/changes ([antver.m]) can be inspected from the GITHUB webside.    
 % 
 % 

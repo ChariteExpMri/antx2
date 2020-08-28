@@ -3,7 +3,7 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Aug 2020 (10:43:27)**</ins>  
-  **[uhelp]** bug-fix: help-fig failed to update fontsize and fig-position after reopening    
+  - **[uhelp]** bug-fix: help-fig failed to update fontsize and fig-position after reopening    
   - updates/changes (**[antver.m]**) can be inspected from the GITHUB webside.      
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**27 Aug 2020 (15:42:11)**</ins>  
