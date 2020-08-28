@@ -22,9 +22,9 @@
 %  - run it without input arguments or use context menu from ANT animal listbox
 %  - the respective ID/number of orientation can be used to define the "orientType" in the projectfile 
 % #ra 16 Oct 2019 (03:42:04)
-%  1) "create study templates"-step can be performed before running the normalization step
+%  1)"create study templates"-step can be performed before running the normalization step
 %    ..see Main/Create Study Templates
-%  2) two new "get-orientation"-functions implemented. Functions can be used if the orientation of 
+%  2)two new "get-orientation"-functions implemented. Functions can be used if the orientation of 
 %    the native image (t2.nii) is unknown. See animal listbox context menu 
 %    (2a) "examineOrientation"       #k [getorientation.m] #n using apriori rotations,.. 
 %         best orientation selected via eyeballing
