@@ -3,6 +3,7 @@
     
  ======= CHANGES ================================  
   [#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+)  28 Aug 2020 (10:43:27)  
+
   [uhelp] bug-fig: help-fig did not update fontsize and position after closing and reopening     
   [#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+)  27 Aug 2020 (15:42:11)  
   [xvol3d_convertscores]: new function for xvol3d...allows to 3d colorize user-specific regions by scores/values (percentages/statist scores)   

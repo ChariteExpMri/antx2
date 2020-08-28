@@ -188,9 +188,9 @@ it=find(~cellfun(@isempty,regexpi(s1,['#\w+.*(\d\d:\d\d:\d\d)'])));
 it(end+1)=size(s1,1);
 
 % https://stackoverflow.com/questions/11509830/how-to-add-color-to-githubs-readme-md-file
-tb(1,:)={ '#yk'   '[#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
-tb(2,:)={ '#ra'   '[#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) '  'green' } ;
-tb(3,:)={ '#ok'   '[#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
+tb(1,:)={ '#yk'   '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
+tb(2,:)={ '#ra'   '![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) '  'green' } ;
+tb(3,:)={ '#ok'   '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
 
 
 s2=[];
