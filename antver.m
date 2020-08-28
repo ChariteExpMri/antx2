@@ -202,11 +202,11 @@ for i=length(it)-1:-1:1
    %     dv2=cellfun(@(a) {[regexprep(a,tb{3,1},tb{3,2})]} ,dv2 ) ; %blue icon for #ra
 %     dv2=cellfun(@(a) {[regexprep(a,tb{2,1},tb{2,2})]} ,dv2 ) ; %green icon for #ok
 
-ro='<div class="bg-yellow-light mb-2">   .text-gray-dark on .bg-yellow-light </div>';
-ro2='<div class="text-purple">This text is purple, <a href="#" class="text-inherit">including the link</a></div>';
-
-   l1=dv2{1};
-   dv2=[{ro};{ro2}; dv2];
+% ro='<div class="bg-yellow-light mb-2">   .text-gray-dark on .bg-yellow-light </div>';
+% ro2='<div class="text-purple">This text is purple, <a href="#" class="text-inherit">including the link</a></div>';
+% 
+%    l1=dv2{1};
+%    dv2=[{ro};{ro2}; dv2];
 
 
     for j=1:size(tb,1)
@@ -229,6 +229,22 @@ head1=cellfun(@(a) {[regexprep(a,'last modification:',[tb{1,2} 'last modificatio
 head1=cellfun(@(a) {[a '  ']} ,head1 ); % add two spaces for break <br>
 
 w=[head0; head1; s2];
+
+% tes1='```js ...
+%   import { Component } from '@angular/core';
+%   import { MovieService } from './services/movie.service';
+% 
+%   @Component({
+%     selector: 'app-root',
+%     templateUrl: './app.component.html',
+%     styleUrls: ['./app.component.css'],
+%     providers: [ MovieService ]
+%   })
+%   export class AppComponent {
+%     title = 'app works!';
+%   }
+% ```'
+
 % w=[ '<font size="+5">' ;w; '</font>'];
 
 fileout=fullfile(fileparts(which('antver.m')),'antver.md');
