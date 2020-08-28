@@ -122,6 +122,7 @@
   **[getorientation.m]**: GUI to examine the apriory orientation (how animal is positioned in scanner)  
    - run it without input arguments or use context menu from ANT animal listbox  
    - the respective ID/number of orientation can be used to define the "orientType" in the projectfile   
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**22 May 2019 (12:19:03)**</ins>  
    addded: **[xcoregmanu.m]** - manually coregister images   
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**08 May 2019 (01:34:19)**</ins>  

@@ -214,10 +214,14 @@ for i=length(it)-1:-1:1
         dv2=cellfun(@(a) {[regexprep(a,tb{j,1},tb{j,2})]} ,dv2 ) ; %green icon for #ok
     end
     
+    
     dv2=cellfun(@(a) {[a '  ']} ,dv2 ); % add two spaces for break <br>
 %     dv2{end}(end-1:end)=[]; %remove last two of list to avoid break ..would hapen anyway
 %   dv2(end+1,1)={'<!---->'}; %force end of list
-    
+%     el=dv2{end};
+    if ~isempty(regexpi(dv2{end} ,'^\s*-\s|^\s*\(\d+)\s|^\s*\d+)\s'))
+        dv2(end+1,1)={'<!---->'}; %force end of list
+    end
     s2=[s2; dv2];
 end
 
