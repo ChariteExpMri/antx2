@@ -221,7 +221,7 @@ head1=cellfun(@(a) {[regexprep(a,'last modification:',[tb{1,2} 'last modificatio
 head1=cellfun(@(a) {[a '  ']} ,head1 ); % add two spaces for break <br>
 
 w=[head0; head1; s2];
-% w=[ '<font size="+1">' ;w; '</font>'];
+% w=[ '<font size="+5">' ;w; '</font>'];
 
 fileout=fullfile(fileparts(which('antver.m')),'antver.md');
 pwrite2file(fileout,w);
