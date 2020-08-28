@@ -130,7 +130,8 @@
    registration step  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 May 2019 (14:16:48)**</ins>  
   ![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+)  new version "ANTx2"  
-     -SPM-package: SPM12  
-     -templates were outsourced and can be downloaded from:  
-      https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM  
-     -linux/mac/windows  
+     - SPM-package: SPM12  
+     - templates were outsourced and can be downloaded from:  
+       https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM  
+     - linux/mac/windows  
+<!---->

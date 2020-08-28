@@ -6,10 +6,10 @@
 %======= CHANGES ================================
 % #ra 07 May 2019 (14:16:48)
 % #ok new version "ANTx2"
-%    -SPM-package: SPM12
-%    -templates were outsourced and can be downloaded from:
-%     https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM
-%    -linux/mac/windows
+%    - SPM-package: SPM12
+%    - templates were outsourced and can be downloaded from:
+%      https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM
+%    - linux/mac/windows
 % #ra 08 May 2019 (01:34:19)
 %  addedd icon panel [iconpannel4spm.m] for manual preregistration step to facilitate manual
 %  registration step
