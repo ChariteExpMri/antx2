@@ -23,7 +23,7 @@ ANTx2 stands for **A** tlas **N** ormalization **T** oolbox using elasti **x**. 
 - MAC (tested: OS X El Capitan v10.11.6)
 - MATLAB, version R2015b/16a were tested, versions above 2018b should work (..not fully tested)
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) [see **last updates**](antver.md)<br>
+![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) Inspect last changes/updates [**here**](antver.md)<br>
 
 ## Installation ##
 ### [OPTION-A] Installation via GITHUB using GIT
