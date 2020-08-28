@@ -140,9 +140,10 @@
 % 
 
 %----- EOF
+% make antvermd for GIT: antver('makeantver')
 
 
-function antver()
+function antver(varargin)
 
 % r=preadfile(which('antver.m')); r=r.all;
 r=strsplit(help('antver'),char(10))';
@@ -150,6 +151,14 @@ ichanges=regexpi2(r,'#*20\d{2}.*(\d{2}:\d{2}:\d{2})' );
 lastchange=r{ichanges(end)};
 lastchange=regexprep(lastchange,{'#\w+ ', ').*'},{'',')'});
 r=[r(1:3); {[' last modification: ' lastchange ]}  ;  r(4:end)];
+
+if nargin==1
+    if strcmp(varargin{1},'makeantver')
+        makeantver(r);
+        return
+    end
+end
+
 uhelp(r,0, 'cursor' ,'end');
 set(gcf,'NumberTitle','off', 'name', 'ANTx2 - VERSION');
 % uhelp('antver.m');
@@ -161,16 +170,47 @@ if 0
 end
 
 
-
 return
 
+function makeantver(r);
+% this makes a human readable antver.md
 
 
+i1=min(regexpi2(r,'CHANGES'));
+head=r(1:i1);
+
+s1=r(i1+1:end); % changes
+lastline=max(regexpi2(s1,'\w'));
+s1=[s1(1:lastline); {' '}];
+
+%resort time: new-->old
+it=find(~cellfun(@isempty,regexpi(s1,['#\w+.*(\d\d:\d\d:\d\d)'])));
+it(end+1)=size(s1,1);
+
+% https://stackoverflow.com/questions/11509830/how-to-add-color-to-githubs-readme-md-file
+tb(1,:)={ '#yk'   '[#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
+tb(2,:)={ '#ra'   '[#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) '  'green' } ;
+tb(3,:)={ '#ok'   '[#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
 
 
+s2=[];
+for i=length(it)-1:-1:1
+    dv2=s1(it(i):it(i+1)-1);
+    dv2=cellfun(@(a) {[regexprep(a,tb{2,1},tb{2,2})]} ,dv2 ) ; %green icon for #ra
+    dv2=cellfun(@(a) {[regexprep(a,tb{3,1},tb{3,2})]} ,dv2 ) ; %blue icon for #ok
+    dv2=cellfun(@(a) {[a '  ']} ,dv2 ); % add two spaces for break <br>
+    
+    s2=[s2; dv2];
+end
 
 
+head0={'## **ANTx2 Modifications**'};
+head1=head(regexpi2(head,'Antx2')+1:end);
+head1=cellfun(@(a) {[a '  ']} ,head1 ); % add two spaces for break <br>
 
+w=[head0; head1; s2];
+fileout=fullfile(fileparts(which('antver.m')),'antver.md');
+pwrite2file(fileout,w);
 
 
 
