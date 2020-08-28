@@ -207,7 +207,7 @@ end
 head0={'## **ANTx2 Modifications**'};
 head1=head(regexpi2(head,'Antx2')+1:end);
 head1(regexpi2(head1,' CHANGES'))=[];%remove  '=== CHANGES ==' line
-head1=[head1; '** CHANGES **'];
+head1=[head1; '**CHANGES**'];
 head1=cellfun(@(a) {[regexprep(a,'last modification:',[tb{1,2} 'last modification:']) ]} ,head1 ) ; %red icon for last modific
 head1=cellfun(@(a) {[a '  ']} ,head1 ); % add two spaces for break <br>
 

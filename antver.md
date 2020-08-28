@@ -1,7 +1,7 @@
 ## **ANTx2 Modifications**
  ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   28 Aug 2020 (10:43:27)  
     
-** CHANGES **  
+**CHANGES**  
   ![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+)  28 Aug 2020 (10:43:27)  
   [uhelp] bug-fig: help-fig did not update fontsize and position after closing and reopening     
   ![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+)  27 Aug 2020 (15:42:11)  
