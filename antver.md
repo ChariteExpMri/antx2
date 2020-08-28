@@ -1,4 +1,3 @@
-<pre>
 ## **ANTx2 Modifications**
  ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   28 Aug 2020 (10:43:27)  
     
@@ -134,4 +133,3 @@
      - templates were outsourced and can be downloaded from:  
        https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM  
      - linux/mac/windows  
-</pre>
