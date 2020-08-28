@@ -40,7 +40,7 @@
 % #ra 04 Nov 2019 (11:35:28)
 % set up GITHUB repository #bw https://github.com/ChariteExpMri/antx2/
 % -primary checks macOS, Linux MINT
-% - updated [uhelp]
+% -updated [uhelp]
 % #ra 13 Nov 2019 (00:47:38) 
 % [maskgenerator] added region-lection list and online link to compare selected regions
 % #ra 15 Nov 2019 (02:14:16)
@@ -78,7 +78,7 @@
 % [xsplittubedata]: split data-sets based on tube-segementation
 % #ra 20 Mar 2020 (12:30:38)
 % [case-filematrix]: export selected files from selected folders
-% % #ra 14 May 2020 (14:14:07)
+% #ra 14 May 2020 (14:14:07)
 % [elastix_checkinstallation] addeed (extras/troubleshoot)  .. fct to check installation of elastix-program
 % [uhelp.m] modified: selection color  
 % [checkRegist] modified: changed image2clipboard function 
@@ -89,7 +89,7 @@
 % #ra 29 May 2020 (14:45:41)
 % [xstatlabels] bugfixed 
 % [uhelp] added finder panel 
-% % #ra 23 Jun 2020 (17:01:21)
+% #ra 23 Jun 2020 (17:01:21)
 % [doelastix.m] update, backward transformation now possible with userdefined voxel or dim-size
 % #ra 23 Jun 2020 (17:13:43)
 % 3D-volume visualization added (main menu .. grahics/3D-volume): allows to 3D-visualize atlas regions,
@@ -191,13 +191,18 @@ it(end+1)=size(s1,1);
 tb(1,:)={ '#yk'   '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
 tb(2,:)={ '#ok'   '![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) '  'green' } ;
 tb(3,:)={ '#ra'   '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
-
+tb(4,:)={ '#bw'   '![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+) '  'margenta' } ;
 
 s2=[];
 for i=length(it)-1:-1:1
     dv2=s1(it(i):it(i+1)-1);
-    dv2=cellfun(@(a) {[regexprep(a,tb{3,1},tb{3,2})]} ,dv2 ) ; %blue icon for #ra
-    dv2=cellfun(@(a) {[regexprep(a,tb{2,1},tb{2,2})]} ,dv2 ) ; %green icon for #ok
+%     dv2=cellfun(@(a) {[regexprep(a,tb{3,1},tb{3,2})]} ,dv2 ) ; %blue icon for #ra
+%     dv2=cellfun(@(a) {[regexprep(a,tb{2,1},tb{2,2})]} ,dv2 ) ; %green icon for #ok
+    
+    for j=1:size(tb,1)
+       dv2=cellfun(@(a) {[regexprep(a,tb{j,1},tb{j,2})]} ,dv2 ) ; %green icon for #ok 
+    end
+    
     dv2=cellfun(@(a) {[a '  ']} ,dv2 ); % add two spaces for break <br>
     
     s2=[s2; dv2];

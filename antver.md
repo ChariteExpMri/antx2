@@ -46,14 +46,14 @@
   3D-volume visualization added (main menu .. grahics/3D-volume): allows to 3D-visualize atlas regions,  
   nodes & links (connections/~strength) and statistical images/intensity images [xvol3d.m]  
   -main features can be accessed via command line  
-  % ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  23 Jun 2020 (17:01:21)  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  23 Jun 2020 (17:01:21)  
   [doelastix.m] update, backward transformation now possible with userdefined voxel or dim-size  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  29 May 2020 (14:45:41)  
   [xstatlabels] bugfixed   
   [uhelp] added finder panel   
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  15 May 2020 (17:33:52)  
   [setup_elastixlinux.m] modified-->solved problem: stucked installation of MRICRON   
-  % ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  14 May 2020 (14:14:07)  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  14 May 2020 (14:14:07)  
   [elastix_checkinstallation] addeed (extras/troubleshoot)  .. fct to check installation of elastix-program  
   [uhelp.m] modified: selection color    
   [checkRegist] modified: changed image2clipboard function   
@@ -97,9 +97,9 @@
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  13 Nov 2019 (00:47:38)   
   [maskgenerator] added region-lection list and online link to compare selected regions  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  04 Nov 2019 (11:35:28)  
-  set up GITHUB repository #bw https://github.com/ChariteExpMri/antx2/  
+  set up GITHUB repository ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  https://github.com/ChariteExpMri/antx2/  
   -primary checks macOS, Linux MINT  
-  - updated [uhelp]  
+  -updated [uhelp]  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)  29 Oct 2019 (23:28:16)  
     starting GITHUB REPO : https://github.com/pstkoch/antx2  
    modif. files [cfg_getfile2], [uhelp]  
