@@ -203,7 +203,7 @@ for i=length(it)-1:-1:1
        dv2=cellfun(@(a) {[regexprep(a,tb{j,1},tb{j,2})]} ,dv2 ) ; %green icon for #ok 
     end
     
-    dv2=cellfun(@(a) {[a '  ']} ,dv2 ); % add two spaces for break <br>
+%     dv2=cellfun(@(a) {[a '  ']} ,dv2 ); % add two spaces for break <br>
     dv2(end+1,1)={'<!-- -->'}; %force end of list
     
     s2=[s2; dv2];
