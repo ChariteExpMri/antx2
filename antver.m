@@ -137,7 +137,7 @@
 % [uhelp] bug-fig: help-fig did not update fontsize and position after closing and reopening.   
 %
 % 
-% 
+% - ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) `#f03c15`
 
 %----- EOF
 
