@@ -210,7 +210,9 @@ for i=length(it)-1:-1:1
   dat=l1(idat:end);
   col=l1(1:idat-1);
   
-  dat2=[ {col}; { [ '```js' ]}; {dat} ; '```'];
+%   dat2=[ {col}; { [ '```js' ]}; {dat} ; '```'];
+  dat2=[ {col}; { '<ins>'}; {dat} ; '</ins>'];
+  
   dv2=[ dat2;  dv2 ];
 %    dv2=[{ro};{ro2}; dv2];
 
