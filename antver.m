@@ -196,15 +196,16 @@ tb(4,:)={ '#bw'   '![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=
 s2=[];
 for i=length(it)-1:-1:1
     dv2=s1(it(i):it(i+1)-1);
-%     dv2=cellfun(@(a) {[regexprep(a,tb{3,1},tb{3,2})]} ,dv2 ) ; %blue icon for #ra
-%     dv2=cellfun(@(a) {[regexprep(a,tb{2,1},tb{2,2})]} ,dv2 ) ; %green icon for #ok
-    
+
+ dv2=regexprep(dv2, {'\[','\]'},{'**[',']**' }); %bold inside brackets
+ 
+   %     dv2=cellfun(@(a) {[regexprep(a,tb{3,1},tb{3,2})]} ,dv2 ) ; %blue icon for #ra
+%     dv2=cellfun(@(a) {[regexprep(a,tb{2,1},tb{2,2})]} ,dv2 ) ; %green icon for #ok 
     for j=1:size(tb,1)
        dv2=cellfun(@(a) {[regexprep(a,tb{j,1},tb{j,2})]} ,dv2 ) ; %green icon for #ok 
     end
     
     dv2=cellfun(@(a) {[a '  ']} ,dv2 ); % add two spaces for break <br>
-    dv2=regexprep(dv2, {'\[','\]'},{'**[',']**' }); %bold inside brackets
     dv2(end+1,1)={'<!---->'}; %force end of list
     
     s2=[s2; dv2];
