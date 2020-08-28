@@ -126,7 +126,7 @@
 % tutorial: "tutorial_orientation_and_manucoreg.doc" added to ..\antx2\mritools\ant\docs
 % This tutorial deals with image orientation for to template registration and manual coregistration.
 % #ra 24 Aug 2020 (12:08:22)
-% getanatomicallabels [sub_atlaslabel2xls.m]: fixed bug.. writing excel table (mac) because newer cell2table-version
+% - getanatomicallabels [sub_atlaslabel2xls.m]: fixed bug.. writing excel table (mac) because newer cell2table-version
 % variable names must match with Matlab variable style. This happens when animal names (such as "20130422_TF_001_m1_s3_e6_p1")
 % start with a numeric value instead of a character). SOLUTION: In such cases animals the animals in the excel table 
 % will be renamed (adding a prefix 's' such as "s20130422_TF_001_m1_s3_e6_p1").
