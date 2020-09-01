@@ -5,7 +5,11 @@
 % file      : xls-filename
 % sheetname : xls-sheetname (string)
 % idx       : indices of cells to colorize [ matlab stlye   ncells x [rows x columns] ]
-% col       : matrix of rgb values  [ ncells x 3RGB-elements ]
+% col       : matrix of rgb values  (0-1 range) [ ncells x 3RGB-elements ]
+% example: 
+% idx= [10 1; 11 2 ]; %colorize row10xcol1 in red and row11xcol2 in blue
+% col=[1 0 0; 0 0 1 ]; %red & blue
+
 function xlscolorizeCells(file,sheetname, idx, col)
 
 

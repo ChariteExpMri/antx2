@@ -24,7 +24,7 @@ function varargout=antsettings
 
 settings.show_instant_help        =  0          ;%[0,1] displays on-the-fly-function's help
 settings.show_intro               =  0          ;%[0,1] shows intro upon ANT-start
-settings.show_HTMLprogressReport  =  0          ;%[0,1] shows HTML progress for init./coregistration/segementation/warping
+settings.show_HTMLprogressReport  =  1          ;%[0,1] shows HTML progress for init./coregistration/segementation/warping
 
 
 

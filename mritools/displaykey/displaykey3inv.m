@@ -1,30 +1,64 @@
 
-%% ##b AUTOMATIC REGISTRATION AND MANUAL REGISTRATION (displaykey3inv.m)
+% #wb   MANUAL REGISTRATION (displaykey3inv.m)
+% This UI is can be used to manually register two images. The graphics window shows an overlay of 
+% two images. If you click into one of the three orthogonal panels the overlayed image disappear 
+% for a short moment (This is a way to compare the registration of the two images).
+% The mouse click also updates the three overlays w.r.t the clicked position.
+% -------------------------------------------------------------------------------------------------
+%  #wg |   STEPS OF MANUAL REGISTRATION    |
+% 1) select optimal orientationtype from "previous/other Orientations" pulldown-menu    (see below)
+% 2) rotate/translate image using icon panels/shortcuts to register images (see below)
+% 3) if image is finally #r in register, click #wr [reorient TPMs] #n -from right pull down menu
+%   #r Don't forget this step! #n The [reorient TPMs] pulldown will become inactive afterwards 
+%  (grayed). 
+% 4) hit #r [END] #n -button to close the UI
+% 5) #g Please wait a moment #k , sometimes closing the window can take some seconds. 
 %
-%% #by AUTOREGISTRATION STEPS 
-% [1] click [Autoreg] button and wait some seconds
-% [2] if match is ok between overlay and anatomical image (green: gray-matter-template, background: your structural image)
-%      than click [Reorient TPMS]-->in the pulldown select [Reorient TPMS] again to save this reorientation
-%       (if other images should be additionally reoriented use [reorient other images (gui)]) in the pulldown menu and select other images via GUI)
-% [3] click [end] button to finalize this step
+% image rotation/translation via: 
+%     (1) edit fields: right, forward, up, pitch roll, yaw
+%     (2) icon-panels above each of the 3 orthogonal views
+%     (3) shortcuts: rotations:   y/p/r  &  [shift]+y/p/r
+%                    translations:  left/right/up/down , [shift+up/down]
 % 
-%% #by MANUAL REGISTRATION STEPS (after suboptimal AUTOREGISTRATION)   
-% [1] click in the image somewhere, to set the crosshair in the center or a region of overlay
-% [2] use [up/down] arrows to shift overlay up/down (dorsal/ventral)
-% [3] use [left/right] arrows to shift overlay to left/right (lateral)
-% [4] use [shift]+[up/down] arrows to shift overlay forward/back (rostral/caudal)
-% [5] use [y],[p],[r] or [shift]+[y],[shift]+[p],[shift]+[r] to yaw/pitch/roll template
-% [6] use [shift] to toggle between a small or large translation size or rotation angle
-% [7] finally--> follow steps [2]&[3] from #by AUTOREGISTRATION #k  
+%  #wg   Edit fields, panel icons and shortcuts   
+% The aim is to register both images manually. For this you may use:
+% 1) Edit fields: right, forward, up, pitch, roll and yaw. These edit fields will be also updated
+%   when using the respective shortcuts or icons (from icon panels on top of the overlay panels). 
+%   Drawback: changing the values via edit controls is really painstaking.
+% 2) icon panels: Each image panel is associated with the respective translation (left,right,up/down
+%    arrow) and rotation (clock & anticlockwise) icons.
+%    The step-size for translation & rotation (edit fields) and a hand-icon to reposition the icon
+%    panel. 
+% 3) shortcuts:  #b type 'h' in the UI to get list of all keyboard shortcuts
+%  ‘up’/’down’ arrow keys          - move foreground(fg)-image (green) up/down (best observed in 1st and 2rd panel)
+%  ‘left’/’right’ arrow keys       - move fg-image (green) left/right (best observed in 1st and 3rd panel)
+%  shift+‘up’/’down’ arrow keys    - move fg-image (green) inward/outward (best observed in 2nd and 3rd panel)
+%  ‘p’ and shift+‘p’               - change pitch-rotation .. clock & anticlockwise
+%  ‘r’ and shift+‘r’               - change roll-rotation .. clock & anticlockwise
+%  ‘y’ and shift+‘y’               - change yaw-rotation .. clock & anticlockwise
 % 
-%% #by MANUAL REGISTRATION STEPS-II (if AUTOREGISTRATION FAILED)   
-% [1] use the [prev/other reorientation] pulldown menu to start with a previously performed or another reorientation
-% [2] use the [setZero] button to reset translation/rotation parameters
-% [3] finally--> follow steps [1] to [7] from #by MANUAL REGISTRATION #k 
-%
-% §r see also [keyboard shortcuts]...
-   
-
+%  The edit fields will be updated each time the translation and rotation icons or shortcuts will be activated
+%  Other shortcuts    
+%  +/-               - increase/decrease the transparency of the foreground image (green)
+%  "#"                 - show/hide red contour plot of the foreground image (green)
+% space              - toggle step-size of translation and rotation (two states: large vs. small step-size)
+%  F1                - change step-size of translation and rotation via GUI
+%  F2, F3, F4        - different toggles to show/hide the foreground/background-image
+% 
+%  #wg   previous/other Orientations (pulldown-menu)   
+% From the pull-down menu (below the overlays) select one of the predefined orientation types and
+% check whether at least the orientation of target and source images matches. Inspect all other 
+% orientation types from the pull-down menu (once the pull-down has the focus: 
+% use up/down arrow keys to change the orientation type). 
+% Previous rigid registration attempts also appear in the pull-down menu. Use one of the available
+% orientation types or orientation types estimated from previous registrations to constrain the variability 
+% in rotation and translation parameters.
+% 
+% #ol ...  Troubleshooting  ...   
+% 1) #b Image is not seen/I see only some pixels: #n Select "Full Volume" from the pulldown menu left to 
+% "hide Crosshairs" (if necessary click into one of the image panels afterwards to update the overlay).
+% 
+% #wb  ...  COMAND LINE   ...
 %% 30.05:    displaykey3inv(  refIMG ,t2,1); %
 %% [1] manually reorient img1 tp img2 (GUI)
 % img1  :sourceIMG (to be transformed)-->BUT ON TOP (overlayed)
@@ -385,8 +419,8 @@ function helpx(ra,ro)
  hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
  a=keylisthelp;
  hlp=[hlp; a];
-%  uhelp(hlp,1);
- uhelp(hlp,1,'position',[0.4976    0.3900    0.4951    0.5533]);
+ uhelp(hlp,1);
+ % uhelp(hlp,1,'position',[0.4976    0.3900    0.4951    0.5533]);
 
 
 function addhelp(ra,ro)
@@ -526,14 +560,15 @@ matsinfo(:,2)=cellfun(@(a,b){[ num2str(b) ') ' a]},mats(:,2),num2cell([1:size(ma
 
 % OPT-2) %USERDEFINDE VIA STRING ---------------------------------------------
 global aux
-if ~isnumeric(aux.orientType); 
-     bvec    =[   [0 0 0    str2num(aux.orientType)   ]  1 1 1 0 0 0];
-     bvecinfo1= [ char(aux.orientType)];
-     bvecinfo2= [ 'user) '  char(aux.orientType)];
-     mats(end+1,:)     =     {bvec bvecinfo1};
-     matsinfo(end+1,:) =     {bvec bvecinfo2};
+if isfield(aux,'orientType')
+    if ~isnumeric(aux.orientType);
+        bvec    =[   [0 0 0    str2num(aux.orientType)   ]  1 1 1 0 0 0];
+        bvecinfo1= [ char(aux.orientType)];
+        bvecinfo2= [ 'user) '  char(aux.orientType)];
+        mats(end+1,:)     =     {bvec bvecinfo1};
+        matsinfo(end+1,:) =     {bvec bvecinfo2};
+    end
 end
-
 % OPT-3) %HISTORY ---------------------------------------------
 try
     global st;

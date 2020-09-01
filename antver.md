@@ -1,7 +1,10 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   28 Aug 2020 (10:43:27)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   % 01 Sep 2020 (12:49:32)  
     
 ------------------  
+  % ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**01 Sep 2020 (12:49:32)**</ins>  
+  manual coregistration **[displaykey3inv.m]**: update help   
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Aug 2020 (10:43:27)**</ins>  
   - **[uhelp]** bug-fix: help-fig failed to update fontsize and fig-position after reopening    
   - updates/changes (**[antver.m]**) can be inspected from the GITHUB webside.      
@@ -17,7 +20,7 @@
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Aug 2020 (09:27:02)**</ins>  
   tutorial: "tutorial_orientation_and_manucoreg.doc" added to ..\antx2\mritools\ant\docs  
-  This tutorial deals with image orientation for to template registration and manual coregistration.  
+  This tutorial deals with image orientation for template registration and manual coregistration.  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 Aug 2020 (16:49:32)**</ins>  
   **[paramgui]** new version, (multi-icon style, execution-history)  
