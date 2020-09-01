@@ -135,7 +135,7 @@
 % #ra 28 Aug 2020 (10:43:27)
 % - [uhelp] bug-fix: help-fig failed to update fontsize and fig-position after reopening  
 % - updates/changes ([antver.m]) can be inspected from the GITHUB webside.    
-% % #ra 01 Sep 2020 (12:49:32)
+% #ra 01 Sep 2020 (12:49:32)
 % manual coregistration [displaykey3inv.m]: update help 
 
 %----- EOF
