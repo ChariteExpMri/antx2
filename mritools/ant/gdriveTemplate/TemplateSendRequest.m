@@ -1,6 +1,7 @@
 % Send HTTP request, get response and additional information in retInfos.
 function [response, retInfos, history] = TemplateSendRequest(uri, request)
 
+retInfos=[];
 % uri: matlab.net.URI
 % request: matlab.net.http.RequestMessage
 % response: matlab.net.http.ResponseMessage
