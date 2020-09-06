@@ -3,7 +3,7 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**01 Sep 2020 (12:49:32)**</ins>  
-  manual coregistration **[displaykey3inv.m]**: update help   
+  manual coregistration **[displaykey3inv.m]**: update help  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Aug 2020 (10:43:27)**</ins>  
   - **[uhelp]** bug-fix: help-fig failed to update fontsize and fig-position after reopening    
