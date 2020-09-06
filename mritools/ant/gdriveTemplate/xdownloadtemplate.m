@@ -239,35 +239,43 @@ disp('[busy]...');
 % ===============================================
 disp('..downloading file..');
 
-fileUrl = sprintf('https://drive.google.com/uc?export=download&id=%s', fileId);
-request = matlab.net.http.RequestMessage();
-
-% First request will be redirected to information page about virus scanning
-% We can get a confirmation code from an associated cookie file
-[~, infos] = TemplateSendRequest(matlab.net.URI(fileUrl), request);
-confirmCode = '';
-for j = 1:length(infos('drive.google.com').cookies)
-    if ~isempty(strfind(infos('drive.google.com').cookies(j).Name, 'download'))
-        confirmCode = infos('drive.google.com').cookies(j).Value;
-        break;
+if ispc==1
+    fileUrl = sprintf('https://drive.google.com/uc?export=download&id=%s', fileId);
+    request = matlab.net.http.RequestMessage();
+    
+    % First request will be redirected to information page about virus scanning
+    % We can get a confirmation code from an associated cookie file
+    [~, infos] = TemplateSendRequest(matlab.net.URI(fileUrl), request);
+    confirmCode = '';
+    for j = 1:length(infos('drive.google.com').cookies)
+        if ~isempty(strfind(infos('drive.google.com').cookies(j).Name, 'download'))
+            confirmCode = infos('drive.google.com').cookies(j).Value;
+            break;
+        end
     end
+    newUrl = strcat(fileUrl, sprintf('&confirm=%s', confirmCode));
+    
+    % We now need to send another request to get the file.
+    % However, Matlab doesn't download the whole Tiff file, but only one frame.
+    [a, b, history] = TemplateSendRequest(matlab.net.URI(newUrl), request);
+    
+    b1=history(end).Response;
+    % fid = fopen('z4.zip', 'wb'); ; fwrite(fid, b1.Body.Data);fclose(fid);
+    fid = fopen(fileName, 'wb');
+    fwrite(fid, b1.Body.Data);
+    fclose(fid);
+    
+else
+    
+    % system(['wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id=1nX0g2DaMIPIVgQGead97dCdeNEflFN6h'' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id=1nX0g2DaMIPIVgQGead97dCdeNEflFN6h" -O HIKI.zip && rm -rf /tmp/cookies.txt'])
+    system(['wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf /tmp/cookies.txt']);
 end
-newUrl = strcat(fileUrl, sprintf('&confirm=%s', confirmCode));
 
-% We now need to send another request to get the file.
-% However, Matlab doesn't download the whole Tiff file, but only one frame.
-[a, b, history] = TemplateSendRequest(matlab.net.URI(newUrl), request);
 
-b1=history(end).Response;
-% fid = fopen('z4.zip', 'wb'); ; fwrite(fid, b1.Body.Data);fclose(fid);
-fid = fopen(fileName, 'wb');  
-fwrite(fid, b1.Body.Data);
-fclose(fid);
-
-disp('..unzipping..');
 % ==============================================
 %%   unzip
 % ===============================================
+disp('..unzipping..');
 [pa fi ext]=fileparts(fileName);
 fileNameOut=fileName;   %final finalName
 if strcmp(ext,'.zip')==1
