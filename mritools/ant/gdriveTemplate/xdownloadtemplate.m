@@ -266,9 +266,13 @@ if ispc==1
     fclose(fid);
     
 else
-    
     % system(['wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id=1nX0g2DaMIPIVgQGead97dCdeNEflFN6h'' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id=1nX0g2DaMIPIVgQGead97dCdeNEflFN6h" -O HIKI.zip && rm -rf /tmp/cookies.txt'])
-    system(['wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf /tmp/cookies.txt']);
+%     system(['wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf /tmp/cookies.txt']);
+    
+cookiefile=fullfile(paout,'cookies.txt');
+system(['wget --load-cookies ' cookiefile ' "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies ' cookiefile ' --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf ' cookiefile '']);
+
+
 end
 
 
@@ -511,12 +515,22 @@ if par==1 %ANTTEMPLATES
 elseif par==2
     set(findobj(gcf,'tag','path1'),'value',0);
     
-    [pa]=uigetdir(pwd,'Select local folder where downloaded template(s) will be saved.');
+    [pa]=uigetdir(p.paout,'Select local folder where downloaded template(s) will be saved.');
     if isnumeric(pa) %error
         set(findobj(gcf,'tag','path1'),'value',1);
         selpath([],[],1)
         return
     end
+    if (~isempty(strfind(pa,'antx2'))) && ...
+            (exist(fullfile([pa(1:min(strfind(pa,'antx2'))-1) 'antx2'],'antlink.m'))==2)
+        msgbox(['Template cannot be downloaded into ANTx-folder.' char(10)  ...
+            'Please select another folder such as the "anttemplates"-folder.' char(10) ....
+            '  Suggestion: ' char(10) ...
+            'Create a folder "anttemplates" at the same hierarchical level as ANTx-TBX.' ....
+            '              Then select this folder. The template will be downloaded into this folder'],'Error','error');
+        return
+    end
+    
     set(findobj(gcf,'tag','paout'),'string',pa);
 end
 
