@@ -462,15 +462,15 @@ url = 'https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwY
 labelStr = ['<html>visit <a href="">' 'gDrive' '</a></html>'];
 jLabel = javaObjectEDT('javax.swing.JLabel', labelStr);
 [hjLabel,hContainer] = javacomponent(jLabel, [10,10,250,20], gcf);
-set(hContainer,'units','norm','position',[.45 .01 .1 .1]);%,'backgroundcolor',[0  1 1])
+set(hContainer,'units','norm','position',[.45 .01 .2 .1]);%,'backgroundcolor',[0  1 1])
 %  http://undocumentedmatlab.com/articles/javacomponent-background-color
 
 % Modify the mouse cursor when hovering on the label
 hjLabel.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
 hjLabel.setBackground(java.awt.Color(1,1,1));
 
-jFont = java.awt.Font('Tahoma', java.awt.Font.PLAIN, 20);
-hjLabel.setFont(jFont);
+% jFont = java.awt.Font('Tahoma', java.awt.Font.PLAIN, 20);
+% hjLabel.setFont(jFont);
 drawnow;
  
 % Set the label's tooltip
