@@ -50,7 +50,9 @@ options2 = matlab.net.http.HTTPOptions(...
 options.ProgressMonitorFcn=options2.ProgressMonitorFcn;
 options.UseProgressMonitor=options2.UseProgressMonitor;
 % options.ResponseTimeout=10; %initial check
-options.DataTimeout=20; % 20s limit between packages...if line is broken..get out
+try % linux no filed there... working
+    options.DataTimeout=20; % 20s limit between packages...if line is broken..get out
+end
 
 % Send request and get response and history of transaction.
 [response, ~, history] = request.send(uri, options);
