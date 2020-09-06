@@ -12,8 +12,8 @@
 function xdownloadtemplate
 
 warning off;
-% p.paout=fullfile(fileparts(fileparts(which('antlink'))),'anttemplates'); %FINAL
-p.paout='C:\paultest\gdrive2';   %outputpath
+p.paout=fullfile(fileparts(fileparts(which('antlink'))),'anttemplates'); %FINAL
+% p.paout='C:\paultest\gdrive2';   %outputpath
 
 % t=load('C:\paultest\rclone\gdrivetemplates.mat');
 t=load(which('gdrivetemplates.mat'));  %in TBX
