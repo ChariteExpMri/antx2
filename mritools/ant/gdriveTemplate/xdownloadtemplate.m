@@ -265,16 +265,32 @@ if ispc==1
     fwrite(fid, b1.Body.Data);
     fclose(fid);
     
-else
-    % system(['wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id=1nX0g2DaMIPIVgQGead97dCdeNEflFN6h'' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id=1nX0g2DaMIPIVgQGead97dCdeNEflFN6h" -O HIKI.zip && rm -rf /tmp/cookies.txt'])
-%     system(['wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf /tmp/cookies.txt']);
     
-cookiefile=fullfile(paout,'cookies.txt');
-system(['wget --load-cookies ' cookiefile ' "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies ' cookiefile ' --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf ' cookiefile '']);
-
-
+elseif ismac
+    
+    %MAC without wget
+    % check if pip is installed
+    [e1,e2]=system('python -m pip');
+    if isempty(strfind(e2,'Run pip in an isolated mode'))==1
+        disp('..installing pip..');
+        !sudo easy_install pip
+        disp('..installing requests-module..');
+    end
+    evalc('!python -m pip install requests');
+    disp('..no waitbar available......be patient..');
+    system(['python dowloadGdrive.py 1nX0g2DaMIPIVgQGead97dCdeNEflFN6h ' fileName]);
+    
+elseif isunix
+    
+    % system(['wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id=1nX0g2DaMIPIVgQGead97dCdeNEflFN6h'' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id=1nX0g2DaMIPIVgQGead97dCdeNEflFN6h" -O HIKI.zip && rm -rf /tmp/cookies.txt'])
+    %     system(['wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf /tmp/cookies.txt']);
+    
+    cookiefile=fullfile(paout,'cookies.txt');
+    system(['wget --load-cookies ' cookiefile ' "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies ' cookiefile ' --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf ' cookiefile '']);
+    
+    
+    
 end
-
 
 % ==============================================
 %%   unzip
