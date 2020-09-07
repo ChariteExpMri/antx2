@@ -869,9 +869,11 @@ msub1 = uimenu(mh2,'Label','check ELASTIX installation',                        
 
 
 mh2 = uimenu(mh,'Label','visit ANTx2 repository (Github)',                                  'Callback',{@menubarCB, 'visitGITHUB'},'separator','on');
-mh2 = uimenu(mh,'Label','get templates from googledrive',                                  'Callback',{@menubarCB, 'openGdrive'},'separator','off');
+mh2 = uimenu(mh,'Label','get templates from googledrive',               'Callback',{@menubarCB, 'openGdrive'},'separator','off');
+mh2 = uimenu(mh,'Label','download templates',                           'Callback',{@menubarCB, 'donwloadTemplates'},'separator','off');
 
-mh2 = uimenu(mh,'Label','check for updates (Github)',                                    'Callback',{@menubarCB, 'checkUpdateGithub'},'separator','on');
+
+mh2 = uimenu(mh,'Label','check for updates (Github)',                    'Callback',{@menubarCB, 'checkUpdateGithub'},'separator','on');
 
 
 %========================================================
@@ -2031,6 +2033,18 @@ elseif strcmp(task,'contact')
         
     end
     statusMsg(0);
+    
+ elseif strcmp(task,'donwloadTemplates')   
+    
+     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+         hlpfun='xdownloadtemplate';
+         return ;
+     end
+     
+     antcb('status',1,'downloading Templates');
+     xdownloadtemplate;
+     antcb('status',0,'')
+    
 elseif strcmp(task,'checkUpdateGithub')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun={' check for updates/changes in GITHUB repository'};

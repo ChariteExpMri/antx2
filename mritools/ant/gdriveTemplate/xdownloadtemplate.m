@@ -1,12 +1,20 @@
 
-% Download template(s) from google-drive
+% #lk  ***  Download Template(s) from Google Drive via GUI  ***   
 % 
+% #r =================================================================
+% #r Function is currently Tested ...function help has to be prepared
+% #r =================================================================
 % 
-% 
-% 
-% 
-% 
-
+% #kl CURRENT STATUS
+% #k WINDOWS: #n relies on matlab.net.http class, Introduced in #b R2016b. 
+%       #b Matlab version #r before R2016b won't work. #n In this case use manual download from webside.
+%   -status via waitbar
+% #k LINUX: #n using 'wget' (no other packages needed) 
+%   -no waitbar, but status via command line 
+% #k MAC: #n using python (pip/requests-modules) and python-script from
+%    https://stackoverflow.com/questions/25010369/wget-curl-large-file-from-google-drive 
+%    ..packages will be downloaded (if needed..) during download
+%     -no waitbar, no status-updates during download 
 
 
 function xdownloadtemplate

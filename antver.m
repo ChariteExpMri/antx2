@@ -137,6 +137,11 @@
 % - updates/changes ([antver.m]) can be inspected from the GITHUB webside.    
 % #ra 01 Sep 2020 (12:49:32)
 % manual coregistration [displaykey3inv.m]: update help 
+% #ra 07 Sep 2020 (03:41:16)
+% [xdownloadtemplate] DOWNLOAD TEMPLATES VIA GUI (faster alternative compared to webside).
+% Access via Extras/donwload templates
+
+
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

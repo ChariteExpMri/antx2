@@ -1,9 +1,13 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   01 Sep 2020 (12:49:32)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   07 Sep 2020 (03:41:16)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 Sep 2020 (03:41:16)**</ins>  
+  **[xdownloadtemplate]** DOWNLOAD TEMPLATES VIA GUI (faster alternative compared to webside).  
+  Access via Extras/donwload templates  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**01 Sep 2020 (12:49:32)**</ins>  
-  manual coregistration **[displaykey3inv.m]**: update help  
+  manual coregistration **[displaykey3inv.m]**: update help   
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Aug 2020 (10:43:27)**</ins>  
   - **[uhelp]** bug-fix: help-fig failed to update fontsize and fig-position after reopening    
