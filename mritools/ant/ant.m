@@ -609,7 +609,63 @@ switch cmenutask
             infox=['select orientation with best match between [' name '] and [' nameref ']'];
             % [id rotstring]=getorientation('ref',refimg,'img',img,'info', name);
             [id rotstring]=getorientation('ref',refimg,'img',img,'info', infox,'mode',1,'wait',1,'disp',1);
-            disp([ name ' rotTable-ID is [' num2str(id)  '] ..which is  "' rotstring  '"']);
+%             disp([ name ' rotTable-ID is [' num2str(id)  '] ..which is  "' rotstring  '"']);
+            
+
+          % ==============================================
+          %% show info
+          % ===============================================
+          
+          
+          msgdo= @()...
+              {...
+              ' #wg  *** Orientation Type for Template Registration ***   '
+              ''
+              ' #wo      Option-2: ROTATION  TABLE ID      (Rec.) '
+              'To use the selected orientation type for template registration,'
+              'open the settings window by selecting the #b [gearwheel-icon] #n from the ANT'
+              'main window. '
+              'The last command line output was:'
+              [' #m  >>' name ' rotTable-ID is [' num2str(id)  '] ..which is  ``' rotstring  '``']
+              [ 'The value in the square-brackets ( here: #r ' num2str(id)  ' #n ) is the rotation-table-ID.'  ]
+              'Set the parameter #b [x.wa.orientationType] #n to this value.'
+              'Note that the value must be #k numeric. '
+              'Internally, this value refers to three rotation angles stored in a table.'
+              ''
+              ' #wo    Option-2: ROTATIONS defined as string-Arguemnt     '
+           [  ' Alternatively, you can also use the three rotations (here #r ''' rotstring ''' #n )']
+              ' as #k string-argument #n in #b [x.wa.orientationType].'
+              ''
+              [' #r ' repmat('=', [1 80])]
+              ' #r Don''t forget to save the settings before doing the template registration. '
+              [' #r ' repmat('=', [1 80])]
+              };
+          
+          
+          
+          disp([[ name ' rotTable-ID is [' num2str(id)  '] ..which is  "' rotstring  '."   '] ...
+              ['<a href="matlab:uhelp(' func2str(msgdo) ',0,''name'',''info'');">' '[HELP]' '</a>' ]  ]);
+          
+
+%             
+
+%           
+%            disp([
+%                 ['<a href="matlab: uhelp('' (strjoin(msgdo,char(10)))  ''',1,''name'',''info'');">' '[HELP]' '</a>'] ...
+%               ]);
+%           
+%           disp([
+%                 ['<a href="matlab: uhelp(''' 'mean.m'  ''',1,''name'',''info'');">' '[HELP]' '</a>'] ...
+%               ]);
+%           
+%                   
+
+          
+% ==============================================
+%%   
+% ===============================================
+
+            
         end
     case 'getOrientationVia3points'
         px=antcb('getsubjects');

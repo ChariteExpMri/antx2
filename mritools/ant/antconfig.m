@@ -137,8 +137,26 @@ try
     z.ls=struct2list(z);
 end
 
-
-
+    % ==============================================
+    %% sanity check: remove ending fileseps
+    % =============================================== 
+    % 
+   
+   
+    try; z.datpath         =regexprep(z.datpath     ,['\' filesep '$'],''); end
+    try; z.templatepath    =regexprep(z.templatepath,['\' filesep '$'],''); end
+    try; z.wa.refpath      =regexprep(z.wa.refpath  ,['\' filesep '$'],''); end
+    
+    try
+        mb=strsplit(m,char(10))';
+        il=regexpi2(mb,'^x.datpath');
+        mb(il)=strrep(mb(il)    ,[z.datpath filesep], z.datpath );
+        
+        
+        il=regexpi2(mb,'^x.wa.refpath');
+        mb(il)=strrep(mb(il)    ,[z.wa.refpath filesep], z.wa.refpath );
+        m=strjoin(mb,char(10));
+    end
 
 try;
     z.mdirs=an.mdirs ;

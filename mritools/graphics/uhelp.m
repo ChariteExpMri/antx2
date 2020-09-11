@@ -145,7 +145,9 @@ warning off;
 
 
 
-
+if isa(fun, 'function_handle')==1 %anonym function
+    fun=fun();
+end
 
 if nargin>2
     %vnew=varargin{1};
@@ -153,11 +155,10 @@ if nargin>2
     
     vara=reshape(varag,[2 length(varag)/2])';
     paras=cell2struct(vara(:,2)',vara(:,1)',2);
-    
 else
     paras=struct();
 end
-
+ parasin=paras;
 
 %% EXPORT HTML ONLY________________________________________________________
 if isfield(paras,'export')
@@ -201,6 +202,10 @@ end
 
 if ~iscell(fun) %call help of a function
     e=help(fun);
+    if isempty(e); %allow string as input
+        e=fun;
+    end
+        
     %     ix=strfind(e,char(10));%replace Carriage return
     %     ix=[1 ix length(e)];
     %     for i=1:length(ix)-1 %make a cell
@@ -585,6 +590,15 @@ set(tx,'callback', @txtline);
 txtline([],[]);
 
 varargout{1}=hfig;
+
+
+% ==============================================
+%%   some other input args
+% ===============================================
+% parasin
+if isfield(parasin,'name')
+    set(gcf,'name',parasin.name,'NumberTitle','off');
+end
 
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 %% •••••••••••••••••••••••••••••  SUBFUNS      •••••••••••••••••••••••••••••••••••••••••••••••••••••••

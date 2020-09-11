@@ -240,7 +240,12 @@ if strcmp(do, 'load');
 % %     tip2=['<html><pre>' strjoin(tip,' ') '</pre></html>'];
 % %     set(hlb2,'tooltipstring',tip2);
 % %     
-    
+    % ==============================================
+    %% sanity check
+    % =============================================== 
+    % remove ending fileseps
+   try; an.datpath         =regexprep(an.datpath     ,['\' filesep '$'],''); end
+   try; an.templatepath    =regexprep(an.templatepath,['\' filesep '$'],''); end
     
     % ==============================================
     %%

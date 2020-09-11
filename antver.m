@@ -139,8 +139,7 @@
 % manual coregistration [displaykey3inv.m]: update help 
 % #ra 07 Sep 2020 (03:41:16)
 % [xdownloadtemplate] DOWNLOAD TEMPLATES VIA GUI (faster alternative compared to webside).
-% Access via Extras/donwload templates
-
+% Access via Extras/donwload templates  --> unresolved/untested: proxy settings 
 
 
 %----- EOF

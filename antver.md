@@ -4,7 +4,7 @@
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 Sep 2020 (03:41:16)**</ins>  
   **[xdownloadtemplate]** DOWNLOAD TEMPLATES VIA GUI (faster alternative compared to webside).  
-  Access via Extras/donwload templates  
+  Access via Extras/donwload templates  --> unresolved/untested: proxy settings   
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**01 Sep 2020 (12:49:32)**</ins>  
   manual coregistration **[displaykey3inv.m]**: update help   
