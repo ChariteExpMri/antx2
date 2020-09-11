@@ -308,15 +308,25 @@ if ispc==1
     getFileGdriveWin(googleID,fiout,p.http_proxy,p.https_proxy);
     
 else
-    googleID_unix=['"' googleID '"'];
+     googleID_unix=['"' googleID '"'];
     fiout_unix   =['"' fiout '"'];
     http_proxy  =strrep(p.http_proxy,'http://','');
     https_proxy =strrep(p.https_proxy,'http://','');
     
-    fun   =[ '.' filesep fullfile(fileparts(which('xdownloadtemplate.m')),'getFileGdrive.sh')];
-    ms=[fun ' ' googleID_unix  ' ' fiout_unix ' ' http_proxy ' ' https_proxy ];
-    
+    shfile=fullfile(fileparts(which('xdownloadtemplate.m')),'getFileGdrive.sh');
+    fun   =[ 'sh ' shfile];
+    %     fun   =fullfile( 'sh ', 'getFileGdrive.sh')
+    %      fun   =['sh ' 'getFileGdrive.sh']
+    ms=['!' fun ' ' googleID_unix  ' ' fiout_unix ' ' http_proxy ' ' https_proxy ];
+    %ms=[ 'cd ' fileparts(which('xdownloadtemplate.m')) ';' ms]
+    ms=regexprep(ms,'\s*$','');
     eval(ms);
+    
+    %     !sh /Users/skoch/Documents/mac_stuff/antx2/mritools/ant/gdriveTemplate/getFileGdrive.sh "1nX0g2DaMIPIVgQGead97dCdeNEflFN6h" "/Users/skoch/Documents/mac_stuff/anttemplates_test/mouse_Allen2017HikishimaLR.zip"
+    
+    %eval(['!ls -l ' shfile])
+    %eval(['!sudo chmod 666 ' shfile])
+    %eval(['!sudo chmod 777 ' shfile])
 end
 
 
