@@ -179,7 +179,7 @@ try
         
         fiout=fullfile(p.paout,strrep(p.t{idxall(i),4},'.zip',''));
         
-        mkdir(fiout);
+       %  mkdir(fiout); %ONLY A TESTER
         
         if exist(fiout)==7 %EXIST
             if forceOverwrite==1
