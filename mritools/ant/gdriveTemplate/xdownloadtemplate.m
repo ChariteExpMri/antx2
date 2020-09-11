@@ -30,35 +30,38 @@ p.t=t.l2;
 
 
 makefig(p);
+
+
+
 % set(gcf,'userdata',p);
 return
 
-% uiwait(gcf);
-
-p=get(gcf,'userdata');
-p.selection  = find(cell2mat(p.uit.Data(:,1)));
-p.uitable    = p.uit.Data;
-p.paout      = get(findobj(gcf,'tag','paout'),'string');
-
-%-----delete file
-delete(findobj(0,'tag','gdrive')); %delete previous table
-drawnow;
-
-if isempty(p.selection)
-    disp('process aborted..no template selected.');
-    return
-end
-
-%----process
-if p.isOK==0
-    disp('process aborted by user.');
-    return
-elseif p.isOK==1
-    disp('...');
-    process(p);
-    
-    return
-end
+% % uiwait(gcf);
+% 
+% p=get(gcf,'userdata');
+% p.selection  = find(cell2mat(p.uit.Data(:,1)));
+% p.uitable    = p.uit.Data;
+% p.paout      = get(findobj(gcf,'tag','paout'),'string');
+% 
+% %-----delete file
+% delete(findobj(0,'tag','gdrive')); %delete previous table
+% drawnow;
+% 
+% if isempty(p.selection)
+%     disp('process aborted..no template selected.');
+%     return
+% end
+% 
+% %----process
+% if p.isOK==0
+%     disp('process aborted by user.');
+%     return
+% elseif p.isOK==1
+%     disp('...');
+%     process(p);
+%     
+%     return
+% end
 
 
 
@@ -167,6 +170,73 @@ try
     
     disp(['*** DOWNLOADING TEMPLATES ***'  ]);
     
+    %------------forceOverwrite
+    forceOverwrite=get(findobj(gcf,'tag','forceOverwrite'),'value');
+    
+    
+     skiplist=[];
+    for i=1:length(idxall)
+        
+        fiout=fullfile(p.paout,strrep(p.t{idxall(i),4},'.zip',''));
+        
+        mkdir(fiout);
+        
+        if exist(fiout)==7 %EXIST
+            if forceOverwrite==1
+                ovrlog=1;
+            elseif forceOverwrite==0
+               
+                %———————————————————————————————————————————————
+                %%
+                %———————————————————————————————————————————————
+                CT={'overwrite','skip','cancel all'};
+                choice = questdlg(...
+                    {'OUTPUT-FOLDER: '
+                    ['[FOLDER]: "' fiout '"' 'exists!']
+                    '    [overwrite]: Try to overwrite this folder.'
+                    '            [skip]: Do not download this template.'
+                    '       [skip all]: No templates will be downloaded'
+                    },...
+                    '? OVERWRITE STUFF', CT{1},CT{2},CT{3},CT{1});
+                ovrlog=find(strcmp(CT,choice));  %[1]overwrite[2]skip file [3] cancel
+                
+                %———————————————————————————————————————————————
+                %%
+                %———————————————————————————————————————————————
+            end %if focetoOverwrite
+            
+            if ovrlog==1
+                
+                disp('OVR-1');
+                try; rmdir(fiout, 's'); end
+            elseif ovrlog==2
+                disp('OVR-2');
+                skiplist=[skiplist i];
+            else
+                idxall=[];
+                break
+                return
+            end
+            
+        end
+    end
+    
+    
+   if exist('skiplist')==1 %remove skipped templates
+       idxall      =setdiff(idxall,skiplist);
+       p.selection =idxall;
+   end
+    
+    
+    %———————————————————————————————————————————————
+    %%
+    %———————————————————————————————————————————————
+    if isempty(idxall); %nothing selected
+        return
+    end
+    
+    
+    %----download
     for i=1:length(idxall)
         idx= idxall(i);
         downloadFile(p,idx,idxall);
@@ -396,7 +466,7 @@ if strcmp(ext,'.zip')==1
         oldname=fullfile(pa,['_',fi]);
         movefile(fileName2,oldname,'f');                  %1) RENAME THE MAIN FOLDER
         movefile(fullfile(pa,['_',fi],fi),fileName2,'f'); %2) RENAME subfolder with content to final name
-        %         try; delete(fileName)   ;end  %3) remove old zip-file
+        try; delete(fileName)   ;end  %3) remove old zip-file
         try; rmdir(oldname ,'s');end  %4) remove old main-folder
         fileNameOut=fileName2;%final finalName
     end
@@ -406,7 +476,7 @@ disp(['[done]..dtime (min): ' num2str(toc(atim)/60)]);
 
 
 
-function help(e,e2)
+function pb_help(e,e2)
 uhelp(mfilename);
 
 
@@ -513,26 +583,45 @@ set(hb,'position',[.08 .21 .15 .07]);
 http_proxyList={'http://proxy.charite.de:8080' 'http://proxyIP:PORT' 'http://#:#' '<empty>'};
 %% pulldown http_proxy
 hb=uicontrol('style','popup','units','norm','string',http_proxyList);
-set(hb,'position',[.2 .25 .3 .03],'tag','http_proxy');
+set(hb,'position',[.2 .25 .3 .025],'tag','http_proxy');
 set(hb,'tooltipstring','http_proxy','fontweight','normal');
+set(hb,'fontsize',8);
 jCombo = findjobj(hb);
 jCombo.setEditable(true);
+
 
 https_proxyList={'https://proxy.charite.de:8080' 'https://proxyIP:PORT' 'https://#:#' '<empty>'};
 %% pulldown http_proxy
 hb=uicontrol('style','popup','units','norm','string',https_proxyList);
-set(hb,'position',[.52 .25 .3 .03],'tag','https_proxy');
+set(hb,'position',[.52 .25 .3 .025],'tag','https_proxy');
 set(hb,'tooltipstring','https_proxy','fontweight','normal');
+set(hb,'fontsize',8);
 jCombo = findjobj(hb);
 jCombo.setEditable(true);
+
 %% TXT http_proxy
 hb=uicontrol('style','text','units','norm','string','HTTP PROXY');
 set(hb,'backgroundcolor','w','fontweight','bold');
 set(hb,'position',[.2 .28 .3 .05]);
+set(hb,'fontsize',8);
 %% TXT https_proxy
 hb=uicontrol('style','text','units','norm','string','HTTPS PROXY');
 set(hb,'backgroundcolor','w','fontweight','bold');
 set(hb,'position',[.5 .28 .3 .05]);
+set(hb,'fontsize',8);
+
+
+
+%% force overwrite-radio
+hb=uicontrol('style','radio','units','norm','string','f.OVR','fontsize',7);
+set(hb,'tag','forceOverwrite');
+set(hb,'position',[.9 .21 .15 .07]);
+set(hb,'tooltipstring',[...
+    '[FORCE TO OVERWRITE] this specific template folder.' char(10) ...
+    '[x] force to overwrite folder, if folder already exists' char(10) ...
+    '[ ] User decides how to proceed.' char(10) ...
+    ],'backgroundcolor','w');
+% set(hb,'callback',@get_wpad);
 
 % ==============================================
 %%   other controls
@@ -553,7 +642,7 @@ set(hb,'position',[.77 0.05 .1 .07]);
 
 %HELP
 hb=uicontrol('style','pushbutton','units','norm','string','Help');
-set(hb,'position',[.55 .95 .05 .03],'tag','help','callback',@help);
+set(hb,'position',[.55 .95 .05 .03],'tag','pb_help','callback',@pb_help);
 set(hb,'tooltipstring','get some help',...
     'fontweight','bold');
 set(hb,'position',[.87 0.92 .1 .07]);
