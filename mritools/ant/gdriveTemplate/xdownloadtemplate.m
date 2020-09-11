@@ -311,7 +311,7 @@ else
     googleID_unix=['"' googleID '"'];
     fiout_unix   =['"' fiout '"'];
     http_proxy  =strrep(p.http_proxy,'http://','');
-    https_proxy =strrep(p.https_proxy,'http://','');
+    https_proxy =strrep(p.https_proxy,'https://','');
     
     shfile=fullfile(fileparts(which('xdownloadtemplate.m')),'getFileGdrive.sh');
     fun   =[ 'sh ' shfile];
