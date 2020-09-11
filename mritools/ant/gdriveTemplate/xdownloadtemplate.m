@@ -99,12 +99,12 @@ if strcmp(str,'<empty>')==1; str=''; end
 p.https_proxy=str;
 
 if p.use_proxy==0
-   p.http_proxy=''; 
-   p.https_proxy=''; 
+    p.http_proxy='';
+    p.https_proxy='';
 end
 
 %  disp(p);
-% % 
+% %
 %  return
 
 %-----delete file
@@ -308,7 +308,7 @@ if ispc==1
     getFileGdriveWin(googleID,fiout,p.http_proxy,p.https_proxy);
     
 else
-     googleID_unix=['"' googleID '"'];
+    googleID_unix=['"' googleID '"'];
     fiout_unix   =['"' fiout '"'];
     http_proxy  =strrep(p.http_proxy,'http://','');
     https_proxy =strrep(p.https_proxy,'http://','');
@@ -375,7 +375,7 @@ if 0 %OLD
         %     system(['wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf /tmp/cookies.txt']);
         
         cookiefile=fullfile(paout,'cookies.txt');
-        system(['wget --load-cookies ' cookiefile ' "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies ' cookiefile ' --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf ' cookiefile '']); 
+        system(['wget --load-cookies ' cookiefile ' "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies ' cookiefile ' --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf ' cookiefile '']);
     end
     
 end% old
@@ -396,7 +396,7 @@ if strcmp(ext,'.zip')==1
         oldname=fullfile(pa,['_',fi]);
         movefile(fileName2,oldname,'f');                  %1) RENAME THE MAIN FOLDER
         movefile(fullfile(pa,['_',fi],fi),fileName2,'f'); %2) RENAME subfolder with content to final name
-%         try; delete(fileName)   ;end  %3) remove old zip-file
+        %         try; delete(fileName)   ;end  %3) remove old zip-file
         try; rmdir(oldname ,'s');end  %4) remove old main-folder
         fileNameOut=fileName2;%final finalName
     end
@@ -682,31 +682,36 @@ end
 
 function get_wpad(e,e2)
 
- if ispc
-   [r1 r2]=system('echo %TEMP%');
-   r2=strsplit(r2,char(10));
-   r2=r2{1};
-   file=fullfile(r2, 'wpad.html');
-   xget   = fullfile(fileparts(which('xdownloadtemplate.m')),'xget.exe');
-   system(['"' xget '" --no-hsts "http://wpad/wpad.dat" -O ' file ]);
-   
-
-
-%     
-%     line_num=dbstack; % get this line number
-%     line_num(end).line % displays the line number
-%     
- else
-    disp('unix-wpad to be implemented');
-     line_num=dbstack; % get this line number
-    disp(['line: ' num2str(line_num(end).line) ]); % displays the line number
+if ispc
+    [r1 r2]=system('echo %TEMP%');
+    r2=strsplit(r2,char(10));
+    r2=r2{1};
+    file=fullfile(r2, 'wpad.html');
+    xget   = fullfile(fileparts(which('xdownloadtemplate.m')),'xget.exe');
+    system(['"' xget '" --no-hsts "http://wpad/wpad.dat" -O ' file ]);
+    
+    %     line_num=dbstack; % get this line number
+    %     line_num(end).line % displays the line number
+    %
+else
+    %disp('unix-wpad to be implemented');
+    %line_num=dbstack; % get this line number
+    %disp(['line: ' num2str(line_num(end).line) ]); % displays the line number
+    [r1 r2]=system('echo ~/Documents');
+    r2=strsplit(r2,char(10));
+    r2=r2{1};
+    file=fullfile(r2, 'wpad.html');
+    system(['curl "http://wpad/wpad.dat" > ' file ]);
+    %web(file);
 end
 
-
-if isempty(file)
+a=preadfile(file);
+% html=preadfile(file);
+html=regexprep(char(a.all),'\s*','');
+if isempty(html)
     %———————————————————————————————————————————————
-%%   
-%———————————————————————————————————————————————
+    %%  empty
+    %———————————————————————————————————————————————
     space=repmat('&nbsp;',[1 5]);
     lg={'<html><FONT color=red>'};
     lg{end+1,1}=['<p style="background-color: #F0EEF3">'];
@@ -715,18 +720,18 @@ if isempty(file)
     lg{end+1,1}=[space '<b>There seems to be no proxies!' '</b><br>'];
     lg{end+1,1}=[repmat('-',[1 145]) '<br>'];
     
-     lg{end+1,1}=[space '<FONT color=k> Proxy was checkd via <b>["http://wpad/wpad.dat"]</b> .' '<br></FONT>'];
+    lg{end+1,1}=[space '<FONT color=k> Proxy was checkd via <b>["http://wpad/wpad.dat"]</b> .' '<br></FONT>'];
     
     lg{end+1,1}=[  ' !!! But this is no guarantee !!!  Maybe check other resiurces as well.' '<br>'];
-
-     lg{end+1,1}=[ '<br>'];
+    
+    lg{end+1,1}=[ '<br>'];
     
     lg{end+1}=['<FONT color=#0832ED><b>[MAC/LINUX]</b><br>'];
     lg{end+1,1}=[space 'Open termnal and type: "env | grep proxy" and check for potential proxies.' '<br>'];
     
     lg{end+1}=['<FONT color=#8808ED><b>[MAC/LINUX]</b><br>'];
     lg{end+1,1}=[space 'Open cdm-window and type: "netsh winhttp show proxy" and check for potential proxies.' '<br>'];
-  
+    
     lg{end+1}=['<FONT color=#000000><b>[Other]</b><br>'];
     lg{end+1}=['# check Settings/Connection Settings of Browser  <br>' ];
     lg{end+1}=['# check value of http_proxy environment variables via Termin:' '<br>'];
@@ -737,12 +742,12 @@ if isempty(file)
     
     lg{end+1}=['</FONT>'];
     
-%     lg{end+1}=['<FONT color=#0008ED><b>[HTTPS-PROXY]</b><br>'];
-%     lg{end+1,1}=[space 'Copy the PROXY_IP and PORT into the [HTTPS-PROXY]-field' '<br>'];
-%     lg{end+1,1}=[space 'and add a "https://"-prefix.  &#8594;   <b> [https://PROXY_IP:PORT]  </b>' '<br>'];
-%     lg{end+1,1}=[space '<FONT color=green> Example: For Charite/Germany the [HTTPS-PROXY] is: https://proxy.charite.de:8080' '<br></FONT>'];
-%     lg{end+1}=['</FONT>'];
-%     
+    %     lg{end+1}=['<FONT color=#0008ED><b>[HTTPS-PROXY]</b><br>'];
+    %     lg{end+1,1}=[space 'Copy the PROXY_IP and PORT into the [HTTPS-PROXY]-field' '<br>'];
+    %     lg{end+1,1}=[space 'and add a "https://"-prefix.  &#8594;   <b> [https://PROXY_IP:PORT]  </b>' '<br>'];
+    %     lg{end+1,1}=[space '<FONT color=green> Example: For Charite/Germany the [HTTPS-PROXY] is: https://proxy.charite.de:8080' '<br></FONT>'];
+    %     lg{end+1}=['</FONT>'];
+    %
     lg{end+1}=['<FONT color=red><b>[Other]</b><br>'];
     lg{end+1,1}=[repmat('-',[1 145]) ' message_stop' '<br>'];
     % lg{end+1,1}=['<p style="background-color: #FFFF00">This whole paragraph <br>of text is highlighted in yellow.</p>'];
@@ -752,48 +757,48 @@ if isempty(file)
     pwrite2file(file,lg);
     web(file);
     %———————————————————————————————————————————————
-%%   
-%———————————————————————————————————————————————
-else
-    a=preadfile(file);
+    %%
     %———————————————————————————————————————————————
-%%   
-%———————————————————————————————————————————————
-space=repmat('&nbsp;',[1 5]);
-lg={'<html><FONT color=red>'};
-lg{end+1,1}=['<p style="background-color: #F0EEF3">'];
-lg{end+1,1}=[repmat('-',[1 145]) ' message_start' '<br>'];
-
-lg{end+1,1}=[space '<b>Please check the below text and search for "PROXY"-tags followed by a PROXY_IP adress and a PORT!' '</b><br>'];
-lg{end+1,1}=[repmat('-',[1 145]) '<br>'];
-
-
-
-lg{end+1,1}=['<FONT color=green> Example: For Charite/Germany this file would contain: "{ return "PROXY proxy.charite.de:8080"; }"' '<br></FONT>'];
-
-lg{end+1}=['<FONT color=#0832ED><b>[HTTP-PROXY]</b><br>'];
-lg{end+1,1}=[space 'Copy the PROXY_IP and PORT into the [HTTP-PROXY]-field' '<br>'];
-lg{end+1,1}=[space 'and add a "http://"-prefix.  &#8594;   <b> [http://PROXY_IP:PORT]  </b>' '<br>'];
-lg{end+1,1}=[space '<FONT color=green> Example: For Charite/Germany the [HTTP-PROXY] is: http://proxy.charite.de:8080' '<br></FONT>'];
-
-lg{end+1}=['</FONT>'];
-
-lg{end+1}=['<FONT color=#8808ED><b>[HTTPS-PROXY]</b><br>'];
-lg{end+1,1}=[space 'Copy the PROXY_IP and PORT into the [HTTPS-PROXY]-field' '<br>'];
-lg{end+1,1}=[space 'and add a "https://"-prefix.  &#8594;   <b> [https://PROXY_IP:PORT]  </b>' '<br>'];
-lg{end+1,1}=[space '<FONT color=green> Example: For Charite/Germany the [HTTPS-PROXY] is: https://proxy.charite.de:8080' '<br></FONT>'];
-lg{end+1}=['</FONT>'];
-
-lg{end+1,1}=[repmat('-',[1 145]) ' message_stop' '<br>'];
-% lg{end+1,1}=['<p style="background-color: #FFFF00">This whole paragraph <br>of text is highlighted in yellow.</p>'];
-lg{end+1,1}=['</p>'];
-lg{end+1,1}=['</FONT>'];
-lg=[lg; a.all];
-lg{end+1,1}=['</html>'];
-pwrite2file(file,lg);
-web(file);
-   %———————————————————————————————————————————————
-%%   
-%——————————————————————————————————————————————— 
+else
+    %a=preadfile(file);
+    %———————————————————————————————————————————————
+    %%   wpad not empty
+    %———————————————————————————————————————————————
+    space=repmat('&nbsp;',[1 5]);
+    lg={'<html><FONT color=red>'};
+    lg{end+1,1}=['<p style="background-color: #F0EEF3">'];
+    lg{end+1,1}=[repmat('-',[1 145]) ' message_start' '<br>'];
+    
+    lg{end+1,1}=[space '<b>Please check the below text and search for "PROXY"-tags followed by a PROXY_IP adress and a PORT!' '</b><br>'];
+    lg{end+1,1}=[repmat('-',[1 145]) '<br>'];
+    
+    
+    
+    lg{end+1,1}=['<FONT color=green> Example: For Charite/Germany this file would contain: "{ return "PROXY proxy.charite.de:8080"; }"' '<br></FONT>'];
+    
+    lg{end+1}=['<FONT color=#0832ED><b>[HTTP-PROXY]</b><br>'];
+    lg{end+1,1}=[space 'Copy the PROXY_IP and PORT into the [HTTP-PROXY]-field' '<br>'];
+    lg{end+1,1}=[space 'and add a "http://"-prefix.  &#8594;   <b> [http://PROXY_IP:PORT]  </b>' '<br>'];
+    lg{end+1,1}=[space '<FONT color=green> Example: For Charite/Germany the [HTTP-PROXY] is: http://proxy.charite.de:8080' '<br></FONT>'];
+    
+    lg{end+1}=['</FONT>'];
+    
+    lg{end+1}=['<FONT color=#8808ED><b>[HTTPS-PROXY]</b><br>'];
+    lg{end+1,1}=[space 'Copy the PROXY_IP and PORT into the [HTTPS-PROXY]-field' '<br>'];
+    lg{end+1,1}=[space 'and add a "https://"-prefix.  &#8594;   <b> [https://PROXY_IP:PORT]  </b>' '<br>'];
+    lg{end+1,1}=[space '<FONT color=green> Example: For Charite/Germany the [HTTPS-PROXY] is: https://proxy.charite.de:8080' '<br></FONT>'];
+    lg{end+1}=['</FONT>'];
+    
+    lg{end+1,1}=[repmat('-',[1 145]) ' message_stop' '<br>'];
+    % lg{end+1,1}=['<p style="background-color: #FFFF00">This whole paragraph <br>of text is highlighted in yellow.</p>'];
+    lg{end+1,1}=['</p>'];
+    lg{end+1,1}=['</FONT>'];
+    lg=[lg; a.all];
+    lg{end+1,1}=['</html>'];
+    pwrite2file(file,lg);
+    web(file);
+    %———————————————————————————————————————————————
+    %%
+    %———————————————————————————————————————————————
     
 end
