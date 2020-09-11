@@ -707,7 +707,7 @@ end
 
 a=preadfile(file);
 % html=preadfile(file);
-html=regexprep(char(a.all),'\s*','');
+html=char(regexprep( (a.all),'\s*',''));
 if isempty(html)
     %———————————————————————————————————————————————
     %%  empty
