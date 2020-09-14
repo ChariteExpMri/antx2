@@ -1,21 +1,46 @@
 
 % #lk  ***  Download Template(s) from Google Drive via GUI  ***
 %
-% #r =================================================================
-% #r Function is currently Tested ...function help has to be prepared
-% #r =================================================================
-%
-% #kl CURRENT STATUS
-% #k WINDOWS: #n relies on matlab.net.http class, Introduced in #b R2016b.
-%       #b Matlab version #r before R2016b won't work. #n In this case use manual download from webside.
-%   -status via waitbar
-% #k LINUX: #n using 'wget' (no other packages needed)
-%   -no waitbar, but status via command line
-% #k MAC: #n using python (pip/requests-modules) and python-script from
-%    https://stackoverflow.com/questions/25010369/wget-curl-large-file-from-google-drive
-%    ..packages will be downloaded (if needed..) during download
-%     -no waitbar, no status-updates during download
-
+% This function can be used to download template(s) from  Google drive.
+% Google drive: 
+%        https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
+% Note that a "template" is a #k folder #n with Nifti-files (Not a single file!).
+% The templates can be alos downloaded manually from the above google address.
+% --------------------------------------------------------------------------------
+% #lk *** GUI controls ***
+% #b [select all]       #n Select all templates from the table to download (radio).
+% #b [table checkboxes] #n Select one ore more templates from the table to download.
+% #b [wpad]             #n Get "Web Proxy Auto-Discovery Protocol" to detect 
+%                       your or the department's intermediary proxy.
+%                     - see [wpad] for other options to obtain the proxy address/port
+% #b [use proxy]        #n Use proxys. Use this only if there is an intermediary proxy.
+%                       [x] Yes, I'm behind a proxy
+%                       [ ] there is no proxy 
+% #b [http/https proxies] #n Specify your proxy addresses.
+%                      - only applies if [use proxy] is enabled!
+%                      - use items from pulldown menu for costumizing proxy address/port
+%                      ..see [wpad] for other options to detect proxy address/port
+% #b [f.OVR]  #n Force to overwrite folder. 
+%            [x] an existing folder with the same template name will be overwritten (no feedback)
+%            [ ] The user decides how to proceed (overwrite vs. skip this download)
+% #b [local template path] #n This is the main target folder. The downloaded template is
+%           stored here. 
+%         - The "anttemplates"-folder is the default download-folder
+%         - use radio [user specified] to select another target folder
+%     #b [anttemplates]    #n Set target folder to the "anttemplates"-folder
+%     #b [user specified]  #n User defines the target folder where template is stored
+% #b [Download] #n  This will download the selected templates.
+%                #n The GUI #r stays open #n when selecting the [Download] button.
+% #b [Close]    #n Close GUI. You have to explicitely close this GUI afterwards.
+% 
+% #lk *** TESTS ***
+% Successfully tested with & without proxies using Windows 10, Mac Catalina and Ubuntu 18
+% #k WINDOWS: #n relies on "Wget 1.20.3": https://eternallybored.org/misc/wget/
+%           - The exe-file was renamed to "xget.exe" instead of "wget.exe" 
+%           - The exe-file is located here: ..\antx2\mritools\ant\gdriveTemplate\ 
+% #k LINUX/MAC : #n using curl-function (distributed with the OS)
+% 
+% 
 
 function xdownloadtemplate
 

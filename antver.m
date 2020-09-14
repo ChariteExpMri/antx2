@@ -140,7 +140,9 @@
 % #ra 07 Sep 2020 (03:41:16)
 % [xdownloadtemplate] DOWNLOAD TEMPLATES VIA GUI (faster alternative compared to webside).
 % Access via Extras/donwload templates  --> unresolved/untested: proxy settings 
-
+% #ra 14 Sep 2020 (13:14:15)
+% [xdownloadtemplate] DOWNLOAD TEMPLATES VIA GUI ..modified using curl (MAC/Linux) and wget.exe (windows)
+% - Function was tested with and without proxies using Win, MAC & Linux
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

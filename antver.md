@@ -1,7 +1,11 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   07 Sep 2020 (03:41:16)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   14 Sep 2020 (13:14:15)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**14 Sep 2020 (13:14:15)**</ins>  
+  **[xdownloadtemplate]** DOWNLOAD TEMPLATES VIA GUI ..modified using curl (MAC/Linux) and wget.exe (windows)  
+  - Function was tested with and without proxies using Win, MAC & Linux  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 Sep 2020 (03:41:16)**</ins>  
   **[xdownloadtemplate]** DOWNLOAD TEMPLATES VIA GUI (faster alternative compared to webside).  
   Access via Extras/donwload templates  --> unresolved/untested: proxy settings   

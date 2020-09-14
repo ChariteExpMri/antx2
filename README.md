@@ -19,9 +19,9 @@ ANTx2 stands for **A** tlas **N** ormalization **T** oolbox using elasti **x**. 
 
 ## **Requirements**
 - Windows (tested: Windows 10)
-- Linux (tested: Ubuntu 16.04.6 LTS, MINT17)
-- MAC (tested: OS X El Capitan v10.11.6)
-- MATLAB, version R2015b/16a were tested, versions above 2018b should work (..not fully tested)
+- Linux (tested: Ubuntu 16.04.6 LTS, (MINT17/Linuxfx))
+- MAC (tested: OS X El Capitan/Catalina)
+- MATLAB, all functions were tested for R2015b/16a. Versions above 2018b should work (otherwise please send a mail)
 
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) Inspect [**last changes/updates**](antver.md).<br>
 
@@ -60,7 +60,9 @@ DISADVANTAGE: no update feature (or you have to install the GIT client post hoc)
  - To check for updates select EXTRAS/"CHECK FOR UPATES (GITHUB)" from the ant main gui
 
 ### <ins> Download Templates </ins> ###
-  Templates are not included in this repository and must be downloaded from [google-drive](https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9).
+  Templates are not included in this repository.
+  The templates can be downloaded via the ANT interface (Menu: Extras/get templates from googledrive)  
+  or manually from [google-drive](https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9).
    
 <!---
  or from subfolder "anttemplates" from LINK: https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM 
