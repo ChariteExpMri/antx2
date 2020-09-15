@@ -615,11 +615,9 @@ switch cmenutask
           % ==============================================
           %% show info
           % ===============================================
-          
-          
-          
-          msg0=...
-              {...
+          global info1001
+          info1001=...
+            {
               ' #wg  *** Orientation Type for Template Registration ***   '
               ''
               ' #wo      Option-2: ROTATION  TABLE ID      (Rec.) '
@@ -641,11 +639,9 @@ switch cmenutask
               ' #r Don''t forget to save the settings before doing the template registration. '
               [' #r ' repmat('=', [1 80])]
               };
-          msgdo= @()(msg0);
+             disp([[ name ' rotTable-ID is [' num2str(id)  '] ..which is  "' rotstring  '."   '] ...
+              ['<a href="matlab:global info1001; uhelp(info1001,0,''name'',''info'');clear info1001">' '[HELP]' '</a>' ]  ]);
           
-          
-          disp([[ name ' rotTable-ID is [' num2str(id)  '] ..which is  "' rotstring  '."   '] ...
-              ['<a href="matlab:uhelp(' func2str(msgdo) ',0,''name'',''info'');">' '[HELP]' '</a>' ]  ]);
           
 
 %             
