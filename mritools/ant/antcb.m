@@ -148,7 +148,7 @@ if strcmp(do, 'load');
     fprintf([' ...loading project: ' '[' [strrep(fi,'.m',''),'.m' ] '] from [' projectdir ']'  '\n']);
     %====================================================================================================
     %% make history of previous projectfiles
-    if 1
+    if 0
         antxpath=antpath;
         prevprojects=fullfile(antxpath,'prevprojects.mat');
         run(projectfile);

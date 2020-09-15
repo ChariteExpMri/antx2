@@ -35,6 +35,9 @@
 % 'cursor' :   'start' or 'end'  -position the cursor in listbox
 % 'lbpos'  :  [x y w h]          -position if the listbox default: [0 0 1 1] 
 % 'fontsize': value              -set listbox fontsize 
+% 'name'    : (string)           - name of the figure (appears in the upper window frame)
+% 'bgcolor' : [R G B]/matlab-color-string - background color; example ..'bgcolor','r'.. or 'bgcolor',[1 .9 .9]...
+
 % EXAMPLES
 % uhelp(his, 1, 'cursor' ,'end','lbpos',[0 .025 1 .95] );           
 % uhelp(cell, 0/1, 'cursor' ,'end' )   ;%places cursor to the end
@@ -596,8 +599,13 @@ varargout{1}=hfig;
 %%   some other input args
 % ===============================================
 % parasin
-if isfield(parasin,'name')
-    set(gcf,'name',parasin.name,'NumberTitle','off');
+if isfield(parasin,'name');             set(gcf,'name',parasin.name,'NumberTitle','off');end
+if isfield(parasin,'backgroundcolor');  set(tx,'backgroundcolor', parasin.backgroundcolor);end
+if isfield(parasin,'bgcolor');          set(tx,'backgroundcolor', parasin.bgcolor);end
+
+
+if nargout==0
+    varargout={};
 end
 
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
