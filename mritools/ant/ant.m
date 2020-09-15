@@ -617,7 +617,8 @@ switch cmenutask
           % ===============================================
           
           
-          msgdo= @()...
+          
+          msg0=...
               {...
               ' #wg  *** Orientation Type for Template Registration ***   '
               ''
@@ -633,14 +634,14 @@ switch cmenutask
               'Internally, this value refers to three rotation angles stored in a table.'
               ''
               ' #wo    Option-2: ROTATIONS defined as string-Arguemnt     '
-           [  ' Alternatively, you can also use the three rotations (here #r ''' rotstring ''' #n )']
+              [  ' Alternatively, you can also use the three rotations (here #r ''' rotstring ''' #n )']
               ' as #k string-argument #n in #b [x.wa.orientationType].'
               ''
               [' #r ' repmat('=', [1 80])]
               ' #r Don''t forget to save the settings before doing the template registration. '
               [' #r ' repmat('=', [1 80])]
               };
-          
+          msgdo= @()(msg0);
           
           
           disp([[ name ' rotTable-ID is [' num2str(id)  '] ..which is  "' rotstring  '."   '] ...
