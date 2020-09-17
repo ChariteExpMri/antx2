@@ -30,8 +30,8 @@ if exist('fi2save')
         if exist('dt')~=1
             rsavenii(fi2save,h,d );
         else
-             h=rmfield(h,'pinfo'); %remove pinfo-field to change dt (works also  for 4d)
-             h=rmfield(h,'private'); %remove pinfo-field to change dt (works also  for 4d)
+             %h=rmfield(h,'pinfo'); %remove pinfo-field to change dt (works also  for 4d)
+             %h=rmfield(h,'private'); %remove pinfo-field to change dt (works also  for 4d)
             rsavenii(fi2save,h,d,dt );
         end
     end
