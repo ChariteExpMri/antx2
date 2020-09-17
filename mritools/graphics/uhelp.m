@@ -772,8 +772,10 @@ end
  
  
 if strcmp(e.Modifier,'control') %copy selection
-    % positioning
-   if strcmp(e.Character      ,'1')  || strcmp(e.Character      ,'0')  || strcmp(e.Key      ,'f1')
+    
+    if strcmp(e.Key  ,'c') 
+            gcontext([], [], 4); %copy
+    elseif strcmp(e.Character      ,'1')  || strcmp(e.Character      ,'0')  || strcmp(e.Key      ,'f1')
         set(Huhelp,'position',[0    0.0706         0.5    0.8983]);
     elseif strcmp(e.Character  ,'2') || strcmp(e.Character      ,'9')  || strcmp(e.Key      ,'f2')
         set(Huhelp,'position',[0    0.0706    0.75    0.8983]);
