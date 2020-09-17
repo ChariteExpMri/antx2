@@ -143,6 +143,10 @@
 % #ra 14 Sep 2020 (13:14:15)
 % [xdownloadtemplate] DOWNLOAD TEMPLATES VIA GUI ..modified using curl (MAC/Linux) and wget.exe (windows)
 % - Function was tested with and without proxies using Win, MAC & Linux
+% #ra 17 Sep 2020 (13:45:38)
+% [xgetlabels4] BUG solved: "zeros" in resulting excelFile
+
+
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

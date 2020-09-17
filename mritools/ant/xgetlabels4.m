@@ -536,6 +536,7 @@ end
 
 %% get parameter
 hano=spm_vol(w.hano);
+bm=round(bm) ; %bug 
 [p q]=getvals(s,ano.*bm,ac,hano);
 
 if useFIB==1
