@@ -769,6 +769,11 @@ end
 
 %  e
 
+if strcmp(e.Modifier,'command') %MAC: copy selection
+    if strcmp(e.Key  ,'c') 
+            gcontext([], [], 4); %copy
+    end
+end
  
  
 if strcmp(e.Modifier,'control') %copy selection
