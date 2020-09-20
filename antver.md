@@ -1,7 +1,11 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   17 Sep 2020 (13:45:38)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   21 Sep 2020 (12:46:16)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**21 Sep 2020 (12:46:16)**</ins>  
+  **[xsegmenttubeManu]** added. This function allows to manually segment a Nifti-image containing several  
+  animals ("multi-tube" image). This function works as manual pendant to **[xsegmenttube]**.  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 Sep 2020 (13:45:38)**</ins>  
   **[xgetlabels4]** BUG solved: "zeros" in resulting excelFile  
 <!---->

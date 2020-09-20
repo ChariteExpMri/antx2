@@ -853,7 +853,8 @@ mh2 = uimenu(mh,'Label',' make mask from Excelfile',                            
 
 mh2 = uimenu(mh,'Label',' draw mask',                                            'Callback',{@menubarCB, 'drawmask'},'Separator','on');
 
-mh2 = uimenu(mh,'Label',' [1] segment tube',                                         'Callback',{@menubarCB, 'segmenttube'},'Separator','on');
+mh2 = uimenu(mh,'Label',' [1a] segment tube',                                     'Callback',{@menubarCB, 'segmenttube'},'Separator','on');
+mh2 = uimenu(mh,'Label',' [1b] segment tube manually',                            'Callback',{@menubarCB, 'segmenttubeManu'},'Separator','off');
 mh2 = uimenu(mh,'Label',' [2] split tube data',                                   'Callback',{@menubarCB, 'splittubedata'},'Separator','off');
 
 
@@ -1626,12 +1627,19 @@ elseif strcmp(task,'segmenttube')
         hlpfun='xsegmenttube';
         return ;
     end
-    
-  
-    statusMsg(1,' segment tube');
+    statusMsg(1,'segment tube');
     xsegmenttube;
-    statusMsg(0);     
-
+    statusMsg(0); 
+    
+elseif strcmp(task,'segmenttubeManu')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xsegmenttubeManu';
+        return ;
+    end
+    statusMsg(1,'segment tube manu');
+    xsegmenttubeManu;
+    statusMsg(0); 
+    
 elseif strcmp(task,'splittubedata')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xsplittubedata';

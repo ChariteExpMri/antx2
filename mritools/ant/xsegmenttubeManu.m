@@ -1,6 +1,9 @@
-%% #b segment several animals from the same image /tube
+%% #b manually segment several animals from the same image /tube
 % output is a mask-file with a cluster-number (indices 1..to x) for each animal in the image
 % DIRS:  works on preselected mouse dirs, i.e. mouse-folders in [ANT] have to be selected before
+% #r Masks ar drawned manually! 
+% #g For information how to segment manually see 'fsegtubeManu.m' or type uhelp('fsegtubeManu.m')
+% #g or hit [help] button in the subsquent UI when running this function
 % ______________________________________________________________________________________________
 %
 %% #ky PARAMETER:
@@ -8,55 +11,41 @@
 %                  use icon to select the respective file
 %    volnumber   : for 4D-volume ,select index of volume in 4th dimension (default: 1)
 %                  default: 1
-%    animalnumber: number of animals expected in the image (set "auto" to estimate the number of animals)
-%                  define the expected number of animals in the image
-%                  default: 'auto'  --> tries to estimate the number of animals in the image
-%    extmin      : scalar for Extended-minima transform (watershed), default: 4
-%                  default: 4
 %    showresult  : show the resulting segmented image {0,1}; (default: 1)
 %    saveresult  : save resulting segmented image {0,1}; (default: 1)
 %    savename    : name of the output filename; default is 'seganimal'
 % ______________________________________________________________________________________________
 %% #ky RUN-def:
-% xsegmenttube(showgui,x)
+% xsegmenttubeManu(showgui,x)
 % with inputs:
 % showgui: (optional)  :  0/1   :no gui/open gui
 % x      : (optional)  : struct with one/more specified parameters from above:
 %
-% xsegmenttube(1) or  FUNCTION    ... open PARAMETER_GUI with defaults
-% xsegmenttube(0,z)                ...run without GUI with specified parametes (z-struct)
-% xsegmenttube(1,z)                ...run with opening GUI with specified parametes (z-struct)
+% xsegmenttubeManu(1) or  FUNCTION    ... open PARAMETER_GUI with defaults
+% xsegmenttubeManu(0,z)                ...run without GUI with specified parametes (z-struct)
+% xsegmenttubeManu(1,z)                ...run with opening GUI with specified parametes (z-struct)
 % ______________________________________________________________________________________________
 %% #ky BATCH EXAMPLE
+% 
+% % =====================================================                                                                                            
+% % #g FUNCTION:        [xsegmenttubeManu.m]                                                                                                         
+% % #b info :              #b manually segment several animals from the same image /tube                                                             
+% % =====================================================                                                                                            
+% z=[];                                                                                                                                                
+% z.file       = {'t0.nii'};        % % SELECT IMAGE to segment or filestring with wildcards                                                      
+% z.volnumber  = [1];               % % for 4D-volume only: select index of volume in 4th dimension (default: 1)                                       
+% z.showresult = [1];               % % show resulting segmented image {0,1}                                                                           
+% z.saveresult = [1];               % % save resulting segmented image {0,1}                                                                           
+% z.savename   = 'seganimal';       % % name of the output filename                                                                                    
+% xsegmenttubeManu(1,z);            % % run function with visible GUI 
 % ______________________________________________________________________________________________
 %
 %% #r RE-USE BATCH: see 'anth' [..anthistory] -variable in workspace
-%     z=[];
-%     z.file         = { 't0.nii' };    % % (<<) SELECT IMAGE to segment or filestring with wildcards
-%     z.volnumber    = [1];             % % for 4D-volume only: select index of volume in 4th dimension (default: 1)
-%     z.animalnumber = 'auto';          % % number of animals expected in the image (set "auto" to estimate the number of animals)
-%     z.extmin       = [4];             % % scalar for Extended-minima transform (watershed), default: 4
-%     z.showresult   = [1];             % % show resulting segmented image {0,1}
-%     z.saveresult   = [1];             % % save resulting segmented image {0,1}
-%     z.savename     = 'seganimal';     % % name of the output filename
-%     xsegmenttube(1,z);
 
-function xsegmenttube(showgui,x)
+function xsegmenttubeManu(showgui,x)
 
 
-if 0
-    z=[];
-    z.file         = { 't0.nii' };    % % (<<) SELECT IMAGE to segment or filestring with wildcards
-    z.volnumber    = [1];             % % for 4D-volume only: select index of volume in 4th dimension (default: 1)
-    z.animalnumber = 'auto';          % % number of animals expected in the image (set "auto" to estimate the number of animals)
-    z.extmin       = [4];             % % scalar for Extended-minima transform (watershed), default: 4
-    z.showresult   = [1];             % % show resulting segmented image {0,1}
-    z.saveresult   = [1];             % % save resulting segmented image {0,1}
-    z.savename     = 'seganimal';     % % name of the output filename
-    xsegmenttube(1,z);
-    
-    
-end
+
 
 %———————————————————————————————————————————————
 %%   PARAMS
@@ -79,14 +68,12 @@ v=getuniquefiles(pa);
 % ===============================================
 if exist('x')~=1;        x=[]; end
 p={...
-    'inf0'      '*** segment animals in tube     ****     '         '' ''
+    'inf0'      '*** Manually segment animals in tube     ****     '         '' ''
     'inf1'      ['routine: [' mfilename '.m]']                         '' ''
     'inf7'     '====================================================================================================='        '' ''
     'file'          {''}    '(<<) SELECT IMAGE to segment or filestring with wildcards'  {@selectfile,v,'single'}
     'volnumber'   1         'for 4D-volume only: select index of volume in 4th dimension (default: 1)'    ''
-    'animalnumber'          'auto'      'number of animals expected in the image (set "auto" to estimate the number of animals)     '  {'auto',1:10}
-    'extmin'  4             'scalar for Extended-minima transform (watershed), default: 4     '  {1:20}
-    ...
+     ...
     'showresult'   1            'show resulting segmented image {0,1} '    'b'
     'saveresult'   1            'save resulting segmented image {0,1} '    'b'
     'savename'     'seganimal'  'name of the output filename'  {'seganimal'}
@@ -218,17 +205,14 @@ cprintf([0 .5 0],[num2str( z.i)  '] '  mdir '\n'])
 cprintf([0 .5 0],[ repmat('=',[1 length(mdir)*2]) '\n']);
 
 volnum      =z.volnumber;  %1
-extmin      =z.extmin      ;%def:4
-expectclass =z.animalnumber; %'auto'
-sortmode    =1; 
 showit      =z.showresult;
 
 
+% if 0
+% v=fsegtube(fi2,volnum, extmin,expectclass,sortmode, showit);
+% end
 
-v=fsegtube(fi2,volnum, extmin,expectclass,sortmode, showit);
-
-
-% v=fsegtubeManu(fi2);
+v=fsegtubeManu(fi2,volnum);
 
 
 

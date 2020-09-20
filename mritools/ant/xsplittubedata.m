@@ -217,15 +217,18 @@ warning off;
 
 
 f1=fullfile(pa,z.segmentfile);
+if iscell(f1);     f1=char(f1); end
+
 [hm m] =rgetnii(f1);
 uni=unique(m(:)); uni(uni==0)=[];
 
 if ~isempty(z.file)
     f2=fullfile(pa,z.file);
+    if iscell(f2);     f2=char(f2); end
+
     [ha a] =rgetnii(f2);
     ha=ha(z.volnumber);
     a=a(:,:,:,z.volnumber);
-    
 end
 
 for i=1:length(uni)
@@ -237,6 +240,7 @@ for i=1:length(uni)
     
     m2=double(m==uni(i));  %save current mask
     f3=fullfile(pa2,stradd(z.segmentfile,z.mask_suffix ,2) );
+    f3=char(f3);
     rsavenii( f3,hm, m2 );
     showinfo2('new tube segmented mask: ',f1,f3);
     

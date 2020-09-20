@@ -145,7 +145,9 @@
 % - Function was tested with and without proxies using Win, MAC & Linux
 % #ra 17 Sep 2020 (13:45:38)
 % [xgetlabels4] BUG solved: "zeros" in resulting excelFile
-
+% #ra 21 Sep 2020 (12:46:16)
+% [xsegmenttubeManu] added. This function allows to manually segment a Nifti-image containing several
+% animals ("multi-tube" image). This function works as manual pendant to [xsegmenttube].
 
 
 %----- EOF

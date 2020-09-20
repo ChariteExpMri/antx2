@@ -2003,7 +2003,6 @@ if ~isempty(htmlline); %underscore
    e2(htmlline)=regexprep( e2(htmlline)  ,'_','<u>_</u>');
 end
 
-
 function caretmoved(e,e2)
 % 'blub'
 % txtline([],[]);
