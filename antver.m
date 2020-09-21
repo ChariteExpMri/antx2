@@ -148,7 +148,9 @@
 % #ra 21 Sep 2020 (12:46:16)
 % [xsegmenttubeManu] added. This function allows to manually segment a Nifti-image containing several
 % animals ("multi-tube" image). This function works as manual pendant to [xsegmenttube].
-
+% #ra 22 Sep 2020 (00:14:08)
+% [xdicom2nifti]: revised (now allows conversion using MRICRON or SPM)...Mac/Linux/WIN
+% 
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

@@ -15,6 +15,7 @@ function [w hist]=plog(hist, X,do,title, varargin)
 % addit. options
 % cr..set carriageReturn   'cr=1]-->default CR is printed'
 % s.. addit. spacer between columns  's=5]'
+% al  : 'al=1' left align; 'al=2' right align (default: al=2) 
 % d..decimal values;  'd=2]'
 % 'plotlines=0'  %do not plot lines, 'plotlines=1': plot lines
 % 'upperline', '0'  , hide upper line
@@ -27,6 +28,7 @@ function [w hist]=plog(hist, X,do,title, varargin)
 % df=plog([],ds,0,str,'s=0,upperline=0')
 % df=plog([],ds,0,str,'s=0,space=1')
 % df=plog([],ds,0,str,'s=0,style=1')
+% plog([],[{'rr' 'r'  'eeee' ;'rr' 'rrr'  'eeee' ;}],0,'TEST' ,'al=1'   ); %align left
 if 0
     hist={}
     
@@ -110,6 +112,12 @@ if  exist('s')~=1 ;    spacer=1; else; spacer=s;end%'spacer'
 if  exist('cr')~=1 ;   cariageReturn=1; else; cariageReturn=cr;end%'cariageReturn'
 
 if spacer==0; spacer=1;end
+if exist('al')~=1 ;   
+    align=2; 
+else;
+    align=al;
+end %orientation [1]left; [2]right
+
 
 if ischar(X)
    cariageReturn=0;
@@ -278,29 +286,50 @@ end
  end
 
 
-  
-%% RIGHT ORIENTATION
-% ex=e;
-if 1
-    for i=1:M;%add spacer and middleOrientation
-%         wr=char(ex(:,i));
-%         wr(:,sum(double(wr)==double(' '),1)==size(wr,1) )=[];
-%         wr=cellstr(wr);
-%         e(:,i)=cellfun(@(a) {[repmat('#',[1 spacer]) (a)]} ,wr)
-    
-        %si=size(char(wr),2)+spacer;
-        si=size(char(e(:,i)),2)+spacer;
-        for j=1:N
-            if length(e{j,i})~=si
-                % sic=(si-length(e{j,i}))/2 ;
-                % e{j,i}= [repmat(' ',[1  floor(sic)])    e{j,i}   repmat(' ',[1  ceil(sic)])  ];
-                
-                e{j,i}= [  repmat(' ',[1  (si-length(e{j,i})  )])   e{j,i}     ]; %LEFT ALLIGN
-            end
-        end
-    end
-end
-
+ 
+ %% RIGHT align
+ % ex=e;
+ if align==2
+     for i=1:M;%add spacer and middleOrientation
+         %         wr=char(ex(:,i));
+         %         wr(:,sum(double(wr)==double(' '),1)==size(wr,1) )=[];
+         %         wr=cellstr(wr);
+         %         e(:,i)=cellfun(@(a) {[repmat('#',[1 spacer]) (a)]} ,wr)
+         
+         %si=size(char(wr),2)+spacer;
+         si=size(char(e(:,i)),2)+spacer;
+         for j=1:N
+             if length(e{j,i})~=si
+                 % sic=(si-length(e{j,i}))/2 ;
+                 % e{j,i}= [repmat(' ',[1  floor(sic)])    e{j,i}   repmat(' ',[1  ceil(sic)])  ];
+                 
+                 e{j,i}= [  repmat(' ',[1  (si-length(e{j,i})  )])   e{j,i}     ]; %LEFT ALLIGN
+             end
+         end
+     end
+     
+     
+     %% LEFT align
+     % ex=e;
+ elseif align==1
+     for i=1:M;%add spacer and middleOrientation
+         %         wr=char(ex(:,i));
+         %         wr(:,sum(double(wr)==double(' '),1)==size(wr,1) )=[];
+         %         wr=cellstr(wr);
+         %         e(:,i)=cellfun(@(a) {[repmat('#',[1 spacer]) (a)]} ,wr)
+         
+         %si=size(char(wr),2)+spacer;
+         si=size(char(e(:,i)),2)+spacer;
+         for j=1:N
+             if length(e{j,i})~=si
+                 % sic=(si-length(e{j,i}))/2 ;
+                 % e{j,i}= [repmat(' ',[1  floor(sic)])    e{j,i}   repmat(' ',[1  ceil(sic)])  ];
+                 
+                 e{j,i}= [ e{j,i}  repmat(' ',[1  (si-length(e{j,i})  )])       ]; %LEFT ALLIGN
+             end
+         end
+     end
+ end
 
 
 s={};
