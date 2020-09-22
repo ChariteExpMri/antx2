@@ -1,7 +1,12 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   22 Sep 2020 (00:14:08)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   22 Sep 2020 (13:30:09)  
     
 ------------------  
+  ![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+)   <ins>**22 Sep 2020 (13:30:09)**</ins>  
+  new tutorial: **['tutorial_convertDICOMs.doc']**    
+  This tutorial deals with the conversion of dicom to nifti files  
+  - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**22 Sep 2020 (00:14:08)**</ins>  
   **[xdicom2nifti]**: revised (now allows conversion using MRICRON or SPM)...Mac/Linux/WIN  
 <!---->
@@ -36,9 +41,10 @@
   start with a numeric value instead of a character). SOLUTION: In such cases animals the animals in the excel table   
   will be renamed (adding a prefix 's' such as "s20130422_TF_001_m1_s3_e6_p1").  
 <!---->
-  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Aug 2020 (09:27:02)**</ins>  
-  tutorial: "tutorial_orientation_and_manucoreg.doc" added to ..\antx2\mritools\ant\docs  
+  ![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+)   <ins>**24 Aug 2020 (09:27:02)**</ins>  
+  new tutorial: **["tutorial_orientation_and_manucoreg.doc"]**   
   This tutorial deals with image orientation for template registration and manual coregistration.  
+  - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 Aug 2020 (16:49:32)**</ins>  
   **[paramgui]** new version, (multi-icon style, execution-history)  
