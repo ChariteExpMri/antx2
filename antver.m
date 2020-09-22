@@ -122,8 +122,8 @@
 % ..the old version is still available (via menu/preferences)
 % 
 % [installfromgithub] BUG-solved:  after 'rebuilding'...gui could not close and workdir did not go prev. study path
-% #ok 24 Aug 2020 (09:27:02)
-% new tutorial: ["tutorial_orientation_and_manucoreg.doc"] 
+% #ra 24 Aug 2020 (09:27:02)
+% new tutorial #bw ["tutorial_orientation_and_manucoreg.doc"] 
 % This tutorial deals with image orientation for template registration and manual coregistration.
 % - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % #ra 24 Aug 2020 (12:08:22)
@@ -151,9 +151,9 @@
 % animals ("multi-tube" image). This function works as manual pendant to [xsegmenttube].
 % #ra 22 Sep 2020 (00:14:08)
 % [xdicom2nifti]: revised (now allows conversion using MRICRON or SPM)...Mac/Linux/WIN
-% #ok 22 Sep 2020 (13:30:09)
-% new tutorial: ['tutorial_convertDICOMs.doc']  
-% This tutorial deals with the conversion of dicom to nifti files
+% #ra 22 Sep 2020 (13:30:09)
+% new tutorial #bw ['tutorial_convertDICOMs.doc']  
+% This tutorial deals with the conversion of dicom to nifti files.
 % - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 
 %----- EOF
