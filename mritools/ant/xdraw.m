@@ -56,6 +56,7 @@ end
 u.f1=file;
 [ha a]=rgetnii(u.f1);
 
+
 % ==============================================
 %%   maskfile
 % ===============================================
@@ -126,7 +127,7 @@ u.colmat=colmat;
 % -------------
 
 set(gcf,'userdata',u);
-
+set(findobj(gcf,'tag','rd_otsu'),'value',0);
 
 set(findobj(gcf,'tag','dotsize'),'string',num2cell(u.dotsizes),'value',u.dotsize);
 
@@ -134,11 +135,20 @@ setslice();
 set(gcf,'WindowButtonMotionFcn', {@motion,1})
 set(gcf,'WindowButtonUpFcn'     ,@selstop);
 set(gcf,'WindowKeyPressFcn',@keys);
+
+set_idlist;
+edvalue([],[]);
+
+
 % ==============================================
 %%
 % ===============================================
-function keys(e,e2)
 
+
+
+
+function keys(e,e2)
+e2
 if strcmp(e2.Key,'leftarrow')
     cb_setslice([],[],'-1');
 elseif strcmp(e2.Key,'rightarrow')
@@ -158,6 +168,8 @@ elseif strcmp(e2.Key,'uparrow') || strcmp(e2.Key,'downarrow')
     end
     set(o,'value',va);
     definedot([],[]);
+elseif strcmp(e2.Key,'f');
+    cb_fill();
     
 elseif strcmp(e2.Key,'l');
     o=findobj(gcf,'tag','pb_legend');
@@ -184,7 +196,20 @@ elseif strcmp(e2.Key,'u')
     if get(o,'value')==0; set(o,'value',1); else; set(o,'value',0); end
     undo();
  elseif strcmp(e2.Key,'h')
-     cb_preview();
+      cb_preview();
+ elseif strcmp(e2.Key,'space')
+     u=get(gcf,'userdata');
+     if isfield(u,'ispreview')==0
+         u.ispreview=0;
+     end
+     u.ispreview=~u.ispreview;
+     set(gcf,'userdata',u);
+     if u.ispreview==1
+         setslice(1);
+     else
+         setslice();
+     end
+         
      
 elseif strcmp(e2.Key,'t')
     e=findobj(gcf,'tag','rd_dottype');
@@ -218,6 +243,15 @@ elseif strcmp(e2.Character,'-')
     set(he,'string',num2str(str));
     hgfeval(get(he,'callback'),he);
     figure(hf1);
+end
+
+if strcmp(e2.Modifier,'control') 
+    if strcmp(e2.Key,'z')
+        pb_undoredo([],[],-1);
+    elseif strcmp(e2.Key,'y')
+        pb_undoredo([],[],+1);
+    end
+    
 end
 
 %  e2
@@ -266,6 +300,7 @@ end
 
 hf2=findobj(0,'tag','otsu');
 if isempty(hf2)
+%     'ri'
     fg;
     set(gcf,'units','norm','menubar','none','name','otsu','NumberTitle','off','tag','otsu');
     pos1=get(hf1,'position');
@@ -293,6 +328,7 @@ if isempty(hf2)
     
 else
     figure(hf2);
+%     'ro'
 end
 
 
@@ -394,6 +430,7 @@ hf2=findobj(0,'tag','otsu');
 u=get(hf1,'userdata');
 
 figure(hf2);
+
 if par==2 || par==3
     [x y]=ginput(1);
     set(gcf,'Pointer','arrow');
@@ -533,8 +570,12 @@ set(gcf,'userdata',u);
 setslice([],'noupdate');
 
 
+function rd_flipud(e,e2)
+setslice();
 
-
+function rd_transpose(e,e2)
+setslice();
+ 
 
 function setslice(par,histupdate)
 hf1=findobj(0,'tag','xpainter');
@@ -601,10 +642,19 @@ rm=sum(rb,2);
 im=find(rm~=0);
 s1(im,:)= (s1(im,:)*alp)+(rb(im,:)*(1-alp)) ;
 x=reshape(s1,size(ra));
-
-
-
-
+% ----------------------------------------------------
+%% transpose
+htran=findobj(hf1,'tag','rd_transpose');
+doTrans=get(htran,'value');
+if doTrans==1
+    x=permute(x, [2 1 3]);
+end
+%% flipud
+hflip=findobj(hf1,'tag','rd_flipud');
+if get(hflip,'value')==1
+    x=flipud(x);
+end
+% ----------------------------------------------------
 if isempty(u.him)
     u.him=image(  x );
     %u.him=image(  (ra*alp)+(rb*(1-alp))   );
@@ -614,15 +664,21 @@ else
 end
 set(findobj(gcf,'tag'  ,'edslice'),'string',u.useslice);
 set(findobj(gcf,'tag'  ,'edalpha'),'string',u.alpha);
+axis image;  axis off;
+% xl=xlim;
+xlim([.5 size(x,2)+.5]); 
+% yl=ylim;
+ylim([.5 size(x,1)+.5]);
+
 
 definedot();
 set(u.him,'ButtonDownFcn', @sel);
 % set(h  ,'ButtonDownFcn', @sel)
 set(gca  ,'ButtonDownFcn', @sel);
 set(gcf,'userdata',u);
-
-xlim([0.5 size(ra,2)+.5]);
-ylim([0.5 size(ra,1)+.5]);
+% 
+% xlim([0.5 size(ra,2)+.5]);
+% ylim([0.5 size(ra,1)+.5]);
 
 %otsu updat
 hf1=findobj(0,'tag','xpainter');
@@ -668,7 +724,22 @@ set(hb,'position',[ .45 .9 .05 .04],'string',char(8594),'callback',{@cb_setslice
 set(hb,'fontsize',8);
 set(hb,'tooltipstring',['view next slice' char(10) '[right-arrow] shortcut' ]);
 
+%==========================================================================================
 
+%transpose image
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'rd_transpose','value',0);
+set(hb,'position',[ .12 .95 .08 .04],'string','transpose','callback',{@rd_transpose});
+set(hb,'fontsize',6,'backgroundcolor','w','fontweight','bold');
+set(hb,'tooltipstring',['transpose image']);
+set(hb,'position',[ .5 .9 .8 .04]);
+
+
+%flipud image
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'rd_flipud','value',0);
+set(hb,'position',[ .12 .95 .08 .04],'string','flipud','callback',{@rd_flipud});
+set(hb,'fontsize',6,'backgroundcolor','w','fontweight','bold');
+set(hb,'tooltipstring',['flip up-down image']);
+set(hb,'position',[ .58 .9 .08 .04]);
 
 %==========================================================================================
 %-----dotType
@@ -709,13 +780,7 @@ set(hb,'position',[ .7 .9 .1 .04],'string','hide mask', 'callback',{@cb_preview}
 set(hb,'fontsize',8);
 set(hb,'tooltipstring',['shortly hide mask' char(10) '[h] shortcut']);
 %==========================================================================================
-% EDIT-VALUE (value to be set)
-hb=uicontrol('style','edit','units','norm', 'tag'  ,'edvalue');
-set(hb,'position',[ .85 .9 .05 .04],'string','1');
-set(hb,'fontsize',8);
-set(hb,'tooltipstring',['value to be set']);
 
-%==========================================================================================
 % LAST-STEP
 hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_prevstep');
 set(hb,'position',[ .5 .95 .05 .04],'string',' ', 'callback',{@pb_undoredo,-1});
@@ -735,7 +800,13 @@ set(hb,'fontsize',7,'backgroundcolor','w');
 set(hb,'tooltipstring',['REDO last step' char(10) '..for this slice only']);
 set(hb,'cdata', flipdim(e,2));
 
-
+%==========================================================================================
+% EDIT-VALUE (value to be set)
+hb=uicontrol('style','edit','units','norm', 'tag'  ,'edvalue');
+set(hb,'position',[ .85 .9 .05 .04],'string','1');
+set(hb,'fontsize',8,'callback',@edvalue);
+set(hb,'tooltipstring',['value to be set']);
+set(hb,'position',[ .92 .6 .08 .04]);
 
 %==========================================================================================
 %legend
@@ -743,6 +814,17 @@ hb=uicontrol('style','togglebutton','units','norm', 'tag'  ,'pb_legend','value',
 set(hb,'position',[ .7 .95 .1 .04],'string','show legend', 'callback',{@pb_legend});
 set(hb,'fontsize',7,'backgroundcolor','w');
 set(hb,'tooltipstring',['show legend' char(10) '[l] shortcut']);
+
+%==========================================================================================
+%ID-LIST
+hb=uicontrol('style','listbox','units','norm', 'tag'  ,'pb_idlist','value',1);
+set(hb,'position',[ .7 .95 .1 .04],'string','', 'callback',{@pb_idlist});
+set(hb,'fontsize',7,'backgroundcolor','w');
+set(hb,'tooltipstring',['id list']);
+set(hb,'position',[.92 .25 .1 .35]);
+
+
+
 
 
 %==========================================================================================
@@ -822,16 +904,111 @@ set(hb,'fontsize',8);
 set(hb,'tooltipstring',['fill something' char(10) '' ]);
 
 
+function set_idlist()
+u=get(gcf,'userdata');
+ids=unique(u.b(:)); ids(isnan(ids))=[]; ids(ids==0)=[];
+val=str2num(get(findobj(gcf,'tag','edvalue'),'string'));
+ids=unique([ids; val]);
+sel=find(ids==val);
+idlist=cellfun(@(a){[num2str(a)]} ,num2cell(ids) );
+hlist=findobj(gcf,'tag','pb_idlist');
+% set(hlist,'string',{'<HTML><FONT color=#0000FF><b>Red</FONT></HTML>'},'value',sel);
+% '<HTML><FONT color="red">Red</FONT></HTML>'
+list={};
+for i=1:length(ids)
+    colrgb=u.colmat(i,:);
+   col=reshape(dec2hex(round(colrgb*255), 2)',1, 6);
+    list(end+1,1)={['<HTML><FONT color=#' col  '><b>' num2str(ids(i)) '</FONT></HTML>']};
+end
+set(hlist,'string',list,'value',sel);
+set(hlist,'backgroundcolor',[.8 .8 .8]);
+set(hlist,'userdata',ids);
+
+
+function pb_idlist(e,e2)
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+hb=findobj(hf1,'tag','edvalue');
+ hlist=findobj(hf1,'tag','pb_idlist');
+ ids=get(hlist,'userdata');
+%  list=get(hlist,'string');
+ va=get(hlist,'value');
+%  id=str2num(list{va});
+id=ids(va);
+ 
+ set(hb,'string',num2str(id));
+%  reshape(dec2hex([1 1 1]*255, 2)',1, 6)
+ axes(findobj(gcf,'Type','axes'));
+ edvalue();
+ 
+ set(gco,'enable','off'); % to allow keyboard outside listbox
+ drawnow; pause(.1);
+ set(gco,'enable','on');
+ axes(findobj(gcf,'Type','axes'));
+ 
+ function edvalue(e,e2)
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+hb=findobj(hf1,'tag','edvalue');
+num=str2num(get(hb,'string'));
+set(hb,'BackgroundColor',u.colmat(num,:));
+
+hdot=findobj(hf1,'tag','dot');
+set(hdot,'FaceColor',u.colmat(num,:));
+set_idlist();
+ axes(findobj(gcf,'Type','axes'));
+ 
+ 
+function  x=transpoflip(x,dirs)
+% transpose and flipud check
+hf1=findobj(0,'tag','xpainter');
+
+if strcmp(dirs,'f') %forward
+    %% transpose
+    htran=findobj(hf1,'tag','rd_transpose');
+    doTrans=get(htran,'value');
+    if doTrans==1
+        x=permute(x, [2 1 3]);
+    end
+    %% flipud
+    hflip=findobj(hf1,'tag','rd_flipud');
+    if get(hflip,'value')==1
+        x=flipud(x);
+    end
+elseif strcmp(dirs,'b'); %back
+    %% flipud
+    hflip=findobj(hf1,'tag','rd_flipud');
+    if get(hflip,'value')==1
+        x=flipud(x);
+    end
+    %% transpose
+    htran=findobj(hf1,'tag','rd_transpose');
+    doTrans=get(htran,'value');
+    if doTrans==1
+        x=permute(x, [2 1 3]);
+    end
+    
+end
+
+
+
+
+
 
 function cb_fill(e,e2)
 set(gcf,'WindowButtonMotionFcn', []);
 hl=findobj(gcf,'tag','undo'); %set togglebut to painting
 if get(hl,'value')==1; set(hl,'value',0); end
 
-va=get(e,'value');
+% va=get(e,'value');
 hf1=findobj(0,'tag','xpainter');
 u=get(hf1,'userdata');
+
+
 r1=getslice2d(u.b);
+
+r1=transpoflip(r1,'f');
+
 bk=r1;
 
 [x y]=ginput(1);
@@ -840,10 +1017,14 @@ selstop([],[]);
 selstop([],[]);
 selstop([],[]);
 
+hed=findobj(hf1,'tag','edvalue');
+id=str2num(get(hed,'string'))
+r1=r1==id;
+
  sm=strel('disk',1);
  %  r2=imerode( imdilate( r1  ,sm)  ,sm);
 r2=imclose( r1  ,sm) ;
-
+warning off;
 r3=imfill(im2bw(r2),[round(y) round(x) ],8);
 r4=bwlabel(r3);
 clustnum=r4(round(y), round(x));
@@ -851,6 +1032,7 @@ val=str2num(get(findobj(hf1,'tag','edvalue'),'string'));
 r5=bk;
 r5(r4==clustnum)=val;
 
+ r5=transpoflip(r5,'b');
 u=putsliceinto3d(u,r5,'b');
 set(gcf,'userdata',u);
 set(gcf,'WindowButtonMotionFcn', {@motion,1});
@@ -1083,6 +1265,20 @@ va=get(hc,'value');
 li=get(hc,'string');
 dia=str2num(li{va});
 
+hdot=findobj(gcf,'tag','dot');
+if isempty(hdot)
+    colix=str2num(get(findobj(gcf,'tag','edvalue'),'string'));
+    u=get(gcf,'userdata');
+    col=u.colmat(colix,:);
+else
+    try
+    col=get(hdot,'facecolor');
+    catch
+     col=get(hdot(1),'facecolor');
+    end
+end
+
+
 try; delete(findobj(gcf,'tag','dot')); end
 r=dia/2;
 th = 0:pi/50:2*pi;
@@ -1114,6 +1310,7 @@ x=x+co(1);
 y=y+co(2);
 
 hd = patch(x,y,z,'g','tag','dot');
+set(hd,'facecolor',col);
 set(hd  ,'ButtonDownFcn', @sel);
 set(hd,'userdata',0);
 
@@ -1138,15 +1335,16 @@ co=co(1,[1 2]);
 % 'now'
     axlim=[get(gca,'xlim') get(gca,'ylim')];
     set(gcf,'pointer','topl');
-    if co(2)<1 || co(1)>axlim(2)  %1 | co(2)<1
+%    co
+    if co(1)<1 || co(2)<1 || co(1)>axlim(2)  %1 | co(2)<1
         set(gcf,'Pointer','arrow');
-        %'u'
+%       'u'
     else
         vp=nan(16,16);
 %         vp(8,8)=2;
 %         set(gcf,'pointer','custom','PointerShapeCData',vp);
         set(gcf, 'Pointer', 'custom', 'PointerShapeCData', NaN(16,16));
-        %'a'
+%         'a'
         
     end
 
@@ -1161,23 +1359,58 @@ yy=get(hd,'yData');
 xs=(xx-mean(xx))+2;
 ys=(yy-mean(yy))+2;
 
+
+
 x=xs+co(1);
 y=ys+co(2);
+
+% co=round(co);
+% x=co(1);
+% y=co(2);
+% disp([co]);
+
+hf1=findobj(0,'tag','xpainter');
+
 set(hd,'xdata',x,'ydata',y);
 
 if get(hd,'userdata')==1  %PAINT NOW
     u=get(gcf,'userdata');
-    x2=get(hd,'XData');
+    x2=get(hd,'XData'); % get POINTS of coursor/dot
     y2=get(hd,'yData');
     
    
     
     dims = u.dim(setdiff(1:3,u.usedim));
-    bw   = double(poly2mask(x2,y2,dims(1),dims(2)));
+    if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+        bw   = double(poly2mask(x2,y2,dims(2),dims(1)));
+    else
+        bw   = double(poly2mask(x2,y2,dims(1),dims(2)));
+    end
+%     if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+%        bw=flipud(bw);
+%     end
+    
     if type~=0
 %         if u.usedim==3
+
           r1=getslice2d(u.a);
           r2=getslice2d(u.b);
+          
+          % ----------------------------------------------------
+          %% transpose
+          
+          
+          if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+              %x=permute(r2, [2 1 3]);
+              r1=r1';
+              r2=r2';
+          end
+          if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+              r1=flipud(r1);
+              r2=flipud(r2);
+          end
+          % ----------------------------------------------------
+          
 %             r1=u.a(:,:,u.useslice);
 %             r2=u.b(:,:,u.useslice);
             si=size(r2);
@@ -1239,7 +1472,21 @@ if get(hd,'userdata')==1  %PAINT NOW
             
             
             set(u.him,'cdata',   x  );
-            u=putsliceinto3d(u,r2,'b');
+            
+            r2n=r2;
+            if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+                r2n=flipud(r2n);
+            end
+            if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+                r2n=r2n';
+            end
+            u=putsliceinto3d(u,r2n,'b');
+            
+% % % % % %             if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+% % % % % %                 u=putsliceinto3d(u,r2','b');
+% % % % % %             else
+% % % % % %                 u=putsliceinto3d(u,r2,'b');
+% % % % % %             end
             set(gcf,'userdata',u);
             %him=findobj(gcf,'tag','image');
             %----------------
