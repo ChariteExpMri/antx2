@@ -156,9 +156,9 @@
 % This tutorial deals with the conversion of dicom to nifti files.
 % - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % #ra 06 Oct 2020 (03:45:46)
-% [xdraw] draw a (multi-) mask manually , improved version, allows otsu-segmentaaton, new image drawing
-% tools, calculate volume for each mask-region
-% access via MENU: tools/draw mask
+% [xdraw] draw a (multi-) mask manually , improved version, allows otsu-segmentation, new image drawing
+% tools, calculate volume for each mask-region, save as mask or save masked background image
+% - access via ANT-menu: Tools/draw mask
 
 
 

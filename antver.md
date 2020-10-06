@@ -3,9 +3,9 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Oct 2020 (03:45:46)**</ins>  
-  **[xdraw]** draw a (multi-) mask manually , improved version, allows otsu-segmentaaton, new image drawing  
-  tools, calculate volume for each mask-region  
-  access via MENU: tools/draw mask  
+  **[xdraw]** draw a (multi-) mask manually , improved version, allows otsu-segmentation, new image drawing  
+  tools, calculate volume for each mask-region, save as mask or save masked background image  
+  - access via ANT-menu: Tools/draw mask  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**22 Sep 2020 (13:30:09)**</ins>  
   new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_convertDICOMs.doc']**    
