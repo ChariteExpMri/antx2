@@ -155,7 +155,10 @@
 % new tutorial #bw ['tutorial_convertDICOMs.doc']  
 % This tutorial deals with the conversion of dicom to nifti files.
 % - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
-
+% #ra 06 Oct 2020 (03:45:46)
+% [xdraw] draw a (multi-) mask manually , improved version, allows otsu-segmentaaton, new image drawing
+% tools, calculate volume for each mask-region
+% access via MENU: tools/draw mask
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
 
