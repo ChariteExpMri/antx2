@@ -82,11 +82,22 @@
 % #r [ID list]   #n list of all IDs (numeric values) found in the 3D-mask
 %                -select one of the IDs in the list to use selected ID as current ID
 %
+% #b [measure distance]  #n This tool allows to measure a distance (mm & pixels) and angle between
+%                        two points (squares). Move the two squares to the respective position.
+% #b [WinFocu][a]  #n If 'on' the window below mouse pointer (hover effect) becomes focused/active.
+%               -This option is usefull for otsu-segmentation (two windows are open). By default ('off'),
+%                one has to select the other non-active window to use it's functions. Using the auto-
+%                focus, we can avoid the extra selection step. 
+% #g Example: transmit a region from otsu-segmentation window to main window (left click) 
+% #g and fill it in the main window just by hoving the mouse over the main window and left 
+% #g double-click to fill the region.
+% 
 % #b [config]    #n change configuration
 %                   -change some of the paramters 
 %                   * auto-focus windo below mouse (might be of help for otsu-operations)
 %                   * show/hide toolbar
-% 
+% #b [help]    #n open help window
+%
 % #b [saving options] #n select the type of image to saved (mask, masked image)
 %                   * mask only
 %                   * different types of masking the background image. See pull-down menu. 
@@ -116,13 +127,20 @@
 % xdraw(fullfile(pwd,'AVGT.nii'),[]);  % #g load bg-image, load no mask
 % xdraw(fullfile(pwd,'AVGT.nii'),fullfile(pwd,'AVGThemi.nii'));  % #g load bg-image, load existing mask
 % xdraw(fullfile(pwd,'t2.nii'),fullfile(pwd,'masklesion.nii'));
+% 
+% 
+
+
 function  xdraw(file,maskfile)
 try; delete(findobj(0,'tag','otsu'));end
+clear global SLICE
 % ==============================================
 %%   file
 % ===============================================
 if exist('file')~=1
-    [fi pa]=uigetfile(fullfile(pwd,'*.nii'),'select BACKGROUND-FILE');
+    msg='select background file (NIFTI) ...mandatory';
+    disp(msg);
+    [fi pa]=uigetfile(fullfile(pwd,'*.nii'),msg);
     if isnumeric(fi);
         return;
     end
@@ -135,28 +153,84 @@ u.f1=file;
 %%   maskfile
 % ===============================================
 if exist('maskfile')~=1
-    [fi pa]=uigetfile(fullfile(pwd,'*.nii'),'optional, select a MASK-FILE, or hit "cancel"');
+    msg='select mask file (NIFTI) or hit "cancel" ...optional';
+    disp(msg);
+    disp('The mask file be in register with the background image (similar w.r.t voxel-size,dims,orientation)');
+    [fi pa]=uigetfile(fullfile(pwd,'*.nii'),msg);
     if isnumeric(fi)
         maskfile=[];
     else
         maskfile=fullfile(pa,fi);
     end
 end
+
 if isempty(maskfile)
     u.f2=[];
     hb=ha;
     b=zeros(size(a));
+    
 else
+    
     u.f2=maskfile;
     [hb b]=rgetnii(u.f2);
-    [h,d ]=rreslice2target(u.f2, u.f1, [], 0);
-    hb=h;
-    b =d;
+    nvalues=length(unique(b));
     
-    uni=unique(b);
-    if median(double(round(uni*10)/10==uni ))==0
-        b=double(b>0);
+    if nvalues>100
+        % ==============================================
+        %%   input-dlg
+        % ===============================================
+        filestr=regexprep(u.f2,{['\' filesep] ,'_'},{['\' filesep filesep] '\\_' });
+        prompt = {
+            ['\color{blue} FILE: \color{black} \bf ' '"' filestr '"'  '\rm' char(10) ...
+            'The selected mask contain \color{magenta}' num2str(nvalues) '\color{black} different values.' char(10) ...
+            'This seems to be a lot for a mask. ' char 10 ...
+            char(10) ...
+            '\bf HOW TO PROCEED?'  '\rm' char(10)  ...
+            '  [1] Proceed and try it ' char(10) ...
+            '  [2] Reduce  number of values in mask volume ' char(10) ...
+            '  [3] Proceed without using the selected mask'  char(10) ...
+            ],'\bf For [2] only: Enter number of values to use for the mask (Otsu-approach).'};
+        dlg_title = ['MASKfile: issue' repmat(' ',[1 150])];
+        num_lines = 1;
+        defaultans = {'1','32'};
+        answer = inputdlg(prompt,dlg_title,num_lines,defaultans,struct('Interpreter','tex'));
+        
+        %% procees
+        if isempty(answer); return; end
+        maskmode=str2num(answer{1});
+        if maskmode==2
+            nclassesOtsu=str2num(answer{2});
+            b= reshape(otsu(b(:),nclassesOtsu), hb.dim);
+        elseif maskmode==3
+            u.f2=[];
+            hb=ha;
+            b=zeros(size(a));
+        end
+        
+        
+        % ==============================================
+        %%   end
+        % ===============================================
+        % ok, try it
+        
+        % otsu-reduce intensity values
+        
+        % no, abort mask
+        
+        
     end
+    
+    if maskmode==1
+        [h,d ]=rreslice2target(u.f2, u.f1, [], 0);
+        hb=h;
+        b =d;
+        
+        uni=unique(b);
+        if median(double(round(uni*10)/10==uni ))==0
+            b=double(b>0);
+        end
+    end
+    
 end
 
 % ==============================================
@@ -258,11 +332,14 @@ u.colmat=colmat;
 set(hf1,'userdata',u);
 
 function timercheck()
+hf1=findobj(0,'tag','xpainter');
 us=get(gcf,'userdata');
 if us.set.autofocus==1
+    set(findobj(hf1,'tag','rd_autofocus'),'value',1, 'backgroundcolor',[1 0.8431 0]);
     timerstart;
 else
     delete(timerfindall);
+    set(findobj(hf1,'tag','rd_autofocus'),'value',0, 'backgroundcolor','w');
 end
 
 % ==============================================
@@ -305,18 +382,29 @@ z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
 u.set=z;
 set(gcf,'userdata',u);
 hf1=findobj(0,'tag','xpainter');
-if z.toolbar==1
+if z.toolbar==1;                  %menubar
     set(hf1,'toolbar','figure');
 else
     set(hf1,'toolbar','none'); 
 end
 
-if   u.set.numColors~=x.numColors
+if  u.set.numColors~=x.numColors   %COLORS
     def_colors();
     setslice();
     set_idlist;
     edvalue([],[]);
 end
+% ==============================================
+%% callback autofocus
+% ===============================================
+function rd_autofocus(e,e2)
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+u.set.autofocus=get(findobj(hf1,'tag','rd_autofocus'),'value');
+set(gcf,'userdata',u);
+
+timercheck();
+
 
 % ==============================================
 %% otsu key
@@ -454,13 +542,16 @@ elseif strcmp(e2.Key,'t'); % zoom
           set(gcf,'toolbar','figure');
        end
        set(hf1,'userdata',u);
-       
-       
+elseif  strcmp(e2.Key,'a');              % AUTOFOCUS
+    hf1=findobj(0,'tag','xpainter');
+    hb=findobj(hf1,'tag','rd_autofocus');
+    set(hb,'value' , ~get(hb,'value') );
+    rd_autofocus([],[]);
 elseif strcmp(e2.Key,'l');
     o=findobj(gcf,'tag','pb_legend');
     set(o,'value',~get(o,'value'));
     pb_legend([],[]);
-  elseif strcmp(e2.Key,'i');  
+elseif strcmp(e2.Key,'i');
     pb_slicewiseInfo([],[]);
     
 elseif strcmp(e2.Key,'d') ;%strcmp(e2.Key,'uparrow') || strcmp(e2.Key,'downarrow')
@@ -1078,6 +1169,10 @@ if par==3 %replace
     set(hf1,'userdata',u);
 end
 
+
+hb=findobj(gcf,'tag','pb_nextstep');
+hgfeval(get( hb ,'callback'),[], 1);
+
 drawnow;
 % figure(hf1);
 % %----------------
@@ -1245,6 +1340,8 @@ if get(findobj(hf1,'tag','rd_otsu'),'value')==1
     
     figure(hf1);
 end
+% pb_measureDistance_off(); %remove measuring tool
+% pb_measureDistance_off();
 % ==============================================
 %%
 % ===============================================
@@ -1349,7 +1446,7 @@ set(hb,'cdata', e);
 
 
 % NEXT-STEP
-hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_prevstep');
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_nextstep');
 set(hb,'position',[ .54 .95 .05 .04],'string',' ', 'callback',{@pb_undoredo,+1});
 set(hb,'fontsize',7,'backgroundcolor','w');
 set(hb,'tooltipstring',['REDO last step' char(10) '..for this slice only' char(10) 'shortcut [ctrl+y] ']);
@@ -1489,6 +1586,8 @@ set(hb,'cdata',e);
 % ==============================================
 %%   imtools
 % ===============================================
+picon=fullfile(matlabroot,'toolbox','images','icons');
+picon2=fullfile(matlabroot,'toolbox','matlab','icons');
 chkicon=which('imrect.m');
 if ~isempty(chkicon);
     hf1=findobj(0,'tag','xpainter');
@@ -1496,8 +1595,7 @@ if ~isempty(chkicon);
     pbx=.8;
     pby=.55;
     colpb=[1.0000    0.9490    0.8667];
-    picon=fullfile(matlabroot,'toolbox','images','icons');
-    picon2=fullfile(matlabroot,'toolbox','matlab','icons');
+
     
     delete(findobj(hf1,'userdata','imtoolsbutton'));
     
@@ -1590,9 +1688,52 @@ if ~isempty(chkicon);
     % Polygon_24px.png
     % STRELLINE_24.png
 end
+
 % ==============================================
-%%
+%%  distance measure
 % ===============================================
+chkicon=which('imdistline.m');
+if ~isempty(chkicon);
+    hf1=findobj(0,'tag','xpainter');
+    pbsiz=0.05;
+    pbx=.8;
+    pby=.38;
+    colpb=[0.8392    0.9098    0.8510];
+    picon=fullfile(matlabroot,'toolbox','images','icons');
+    picon2=fullfile(matlabroot,'toolbox','matlab','icons');
+
+    
+    % measure distance
+    hb=uicontrol('style','togglebutton','units','norm', 'tag'  ,'pb_measureDistance');           %SET-next-SLICE
+    set(hb,'fontsize',8,'backgroundcolor',colpb,'value',0,'string','');
+    % ---
+    set(hb,'callback',@pb_measureDistance);
+    set(hb,'tooltipstring',['measure distance' char(10) '--' ]);
+    set(hb,'position',[ pbx pby pbsiz pbsiz]);
+    [e map]=imread(fullfile(picon,'distance_tool.gif'));
+    e=mat2gray(e);
+    e(e==1)=nan;
+    % ---
+    %e=double(imresize(e,[16 16],'cubic'));
+    if max(e(:))>1; e=e./255; end
+    e2=repmat(e,[1 1 3]);
+    set(hb,'cdata',e2);
+end
+% ==============================================
+%%  windows-auto focus
+% ===============================================
+if 1%~isempty(chkicon);
+    hf1=findobj(0,'tag','xpainter'); 
+    hb=uicontrol('style','radio','units','norm', 'tag'  ,'rd_autofocus');           %SET-next-SLICE
+    set(hb,'fontsize',7,'backgroundcolor','w','value',0,'string','WinFocus');
+    set(hb,'callback',@rd_autofocus);
+    set(hb,'tooltipstring',['autofocus window' char(10) 'window becoms focused (active) when mouse hovers over it' char(10) '[a] shortcut']);
+    set(hb,'position',[ .84 .2 .11 .035]);
+end
+
+
+
+
 
 
 function show_allslices(e,e2,px)
@@ -2021,6 +2162,8 @@ uhelp(z);
 
 
 function pop_changedim(e,e2)
+
+
 e=findobj(gcf,'tag','rd_changedim');
 li=get(e,'string');
 va=get(e,'value');
@@ -2183,6 +2326,9 @@ function selstop(e,e2)
 hf1=findobj(0,'tag','xpainter');
 u=get(hf1,'userdata');
 
+ismeasure=get(findobj(hf1,'tag','pb_measureDistance'),'value');
+if ismeasure==1; return; end
+
 putImage(); %######
 
 col=u.colmat(str2num(get(findobj(hf1,'tag','edvalue'),'string')),:);
@@ -2230,6 +2376,9 @@ u=get(hf1,'userdata');
 % set(hf1,'userdata',u);
 
 global SLICE
+if isempty(SLICE.r2)
+   keyboard 
+end
 r2n=SLICE.r2;
 u=putsliceinto3d(u,r2n,'b');
 set(hf1,'userdata',u);
@@ -2239,6 +2388,10 @@ set(hf1,'userdata',u);
 % ===============================================
 function motion(e,e2, type)
 hf1=findobj(0,'tag','xpainter');
+ismeasure=get(findobj(hf1,'tag','pb_measureDistance'),'value');
+if ismeasure==1; return; end
+
+
 u=get(hf1,'userdata');
 hax=findobj(gcf,'type','axes');
 co=get(hax,'CurrentPoint');
@@ -2388,14 +2541,16 @@ end
 function u=putsliceinto3d(u,d2,varnarname)
 % u=putsliceinto3d(u,r2,'b');
 dum=getfield(u,varnarname);
-if u.usedim==1
-    dum(u.useslice,:,:)=d2;
-elseif u.usedim==2
-    dum(:,u.useslice,:)=d2;
-elseif u.usedim==3
-    dum(:,:,u.useslice)=d2;
-end
-u=setfield(u,varnarname,dum);
+% try
+    if u.usedim==1
+        dum(u.useslice,:,:)=d2;
+    elseif u.usedim==2
+        dum(:,u.useslice,:)=d2;
+    elseif u.usedim==3
+        dum(:,:,u.useslice)=d2;
+    end
+    u=setfield(u,varnarname,dum);
+% end
 
 function imtoolbreak
 hf1=findobj(0,'tag','xpainter');
@@ -2414,6 +2569,9 @@ delete(findobj(hf1,'userdata','imtool'));
 disp('imtool break');
 delete(findobj(hf1,'userdata','imtool'));
 
+%———————————————————————————————————————————————
+%%   
+%———————————————————————————————————————————————
 function  imdrawtool_prep(e,e2,type)
 
 hf1=findobj(0,'tag','xpainter');
@@ -2546,6 +2704,7 @@ hax=findobj(gcf,'type','axes');
 % findobj(hf1,'userdata','imtoolsbutton')
 % imellipse | imfreehand | imline | impoint | impoly | imroi | makeConstrainToRectFcn
     
+    set(gcf,'WindowButtonUpFcn'     ,[]);
     if type==1
         try; h = imfreehand;
             %     catch; imdrawtool(e,e2, type);
@@ -2567,6 +2726,7 @@ hax=findobj(gcf,'type','axes');
             %     catch; imdrawtool(e,e2, type);
         end
     end
+    set(gcf,'WindowButtonUpFcn'     ,@selstop);
     % uiwait(hf1);
     % setappdata(h,'imrecttools',1);
     try
@@ -2600,8 +2760,13 @@ elseif u.activeIcons_do==2 %boundary/ege
    % bw=boundarymask(bw);
     bw=bwperim(bw);
 end
+
 r1=getslice2d(u.a);
 r2=getslice2d(u.b);
+
+% global SLICE
+%         r1=SLICE.r1;
+%         r2=SLICE.r2;
 
 % ----------------------------------------------------
 %% transpose
@@ -2660,11 +2825,20 @@ end
 if get(findobj(hf1,'tag','rd_transpose'),'value')==1
     r2n=r2n';
 end
-u=putsliceinto3d(u,r2n,'b');
+% ==============================================
+%%   %% outsource
+% ===============================================
+%u.r2=r2n;
+global SLICE
+SLICE.r2=r2n;
 
-% ----history
+if 1
+    u=putsliceinto3d(u,r2n,'b');
+    
+    % ----history
     u.histpointer=u.histpointer+1;
     u.hist(:,:,u.histpointer)=r2n;
+end
 % ------------
 set(hf1,'userdata',u);
 %----------------
@@ -2755,3 +2929,269 @@ u.activeIcons_do=par;
 set(hf1,'userdata',u);
 delete(findobj(hf1,'userdata','activeIcons'));
 uiresume(hf1);
+
+%———————————————————————————————————————————————
+%%   DISTANCE-TOOL
+%———————————————————————————————————————————————
+function create_distanceMeas
+%create_distanceMeas - Show use of FINDOBJ and TAG property to identify active handle
+%during addNewPositionCallback
+% Created for R2007b
+
+% close all
+% clear all
+if 0
+    cf
+    fg
+    I = imread('pout.tif');
+    
+    imshow(I);
+end
+% [ha a]=rgetnii('AVGT.nii');
+% 
+% fg
+% dim=2
+% a2=dqueeze
+% imagesc()
+
+
+
+
+h1 = imdistline;
+set(h1,'Tag','distline1');
+api1 = iptgetapi(h1);
+
+
+u=get(gcf,'userdata');
+u.meas.h1=h1;
+u.meas.api=api1;
+set(gcf,'userdata',u);
+
+% h2 = imdistline;
+% set(h2,'Tag','distline2');
+% api2 = iptgetapi(h2);
+
+id1 = api1.addNewPositionCallback(@(x) cb_distanceMeas(h1,x,1));
+% id2 = api2.addNewPositionCallback(@(x) cb_distanceMeas(x,2));
+h1.setColor([1 0 0]);
+u=get(gcf,'userdata');
+
+hb=uicontrol('style','pushbutton','units','norm','string','x','tag','pb_deldistfun',...
+    'callback',{@pb_deldistfun,api1},'tooltipstring','close distance measuring tool');
+
+cb_distanceMeas(h1,[],1);
+updateDeldistBtn(1);
+
+function updateDeldistBtn(par)
+hd=findobj(gcf,'tag','end point 1');
+hb=findobj(gcf,'tag','pb_deldistfun');
+
+x=get(hd,'xdata');
+y=get(hd,'ydata');
+if par==1 %start
+    ax = gca;
+    AxesPos = get(ax, 'position');
+    xscale = get(ax, 'xlim' );
+    yscale = get(ax, 'ylim');
+    x2=(x-xscale(1))/(xscale(2)-xscale(1))*AxesPos(3)+AxesPos(1);
+    y2=1-(y-yscale(1))/(yscale(2)-yscale(1))*AxesPos(4)+AxesPos(2);
+    set(hb,'position',[x2 y2 .1 .1]);
+else
+    co=get(gcf,'CurrentPoint');
+    set(hb,'position',[co(1)-0.01 co(2) .1 .1]);
+end
+    
+
+% hb=uicontrol('style','pushbutton','units','norm','string','x');
+
+% hd=findobj(h1,'tag','end point 1')
+% 
+
+set(hb,'units','pixels');
+pos=get(hb,'position');
+si=14;
+set(hb,'position',[pos(1)-si*1.5 pos(2)+0 si si]);
+set(hb,'units','norm');
+
+
+%   Text    (distance label)
+%   Line    (end point 2)
+%   Line    (end point 1)
+%   Line    (top line)
+%   Line    (bottom line)
+
+function cb_distanceMeas(h1,pos,id)
+
+updateDeldistBtn(0);
+% disp(id);
+h = findobj(gcf,'Tag',['distline' num2str(id)]) ;
+% disp(get(h,'Tag'));
+% disp(pos);
+
+dis=h1.getDistance();
+ang=h1.getAngleFromHorizontal();
+
+hl=findobj(h,'tag','distance label');
+% set(hl,'string',{['s: '  sprintf('%2.3f',dis) 'mm']
+%     ['s: '  sprintf('%2.3f',dis) 'pix']
+%     ['{\theta}: '  sprintf('%2.3f',ang) '°']},'fontsize',8);
+
+% 'a'
+tpos=get(hl,'position');
+% disp(ang);
+% if ang>90 && ang<=170
+%     set(hl,'position',[tpos(1)+16 tpos(2)-16 tpos(3)])
+% elseif  ang>170 && ang<=180
+%     set(hl,'position',[tpos(1)+16 tpos(2)-16*2 tpos(3)])  
+% elseif  ang>=0 && ang<=90
+%     set(hl,'position',[tpos(1)+16 tpos(2)-16*2 tpos(3)])
+% end
+
+tmtag=get(gco,'tag');
+if isempty(tmtag)
+    tmtag='end point 1';
+end
+if sum(strcmp(tmtag,{'end point 1', 'end point 2'}))==0
+    tmtag='end point 1';
+end
+
+
+tm=findobj(h1,'tag',tmtag);
+
+if strcmp(tmtag,'end point 1')
+    tf=findobj(h1,'tag','end point 2');
+else
+    tf=findobj(h1,'tag','end point 1');
+end
+fp=cell2mat(get(tf,{'xdata' 'ydata'}));%fix xy
+mp=cell2mat(get(tm,{'xdata' 'ydata'}));%moving xy
+
+
+%____________________mm-distance____________________________
+hdim=findobj(gcf,'tag','rd_changedim');
+transpose=get(findobj(gcf,'tag','rd_transpose'),'value');
+or=get(hdim,{'string' 'value'});
+dimused=str2num(or{1}{or{2}});
+u=get(gcf,'userdata');
+dim=u.ha.dim;
+mat=u.ha.mat;
+
+dim(dimused)=[];
+voxsi=diag(mat(1:3,1:3))';
+voxsi(dimused)=[];
+
+if transpose==1
+    voxsi=fliplr(voxsi);
+    dim  =fliplr(dim);
+end
+
+dfdo=abs(fp(2)-mp(2));
+dfri=abs(fp(1)-mp(1));
+
+mmri=dfri*voxsi(2);
+mmdo=dfdo*voxsi(1);
+mm=sqrt(mmri.^2+mmdo.^2);
+
+% dum1=get(findobj(gcf,'type','image'),'xdata');
+% dum2=get(findobj(gcf,'type','image'),'ydata');
+% imgdim=[dum1(2) dum2(2)];
+
+set(hl,'string',{['s: '  sprintf('%2.3f',mm) 'mm']
+    ['s: '  sprintf('%2.3f',dis) 'pix']
+    ['{\theta}: '  sprintf('%2.3f',ang) '°']},'fontsize',8);
+
+
+%________________________________________________
+set(tm,'MarkerSize',20);
+set(tf,'MarkerSize',20);
+
+if 0
+    df=fp-mp;
+    set(hl,'position',[fp(1)+sign(df(1))*14 fp(2)+sign(df(2))*14 0]);
+    if mp(2)<=fp(2) %virtually mp is above fp
+        disp(rand(1))
+        set(hl,'position',[fp(1)+sign(df(1))*14 fp(2)+sign(df(2))*14*2 0]);
+        if ang==0
+            set(hl,'position',[fp(1)+sign(df(1))*14*2 fp(2)+14*2 0]);
+        end
+    else
+        se
+        t(hl,'position',[fp(1)+sign(df(1))*14 fp(2)+sign(df(2))*14*2 0]);
+    end
+end
+set(hl,'backgroundcolor','k','color',[1.0000 0.8431  0],'fontsize',7,'fontweight','bold');
+xl=xlim;
+yl=ylim;
+% ce=round((fp+mp)/2);
+% if ce(1)<mean(xl)
+%     set(hl,'position',[xl(2)-xl(2)*.25  yl(2)-yl(2)*.05]);
+% else
+    set(hl,'position',[xl(1)+xl(2)*.05  yl(2)-yl(2)*.05]);
+% end
+lpos=get(hl,'Extent');
+
+b(1)=fp(1)>lpos(1) &&  fp(1)<lpos(2) && fp(2)>lpos(2)-lpos(4) &&  fp(2)<lpos(2);
+b(2)=mp(1)>lpos(1) &&  mp(1)<lpos(2) && mp(2)>lpos(2)-lpos(4) &&  mp(2)<lpos(2);
+b(3)=fp(2)>lpos(2)-lpos(4) &&  fp(2)<lpos(2) && mp(2)>lpos(2)-lpos(4) &&  mp(2)<lpos(2);
+% disp(b);
+if b(3)==1
+    set(hl,'position',[xl(1)+xl(2)*.05  yl(1)+yl(2)*.075]);
+else
+    if any(b)==1
+        set(hl,'position',[xl(2)-xl(2)*.25  yl(2)-yl(2)*.05]);
+    end
+end
+
+% disp(get(hl,'position'));
+% set(hl,'fontweight','bold');
+
+
+function pb_deldistfun(e,e2,api1)
+delete(api1);
+delete(findobj(gcf,'tag','pb_deldistfun'));
+hb=findobj(gcf,'tag','pb_measureDistance');
+set(hb,'value',0);
+hgfeval(get( hb ,'callback'));
+
+
+
+
+function pb_measureDistance(e,e2)
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+val=get(findobj(gcf,'tag','pb_measureDistance'),'value');
+
+if val==0 %off
+    try; delete(u.meas.api); end
+    try; delete(u.meas.h1); end
+    %     try; delete(get(findobj(hf1,'tag','end point 1'),'parent')); end
+    try;  delete(findobj(hf1,'tag','pb_deldistfun'));end
+    
+%     hb=findobj(gcf,'tag','undo');
+%     hgfeval(get( hb ,'callback'));
+    
+else
+    %set(hf1,'Pointer','arrow');
+%     hb=findobj(gcf,'tag','undo');
+%     hgfeval(get( hb ,'callback'));
+
+set(gcf,'WindowButtonDownFcn',[]);
+set(gca,'ButtonDownFcn',[]);
+set(findobj(gcf,'type','image'),'ButtonDownFcn',[]);
+    create_distanceMeas();
+    
+end
+
+function pb_measureDistance_off()
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+set(findobj(gcf,'tag','pb_measureDistance'),'value',0);
+
+try; delete(u.meas.api); end
+try; delete(u.meas.h1); end
+try; delete(get(findobj(hf1,'tag','end point 1'),'parent'));end
+try; delete(findobj(hf1,'tag','pb_deldistfun')); end
+    
+%     hb=findobj(gcf,'tag','undo');
+%     hgfeval(get( hb ,'callback'));
+
