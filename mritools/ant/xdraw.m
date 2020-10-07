@@ -682,6 +682,9 @@ elseif u.usedim==3
     v2=squeeze(v3(:,:,u.useslice));
 end
 
+% r1=imadjust(r1); 
+% disp('adjustIM');
+
 
 function cb_preview(e,e2)
 hf1=findobj(0,'tag','xpainter');
@@ -727,6 +730,7 @@ set(hf1,'userdata',u);
 
 
 r1=getslice2d(u.a);
+r1=adjustIntensity(r1);
 r2=getslice2d(u.b);
 
 if get(findobj(hf1,'tag','rd_transpose'),'value')==1
@@ -949,7 +953,6 @@ o=get(hf,'userdata');
 him2=findobj(hf,'Type','image');
 
 
-
 try
     if o.docut==1
         co=round(get(gca,'CurrentPoint'));
@@ -1061,6 +1064,7 @@ bw = m;
 %         if u.usedim==3
 r1=getslice2d(u.a);
 r2=getslice2d(u.b);
+r1=adjustIntensity(r1);
 
 
 if get(findobj(hf1,'tag','rd_transpose'),'value')==1
@@ -1257,6 +1261,8 @@ end
 % end
 
 r1=mat2gray(r1);
+r1=adjustIntensity(r1);
+
 
 % if 0
 %     'flt'
@@ -2357,6 +2363,7 @@ u=get(hf1,'userdata');
 
 r1=getslice2d(u.a);
 r2=getslice2d(u.b);
+r1=adjustIntensity(r1);
 % u.r1=r1;
 % u.r2=r2;
 % set(hf1,'userdata',u);
@@ -2391,9 +2398,11 @@ hf1=findobj(0,'tag','xpainter');
 ismeasure=get(findobj(hf1,'tag','pb_measureDistance'),'value');
 if ismeasure==1; return; end
 
+% 'ri'
+
 
 u=get(hf1,'userdata');
-hax=findobj(gcf,'type','axes');
+hax=findobj(hf1,'type','axes');
 co=get(hax,'CurrentPoint');
 try
     co=co(1,[1 2]);
@@ -2401,13 +2410,27 @@ catch
     return
 end
 axlim=[get(hax,'xlim') get(hax,'ylim')];
+showDot=0;
 % set(gcf,'pointer','arrow');
 if co(1)<1 || co(2)<1 || co(1)>axlim(2)  %1 | co(2)<1
     set(hf1,'Pointer','arrow');
+    %'yes'
 else
     %vp=nan(16,16);
+     showDot=1;
     set(hf1, 'Pointer', 'custom', 'PointerShapeCData', NaN(16,16)); 
+    %'no'
 end
+
+% if strcmp(get(gco,'tag'),'xpainter')==0 % not focus
+%     set(hf1,'Pointer','arrow');
+% else
+%     
+% 
+%     
+%     
+% end
+
 hd=findobj(hf1,'tag','dot');
 xx=get(hd,'XData');
 yy=get(hd,'yData');
@@ -2763,6 +2786,7 @@ end
 
 r1=getslice2d(u.a);
 r2=getslice2d(u.b);
+r1=adjustIntensity(r1);
 
 % global SLICE
 %         r1=SLICE.r1;
@@ -3194,4 +3218,7 @@ try; delete(findobj(hf1,'tag','pb_deldistfun')); end
     
 %     hb=findobj(gcf,'tag','undo');
 %     hgfeval(get( hb ,'callback'));
+
+function r1=adjustIntensity(r1);
+% r1=imadjust(mat2gray(r1));
 
