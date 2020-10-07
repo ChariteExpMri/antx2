@@ -3,7 +3,7 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 Oct 2020 (12:56:31)**</ins>  
-  **[xdraw]** : debug, added measuring tool (distance in mm/pixel) angle  
+  **[xdraw]** : debug, added measuring tool (distance in mm/pixel and angle)  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Oct 2020 (03:45:46)**</ins>  
   **[xdraw]** draw a (multi-) mask manually , improved version, allows otsu-segmentation, new image drawing  
