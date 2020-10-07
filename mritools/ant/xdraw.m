@@ -163,7 +163,7 @@ if exist('maskfile')~=1
         maskfile=fullfile(pa,fi);
     end
 end
-
+maskmode=1;
 if isempty(maskfile)
     u.f2=[];
     hb=ha;
