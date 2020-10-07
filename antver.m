@@ -159,7 +159,8 @@
 % [xdraw] draw a (multi-) mask manually , improved version, allows otsu-segmentation, new image drawing
 % tools, calculate volume for each mask-region, save as mask or save masked background image
 % - access via ANT-menu: Tools/draw mask
-
+% #ra 07 Oct 2020 (12:56:31)
+% [xdraw] : debug, added measuring tool (distance in mm/pixel) angle
 
 
 %----- EOF

@@ -1,7 +1,10 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   06 Oct 2020 (03:45:46)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   07 Oct 2020 (12:56:31)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 Oct 2020 (12:56:31)**</ins>  
+  **[xdraw]** : debug, added measuring tool (distance in mm/pixel) angle  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Oct 2020 (03:45:46)**</ins>  
   **[xdraw]** draw a (multi-) mask manually , improved version, allows otsu-segmentation, new image drawing  
   tools, calculate volume for each mask-region, save as mask or save masked background image  
