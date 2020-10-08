@@ -151,6 +151,7 @@ end
 
 hB = imagesc(B);
 hold on
+climF=double(climF);
 hF = imagesc(F,climF);
 
 

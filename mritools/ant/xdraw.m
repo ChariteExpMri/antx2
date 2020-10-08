@@ -278,7 +278,7 @@ set(gcf,'userdata',u);
 u.him=[];
 u.usedim =3;
 % u.pensi  =10;
-u.alpha  =.5;
+u.alpha  =.4;
 u.dotsize=5;
 u.dotsizes=([1:200]);
 u.a=a; u.ha=ha;
@@ -857,14 +857,21 @@ else%2d
         r1=medfilt2(r1,[medfltval medfltval],'symmetric');
     end
     
-    
+    if isempty(numcluster); return; end
     ot=otsu(r1,numcluster);
 end
 
 
-
-
-
+% ----------
+if 0
+    ox=ot;
+    ox(ox==1)=0;
+    ma=double(label2rgb(ox,'jet'));
+    bg=repmat( (imadjust(mat2gray(r1))),[1 1 3]);
+    
+    fg,imshow(bg.*.9+ma.*0.1)
+end
+% ----------
 
 
 hp=findobj(hf2,'tag','pb_otsouse');
@@ -1148,7 +1155,8 @@ end
 s1=reshape(ra,[ size(ra,1)*size(ra,2) 3 ]);
 rm=sum(rb,2);
 im=find(rm~=0);
-s1(im,:)= (s1(im,:)*alp)+(rb(im,:)*(1-alp)) ;
+% s1(im,:)= (s1(im,:)*alp)+(rb(im,:)*(1-alp)) ;
+s1(im,:)= (s1(im,:)*(1-alp))+(rb(im,:)*(alp)) ;
 x=reshape(s1,size(ra));
 
 
@@ -1249,7 +1257,7 @@ u=get(hf1,'userdata');
 alp=u.alpha;% .8
 if exist('par')==1
     if par==1
-        alp=1;
+        alp=0;
     end
     
 end
@@ -1311,11 +1319,16 @@ for i=1:length(val)
     rb( ix ,:)  = repmat(u.colmat(val(i),:), [length(ix) 1] );
 end
 % rb=reshape(rb,size(ra));
-s1=reshape(ra,[ size(ra,1)*size(ra,2) 3 ]);
+s1=reshape(ra,[ size(ra,1)*size(ra,2) 3 ]); %GBimage
 rm=sum(rb,2);
 im=find(rm~=0);
-s1(im,:)= (s1(im,:)*alp)+(rb(im,:)*(1-alp)) ;
+% s1(im,:)= (s1(im,:)*alp)+(rb(im,:)*(1-alp)) ;
+s1(im,:)= (s1(im,:)*(1-alp))+(rb(im,:)*(alp)) ;
 x=reshape(s1,size(ra));
+
+%------------
+
+
 % ----------------------------------------------------
 %% transpose
 htran=findobj(hf1,'tag','rd_transpose');
@@ -1877,28 +1890,53 @@ bg=montageout(permute(bg,[1 2 4 3]));
 
 % bg=imadjust(mat2gray(montageout(permute(bg,[1 2 4 3]))));
 %-----
-
 bg=repmat(bg,[1 1 3]);
+% TX=repmat(permute([1:size(c1,3) ]',[3 2 1]),[size(c1,1)  size(c1,2)  1]); %for txtlabel
+TX=zeros(size(c1));
+for i=1:size(c1,3)
+    TX(1,1,i)=i;
+end
 
+TX=montageout(permute(TX,[1 2 4 3]));
 if do_transp==1
     bg=permute(bg,[2 1 3]);
-    d =permute(d,[2 1 3]);
+    d =permute( d,[2 1 3]);
+    TX=permute( TX,[2 1 3]);
 end
 if do_flipud==1
     bg =flipdim(bg,1);
     d  =flipdim(d,1);
 end
 
+%%label-cords
+laco=zeros(size(c1,3),2);
+for i=1:size(c1,3)
+    [laco(i,1) laco(i,2)]=find(TX==i);
+end
 
+
+
+%%
 % h=image(imfuse(bg,d,'blend'));
 if sum(d(:))==0
     fus=bg;
 else
     fus=bg.*.5+d.*.5;
 end
+
+% brightness=1.5;
+% fus=fus*brightness;
+
+
+% us.brightness=brightness;
 us.fus=fus;
 us.bg =bg;
 us.ma =d;
+
+% ==============================================
+%%   
+% ===============================================
+
 
 fg;
 image(fus);
@@ -1909,6 +1947,23 @@ set(gcf,'userdata',us);
 set(gca,'position',[0.05 0 1 1]); %axis normal;
 hb=uicontrol('style','text','units','norm','string','bg-image & mask');
 set(hb,'position',[0 0 1 .04],'foregroundcolor','b');
+
+
+for i=1:size(c1,3)
+    te(i)=text( laco(i,2)+size(c1,2)*0.5 ,laco(i,1), num2str(i));
+    set(te(i),'color',[1.0000    0.8431         0],'tag','slicenum');
+    set(te,'VerticalAlignment','top','fontsize',8,'fontweight','bold');
+end
+%     'baseline'
+%     'top'
+%     'cap'
+%     'middle'
+%     'bottom'
+% ==============================================
+%%   
+% ===============================================
+
+
 zoom on;
 fprintf('done\n');
 
@@ -1918,12 +1973,37 @@ set(hb,'position',[0 .9+1*.03 .1 .03],'fontsize',7,'backgroundcolor','w','Horizo
 
 hb=uicontrol('style','radio','units','norm','string','both','value',1,'callback',@montage_post);
 set(hb,'position',[0 .9 .15 .03],'fontsize',7,'backgroundcolor','w','userdata',1,'tag','rd_montage_ovl');
+set(hb,'tooltipstring','show background image [BG] and mask');
 
 hb=uicontrol('style','radio','units','norm','string','[0]BG,[1]Mask','value',0,'callback',@montage_post);
 set(hb,'position',[0 .9-1*.03  .15 .03],'fontsize',7,'backgroundcolor','w','userdata',2,'tag','rd_montage_ovl');
+set(hb,'tooltipstring','show background image [BG] or mask');
+
+
+%slider-TXT
+hb=uicontrol('style','text','units','norm','string','contrast');
+set(hb,'position',[0 .8-0*.03  .15 .03],'fontsize',7,'backgroundcolor','w');
+%slider-ui
+hb=uicontrol('style','slider','units','norm','string','rb','value',0.5,'callback',@montage_slid_contrast);
+set(hb,'position',[0 .8-1*.03  .15 .03],'fontsize',7,'backgroundcolor','w','userdata',[],'tag','montage_slid_contrast');
+set(hb,'tooltipstring','change contrast');
+
+
+montage_slid_contrast();
 
 % hb=uicontrol('style','radio','units','norm','string','Mask','value',0,'callback',@montage_post);
 % set(hb,'position',[0 .9-2*.03  .12 .03],'fontsize',7,'backgroundcolor','w','userdata',3,'tag','rd_montage_ovl');
+function montage_slid_contrast(e,e2)
+% uv=get(gcf,'userdata')
+% hb=findobj(gcf,'tag','montage_slid_contrast');
+% val=get(hb,'value');
+% him=findobj(gca,'type','image');
+% d=get(him,'cdata');
+% set(him,'cdata',d.*(val*3));
+
+hd=findobj(gcf,'tag','rd_montage_ovl');
+hf=hd(find(cell2mat(get(hd,'value'))));
+montage_post(hf,[]);
 
 function montage_post(e,e2)
 % 'a'
@@ -1938,15 +2018,30 @@ if get(e,'userdata')==2 % single img
     end
 else         %fuse
     set(findobj(hd,'userdata',2),'value',0); %other off
-    set(e,'value',1);
-    im=us.fus; 
+    if get(e,'value')==0
+        set(findobj(hd,'userdata',2),'value',0);
+        montage_post( findobj(hd,'userdata',2) ,[]);
+        return
+    else
+        im=us.fus;
+    end
+    
 end
 % set(hd,'value',0);
 % set(e,'value',1);
 % val=get(e,'userdata');
 % li={'fus','bg','ma'};
 him=findobj(gca,'type','image');
-set(him,'cdata',im);
+
+
+hb=findobj(gcf,'tag','montage_slid_contrast');
+val=get(hb,'value');
+if get(e,'userdata')==1
+    im2=im*val*4;
+else
+    im2=im*val*2;
+end
+set(him,'cdata',im2);
 
 % ==============================================
 %%   
@@ -2675,7 +2770,8 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
         s1=reshape(ra,[ size(ra,1)*size(ra,2) 3 ]);
         rm=sum(rb,2);
         im=find(rm~=0);
-        s1(im,:)= (s1(im,:)*alp)+(rb(im,:)*(1-alp)) ;
+        %s1(im,:)= (s1(im,:)*alp)+(rb(im,:)*(1-alp)) ;
+        s1(im,:)= (s1(im,:)*(1-alp))+(rb(im,:)*(alp)) ;
         x=reshape(s1,size(ra));
         set(u.him,'cdata',   x  );
    
@@ -2962,6 +3058,7 @@ if u.activeIcons_do==3 %UNPAINT
     r2=r2.*~bw; %UNPAINT
 end
 alp=u.alpha;% .8
+% alp =u.create_distanceMeas;% .8
 val=unique(u.b);
 val=[val(:) ;value];
 val(val==0)=[];
@@ -2979,7 +3076,8 @@ end
 s1=reshape(ra,[ size(ra,1)*size(ra,2) 3 ]);
 rm=sum(rb,2);
 im=find(rm~=0);
-s1(im,:)= (s1(im,:)*alp)+(rb(im,:)*(1-alp)) ;
+% s1(im,:)= (s1(im,:)*alp)+(rb(im,:)*(1-alp)) ;
+s1(im,:)= (s1(im,:)*(1-alp))+(rb(im,:)*(alp)) ;
 x=reshape(s1,size(ra));
 set(u.him,'cdata',   x  );
 r2n=r2;
