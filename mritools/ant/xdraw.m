@@ -57,9 +57,15 @@
 % #b [hide mask] [h] #n shortly hide mask
 %                    -alternatively, use [space] shortcut to toggle between bg-image and mask 
 % 
-% #ok *** Right-side CONTROLS *** 
+% #kl *** Right-side CONTROLS *** 
+% #b [sat CON][s]    #n saturate/adjust contrast; If enabled, use default contrast enhancement
+%                     'auto' from the right pulldown-menu
+%                     -change contrast values in right pull-down menu ('auto')
+% #b [auto]          #n puldown with min/max values for low and high cotrast enhancing values
+%                    -changes apply only if [sat CON] is enabled
+%                    -you can also edit two values (min max value in range between 0 and 1)
 % #b [clear]         #n clear mask of current slice/clear entire 3d mask
-%                    #shortcut [c] clears the mask of the current image
+%                    #r shortcut [c] clears the mask of the current image
 % #r [special drawing tools]
 % #b [freehand]  [1] #n freehand drawing
 % #b [rectangle] [2] #n draw rectangle
@@ -111,7 +117,9 @@
 %        #b [arrow up/down] shortcuts to decrease/increase the number of otsu-classes
 % #b [medfilt]  #n filter length of the 2d median filter, {1...n} 
 %        #b [ctrl+arrow up/down] shortcuts to decrease/increase filter length (smoothness)
-% #b [cut cluser][x]   if enabled, Draw a line through cluster to separate cluster 
+% #b [cut cluser][x]  if enabled, Draw a line through cluster to separate cluster 
+%                     -[cut cluser] can be used to parcelate a cluster. A cutted part of a cluster
+%                      can than transmitted to the main window
 %                     use shortcut [x] to toggle enable/disable [cut cluser] function
 % #r LEFT MOUSE-BUTON #n   click onto a region to transmit this region to the main window.
 %                           The transmitted region obtains the ID (value) of the current selected
@@ -437,6 +445,12 @@ if isempty(e2.Modifier)==1
             hgfeval(get(hb,'callback'),[],+1);
             figure(hf2);
         end
+    elseif strcmp(e2.Key,'s');        %saturate contrast
+        hf1=findobj(0,'tag','xpainter');
+        hb=findobj(hf1,'tag','cb_adjustIntensity');
+        set(hb,'value', ~get(hb,'value') );
+        cb_adjustIntensity([],[]);
+    %hgfeval(get( hb ,'callback'),[], 1);   
     elseif strcmp(e2.Key,'h')
         figure(hf1);
         cb_preview();
@@ -531,6 +545,13 @@ elseif strcmp(e2.Key,'uparrow') || strcmp(e2.Key,'downarrow')
     definedot([],[]);
 elseif strcmp(e2.Key,'f');
     cb_fill();
+elseif strcmp(e2.Key,'s');        %saturate contrast
+    hf1=findobj(0,'tag','xpainter');
+    hb=findobj(hf1,'tag','cb_adjustIntensity');
+    set(hb,'value', ~get(hb,'value') );
+    cb_adjustIntensity([],[]);
+    %hgfeval(get( hb ,'callback'),[], 1);
+     
 elseif strcmp(e2.Key,'t'); % zoom
        hf1=findobj(0,'tag','xpainter');
        u=get(hf1,'userdata');
@@ -591,6 +612,7 @@ elseif strcmp(e2.Key,'space')
         setslice(); %show mask
         set(findobj(hf1,'tag','preview'),'backgroundcolor',[repmat(.94,[1 3])]);
     end
+    return
     
     
 elseif strcmp(e2.Key,'b')
@@ -1439,6 +1461,65 @@ set(hb,'fontsize',8);
 set(hb,'tooltipstring',['shortly hide mask' char(10) '[h] shortcut']);
 %==========================================================================================
 
+%adjust slice intensity
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'cb_adjustIntensity');
+set(hb,'position',[ .8 .8 .1 .035],'string','sat Con', 'callback',{@cb_adjustIntensity});
+set(hb,'fontsize',7,'backgroundcolor','w','value',0);
+set(hb,'tooltipstring',['Saturate contrast, i.e. auto adjust intensity of slice' char(10) '[s] shortcut']);
+
+% contrast range
+% str={ '0.0 1.0'  '.2 .8' '.3 .7' '.4  .6'   '0 .3' '0 .5'  '0 .7'         '.5 1' '.7 1' '.85 1'};
+
+vec=0:.1:1;
+alc=allcomb(vec,vec);
+alc=round(alc*10)./10;
+alc(alc(:,1)>=(alc(:,2)),:)=[];
+% alc(:,3)=[alc(:,2)-alc(:,1)]; % add distance between lims
+% alc(:,4)=[abs(alc(:,3)-0.5)];      % distance to 0.5
+
+alc=(sortrows([alc alc(:,2)-alc(:,1)],[1 ]));
+alc2=[0 1; .1 .9;.2 .8;.3 .7;.4 .6 ];
+
+% alc=[alc2; alc(:,1:2)];
+alc=unique([alc2; alc(:,1:2)],'rows','stable');
+% alc= flipud(sortrows([alc alc(:,2)-alc(:,1)],[3 ]));
+str=cellfun(@(a,b){[ sprintf('%2.1f',a) ' '  sprintf('%2.1f',b) ]} , num2cell(alc(:,1)),num2cell(alc(:,2)) );
+
+str=['auto';str];
+
+
+
+% hb = uicontrol('Style','popup', 'units','norm', 'tag'  ,'cb_adjustIntensity_value','string',str);
+% set(hb,'position',[ .9 .805 .1 .035],'string',str);
+% set(hb,'fontsize',7,'backgroundcolor','w','value',1);
+% set(hb,'tooltipstring',['contrast range'  ]);
+% % set(hb, 'string', [])
+% jCombo = findjobj(hb);
+% jCombo.setEditable(true);
+
+position = [10,100,90,20];  % pixels
+hContainer = gcf;  % can be any uipanel or figure handle
+% str = {'a','b','c'};
+model = javax.swing.DefaultComboBoxModel(str);
+[jCombo hb2] = javacomponent('javax.swing.JComboBox', position, hContainer);
+set(hb2,'units','norm','position',[[ .9 .805 .1 .035]]);
+jCombo.setModel(model);
+jCombo.setEditable(true);
+% jCombo.setFont(java.awt.Font('Arial', java.awt.Font.PLAIN, 14))
+javaLangString=jCombo.getFont;
+FSsize=get(javaLangString,'Size');
+jCombo.setFont(java.awt.Font('Arial', java.awt.Font.PLAIN, FSsize-5));
+set(jCombo,'ActionPerformedCallback',@cb_adjustIntensity_value);
+set(hb2,'tag', 'cb_adjustIntensity_value');
+set(hb2,'userdata', jCombo);
+
+% idxset=find(alc(:,1)==.3 & alc(:,2)==.7)-1;
+jCombo.setSelectedIndex(0);
+jCombo.setToolTipText('contrast limits for image saturation');
+
+%==========================================================================================
+
+
 % LAST-STEP
 hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_prevstep');
 set(hb,'position',[ .5 .95 .05 .04],'string',' ', 'callback',{@pb_undoredo,-1});
@@ -1785,7 +1866,18 @@ d(:,:,2)=montageout(permute(c2,[1 2 4 3]));
 d(:,:,3)=montageout(permute(c3,[1 2 4 3]));
 
 bg=permute(u.a, [dimother dim]);
-bg=imadjust(mat2gray(montageout(permute(bg,[1 2 4 3]))));
+
+% r1=adjustIntensity(r1)
+% -----
+for i=1:size(bg,3)
+  %bg(:,:,i)=imadjust(mat2gray(bg(:,:,i)));
+  bg(:,:,i)=adjustIntensity(mat2gray(bg(:,:,i)));
+end
+bg=montageout(permute(bg,[1 2 4 3]));
+
+% bg=imadjust(mat2gray(montageout(permute(bg,[1 2 4 3]))));
+%-----
+
 bg=repmat(bg,[1 1 3]);
 
 if do_transp==1
@@ -1797,17 +1889,65 @@ if do_flipud==1
     d  =flipdim(d,1);
 end
 
-fg;
+
 % h=image(imfuse(bg,d,'blend'));
-image(bg.*.5+d.*.5);
+if sum(d(:))==0
+    fus=bg;
+else
+    fus=bg.*.5+d.*.5;
+end
+us.fus=fus;
+us.bg =bg;
+us.ma =d;
+
+fg;
+image(fus);
 axis image; axis off;
 title('bg-image & mask');
+set(gcf,'userdata',us);
 
-set(gca,'position',[0 0 1 1]); %axis normal;
+set(gca,'position',[0.05 0 1 1]); %axis normal;
 hb=uicontrol('style','text','units','norm','string','bg-image & mask');
 set(hb,'position',[0 0 1 .04],'foregroundcolor','b');
 zoom on;
 fprintf('done\n');
+
+
+hb=uicontrol('style','text','units','norm','string','Show');
+set(hb,'position',[0 .9+1*.03 .1 .03],'fontsize',7,'backgroundcolor','w','HorizontalAlignment','left','fontweight','bold');
+
+hb=uicontrol('style','radio','units','norm','string','both','value',1,'callback',@montage_post);
+set(hb,'position',[0 .9 .15 .03],'fontsize',7,'backgroundcolor','w','userdata',1,'tag','rd_montage_ovl');
+
+hb=uicontrol('style','radio','units','norm','string','[0]BG,[1]Mask','value',0,'callback',@montage_post);
+set(hb,'position',[0 .9-1*.03  .15 .03],'fontsize',7,'backgroundcolor','w','userdata',2,'tag','rd_montage_ovl');
+
+% hb=uicontrol('style','radio','units','norm','string','Mask','value',0,'callback',@montage_post);
+% set(hb,'position',[0 .9-2*.03  .12 .03],'fontsize',7,'backgroundcolor','w','userdata',3,'tag','rd_montage_ovl');
+
+function montage_post(e,e2)
+% 'a'
+hd=findobj(gcf,'tag','rd_montage_ovl');
+us=get(gcf,'userdata');
+if get(e,'userdata')==2 % single img
+    set(findobj(hd,'userdata',1),'value',0); %other off
+    if get(e,'value')==1
+        im=us.ma;
+    else
+        im=us.bg; 
+    end
+else         %fuse
+    set(findobj(hd,'userdata',2),'value',0); %other off
+    set(e,'value',1);
+    im=us.fus; 
+end
+% set(hd,'value',0);
+% set(e,'value',1);
+% val=get(e,'userdata');
+% li={'fus','bg','ma'};
+him=findobj(gca,'type','image');
+set(him,'cdata',im);
+
 % ==============================================
 %%   
 % ===============================================
@@ -3220,5 +3360,41 @@ try; delete(findobj(hf1,'tag','pb_deldistfun')); end
 %     hgfeval(get( hb ,'callback'));
 
 function r1=adjustIntensity(r1);
-% r1=imadjust(mat2gray(r1));
+hf1=findobj(0,'tag','xpainter');
+hb=findobj(hf1,'tag','cb_adjustIntensity');
+if get(hb,'value')==1
+    uv=get(hb,'userdata');
+    if isfield(uv,'lims') && ~isempty(uv.lims)
+          %r1=imadjust(mat2gray(r1),[0.3 0.7],[1 0]);
+          if uv.lims(2)>uv.lims(1)
+              r1=imadjust(mat2gray(r1),sort(uv.lims));
+          else
+              r1=imadjust(mat2gray(r1),sort(uv.lims),[1 0]);
+          end
+    else
+      r1=imadjust(mat2gray(r1));
+    end
 
+end
+
+
+function cb_adjustIntensity(e,e2)
+hf1=findobj(0,'tag','xpainter');
+hb=findobj(hf1,'tag','cb_adjustIntensity');
+% set(hb,'value');
+setslice();
+
+function cb_adjustIntensity_value(e,e2)
+hf1=findobj(0,'tag','xpainter');
+hb=findobj(hf1,'tag','cb_adjustIntensity_value');
+hj=get(hb,'userdata');
+lims=str2num(char(hj.getSelectedItem));
+if length(lims)==1
+    hj.setSelectedIndex(0);
+    cb_adjustIntensity_value()
+    return;
+end
+hr=findobj(hf1,'tag','cb_adjustIntensity');
+uv.lims=lims;
+set(hr,'userdata',uv);
+setslice();
