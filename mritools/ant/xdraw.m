@@ -2687,6 +2687,10 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
     else
         bw   = double(poly2mask(x2,y2,dims(1),dims(2)));
     end
+    seltype=get(gcf,'SelectionType');
+    if strcmp(seltype,'open') || strcmp(seltype,'alt')
+        bw=bw.*0;
+    end
 
    %% type: drfines whether to paint/unpaint
     if type~=0 %PAINT 
@@ -2727,7 +2731,8 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
         seltype=get(gcf,'SelectionType');
         if strcmp(seltype,'open') || strcmp(seltype,'alt')
             %disp(['now-' num2str(rand(1))]);
-            value=str2num(get(findobj(hf1,'tag','edvalue'),'string'));  
+            value=str2num(get(findobj(hf1,'tag','edvalue'),'string')); 
+            value=r2(round(co(2)),round(co(1))  );
             m1=r2==value;
             r2(m1==1)=0;
             x2=mean(x); y2=mean(y);
