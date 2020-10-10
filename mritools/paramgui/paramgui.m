@@ -698,7 +698,7 @@ end
 set(us.jCodePane,'MouseReleasedCallback',@mouseReleased);
 
 drawnow;
-set(gcf,'visible','on');  % #rp1
+set(gcf,'visible','off');  % #rp1
 
 % reformat; %reformat
 
@@ -822,7 +822,6 @@ prepicon();
 % end
 
 
-
 if us.mimic_oldstyle==1 ;% OLD single-icon STYLE
     r=findobj(gcf,'style','pushbutton');
     iicons=[];
@@ -842,8 +841,10 @@ if us.mimic_oldstyle==1 ;% OLD single-icon STYLE
         set(r(1),'position',posini);
     end
 end
+set(gcf,'visible','on');
+
 % resizefun();
-updateIconposition();drawnow;
+updateIconposition('initialize');
 % us.jCodePane.setCaretPosition(1); %pos-1
 % us.jCodePane.requestFocus();
 us.jCodePane.setCaretPosition(1); %pos-1
@@ -852,7 +853,7 @@ us.jCodePane.requestFocus();
 posx=get(gcf,'position');
 set(gcf,'position',[posx(1:3) posx(4)+.001]);
 
-
+set(gcf,'visible','on');
 highlightSelectedIcon();
 % ==============================================
 %%   uiwait
@@ -1385,16 +1386,30 @@ function figkey(h,e)
 
 function showhelp(h,e,info)
 
-if strfind(char(info{1}),'doc');
-    hgfeval(info);
-elseif strfind(char(info{1}),'uhelp');
-    %     hgfeval(info);
-    uhelp(info{2});
-else
-%     uhelp(info(:),1,'position',[.75 .5 .25 .4]);
-    uhelp(info(:),1);
-end
+ico=get(h,'CData');
+ico2=reshape(ico,[size(ico,1)*size(ico,2) size(ico,3)]);
+ibg=find(sum(ico2,2)==3);
+ico2(ibg,:)=repmat([ 0.9294    0.6941    0.1255],[length(ibg) 1]);
+ico3=reshape(ico2,[size(ico,1) size(ico,2) size(ico,3)]);
+set(h,'cdata',ico3); drawnow;
 
+pos0=get(h,'position');
+hb=uicontrol('style','text','units','pixels','position',[0 0 .1 .1]);
+set(hb,'position',[pos0(3) pos0(4)+pos0(2)  pos0(3)*5  pos0(4).*.75],'string', '..wait..');
+set(hb,'backgroundcolor','k','foregroundcolor',[ 1.0000    0.8431 0]);
+try
+    if strfind(char(info{1}),'doc');
+        hgfeval(info);
+    elseif strfind(char(info{1}),'uhelp');
+        %     hgfeval(info);
+        uhelp(info{2});
+    else
+        %     uhelp(info(:),1,'position',[.75 .5 .25 .4]);
+        uhelp(info(:),1);
+    end
+end
+set(h,'cdata',ico); drawnow;
+delete(hb);
 
 
 function highlightSelectedIcon()
@@ -2029,7 +2044,7 @@ updateIconposition();
 us.jCodePane.setCaretPosition(carpos);
 
 
-function updateIconposition
+function updateIconposition(status)
 % us=get(gcf,'userdata');
 % txt=us.jCodePane.getText
 % CR=strfind(txt,char(10));
@@ -2099,7 +2114,9 @@ for i=1:length(r)
     end
 end
 r=r(iicons);
-% set(r,'visible','off');
+if exist('status')% 'initialize'
+   set(r,'visible','off');
+end
 
 %sort iconandles
 lastcurpos=us.jCodePane.getCaretPosition;

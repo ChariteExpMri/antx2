@@ -266,9 +266,8 @@ if find(s.task==1)
     end
     %% SKULLSTRIP T2.nii
     if s.usePriorskullstrip==1
-        fprintf('     ...do skullstripping..');
-        
-        
+        fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: use pcnn3d-tool' ]);
+
         %if isfield(s,'species') && strcmp(s.species,'rat')  % ##-RAT-##
         if isfield(s,'species') && (strcmp(s.species,'rat') || strcmp(s.species,'etruscianshrew'))   
             skparam.species = s.species;
@@ -278,13 +277,64 @@ if find(s.task==1)
             evalc('skullstrip_pcnn3d(s.t2, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip''   )'); ;
         end
         fprintf('done.\n ');
-    elseif s.usePriorskullstrip==2 % dirty maskingApproach
         
-        fprintf('     ...do skullstripping [method-2]..');
-%         skullstrip2(s.t2,5,[3:7],20,1,0,1);
-         skullstrip2(s.t2,5,[3],1,20,1,0,1);
+    elseif s.usePriorskullstrip==2 
+        % ==============================================
+        %%  copy t2.nii as mask
+        % ===============================================
+        fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: just use "t2.nii" as "_msk.nii"' ]);
+        disp('"t2.nii" copied as "_msk.nii" ');
+        msk=fullfile(s.pa,'_msk.nii');
+        copyfile(s.t2,msk,'f');
         fprintf('done.\n ');
+    elseif s.usePriorskullstrip==3 % '_msk.nii' allready exists (same props as t2.nii)    
+        % ==============================================
+        %%   dirty maskingApproach for tubes
+        % ===============================================
+        fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']..' ]);
+        %         skullstrip2(s.t2,5,[3:7],20,1,0,1);
+        skullstrip2(s.t2,5,[3],1,20,1,0,1);
+        fprintf('done.\n ');
+    elseif s.usePriorskullstrip==4 % '_msk.nii' allready exists (same props as t2.nii)
+        % ==============================================
+        %%  mutitube: use t2.nii but remove background
+        % ===============================================
+        disp(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  '].. ' '""_msk.nii"  is background removed "t2.nii" ']);
+        [hc c]=rgetnii(s.t2);
+        o=reshape(otsu(c(:),10),hc.dim);
+        cl1=o([1 end],:,:);
+        cl2=o(:,[1 end],:);
+        bglab=mode([cl1(:) ;cl2(:)]);
+        [bw L]=bwlabeln(o==bglab);
+        cl1=bw([1 end],:,:);
+        cl2=bw(:,[1 end],:);
+        bglab=mode([cl1(:) ;cl2(:)]);
+        mx=bw~=bglab;
+        % montage2(mx);
+        mx2=mx;
+        for i=1:size(mx2,3)
+           mx2(:,:,i) =imdilate(mx2(:,:,i),strel('disk',5));
+           mx2(:,:,i) =imfill(mx2(:,:,i),'holes');
+        end
+        for i=1:size(mx2,2)
+           mx2(:,i,:) =imdilate(mx2(:,i,:),strel('disk',5));
+           mx2(:,i,:) =imfill(mx2(:,i,:),'holes');
+        end
+        %montage2(mx2);
+        msk=fullfile(s.pa,'_msk.nii');
+        rsavenii(msk,hc,mx2.*c);
+        disp('done');
+    elseif s.usePriorskullstrip==-1 % 
+        % ==============================================
+        %% '_msk.nii exist in path'
+        % ===============================================
+         disp(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  '] use existing "_msk.nii" file from animal''s path ' ]);
         
+        
+% ==============================================
+%%   
+% ===============================================
+
     else
         fprintf('     ...remove Background..');
         mskfile=fullfile(s.pa,'_msk.nii');

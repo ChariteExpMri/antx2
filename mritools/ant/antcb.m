@@ -316,6 +316,7 @@ if strcmp(do, 'settings');
     global an
     configfile = an.configfile;
     m= antconfig;
+    drawnow;
     
     if isempty(m); return; end
     
@@ -386,6 +387,10 @@ if strcmp(do, 'settings');
         lb3=findobj(gcf,'tag','lb3');        set(lb3,'value',val3);
         lb1=findobj(gcf,'tag','lb1');        set(lb1,'value',val1);
     end
+    
+    %antcb('reload');
+    %disp('reload');
+    drawnow();
     
 end
 %% %###########################################################

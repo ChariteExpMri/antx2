@@ -275,10 +275,22 @@ for i=1:size(tb,1)
     %% ============================================
     %rmricron([],fullfile(fileparts(f3),'result.0.nii'),f3,1); % CHECK
     paras  = get_ix(fullfile(outdir,'TransformParameters.0.txt'), 'TransformParameters');
-    signs  = [1     -1    -1    -1    -1     1];
+    signs  = [1     -1    -1    -1    -1     1]; %orig
     paras2 = paras.*signs;
     vvec   = [ paras2(4:6) paras2(1:3)  1 1 1 0 0 0];
     vmat   = spm_matrix(vvec);
+    
+    
+    %%  MI-approach  -------- workAround, I previously failed o extract the 'right' parameters
+    if strcmp(get_ix(parafile,'Metric'), 'AdvancedMattesMutualInformation')==1
+        paras=getorientviadots(f222,f3, parafile,[], 2000,0,1);
+        vvec   = [ paras(1:3) paras(4:6)  1 1 1 0 0 0];
+        vmat   = spm_matrix(vvec);
+    end
+    
+    
+   
+    
     
     %% [] overlay images in MOUSESPACE (PREROTATED NORMSPACE transformed to MOUSESPACE)
     %% OVL: rigidmouse.nii + translate+rotate _rigidtemplateRotated.nii

@@ -1,7 +1,99 @@
 
 % #ok [ANTCONFIG.m] configure paramters
-% ..has to be written..
-
+% 
+% #kl  *** SETTINGS-FILE ***
+% The paramter are stored in the project-file (matlab m-file): The default name is 'proj.m', but
+% you can chose a suitable name. Ideally, store the project-file in a study-folder which can contain
+% the raw-data (dicom/Bruker raw data). 
+% Later, the study-folder will contain a 'dat'-folder which is the main animal folder. This folder 
+% will contain the animals subfolder. Each animal with one subfolder. 
+% Please provide enough storage capacity. The study-folder will become large. Also provide the proper 
+% access rights (linux!) for writing/deleting files.
+% ___________________________________________________________________________________________________
+% #b project: #n Project-name. No need to specify. String can be arbibtrarily chosen.
+% ___________________________________________________________________________________________________
+% #b datpath: #n Path of the 'dat'-folder. The 'dat'-folder contains the animal-data of the study.
+%               -ideally the 'dat-folder' is located at the same hierarchical level as the project-file 'proj.m'
+%               -Do not store raw-data (dicom/Bruker raw data)  here. 
+% ___________________________________________________________________________________________________
+% #b voxsize: #n Final voxel-resolution used for the template and images transformed to standard space.
+% ___________________________________________________________________________________________________
+% #b BiasFieldCor: #n [0,1] use dirty BiasFieldCorrectio of "t2.nii" prior to skull-stripping. 
+%               #r Please avoid to use this option. #n In most cases the skullstripping/registration works. 
+%               If [1] the biasFieldCorrection will change the input image 't2.nii' permanently.
+%               Sometimes, registration will fail because of inhomogenious image intensities. This will,
+%              result in skull-stripping (problem with bias-filed/lesion/artecact...). In this case, try
+%              another [usePriorskullstrip]-option  & another [orientelxParamfile]-paramterfile ("trafoeuler5_MutualInfo.txt")
+%              before using this [BiasFieldCor] finction   
+%          #g * default: [0]
+% ___________________________________________________________________________________________________
+% #b usePriorskullstrip:  #n skull strip "t2.nii". This option is used for rigid registration, only.
+%         Here,  the image "_msk.nii" is created based on 't2.nii' 
+%         #r '_msk.nii' is not binary!, rather the brain-masked 't2.nii'-image (outer brain values are ideally 0).
+% options [0] : 't2.nii' is already skullstripped (exvivo brain) 
+%         [1] : create '_msk.nii' based on pcnn3d-tool. #b real skull-stripping 
+%              #g default: [1]
+%         [2] : create '_msk.nii' based on otsu-method. This option is prone to errors and should be
+%               only tested for exvivo skullstripped brain preserved in the stuff that produces 
+%               high-contrast in the MR-image
+%         [3] : '_msk.nii' is a copy of 't2.nii'.
+%         [4] : '_msk.nii' is basically 't2.nii' but background is removed to accellerate segmentation
+%               *use this option for exvivo skullstripped brain preserved in the stuff that produces 
+%               high-contrast in the MR-image. 
+%        [-1] : brain masked image '_msk.nii' is assumed to exist in the path
+%               use this option if you have created a brain-masked 't2.nii' via other tools
+% #g NOTE: The aim of '_msk.nii' file is to obtain a rough but sufficient rigid registration. Accordingly,
+% #g don't use this file as 'proper' brain mask for later analysis
+% #g for [3]&[4]: For successful registration select the  parameterfile #k "trafoeuler5_MutualInfo.txt" for "orientelxParamfile"-parameter 
+% ___________________________________________________________________________________________________
+% #b orientType #n : Type of orientation. 
+%                This parameter defines the orientation of the animal in the MR bore relative 
+%                to the used template. The proper [orientType] is necessary to have a
+%                good initial guess for image registration.
+%      [orientType] can be specified as #r [1] numeric value #n or as #r [2] as string
+%      [1] numeric value: is an index  refering to a table of pre-defined rotation angles (pitch,yaw,roll)
+%         *USE #g 'examine orientation' from animals listbox to specify a suitable orientation (index)
+%      [2] string: can be used to transmit 3 rotation angles (pitch,yaw,roll). Here we use a string 
+%         argument to allow readable PI-fractions  example: 'pi/2 pi 0'
+%         *USE #g 'get orientation via 3-point selection' from animals listbox to specify a suitable orientation (string)
+%      #g * default: [1]
+% ___________________________________________________________________________________________________
+% #b orientelxParamfile: #n RIGID PARAMETER FILE #n This file is used to perform rigid-body/Euler transformation.
+%           #g * default: #k 'path...\...\trafoeuler5.txt'
+%           -try also : #k 'path...\...\trafoeuler5_MutualInfo.txt'
+%           * Use "trafoeuler5_MutualInfo.txt" if the rigide registration fails :high contrast; exvivo brains
+%             preserved in the stuff that produces high-contrast in the MR-image; artefacts; other modality
+% ___________________________________________________________________________________________________
+% #b x.wa.elxMaskApproach: #n Approach used for non-linear transformation. The approach is only used to 
+%           calculation of a transfomation paramters. Click #g 'ICON' #n for more details.
+%           #g * default: [1]
+% ___________________________________________________________________________________________________
+% #b elxParamfile: #n ELASTIX parameter files (cell-array)  with paths for affine+nonlinear parameter file 
+%         -Contains two files: 1st parameter file: affine registration 
+%                              2nd parameter file: non-linear warping
+%           #g * default: {'f:\antx2\mritools\elastix\paramfiles\Par0025affine.txt' 'f:\antx2\mritools\elastix\paramfiles\Par0033bspline_EM2.txt' }
+% ___________________________________________________________________________________________________
+% #b cleanup: #n delete temporary files [0,1]
+% ___________________________________________________________________________________________________
+% #b usePCT: #n use parallel-computation 
+%           [0] no ; [1] SPMD; [2] parfor
+%           #g * default: [2] 
+%           -Parallel Computing toolbox must be provided
+%           -currently, support only for the initalization/coregistration/segmentation & warping pipeline     
+% ___________________________________________________________________________________________________
+% #b refpath: #n Reference Path of the template
+%           #r - the reference path has to be specified! Please download the respective animal template
+%           #r   from google-drive. See Menu: Extras/get templates from google drive
+% ___________________________________________________________________________________________________
+% #b species: #n used animal species
+%          #r normally, You don't need to change this field. [species] is updated when the template's 
+%          #r reference path is selected
+% 
+% ___________________________________________________________________________________________________
+% #b IMAGES : #n images to transform ('tf_t2','tf_avg'..etc). Please do not change these parameters 
+% 
+% 
+% 
 
 function varargout=antconfig(showgui,varargin)
 varargout{1}=[];
@@ -50,7 +142,7 @@ p={...
     'inf2'   '_______________________________________________________________________________________________' '' ''
     
     'wa.BiasFieldCor'        [0]         'perform initial bias field correction (only needed if initial skullstripping failes) ' 'b'
-    'wa.usePriorskullstrip'  [1]         'use a priori skullstripping (used for automatic registration)'  'b'
+    'wa.usePriorskullstrip'  [1]         'use a priori skullstripping (used for automatic registration)'  {1 0 2 3 4 -1}
     'wa.fastSegment'         [1]         'faster segmentation by cutting boundaries of t2.nii [0,1]' 'b'
     
     
@@ -106,9 +198,10 @@ if showgui==1
     
     
          hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
-        figpos=[0.1688    0.3000    0.8073    0.6111];
+        %figpos=[0.1688    0.3000    0.8073    0.6111];
+        figpos=[0.1688    0.3611    0.8073    0.5511];
         [m z a params]=paramgui(p2,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',figpos,...
-            'title','SETTINGS','pb1string','OK','info',hlp);%,'cb1string',cb1string);
+            'title',['SETTINGS [' mfilename '.m]'],'pb1string','OK','info',hlp);%,'cb1string',cb1string);
         
 %          hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
 %     [m z]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .6 .5 ],...

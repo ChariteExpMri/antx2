@@ -177,6 +177,7 @@ if isfield(u.p,'savetrafo')==0;                 u.p.savetrafo       = 1;       e
 if isfield(u.p,'showmatch')==0;                 u.p.showmatch       = 1;       end
 if isfield(u.p,'showMricron')==0;               u.p.showMricron     = 0;       end
 if isfield(u.p,'info')       ==0;               u.p.info            = '';      end
+if isfield(u.p,'wait')       ==0;               u.p.wait            = 1 ;      end
 
 
 
@@ -193,7 +194,7 @@ readfiles();
 redraw();
 setdot([],[],1);
 redraw();
-if p.wait==1
+if u.p.wait==1
     uiwait(gcf);
 end
 

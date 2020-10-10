@@ -822,30 +822,79 @@ if isempty(hf2)
     set(hb,'fontsize',7,'backgroundcolor','w','fontweight','bold');
     set(hb,'tooltipstring',['median filter length' char(10) '-']);
     
+    % ========= OTSU-3d-panel-pushbutton======================================================
+  
+     hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_otsu3Dmontage');
+    set(hb,'position',[ .1 .001 .25 .05],'string','show 3D-otsu', 'callback',@pb_otsu3Dmontage);
+    set(hb,'fontsize',7,'backgroundcolor','w');
+    set(hb,'tooltipstring',['3D-Otsu - show all slices ' char(10) ' ']);
+    
+    
+    % ===============================================================
+
     set(gcf,'WindowKeyPressFcn',@keys_otsu);
 else
     figure(hf2);
     %     'ro'
 end
 
-numcluster=str2num(get(findobj(hf2,'tag','ed_otsu'),'string'));
+medfltval   =str2num(get(findobj(hf2,'tag','otsu_medfilt_val'),'string'));
+numcluster  =str2num(get(findobj(hf2,'tag','ed_otsu'),'string'));
 do3d=get(findobj(hf1,'tag','rd_otsu3d'),'value');
-% do3d
+
+ if isempty(numcluster); return; end
+ 
+% OTSU 2D/3D
 if do3d==1                                         %3d
-    if isfield(u,'otsu')==0 || numcluster~= u.set.otsu_numClasses
-        v=reshape(  otsu(u.a(:),numcluster),[ size(u.a) ]);
-        u.otsu=v;
-        u.set.otsu_numClasses=numcluster;
+%     if isfield(u,'otsu')==0 || numcluster~= u.set.otsu_numClasses
+%         v=reshape(  otsu(u.a(:),numcluster),[ size(u.a) ]);
+%         u.otsu=v;
+%         u.set.otsu_numClasses=numcluster;
+%         set(hf1,'userdata',u);
+%     end
+    
+    %--------------
+    
+    
+    if isfield(u,'otsu')==0 ||  isfield(u,'otsu3D_numClasses')==0 ||  numcluster~= u.set.otsu3D_numClasses
+        disp('otsu3d');
+        hf1=findobj(0,'tag','xpainter');
+        u=get(hf1,'userdata');
+        a=u.a;
+        b=u.b;
+        %      a=permute(u.a,[setdiff([1:3],u.usedim) u.usedim]);
+        %      b=permute(u.b,[setdiff([1:3],u.usedim) u.usedim]);
+        
+        %med-filter
+        if get(findobj(hf2,'tag','otsu_medfilt_rd'),'value')==1
+            [a] = ordfilt3D(a,medfltval);
+        end
+        
+        %ot=getslice2d();
+        ot3=reshape(  otsu(a(:),numcluster),[ size(a)]);
+        
+        u.otsu=ot3;
+        u.set.otsu3D_numClasses=numcluster;
         set(hf1,'userdata',u);
     end
-    ot=getslice2d(u.otsu);
+    
+    ot3=permute(u.otsu,[setdiff([1:3],u.usedim) u.usedim]);
+    ot=ot3(:,:,u.useslice);
+    
+    
+    %--------------
+
+    
+    %ot=getslice2d(u.otsu);
     
     if get(findobj(hf1,'tag','rd_transpose'),'value')==1
         %x=permute(r2, [2 1 3]);
         ot=ot';
+        %ot3=permute(ot3,[2 1 3]);
     end
     if get(findobj(hf1,'tag','rd_flipud'),'value')==1
-        ot=flipud(ot);
+        ot =flipud(ot);
+        %ot3=flipdim(ot,2);
     end
     
     
@@ -853,11 +902,10 @@ else%2d
     
     %med-filter
     if get(findobj(hf2,'tag','otsu_medfilt_rd'),'value')==1
-        medfltval=str2num(get(findobj(hf2,'tag','otsu_medfilt_val'),'string'));
         r1=medfilt2(r1,[medfltval medfltval],'symmetric');
     end
     
-    if isempty(numcluster); return; end
+   
     ot=otsu(r1,numcluster);
 end
 
@@ -919,6 +967,440 @@ pb_otsucut([],[],[]);
 % set(gcf,'PointerShapeCData',pointer);drawnow
 % set(gcf,'PointerShapeCData',pointer);drawnow
 % set(gcf,'pointer','cross');
+
+
+
+%———————————————————————————————————————————————
+%%   make 3d-otsu-fig
+%———————————————————————————————————————————————
+function otsu3Dmontage_mkfig();
+fg; 
+set(gcf,'name','OTSU-3D','NumberTitle','off','tag','otsu3d');
+% him=image(uint8(cat(3,0,0,255)));
+% axis off
+% set(gca,'position',[0.2 .1 .8 .9]);
+v.him=[];
+set(gcf,'userdata',v);
+
+
+% 3d-OTSU                                           3d-OTSU
+% ========classes=======================================================
+%otsu -number of classes-label
+hb=uicontrol('style','text','units','norm', 'string' ,'classes');
+set(hb,'fontsize',7,'backgroundcolor',[0.8392    0.9098    0.8510],'fontweight','normal');
+set(hb,'position',[0 .95 .12 .04],'HorizontalAlignment','left');
+set(hb,'tooltipstring',['otsu define number of classes/clusters' char(10) '--']);
+%otsu -number of classes
+hb=uicontrol('style','edit','units','norm', 'tag'  ,'otsu3_numclasses','value',0);
+set(hb,'position',[ .12 .95 .05 .04],'string','3', 'callback',@otsu3Dmontage_plot);
+set(hb,'fontsize',7,'backgroundcolor','w','fontweight','bold');
+set(hb,'tooltipstring',['otsu3D: define number of classes/clusters' char(10) '--']);
+% =========median-filter======================================================
+%medianfilter-radio
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'otsu3_medfilt_rd','value',1);
+set(hb,'position',[0 .91 .12 .04],'string','medfilt', 'callback',@otsu3Dmontage_plot);
+set(hb,'fontsize',7,'backgroundcolor',[0.8392    0.9098    0.8510],'fontweight','normal');
+set(hb,'tooltipstring',['median filter image prior otsu3D' char(10) '-']);
+%medianfilter-filtervalue
+hb=uicontrol('style','edit','units','norm', 'tag'  ,'otsu3_medfilt_ed');
+set(hb,'position',[.12 .91 .05 .04],'string','3', 'callback',@otsu3Dmontage_plot);
+set(hb,'fontsize',7,'backgroundcolor','w','fontweight','bold');
+set(hb,'tooltipstring',['median filter length' char(10) '-']);
+
+ % =========crop======================================================
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'otsu3_crop','value',1);
+set(hb,'position',[0 .78 .12 .04],'string','crop slices', 'callback',@otsu3Dmontage_plot);
+set(hb,'fontsize',7,'backgroundcolor',[1 1 1],'fontweight','normal');
+set(hb,'tooltipstring',['crop slices for better montage' char(10) '-']);
+
+% =========contour======================================================
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'otsu3Dmontage_contour','value',0);
+set(hb,'position',[0 .74 .12 .04],'string','contour', 'callback',@otsu3Dmontage_post);
+set(hb,'fontsize',7,'backgroundcolor',[1 1 1],'fontweight','normal');
+set(hb,'tooltipstring',['show contour' char(10) '-']);
+
+% =========alpha======================================================
+
+hb=uicontrol('style','text','units','norm');
+set(hb,'position',[0 .7 .12 .04],'string','transparency');
+set(hb,'fontsize',7,'backgroundcolor',[1 1 1],'fontweight','normal');
+set(hb,'tooltipstring',['transparency/alpha: [0-1] range' char(10) '-']);
+
+hb=uicontrol('style','edit','units','norm', 'tag'  ,'otsu3D_alpha','value',0);
+set(hb,'position',[0.12 .7 .05 .04],'string','.4', 'callback',@otsu3Dmontage_post);
+set(hb,'fontsize',7,'backgroundcolor','w','fontweight','normal');
+set(hb,'tooltipstring',['transparency/alpha: [0-1] range' char(10) '-']);
+
+
+
+ % =========fuse image======================================================
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'otsu3_bgfgfuse','value',1);
+set(hb,'position',[0 .6 .14 .04],'string','fuse BG+FG', 'callback',@otsu3Dmontage_post);
+set(hb,'fontsize',7,'backgroundcolor',[ 0.9373    0.8667    0.8667],'fontweight','normal');
+set(hb,'tooltipstring',['show background /foreground image' char(10) '-']);
+ % =========BG/FG======================================================
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'otsu3_bgfg','value',0);
+set(hb,'position',[0 .56 .14 .045],'string','BG or FG', 'callback',@otsu3Dmontage_post);
+set(hb,'fontsize',7,'backgroundcolor',[ 0.9373    0.8667    0.8667],'fontweight','normal');
+set(hb,'tooltipstring',['show [0] background image or [1]foreground image' char(10) '-']);
+
+
+
+ % =========all slices======================================================
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'otsu3_applyAllSlices','value',1);
+set(hb,'position',[0 .4 .12 .04],'string','all slices', 'callback',@otsu3Dmontage_plot);
+set(hb,'fontsize',7,'backgroundcolor',[1 0.83 0],'fontweight','normal');
+set(hb,'tooltipstring',['[1] apply selection on all slices' char(10) '[0] apply only on current slice' char(10) '-']);
+
+set(gcf,'WindowButtonDownFcn',@pb_otsu3D_transmit);
+
+
+
+%———————————————————————————————————————————————
+%%   main caller for 3d-otsu
+%———————————————————————————————————————————————
+function pb_otsu3D(e,e2)
+hf=findobj(0,'tag','otsu3d');
+ delete(hf);
+ if get(e,'value')==0
+    return
+end
+otsu3Dmontage_mkfig();
+otsu3Dmontage_plot([],[]);
+% pb_otsu3Dmontage();
+
+
+%———————————————————————————————————————————————
+%%   prep otsu
+%———————————————————————————————————————————————
+function otsu3Dmontage_plot(e,e2)
+% disp('otsu3d');
+hf1=findobj(0,'tag','xpainter');
+hf3=findobj(0,'tag','otsu3d');
+u=get(hf1,'userdata');
+numcluster  =str2num(get(findobj(hf3,'tag','otsu3_numclasses'),'string'));
+medfltval   =str2num(get(findobj(hf3,'tag','otsu3_medfilt_ed'),'string'));
+medfltdo    =get(findobj(hf3,'tag','otsu3_medfilt_rd'),'value');
+docrop      =get(findobj(hf3,'tag','otsu3_crop'),'value');
+alpha       =str2num(get(findobj(hf3,'tag','otsu3D_alpha'),'string'))
+
+a=u.a;
+b=u.b;
+%med-filter
+if medfltdo==1
+    for i=1:size(a,3)
+        a(:,:,i)=medfilt2(a(:,:,i),[medfltval medfltval]);
+    end
+        %[a] = ordfilt3D(a,medfltval);
+end
+ot3=reshape(  otsu(a(:),numcluster),[ size(a)]);
+v=get(hf3,'userdata');
+%———————————————————————————————————————————————
+%%   
+%———————————————————————————————————————————————
+o=ot3 ;%u.otsu;
+a=u.a;
+TX=repmat(permute([1:size(a,3) ]',[3 2 1]),[size(a,1)  size(a,2)  1]); %for slicewise-reversing
+o =permute( o,[setdiff([1:3],u.usedim) u.usedim]);
+a =permute( a,[setdiff([1:3],u.usedim) u.usedim]);
+TX=permute(TX,[setdiff([1:3],u.usedim) u.usedim]);
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    o=permute(o,[2 1 3]);
+    a=permute(a,[2 1 3]);
+    TX=permute(TX,[2 1 3]);
+end
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    o=flipdim(o,1);
+    a=flipdim(a,1);
+    TX=flipdim(TX,1);
+end
+
+v.a=a;
+v.o=o;
+v.TX=TX;
+
+if docrop==1        %------------------------- CROP
+    cm=mean(o,3)==1 ;%crop
+    cm=imdilate(cm,strel('square',[7]));
+    v.ins_lr=find(mean(cm,1)~=1);
+    v.ins_ud=find(mean(cm,2)~=1);
+   o  =o(v.ins_ud, v.ins_lr,:);
+   a  =a(v.ins_ud, v.ins_lr,:);
+   TX =TX(v.ins_ud, v.ins_lr,:);
+else
+   v.ins_lr=[1:size(o,2)]; 
+   v.ins_ud=[1:size(o,1)]; 
+end
+
+v.o1=o; %after cropping
+v.TX1=TX;
+
+o2 =montageout(permute(o ,[1 2 4 3]));
+a2 =montageout(permute(a ,[1 2 4 3]));
+TX2=montageout(permute(TX,[1 2 4 3]));
+
+%________________________________________________colorize
+numcols=unique(o);
+numcols(numcols==0)=[];
+colmat = distinguishable_colors(max(numcols),[1 1 1; 0 0 0]);
+ra=reshape( o            , [ size(o,1)*size(o,2)*size(o,3)   1 ]);
+rb=repmat(ra.*0,[1 3]);
+for i=1:length(numcols)
+    ix=find(ra==numcols(i));
+    rb( ix ,:)  = repmat(colmat(numcols(i),:), [length(ix) 1] );
+end
+rb=reshape(rb,[ size(o,1) size(o,2) size(o,3)  3]);
+clear ma
+ma(:,:,1)=montageout(permute(rb(:,:,:,1),[1 2 4 3]));
+ma(:,:,2)=montageout(permute(rb(:,:,:,2),[1 2 4 3]));
+ma(:,:,3)=montageout(permute(rb(:,:,:,3),[1 2 4 3]));
+
+bg=imadjust(mat2gray(a2));
+bg=round(bg.*255);
+bg=im2double(uint8(cat(3,bg,bg,bg)));
+% bg=double(ind2rgb( round(mat2gray(a2).*255) ,gray));
+% ma=im2double(label2rgb(o2,'jet'));
+% fg,image(bg)
+%———————————————————————————————————————————————
+%%   
+%———————————————————————————————————————————————
+fus3=(bg.*(1-alpha)+ma.*(alpha)  );
+v.him=findobj(gca,'type','image');
+if ~isempty(v.him) ; set(v.him,'cdata',fus3); else;     v.him=image(fus3); end
+% fg,
+% image(bg.*(1-alp)+ma.*(alp)  );
+% % fg,image(ma.*(alp)  )
+axis off
+set(gca,'position',[0.2 .1 .75 .9]);
+xlim([.5 size(fus3,2)+.5]);       ylim([.5 size(fus3,1)+.5]);
+% --------------
+v.numcols=numcols;
+v.colmat=colmat;
+v.bg=bg;
+v.ma=ma;
+v.fus3=fus3;
+v.o2=o2; %2d otsu montage
+v.ot3=ot3;
+v.TX2=TX2;
+set(gcf,'userdata',v);
+
+ set(gca,'position',[0.175 .0 .825 1]);
+ 
+ %———————————————————————————————————————————————
+%%   otsu_transmit 3d
+%———————————————————————————————————————————————
+function pb_otsu3D_transmit(e,e2);
+co=get(gca,'CurrentPoint');
+co=round(co(1,[1 2])) %right-down
+
+xl=xlim, yl=ylim();
+if co(1)<0 || co(1)>xl(2)      ||    co(2)<0 || co(2)>yl(2)
+    return ;%'out'
+% else ;%     'in'
+end
+
+
+
+hf1=findobj(0,'tag','xpainter');
+hf3=findobj(0,'tag','otsu3d');
+u=get(hf1,'userdata');
+
+disp(co)
+v=get(hf3,'userdata');
+val=v.o2(co(2),co(1))
+mp=v.o2==val;
+
+reg=v.o1==val;
+[cl numsubslust] =bwlabeln(reg);
+tb=[[1:numsubslust]' histc(cl(:),1:numsubslust)];
+dum1 =cl(:);
+dum2=dum1(:)*0;
+tb=tb(tb(:,2)>100,:);
+for i=1:size(tb,1)
+   dum2(dum1==tb(i,1))=i; 
+end
+cl=reshape(dum2, size(reg));
+numsubslust=size(tb,1);
+
+cl2 =montageout(permute(cl,[1 2 4 3]));
+% clrgb=im2double(label2rgb(cl2,'jet'));
+
+%________________________________________________colorize
+numcols=unique(cl);
+numcols(numcols==0)=[];
+colmat = distinguishable_colors(max(numcols),[1 1 1; 0 0 0]);
+ra=reshape( cl           , [ numel(cl) 1 ]);
+rb=repmat(ra.*0,[1 3]);
+for i=1:length(numcols)
+    ix=find(ra==numcols(i));
+    rb( ix ,:)  = repmat(colmat(numcols(i),:), [length(ix) 1] );
+end
+rb=reshape(rb,[ size(cl)  3]);
+clear ma
+clrgb(:,:,1)=montageout(permute(rb(:,:,:,1),[1 2 4 3]));
+clrgb(:,:,2)=montageout(permute(rb(:,:,:,2),[1 2 4 3]));
+clrgb(:,:,3)=montageout(permute(rb(:,:,:,3),[1 2 4 3]));
+
+
+ 
+alpha=.6;
+fus4=(v.bg.*(1-alpha)+clrgb.*(alpha)  );
+fg,imagesc( fus4);
+set(gcf,'WindowButtonDownFcn',@otsu3d_selectsubcluster);
+v.inf3='*** sub-cluster-selection ***'
+v.cl =cl;
+v.cl2=cl2;
+title({['#clusters: ' num2str(numsubslust)]})
+
+set(hf3,'userdata',v);
+
+function otsu3d_selectsubcluster(e,e2)
+co=get(gca,'CurrentPoint');
+co=round(co(1,[1 2])); %right-down
+% disp(co)
+xl=xlim, yl=ylim();
+if co(1)<0 || co(1)>xl(2)      ||    co(2)<0 || co(2)>yl(2)
+   %'out'
+   return ;
+ else ;%     'in'
+end
+
+hf1=findobj(0,'tag','xpainter');
+hf3=findobj(0,'tag','otsu3d');
+u=get(hf1,'userdata');
+v=get(hf3,'userdata');
+val=v.cl2(co(2),co(1))
+mp=v.cl2==val;
+if val==0; return; end
+
+%--------backtrafo
+b1=zeros(size(v.o1));
+for i=1:size(b1,3)
+  ix=find(v.TX2==i);
+  tt=reshape(  mp(ix), [length(v.ins_ud) length(v.ins_lr)] );
+  b1(:,:,i)=tt;
+end
+% ------deCrop
+%get(findobj(hf3,'tag','otsu3_crop'),'value')
+% if ~isempty(v.ins_lr) || ~isempty(v.ins_ud)
+    b2=zeros(size(v.o));
+    b2(v.ins_ud, v.ins_lr,:)=b1;
+% end
+% ------flipdim
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    b2=flipdim(b2,1);
+end
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    b2=permute(b2,[2 1 3]);
+end
+
+% ------------ update mask
+ix=find(b2(:)==1);
+up=u.b(:);
+up(ix)=str2num(get(findobj(hf1,'tag','edvalue'),'string'));
+up2=reshape(up,size(b2));
+
+u.b=up2;
+set(hf1,'userdata',u);
+figure(hf1);
+setslice();
+
+
+
+
+return
+
+% 
+% o=ot3 ;%u.otsu;
+% a=u.a;
+% TX=repmat(permute([1:size(a,3) ]',[3 2 1]),[size(a,1)  size(a,2)  1]); %for slicewise-reversing
+% o =permute( o,[setdiff([1:3],u.usedim) u.usedim]);
+% a =permute( a,[setdiff([1:3],u.usedim) u.usedim]);
+% TX=permute(TX,[setdiff([1:3],u.usedim) u.usedim]);
+% if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+%     o=permute(o,[2 1 3]);
+%     a=permute(a,[2 1 3]);
+%     TX=permute(TX,[2 1 3]);
+% end
+% if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+%     o=flipdim(o,1);
+%     a=flipdim(a,1);
+%     TX=flipdim(TX,1);
+% end
+
+
+ 
+%———————————————————————————————————————————————
+%%   otsu3Dmontage_post
+%———————————————————————————————————————————————
+function otsu3Dmontage_post(e,e2)
+% 'post3d'
+hf3=findobj(0,'tag','otsu3d');
+v=get(hf3,'userdata');
+
+% if strcmp(get(e,'tag'),'otsu3D_alpha')
+alpha      =str2num(get(findobj(hf3,'tag','otsu3D_alpha'),'string'));
+docontour  =       (get(findobj(hf3,'tag','otsu3Dmontage_contour'),'value'));
+
+hfuse=findobj(hf3,'tag','otsu3_bgfgfuse');
+hbgfg=findobj(hf3,'tag','otsu3_bgfg');
+dofuse     =       get(hfuse,'value');
+showbgfg   =       get(hbgfg,'value');
+
+if strcmp(get(e,'tag'),'otsu3_bgfg')
+     if showbgfg==0  %BG-image
+       dx=v.bg; 
+    else             %FG-image
+      dx=v.ma;
+    end
+    set(hfuse,'value',0);
+else %FUSE
+    if dofuse==1
+        set(hbgfg,'value',0)
+        v.fus3=(v.bg.*(1-alpha)+v.ma.*(alpha)  );
+        dx=v.fus3;
+    else
+        set(hbgfg,'value',0);
+        set(hfuse,'value',0);
+        otsu3Dmontage_post(hbgfg,[]);
+        return
+    end
+end    
+if dofuse==0
+    set(hfuse,'value',0);
+    if showbgfg==0  %BG-image
+       dx=v.bg; 
+    else             %FG-image
+      dx=v.ma;
+    
+    end
+end %fuse
+
+v.him=findobj(gca,'type','image');
+if ~isempty(v.him);    set(v.him,'cdata',dx);
+else;                  v.him=image(dx);
+end;
+xlim([.5 size(dx,2)+.5]);       ylim([.5 size(dx,1)+.5]);
+
+set(gcf,'userdata',v);
+
+
+if docontour==1
+    hold on;contour(v.o2,size(v.numcols,1));
+    colormap(v.colmat);
+else
+    delete(findobj(gca,'type','contour'));
+end
+
+
+
+
+
+
+%———————————————————————————————————————————————
+%%   otsu-2d !!!
+%———————————————————————————————————————————————
+
 
 function pb_otsucut(e,e2,par)
 hf=findobj(0,'tag','otsu');
@@ -1620,8 +2102,10 @@ set(hb,'tooltipstring',['saving options' char(10) '']);
 list={'save: mask [sm]' %'save: masked image [smi]'
     'save background-image: mask-value 0 is filled with 0-values)    [smi00]'
     'save background-image: mask-value 0 is filled with mean-values) [smi0m] '
+    'save background-image: mask-value 0 is filled with neighbouring values) [smi0nv]'
     'save background-image: mask-value 1 is filled with 0-values)    [smi10]'
     'save background-image: mask-value 1 is filled with mean-values) [smi1m]'
+    'save background-image: mask-value 1 is filled with neighbouring values) [smi1nv]'
     };
 set(hb,'string',list);
 
@@ -1633,15 +2117,16 @@ set(hb,'position',[ .0 .95 .08 .04],'string','otsu', 'callback',{@pb_otsu,1});
 set(hb,'fontsize',7,'backgroundcolor','w','fontweight','bold');
 set(hb,'tooltipstring',['otsu thresholding ' char(10) '[o] shortcut']);
 
-% %otsu -number of classes
-% hb=uicontrol('style','edit','units','norm', 'tag'  ,'ed_otsu','value',0);
-% set(hb,'position',[ .08 .95 .04 .04],'string','3', 'callback',{@pb_otsu,1});
-% set(hb,'fontsize',7,'backgroundcolor','w','fontweight','bold');
-% set(hb,'tooltipstring',['otsu define number of classes/clusters' char(10) 'xx']);
+%otsu -button
+hb=uicontrol('style','togglebutton','units','norm', 'tag'  ,'pb_otsu3D','value',0);
+set(hb,'position',[ .08 .95 .08 .04],'string','otsu3D', 'callback',@pb_otsu3D);
+set(hb,'fontsize',7,'backgroundcolor','w','fontweight','bold');
+set(hb,'tooltipstring',['otsu-3D thresholding ' char(10) '--']);
+
 
 %3d-otsu
 hb=uicontrol('style','radio','units','norm', 'tag'  ,'rd_otsu3d','value',0);
-set(hb,'position',[ .12 .95 .08 .04],'string','3dotsu','callback',{@pb_otsu,1});
+set(hb,'position',[ .18 .95 .08 .04],'string','3dotsu','callback',{@pb_otsu,1});
 set(hb,'fontsize',6,'backgroundcolor','w','fontweight','bold');
 set(hb,'tooltipstring',['[]2d vs [x]3d otsu' char(10) '']);
 
@@ -2262,7 +2747,30 @@ elseif ~isempty(regexpi(saveop,'\[smi10\]'))
 elseif ~isempty(regexpi(saveop,'\[smi1m\]'))
     % 55
     m=~(u.b>0);
-    c=u.a.*m+(m==0).*mean(u.a(:));
+    val=mean(u.a(m==1));
+    
+    if isnan(val); 
+        warndlg({'no mask found' '..saving step aborted..'});
+        return
+    end
+    c=u.a.*m+(m==0).*val;
+    dt=u.ha.dt;
+else ~isempty(regexpi(saveop,'\[smi1nv\]')) || ~isempty(regexpi(saveop,'\[smi0nv\]'))
+    m=double(~(u.b>0));
+    if ~isempty(regexpi(saveop,'\[smi0nv\]'))
+        m=~m;
+    else
+    for i=1:size(m,3)
+        m(:,:,i)=imfill(m(:,:,i),'holes');
+        m(:,:,i)=imerode(m(:,:,i),strel('disk',2));
+    end
+    end
+    m(m==0)=nan;
+    as=u.a.*m;
+    af=snip_inpaintn(as,10);
+    %montage2(af); title('fil')
+    
+    c=af;
     dt=u.ha.dt;
 end
 
@@ -2277,7 +2785,9 @@ end
 % save
 % ===============================================
 newmask=fullfile(pa,fi);
-rsavenii(newmask,u.hb,c,dt);
+% rsavenii(newmask,u.hb,c,dt);
+rsavenii(newmask,u.ha,c);
+
 try
     showinfo2('new mask',u.f1,newmask,13);
 end

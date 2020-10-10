@@ -161,6 +161,18 @@
 % - access via ANT-menu: Tools/draw mask
 % #ra 07 Oct 2020 (12:56:31)
 % [xdraw] : debug, added measuring tool (distance in mm/pixel and angle)
+% #ra 13 Oct 2020 (10:46:14)
+% EXVIVO APPROACH: coregistration approach for splitted multi-tube skullstripped (exvivo) animals. 
+% The problem is the high intensity of the preserving substance enclosing the animal brain. 
+% This resulted in a defective brain mask with subsequent suboptimal rigid registration. 
+% Solution: In the settings menu (gearwheel icon) set [usePriorskullstrip] to [4] and set the parameter
+% file for rigid transformation [orientelxParamfile] to "..mypath\..\trafoeuler5_MutualInfo.txt"
+% This has two effects: First, background intensity is removed and a peudo-mask of 't2.nii' ("_msk.nii")
+% is created. Second, mutual information is used as metric for rigid transformation.
+% [antconfig] settings menu (gear wheel icon) has finally obtain a help window
+% Access: When creating a new project (Menu: Main/new project) or selecting the [gear wheel icon]  
+% obtain the help window via bulb-icon (lower left corner of the paramter file)
+
 
 
 %----- EOF
@@ -168,7 +180,6 @@
 
 
 function antver(varargin)
-
 % r=preadfile(which('antver.m')); r=r.all;
 r=strsplit(help('antver'),char(10))';
 ichanges=regexpi2(r,'#*20\d{2}.*(\d{2}:\d{2}:\d{2})' );
@@ -186,8 +197,6 @@ end
 uhelp(r,0, 'cursor' ,'end');
 set(gcf,'NumberTitle','off', 'name', 'ANTx2 - VERSION');
 % uhelp('antver.m');
-
-
 if 0
     clipboard('copy', [    ['% #ra '   datestr(now,'dd mmm yyyy (HH:MM:SS)') repmat(' ',1,0) ]           ]);
     clipboard('copy', [    ['% #T '   datestr(now,'dd mmm yyyy (HH:MM:SS)') '' ]           ]);
