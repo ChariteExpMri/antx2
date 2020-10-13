@@ -67,7 +67,7 @@ try
     % pause(.1);
     warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
     jframe=get(gcf,'javaframe');
-    icon=fullfile(fileparts(which('antver.m')),'mouse.png');
+    icon=fullfile(fileparts(which('ant.m')),'mouse.png');
     %icon='O:\data\karina\brain.gif'
     jIcon=javax.swing.ImageIcon(icon);
     jframe.setFigureIcon(jIcon);
