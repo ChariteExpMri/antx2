@@ -4,15 +4,16 @@
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**13 Oct 2020 (10:46:14)**</ins>  
   EXVIVO APPROACH: coregistration approach for splitted multi-tube skullstripped (exvivo) animals.   
-  The problem is the high intensity of the preserving substance enclosing the animal brain.   
+  The problem is the high intensity of the preserving substance enclosing the animal's brain.   
   This resulted in a defective brain mask with subsequent suboptimal rigid registration.   
   Solution: In the settings menu (gearwheel icon) set **[usePriorskullstrip]** to **[4]** and set the parameter  
   file for rigid transformation **[orientelxParamfile]** to "..mypath\..\trafoeuler5_MutualInfo.txt"  
   This has two effects: First, background intensity is removed and a peudo-mask of 't2.nii' ("_msk.nii")  
   is created. Second, mutual information is used as metric for rigid transformation.  
-  **[antconfig]** settings menu (gear wheel icon) has finally obtain a help window  
-  Access: When creating a new project (Menu: Main/new project) or selecting the **[gear wheel icon]**    
-  obtain the help window via bulb-icon (lower left corner of the paramter file)  
+    
+  PARAMTER SETTING **[antconfig]** (gear wheel icon) has finally obtained a help window.  
+   Access: When creating a new project (Menu: Main/new project) or selecting the **[gear wheel icon]**    
+   obtain the help window via bulb-icon (lower left corner of the paramter file)  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 Oct 2020 (12:56:31)**</ins>  
   **[xdraw]** : debug, added measuring tool (distance in mm/pixel and angle)  
