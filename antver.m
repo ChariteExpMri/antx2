@@ -160,7 +160,7 @@
 % tools, calculate volume for each mask-region, save as mask or save masked background image
 % - access via ANT-menu: Tools/draw mask
 % #ra 07 Oct 2020 (12:56:31)
-% [xdraw] : debug, added measuring tool (distance in mm/pixel and angle)
+% -[xdraw] : debug, added measuring tool (distance in mm/pixel and angle)
 % #ra 13 Oct 2020 (10:46:14)
 % EXVIVO APPROACH: coregistration approach for splitted multi-tube skullstripped (exvivo) animals. 
 % The problem is the high intensity of the preserving substance enclosing the animal's brain. 
@@ -170,7 +170,7 @@
 % This has two effects: First, background intensity is removed and a peudo-mask of 't2.nii' ("_msk.nii")
 % is created. Second, mutual information is used as metric for rigid transformation.
 % 
-% PARAMTER SETTING [antconfig] (gear wheel icon) has finally obtained a help window.
+% -PARAMTER SETTING [antconfig] (gear wheel icon) has finally obtained a help window.
 %  Access: When creating a new project (Menu: Main/new project) or selecting the [gear wheel icon]  
 %  obtain the help window via bulb-icon (lower left corner of the paramter file)
 

@@ -11,12 +11,12 @@
   This has two effects: First, background intensity is removed and a peudo-mask of 't2.nii' ("_msk.nii")  
   is created. Second, mutual information is used as metric for rigid transformation.  
     
-  PARAMTER SETTING **[antconfig]** (gear wheel icon) has finally obtained a help window.  
+  -PARAMTER SETTING **[antconfig]** (gear wheel icon) has finally obtained a help window.  
    Access: When creating a new project (Menu: Main/new project) or selecting the **[gear wheel icon]**    
    obtain the help window via bulb-icon (lower left corner of the paramter file)  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 Oct 2020 (12:56:31)**</ins>  
-  **[xdraw]** : debug, added measuring tool (distance in mm/pixel and angle)  
+  -**[xdraw]** : debug, added measuring tool (distance in mm/pixel and angle)  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Oct 2020 (03:45:46)**</ins>  
   **[xdraw]** draw a (multi-) mask manually , improved version, allows otsu-segmentation, new image drawing  
