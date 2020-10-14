@@ -173,7 +173,8 @@
 % - PARAMTER SETTING [antconfig] (gear wheel icon) has finally obtained a help window.
 %  Access: When creating a new project (Menu: Main/new project) or selecting the [gear wheel icon]  
 %  obtain the help window via bulb-icon (lower left corner of the paramter file)
-
+% #ra 14 Oct 2020 (02:03:47)
+% - [xdraw] drawing mask tool now includes a 3D-otsu segmentation 
 
 
 %----- EOF

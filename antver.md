@@ -1,7 +1,10 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   13 Oct 2020 (10:46:14)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   14 Oct 2020 (02:03:47)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**14 Oct 2020 (02:03:47)**</ins>  
+  - **[xdraw]** drawing mask tool now includes a 3D-otsu segmentation   
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**13 Oct 2020 (10:46:14)**</ins>  
   - EXVIVO APPROACH: coregistration approach for splitted multi-tube skullstripped (exvivo) animals.   
   The problem is the high intensity of the preserving substance enclosing the animal's brain.   
