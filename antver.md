@@ -1,7 +1,10 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   14 Oct 2020 (02:03:47)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   14 Oct 2020 (17:53:20)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**14 Oct 2020 (17:53:20)**</ins>  
+  - **[xdraw]** drawing mask tool: added contours and contour-based segmentation, completed help  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**14 Oct 2020 (02:03:47)**</ins>  
   - **[xdraw]** drawing mask tool now includes a 3D-otsu segmentation   
 <!---->

@@ -37,19 +37,10 @@
 % 'fontsize': value              -set listbox fontsize 
 % 'name'    : (string)           - name of the figure (appears in the upper window frame)
 % 'bgcolor' : [R G B]/matlab-color-string - background color; example ..'bgcolor','r'.. or 'bgcolor',[1 .9 .9]...
-
+% 
 % EXAMPLES
 % uhelp(his, 1, 'cursor' ,'end','lbpos',[0 .025 1 .95] );           
 % uhelp(cell, 0/1, 'cursor' ,'end' )   ;%places cursor to the end
-
-%
-%% COLORCODE
-% e2={'ee3e' ; 'blll ## HASH ' ;'blll ### HASH ### ddede' ;'blll #### HASH ddede';' ## ------------------------------' };
-% uhelp(e2)
-% e2={'ee3e' ; ' § [h] § [heute]  ; § [m] § morgen '};uhelp(e2)
-% % uhelp({' #cm rote KORRELATION #k ccrrc #ky blob';' #c deddeede'});
-% uhelp(e2)
-%
 %% ##wg _______EXAMPLES_______________________________________________
 %% #bl              MOUSE-LISTBOX
 %% #bx           MOUSE-LISTBOX
@@ -60,6 +51,15 @@
 %% #kd _MOUSE-LISTBOX_
 %% #ra _MOUSE-LISTBOX_
 %% #rd _MOUSE-LISTBOX_
+%
+%% COLORCODE
+% e2={'ee3e' ; 'blll ## HASH ' ;'blll ### HASH ### ddede' ;'blll #### HASH ddede';' ## ------------------------------' };
+% uhelp(e2)
+% e2={'ee3e' ; ' § [h] § [heute]  ; § [m] § morgen '};uhelp(e2)
+% % uhelp({' #cm rote KORRELATION #k ccrrc #ky blob';' #c deddeede'});
+% uhelp(e2)
+%
+
 %
 % HREF-matlab-workspace
 % disp(['BATCH: <a href="matlab: uhelp({'' #r RED'' ;'' #g green''},1,''cursor'',''end'')">' 'show history' '</a>'  ]);

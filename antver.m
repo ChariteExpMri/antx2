@@ -175,7 +175,8 @@
 %  obtain the help window via bulb-icon (lower left corner of the paramter file)
 % #ra 14 Oct 2020 (02:03:47)
 % - [xdraw] drawing mask tool now includes a 3D-otsu segmentation 
-
+% #ra 14 Oct 2020 (17:53:20)
+% - [xdraw] drawing mask tool: added contours and contour-based segmentation, completed help
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
