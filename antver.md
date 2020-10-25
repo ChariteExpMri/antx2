@@ -1,7 +1,14 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   14 Oct 2020 (17:53:20)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   25 Oct 2020 (21:33:14)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**25 Oct 2020 (21:33:14)**</ins>  
+   **[xdraw]** drawing mask tool: refurbished, containing tools:   
+    - advanced saving options,   
+    - contour line segmentation  
+    - ROI manipulation (translate/rotate/flip/copy/replace)  
+    -TODO: test MAC & LINUX  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**14 Oct 2020 (17:53:20)**</ins>  
   - **[xdraw]** drawing mask tool: added contours and contour-based segmentation, completed help  
 <!---->

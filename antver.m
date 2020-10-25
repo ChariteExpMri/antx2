@@ -177,6 +177,13 @@
 % - [xdraw] drawing mask tool now includes a 3D-otsu segmentation 
 % #ra 14 Oct 2020 (17:53:20)
 % - [xdraw] drawing mask tool: added contours and contour-based segmentation, completed help
+% #ra 25 Oct 2020 (21:33:14)
+%  [xdraw] drawing mask tool: refurbished, containing tools: 
+%   - advanced saving options, 
+%   - contour line segmentation
+%   - ROI manipulation (translate/rotate/flip/copy/replace)
+%   -TODO: test MAC & LINUX
+%
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

@@ -110,6 +110,7 @@ end
 %________________________________________________
 
 us=[];
+us.figtag='montage2.m';
 us.hd=hd;
 us.d =d;
 us.fname=fname;
@@ -285,6 +286,14 @@ function motion(h,e)
 
 
 try
+    u=get(gcf,'userdata');
+    if strcmp(u.figtag,'montage2.m')~=1; %prevent op on other fig
+        return
+    end
+    
+
+    
+    
     pos=get(gca,'CurrentPoint');
     pos=round(pos(1,1:2));
     pos=fliplr(pos);

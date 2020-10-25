@@ -1,19 +1,18 @@
 
 
 % #ok xdraw (xdraw.m)
-% Manually draw mask.
-% This mask can contain several ROIs/masks with different numeric values (IDs).
+% draw mask manually
+% The mask can contain several ROIs with different numeric values (IDs).
 % Input: a background file and optional a mask file (or unfinished mask).
-% #r: at the current development stage don't use an atlas-file with to many ROI-IDs
+% #r: please avoid to load a mask with more than 150 different IDs
 % #b for more information see coltrol's tooltips
 % ________________________________________________________________________________
-% #lk *** [1] HOW TO DRAW ***
-% #ka *** Draw MASK ***
+% #lk *** [1] HOW TO DRAW A ROI ***
+% #ka *** Draw ROI ***
 % --> deselect [unpaint]-button (gray color)
 % * Keep the left mouse-button pressed to draw .. colorize pixels below pointer.
 % * Double-click to fill a region (boundaries of region must be closed)
-% * Single click right mouse button to remove region below pointer
-% #ka *** REMOVE MASK ***
+% #ka *** REMOVE ROI ***
 % --> select [unpaint]-button (orange color)
 % * Keep the left mouse-button pressed to unpaint .. remove colorized pixels below pointer.
 % * Single click right mouse button to remove region below pointer
@@ -26,24 +25,22 @@
 % #x -----------------------------------------
 % #b [otsu][o]        #n  2D-otsu segmentation using the current slice. This will open another figure
 %                     #r see below for more details
-% #b [otsu]           #n  3D-otsu segmentation. This will open another figure.
+% #b [otsu3D]         #n  3D-otsu segmentation. This will open another figure.
 %                     #r see below for more details
-% #b [contour][-]     #n  Draw contours. You can you the contours for segmentation
+% #b [contour][-]     #n  Draw contours. You can use the contours for segmentation
 %                     #r see below for more details
+%                     -only available if [vis] checkbox in in contour-panel(bottom) is disabled
 % #b [contourlines]   #n  number of contour lines to draw.
-% #b [unpaint][u]     #n  remove drawn location, toggle between drawing and unpainting mode
-%                       -If 'on': the 'unpainting' mode erases all IDs in voxels below the moved
-%                        brush-pointer when left mouse button is down.
-%                       -If 'off': the 'drawing' mode is enabled and voxels below the moved
-%                        brush-pointer obtain the current ID when left mouse button is down
+% #b [Thresh tool]    #n use Thresh-tool to segment regions (2D)
+%                     #r see below for more details
+%                     -works best in combination with drawng tools ("rectangle") to preselect an area
+%                     -This area can be recalled and used for other slices (for the samme dim) via shortcut [#]
+%                     #m not really tested with with multiple IDs
 % ________________________________________________________________________________
-% #b [undo] [x] or [ctr+x]    #n  undo last step(s)
-%                       -go back to a previous step as long as the slice-number/dimension is not changed.
-% #b [redo][y] or [ctr+y]    #n  redo last step(s)
-%                       -..as long as the slice-number/dimension is not changed.
-% #b hist 1/1        #n shows current step of n-history steps 
+% #b [ax normal]     #n  axis layout. [0] normal [1] image, 
+%                    - use [1] to obtain realistic wide height ratio of the slice
 % ________________________________________________________________________________
-% #b [show legend][l] #n  show/hide legend with drawn IDs
+% #b [show legend][l] #n show/hide legend with drawn IDs
 %                       -shows for each drawn ID the respective color, number of voxels and volume
 % #b [i] [i]          #n  show information:
 %                                   File-information,
@@ -65,24 +62,38 @@
 % #b [flipud]     #n flip upside-down current slice
 %
 % #b [transparency]  #n set transparency  of the mask range 0-1
-% #b [hide mask] [h] #n shortly hide mask
-%                    -alternatively, use [space] shortcut to toggle between bg-image and mask
 % ________________________________________________________________________________
 % #kl *** Right-side CONTROLS ***
+% #b [hand-icon]  #n drag panel to another position
 % #b [config]  #n change configuration
-%                   -change some of the paramters
+%                   -change some of the parameters
 %                   * auto-focus windo below mouse (might be of help for otsu-operations)
 %                   * show/hide toolbar
 % #b [help]    #n open help window
-% 
+%
 % #b [contrast][s]    #n adjust contrast; If enabled, use default contrast enhancement
 %                     'auto' from the right pulldown-menu
 %                     -change contrast values in right pull-down menu ('auto')
 % #b [auto]          #n puldown with min/max values for low and high cotrast enhancing values
 %                    -changes apply only if [contrast] is enabled
 %                    -you can also edit two values (min max value in range between 0 and 1)
-% #b [clear]         #n clear mask of current slice/clear entire 3d mask
-%                    #r shortcut [c] clears the mask of the current image
+% #b [clear]         #n remove all ROIs from current slice/all slices
+%                    #r shortcut [c] remove all ROIs from current slice
+%                    #r shortcut [ctrl+c] remove all ROIs from all slices
+% #b [XYZ]          #n show xyz-coordinates and value below mouse pointer
+% #b [fillNB]       #n filling-option, use next neighbouring ID (via double click)
+%                       [0] fills ROI with currently defined ID ( defined in edit field [ID])
+%                       [1] fills ROI with ID  thas is closest to the mouse pointer
+% #b [newID]        #n change ID of a ROI
+%                    - click this button, than click onto a ROI and type the new ID in the messagebox 
+% #b [fill_loc]    #n filling-option, fill local/all holes
+%                       [0] fill all holes of the ROI 
+%                       [1] fill only local ROI, in case there are several holes
+% #b [clifi]        #n close a region/combine disconnected lines/points and fill them
+%                    - THIS DEALS WITH DISCONNECTED SHAPES
+%                    - click this button,than move mouse pointer to the location to close and fill area
+%                    - THE filling ID is determined by nearest neighbouring ID  
+%                    - currently works by iteration and stops when first local fill elements was found
 %% #r  ________________________________________________________________________________
 % #r [special drawing tools]
 % #b [freehand]  [1] #n freehand drawing
@@ -106,8 +117,48 @@
 % #r [ID list]   #n list of all IDs (numeric values) found in the 3D-mask
 %                -select one of the IDs in the list to use selected ID as current ID
 %
-% #b [measure distance]  #n This tool allows to measure a distance (mm & pixels) and angle between
+%% #r  ________________________________________________________________________________
+%
+% #b [ROI OPERATION][r]   #n This tool allows to move, rotate and replicate ROIS
+%        - you can replicate a ROI in the same slice or copy it to other/all slices
+%        - First click this button, than click onto ROI:
+%            A patch object is overlayed over the ROI. Here you can use:
+%             [x] to close the patch/ROI Operation 
+%             [hand icon]  to drag the patch
+%             [slider]  -to rotate the patch
+%                       -the contextmenu allso allows to:
+%                            * rotate patch by fixed angle (45    90   135   180   -45   -90  -135  -180 degrees)
+%                            * rotate to origin
+%                            * flip patch horizontally
+%                            * flip patch vertically
+% The patch-context menu allows to:
+%        -COPY ROI:   ..i.e. the patch on the same slice
+%            - The translated/rotated/flipped patch will be copied!!!
+%            - you can specify the ID
+%        -REPLACE ROI ...first ranslate/rotate/flip patch to see a result
+%        -DELETE ROI mother  deletes the original ROI (not the patch)
+%        -COPY ROI TO OTHER SLICES: allows to copy the patch object to all/defined slices
+%           #r Currently, the history works only on the current slice. Whenn copying a ROI to
+%           #r other slices the history does not update the changes on the other slices
+%
+% #b [measure distance][ctrl+m] #n measure distance tool: mm, pixels and angle between
 %                        two points (squares). Move the two squares to the respective position.
+%                      click [x] button or, [q]-shortcut or [measure distance] btn to quit
+% ________________________________________________________________________________
+% #b [undo] [x] or [ctr+x]    #n  undo last step(s)
+%                       -go back to a previous step as long as the slice-number/dimension is not changed.
+% #b [redo][y] or [ctr+y]    #n  redo last step(s)
+%                       -..as long as the slice-number/dimension is not changed.
+% #b hist 1/1        #n shows current step of n-history steps
+% ________________________________________________________________________________
+% #b [unpaint][u]     #n  remove drawn location, toggle between drawing and unpainting mode
+%                       -If 'on': the 'unpainting' mode erases all IDs in voxels below the moved
+%                        brush-pointer when left mouse button is down.
+%                       -If 'off': the 'drawing' mode is enabled and voxels below the moved
+%                        brush-pointer obtain the current ID when left mouse button is down
+% #b [hide mask] [h] #n show/hide mask
+%                    - when the mask is hidden, the button changes the color
+% ________________________________________________________________________________
 % #b [WinFocu][a]  #n If 'on' the window below mouse pointer (hover effect) becomes focused/active.
 %               -This option is usefull for otsu-segmentation (two windows are open). By default ('off'),
 %                one has to select the other non-active window to use it's functions. Using the auto-
@@ -119,8 +170,12 @@
 %
 % #b [saving options] #n select the type of image to saved (mask, masked image)
 %                   * mask only
-%                   * different types of masking the background image. See pull-down menu.
-% #b [save]  #n save the image ...saving mode depends on [saving options]
+%               #r  * use  "Advanced saving options (mskman.m)" to combine the mask with other images
+%                       -theshold mask, combine mask with another mask or other images 
+%                       -apply mask with background image
+%                   
+%                   * (older): different types of masking the background image. See pull-down menu.
+% #b [save]  #n save the image ...saving mode depends on [saving options] pulldown menu
 %
 % #lk ***  [3.1] SLICEWISE (2D) OTSU Segmentation ***
 % Clicking the otsu button opens a new window with otsu segmentation of the current slice
@@ -143,7 +198,7 @@
 % #x change the otsu-classes (up/down arrows) and median filter (ctrl+up/down arrows),
 % #x undo/redo steps (ctrl+x/y) or clear the slice (c).
 % #x Try the window auto-focus mode (enabled via configuration settings)
-% 
+%
 % #lk *** [3.2] 3D-OTSU Segmentation ***
 % Available via button [Otsu3D]. This option can be used to transmit ostu-segments (regions) for
 % the entire volume (compared to [Otsu2D] which works on a slice-by-slice basis).
@@ -151,8 +206,8 @@
 % The auto-contrast option seems to be ok.
 % In the OTSU-3D figure you can change the number of classes for otsu-segmentation and whether to
 % median filter [0,1] the data and with with pixel-length
-% - For better visualization use the #b [crop slices] #n button, which removes unneccessary bordering 
-%   (background) colomns/rows. 
+% - For better visualization use the #b [crop slices] #n button, which removes unneccessary bordering
+%   (background) colomns/rows.
 % - Decide whether to see a fused image  #b [fuse bg/fg]-radio #n or the background and otsu clusters
 %   separately via #b [BG or FG] radio.
 % - #b [contour] #n adds a contour-plot
@@ -166,15 +221,43 @@
 % =======================================================================================
 % #r: History undo/redo steps currently not supported for [Otsu3D]
 % =======================================================================================
-% 
-% #lk *** [3.3] CONTOUR Segmentation ***
-% This is a 2D (slice-wise)-method using contourlines. 
+%
+% #lk *** [3.3] SINGLE-CONTOUR Segmentation ***  ()
+% --> see lower panel
+% This is a 2D (slice-wise)-method using a single contourline.
+% [hand icon]  - shift the contour panel to another position
+% [vis]       - show/hide contourline
+%                * context menu allows to change the color of the contour line
+% [slider]    -change contourline by changing the intensity threshold
+%        #b shortcut:  [shift+left/right arrow keys]
+% #b [shift+left mouse click] #n will fill the area within the contour line
+% [F] apply median filter; default 'true', using the filter length defined in the right edit field 
+%
+
+% #lk *** [3.4] MULTI-CONTOUR Segmentation ***  
+% This is a 2D (slice-wise)-method using multiple contourlines.
 % Activate #b [contour] #n radio and a proper number of contour lines
 % #g 1.) Move the pointer (brush) to a location that is surounded  by a contour line
 % #g 2.) [shift]+left mouse-click to transmit this region
 % #g The transmitted region obtains the ID (value) of the currently selected ID.
-% 
-% 
+
+%
+% #lk *** [3.5] Threshold Tool for Segmentation ***
+% -Here an interactive intensity threshold can be used to segment a region
+% -The default uses the enire image (slice). Alternatively you can select for instance the
+%  #b [rectangle] icon #n from the drawing tool to select a subregion of interest.
+%  -Press #b [t]-icon to mark this region as subregion to investigate via thresh-tool
+% #r This selected area can be recalled and used for other slices (for the samme dimension)
+% #g -use #r [rectangle] #g and the  #r icon [t] #g to change the selected region
+% #g use [TreshT.] or shortcut #r [t]  #g to open the threshTool.
+% #g In the threshtool move green slider to adjust the intensity cut-off.
+% #g If the thesholded mask is ok, click onto the respective region in panel-2 to bring
+% #g this region to the output-panel (right). In this way several regions can be
+% #g brought in the output-panel
+% #g select [OK] to transmit this mask to the main window
+% #g The transmitted region obtains the ID (value) of the currently selected ID.
+% #g window.
+
 % ====================================================================================
 % #lk COMMANDLINE
 % xdraw(fullfile(pwd,'AVGT.nii'),[]);  % #g load bg-image, load no mask
@@ -185,6 +268,8 @@
 
 
 function  xdraw(file,maskfile)
+warning off;
+disp('..please wait..');
 try; delete(findobj(0,'tag','otsu'));end
 clear global SLICE
 % ==============================================
@@ -200,7 +285,7 @@ if exist('file')~=1
     file=fullfile(pa,fi);
 end
 u.f1=file;
-[ha a]=rgetnii(u.f1);
+[ha a amm]=rgetnii(u.f1);
 
 % ==============================================
 %%   maskfile
@@ -246,7 +331,7 @@ else
         dlg_title = ['MASKfile: issue' repmat(' ',[1 150])];
         num_lines = 1;
         defaultans = {'1','32'};
-        answer = inputdlg(prompt,dlg_title,num_lines,defaultans,struct('Interpreter','tex'));
+        answer = inputdlg2(prompt,dlg_title,num_lines,defaultans,struct('Interpreter','tex'));
         
         %% procees
         if isempty(answer); return; end
@@ -293,7 +378,7 @@ pp.autofocus                =   0  ;
 pp.toolbar                  =   0  ;
 pp.otsu_numClasses          =   3  ;
 pp.otsu_medianFltLength     =   3  ;
-pp.numColors                =   15 ;
+pp.numColors                =   30 ;
 
 u.config={
     'autofocus'         pp.autofocus           'autofocus figure under mouse{0,1}...no/yes' 'b'
@@ -313,8 +398,13 @@ u.set=pp;
 
 delete(findobj(0,'tag','xpainter'));
 fg;
+% hf1=gcf;
 set(gcf,'units','norm','menubar','none','name','xdraw','NumberTitle','off','tag','xpainter');
 makegui;
+
+% set(findobj(gcf,'tag','waitnow'),'visible','on','string','..wait..');  
+
+
 u.dummy=1;
 set(gcf,'userdata',u);
 
@@ -327,13 +417,28 @@ u.alpha  =.4;
 u.dotsize=5;
 u.dotsizes=([1:200]);
 u.a=a; u.ha=ha;
+
+u.ax=reshape(single(amm(1,:)'),[size(a)]);
+u.ay=reshape(single(amm(2,:)'),[size(a)]);
+u.az=reshape(single(amm(3,:)'),[size(a)]);
+
 u.b=b; u.hb=hb;
 u.dim=u.ha.dim;
 u.lastslices=round(size(u.a)/2);
 u.useslice=u.lastslices(u.usedim) ;%round(u.dim(u.usedim)/2);
 u.contour=0;
 u.contourlines=10;
+% thresh via controus ------
+u.threshcolor=[0     1     0];
 
+
+% global lastmovecords
+% lastmovecords=[];
+
+global lastclicktime;
+lastclicktime.obj=tic;
+lastclicktime.time=toc(lastclicktime.obj);
+% lastclicktime
 
 set(gcf,'userdata',u);
 
@@ -347,6 +452,7 @@ set(gcf,'WindowKeyPressFcn',@keys);
 set(gcf,'SizeChangedFcn', @resizefig);
 set_idlist;
 edvalue([],[]);
+set(findobj(gcf,'tag','waitnow'),'visible','off');  
 
 % ==============================================
 %%   timer
@@ -382,7 +488,7 @@ timercheck();
 function rd_contourdraw(e,e2)
 hf1=findobj(0,'tag','xpainter');
 hb=findobj(hf1,'tag','rd_contourdraw');
-
+set(findobj(gcf,'tag','thresh_visible'),'value',0);
 u=get(hf1,'userdata');
 u.contour=get(hb,'value');
 set(hf1,'userdata',u);
@@ -533,12 +639,14 @@ if isempty(e2.Modifier)==1
         %hgfeval(get( hb ,'callback'),[], 1);
     elseif strcmp(e2.Key,'h')
         figure(hf1);
+        hb=findobj(hf1,'tag','preview');
+        set(hb,'value',~get(hb,'value'));
         cb_preview();
         figure(hf2);
-    elseif strcmp(e2.Key,'space')
-        figure(hf1);
-         hide_mask();
-        figure(hf2);
+%     elseif strcmp(e2.Key,'space')
+%         figure(hf1);
+%         hide_mask();
+%         figure(hf2);
     elseif strcmp(e2.Key,'c')    %clear slice
         figure(hf1);
         hf1=findobj(0,'tag','xpainter');
@@ -554,35 +662,52 @@ if isempty(e2.Modifier)==1
         figure(hf2);
         % elseif strcmp(e2.Key,'t'); % zoom
         %        'a'
-    elseif strcmp(e2.Key,'x'); % cut cluster
+    elseif strcmp(e2.Key,'v'); % cut cluster
         hb= findobj(hf2,'tag','pb_otsucut');
         set(hb,'value',~get(hb,'value'));
         hgfeval(get( hb ,'callback'));
     end
+else
+    figure(hf1);
+    if strcmp(e2.Modifier,'control')
+        if strcmp(e2.Key,'x')           % # undo
+            pb_undoredo([],[],-1);
+        elseif strcmp(e2.Key,'y')      % # redo
+            pb_undoredo([],[],+1);
+        end
+        
+        if strcmp(e2.Key,'uparrow') || strcmp(e2.Key,'downarrow')
+            hb=findobj(hf2,'tag','otsu_medfilt_val');
+            medfiltlength=str2num(get(hb,'string'));
+            if strcmp(e2.Key,'uparrow');
+                medfiltlength=medfiltlength-1;
+                if medfiltlength<1;              medfiltlength=1  ;      end
+            else
+                medfiltlength=medfiltlength+1;
+            end
+            set(hb,'string',num2str(medfiltlength));
+            hgfeval(get(hb,'callback'),[],1);
+        end
+    end
 end
 
-figure(hf1);
-if strcmp(e2.Modifier,'control')
-    if strcmp(e2.Key,'z')
-        pb_undoredo([],[],-1);
-    elseif strcmp(e2.Key,'y')
-        pb_undoredo([],[],+1);
-    end
-    
-    if strcmp(e2.Key,'uparrow') || strcmp(e2.Key,'downarrow')
-        hb=findobj(hf2,'tag','otsu_medfilt_val');
-        medfiltlength=str2num(get(hb,'string'));
-        if strcmp(e2.Key,'uparrow');
-            medfiltlength=medfiltlength-1;
-            if medfiltlength<1;              medfiltlength=1  ;      end
-        else
-            medfiltlength=medfiltlength+1;
-        end
-        set(hb,'string',num2str(medfiltlength));
-        hgfeval(get(hb,'callback'),[],1);
-    end
-end
 figure(hf2);
+
+function slid_thresh_set(stepsize)
+hp3 =findobj(gcf,'tag','panel3'); %panel3
+hvis=findobj(hp3,'tag','thresh_visible'); %visible
+if get(hvis,'value')==1
+    hs=findobj(hp3,'tag','slid_thresh');
+    val=get(hs,'value');
+    val=get(hs,'value')+stepsize;
+    if val<=0; val=0; end
+    if val>1; val=1; end
+    
+    set(hs,'value',val);
+    
+    slid_thresh();
+end
+
 
 % ==============================================
 %% main fig key
@@ -593,9 +718,100 @@ try
         return
     end
 end
- hf1=findobj(0,'tag','xpainter');
+hf1=findobj(0,'tag','xpainter');
 
-if strcmp(e2.Key,'leftarrow')
+
+% ==============================================
+%%   fig-shortcuts: shift
+% ===============================================
+
+if strcmp(e2.Modifier,'shift')
+    hp3 =findobj(gcf,'tag','panel3'); %panel3
+    %disp('shift-not defined');
+    if  strcmp(e2.Key,'leftarrow')                        %slider contour -L
+        
+        hvis=findobj(hp3,'tag','thresh_visible'); %visible
+        if get(hvis,'value')==1
+            slid_thresh_set(-.01);
+        end
+    elseif strcmp(e2.Key,'rightarrow')                     %slider contour -R
+        
+        hvis=findobj(hp3,'tag','thresh_visible'); 
+        if get(hvis,'value')==1
+            slid_thresh_set(+.01);
+        end
+    elseif strcmp(e2.Key,'c')                                 % visible contour
+        hc=findobj(hp3,'tag','thresh_visible');
+        set(hc,'value', ~get(hc,'value'));
+       slid_thresh();
+    end
+    
+    
+    return
+end
+
+% ==============================================
+%%   fig-shortcuts: CTRL
+% ===============================================
+if strcmp(e2.Modifier,'control')
+    if strcmp(e2.Key,'x')
+        pb_undoredo([],[],-1);         % #undo
+    elseif strcmp(e2.Key,'y')
+        pb_undoredo([],[],+1);         % #redo
+     elseif strcmp(e2.Key,'c')  %delete all  
+         hf1=findobj(0,'tag','xpainter');
+         hb=findobj(hf1,'tag','clear mask');
+         
+          BTN = questdlg('Clear all ROI''s from all slices?', 'CLEAR ROIs', 'Yes', 'No', 'Yes');
+          if strcmp(BTN,'No'); return; end
+           
+         ix_curr=get(hb,'value');
+         ix_clearAll=find(~cellfun('isempty',strfind(hb.String,'all slices')));
+         set(hb,'value',ix_clearAll);
+         drawnow
+         %hgfeval(get(hb,'callback'),[],[]);
+        cb_clear()
+         set(hb,'value',ix_curr);
+      elseif strcmp(e2.Key,'m')  % distance measure 
+          hb=findobj(gcf,'tag','pb_measureDistance');
+          set(hb,'value',~get(hb,'value'));
+          pb_measureDistance();
+          %     elseif strcmp(e2.Key,'leftarrow')
+          %         hp3 =findobj(gcf,'tag','panel3'); %panel3
+%         hvis=findobj(hp3,'tag','thresh_visible'); %visible
+%         if get(hvis,'value')==1
+%             slid_thresh_set(-.01);
+%         end
+%     elseif strcmp(e2.Key,'rightarrow')
+%         hp3 =findobj(gcf,'tag','panel3'); %panel3
+%         hvis=findobj(hp3,'tag','thresh_visible'); %visible
+%         if get(hvis,'value')==1
+%             slid_thresh_set(+.01);
+%         end
+        
+    end
+    return
+end
+
+% e2
+if strcmp(e2.Key,'escape')
+    hb=findobj(gcf,'tag','pb_im_break');
+    if ~isempty(hb)
+        hgfeval(get(hb,'callback'),[],[]);  % QUIT IMDRAWTOOLS-DECISSION-STATE
+        return
+    end
+    hb=findobj(gcf,'tag','patch_remove');
+    if ~isempty(hb)
+        hgfeval(get(hb,'callback'),[],[]);  % QUIT ROI operation tool
+        return
+    end
+    hb=findobj(gcf,'tag','pb_deldistfun'); %quit distance tool
+    if ~isempty(hb)
+        hgfeval(get(hb,'callback'),[],[]);  % QUIT ROI operation tool
+        return
+    end
+    
+elseif strcmp(e2.Key,'leftarrow')
     cb_setslice([],[],'-1');
 elseif strcmp(e2.Key,'rightarrow')
     cb_setslice([],[],'+1');
@@ -616,6 +832,8 @@ elseif strcmp(e2.Key,'uparrow') || strcmp(e2.Key,'downarrow')
     definedot([],[]);
 elseif strcmp(e2.Key,'f');
     cb_fill();
+elseif strcmp(e2.Key,'r')
+        pb_patch();
 elseif strcmp(e2.Key,'s');        %saturate contrast
     hf1=findobj(0,'tag','xpainter');
     hb=findobj(hf1,'tag','cb_adjustIntensity');
@@ -667,10 +885,12 @@ elseif strcmp(e2.Key,'u')
     if get(o,'value')==0; set(o,'value',1); else; set(o,'value',0); end
     undo();
 elseif strcmp(e2.Key,'h')
+    hb=findobj(hf1,'tag','preview');
+    set(hb,'value',~get(hb,'value'));
     cb_preview();
 elseif strcmp(e2.Key,'space')
-    hide_mask();
-    return
+%     hide_mask();
+%     return
     
     
 elseif strcmp(e2.Key,'b')
@@ -692,22 +912,26 @@ elseif strcmp(e2.Key,'c')    %clear slice
     hb=findobj(hf1,'tag','clear mask');
     set(hb,'value',1);
     hgfeval(get(hb,'callback'),[],[]);
+    
+    
 elseif strcmp(e2.Key,'o')
     hf1=findobj(0,'tag','xpainter');
     hb=findobj(hf1,'tag','pb_otsu');
     set(hb,'value',~get(hb,'value') );
     pb_otsu([],[],1);
     
-elseif strcmp(e2.Key,'z')
+elseif strcmp(e2.Key,'x')   % # undo
     pb_undoredo([],[],-1);
-elseif strcmp(e2.Key,'y')
+elseif strcmp(e2.Key,'y')   % # redo
     pb_undoredo([],[],+1);
 elseif strcmp(e2.Key,'m')
     show_allslices()
 elseif strcmp(e2.Character,'-')
     hb=findobj(hf1,'tag','rd_contourdraw');
     set(hb,'value', ~get(hb,'value'));
-   rd_contourdraw([],[]);
+    rd_contourdraw([],[]);
+elseif strcmp(e2.Character,'#')
+    threshtoolprep();
     % elseif strcmp(e2.Character,'+')
     %     hf1=findobj(0,'tag','xpainter');
     %     hf2=findobj(0,'tag','otsu');
@@ -750,17 +974,205 @@ elseif strcmp(e2.Key,'1') || strcmp(e2.Key,'2') || strcmp(e2.Key,'3')|| strcmp(e
 end
 
 
-if strcmp(e2.Modifier,'control')
-    if strcmp(e2.Key,'z')
-        pb_undoredo([],[],-1);
-    elseif strcmp(e2.Key,'y')
-        pb_undoredo([],[],+1);
+
+
+%———————————————————————————————————————————————
+%%
+%———————————————————————————————————————————————
+
+function pb_Treshtool(e,e2);
+threshtoolprep();
+
+function threshtoolprep()
+
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+
+a=u.bg2d;
+% b=getslice2d(u.b);
+% b=ones(size(b));
+
+b=[];
+if isfield(u,'tempmask')
+    b=u.tempmask;
+end
+
+if isempty(b) ||  any(size(b)==size(a)==0)
+    b=getslice2d(u.b);
+    b=ones(size(b));
+    
+    % ----------------------------------------------------
+    % transpose
+    
+    if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+        %x=permute(r2, [2 1 3]);
+        b=b';
+    end
+    if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+        b=flipud(b);
     end
     
 end
+% ----------------------------------------------------
+%   h=imrect();
+if 1
+    bm=b;
+    % bn=bwlabeln(b);
+    % bm=bn==bn(co(2),co(1));
+    ile=find(sum(bm,1)>0);
+    ido=find(sum(bm,2)>0);
+    %
+    sm=bm(ido,ile);
+    sa=a(ido,ile);
+    % sa(sm==0)=median(sa(sm==1));
+    % fg,imagesc(sa)
+    % [m]=threshtool(sa,struct('medfilt',1,'msk',msk));
+    [m]=threshtool(sa,struct('medfilt',1,'msk',[]));
+    drawnow;
+end
 
-%  e2
-% ''
+if isempty(m); return; end
+
+m2=zeros(size(a));
+m2(ido,ile)=m;
+bw = m2;
+
+% #################
+
+hf1=findobj(0,'tag','xpainter');
+figure(hf1);
+
+u=get(hf1,'userdata');
+
+
+dims=u.dim(setdiff(1:3,u.usedim));
+
+r1=getslice2d(u.a);
+r2=getslice2d(u.b);
+r1=adjustIntensity(r1);
+
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    r1=r1';
+    r2=r2';
+end
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    r1=flipud(r1);
+    r2=flipud(r2);
+end
+
+si=size(r2);
+r2=r2(:);
+r2(bw==1)  =  str2num(get(findobj(hf1,'tag','edvalue'),'string'))  ;
+r2=reshape(r2,si);
+
+%===== update history
+r2n=r2;
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    r2n=flipud(r2n);
+end
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    r2n=r2n';
+end
+
+if sum(any(u.hist(:,:,u.histpointer)-r2n))==0; return; end
+u.histpointer=u.histpointer+1;
+u.hist(:,:,u.histpointer)=r2n;
+
+alp=u.alpha;% .8
+% val=unique(u.b); val(val==0)=[];
+r2v=r2(:);
+r1=mat2gray(r1);
+ra=repmat(r1,[1 1 3]);
+
+rb=reshape(zeros(size(ra)), [ size(ra,1)*size(ra,2) 3 ]);
+val=unique(r2); val(val==0)=[];
+for i=1:length(val)
+    ix=find(r2v==val(i));
+    rb( ix ,:)  = repmat(u.colmat(val(i),:), [length(ix) 1] );
+end
+% rb=reshape(rb,size(ra));
+s1=reshape(ra,[ size(ra,1)*size(ra,2) 3 ]);
+rm=sum(rb,2);
+im=find(rm~=0);
+% s1(im,:)= (s1(im,:)*alp)+(rb(im,:)*(1-alp)) ;
+s1(im,:)= (s1(im,:)*(1-alp))+(rb(im,:)*(alp)) ;
+x=reshape(s1,size(ra));
+
+set(u.him,'cdata',   x  );
+
+
+% u=putsliceinto3d(u,r2,'b');
+r2n=r2;
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    r2n=flipud(r2n);
+end
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    r2n=r2n';
+end
+u=putsliceinto3d(u,r2n,'b');
+set(gcf,'userdata',u);
+undo_redolabel_update();
+
+
+him=findobj(gcf,'tag','image');
+
+hb=findobj(gcf,'tag','pb_nextstep');
+hgfeval(get( hb ,'callback'),[], 1);
+drawnow;
+
+
+
+
+% if sum(m(:))==0; return; end
+
+
+
+return
+
+% [level,bw] = thresh_tool(sa,jet);
+
+%———————————————————————————————————————————————
+%%
+%———————————————————————————————————————————————
+fg;
+h1=axes('position',[0 .4 .4 .4])
+set(h1,'position',[0 .45 .5 .5],'tag','ax1');; axis off;
+h2=axes('position',[0 .4 .4 .4])
+set(h2,'position',[.5 .45 .5 .5],'tag','ax2'); axis off;
+h3=axes('position',[0 .2 1 .2])
+set(h3,'position',[0.05 .24 .9 .2],'tag','ax3'); axis on;
+
+cmap=parula;
+tr  =0.5;
+s=ind2rgb(round(sa.*size(cmap,1)),cmap);
+axes(h1); image(s); title('input')
+%colormap(cmap);
+axes(h2); imagesc(sa>tr);colormap(gray); title('segmented');
+
+axes(h3); imhist(sa);
+%———————————————————————————————————————————————
+%%
+%———————————————————————————————————————————————
+return
+%———————————————————————————————————————————————
+%%
+%———————————————————————————————————————————————
+v=round(sa*255);
+% m1=cat(3,v,v,v);
+m1=ind2rgb(  round((imadjust(sa))*64),parula);
+m2=rgb2hsv(m1);
+% fg,imagesc(otsu(medfilt2(m2(:,:,1)./m2(:,:,2),[2 2],'symmetric'),3))
+
+% fg,imagesc(otsu(imadjust(mat2gray(medfilt2((m2(:,:,3)+m2(:,:,2))./m2(:,:,1),[2 2]))),3))
+
+so=otsu(imadjust(mat2gray(medfilt2((m2(:,:,3)+m2(:,:,2))./m2(:,:,1),[2 2],'symmetric'))),3);
+imoverlay(sa,so);
+
+
+
+%———————————————————————————————————————————————
+%%
+%——————————————————————————————————————————————
 
 function v2=getslice2d(v3)
 hf1=findobj(0,'tag','xpainter');
@@ -780,20 +1192,23 @@ end
 function cb_preview(e,e2)
 hf1=findobj(0,'tag','xpainter');
 hcon=findobj(hf1,'tag','rd_contourdraw');
+hb=findobj(hf1,'tag','preview');
 alpha        =1;
 useoldHistory=1;
 
-% transparent ...no mask
-setslice(alpha,useoldHistory);
-set(findobj(hf1,'tag','preview'),'backgroundcolor',[ 1.0000    0.8431         0]);
-% if get(hcon,'value')==1
- try;  set(findobj(gca,'type','contour'),'visible','off'); end
-% end
-drawnow;
-pause(.2);
-setslice([],useoldHistory);
-set(findobj(hf1,'tag','preview'),'backgroundcolor',[repmat(.94,[1 3])]);
-try;  set(findobj(gca,'type','contour'),'visible','on'); end
+if get(hb,'value')==1
+    % transparent ...no mask
+    setslice(alpha,useoldHistory);
+    set(findobj(hf1,'tag','preview'),'backgroundcolor',[ 1.0000    0.8431         0]);
+    % if get(hcon,'value')==1
+    try;  set(findobj(gca,'type','contour'),'visible','off'); end
+    % end
+    drawnow;
+else
+    setslice([],useoldHistory);
+    set(findobj(hf1,'tag','preview'),'backgroundcolor',[repmat(.94,[1 3])]);
+    try;  set(findobj(gca,'type','contour'),'visible','on'); end
+end
 
 function hide_mask();
 u=get(gcf,'userdata');
@@ -809,11 +1224,11 @@ useoldHistory=1;
 if u.ispreview==1
     setslice(alpha,useoldHistory); %hide mask
     set(findobj(hf1,'tag','preview'),'backgroundcolor',[ 1.0000    0.8431         0]);
-     try;  set(findobj(gca,'type','contour'),'visible','off'); end
+    try;  set(findobj(gca,'type','contour'),'visible','off'); end
 else
     setslice([],useoldHistory); %show mask
     set(findobj(hf1,'tag','preview'),'backgroundcolor',[repmat(.94,[1 3])]);
-     try;  set(findobj(gca,'type','contour'),'visible','on'); end
+    try;  set(findobj(gca,'type','contour'),'visible','on'); end
 end
 
 
@@ -891,7 +1306,7 @@ if isempty(hf2)
     hb=uicontrol('style','radio','units','norm', 'tag'  ,'pb_otsucut');
     set(hb,'position',[ .7 .9 .2 .05],'string','cut cluster', 'callback',{@pb_otsucut,1});
     set(hb,'fontsize',7,'backgroundcolor','w','value',0);
-    set(hb,'tooltipstring',['cut cluster' char(10) 'shortcut [o] ']);
+    set(hb,'tooltipstring',['cut cluster' char(10) 'shortcut [v] ']);
     
     % ========classes=======================================================
     %otsu -number of classes-label
@@ -1960,6 +2375,7 @@ set(gcf,'userdata',u);
 
 
 setslice([],'noupdate');
+edvalue();
 
 
 function rd_flipud(e,e2)
@@ -1982,8 +2398,13 @@ if exist('par')==1
     
 end
 
-r1=getslice2d(u.a);
-r2=getslice2d(u.b);
+% r1=getslice2d(u.a);
+% r2=getslice2d(u.b);
+%
+getImage();
+global SLICE
+r1=SLICE.r1;
+r2=SLICE.r2;
 
 
 if 0
@@ -2073,12 +2494,22 @@ else
 end
 set(findobj(gcf,'tag'  ,'edslice'),'string',u.useslice);
 set(findobj(gcf,'tag'  ,'edalpha'),'string',u.alpha);
-axis image;  axis off;
+axis off;
+
+if get(findobj(gcf,'tag'  ,'rd_axisnormal'),'value')==1  %/ axis image
+    axis image;
+else                                                    %/ axis normal
+    axis normal;
+end
 set(gca,'position',[0 0 .8 .9]);
 
-if size(x,2)>250
-    axis square; axis manual;
+if 0
+    if size(x,2)>250
+        axis square; axis manual;
+    end
 end
+
+
 adjustAxesPosition()
 % xl=xlim;
 xlim([.5 size(x,2)+.5]);
@@ -2095,23 +2526,35 @@ set(gcf,'ButtonDownFcn', @sel);  % #critical
 
 
 u.bg2d=bg2d;
+
+[u.slice_ax]=aa_getslice_spec(u.ax);
+[u.slice_ay]=aa_getslice_spec(u.ay);
+[u.slice_az]=aa_getslice_spec(u.az);
+
 set(gcf,'userdata',u);
+
+
+
+
 %
 % xlim([0.5 size(ra,2)+.5]);
 % ylim([0.5 size(ra,1)+.5]);
 undo_redolabel_update();
+updateContour();         %CONTOURUPDATE
 
-% ---- contour
-if u.contour==1
-    delete(findobj(gca,'type','contour'));
-    %g=rgb2gray(x);
-    hold on
-    [h hc]=contour(bg2d,u.contourlines);
-   set(hc,'hittest','off');
-else
-  delete(findobj(gca,'type','contour'));  
-    
-end
+
+
+
+% % ---- contour
+% if u.contour==1
+%     delete(findobj(gca,'type','contour'));
+%     %g=rgb2gray(x);
+%     hold on
+%     [h hc]=contour(bg2d,u.contourlines);
+%    set(hc,'hittest','off');
+% else
+%    delete(findobj(gca,'type','contour'));
+% end
 
 %-----otsu update
 hf1=findobj(0,'tag','xpainter');
@@ -2137,7 +2580,9 @@ catch
 end
 set(hl,'string',histlabel);
 
+function rd_sliceBelowPan1(e,e2)
 
+adjustAxesPosition();
 
 function adjustAxesPosition()
 hf1=findobj(0,'tag','xpainter');
@@ -2155,9 +2600,25 @@ set(hp2,'units','pixels');
 % --adjust axes
 hax=findobj(hf1,'type','axes');
 axpos=get(hax,'position');
-axpos=[0 0  norpos2(1)  norpos1(2)];
+%axpos=[0 0  norpos2(1)  norpos1(2)];
+if get(findobj(hf1,'tag','rd_sliceBelowPan1'),'value') ==1
+    axpos=[0 0 1 1];
+else
+    axpos=[0 0  1  norpos1(2)];
+end
 set(hax,'position',axpos);
 
+
+function pan2_CB(e,e2)
+
+% je = findjobj(h33); % hTable is the handle to the uitable object
+% set(je,'MouseDraggedCallback',@pan2_dragCB  );
+%
+% hf1=findobj(0,'tag','xpainter');
+% hp2=findobj(hf1,'tag','panel2')
+% hb=findobj(hp2,'tag','thresh_drag');
+% je = findjobj(hb); % hTable is the handle to the uitable object
+% set(je,'MouseDraggedCallback',@pan2_dragCB  );
 
 %===================================================================================================
 function resizefig(e,e2)
@@ -2168,19 +2629,84 @@ set(get(hp,'children'),'units','pixels');
 set(hp,'units','norm');
 norpos1=get(hp,'position');
 norpos1=[0 1-norpos1(4) norpos1(3:4)];
+pospan1=norpos1;
 set(hp,'position',norpos1);
 set(hp,'units','pixels');
 
+% %% pan2 ----------
+% hp2=findobj(hf1,'tag','panel2');
+% % pixpos=get(hp,'position');
+% set(get(hp2,'children'),'units','pixels');
+% set(hp2,'units','norm');
+% norpos2=get(hp2,'position');
+% norpos2=[1-norpos2(3)   0  norpos2(3:4)];
+% set(hp2,'position',norpos2);
+% set(hp2,'units','pixels');
 
+%% pan2 ------------------------------------------------------------
 hp2=findobj(hf1,'tag','panel2');
-% pixpos=get(hp,'position');
-set(get(hp2,'children'),'units','pixels');
-set(hp2,'units','norm');
-norpos2=get(hp2,'position');
-norpos2=[1-norpos2(3)   0  norpos2(3:4)];
-set(hp2,'position',norpos2);
-set(hp2,'units','pixels');
+v=get(hp2,'userdata');
 
+set(hp2,'units','pixels');
+pospx3=get(hp2,'position');
+set(hp2,'position',[ pospx3(1:2) v.unp(3:4) ]);
+%set(hp2,'position',[ pospx3(1) 1-pospx3(2)  v.unp(3:4) ]);
+
+
+set(hp2,'units','norm');
+pos=get(hp2,'position');
+% set(hp2,'position',[ pos ]);
+% if pos(1)>1; pos(1)=.9; end
+% if pos(2)>1; pos(2)=.7; end
+
+posbk=v.unn;
+posn =[posbk(1) 1-(posbk(2)+posbk(4)) pos(3:4) ];
+%posn =[posbk(1) posbk(2) pos(3:4) ];
+
+% posn
+if  posn(2)+posn(4)>pospan1(2);
+    posn(2)=pospan1(2)-posn(4);
+end
+
+% % % % % if posn(2)<0; posn(2)=0; end
+% % % % % posn
+if posn(1)+posn(3)>1;
+    posn(1)=1-posn(3);
+end
+set(hp2,'position',posn);
+% drawnow;
+% posn
+
+v.unn=posn; %update Normal position
+set(hp2,'userdata',v);
+
+hb=findobj(hp2,'tag','pan2_dragCB');
+je = findjobj(hb); % hTable is the handle to the uitable object
+set(je,'MouseDraggedCallback',@pan2_dragCB  );
+
+
+%% pan3 ------------------------------------------------------------
+hp3=findobj(hf1,'tag','panel3');
+v=get(hp3,'userdata');
+
+set(hp3,'units','pixels');
+pospx3=get(hp3,'position');
+set(hp3,'position',[ pospx3(1:2) v.unp(3:4) ]);
+set(hp3,'units','norm');
+
+pos=get(hp3,'position');
+if pos(1)>1; pos(1)=.9; end
+if pos(2)>1; pos(2)=.7; end
+set(hp3,'position',[ pos ]);
+
+% uistack(hp3,'top');
+
+hb=findobj(hp3,'tag','thresh_drag');
+% set(h33,'string','','tooltipstring','drag panel to another position ','tag','thresh_drag');
+je = findjobj(hb); % hTable is the handle to the uitable object
+set(je,'MouseDraggedCallback',@thresh_dragCB  );
+
+% ----------------
 % --adjust axes
 adjustAxesPosition();
 
@@ -2211,6 +2737,1042 @@ return
 
 
 
+% ==============================================
+%%
+% ===============================================
+
+function updateContour();
+hf1=findobj(0,'tag','xpainter');
+u=get(gcf,'userdata');
+hp=findobj(hf1,'tag','panel3');
+
+hp3 =findobj(gcf,'tag','panel3'); %panel3
+hvis=findobj(hp3,'tag','thresh_visible'); %visible
+
+if get(hvis,'value')==1
+    u.contour=0;
+    set(hf1,'userdata',u);
+    hb=findobj(hp,'tag','slid_thresh'); %slider
+    delete(findobj(gca,'type','contour'))
+    slid_thresh([], []);
+elseif u.contour==1;
+    delete(findobj(gca,'type','contour'));
+    %g=rgb2gray(x);
+    hold on
+    [h hc]=contour(u.bg2d,u.contourlines);
+    set(hc,'hittest','off');
+else
+    delete(findobj(gca,'type','contour'));
+end
+% % ---- contour
+% if u.contour==1
+%     delete(findobj(gca,'type','contour'));
+%     %g=rgb2gray(x);
+%     hold on
+%     [h hc]=contour(bg2d,u.contourlines);
+%    set(hc,'hittest','off');
+% else
+%    delete(findobj(gca,'type','contour'));
+% end
+
+% function (thresh_visible)
+
+% ==============================================
+%%  main:getSpecific Slice
+% exmpl: [s]=aa_getslice_spec(u.az)
+% ===============================================
+function [s]=aa_getslice_spec(s)
+hf1=findobj(0,'tag','xpainter');
+s=getslice2d(s);
+% ----------------------------------------------------
+%% transpose
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    s=s';
+end
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    s=flipud(s);
+end
+% ----------------------------------------------------
+
+
+
+
+
+% ==============================================
+%%  main:get slices
+% ===============================================
+function [r1 r2]=aa_getslice()
+hf1=findobj(0,'tag','xpainter');
+getImage();
+global SLICE
+r1=SLICE.r1;
+r2=SLICE.r2;
+% ----------------------------------------------------
+%% transpose
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    %x=permute(r2, [2 1 3]);
+    r1=r1';
+    r2=r2';
+end
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    r1=flipud(r1);
+    r2=flipud(r2);
+end
+% ----------------------------------------------------
+
+% ==============================================
+%%  main:push back slices
+% ===============================================
+function aa_setslice(r2)
+
+
+r2n=r2;
+hf1=findobj(0,'tag','xpainter');
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    r2n=flipud(r2n);
+end
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    r2n=r2n';
+end
+% ===============================================
+%u.r2=r2n;
+global SLICE
+SLICE.r2=r2n;
+
+
+putImage(); %######
+u=get(gcf,'userdata');
+%---make history
+r2=getslice2d(u.b);
+if sum(any(u.hist(:,:,u.histpointer)-r2))~=0
+    u.histpointer=u.histpointer+1;
+    u.hist(:,:,u.histpointer)=r2;
+    u.hist(:,:,u.histpointer+1:end)=[]; %remove older stuff
+    set(gcf,'userdata',u);
+end
+undo_redolabel_update();
+% col=u.colmat(str2num(get(findobj(hf1,'tag','edvalue'),'string')),:);
+% hd=findobj(gcf,'tag','dot');
+% set(hd,'FaceColor',col,'edgecolor','k');
+% set(hd,'userdata',0);
+
+function blanko(e,e2)
+%==================get================================================
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+[r1 r2]=aa_getslice();
+%======================DO============================================
+[x y]=ginput(1);
+co=round([x y]);
+
+
+
+aa_setslice(r2);
+%==================update ================================================
+hb=findobj(hf1,'tag','edvalue');
+edvalue();
+setslice([],1);
+
+
+
+
+
+function patch_remove(e,e2)
+hp=findobj(gcf,'tag','ROI');
+v=get(hp,'userdata');
+delete(v.hall);
+try;          setfocus(gca);   end         % deFocus edit-fields
+
+function patch_drag(e,e2)
+hf1=findobj(0,'tag','xpainter');
+hp=findobj(hf1,'tag','ROI');
+hh=findobj(hf1,'tag','ROI_drag');
+coFig=get(gcf,'CurrentPoint');
+v=get(hp,'userdata');
+% drag icon
+pos=get(hh,'position');
+posdrag=[ coFig(1:2)  pos(3:4) ];
+set(hh,'position', posdrag);
+posdiff=posdrag-pos;
+posrot  =get(v.hs,'position');  set(v.hs  ,'position',posrot+posdiff );
+posclear=get(v.hcl,'position'); set(v.hcl ,'position',posclear+posdiff );
+% -------drag patch
+co=get(gca,'CurrentPoint');
+co=round(co(1,1:2));
+% disp(co);
+x=get(hp,'xdata');
+y=get(hp,'ydata');
+xm=mean(x);
+ym=mean(y);
+set(hp,'xdata',x-xm+co(1));
+set(hp,'ydata',y-ym+co(2));
+v.rotcent=[xm ym];
+set(hp,'userdata',v);
+
+function patch_fun(e,e2,task)
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+hp=findobj(gcf,'tag','ROI');
+v=get(hp,'userdata');
+if strcmp(task,'cancel');
+    delete(hp);
+    delete(findobj(gcf,'tag','ROI_drag'));
+elseif strcmp(task,'replicateROI') || strcmp(task,'replicateROI_allslices') || ...
+        strcmp(task,'replaceROI')
+    
+    newID=1;
+    if strcmp(task,'replicateROI')==1
+        prompt = {[...
+            'Assign ID (value) for ROI-child:                             ' char(10)  ...
+            '   nan: use ID of "ROI-mother"' char(10) ...
+            '   or enter a new numeric ID']};
+        dlg_title = 'ROI-child ID';
+        num_lines = 1;
+        defaultans = {'nan'};
+        answer = inputdlg2(prompt,dlg_title,num_lines,defaultans);
+        if isempty(answer); return; end
+        newID=str2num(answer{1});
+        if isnan(newID);
+            newID=v.id;%str2num(get(findobj(hf1,'tag','edvalue'),'string')) ;
+        end
+    elseif strcmp(task,'replaceROI')==1
+      % newID =v.id;
+    else
+        % ==============================================
+        %% input: distribute over slices
+        % ===============================================
+        prompt = {[...
+            '\color{blue} Assign ID (value) for ROI-child:                \color{black}                                ' char(10)  ...
+            '   nan: use ID of "ROI-mother"' char(10) ...
+            '   or enter a new numeric ID']...
+            ...
+            [...
+            '\color{blue}' ...
+            'COPY ROI TO OTHER SLICES  '                   '\color[rgb]{0,0.5,0}' char(10)   ...
+            ['      current Dim: ['  num2str(u.usedim)              ']']    ...
+            ['      number of SLICES: ['  num2str(size(u.b,u.usedim))    ']']   ...
+            ['      current SLICE: ['  num2str(u.useslice)            ']'] char(10)  ...
+            ['\color{black}' ...
+            'Enter slice number here: ' char(10)  ...
+            'Examples:  [16], [1:3], [1 2 3 10:12]  ...without brackets' char(10)  ...
+            'Examples:  [all], [1:2:end]  [end-3:end],   ...without brackets' char(10)  ...
+            ' --> [all] refers to all slices: ' char(10)  ...
+            ]
+            ]
+            };
+        dlg_title = 'COPY ROI to other SLICES';
+        num_lines = 1;
+        defaultans = {'nan' 'all'};
+        opts.Interpreter = 'tex';
+        answer = inputdlg(prompt,dlg_title,num_lines,defaultans,opts);
+        if isempty(answer); return; end
+        
+        newID=str2num(answer{1});
+        if isnan(newID);            newID=v.id; end   %str2num(get(findobj(hf1,'tag','edvalue'),'string')) ;
+    
+        nslices=size(u.b,u.usedim);
+        allslices=1:nslices;
+        if strcmp(answer{2},'all') ||strcmp(answer{2},'[all]')
+            slices=1:nslices;
+        else
+            try
+            eval(['slices=allslices([' answer{2} ']);']);
+            catch
+               return 
+            end
+        end
+       
+        % ==============================================
+        %%
+        % ===============================================
+    end
+    
+    % % ==============================================
+    %%   patch to mask
+    % ===============================================
+    
+    x= (get(hp,'xdata'));
+    y= (get(hp,'ydata'));
+    xm=round(mean(x)); ym=round(mean(y));
+    
+    m=round(double(poly2mask(x,y,size(v.m,1),size(v.m,2))));
+    %      fg,imagesc(m)
+    
+    if 0
+        fg,imagesc(m*3+v.m*2)
+        disp([sum(m(:)~=0)  sum(v.m(:)~=0)])
+    end
+    % ==============================================
+    %%  solution for minimal accuracy in patch conversion    
+    % ===============================================
+    
+% 
+%     [r1 mr]=dftregistration(fft2(double(m)),fft2(double(v.m)));
+%     mr= round(abs(ifft2(mr)));
+% 
+%     if 1
+%         fg,
+%         subplot(2,2,1); imagesc(m); title('fix')
+%         subplot(2,2,2); imagesc(v.m); title('moving')
+%         subplot(2,2,3); imagesc(mr); title('registered')
+%         subplot(2,2,4); imagesc(mr-v.m); title('diff: registered-moving')
+%      disp([sum(m(:)~=0)  sum(v.m(:)~=0)   sum(mr(:)~=0) ])
+%     end
+% 
+% % ==============================================
+% %%   
+% % ===============================================
+% 
+%     %back
+%     m=mr;
+    
+    % ==============================================
+    %%
+    % ===============================================
+
+    if 0
+        % ===============================================
+        m=zeros(numel(v.m),1);
+        x=round(get(hp,'xdata')); y=round(get(hp,'ydata'));
+        idel=find(x<=0) ;       x(idel)=1;
+        idel=find(y<=0) ;       y(idel)=1;
+        idel=find(y>size(v.m,1)) ;       y(idel)=size(v.m,1);
+        idel=find(x>size(v.m,2)) ;       x(idel)=size(v.m,2);
+        ix=sub2ind(size(v.m),y,x);
+        
+        m(ix)=1;
+        m=reshape(m,size(v.m));
+        m=bwmorph(m,'bridge');
+    end
+    
+    %      m0=padarray(m,[1 1],1,'both');
+    %      %test=edge(I,'canny');
+    %      m0 = imfill(m0,'holes');
+    %      m0([1 end],:)=[]; m0(:,[1 end])=[];
+    %       m=m0;
+    
+%     m=imfill(m,'holes');
+    
+    [r1 r2]=aa_getslice();
+    if strcmp(task,'replaceROI')==1
+        newID =v.id;
+        r2(v.m==1)=0;
+        r2(m==1)=newID;
+        
+    else
+        
+        r2(m==1)=newID;
+        
+    end
+    
+    
+    
+    %==================update ======
+    aa_setslice(r2);
+    hb=findobj(gcf,'tag','edvalue');
+    edvalue();
+    setslice([],1);
+    delete(v.hall) ;  %delete(v.hp); delete(v.hdrag);
+    
+    % ==============================================
+    %%   distribute patch over all/selected slices
+    % ===============================================
+    if strcmp(task,'replicateROI_allslices') || ...
+            strcmp(task,'replicateROI_slicesviaInput')
+        hb_edslice=findobj(gcf,'tag','edslice');
+        thisSlice  =str2num(get(hb_edslice,'string'));
+        
+        hwait=findobj(gcf,'tag','waitnow');
+        set(hwait,'visible','on','string','..wait..'); drawnow;
+        
+        
+        for i=1:length(slices)
+            sliceno=slices(i);
+            
+            u=get(gcf,'userdata');
+            u.useslice=sliceno;
+            set(gcf,'userdata',u);
+            set(hb_edslice,'string',num2str(sliceno));
+            [r1 r2]=aa_getslice();
+            r2(m==1)=newID;
+            
+            
+            r2n=r2;
+            hf1=findobj(0,'tag','xpainter');
+            if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+                r2n=flipud(r2n);
+            end
+            if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+                r2n=r2n';
+            end
+            % ===============================================
+            %u.r2=r2n;
+            global SLICE
+            SLICE.r2=r2n;
+            
+            
+            putImage(); %######
+            
+            %BACK
+            [r1 r2]=aa_getslice();
+            set(hb_edslice,'string',num2str(thisSlice));
+            u=get(gcf,'userdata');
+            
+            u.bg2d =r1;
+            u.useslice=thisSlice;
+            set(gcf,'userdata',u);
+            
+        end
+        set(hwait,'visible','off'); drawnow;
+        
+        return
+        
+        
+        r2n=m;
+        hf1=findobj(0,'tag','xpainter');
+        if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+            r2n=flipud(r2n);
+        end
+        if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+            r2n=r2n';
+        end
+        
+        u=get(hf1,'userdata');
+        
+        dum=u.hb;
+        for i=1:length(slices)
+            if u.usedim==1
+               ds= dum(slices(i),:,:); ds(m==1)=newID;    dum(slices(i),:,:) =ds;
+            elseif u.usedim==2
+               ds= dum(:,slices(i),:);  ds(m==1)=newID;    dum(:,slices(i),:) =ds;
+            elseif u.usedim==3
+               ds= dum(:,:,slices(i)); ds=squeeze(ds);  ds(m==1)=newID;   dum(:,:,slices(i))  =ds;
+            end
+        end
+        u.b=dum;
+        set(hf1,'userdata',u);
+        
+        return
+        
+        
+        ord=[setdiff([1:3],u.usedim)  u.usedim];
+        d=permute(u.b, ord);
+        
+        
+        for i=1:length(slices)
+            ds=d(:,:,slices(i));
+            ds(m==1)=newID;
+            d(:,:,slices(i))=ds;
+        end
+        d2=permute(d, ord);
+        u.b=d2;
+        set(hf1,'userdata',u);
+        
+          
+    end    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+  
+    
+    return
+elseif strcmp(task,'delete');
+    [r1 r2]=aa_getslice();
+    m=~v.m;
+    r2=m.*r2;
+    
+    
+    %==================update ======
+    aa_setslice(r2);
+    hb=findobj(gcf,'tag','edvalue');
+    edvalue();
+    setslice([],1);
+    delete(v.hall) ;%delete(v.hp); delete(v.hdrag);
+else
+    
+    
+    
+    keyboard
+end
+
+
+% ==============================================
+%%   test
+% ===============================================
+function pb_patch(e,e2)
+%==================get========
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+
+
+%----clean up
+delete(findobj(hf1,'tag','ROI'));
+delete(findobj(hf1,'tag','ROI_drag'));
+delete(findobj(hf1,'tag','ROI_rotate'));
+delete(findobj(gcf,'tag','patch_remove'));
+delete(findobj(gcf,'tag','ROI_rotateslider'));
+% ------
+
+
+[r1 r2]=aa_getslice();
+%======================DO=======
+% [x y]=ginput(1);
+[x,y] = myginput(1,'crosshair');
+mouseposfig=get(gcf,'CurrentPoint');
+co=round([x y]);
+
+id =r2(co(2),co(1));
+if id==0
+    msgbox('no ROI found at this position');
+    return
+end
+
+
+idmask=r2==id;
+cl =bwlabeln(idmask);
+clid=cl(co(2),co(1));
+m  =cl==clid;
+
+m2 =bwperim(m);
+% x=bwtraceboundary(m,[],'W',8,Inf,'counterclockwise')
+[X,L] = bwboundaries(m2,'noholes');
+% dum=X{1};
+% xy=fliplr(dum);
+
+
+if 1
+    dum=[];
+    for i=1:length(X)
+        dum=[dum;X{i}];
+    end
+    xy=fliplr(dum);
+    
+end
+
+
+% fg,imagesc(m2); hold on; plot(xy(:,1),xy(:,2),'m.'); zoom on;
+% ==============================================
+%%
+% fg,imagesc(m2); hold on;
+% h2=patch([20 50  50 20 ],[10 10 40 40],'g','facealpha',.8)
+% h = impoly(gca,xy)
+
+delete(findobj(gcf,'tag','ROI'));
+hp=patch(xy(:,1),xy(:,2),'g','facealpha',.8,'tag','ROI');
+
+%% dragg
+handicon=[...
+    129	129	129	129	129	129	129	0	0	129	129	129	129	129	129	129
+    129	129	129	0	0	129	0	215	215	0	0	0	129	129	129	129
+    129	129	0	215	215	0	0	215	215	0	215	215	0	129	129	129
+    129	129	0	215	215	0	0	215	215	0	215	215	0	129	0	129
+    129	129	129	0	215	215	0	215	215	0	215	215	0	0	215	0
+    129	129	129	0	215	215	0	215	215	0	215	215	0	215	215	0
+    129	0	0	129	0	215	215	215	215	215	215	215	0	215	215	0
+    0	215	215	0	0	215	215	215	215	215	215	215	215	215	215	0
+    0	215	215	215	0	215	215	215	215	215	215	215	215	215	0	129
+    129	0	215	215	215	215	215	215	215	215	215	215	215	215	0	129
+    129	129	0	215	215	215	215	215	215	215	215	215	215	215	0	129
+    129	129	0	215	215	215	215	215	215	215	215	215	215	0	129	129
+    129	129	129	0	215	215	215	215	215	215	215	215	215	0	129	129
+    129	129	129	129	0	215	215	215	215	215	215	215	0	129	129	129
+    129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129
+    129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129];
+
+handicon(handicon==handicon(1,1))=255;
+if size(handicon,3)==1; handicon=repmat(handicon,[1 1 3]); end
+handicon=double(handicon)/255;
+
+delete(findobj(gcf,'tag','ROI_drag'));
+h33=uicontrol('style','pushbutton','cdata',handicon,'backgroundcolor','w');
+set(h33,'backgroundcolor','w');%,'callback',@slid_thresh)
+set(h33,'units','pixels','position',[100 100 16 16]);
+set(h33,'units','norm')
+poshand=get(h33,'position');
+poshand=[mouseposfig(1) mouseposfig(2) poshand(3:4)];
+set(h33,'position',[mouseposfig(1) mouseposfig(2) poshand(3:4)]);
+set(h33,'string','','tooltipstring','drag to move ROI ','tag','ROI_drag');
+je = findjobj(h33); % hTable is the handle to the uitable object
+set(je,'MouseDraggedCallback',@patch_drag  );
+
+delete(findobj(gcf,'tag','patch_remove'));
+hcl=uicontrol('style','pushbutton','backgroundcolor','w','string','x','callback',@patch_remove);
+set(hcl,'units','norm');
+posclear=[poshand(1) poshand(2)+poshand(4) poshand(3) poshand(4)];
+set(hcl,'position',posclear);
+set(hcl,'tooltipstring','cancel ..remove patch ','tag','patch_remove');
+
+delete(findobj(gcf,'tag','ROI_rotateslider'));
+hs=uicontrol('style','slider','backgroundcolor','w');%,'callback',@patch_rotate);
+set(hs,'units','norm','value',0);
+posslider=[poshand(1)+poshand(3) poshand(2) poshand(3)*3 poshand(4)];
+set(hs,'position',posslider);
+set(hs,'string','rr','tooltipstring','rotate ','tag','ROI_rotate');
+addlistener(hs,'ContinuousValueChange',@patch_rotate);
+
+
+c = uicontextmenu;
+hs.UIContextMenu = c;
+
+rotangles=[45:45:180  -45:-45:-180];
+for i=1:length(rotangles)
+    m1 = uimenu(c,'Label',['rotate ' num2str(rotangles(i)) '°'],...
+        'Callback',{@patch_rotate_fixangle, num2str(rotangles(i))});
+end
+m1 = uimenu(c,'Label','rotate angle input','Callback',{@patch_rotate_fixangle,'input'});
+m1 = uimenu(c,'Label','rotate to origin','Callback',{@patch_rotate_fixangle,'origin'},'separator','on');
+m1 = uimenu(c,'Label','flip horizontally','Callback',{@patch_rotate_fixangle,'fliph'},'separator','on');
+m1 = uimenu(c,'Label','flip vertically','Callback',{@patch_rotate_fixangle,'flipv'});
+
+v.inf1='--handles----';
+v.hp   =hp;
+v.hdrag=h33;
+v.hs   =hs;
+v.hcl  =hcl;
+v.hall=[v.hp v.hdrag v.hs v.hcl];
+v.inf2='------';
+v.m  =m;
+v.xy =xy;
+v.id =id;
+v.mouseposfig=mouseposfig;
+
+x=get(hp,'xdata');
+y=get(hp,'ydata');
+xm=mean(x);
+ym=mean(y);
+v.rotcent=[xm ym];
+set(hp,'userdata',v);
+% ==============================================
+c = uicontextmenu;
+hp.UIContextMenu = c;
+% m1 = uimenu(c,'Label','cancel & close patch','Callback',{@patch_fun,'cancel'});
+m1 = uimenu(c,'Label','copy ROI (move ROI first..)','Callback',{@patch_fun,'replicateROI'});
+m1 = uimenu(c,'Label','replace ROI (move ROI first..)','Callback',{@patch_fun,'replaceROI'});
+m1 = uimenu(c,'Label','delete ROI-mother from slice','Callback',{@patch_fun,'delete'});
+m1 = uimenu(c,'Label','copy ROI to other slices','Callback',{@patch_fun,'replicateROI_allslices'},'separator','on');
+% m1 = uimenu(c,'Label','copy to all slices','Callback',{@patch_fun,'replicateROI_slicesviaInput'},'separator','off');
+
+v.hdrag.UIContextMenu = c;
+
+
+function patch_rotate_fixangle(e,e2,task )
+hp=findobj(gcf,'tag','ROI');
+v=get(hp,'userdata');
+slidval=get(v.hs,'value');
+
+ang=str2num(task);
+if isempty(ang)
+    if strcmp(task,'input')
+        prompt = {[...
+            'Enter single rotation angle.                            ' char(10)  ...
+            ' Example: 90, -90, 270 etc' char(10) '']};
+        dlg_title = 'rotation angle';
+        num_lines = 1;
+        defaultans = {'180'};
+        answer = inputdlg(prompt,dlg_title,num_lines,defaultans);
+        ang=str2num(answer{1});
+        if isnan(ang);
+            return
+        end
+    elseif strcmp(task,'fliph')
+        x = get(hp, 'XData');
+        x2 = max(x) - x + min(x);
+        set(hp, 'XData', x2);
+        return
+    elseif strcmp(task,'flipv')
+        y = get(hp, 'YData');
+        y2 = max(y) - y + min(y);
+        set(hp, 'YData', y2);
+        return
+    end
+end
+
+stp=ang/360;
+newslidval=slidval+stp;
+if newslidval>1;       newslidval=mod(newslidval,1);   end
+if newslidval<0;       newslidval=mod(newslidval,1);   end
+
+if  strcmp(task,'origin') ==1
+    set(v.hs,'value',0);
+else
+    set(v.hs,'value',newslidval);
+end
+patch_rotate([],[]);
+
+
+function patch_rotate(e,e2)                              %'ROTATION'
+hf1=findobj(0,'tag','xpainter');
+hp=findobj(hf1,'tag','ROI');
+v=get(hp,'userdata');
+hs=findobj(gcf,'tag','ROI_rotate');
+val=get(hs,'value');
+rotangle=val*360;
+set(hs,'sliderstep',[0.00500 0.05000] ); %[0.0100 0.1000]
+x=round(get(hp,'xdata')); y=round(get(hp,'ydata'));
+xm=round(mean(x)); ym=round(mean(y));
+w=get(hs,'userdata');
+if isempty(w)
+    w.xm=[xm];  w.ym=[ym];
+    w.newrot=0;
+    w.lastrot=0;
+    w.xdata=get(hp,'xdata');
+    w.ydata=get(hp,'ydata');
+    w.zdata=get(hp,'zdata');
+    w.Vertices=get(hp,'Vertices');
+    set(hs,'userdata',w);
+    drawnow;
+end
+if w.lastrot==w.newrot
+    w.newrot=rotangle;
+end
+rot=w.newrot-w.lastrot;
+w.lastrot=w.newrot;
+w.newrot =rotangle;
+set(hs,'userdata',w);
+rotate(hp,[0 0 1],rot,[v.rotcent 0]);
+drawnow;
+
+
+
+% ==============================================
+%%   test
+% ===============================================
+function rb_changeID(e,e2)
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+[r1 r2]=aa_getslice();
+% r2(1:4,1:4)=1;
+
+%===================================================================================================
+[x y]=ginput(1);
+co=round([x y]);
+
+prompt = {[...
+    'Here you can assign a new ID (value) for the selected region:' char(10)  ...
+    '   nan: use current selected ID (from listbox)' char(10) ...
+    '   or enter a new numeric ID']};
+dlg_title = 'Input';
+num_lines = 1;
+defaultans = {'nan'};
+answer = inputdlg2(prompt,dlg_title,num_lines,defaultans);
+if isempty(answer); return; end
+newID=str2num(answer{1});
+if isnan(newID);
+    newID=str2num(get(findobj(hf1,'tag','edvalue'),'string')) ;
+end
+
+oldID=r2(co(2),co(1));
+m1=r2==oldID;
+cl=bwlabel(m1);
+clustnum=cl(round(co(2)),round(co(1))  );
+cl2=cl==clustnum;
+m2=cl2;
+m3=r2;
+m3(m2)=newID;
+r2=m3;
+aa_setslice(r2);
+%===================================================================================================
+% ------------- update IDlist -------------
+hb=findobj(hf1,'tag','edvalue');
+set(hb,'string', num2str(newID));
+edvalue();
+setslice([],1);
+
+% fg,imagesc(r2);
+return
+% ==============================================
+%%   close and fill
+% ===============================================
+function rb_closeAndFill(e,e2)
+
+
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+[r1 r2]=aa_getslice();
+if sum(r2(:))==0
+    disp(['r2 is empty']);
+end
+% fg,imagesc(r2);
+%===================================================================================================
+[x y]=ginput(1);
+xy0=fliplr(round([x y]));
+xy=(xy0);
+
+val=r2(xy(1),xy(2));
+if val==0 % get nearest value
+    [x1 y1]=find(  r2~=0);
+    cp=[x1 y1];
+    cp2=[round(xy(1)),round(xy(2))];
+    dist=sqrt(sum((cp-repmat(cp2,[size(cp,1) 1])).^2,2));
+    imin=min(find(dist==min(dist)));
+    xy=cp(imin,:);
+    val=r2(xy(1),xy(2));
+end
+newID=  val;
+
+% -----1
+% u1=r2>0;
+% u2=imclose(u1,strel('disk',5));
+% % u3=u2-u1;
+% u3=imfill(u1+u2,'holes');
+%
+% % % -----2
+% u1=r2==val;
+% u2=imclose(r2,strel('disk',10));
+% u3=u1+u2;
+% u3=imfill(u3);
+
+hdot=findobj(gca,'tag','dot');
+xd=get(hdot,'xdata');
+yd=get(hdot,'ydata');
+dotsi=max([max(xd)-min(xd) max(yd)-min(yd)]);
+
+
+% ==============================================
+%%   
+% ===============================================
+doRun=1;
+maxi=20;
+i=0;
+while doRun==1 && i<maxi
+    
+    i=i+1;
+%     disp(i);
+    u1=r2==val;
+    npad=20;
+    uc=padarray(r2,[npad npad]);
+    uc=imclose(uc,strel('disk',i));
+    u2=uc(npad+1:end-npad,npad+1:end-npad);
+    %fg;imagesc(u2); title(i)
+    
+    % u4=u3==num;
+    % cl=bwlabeln(u2,4);
+    cl=u2;
+    clustnum=cl(xy0(1),xy0(2)  );
+    cl2=cl==clustnum;
+    m2=cl2;
+     %fg;imagesc(m2); title(i)
+     
+     
+    
+    cl=bwlabeln(m2,4);
+    clustnum=cl(xy0(1),xy0(2)  );
+    cl2=cl==clustnum;
+    m3=cl2;
+     
+    val_inROI=m3(xy0(1),xy0(2));
+    val_edge =[m3(1,1) m3(1,end)  m3(end,1) m3(end,end)];
+    %disp( [ i nan val_inROI val_edge] );
+    
+    
+    if mode(val_edge)~=val_inROI
+       doRun=0; 
+    end
+
+%     fg;imagesc(m3); title(i);
+%    'a'
+    
+    
+end
+if 0
+    fg;imagesc(m3); title(i);
+    fg;imagesc(w1); title(i);
+end
+
+w1=r2>0;
+
+m4=imclose(m3-w1,strel('disk',2));
+% cl=bwlabeln(m4,4);
+cl=m4;
+clustnum=cl(xy0(1),xy0(2)  );
+m5=cl==clustnum;
+
+val_edge =[m5(1,1) m5(1,end)  m5(end,1) m5(end,end)];
+if mode(val_edge) ==1
+%    'return'
+   return
+end
+
+% ==============================================
+%%   
+% ===============================================
+ mout=r2;
+ mout(m5==1)=newID;
+% fg;imagesc(mout); 
+
+% % =========BACK=====================================
+aa_setslice(mout);
+%update IDlist
+hb=findobj(hf1,'tag','edvalue');
+set(hb,'string', num2str(newID))
+edvalue();
+setslice([],1);
+
+
+% % % % % ==============================================
+% % % % %%   old
+% % % % % ===============================================
+% % % % 
+% % % % % ------
+% % % % % u2=imclose(r2,strel('disk',5));
+% % % % v1=bwmorph(u2,'skel',Inf); %#####
+% % % % v1=u2;
+% % % % % v2=imdilate(v1, strel('disk',1));
+% % % % v2=v1;
+% % % % v3=(v2+r2)>0;
+% % % % 
+% % % % % v1=(bwmorph(u2,'skel',Inf)+r2)>0;
+% % % % u3=~v3;
+% % % % 
+% % % % 
+% % % % 
+% % % % num=u3(xy0(1),xy0(2)  );
+% % % % u4=u3==num;
+% % % % cl=bwlabeln(u4,4);
+% % % % clustnum=cl(xy0(1),xy0(2)  );
+% % % % cl2=cl==clustnum;
+% % % % m2=cl2;
+% % % % m2=imclose(cl2,strel('disk',1)); %remove antiskel
+% % % % m2=imfill(m2,'holes');
+% % % % %  fg,imagesc(m2)
+% % % % 
+% % % % newID=  val;
+% % % % m3=r2;
+% % % % m3(m2)=newID;
+% % % % 
+% % % % % fg,imagesc(m3);
+% % % % 
+% % % % % fg,imagesc(r2)
+% % % % 
+% % % % % 's'
+% % % % % other option: bo=boundarymask(r2);
+% % % % 
+% % % % % return
+% % % % aa_setslice(mout);
+% % % % %update IDlist
+% % % % hb=findobj(hf1,'tag','edvalue');
+% % % % set(hb,'string', num2str(newID))
+% % % % edvalue();
+% % % % setslice([],1);
+% % % % 
+% % % % 
+% % % % 
+% % % % 
+% % % % % ==============================================
+% % % % %%
+% % % % % ===============================================
+
+
+
+
+
+
+function slid_thresh_flt(e,e2)
+% set(e2,'enable','off');
+% drawnow;
+% pause(.3);
+% set(e2,'enable','on');
+% drawnow
+% pause(.3);
+% figure(gcf);
+slid_thresh();
+try;          setfocus(gca);   end         % deFocus edit-fields
+
+% set(e,'enable','off');
+% drawnow;
+% pause(.3);
+% set(e,'enable','on');
+% drawnow
+% pause(.3);
+
+% 
+% jPeer = get(handle(gcf), 'JavaFrame');
+% jPeer.getAxisComponent.requestFocus
+
+
+
+
+function slid_thresh(e,e2)
+warning off
+u=get(gcf,'userdata');
+hs=findobj(gcf,'tag','slid_thresh');              val    =get(hs,'value');
+hm=findobj(gcf,'tag','thresh_medfilt');           doflt  =get(hm,'value');
+hml=findobj(gcf,'tag','thresh_medfiltlength');    fltLen =str2num(get(hml,'string'));
+
+
+
+
+
+hv=findobj(gcf,'tag','thresh_visible');           visible  =get(hv,'value');
+
+if visible==1
+    set(findobj(gcf,'tag','rd_contourdraw'),'value',0);
+    x0=u.bg2d;
+    if doflt==1
+        x0=medfilt2(x0,[fltLen fltLen ],'symmetric');
+    end
+    
+    x=x0>val;
+    c=contourc(double(x),1);
+    set(hs,'userdata',c);
+    
+    hold on
+    delete(findobj(gca,'type','contour'));
+    try
+        [hc ]=contour(x,1,'r','hittest','off','color',u.threshcolor);
+    end
+else
+    delete(findobj(gca,'type','contour'));
+end
+
+set(hs, 'Enable', 'off');
+drawnow;
+set(hs, 'Enable', 'on');
+
+% 2446
+function pan2_dragCB(e,e2)
+hf1=findobj(0,'tag','xpainter');
+hp=findobj(hf1,'tag','panel2');
+co=get(gcf,'CurrentPoint');
+% disp(co);
+set(hp,'units','normalized');
+pos=get(hp,'position');
+
+v=get(hp,'userdata');
+v.unn=pos;
+set(hp,'userdata',v);
+
+set(hp,'position', [ co(1) co(2)-pos(4)  pos(3:4) ]);
+set(hp,'units','pixels');
+
+function thresh_dragCB(e,e2)
+
+hf1=findobj(0,'tag','xpainter');
+hp=findobj(hf1,'tag','panel3');
+co=get(gcf,'CurrentPoint');
+% disp(co);
+set(hp,'units','normalized');
+pos=get(hp,'position');
+set(hp,'position', [ co(1:2)  pos(3:4) ]);
+set(hp,'units','pixels');
+
+
+function thresh_context(e,e2,task)
+
+if strcmp(task,'color')
+    u=get(gcf,'userdata');
+    u.threshcolor=uisetcolor(u.threshcolor,'contour color (threshold)');
+    set(gcf,'userdata',u);
+    slid_thresh([],[]);
+end
 
 
 % ==============================================
@@ -2221,17 +3783,117 @@ function makegui
 u=get(gcf,'userdata');
 u.ax=axes('units','norm','position',[0 0 .8 .8]);
 
-% wait
-hb=uicontrol('style','text','units','norm', 'tag'  ,'waitnow');             %CHANGE-DIM
-set(hb,'position',[ .93 .97 .07 .03],'string','..wait..','backgroundcolor','k','foregroundcolor',[1.0000 0.8431 0]);
-set(hb,'visible','off');
+
+
+% infobox
+hb=uicontrol('style','text','units','norm', 'tag'  ,'infobox');             %CHANGE-DIM
+set(hb,'position',[ .01 0.01 .2 .06],'string','',...{'infobox' 'dd'},...
+    'backgroundcolor','k','foregroundcolor',[0.9294    0.6941    0.1255],...
+    'horizontalalignment','left','fontsize',7,'fontweight','bold');
+set(hb,'visible','on');
+
+if 1
+    jPanel =findjobj(hb);% hb.JavaFrame.getPrintableComponent;  % hPanel is the Matlab handle to the uipanel
+    jPanel.setOpaque(false)
+    jPanel.getParent.setOpaque(false)
+    jPanel.repaint
+end
+
+%———————————————————————————————————————————————
+%%   PANEL-3 (contour)
+%———————————————————————————————————————————————
+pan3 = uipanel('Title','contour','FontSize',7,'units','norm', 'BackgroundColor','white',  'Position',[0 0 .5 .3]);
+set(pan3,'Position',[.3 0 .4 .05],'Title','','tag','panel3','visible','on','backgroundcolor','w');
+set(pan3,'units','pixels','visible','on');
+set(pan3,'BorderType','etchedout','shadowColor',[1 0 0]);
+set(pan3,'BorderType','etchedout','BackgroundColor',[1 1 1]);
+% jPanel = pan3.JavaFrame.getPrintableComponent;  % hPanel is the Matlab handle to the uipanel
+% jPanel.setOpaque(false)
+% jPanel.getParent.setOpaque(false)
+% jPanel.getComponent(0).setOpaque(false)
+% jPanel.repaint
+
+%==========================================================================================
+%% dragg
+handicon=[...
+    129	129	129	129	129	129	129	0	0	129	129	129	129	129	129	129
+    129	129	129	0	0	129	0	215	215	0	0	0	129	129	129	129
+    129	129	0	215	215	0	0	215	215	0	215	215	0	129	129	129
+    129	129	0	215	215	0	0	215	215	0	215	215	0	129	0	129
+    129	129	129	0	215	215	0	215	215	0	215	215	0	0	215	0
+    129	129	129	0	215	215	0	215	215	0	215	215	0	215	215	0
+    129	0	0	129	0	215	215	215	215	215	215	215	0	215	215	0
+    0	215	215	0	0	215	215	215	215	215	215	215	215	215	215	0
+    0	215	215	215	0	215	215	215	215	215	215	215	215	215	0	129
+    129	0	215	215	215	215	215	215	215	215	215	215	215	215	0	129
+    129	129	0	215	215	215	215	215	215	215	215	215	215	215	0	129
+    129	129	0	215	215	215	215	215	215	215	215	215	215	0	129	129
+    129	129	129	0	215	215	215	215	215	215	215	215	215	0	129	129
+    129	129	129	129	0	215	215	215	215	215	215	215	0	129	129	129
+    129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129
+    129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129];
+
+handicon(handicon==handicon(1,1))=255;
+if size(handicon,3)==1; handicon=repmat(handicon,[1 1 3]); end
+handicon=double(handicon)/255;
+
+h33=uicontrol('style','pushbutton','cdata',handicon);
+set(h33,'parent',pan3,'backgroundcolor','w');%,'callback',@slid_thresh)
+set(h33,'units','norm','position',[-.01 -.01 .1 .98]);
+set(h33,'string','','tooltipstring','drag panel to another position ','tag','thresh_drag');
+je = findjobj(h33); % hTable is the handle to the uitable object
+set(je,'MouseDraggedCallback',@thresh_dragCB  );
+
+%% visible
+hb=uicontrol('style','checkbox','units','norm', 'tag' ,'thresh_visible','fontsize',7);             %CHANGE-DIM
+set(hb,'position',[ .25  .9 .05 .041],'string','vis','backgroundcolor','w');
+set(hb,'tooltipstring',['show/hide contour' char(10) ' ..use context menu to change color']);
+set(hb,'parent',pan3,'callback',@slid_thresh);
+set(hb,'position',[ .1  .0 .13 1],'value',1);
+
+c = uicontextmenu;
+hb.UIContextMenu = c;
+% Create menu items for the uicontextmenu
+m1 = uimenu(c,'Label','change color','Callback',{@thresh_context,'color'});
+% m1 = uimenu(c,'Label','assign another ID','Callback',{@idlist_contextmenu,'reassignID'});
+
+
+
+%% - slider thresh
+hb=uicontrol('style','slider','units','norm', 'tag'  ,'slid_thresh','fontsize',8);             %CHANGE-DIM
+set(hb,'position',[ .25  .9 .05 .041],'string','rw','value',0.5,'backgroundcolor','w');
+set(hb,'tooltipstring',['change contour threshold intensity' char(10) ' shortcut [shift+left/right arrow]']);
+set(hb,'parent',pan3);
+set(hb,'position',[ .285  .0 .5 1]);
+addlistener(hb,'ContinuousValueChange',@slid_thresh);
+
+%% thresh_medfilt
+hb=uicontrol('style','radio','units','norm', 'tag' ,'thresh_medfilt','fontsize',7);             %CHANGE-DIM
+set(hb,'position',[ .25  .9 .05 .041],'string','F','backgroundcolor','w');
+set(hb,'tooltipstring',['median filter' char(10) ''],'value',1);
+set(hb,'parent',pan3,'callback',@slid_thresh);
+set(hb,'position',[ .82  .0 .15 1]);
+
+%% thresh_medfilt-value
+hb=uicontrol('style','edit','units','norm', 'tag' ,'thresh_medfiltlength','fontsize',7);             %CHANGE-DIM
+set(hb,'position',[ .25  .9 .05 .041],'string','3','backgroundcolor','w');
+set(hb,'tooltipstring',['median filter length' char(10) '']);
+set(hb,'parent',pan3,'callback',@slid_thresh_flt);
+% set(hb,'position',[ .25  .45 .05 .041]); %PAN1
+set(hb,'position',[ .93  .0 .07 1]);
+
+
+
+
+
+
 %———————————————————————————————————————————————
 %%   PANEL-1
 %———————————————————————————————————————————————
 pan1 = uipanel('Title','Main Panel','FontSize',7,'units','norm', 'BackgroundColor','white',  'Position',[0 0 .5 .3]);
 set(pan1,'Position',[0 .9 1 .1],'Title','','tag','panel1','visible','on','backgroundcolor','w');
 set(pan1,'units','pixels','visible','on');
-uistack(pan1,'bottom');
+
 %==========================================================================================
 %-----CHANGE DIM
 str={'1' ,'2' '3'};
@@ -2285,7 +3947,30 @@ set(hb,'tooltipstring',['flip up-down image']);
 set(hb,'position',[ .58 .9 .08 .04]);
 set(hb,'parent',pan1);
 set(hb,'position',[ .35+.05*5  .05 .05*2 .41]); %PAN1
+%==========================================================================================
 
+%axis normal/image
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'rd_axisnormal','value',1);
+set(hb,'position',[ .12 .95 .08 .04],'string','ax normal','callback',{@rd_axisnormal});
+set(hb,'fontsize',6,'backgroundcolor','w','fontweight','normal');
+set(hb,'tooltipstring',['axis layout: [0] normal, [1] image']);
+% set(hb,'position',[ .58 .9 .08 .04]);
+set(hb,'parent',pan1);
+set(hb,'position',[0.5 0.501 0.1 0.41]); %PAN1
+
+%==========================================================================================
+% panel on top
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'rd_sliceBelowPan1','value',0);
+set(hb,'position',[ .12 .95 .08 .04],'string','on top','callback',{@rd_sliceBelowPan1});
+set(hb,'fontsize',6,'backgroundcolor','w','fontweight','normal','value',1);
+set(hb,'tooltipstring',[...
+    'layout: slice & upper panel ' char(10) ...
+    '[1]upper panel on top of slice' char(10) ...
+    '[1]upper panel and slice side by side' char(10) ...
+    ]);
+% set(hb,'position',[ .58 .9 .08 .04]);
+set(hb,'parent',pan1);
+set(hb,'position',[0.928 -0.0074 0.1 0.41]); %PAN1
 %==========================================================================================
 %-----dotType
 str={'dot' ,'square' 'hline' 'vline'};
@@ -2307,49 +3992,49 @@ set(hb,'parent',pan1);
 set(hb,'position',[ 0.1 .08 .05*2 .41]); %PAN1
 %==========================================================================================
 
-
-% unpaint
-hb=uicontrol('style','togglebutton','string','unpaint','units','norm','value',0);
-set(hb,'position',[.32  .95 .15 .06],'backgroundcolor','w');
-set(hb,'callback',@undo,'tag','undo');
-set(hb,'fontsize',8);
-set(hb,'tooltipstring',['un-paint location' char(10) '[u] shortcut' ]);
-set(hb,'parent',pan1);
-set(hb,'position',[ 0.36 .5 .05*3 .6]); %PAN1
+% % % % % 
+% % % % % % unpaint
+% % % % % hb=uicontrol('style','togglebutton','string','unpaint','units','norm','value',0);
+% % % % % set(hb,'position',[.32  .95 .15 .06],'backgroundcolor','w');
+% % % % % set(hb,'callback',@undo,'tag','undo');
+% % % % % set(hb,'fontsize',8);
+% % % % % set(hb,'tooltipstring',['un-paint location' char(10) '[u] shortcut' ]);
+% % % % % set(hb,'parent',pan1);
+% % % % % set(hb,'position',[ 0.36 .5 .05*3 .6]); %PAN1
 
 %==========================================================================================
-
-% previois/last step
-%==========================================================================================
-% LAST-STEP
-hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_prevstep');
-set(hb,'position',[ .52 .95 .05 .04],'string',' ', 'callback',{@pb_undoredo,-1});
-set(hb,'fontsize',7,'backgroundcolor','w');
-set(hb,'tooltipstring',['UNDO last step' char(10) '..for this slice only' char(10) 'shortcut [ctrl+x] ' ]);
-e = which('undo.gif');
-%    if ~isempty(regexpi(e,'.gif$'))
-[e map]=imread(e);e=ind2rgb(e,map);
-set(hb,'cdata', e);
-set(hb,'parent',pan1);
-set(hb,'position',[ 0.52 .48 .05 .5]); %PAN1
-
-% NEXT-STEP
-hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_nextstep');
-set(hb,'position',[ .56 .95 .05 .04],'string',' ', 'callback',{@pb_undoredo,+1});
-set(hb,'fontsize',7,'backgroundcolor','w');
-set(hb,'tooltipstring',['REDO last step' char(10) '..for this slice only' char(10) 'shortcut [ctrl+y] ']);
-set(hb,'cdata', flipdim(e,2));
-set(hb,'parent',pan1);
-set(hb,'position',[ 0.57 .48 .05 .5]); %PAN1
-
-
-% do/redo-label
-hb=uicontrol('style','text','units','norm', 'tag'  ,'pb_undoredo_label');
-set(hb,'position',[ .6 .95 .1 .035],'string','Hist: 1/10','horizontalalignment','left');
-set(hb,'fontsize',7,'backgroundcolor','w');
-set(hb,'tooltipstring',['undo/redo step']);
-set(hb,'parent',pan1);
-set(hb,'position',[ 0.62 .48 .1 .4]); %PAN1
+% 
+% % previois/last step
+% %==========================================================================================
+% % LAST-STEP
+% hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_prevstep');
+% set(hb,'position',[ .52 .95 .05 .04],'string',' ', 'callback',{@pb_undoredo,-1});
+% set(hb,'fontsize',7,'backgroundcolor','w');
+% set(hb,'tooltipstring',['UNDO last step' char(10) '..for this slice only' char(10) 'shortcut [ctrl+x] ' ]);
+% e = which('undo.gif');
+% %    if ~isempty(regexpi(e,'.gif$'))
+% [e map]=imread(e);e=ind2rgb(e,map);
+% set(hb,'cdata', e);
+% set(hb,'parent',pan1);
+% set(hb,'position',[ 0.52 .48 .05 .5]); %PAN1
+% 
+% % NEXT-STEP
+% hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_nextstep');
+% set(hb,'position',[ .56 .95 .05 .04],'string',' ', 'callback',{@pb_undoredo,+1});
+% set(hb,'fontsize',7,'backgroundcolor','w');
+% set(hb,'tooltipstring',['REDO last step' char(10) '..for this slice only' char(10) 'shortcut [ctrl+y] ']);
+% set(hb,'cdata', flipdim(e,2));
+% set(hb,'parent',pan1);
+% set(hb,'position',[ 0.57 .48 .05 .5]); %PAN1
+% 
+% 
+% % do/redo-label
+% hb=uicontrol('style','text','units','norm', 'tag'  ,'pb_undoredo_label');
+% set(hb,'position',[ .6 .95 .1 .035],'string','Hist: 1/10','horizontalalignment','left');
+% set(hb,'fontsize',7,'backgroundcolor','w');
+% set(hb,'tooltipstring',['undo/redo step']);
+% set(hb,'parent',pan1);
+% set(hb,'position',[ 0.62 .48 .1 .4]); %PAN1
 
 %==========================================================================================
 %TRANSPARENCY
@@ -2360,13 +4045,13 @@ set(hb,'tooltipstring',['set transparency {value between 0 and 1}' ]);
 set(hb,'parent',pan1);
 set(hb,'position',[ .701  .05 .05*1 .41]); %PAN1
 %==========================================================================================
-%HIDE
-hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'preview');
-set(hb,'position',[ .7 .9 .1 .04],'string','hide mask', 'callback',{@cb_preview});
-set(hb,'fontsize',8);
-set(hb,'tooltipstring',['shortly hide mask' char(10) '[h] shortcut']);
-set(hb,'parent',pan1);
-set(hb,'position',[ 0.85 .05 .05*3 .41]); %PAN1
+% % % % %HIDE
+% % % % hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'preview');
+% % % % set(hb,'position',[ .7 .9 .1 .04],'string','hide mask', 'callback',{@cb_preview});
+% % % % set(hb,'fontsize',8);
+% % % % set(hb,'tooltipstring',['shortly hide mask' char(10) '[h] shortcut']);
+% % % % set(hb,'parent',pan1);
+% % % % set(hb,'position',[ 0.85 .05 .05*3 .41]); %PAN1
 
 
 %==========================================================================================
@@ -2413,13 +4098,23 @@ set(hb,'tooltipstring',['otsu-3D thresholding ' char(10) '--']);
 set(hb,'parent',pan1);
 set(hb,'position',[ 0.07 .52 .07 .45]); %PAN1
 
+
+%threshtool
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_Treshtool','value',0);
+set(hb,'position',[ .08 .95 .08 .04],'string','TreshT.', 'callback',@pb_Treshtool);
+set(hb,'fontsize',7,'backgroundcolor','w','fontweight','bold');
+set(hb,'tooltipstring',['Threshhold Tool ' char(10) '[#] shortcurt']);
+set(hb,'parent',pan1);
+set(hb,'position',[ 0.14 .52 .07 .45]); %PAN1
+
+
 %3d-otsu
 hb=uicontrol('style','radio','units','norm', 'tag'  ,'rd_otsu3d','value',0);
 set(hb,'position',[ .18 .95 .08 .04],'string','3dotsu','callback',{@pb_otsu,1});
 set(hb,'fontsize',6,'backgroundcolor','w','fontweight','bold');
 set(hb,'tooltipstring',['[]2d vs [x]3d otsu' char(10) '']);
 set(hb,'parent',pan1);
-set(hb,'position',[ 0.14 .52 .08 .45]); %PAN1
+set(hb,'position',[ 0.14 .52 .08 .45],'visible','off'); %PAN1
 
 %link otsu
 hb=uicontrol('style','radio','units','norm', 'tag'  ,'rd_otsu');
@@ -2453,6 +4148,38 @@ pan2 = uipanel('Title','','FontSize',7,'units','norm', 'BackgroundColor','white'
 set(pan2,'Position',[0.8 -.01 .21 .915],'tag','panel2','visible','on','backgroundcolor','w');
 % set(pan2,'Position',[0.8 0-.01 .205 .9]);
 set(pan2,'units','pixels','visible','on');
+
+
+h33=uicontrol('style','pushbutton','cdata',handicon);
+set(h33,'parent',pan2,'backgroundcolor','w');%,'callback',@slid_thresh)
+set(h33,'units','norm','position',[ .0 .945 .2 .06]);
+set(h33,'string','','tooltipstring','drag panel to another position ','tag','pan2_dragCB');
+je = findjobj(h33); % hTable is the handle to the uitable object
+set(je,'MouseDraggedCallback',@pan2_dragCB  );
+set(h33,'cALLback',@pan2_CB)
+
+
+%=========config=================================================================================
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'config');           %SET-next-SLICE
+set(hb,'position',[ .84 .14 .05 .05],'string','','callback',{@cb_configuration});
+set(hb,'fontsize',8,'backgroundcolor','w');
+set(hb,'tooltipstring',['configuration' char(10) '' ]);
+icon=strrep(which('ant.m'),'ant.m','settings.png');
+[e map]=imread(icon)  ;
+e=ind2rgb(e,map);
+% e(e<=0.01)=nan;
+set(hb,'cdata',e);
+
+set(hb,'parent',pan2);
+set(hb,'position',[ .2 .945 .2 .06]); %PAN2
+%=========HELP=================================================================================
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_help');
+set(hb,'position',[ .9 .15 .1 .04],'string','help', 'callback',{@pb_help});
+set(hb,'fontsize',7,'backgroundcolor','w','fontweight','bold');
+set(hb,'tooltipstring',['more help' char(10) '']);
+set(hb,'parent',pan2);
+set(hb,'position',[ .45 .96 .5 .04]); %PAN2
+
 
 % CONTRAST adjust slice intensity
 hb=uicontrol('style','radio','units','norm', 'tag'  ,'cb_adjustIntensity');
@@ -2524,6 +4251,17 @@ set(hb,'position',[.62 .35 .4 .35]); %PAN2
 
 
 
+c = uicontextmenu;
+hb.UIContextMenu = c;
+% Create menu items for the uicontextmenu
+m1 = uimenu(c,'Label','assign another ID','Callback',{@idlist_contextmenu,'reassignID'});
+m1 = uimenu(c,'Label','remove this ID from slice','Callback',{@idlist_contextmenu,'removeID'});
+m1 = uimenu(c,'Label','keep following IDs in slice','Callback',{@idlist_contextmenu,'keepFollowingIDs'},'separator','on');
+m1 = uimenu(c,'Label','keep following IDs in all slices','Callback',{@idlist_contextmenu,'keepFollowingIDs_allSlices'},'separator','on');
+% m1 = uimenu(c,'Label','remove following IDs from slice','Callback',{@idlist_contextmenu,'removeFollowingIDs'},'separator','on');
+% m1 = uimenu(c,'Label','remove following IDs from all slices','Callback',{@idlist_contextmenu,'removeFollowingIDs_allSlices'},'separator','on');
+% 
+
 
 %==========================================================================================
 % %load file
@@ -2552,6 +4290,8 @@ set(hb,'position',[ .86 .052 .14 .04],'string','r');%, 'callback',{@pb_save2});
 set(hb,'fontsize',8,'backgroundcolor','w','fontweight','bold');
 set(hb,'tooltipstring',['saving options' char(10) '']);
 list={'save: mask [sm]' %'save: masked image [smi]'
+    'Advanced saving options [maskman.m]'
+    '---older-----'
     'save background-image: mask-value 0 is filled with 0-values)    [smi00]'
     'save background-image: mask-value 0 is filled with mean-values) [smi0m] '
     'save background-image: mask-value 0 is filled with neighbouring values) [smi0nv]'
@@ -2563,26 +4303,7 @@ set(hb,'string',list);
 set(hb,'parent',pan2);
 set(hb,'position',[ .3 .07 .7 .04]); %PAN2
 
-%=========config=================================================================================
-hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'config');           %SET-next-SLICE
-set(hb,'position',[ .84 .14 .05 .05],'string','','callback',{@cb_configuration});
-set(hb,'fontsize',8,'backgroundcolor','w');
-set(hb,'tooltipstring',['configuration' char(10) '' ]);
-icon=strrep(which('ant.m'),'ant.m','settings.png');
-[e map]=imread(icon)  ;
-e=ind2rgb(e,map);
-% e(e<=0.01)=nan;
-set(hb,'cdata',e);
 
-set(hb,'parent',pan2);
-set(hb,'position',[ .0 .945 .2 .06]); %PAN2
-%=========HELP=================================================================================
-hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_help');
-set(hb,'position',[ .9 .15 .1 .04],'string','help', 'callback',{@pb_help});
-set(hb,'fontsize',7,'backgroundcolor','w','fontweight','bold');
-set(hb,'tooltipstring',['more help' char(10) '']);
-set(hb,'parent',pan2);
-set(hb,'position',[ .45 .96 .5 .04]); %PAN2
 
 %=========clear mask=================================================================================
 hb=uicontrol('style','popupmenu','units','norm', 'tag'  ,'clear mask');           %SET-next-SLICE
@@ -2591,6 +4312,57 @@ set(hb,'fontsize',8);
 set(hb,'tooltipstring',['clear current slice/clear all slices' char(10) 'shortcut [c]' ]);
 set(hb,'parent',pan2);
 set(hb,'position',[ .15 .8 .7 .04]); %PAN2
+
+%=========show coordinates =================================================================================
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'rb_showcoordinates');           %SET-next-SLICE
+set(hb,'position',[ .85 .7 .15 .04],'string','XYZ','value',0, 'callback',@rb_showcoordinates);
+set(hb,'fontsize',6,'backgroundcolor','w');
+set(hb,'tooltipstring',['shows mm-coordinates ' char(10) ' ..deselect when drawing manually for smoother performance'  ]);
+set(hb,'parent',pan2);
+set(hb,'position',[0 0.7455 0.4 0.035]); %PAN2
+
+
+
+%=========filltype=================================================================================
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'rb_filltype');           %SET-next-SLICE
+set(hb,'position',[ .85 .7 .15 .04],'string','fillNB');
+set(hb,'fontsize',6,'backgroundcolor','w');
+set(hb,'tooltipstring',...
+    ['ID filling option' char(10) '[0] fill by selected ID; ' char(10) '[1] fill by next neighbouring ID'  ]);
+set(hb,'parent',pan2);
+set(hb,'position',[0 .7 .4 .035]); %PAN2
+
+%=========change ID=================================================================================
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'rb_changeID');           %SET-next-SLICE
+set(hb,'position',[ .85 .7 .15 .04],'string','newID','callback',@rb_changeID);
+set(hb,'fontsize',6,'backgroundcolor',[0.8706    0.9216    0.9804]);
+set(hb,'tooltipstring',['change ID( recolor color) of selected ROI' char(10) ...
+    ' via Graphical input from mouse or cursor'  ]);
+set(hb,'parent',pan2);
+set(hb,'position',[0.35 .7 .22 .03]); %PAN2
+
+
+%=========filltype=================================================================================
+hb=uicontrol('style','radio','units','norm', 'tag'  ,'rb_filllocal');           %SET-next-SLICE
+set(hb,'position',[ .85 .66 .15 .04],'string','fill_loc');
+set(hb,'fontsize',6,'backgroundcolor','w');
+set(hb,'tooltipstring',...
+    ['fill selected/all holes in ROI ' char(10) '[0] fill all holes; ' char(10) '[1] fill selected hole only'  ]);
+set(hb,'parent',pan2);
+set(hb,'position',[0.008 0.65835 0.4 0.035]); %PAN2
+
+%=========close points and fill =================================================================================
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'rb_closeAndFill');           %SET-next-SLICE
+set(hb,'position',[ .85 .7 .15 .04],'string','cloFi','callback',@rb_closeAndFill);
+set(hb,'fontsize',6,'backgroundcolor',[0.8706    0.9216    0.9804]);
+set(hb,'tooltipstring',['close disconnected points and fill with next neighbouring ID ' char(10) ...
+    ' via Graphical input from mouse or cursor'  ]);
+set(hb,'parent',pan2);
+set(hb,'position',[0.354 0.6587 0.22 0.035]); %PAN2
+
+
+
+
 
 %=========fill something=================================================================================
 % hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'fill');           %SET-next-SLICE
@@ -2638,7 +4410,7 @@ if ~isempty(chkicon);
     % ---
     set(hb,'callback',{@imdrawtool_prep,   1     });
     setappdata(hb,'toolnr',1);
-    set(hb,'tooltipstring',['free-hand drawing' char(10) 'shortcut [1]' ]);
+    set(hb,'tooltipstring',['free-hand drawing' char(10) 'shortcut [1]'  '; [esc] to quit' ]);
     set(hb,'parent',pan2);
     set(hb,'position',[ x y xs ys]);
     [e map]=imread(fullfile(picon,'Freehand_24px.png'),'BackGroundColor',colpb);
@@ -2653,7 +4425,7 @@ if ~isempty(chkicon);
     % ---
     set(hb,'callback',{@imdrawtool_prep,  2   });
     setappdata(hb,'toolnr',2);
-    set(hb,'tooltipstring',['draw rectangle' char(10) 'shortcut [2]' ]);
+    set(hb,'tooltipstring',['draw rectangle' char(10) 'shortcut [2]'  '; [esc] to quit' ]);
     set(hb,'position',[ pbx pby-1*pbsiz pbsiz pbsiz]);
     set(hb,'parent',pan2);
     set(hb,'position',[ x+0*xs y-1*ys xs ys]);
@@ -2670,7 +4442,7 @@ if ~isempty(chkicon);
     % ---
     set(hb,'callback',{@imdrawtool_prep,  3   });
     setappdata(hb,'toolnr',3);
-    set(hb,'tooltipstring',['draw ellipse/cirlce' char(10) 'shortcut [3]' ]);
+    set(hb,'tooltipstring',['draw ellipse/cirlce' char(10) 'shortcut [3]' '; [esc] to quit' ]);
     set(hb,'position',[ pbx+1*pbsiz pby-1*pbsiz pbsiz pbsiz]);
     set(hb,'parent',pan2);
     set(hb,'position',[ x+1*xs y-1*ys xs ys]);
@@ -2686,7 +4458,7 @@ if ~isempty(chkicon);
     % ---
     set(hb,'callback',{@imdrawtool_prep,  4   });
     setappdata(hb,'toolnr',4);
-    set(hb,'tooltipstring',['draw polygon' char(10) 'shortcut [4]' ]);
+    set(hb,'tooltipstring',['draw polygon' char(10) 'shortcut [4]'  '; [esc] to quit' ]);
     set(hb,'position',[ pbx+0*pbsiz pby-2*pbsiz pbsiz pbsiz]);
     set(hb,'parent',pan2);
     set(hb,'position',[ x+0*xs y-2*ys xs ys]);
@@ -2702,7 +4474,7 @@ if ~isempty(chkicon);
     % ---
     set(hb,'callback',{@imdrawtool_prep,  5   });
     setappdata(hb,'toolnr',5);
-    set(hb,'tooltipstring',['draw line' char(10) 'shortcut [5]' ]);
+    set(hb,'tooltipstring',['draw line' char(10) 'shortcut [5]' char(10)  '; [esc] to quit' ]);
     set(hb,'position',[ pbx+1*pbsiz pby-2*pbsiz pbsiz pbsiz]);
     set(hb,'parent',pan2);
     set(hb,'position',[ x+1*xs y-2*ys xs ys]);
@@ -2745,10 +4517,10 @@ if ~isempty(chkicon);
     set(hb,'fontsize',8,'backgroundcolor',colpb,'value',0,'string','');
     % ---
     set(hb,'callback',@pb_measureDistance);
-    set(hb,'tooltipstring',['measure distance' char(10) '--' ]);
+    set(hb,'tooltipstring',['measure distance' char(10) '[ctrl+m] to open/close tool; [esc] to close tool' ]);
     %set(hb,'position',[ pbx pby pbsiz pbsiz]);
     set(hb,'parent',pan2);
-    set(hb,'position',[ x+0*xs y-3.5*ys xs ys]);
+    set(hb,'position',[ 0.2696 0.326  xs ys]);
     [e map]=imread(fullfile(picon,'distance_tool.gif'));
     e=mat2gray(e);
     e(e==1)=nan;
@@ -2758,6 +4530,106 @@ if ~isempty(chkicon);
     e2=repmat(e,[1 1 3]);
     set(hb,'cdata',e2);
 end
+
+
+%% ========= patch =================================================================================
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_patch');           %SET-next-SLICE
+set(hb,'position',[ .85 .2 .15 .04],'string','','callback',@pb_patch);
+set(hb,'fontsize',6,'backgroundcolor',[0.8706    0.9216    0.9804]);
+set(hb,'tooltipstring',['ROI operation' char(10) ...
+    'move,rotate/mirror, replicate ROI' char(10) ...
+    ' shortcut [r]']);
+set(hb,'parent',pan2);
+set(hb,'position',[0.0064 0.3259 xs ys]); %PAN2
+% picon2=fullfile(matlabroot,'toolbox','matlab','icons');
+[e map]=imread(fullfile(picon2,'help_block.png'),'BackGroundColor',[0.8706    0.9216    0.9804]);
+e=double(imresize(e,[16 16],'cubic'));
+if max(e(:))>1; e=e./255; end
+set(hb,'cdata',e);
+   
+
+% panlin1 = uipanel('parent',pan2,'Title','','FontSize',7,'units','norm', 'BackgroundColor','r', ...
+%     'Position',[0 0 .5 .3]);
+% set(panlin1,'Position',[0  .31 1 .01],'tag','panlin1','visible','on','ShadowColor','r');
+%% ========= separatorline =================================================================================
+colsep=[ 0.4667    0.6745    0.1882];
+
+hb = uicontrol('parent',pan2,'style','pushbutton','string','','FontSize',7,'units','norm', ...
+    'Position',[0 0 .5 .3]);
+set(hb,'Position',[0  .31 1 .007],'tag','panlin1','visible','on','BackgroundColor',colsep,'tag','pan2sep1');
+
+%% previois/last step
+%==========================================================================================
+% LAST-STEP
+butsi=[.16 0.05];
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_prevstep');
+set(hb,'position',[ .52 .95 .05 .04],'string',' ', 'callback',{@pb_undoredo,-1});
+set(hb,'fontsize',7,'backgroundcolor','w');
+set(hb,'tooltipstring',['UNDO last step' char(10) '..for this slice only' char(10) 'shortcut [x] or [ctrl+x] ' ]);
+e = which('undo.gif'); 
+%    if ~isempty(regexpi(e,'.gif$'))
+[e map]=imread(e);e=ind2rgb(e,map);
+set(hb,'cdata', e);
+set(hb,'parent',pan2);
+set(hb,'position',[ 0.0064 .25 butsi   ]);  
+
+% NEXT-STEP
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_nextstep');
+set(hb,'position',[ .56 .95 .05 .04],'string',' ', 'callback',{@pb_undoredo,+1});
+set(hb,'fontsize',7,'backgroundcolor','w');
+set(hb,'tooltipstring',['REDO last step' char(10) '..for this slice only' char(10) 'shortcut  [y] or  [ctrl+y] ']);
+set(hb,'cdata', flipdim(e,2));
+set(hb,'parent',pan2);
+set(hb,'position',[ 0.0064+(butsi(1)) .25 butsi]);  
+
+
+% do/redo-label
+hb=uicontrol('style','text','units','norm', 'tag'  ,'pb_undoredo_label');
+set(hb,'position',[ .6 .95 .1 .035],'string','Hist: 1/10','horizontalalignment','left');
+set(hb,'fontsize',7,'backgroundcolor','w','foregroundcolor','b');
+set(hb,'tooltipstring',['undo/redo step number of available undo/redo steps']);
+set(hb,'parent',pan2);
+set(hb,'position',[ 0.0064+(butsi(1))*2 .25 butsi(1)*4  butsi(2)]);
+
+
+
+%% =========paint/unpaint =================================================================================
+hb=uicontrol('style','togglebutton','string','unpaint','units','norm','value',0);
+set(hb,'position',[.32  .95 .15 .06],'backgroundcolor','w');
+set(hb,'callback',@undo,'tag','undo');
+set(hb,'fontsize',8);
+set(hb,'tooltipstring',['un-paint location' char(10) '[u] shortcut' ]);
+set(hb,'parent',pan2);
+set(hb,'position',[ 0.0064 .2 .45 .04]); 
+
+%% ========= hide mask =================================================================================
+hb=uicontrol('style','togglebutton','units','norm', 'tag'  ,'preview');
+set(hb,'position',[ .7 .9 .1 .04],'string','hide mask', 'callback',{@cb_preview});
+set(hb,'fontsize',8);
+set(hb,'tooltipstring',['show/hide masks:  [0]show mask, [1] hide mask' char(10) '[h] shortcut']);
+set(hb,'parent',pan2);
+set(hb,'position',[ .51 .2 .45 .04]); 
+
+
+
+%% ========= separatorline =================================================================================
+hb = uicontrol('parent',pan2,'style','pushbutton','string','','FontSize',7,'units','norm', ...
+    'Position',[0 0 .5 .3]);
+set(hb,'Position',[0  .19 1 .007],'tag','panlin1','visible','on','BackgroundColor',colsep,'tag','pan2sep2');
+
+
+%% =========test =================================================================================
+if 0
+    hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'rb_test');           %SET-next-SLICE
+    set(hb,'position',[0 0 .15 .04],'string','test','callback',@pb_test);
+    set(hb,'fontsize',6,'backgroundcolor',[0.8706    0.9216    0.9804]);
+    set(hb,'tooltipstring',['test ' char(10) ...
+        ' '  ]);
+    set(hb,'parent',pan2);
+    set(hb,'position',[0.354 0.2587 0.22 0.035]); %PAN2
+end
+
+
 % ==============================================
 %%  windows-auto focus
 % ===============================================
@@ -2769,10 +4641,376 @@ if 1%~isempty(chkicon);
     set(hb,'tooltipstring',['autofocus window' char(10) 'window becoms focused (active) when mouse hovers over it' char(10) '[a] shortcut']);
     %set(hb,'position',[ .84 .2 .11 .035]);
     set(hb,'parent',pan2);
-    set(hb,'position',[ .2 .2 .6 .035]);
+    set(hb,'position',[0.05 0.1195 0.6 0.035]);
 end
 
 
+
+
+%% --------------- end panel2
+
+
+% wait
+hb=uicontrol('style','text','units','norm', 'tag'  ,'waitnow');             %CHANGE-DIM
+set(hb,'position',[ .93 .97 .07 .03],'string','..wait..','backgroundcolor','k','foregroundcolor',[1.0000 0.8431 0]);
+set(hb,'visible','on');
+
+v.unp=get(pan1,'position');
+set(pan1,'units','norm');
+v.unn=get(pan1,'position');
+set(pan1,'userdata',v);
+
+v.unp=get(pan2,'position');
+set(pan2,'units','norm');
+v.unn=get(pan2,'position');
+set(pan2,'userdata',v);
+
+v.unp=get(pan3,'position');
+set(pan3,'units','norm');
+v.unn=get(pan3,'position');
+set(pan3,'userdata',v);
+
+%
+% pos2=get(pan2,'position');
+% set(pan2,'userdata',pos2);
+% set(pan2,'units','norm');
+%
+% pos3=get(pan3,'position');
+% set(pan3,'userdata',pos3);
+% set(pan3,'units','norm');
+
+
+
+function idlist_contextmenu(e,e2,task)
+hf1=findobj(0,'tag','xpainter');
+hed=findobj(hf1,'tag','edvalue');
+ID=str2num(get(hed,'string'));
+
+
+
+%% =========================================================================================
+u=get(hf1,'userdata');
+[r1 r2]=aa_getslice();
+% r2(1:4,1:4)=1;
+
+if strcmp(task,'removeID')
+    %'removeID'
+    newID=0;
+elseif strcmp(task,'reassignID')
+    %'reassignID'
+    %% =========================================================================================
+    prompt = {[...
+        ['Assign a new ID for all ROIs with ID=[' num2str(ID) '] found in THIS slice:'] char(10)  ...
+        '   0: will remove all ROIs with this ID from THIS slice' char(10) ...
+        '   ..enter a new numeric ID']};
+    dlg_title = 'Reassign ID';
+    num_lines = 1;
+    defaultans = {num2str(ID)};
+    answer = inputdlg2(prompt,dlg_title,num_lines,defaultans);
+    %% =========================================================================================
+    if isempty(answer); return; end
+    newID=str2num(answer{1});
+    if isnan(newID);
+        newID=str2num(get(findobj(hf1,'tag','edvalue'),'string')) ;
+    end
+elseif strcmp(task,'keepFollowingIDs') 
+    allID=unique(r2); allID(allID==0)=[];
+    
+    msg='Keep selected IDs in slice; optional: rename selected IDs in 3rd. column';
+    selection=1;
+    idkeeptab=idlistTable(allID,msg,selection);
+    if isempty(idkeeptab); return; end
+    
+    tb=idkeeptab(idkeeptab(:,1)==1,:);
+     si=size(r2);
+    x=r2(:);
+    y=x.*0;
+    for i=1:size(tb,1)  % fill slice with IDs
+        ix=find(x==tb(i,2));
+        if    tb(i,3)~=0;   y(ix)=tb(i,3);
+        else;               y(ix)=tb(i,2);
+        end
+    end
+    y2=reshape(y,si);
+    IDleft=unique(y2); IDleft(IDleft==0)=[];
+    if isempty(IDleft)  ; newID=1;
+    else                ; newID=min(IDleft);
+    end
+    
+    aa_setslice(y2);
+    hb=findobj(hf1,'tag','edvalue');
+    set(hb,'string', num2str(newID));
+    edvalue();
+    setslice([],1);
+    
+    return
+elseif strcmp(task,'keepFollowingIDs_allSlices')
+
+    r2=u.b;
+    allID=unique(r2); allID(allID==0)=[];
+    
+    msg='Keep selected IDs in ALL slices; optional: rename selected IDs in 3rd. column';
+    selection=1;
+    idkeeptab=idlistTable(allID,msg,selection);
+    if isempty(idkeeptab); return; end
+    
+    tb=idkeeptab(idkeeptab(:,1)==1,:);
+    si=size(r2);
+    x=r2(:);
+    y=x.*0;
+    for i=1:size(tb,1)  % fill slice with IDs
+        ix=find(x==tb(i,2));
+        if    tb(i,3)~=0;   y(ix)=tb(i,3);
+        else;               y(ix)=tb(i,2);
+        end
+    end
+    y2=reshape(y,si);
+    IDleft=unique(y2); IDleft(IDleft==0)=[];
+    if isempty(IDleft)  ; newID=1;
+    else                ; newID=min(IDleft);
+    end
+    u.b=y2;
+    set(hf1,'userdata',u);
+    setslice();
+    %aa_setslice(y2);
+    hb=findobj(hf1,'tag','edvalue');
+    set(hb,'string', num2str(newID));
+    edvalue();
+    %setslice([],1);
+    
+    return
+
+
+
+
+
+
+end
+%% =========================================================================================
+m2=r2==ID;
+% m2=m1*newID;
+% cl=bwlabel(m1);
+% clustnum=cl(round(co(2)),round(co(1))  );
+% cl2=cl==clustnum;
+% m2=cl2;
+m3=r2;
+m3(m2)=newID;
+ro=m3;
+aa_setslice(ro);
+%===================================================================================================
+% ------------- update IDlist -------------
+hb=findobj(hf1,'tag','edvalue');
+set(hb,'string', num2str(newID));
+edvalue();
+setslice([],1);
+% fg,imagesc(r2);
+
+
+% function delID=idlistTable(allID)
+% % delID=[]
+% % 
+% % idtab=snip_idlistTable(ids,msg,selection)
+
+
+
+function idtab=idlistTable(ids,msg,selection)
+% ==============================================
+%%   id table
+% ===============================================
+idtab=[];
+
+
+if 0
+    msg='Selected IDs will be remove from this Slice, rename IDs in 3rd. column';
+    ids
+    selection=0;
+    snip_idlistTable(ids,msg,selection);
+end
+
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+
+
+ids=unique(ids(:)); ids(ids==0)=[];
+
+dx=[ logical(ones(size(ids)))  ids  ones(size(ids))  ];
+dx={};
+for i=1:length(ids)
+    tmp= { logical(selection) num2str(ids(i))   ''};
+    dx=[dx; tmp];
+end
+
+tbh      = {'use' 'ID' 'newID'};
+tb       =dx;
+editable = [1    0  1  ]; %EDITABLE
+colfmt   ={'logical' 'string'  'numeric'} ;
+
+% for i=1:size(tbh,2)
+%     addspace=size(char(tb(:,i)),2)-size(tbh{i},2)+3;
+%     tbh(i)=  { [' ' tbh{i} repmat(' ',[1 addspace] )  ' '  ]};
+% end
+
+delete(findobj(0,'tag'  ,'IDlist'));
+fg;
+set(gcf,'numbertitle','off','tag','IDlist','name','IDlist','menubar','none');
+hf5=gcf;
+pos=get(hf5,'position');
+pos=set(hf5,'position',[pos(1:2) pos(3)./3  pos(4)]);
+
+t = uitable('Parent', gcf,'units','norm', 'Position', [0 0.05 .89 .95], ...
+    'Data', tb,'tag','table',...
+    'ColumnWidth','auto');
+t.ColumnName =tbh;
+% h(end+1,:)={get(t,'tag') get(t,'type')  '' };
+
+t.ColumnEditable =logical(editable ) ;% [false true  ];
+try
+    colmat=u.colmat;
+catch
+    u.colmat = distinguishable_colors(length(ids),[1 1 1; 0 0 0]);
+    if size(u.colmat ,1)>2
+        u.colmat=u.colmat([2 1 3:end ],:);
+    end
+end
+if length(ids)>size(u.colmat,1)
+     u.colmat = distinguishable_colors(length(ids),[1 1 1; 0 0 0]);
+    if size(u.colmat ,1)>2
+        u.colmat=u.colmat([2 1 3:end ],:);
+    end 
+end
+
+
+
+
+% colmat=repmat(colmat,[5 1]);
+col=u.colmat(1:length(ids),:);
+t.BackgroundColor =col;% [0 0 1; 0.9451    0.9686    0.9490];
+
+% set(t,'ColumnWidth',{51});
+set(t,'units','norm','position',[0 0.05 .89 .9]);
+set(t,'tooltipstring','IDs ...select/deselect IDs ..see task above');
+
+% select all
+hb=uicontrol('style','checkbox','units','norm', 'tag'  ,'IDlist_selectall');
+set(hb,'position',[0.021429 0.0035714 0.4 0.04],'string','select all',...{'infobox' 'dd'},...
+    'backgroundcolor','w','foregroundcolor',[0.9294    0.6941    0.1255],'value',selection,...
+    'horizontalalignment','left','fontsize',7,'fontweight','bold');
+set(hb,'callback',@IDlist_selectall);
+set(hb,'tooltipstring','select/deselect IDs');
+
+%OK
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'IDlist_OK');
+set(hb,'position',[0.74464 0.0035714 0.25 0.04],'string','OK',...{'infobox' 'dd'},...
+    'backgroundcolor','w','foregroundcolor','k','value',0,...
+    'horizontalalignment','left','fontsize',7,'fontweight','bold');
+set(hb,'callback',@IDlist_OK);
+set(hb,'tooltipstring','OK..accept');
+
+%cancel
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'IDlist_cancel');
+set(hb,'position',[0.49286 0.0035714 0.25 0.04],'string','Cancel',...{'infobox' 'dd'},...
+    'backgroundcolor','w','foregroundcolor','k','value',0,...
+    'horizontalalignment','left','fontsize',7,'fontweight','bold');
+set(hb,'callback',@IDlist_cancel);
+set(hb,'tooltipstring','cancel');
+
+
+%MSG
+col=[0.7569    0.8667    0.7765];
+% col=repmat([1],[1 3]);
+hb=uicontrol('style','text','units','norm', 'tag'  ,'IDlist_msg');
+set(hb,'position',[0 .94 1 0.06],'string',msg,...{'infobox' 'dd'},...
+    'backgroundcolor',col,'foregroundcolor','k','value',0,...
+    'horizontalalignment','left','fontsize',7,'fontweight','bold');
+set(hb,'tooltipstring','message');
+
+v=[];
+set(hf5,'userdata',v);
+
+ uiwait(hf5);  %WAIT
+
+try
+    v=get(hf5,'userdata');
+    if v.isOK==1
+        ht=findobj(hf5,'tag'  ,'table');
+        d=get(ht,'Data');
+
+        iempty= cellfun('isempty',d);
+        d(iempty)={0};
+        d2=cell2mat(cellfun(@(a){[str2num(num2str(a)) ]} , d ));
+        if sum(d2(:,3))==0
+           d2=d2(:,1-2) ; %remove renaming col
+        end
+        idtab=d2;
+    end
+end
+close(hf5);
+
+
+% ==============================================
+%%   IDlist subs
+% ===============================================
+
+function IDlist_selectall(e,e2)
+hb=findobj(gcf,'tag','table');
+if get(findobj(gcf,'tag','IDlist_selectall'),'value')==0
+    hb.Data(:,1)={logical(0)} ;% d(:,1)={logical(0)};
+else
+    hb.Data(:,1)={logical(1)} ;d(:,1)={logical(1)} ;
+end
+
+function IDlist_OK(e,e2)
+v=get(gcf,'userdata');
+v.isOK=1;
+set(gcf,'userdata',v);
+uiresume(gcf);
+ 
+
+function IDlist_cancel(e,e2)
+v=get(gcf,'userdata');
+v.isOK=0;
+set(gcf,'userdata',v);
+uiresume(gcf);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function rb_showcoordinates(e,e2)
+hf1=findobj(0,'tag','xpainter');
+set(findobj(hf1,'tag','infobox'),'string','');
+
+function montage_reload(e,e2)
+show_allslices();
 
 
 
@@ -2784,7 +5022,10 @@ function show_allslices(e,e2,px)
 % fprintf('..wait...');
 hf1=findobj(0,'tag','xpainter');
 hw=findobj(hf1,'tag','waitnow');
-set(hw,'visible','on'); drawnow;
+% drawnow
+% uistack(findobj(hf1,'tag','panel1'),'top');
+% drawnow
+set(hw,'visible','on','string','..wait..'); drawnow;
 u=get(hf1,'userdata');
 hb=findobj(hf1,'tag','rd_changedim');
 dimval=get(hb,'value');
@@ -2808,6 +5049,11 @@ for i=1:length(uni)
     c(ix,:)=repmat( u.colmat(uni(i),:) ,[ length(ix) 1]);
 end
 % fprintf('..');
+
+% ==============================================
+%%   
+% ===============================================
+
 c1=reshape(c(:,1),[u.hb.dim]);
 c2=reshape(c(:,2),[u.hb.dim]);
 c3=reshape(c(:,3),[u.hb.dim]);
@@ -2819,13 +5065,50 @@ c3=permute(c3, [dimother dim]);
 
 
 
+% d=[];
+% d(:,:,1)=montageout(permute(c1,[1 2 4 3]));
+% d(:,:,2)=montageout(permute(c2,[1 2 4 3]));
+% d(:,:,3)=montageout(permute(c3,[1 2 4 3]));
+
+bg  =permute(u.a, [dimother dim]);
+mask=permute(u.b, [dimother dim]);
+
+
+% crop   ------------------------------------------------------------
+hf4=findobj(0,'tag','montage');
+hc=findobj(hf4,'tag','montage_crop');
+if isempty(hc)
+    docrop=0;
+else
+    docrop=get(hc,'value');
+end
+
+if docrop==1        %------------------------- CROP
+    o=reshape(   otsu(bg(:),3)  ,[size(c2)])  ;
+    cm=mean(o,3)==1 ;%crop
+    
+    cm=imerode(cm,strel('square',[2]));
+    v.ins_lr=find(mean(cm,1)~=1);
+    v.ins_ud=find(mean(cm,2)~=1);
+    
+    bg     =bg(   v.ins_ud, v.ins_lr,:);
+    mask   =mask( v.ins_ud, v.ins_lr,:);
+    c1     =c1(   v.ins_ud, v.ins_lr,:);
+    c2     =c2(   v.ins_ud, v.ins_lr,:);
+    c3     =c3(   v.ins_ud, v.ins_lr,:);
+%     d      =d(    v.ins_ud, v.ins_lr,:)  ;
+    
+end
+% montage2(bg)
 d=[];
 d(:,:,1)=montageout(permute(c1,[1 2 4 3]));
 d(:,:,2)=montageout(permute(c2,[1 2 4 3]));
 d(:,:,3)=montageout(permute(c3,[1 2 4 3]));
+% ==============================================
+%%   
+% ===============================================
 
-bg  =permute(u.a, [dimother dim]);
-mask=permute(u.b, [dimother dim]);
+
 % r1=adjustIntensity(r1)
 % -----
 for i=1:size(bg,3)
@@ -2883,72 +5166,146 @@ us.bg =bg;
 us.ma =d;
 us.mask=mask;
 
+
+% %% crop
+% docrop=1;
+% if docrop==1        %------------------------- CROP
+% 
+%     o=otsu(bg(:,:,1),3);
+%     cm=mean(o,3)==1 ;%crop
+%     cm=imdilate(cm,strel('square',[7]));
+%     v.ins_lr=find(mean(cm,1)~=1);
+%     v.ins_ud=find(mean(cm,2)~=1);
+% 
+%     us.fus   =us.fus(v.ins_ud, v.ins_lr,:);
+%     us.bg    =us.bg(v.ins_ud, v.ins_lr,:);
+%     us.ma    =us.ma(v.ins_ud, v.ins_lr,:);
+%     us.mask  =us.mask(v.ins_ud, v.ins_lr,:);
+% 
+% 
+% %    TX =TX(v.ins_ud, v.ins_lr,:);
+% 
+% 
+%    
+% else
+%     v.ins_lr=[1:size(o,2)];
+%     v.ins_ud=[1:size(o,1)];
+% end
+us.docrop=docrop;
+
 % ==============================================
 %%
 % ===============================================
+hf4=findobj(0,'tag','montage');
+if isempty(hf4);
+    makenewFig=1;
+else
+    makenewFig=0;
+end
+
+if makenewFig==1
+    fg;
+    hf4=gcf;
+    set(hf4,'NumberTitle','off','name', 'montage');
+    image(fus);
+    axis image; axis off;
+    title('bg-image & mask');
+    
+    
+    set(gca,'position',[0.05 0 1 1]); %axis normal;
+    hb=uicontrol('style','text','units','norm','string','bg-image & mask');
+    set(hb,'position',[0 0 1 .04],'foregroundcolor','b');
+else
+    figure(hf4);
+    him=findobj(hf4,'type','image');
+    set(him,'cdata',us.fus);
+end
+
+set(hf4,'userdata',us,'tag','montage');
+delete(findobj(hf4,'tag','slicenum'));
 
 
-fg;
-image(fus);
-axis image; axis off;
-title('bg-image & mask');
-set(gcf,'userdata',us);
-
-set(gca,'position',[0.05 0 1 1]); %axis normal;
-hb=uicontrol('style','text','units','norm','string','bg-image & mask');
-set(hb,'position',[0 0 1 .04],'foregroundcolor','b');
-
-
+if docrop==1
+    shiftTX=0;
+else
+    shiftTX=0.4;
+end
 for i=1:size(c1,3)
-    te(i)=text( laco(i,2)+size(c1,2)*0.5 ,laco(i,1), num2str(i));
+    te(i)=text( laco(i,2)+size(c1,2)*shiftTX ,laco(i,1), num2str(i));
     set(te(i),'color',[1.0000    0.8431         0],'tag','slicenum');
     set(te,'VerticalAlignment','top','fontsize',8,'fontweight','bold');
     set(te,'ButtonDownFcn', @showclises_gotoThisSlice);
 end
-%     'baseline'
-%     'top'
-%     'cap'
-%     'middle'
-%     'bottom'
+
+
+
+
 % ==============================================
 %%
 % ===============================================
+if makenewFig==1;
+    
+    zoom on;
+    % fprintf('done\n');
+    
+    
+    hb=uicontrol('style','text','units','norm','string','Show');
+    set(hb,'position',[0 .9+1*.03 .1 .03],'fontsize',7,'backgroundcolor','w','HorizontalAlignment','left','fontweight','bold');
+    
+    hb=uicontrol('style','radio','units','norm','string','both','value',1,'callback',@montage_post);
+    set(hb,'position',[0 .9 .15 .03],'fontsize',7,'backgroundcolor','w','userdata',1,'tag','rd_montage_ovl');
+    set(hb,'tooltipstring','show background image [BG] and mask');
+    
+    hb=uicontrol('style','radio','units','norm','string','[0]BG,[1]Mask','value',0,'callback',@montage_post);
+    set(hb,'position',[0 .9-1*.03  .15 .03],'fontsize',7,'backgroundcolor','w','userdata',2,'tag','rd_montage_ovl');
+    set(hb,'tooltipstring','show background image [BG] or mask');
+    
+    
+    %slider-TXT
+    hb=uicontrol('style','text','units','norm','string','contrast');
+    set(hb,'position',[0 .8-0*.03  .15 .03],'fontsize',7,'backgroundcolor','w');
+    %slider-ui
+    hb=uicontrol('style','slider','units','norm','string','rb','value',0.5,'callback',@montage_slid_contrast);
+    set(hb,'position',[0 .8-1*.03  .15 .03],'fontsize',7,'backgroundcolor','w','userdata',[],'tag','montage_slid_contrast');
+    set(hb,'tooltipstring','change contrast');
+    
+    % =========contour======================================================
+    hb=uicontrol('style','radio','units','norm', 'tag'  ,'montage_contour','value',0);
+    set(hb,'position',[0 .7 .12 .04],'string','contour', 'callback',@montage_post);
+    set(hb,'fontsize',7,'backgroundcolor',[1 1 1],'fontweight','normal');
+    set(hb,'tooltipstring',['show contour' char(10) '-']);
+    
+   % =========crop======================================================
+    hb=uicontrol('style','radio','units','norm', 'tag'  ,'montage_crop','value',0);
+    set(hb,'position',[0.0017857 0.61786 0.12 0.04],'string','crop slices', 'callback',@montage_reload);
+    set(hb,'fontsize',7,'backgroundcolor',[1 1 1],'fontweight','normal');
+    set(hb,'tooltipstring',['crop slices for better montage' char(10) '-']);
+   % =========axis normal/image======================================================
+    hb=uicontrol('style','radio','units','norm', 'tag'  ,'montage_axisnormal','value',0);
+    set(hb,'position',[0.0017857 0.57976 0.12 0.04],'string','axis normal', 'callback',@montage_axisnormal);
+    set(hb,'fontsize',7,'backgroundcolor',[1 1 1],'fontweight','normal');
+    set(hb,'tooltipstring',['axis normal/image' char(10) '-']);
+
+    % =========reload======================================================
+    hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'montage_reload');
+    set(hb,'position',[0.0017857 0.96071 0.12 0.04] ,'string','reload', 'callback',@montage_reload);
+    set(hb,'fontsize',7,'backgroundcolor',[0.8392    0.9098    0.8510],'fontweight','normal');
+    set(hb,'tooltipstring',['reload data']);
+    
+    
+%     set(findobj(hf4,'type','uicontrol'),'units',  'pixels');
+ 
+else
+    set(findobj(gcf,'tag','rd_montage_ovl','-and','userdata',1),'value',1);
+    set(findobj(gcf,'tag','rd_montage_ovl','-and','userdata',2),'value',0);
+end
 
 
-zoom on;
-% fprintf('done\n');
 
-
-hb=uicontrol('style','text','units','norm','string','Show');
-set(hb,'position',[0 .9+1*.03 .1 .03],'fontsize',7,'backgroundcolor','w','HorizontalAlignment','left','fontweight','bold');
-
-hb=uicontrol('style','radio','units','norm','string','both','value',1,'callback',@montage_post);
-set(hb,'position',[0 .9 .15 .03],'fontsize',7,'backgroundcolor','w','userdata',1,'tag','rd_montage_ovl');
-set(hb,'tooltipstring','show background image [BG] and mask');
-
-hb=uicontrol('style','radio','units','norm','string','[0]BG,[1]Mask','value',0,'callback',@montage_post);
-set(hb,'position',[0 .9-1*.03  .15 .03],'fontsize',7,'backgroundcolor','w','userdata',2,'tag','rd_montage_ovl');
-set(hb,'tooltipstring','show background image [BG] or mask');
-
-
-%slider-TXT
-hb=uicontrol('style','text','units','norm','string','contrast');
-set(hb,'position',[0 .8-0*.03  .15 .03],'fontsize',7,'backgroundcolor','w');
-%slider-ui
-hb=uicontrol('style','slider','units','norm','string','rb','value',0.5,'callback',@montage_slid_contrast);
-set(hb,'position',[0 .8-1*.03  .15 .03],'fontsize',7,'backgroundcolor','w','userdata',[],'tag','montage_slid_contrast');
-set(hb,'tooltipstring','change contrast');
-
-% =========contour======================================================
-hb=uicontrol('style','radio','units','norm', 'tag'  ,'montage_contour','value',0);
-set(hb,'position',[0 .7 .12 .04],'string','contour', 'callback',@montage_post);
-set(hb,'fontsize',7,'backgroundcolor',[1 1 1],'fontweight','normal');
-set(hb,'tooltipstring',['show contour' char(10) '-']);
-
-
-
-montage_slid_contrast();
+ montage_slid_contrast();
 set(hw,'visible','off');
+
+
 
 
 function showclises_gotoThisSlice(e,e2)
@@ -2968,14 +5325,17 @@ function montage_slid_contrast(e,e2)
 % him=findobj(gca,'type','image');
 % d=get(him,'cdata');
 % set(him,'cdata',d.*(val*3));
-
-hd=findobj(gcf,'tag','rd_montage_ovl');
+hf4=findobj(0,'tag','montage');
+hd=findobj(hf4,'tag','rd_montage_ovl');
 hf=hd(find(cell2mat(get(hd,'value'))));
 montage_post(hf,[]);
 
+function montage_axisnormal(e,e2,px)
+montage_post();
+
 function montage_post(e,e2)
-% 'a'
-hd=findobj(gcf,'tag','rd_montage_ovl');
+hf4=findobj(0,'tag','montage');
+hd=findobj(hf4,'tag','rd_montage_ovl');
 us=get(gcf,'userdata');
 % get(e,'userdata')
 
@@ -2992,42 +5352,15 @@ elseif rd(1)==1 && rd(2)==1
     im=us.ma;
 end
 
-
-
-
-% return
-% if get(e,'userdata')==2 % single img
-%     set(findobj(hd,'userdata',1),'value',0); %other off
-%     if get(e,'value')==1
-%         im=us.ma;
-%     else
-%         im=us.bg;
-%     end
-% else         %fuse
-%     set(findobj(hd,'userdata',2),'value',0); %other off
-%     if get(e,'value')==0
-%         set(findobj(hd,'userdata',2),'value',0);
-%         montage_post( findobj(hd,'userdata',2) ,[]);
-%         return
-%     else
-%         im=us.fus;
-%     end
-%
-% end
-% set(hd,'value',0);
-% set(e,'value',1);
-% val=get(e,'userdata');
-% li={'fus','bg','ma'};
 him=findobj(gca,'type','image');
-
-
 hb=findobj(gcf,'tag','montage_slid_contrast');
 val=get(hb,'value');
-if get(e,'userdata')==1
-    im2=im*val*2;
-else
-    im2=im*val*2;
-end
+% if get(e,'userdata')==1
+%     im2=im*val*2;
+% else
+%     im2=im*val*2;
+% end
+im2=im*val*2;
 set(him,'cdata',im2);
 
 % ----contour
@@ -3066,7 +5399,7 @@ if docontour==1
     for i=1:length(c2)
         cx=[c2(i).xdata, c2(i).ydata];
         ind = sub2ind(size(us.mask), round(cx(:,2)),  round(cx(:,1)));
-        tb=flipud(sortrows([uni histc(msk2(ind),uni) ],2))  ; 
+        tb=flipud(sortrows([uni histc(msk2(ind),uni) ],2))  ;
         val=tb(1,1);
         if tb(1,2)/length(ind)>30
             val=0;
@@ -3075,15 +5408,27 @@ if docontour==1
         if val~=0
             hp=plot(c2(i).xdata, c2(i).ydata, 'color',u.colmat(val,:),'tag','mycontour','linewidth',1);
         end
-       % disp(i) ;drawnow; pause
+        % disp(i) ;drawnow; pause
     end
-%     
-
-
-% ==============================================
-%%
-% ===============================================
+    %
+    
+    
+    % ==============================================
+    %%
+    % ===============================================
 end
+
+
+hd=findobj(hf4,'tag','montage_axisnormal');
+figure(hf4);
+if get(hd,'value')==1
+    axis normal;
+    set(gca,'position',[ 0.151         0  .848    1.0000]);
+else
+    axis image;
+    set(gca,'position',[ 0.0500         0    1.0000    1.0000]);
+end
+
 
 function set_idlist()
 hf1=findobj(0,'tag','xpainter');
@@ -3096,6 +5441,20 @@ idlist=cellfun(@(a){[num2str(a)]} ,num2cell(ids) );
 hlist=findobj(gcf,'tag','pb_idlist');
 % set(hlist,'string',{'<HTML><FONT color=#0000FF><b>Red</FONT></HTML>'},'value',sel);
 % '<HTML><FONT color="red">Red</FONT></HTML>'
+
+% 
+% function def_colors()
+% hf1=findobj(0,'tag','xpainter');
+% u=get(hf1,'userdata');
+% colmat = distinguishable_colors(u.set.numColors,[1 1 1; 0 0 0]);
+% 
+if max(ids)>size(u.colmat,1)
+    u.set.numColors=max(ids);
+    set(hf1,'userdata',u);
+def_colors();
+    u=get(hf1,'userdata');
+end
+
 list={};
 for i=1:length(ids)
     colrgb=u.colmat(ids(i),:);
@@ -3133,22 +5492,37 @@ hf1=findobj(0,'tag','xpainter');
 u=get(hf1,'userdata');
 hb=findobj(hf1,'tag','edvalue');
 num=str2num(get(hb,'string'));
+
+
+
+
+if num>size(u.colmat,1); %increase number of colors
+    u.set.numColors=num;
+    set(hf1,'userdata',u);
+    def_colors();
+    u=get(hf1,'userdata');
+end
+
+
 try
     set(hb,'BackgroundColor',u.colmat(num,:));
 catch
-    warndlg([...
-        ['You want to use ID=' num2str(num) ' which refers to the ' num2str(num) 'th. color.' char(10)]...
-        ['BUT: Currently only ' num2str(size(u.colmat,1)) ' colors defined.' char(10)] ...
-        ['Solution: Increase number of colors ("numColors") via configuration ' char(10)],...
-        ],'INCREASE number of colors');
-    
+    if num>size(u.colmat,1)
+        warndlg([...
+            ['You want to use ID=' num2str(num) ' which refers to the ' num2str(num) 'th. color.' char(10)]...
+            ['BUT: Currently only ' num2str(size(u.colmat,1)) ' colors defined.' char(10)] ...
+            ['Solution: Increase number of colors ("numColors") via configuration ' char(10)],...
+            ],'INCREASE number of colors');
+        uiwait(gcf);
+
+    end
     set(hb,'string','1'); drawnow;
-    uiwait(gcf);
     edvalue([],[]);
-    return
+    u=get(hf1,'userdata');
 end
 
 hdot=findobj(hf1,'tag','dot');
+if num==0; return; end
 set(hdot,'FaceColor',u.colmat(num,:));
 set_idlist();
 axes(findobj(gcf,'Type','axes'));
@@ -3236,8 +5610,10 @@ setslice([],'moox');
 
 
 function cb_clear(e,e2)
-va=get(e,'value');
 hf1=findobj(0,'tag','xpainter');
+hb=findobj(hf1,'tag','clear mask');
+va=get(hb,'value');
+% va=get(e,'value');
 u=get(hf1,'userdata');
 % him=findobj(hf1,'type','image');
 r2=getslice2d(u.b)*0;
@@ -3256,9 +5632,42 @@ setslice();
 function pb_help(e,e2)
 uhelp(mfilename);
 
+% ==============================================
+%%   save
+% ===============================================
 
 function pb_save(e,e2)
 hf=findobj(0,'tag','xpainter');
+
+
+so=findobj(hf,'tag','pb_saveoptions');
+li=get(so,'string'); va=get(so,'value');
+saveop=li{va};
+% ==============================================
+%%   maskman
+% ===============================================
+
+if ~isempty(strfind(saveop,'Advanced saving options'))
+    
+    hf1=findobj(0,'tag','xpainter');
+    u=get(hf1,'userdata');
+    v.f1    =  u.f1;
+    v.f2    =  u.f2;
+    
+    v.ha     = u.ha;
+    v.a      = u.a;
+    v.hb     = u.hb;
+    v.b      = u.b;
+    
+    v.colmat = u.colmat;
+    
+    maskman(v); %opens mask-saving window
+    return
+end
+
+if ~isempty(strfind(saveop,'older')); return; end
+
+
 
 u=get(hf,'userdata');
 [fi pa]=uiputfile(fullfile(fileparts(u.f1),'*.nii'),'save new mask as..');
@@ -3271,14 +5680,11 @@ if max(unique(u.b))<=255
 else
     dt=[16 0];
 end
-so=findobj(hf,'tag','pb_saveoptions');
-li=get(so,'string'); va=get(so,'value');
-% ==============================================
-%%   saveoption
-% ===============================================
 
-saveop=li{va};
-if ~isempty(regexpi(saveop,'\[sm\]'))
+% ==============================================
+%%   other options
+% ===============================================
+ if  ~isempty(regexpi(saveop,'\[sm\]'))
     %     11
     c=u.b;
 elseif ~isempty(regexpi(saveop,'\[smi00\]'))
@@ -3307,7 +5713,7 @@ elseif ~isempty(regexpi(saveop,'\[smi1m\]'))
     end
     c=u.a.*m+(m==0).*val;
     dt=u.ha.dt;
-else ~isempty(regexpi(saveop,'\[smi1nv\]')) || ~isempty(regexpi(saveop,'\[smi0nv\]'))
+elseif ~isempty(regexpi(saveop,'\[smi1nv\]')) || ~isempty(regexpi(saveop,'\[smi0nv\]'))
     m=double(~(u.b>0));
     if ~isempty(regexpi(saveop,'\[smi0nv\]'))
         m=~m;
@@ -3324,6 +5730,12 @@ else ~isempty(regexpi(saveop,'\[smi1nv\]')) || ~isempty(regexpi(saveop,'\[smi0nv
     
     c=af;
     dt=u.ha.dt;
+else
+    fileout=fullfile(pa,fi);
+    save_specific(fileout);
+    return
+    
+    
 end
 
 % montage2(c);
@@ -3343,6 +5755,20 @@ rsavenii(newmask,u.ha,c);
 try
     showinfo2('new mask',u.f1,newmask,13);
 end
+
+
+
+function save_specific(fileout)
+
+fg
+set(gcf,'menubar','none','tag','savespec')
+
+
+
+
+
+
+
 
 
 
@@ -3369,6 +5795,8 @@ end
 
 le=legend(pl,lgstr,'fontsize',5);
 set(le,'Location','northeast','tag','xlegend');
+pos=get(le,'position');
+set(le,'position',[pos(1)-.05 pos(2)-.1 pos(3:4)])
 % pos=get(le,'position');
 % pos(3)=pos(3)/5;
 % set(le,'position',pos);
@@ -3483,10 +5911,14 @@ end
 u.lastslices(u.usedim)=u.useslice;
 set(gcf,'userdata',u);
 setslice();
+try;          setfocus(gca);   end         % deFocus edit-fields
+
+
+
+function rd_axisnormal(e,e2)
+setslice([],1);
 
 function pop_changedim(e,e2)
-
-
 e=findobj(gcf,'tag','rd_changedim');
 li=get(e,'string');
 va=get(e,'value');
@@ -3506,7 +5938,8 @@ u=get(gcf,'userdata');
 u.alpha=str2num(get(e,'string'));
 set(gcf,'userdata',u);
 set(e,'string',num2str(u.alpha));
-setslice();
+setslice([],1);
+try;          setfocus(gca);   end         % deFocus edit-fields
 
 
 
@@ -3599,6 +6032,52 @@ u.dotsize=dia;
 set(hf1,'userdata',u);
 
 
+% function isDoubleclick=DoubleClick_check()
+% isDoubleclick=0;
+% persistent chk
+% if isempty(chk)
+%       chk = 1;
+%       pause(.3); %Add a delay to distinguish single click from a double click
+%       if chk == 1
+%           fprintf(1,'\nI am doing a single-click.\n\n');
+%           isDoubleclick=0;
+%           chk = [];
+%            set(findobj(gcf,'tag','dot'),'userdata',0);
+%       end
+%       %selstop([])
+%
+% else
+%       chk = [];
+%       fprintf(1,'\nI am doing a double-click.\n\n');
+%       isDoubleclick=1;
+%       selstop([])
+% end
+
+function isDoubleclick=DoubleClick_check()
+isDoubleclick=0;
+persistent chk
+if isempty(chk)
+    chk = 1;
+    pause(.3); %Add a delay to distinguish single click from a double click
+    if chk == 1
+        fprintf(1,'\nI am doing a single-click.\n\n');
+        isDoubleclick=0;
+        chk = [];
+        set(findobj(gcf,'tag','dot'),'userdata',0);
+    end
+    %selstop([])
+    
+else
+    chk = [];
+    fprintf(1,'\nI am doing a double-click.\n\n');
+    isDoubleclick=1;
+    selstop([])
+end
+
+
+
+
+
 function buttondown(e,e2,par)
 % '##'
 
@@ -3607,6 +6086,32 @@ function buttondown(e,e2,par)
 %% Button down
 % ===============================================
 function sel(e,e2)
+
+% isDoubleclick=DoubleClick_check();
+
+% global lastclicktime
+% lastclicktime(end+1,1)=toc(lastclicktime(end))
+
+
+% global lastclicktime
+% lastclicktime.obj=tic
+% lastclicktime.time=toc(lastclicktime.obj);
+% lastclicktime
+% ==============================================
+%%
+% ===============================================
+global lastclicktime
+lastclicktime.time(end+1,1)=toc(lastclicktime.obj);%-lastclicktime.time(end)   ;%-lastclicktime.time(end,1)
+
+% disp(lastclicktime.time);
+
+% ==============================================
+%%
+% ===============================================
+
+
+% return
+
 hf1=findobj(0,'tag','xpainter');
 u=get(hf1,'userdata');
 col=u.colmat(str2num(get(findobj(hf1,'tag','edvalue'),'string')),:);
@@ -3631,11 +6136,12 @@ end
 %% Button up
 % ===============================================
 function selstop(e,e2)
+%  'b'
 hf1=findobj(0,'tag','xpainter');
 u=get(hf1,'userdata');
 
 ismeasure=get(findobj(hf1,'tag','pb_measureDistance'),'value');
-if ismeasure==1; return; end
+% if ismeasure==1; return; end
 
 putImage(); %######
 
@@ -3645,6 +6151,13 @@ set(hd,'FaceColor',col,'edgecolor','k');
 set(hd,'userdata',0);
 
 u=get(gcf,'userdata');
+set(gcf,'userdata',u);
+
+% global lastmovecords
+% lastmovecords=[];
+
+
+
 xylim=[xlim ylim];
 co=get(gca,'currentpoint');
 if co(1,1)<xylim(2) && co(1,2)>0
@@ -3669,13 +6182,20 @@ u=get(hf1,'userdata');
 r1=getslice2d(u.a);
 r2=getslice2d(u.b);
 r1=adjustIntensity(r1);
-% u.r1=r1;
-% u.r2=r2;
-% set(hf1,'userdata',u);
+
+% ax=getslice2d(u.ax);
+% ay=getslice2d(u.ay);
+% az=getslice2d(u.az);
 
 global SLICE
 SLICE.r1=r1;
 SLICE.r2=r2;
+
+% SLICE.ax=ax;
+% SLICE.ay=ay;
+% SLICE.az=az;
+%
+% 'now'
 
 % ==============================================
 %%  button-UP: put current image to 3d-mask
@@ -3703,11 +6223,44 @@ end
 %% MOTION
 % ===============================================
 function motion(e,e2, type)
-hf1=findobj(0,'tag','xpainter');
-ismeasure=get(findobj(hf1,'tag','pb_measureDistance'),'value');
-if ismeasure==1; return; end
 
-% 'ri'
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+if 0 %OLD FUN
+    if any(cell2mat(regexp({'uipanel','uicontrol'},get(hunderpointer,'type'))))==1 ...
+            || strcmp(get(hunderpointer,'type'),'patch')
+        %     && strcmp(get(hunderpointer,'tag'),'dot')~=1 ...
+        %         && strcmp(get(hunderpointer,'type'),'figure')~=1
+        % disp(get(hunderpointer,'style'));
+        % disp(get(hunderpointer,'type'));
+        showDot=0;
+        set(hf1,'Pointer','hand');
+        
+        set(hdot,'visible','off');
+    end
+end
+
+hf1=findobj(0,'tag','xpainter');
+hunderpointer=hittest(hf1);
+% disp([get(hunderpointer,'tag') ' - ' get(hunderpointer,'type') ]);
+
+if strcmp(get(hunderpointer,'type'),'figure') || strcmp(get(hunderpointer,'type'),'image')
+    % IN IMAGE to draw
+else
+    % SOMETHING ELSE
+    showDot=0;
+    set(hf1,'Pointer','hand');
+    hdot=findobj(hf1,'tag','dot');
+    set(hdot,'visible','off');
+    return
+end
+
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+hf1=findobj(0,'tag','xpainter');
+
+
+ismeasure=get(findobj(hf1,'tag','pb_measureDistance'),'value');
+% if ismeasure==1; return; end
 
 
 u=get(hf1,'userdata');
@@ -3731,27 +6284,65 @@ else
     %'no'
 end
 
+hdot=findobj(hf1,'tag','dot');
+set(hdot,'visible','on');
 % --------over object
 % hAxes = overobj('axes');
 % disp(hAxes);
-hunderpointer=hittest(hf1);
-% disp([get(hunderpointer,'tag') ' - ' get(hunderpointer,'type') ]);
-%  if strcmp(get(hunderpointer,'type'),'image')~=1
-  if any(cell2mat(regexp({'uipanel','uicontrol'},get(hunderpointer,'type'))))==1  
-%     && strcmp(get(hunderpointer,'tag'),'dot')~=1 ...
-%         && strcmp(get(hunderpointer,'type'),'figure')~=1 
-    % disp(get(hunderpointer,'style'));
-    % disp(get(hunderpointer,'type'));
-    showDot=0;
-    set(hf1,'Pointer','hand');
-end
-% if ~isempty(hAxes)
-%     set(gcf,'Pointer','fleur');
-% %     'w'
-% else
-%     set(gcf,'Pointer','hand');
-% %     'i'
+
+
+% % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% if 0 %OLD FUN
+%     if any(cell2mat(regexp({'uipanel','uicontrol'},get(hunderpointer,'type'))))==1 ...
+%             || strcmp(get(hunderpointer,'type'),'patch')
+%         %     && strcmp(get(hunderpointer,'tag'),'dot')~=1 ...
+%         %         && strcmp(get(hunderpointer,'type'),'figure')~=1
+%         % disp(get(hunderpointer,'style'));
+%         % disp(get(hunderpointer,'type'));
+%         showDot=0;
+%         set(hf1,'Pointer','hand');
+%
+%         set(hdot,'visible','off');
+%     end
 % end
+%
+% hunderpointer=hittest(hf1);
+% % disp([get(hunderpointer,'tag') ' - ' get(hunderpointer,'type') ]);
+%
+% if strcmp(get(hunderpointer,'type'),'figure') || strcmp(get(hunderpointer,'type'),'image')
+%     % IN IMAGE to draw
+% else
+%     % SOMETHING ELSE
+%     showDot=0;
+%     set(hf1,'Pointer','hand');
+%     set(hdot,'visible','off');
+%     return
+% end
+%
+% % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+% -----mm info
+if  get(findobj(hf1,'tag','rb_showcoordinates'),'value')==1
+    hw=findobj(hf1,'tag','infobox');
+    %     set(hw,'visible','on');
+    %     uistack(hw,'top');
+    try
+        ip=round(co);
+        mm=[u.slice_ax(ip(2),ip(1)) u.slice_ay(ip(2),ip(1)) u.slice_az(ip(2),ip(1))];
+        mm=['mm: ' sprintf('%2.2f ',mm) ];
+
+        global SLICE
+        set(hw,'string',{...
+        mm; ...
+       [' val: ' num2str(u.bg2d(ip(2),ip(1)) )  '; ' num2str(SLICE.r2(ip(2),ip(1)) )   ] ...
+      });
+
+    end
+    
+end
+
+
+%   's'
 
 % -----------------
 % if strcmp(get(gco,'tag'),'xpainter')==0 % not focus
@@ -3782,12 +6373,129 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
     y2=get(hd,'yData');
     %      disp(rand(1)); return
     dims = u.dim(setdiff(1:3,u.usedim));
+    
+    
+    
+    
+    
+    
+    %     global lastmovecords
+    %     if ~isempty(lastmovecords)
+    %
+    % %          keyboard
+    %         % ==============================================
+    %         %%
+    %         % ===============================================
+    %
+    %
+    %         %         lastmovecords(1)+(x2-mean(x2));
+    %         tic
+    %         pn1=lastmovecords;
+    %         pn2=round(co);
+    %
+    %         xx0=[pn1(1) pn2(1)];
+    %         yy0=[pn1(2) pn2(2)];
+    %         if xx0(1)>xx0(2)
+    %             xx0=xx0([2 1]);
+    %             yy0=yy0([2 1]);
+    %         end
+    %
+    %         pf = polyfit(xx0,yy0,2);
+    %         xx1=[xx0(1):xx0(2)];
+    %         yy1 =  (polyval(pf,xx1));
+    %
+    %         obx=x2-mean(x2);
+    %         oby=y2-mean(y2);
+    %
+    %         global SLICE;
+    %         r2=SLICE.r2;
+    %         bx=zeros(size(r2));
+    %
+    %         for i=1:length(xx1)
+    %             xx2=round(xx1(i)+obx);
+    %             yy2=round(yy1(i)+obx);
+    %             bw   = double(poly2mask(yy2,xx2,size(bx,2),size(bx,1)));
+    %             bx=bx+bw;
+    %         end
+    % %         fg,imagesc(bx)
+    %
+    % %         blanko=zeros(numel(r2),1);
+    % %         idx=sub2ind(size(r2), yy1, xx1);
+    % %         bx=blanko;
+    % %         bx(idx)=1;
+    % %         bx=reshape(bx,size(r2));
+    % %         bx=imdilate(bx,strel('disk',2));
+    %
+    %
+    % %         obx=x2-mean(x2);
+    % %         oby=y2-mean(y2);
+    % %         X1=repmat(xx1, [size(obx,1) 1])+repmat(obx, [1 size(xx1,2) ]);
+    % %         Y1=repmat(yy1, [size(oby,1) 1])+repmat(oby, [1 size(yy1,2) ]);
+    % %         X2=X1(:);
+    % %         Y2=Y1(:);
+    % %
+    % %
+    % %         global SLICE;
+    % %         r2=SLICE.r2;
+    % %         blanko=zeros(numel(r2),1);
+    % %         ron=round([X2,Y2]);
+    % %
+    % %         idx=sub2ind(size(r2), ron(:,2), ron(:,1));
+    % %         bx=blanko;
+    % %         bx(idx)=1;
+    % %         bx=reshape(bx,size(r2));
+    %
+    %          toc
+    %
+    %         if 0
+    %         fg, hold on;
+    %         plot(xx1,yy1,'r.');
+    %
+    %         plot(pn1(1),pn1(2),'ro','markerfacecolor','r');
+    %         plot(pn2(1),pn2(2),'ro','markerfacecolor','b')
+    %         plot(X2,Y2,'g.-')
+    %
+    %
+    %         fg,imagesc(bx)
+    %         end
+    %
+    %
+    %
+    %         bw=bx;
+    %
+    %
+    %
+    % %         bv=double(poly2mask(X2,Y2,dims(2),dims(1)));
+    %         % ==============================================
+    %         %%
+    %         % ===============================================
+    %     else  % isempty(lastmovecords)
+    %         %         keyboard
+    %         if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    %             bw   = double(poly2mask(x2,y2,dims(2),dims(1)));
+    %         else
+    %             bw   = double(poly2mask(x2,y2,dims(1),dims(2)));
+    %         end
+    %
+    %     end
+    %
+    %     lastmovecords=round(mean([x y]));
+    
     if get(findobj(hf1,'tag','rd_transpose'),'value')==1
         bw   = double(poly2mask(x2,y2,dims(2),dims(1)));
     else
         bw   = double(poly2mask(x2,y2,dims(1),dims(2)));
     end
+    
+%     [click]    (normal)     : paint/unpaint brush-form region
+%     [double+click] (open)   : fill ROI
+%     [alt+click] (alt) : remove ROI
+%     [cmd+click] (extend)    : fill ROI via contour
+    
+    
     seltype=get(gcf,'SelectionType');
+%     disp(seltype);
+%     disp(get(gcf,'CurrentCharacter'));
     if strcmp(seltype,'open') || strcmp(seltype,'alt')
         bw=bw.*0;
     end
@@ -3819,7 +6527,12 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
         si=size(r2);
         r2=r2(:);
         if type==1
+            %             if filltype==0
             r2(bw==1)  =  str2num(get(findobj(hf1,'tag','edvalue'),'string'))  ;
+            %             else
+            
+            %             end
+            
         elseif type==2
             r2(bw==1)  =  0;
         end
@@ -3830,39 +6543,161 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
         % ===============================================
         seltype=get(gcf,'SelectionType');
         if strcmp(seltype,'open') || strcmp(seltype,'alt')
-            %disp(['now-' num2str(rand(1))]);
-            value=str2num(get(findobj(hf1,'tag','edvalue'),'string'));
-            value=r2(round(co(2)),round(co(1))  );
-            m1=r2==value;
-            r2(m1==1)=0;
-            x2=mean(x); y2=mean(y);
-            sm=strel('disk',1);
-            %  r2=imerode( imdilate( r1  ,sm)  ,sm);
-            m2=imclose( m1  ,sm) ;
-            warning off;
-            m3=imfill(m2,'holes');
-            m4=bwlabel(m3);
-            try
-                clustnum=m4(round(y2), round(x2));
-            catch
-                return
-            end
-            m5=m1;
             if strcmp(seltype,'open')
-                m5(m4==clustnum)=1;
-                r2(m5==1)=value;
+                
+                filltype=get(findobj(hf1,'tag','rb_filltype'),'value');
+                
+                
+                dims = u.dim(setdiff(1:3,u.usedim));
+                if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+                    bw   = double(poly2mask(x2,y2,dims(2),dims(1)));
+                else
+                    bw   = double(poly2mask(x2,y2,dims(1),dims(2)));
+                end
+                errmsk=imdilate(bw, strel('disk',3))  ~=0; %from single click
+                
+                
+                w1=r2;
+                %                 w1=w1.*~errmsk;
+                
+                [x1 y1]=find(  w1~=0);
+                cp=[x1 y1];
+                cp2=[round(co(2)),round(co(1))];
+                dist=sqrt(sum((cp-repmat(cp2,[size(cp,1) 1])).^2,2));
+                imin=min(find(dist==min(dist)));
+                
+                inearest=cp(imin,:);
+                if isempty(inearest); return; end
+                
+                w1(inearest(1),inearest(2));
+                id=w1(inearest(1),inearest(2));
+                
+                idmask=w1>0;%==id;
+                
+                other=w1.*~idmask;
+                fus=idmask+other;
+                fill=imfill(fus,'holes');
+                v1=imclose(fill,strel('disk',3));
+                v2=imfill(v1);
+                in=v2-idmask;
+                
+                isfill_local=get(findobj(hf1,'tag','rb_filllocal'),'value');
+                if isfill_local==0 % fill entire ROI
+                    u1=w1==id;
+                    %w1=u1+in;
+                    u2=(in+2*u1+fill*3)>3;
+                    in=u2;
+                    
+                end
+                %                 keyboard
+                %                 other=w1.*~idmask;
+                %                 fus=idmask+other;
+                %                 fill=imfill(fus,'holes');
+                %                 in=(fill-idmask);
+                in=imfill(in,'holes');
+                
+                cl=bwlabeln(in,4);
+                clustnum=cl(round(co(2)),round(co(1))  );
+             
+                if isfill_local==1
+                    if clustnum==0
+                        return
+                        %[bk(1,1) bk(1,end)  bk(end,1) bk(end,end)]
+                    end
+                end
+
+                cl2=cl==clustnum;
+                
+                bk=w1;
+                if filltype==0
+                    bk(cl2==1)=str2num(get(findobj(hf1,'tag','edvalue'),'string'));
+                else
+                    bk(cl2==1)=id;
+                end
+                
+                r2=bk;
+                
+                %                     return
+                %
+                %
+                %                     [c]=contourc(double(idmask));
+                %                     id=r2(round(co(2)),round(co(1)))
+                %                     c2=contourdata(c);
+                %
+                %                     cm=zeros(size(u.bg2d));
+                %                     ml=cm;
+                %                     for i=1:length(c2)
+                %                         %[c2(i).xdata c2(i).ydata]-repmat(cc,[length(c2(i).xdata) 1]);
+                %                         ml   = double(poly2mask(c2(i).xdata,c2(i).ydata,size(cm,1),size(cm,2)));
+                %                         cm(ml==1)=i;
+                %                     end
+                % %                     fg,imagesc(cm)
+                %
+                %
+                %
+                %                     m4=bwlabel(cm);
+                %                     clustnum=m4(round(co(2)),round(co(1))  );
+                %                     m4=m4==clustnum;
+                %
+                %                     m5(m4==clustnum)=1;
+                % %                     fg,imagesc(m5)
+                %
+                %                     %bb=r2
+                %                     r2(m4==1)=str2num(get(findobj(hf1,'tag','edvalue'),'string'));
+                
+                
             elseif strcmp(seltype,'alt')
+                %disp(['now-' num2str(rand(1))]);
+                value=str2num(get(findobj(hf1,'tag','edvalue'),'string'));
+                try
+                    value=r2(round(co(2)),round(co(1))  );
+                catch
+                    return
+                    
+                end
+                m1=r2==value;
+                r2(m1==1)=0;
+                x2=mean(x); y2=mean(y);
+                sm=strel('disk',1);
+                %  r2=imerode( imdilate( r1  ,sm)  ,sm);
+                m2=m1;%imclose( m1  ,sm) ;
+                warning off;
+                m3=imfill(m2,'holes');
+                m4=bwlabel(m3);
+                try
+                    clustnum=m4(round(y2), round(x2));
+                catch
+                    return
+                end
+                m5=m1;
+                
+                
+                
+                
+                
+                
                 m5(m4==clustnum)=0;
                 r2(m5==1)=value;
             end
-        elseif strcmp(seltype,'extend')
-           value=str2num(get(findobj(hf1,'tag','edvalue'),'string'));
+        elseif strcmp(seltype,'extend')              % ### CONTOURLINE
+            value=str2num(get(findobj(hf1,'tag','edvalue'),'string'));
             
-            c=contourc(u.bg2d,u.contourlines);
+            hp3 =findobj(gcf,'tag','panel3'); %panel3
+            hvis=findobj(hp3,'tag','thresh_visible');
+            if get(hvis,'value')==1  ; %PNAEL 3
+                hs=findobj(gcf,'tag','slid_thresh');
+                %               thresh=get(hs,'value')
+                %               c=contourc(double(u.bg2d>thresh),1);
+                c=get(hs,'userdata');% get thresholded contourData
+                
+            else
+                c=contourc(u.bg2d,u.contourlines);
+            end
+            
             c2=contourdata(c);
-            
             cc=round(co);
-            levx=u.bg2d(cc(1),cc(2));
+%             cc
+            %levx=u.bg2d(cc(1),cc(2));
             
             cm=zeros(size(u.bg2d));
             ml=cm;
@@ -3872,11 +6707,22 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
                 cm(ml==1)=i;
             end
             m1=cm==cm(cc(2),cc(1));
+            %m1=cm==cm(cc(1),cc(2));
             m1=imfill(m1,'holes');
-            m1=imdilate(m1,strel('disk',2));
-            m1=imfill(m1,'holes');
-            m1=imerode(m1,strel('disk',1));
+            if get(findobj(hf1,'tag','thresh_visible'),'value')==1
+                
+            else
+%                 m1=imdilate(m1,strel('disk',1));
+%                 m1=imfill(m1,'holes');
+%                 m1=imerode(m1,strel('disk',1));
+            end
             
+            status_cont1 =get(findobj(hf1,'tag','thresh_visible'),'value');
+            status_cont2 =get(findobj(hf1,'tag','rd_contourdraw'),'value');
+            
+            if sum([status_cont1 status_cont2])==0
+                return
+            end
             
             r2(m1==1)=value;
             
@@ -3927,6 +6773,9 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
         %             set(hf1,'userdata',u);
         %         end
     end  %type
+    
+    %     global lastmovecords
+    %     lastmovecords=co;
 end
 
 
@@ -4059,7 +6908,6 @@ function imdrawtool(e,e2, type)
 if get(e,'value')==0
     return
 end
-
 hf1=findobj(0,'tag','xpainter');
 u=get(hf1,'userdata');
 % hb=findobj(hf1,'tag','imdraw');
@@ -4098,6 +6946,9 @@ hax=findobj(gcf,'type','axes');
 % imellipse | imfreehand | imline | impoint | impoly | imroi | makeConstrainToRectFcn
 
 set(gcf,'WindowButtonUpFcn'     ,[]);
+set(findobj(gca,'tag','dot'),'visible','off');
+set(gcf,'name','xdraw: drawtool - move mouse');
+
 if type==1
     try; h = imfreehand;
         %     catch; imdrawtool(e,e2, type);
@@ -4119,6 +6970,9 @@ elseif type==5
         %     catch; imdrawtool(e,e2, type);
     end
 end
+set(findobj(gca,'tag','dot'),'visible','on');
+set(gcf,'name','xdraw');
+
 set(gcf,'WindowButtonUpFcn'     ,@selstop);
 % uiwait(hf1);
 % setappdata(h,'imrecttools',1);
@@ -4143,11 +6997,18 @@ bw=createMask(h);
 xm=round(mean(x2));
 ym=round(mean(y2));
 activeIcons_show();
+
 uiwait(hf1); %wait for activeIcons.selection
 u=get(hf1,'userdata');
 delete(h);
-if u.activeIcons_do==4 %cancel
+if u.activeIcons_do==5 %cancel
     %     imdrawtool(e,e2, type);
+    return
+elseif u.activeIcons_do==3 % threshtool
+    %'threshtool'
+    u.tempmask=bw;
+    set(gcf,'userdata',u);
+    threshtoolprep();
     return
 elseif u.activeIcons_do==2 %boundary/ege
     % bw=boundarymask(bw);
@@ -4188,7 +7049,7 @@ r2=reshape(r2,si);
 %%
 % ===============================================
 value=str2num(get(findobj(hf1,'tag','edvalue'),'string'));
-if u.activeIcons_do==3 %UNPAINT
+if u.activeIcons_do==4 %UNPAINT
     r2=r2.*~bw; %UNPAINT
 end
 alp=u.alpha;% .8
@@ -4294,13 +7155,20 @@ set(hc,'position',[po(1)+boxsi po(2)+.01 repmat(boxsi,[1 2]) ],'string','e');
 set(hc,'tooltipstring','edge rigion/draw boundary only ...do not fill');
 hc2(end+1)=hc;
 
+hc=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_im_thresh');           %SET-next-SLICE
+set(hc,'position',[po(1)+boxsi*2 po(2)+.01 repmat(boxsi,[1 2]) ],'string','t');
+set(hc,'tooltipstring','threshold selected area');
+hc2(end+1)=hc;
+
 hc=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_im_del');           %SET-next-SLICE
-set(hc,'position',[po(1)+boxsi*2 po(2)+.01 repmat(boxsi,[1 2]) ],'string','u');
+% set(hc,'position',[po(1)+boxsi*3 po(2)+.01 repmat(boxsi,[1 2]) ],'string','u');
+set(hc,'position',  [po(1)         po(2)-boxsi+.01 repmat(boxsi,[1 2]) ],'string','u');
 set(hc,'tooltipstring','unpaint rigion');
 hc2(end+1)=hc;
 
 hc=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_im_break');           %SET-next-SLICE
-set(hc,'position',[po(1)+boxsi*3 po(2)+.01 repmat(boxsi,[1 2]) ],'string','x');
+% set(hc,'position',[po(1)+boxsi*4 po(2)+.01 repmat(boxsi,[1 2]) ],'string','x');
+set(hc,'position',  [po(1)+boxsi*1 po(2)-boxsi+.01 repmat(boxsi,[1 2]) ],'string','x');
 set(hc,'tooltipstring','abort...do nothing');
 hc2(end+1)=hc;
 
