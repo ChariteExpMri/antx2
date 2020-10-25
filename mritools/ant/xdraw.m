@@ -2568,12 +2568,12 @@ hf1=findobj(0,'tag','xpainter');
 if get(findobj(hf1,'tag','rd_otsu'),'value')==1
     if exist('histupdate')~=1
         pb_otsu([],[]);
-    end
+    end;
     figure(hf1);
 end
 % pb_measureDistance_off(); %remove measuring tool
 % pb_measureDistance_off();
-
+% axes(findobj(gcf,'type','hf1'));
 
 function undo_redolabel_update()
 hf1=findobj(0,'tag','xpainter');
@@ -5323,6 +5323,10 @@ set(hb,'string',str);
 figure(hf1);
 cb_setslice([],[],'ed');
 
+hd=findobj(hf1,'tag','dot');
+set(hd,'userdata',0);
+
+
 % hb=uicontrol('style','radio','units','norm','string','Mask','value',0,'callback',@montage_post);
 % set(hb,'position',[0 .9-2*.03  .12 .03],'fontsize',7,'backgroundcolor','w','userdata',3,'tag','rd_montage_ovl');
 function montage_slid_contrast(e,e2)
@@ -5923,7 +5927,7 @@ end
 u.lastslices(u.usedim)=u.useslice;
 set(gcf,'userdata',u);
 setslice();
-try;          setfocus(gca);   end         % deFocus edit-fields
+% try;          setfocus(gca);   end         % deFocus edit-fields
 
 
 
