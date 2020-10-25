@@ -3975,12 +3975,12 @@ set(hb,'position',[0.928 -0.0074 0.1 0.41]); %PAN1
 %-----dotType
 str={'dot' ,'square' 'hline' 'vline'};
 hb=uicontrol('style','popupmenu','units','norm', 'tag'  ,'rd_dottype');
-set(hb,'position',[ .001  .9 .1 .04],'string',str,'value',1,'backgroundcolor','w');
+set(hb,'position',[ .001  .9 .12 .04],'string',str,'value',1,'backgroundcolor','w');
 set(hb,'callback',{@rd_dottype});
 set(hb,'fontsize',8);
 set(hb,'tooltipstring',['brush type' char(10) '[b] shortcut to alternate between brush types']);
 set(hb,'parent',pan1);
-set(hb,'position',[ 0 .08 .05*2 .41]); %PAN1
+set(hb,'position',[ 0 .08 .12 .41]); %PAN1
 
 % DOT-SIZE
 hb=uicontrol('style','popupmenu','string',{'dotsize'},'value',1,'units','norm','tag','dotsize');
@@ -3989,7 +3989,7 @@ set(hb,'callback',@definedot);
 set(hb,'fontsize',8);
 set(hb,'tooltipstring',['brush size' char(10) '[up/down arrow] to change brush size' ]);
 set(hb,'parent',pan1);
-set(hb,'position',[ 0.1 .08 .05*2 .41]); %PAN1
+set(hb,'position',[ 0.12 .08 .075 .41]); %PAN1
 %==========================================================================================
 
 % % % % % 
@@ -4867,13 +4867,13 @@ t.ColumnEditable =logical(editable ) ;% [false true  ];
 try
     colmat=u.colmat;
 catch
-    u.colmat = distinguishable_colors(length(ids),[1 1 1; 0 0 0]);
+    u.colmat = distinguishable_colors(max(ids),[1 1 1; 0 0 0]);
     if size(u.colmat ,1)>2
         u.colmat=u.colmat([2 1 3:end ],:);
     end
 end
-if length(ids)>size(u.colmat,1)
-     u.colmat = distinguishable_colors(length(ids),[1 1 1; 0 0 0]);
+if max(ids)>size(u.colmat,1)
+     u.colmat = distinguishable_colors(max(ids),[1 1 1; 0 0 0]);
     if size(u.colmat ,1)>2
         u.colmat=u.colmat([2 1 3:end ],:);
     end 
@@ -4883,7 +4883,7 @@ end
 
 
 % colmat=repmat(colmat,[5 1]);
-col=u.colmat(1:length(ids),:);
+col=u.colmat(ids,:);
 t.BackgroundColor =col;% [0 0 1; 0.9451    0.9686    0.9490];
 
 % set(t,'ColumnWidth',{51});
@@ -4938,9 +4938,9 @@ try
         iempty= cellfun('isempty',d);
         d(iempty)={0};
         d2=cell2mat(cellfun(@(a){[str2num(num2str(a)) ]} , d ));
-        if sum(d2(:,3))==0
-           d2=d2(:,1-2) ; %remove renaming col
-        end
+%         if sum(d2(:,3))==0
+%            d2=d2(:,1:2) ; %remove renaming col
+%         end
         idtab=d2;
     end
 end
