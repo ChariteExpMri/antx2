@@ -379,6 +379,7 @@ pp.toolbar                  =   0  ;
 pp.otsu_numClasses          =   3  ;
 pp.otsu_medianFltLength     =   3  ;
 pp.numColors                =   30 ;
+pp.bgcolor                  =   repmat(.3,[1 3]) ;
 
 u.config={
     'autofocus'         pp.autofocus           'autofocus figure under mouse{0,1}...no/yes' 'b'
@@ -388,7 +389,8 @@ u.config={
     'otsu_medianFltLength'   pp.otsu_medianFltLength     'length of otsu median-filter'   ''
     'inf2'  '' '' ''
     'inf3'             [' Mich. ' repmat('=',[1 20])  ]               '' ''
-    'numColors'          pp.numColors          'number of used colors '   ''
+    'numColors'          pp.numColors          'number of used ID colors '   ''
+    'bgcolor'          pp.bgcolor          'set figure background color '  'col'
     };
 u.set=pp;
 %===================================================================================================
@@ -401,7 +403,7 @@ fg;
 % hf1=gcf;
 set(gcf,'units','norm','menubar','none','name','xdraw','NumberTitle','off','tag','xpainter');
 makegui;
-
+set(gcf,'color', pp.bgcolor);
 % set(findobj(gcf,'tag','waitnow'),'visible','on','string','..wait..');  
 
 
@@ -568,7 +570,7 @@ p=u.config;
 p=paramadd(p,x);%add/replace parameter
 % hlp=help(); hlp=strsplit2(hlp,char(10))';
 [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[0.1500    0.4011    0.3625    0.2000 ],...
-    'title','***config***','info',{'--'});
+    'title','***xdraw config***','info',{'--'});
 if isempty(m); return; end
 fn=fieldnames(z);
 z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
@@ -588,6 +590,11 @@ if  u.set.numColors~=x.numColors   %COLORS
     set_idlist;
     edvalue([],[]);
 end
+
+try
+set(hf1,'color', u.set.bgcolor);
+end
+
 % ==============================================
 %% callback autofocus
 % ===============================================
@@ -3989,7 +3996,7 @@ set(hb,'callback',@definedot);
 set(hb,'fontsize',8);
 set(hb,'tooltipstring',['brush size' char(10) '[up/down arrow] to change brush size' ]);
 set(hb,'parent',pan1);
-set(hb,'position',[ 0.12 .08 .075 .41]); %PAN1
+set(hb,'position',[ 0.12 .08 .1 .41]); %PAN1
 %==========================================================================================
 
 % % % % % 
@@ -5866,6 +5873,11 @@ z{end+1,1}=       [' #b File      : '  u.f1];
 z{end+1,1}=sprintf('        DIM: %dx%dx%d', u.ha.dim(1),u.ha.dim(2),u.ha.dim(3));
 voxmm=abs(diag(u.ha.mat(1:3,1:3)));
 z{end+1,1}=sprintf('VoxSize[mm]: %2.3f   %2.3f   %2.3f   ', voxmm(1),voxmm(2),voxmm(3));
+z{end+1,1}=sprintf('   DataType: %d %d    ', u.ha.dt);
+
+z1=plog([],u.ha.mat,0,'mat (header)'); %MAT
+
+z=[z; z1];
 z{end+1,1}='';
 
 z{end+1,1}=[' #ld *** IDs within entire volume (MASK) ***'];
@@ -6318,9 +6330,41 @@ set(hdot,'visible','on');
 %     set(hdot,'visible','off');
 %     return
 % end
-%
+
+
+
+
+
+
+
+
+
+
 % % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+global SLICE
+r1=SLICE.r1;
+r2=SLICE.r2;
+%         r1=u.r1;
+%         r2=u.r2;
+if 0 % OUTSOURCED
+    r1=getslice2d(u.a);
+    r2=getslice2d(u.b);
+end
+% ----------------------------------------------------
+%% transpose
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    %x=permute(r2, [2 1 3]);
+    r1=r1';
+    r2=r2';
+end
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    r1=flipud(r1);
+    r2=flipud(r2);
+end
+
+
+% % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % -----mm info
 if  get(findobj(hf1,'tag','rb_showcoordinates'),'value')==1
     hw=findobj(hf1,'tag','infobox');
@@ -6331,10 +6375,10 @@ if  get(findobj(hf1,'tag','rb_showcoordinates'),'value')==1
         mm=[u.slice_ax(ip(2),ip(1)) u.slice_ay(ip(2),ip(1)) u.slice_az(ip(2),ip(1))];
         mm=['mm: ' sprintf('%2.2f ',mm) ];
 
-        global SLICE
+%         global SLICE
         set(hw,'string',{...
         mm; ...
-       [' val: ' num2str(u.bg2d(ip(2),ip(1)) )  '; ' num2str(SLICE.r2(ip(2),ip(1)) )   ] ...
+       [' val: ' num2str(r1(ip(2),ip(1)) )  '; ' num2str(r2(ip(2),ip(1)) )   ] ...
       });
 
     end
@@ -6342,17 +6386,6 @@ if  get(findobj(hf1,'tag','rb_showcoordinates'),'value')==1
 end
 
 
-%   's'
-
-% -----------------
-% if strcmp(get(gco,'tag'),'xpainter')==0 % not focus
-%     set(hf1,'Pointer','arrow');
-% else
-%
-%
-%
-%
-% end
 hf1=findobj(0,'tag','xpainter');
 hd=findobj(hf1,'tag','dot');
 xx=get(hd,'XData');
@@ -6364,123 +6397,11 @@ y=ys+co(2);
 
 set(hd,'xdata',x,'ydata',y);
 
-
-% disp(get(hd,'userdata'));
-
 if get(hd,'userdata')==1  %PAINT NOW ---button down
     u=get(hf1,'userdata');
     x2=get(hd,'XData'); % get POINTS of coursor/dot
     y2=get(hd,'yData');
-    %      disp(rand(1)); return
     dims = u.dim(setdiff(1:3,u.usedim));
-    
-    
-    
-    
-    
-    
-    %     global lastmovecords
-    %     if ~isempty(lastmovecords)
-    %
-    % %          keyboard
-    %         % ==============================================
-    %         %%
-    %         % ===============================================
-    %
-    %
-    %         %         lastmovecords(1)+(x2-mean(x2));
-    %         tic
-    %         pn1=lastmovecords;
-    %         pn2=round(co);
-    %
-    %         xx0=[pn1(1) pn2(1)];
-    %         yy0=[pn1(2) pn2(2)];
-    %         if xx0(1)>xx0(2)
-    %             xx0=xx0([2 1]);
-    %             yy0=yy0([2 1]);
-    %         end
-    %
-    %         pf = polyfit(xx0,yy0,2);
-    %         xx1=[xx0(1):xx0(2)];
-    %         yy1 =  (polyval(pf,xx1));
-    %
-    %         obx=x2-mean(x2);
-    %         oby=y2-mean(y2);
-    %
-    %         global SLICE;
-    %         r2=SLICE.r2;
-    %         bx=zeros(size(r2));
-    %
-    %         for i=1:length(xx1)
-    %             xx2=round(xx1(i)+obx);
-    %             yy2=round(yy1(i)+obx);
-    %             bw   = double(poly2mask(yy2,xx2,size(bx,2),size(bx,1)));
-    %             bx=bx+bw;
-    %         end
-    % %         fg,imagesc(bx)
-    %
-    % %         blanko=zeros(numel(r2),1);
-    % %         idx=sub2ind(size(r2), yy1, xx1);
-    % %         bx=blanko;
-    % %         bx(idx)=1;
-    % %         bx=reshape(bx,size(r2));
-    % %         bx=imdilate(bx,strel('disk',2));
-    %
-    %
-    % %         obx=x2-mean(x2);
-    % %         oby=y2-mean(y2);
-    % %         X1=repmat(xx1, [size(obx,1) 1])+repmat(obx, [1 size(xx1,2) ]);
-    % %         Y1=repmat(yy1, [size(oby,1) 1])+repmat(oby, [1 size(yy1,2) ]);
-    % %         X2=X1(:);
-    % %         Y2=Y1(:);
-    % %
-    % %
-    % %         global SLICE;
-    % %         r2=SLICE.r2;
-    % %         blanko=zeros(numel(r2),1);
-    % %         ron=round([X2,Y2]);
-    % %
-    % %         idx=sub2ind(size(r2), ron(:,2), ron(:,1));
-    % %         bx=blanko;
-    % %         bx(idx)=1;
-    % %         bx=reshape(bx,size(r2));
-    %
-    %          toc
-    %
-    %         if 0
-    %         fg, hold on;
-    %         plot(xx1,yy1,'r.');
-    %
-    %         plot(pn1(1),pn1(2),'ro','markerfacecolor','r');
-    %         plot(pn2(1),pn2(2),'ro','markerfacecolor','b')
-    %         plot(X2,Y2,'g.-')
-    %
-    %
-    %         fg,imagesc(bx)
-    %         end
-    %
-    %
-    %
-    %         bw=bx;
-    %
-    %
-    %
-    % %         bv=double(poly2mask(X2,Y2,dims(2),dims(1)));
-    %         % ==============================================
-    %         %%
-    %         % ===============================================
-    %     else  % isempty(lastmovecords)
-    %         %         keyboard
-    %         if get(findobj(hf1,'tag','rd_transpose'),'value')==1
-    %             bw   = double(poly2mask(x2,y2,dims(2),dims(1)));
-    %         else
-    %             bw   = double(poly2mask(x2,y2,dims(1),dims(2)));
-    %         end
-    %
-    %     end
-    %
-    %     lastmovecords=round(mean([x y]));
-    
     if get(findobj(hf1,'tag','rd_transpose'),'value')==1
         bw   = double(poly2mask(x2,y2,dims(2),dims(1)));
     else
@@ -6492,7 +6413,6 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
 %     [alt+click] (alt) : remove ROI
 %     [cmd+click] (extend)    : fill ROI via contour
     
-    
     seltype=get(gcf,'SelectionType');
 %     disp(seltype);
 %     disp(get(gcf,'CurrentCharacter'));
@@ -6503,26 +6423,26 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
     %% type: drfines whether to paint/unpaint
     if type~=0 %PAINT
         
-        global SLICE
-        r1=SLICE.r1;
-        r2=SLICE.r2;
-        %         r1=u.r1;
-        %         r2=u.r2;
-        if 0 % OUTSOURCED
-            r1=getslice2d(u.a);
-            r2=getslice2d(u.b);
-        end
-        % ----------------------------------------------------
-        %% transpose
-        if get(findobj(hf1,'tag','rd_transpose'),'value')==1
-            %x=permute(r2, [2 1 3]);
-            r1=r1';
-            r2=r2';
-        end
-        if get(findobj(hf1,'tag','rd_flipud'),'value')==1
-            r1=flipud(r1);
-            r2=flipud(r2);
-        end
+% % % % % %         global SLICE
+% % % % % %         r1=SLICE.r1;
+% % % % % %         r2=SLICE.r2;
+% % % % % %         %         r1=u.r1;
+% % % % % %         %         r2=u.r2;
+% % % % % %         if 0 % OUTSOURCED
+% % % % % %             r1=getslice2d(u.a);
+% % % % % %             r2=getslice2d(u.b);
+% % % % % %         end
+% % % % % %         % ----------------------------------------------------
+% % % % % %         %% transpose
+% % % % % %         if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+% % % % % %             %x=permute(r2, [2 1 3]);
+% % % % % %             r1=r1';
+% % % % % %             r2=r2';
+% % % % % %         end
+% % % % % %         if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+% % % % % %             r1=flipud(r1);
+% % % % % %             r2=flipud(r2);
+% % % % % %         end
         % ----------------------------------------------------
         si=size(r2);
         r2=r2(:);
