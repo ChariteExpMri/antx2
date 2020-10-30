@@ -5,9 +5,9 @@
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**30 Oct 2020 (14:50:30)**</ins>  
   **[SIGMA RAT template]** (Barrière et al., 2019) added to gdrive  
      PAPER            : https://rdcu.be/b9tKX  
-     DOI              : https://doi.org/10.1038/s41467-019-13575-7  
+                      : https://doi.org/10.1038/s41467-019-13575-7  
     - access via link: https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9  
-      or ANT menu: EXTRAS/cownload templates  
+      or ANT menu: EXTRAS/download templates  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**25 Oct 2020 (21:33:14)**</ins>  
    **[xdraw]** drawing mask tool: refurbished, containing tools:   
