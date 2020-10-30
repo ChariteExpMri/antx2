@@ -837,6 +837,8 @@ elseif strcmp(e2.Key,'uparrow') || strcmp(e2.Key,'downarrow')
     end
     set(o,'value',va);
     definedot([],[]);
+elseif strcmp(e2.Key,'v'); % keep clusterslice table 
+    keepclusterinSlice();
 elseif strcmp(e2.Key,'f');
     cb_fill();
 elseif strcmp(e2.Key,'r')
@@ -1668,6 +1670,10 @@ end
 
 v.a=a;
 v.o=o;
+
+% for i=1:size(TX,3)
+%     TX(:,:,i)=i;
+% end
 v.TX=TX;
 
 if docrop==1        %------------------------- CROP
@@ -1922,8 +1928,11 @@ b1=zeros(size(v.o1));
 
 for i=1:size(b1,3)
     ix=find(v.TX2==i);
-    tt=reshape(  mp(ix), [length(v.ins_ud) length(v.ins_lr)] );
-    b1(:,:,i)=tt;
+   [ i length(ix) ]
+    if ~isempty(ix)
+        tt=reshape(  mp(ix), [length(v.ins_ud) length(v.ins_lr)] );
+        b1(:,:,i)=tt;
+    end
 end
 % ------deCrop
 %get(findobj(hf3,'tag','otsu3_crop'),'value')
@@ -3449,6 +3458,78 @@ drawnow;
 
 
 
+
+
+% ==============================================
+%%   keepclusterinSlice: remove cluster by table
+% ===============================================
+function keepclusterinSlice(e,e2)
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+[r1 r2]=aa_getslice();
+% r2(1:4,1:4)=1;
+
+
+ids=unique(r2(:)); ids(ids==0)=[];
+if isempty(ids)
+   msgbox('no ROIs found in this slice');
+    return
+end
+tb=[];
+for i=1:(length(ids))
+    rm=r2==ids(i);
+    cl=bwlabel(rm);
+    uni=unique(cl(:)); uni(uni==0)=[];
+    tbid=flipud(sortrows([ones(length(uni),1)*ids(i)   histc(cl(:),uni)],2));
+    tb=[tb; tbid];
+end
+
+% ==============================================
+%%   selection via table
+% ===============================================
+
+msg='Select ROI(s) to keep. Non-selected will be removed from slice.';
+idtab=idlistTable(tb,msg,0,2);
+if isempty(idtab)==1; return; end
+
+idtab(idtab(:,1)==0,:)=[];
+m2=zeros(size(r2));
+selid=unique(idtab(:,2));
+for i=1:length(selid) 
+    thisID=selid(i);
+    rm=r2==thisID;
+    cl=bwlabel(rm);
+    uni=unique(cl(:)); uni(uni==0)=[];
+    tbid=flipud(sortrows([uni   histc(cl(:),uni)],2));
+    
+    tz=idtab(idtab(:,2)==selid(i),2:3);
+    for j=1:size(tz,1)
+        cnum=tbid((tbid(:,2)==tz(j,2)),1);
+        for k=1:length(cnum)
+            m2(cl==cnum(k))=thisID;
+        end
+    end
+end
+
+if 0
+    fg;
+    subplot(2,2,1); imagesc(r2); title('in');
+    subplot(2,2,2); imagesc(m2);    title('selected');
+    subplot(2,2,3); imagesc(r2-m2); title('diff');
+end
+% ==============================================
+%%   update IDlist 
+% ===============================================
+% ------------- -------------
+
+r2=m2;
+aa_setslice(r2);
+
+hb=findobj(hf1,'tag','edvalue');
+% set(hb,'string', num2str(newID));
+edvalue();
+setslice([],1);
+
 % ==============================================
 %%   test
 % ===============================================
@@ -3728,6 +3809,7 @@ if visible==1
     end
     
     x=x0>val;
+    x([1 end],:)=0; x(:,[1 end])=0; %border
     c=contourc(double(x),1);
     set(hs,'userdata',c);
     
@@ -4820,12 +4902,14 @@ setslice([],1);
 
 
 
-function idtab=idlistTable(ids,msg,selection)
+function idtab=idlistTable(ids,msg,selection,tabtype)
 % ==============================================
 %%   id table
+% tabtype1: [x] ID IDNEW
+% tabtype2: [x] ID Number of pixel
 % ===============================================
 idtab=[];
-
+if exist('tabtype')==0; tabtype=1; end
 
 if 0
     msg='Selected IDs will be remove from this Slice, rename IDs in 3rd. column';
@@ -4837,21 +4921,40 @@ end
 hf1=findobj(0,'tag','xpainter');
 u=get(hf1,'userdata');
 
-
-ids=unique(ids(:)); ids(ids==0)=[];
-
-dx=[ logical(ones(size(ids)))  ids  ones(size(ids))  ];
-dx={};
-for i=1:length(ids)
-    tmp= { logical(selection) num2str(ids(i))   ''};
-    dx=[dx; tmp];
+if tabtype==1
+    tbh      = {'use' 'ID' 'newID'};
+    editable = [1    0  1  ]; %EDITABLE
+    colfmt   ={'logical' 'string'  'numeric'} ;
+    ids=unique(ids(:)); ids(ids==0)=[];
+    
+    dx={};
+    for i=1:length(ids)
+        tmp= { logical(selection) num2str(ids(i))   ''};
+        dx=[dx; tmp];
+    end
+    
+elseif tabtype==2
+    d0=ids; %rewrite
+    
+    tbh      = {'use' 'ID' '#Pixels'};
+    editable = [1    0  0  ]; %EDITABLE
+    colfmt   ={'logical' 'string'  'numeric'} ;
+    
+    ids=d0(:,1);
+    npixel=d0(:,2);
+    
+    dx={};
+    for i=1:length(ids)
+        tmp= { logical(selection) num2str(ids(i))   num2str(npixel(i))};
+        dx=[dx; tmp];
+    end
 end
 
-tbh      = {'use' 'ID' 'newID'};
-tb       =dx;
-editable = [1    0  1  ]; %EDITABLE
-colfmt   ={'logical' 'string'  'numeric'} ;
 
+% dx=[ logical(ones(size(ids)))  ids  ones(size(ids))  ];
+
+
+tb       =dx;
 % for i=1:size(tbh,2)
 %     addspace=size(char(tb(:,i)),2)-size(tbh{i},2)+3;
 %     tbh(i)=  { [' ' tbh{i} repmat(' ',[1 addspace] )  ' '  ]};
@@ -5950,12 +6053,29 @@ function rd_dottype(e,e2)
 definedot([],[]);
 
 function edalpha(e,e2,par)
+
+%  set(e,'enable','off'); drawnow;pause(.1); set(e,'enable','on'); drawnow;
+% try;          setfocus(findobj(gcf,'tag','waitnow'));   end         % deFocus edit-fields
+
 u=get(gcf,'userdata');
 u.alpha=str2num(get(e,'string'));
 set(gcf,'userdata',u);
 set(e,'string',num2str(u.alpha));
+% set(e,'enable','off'); drawnow;pause(.1); set(e,'enable','on'); drawnow;
 setslice([],1);
-try;          setfocus(gca);   end         % deFocus edit-fields
+
+% % set(findobj(gcf,'tag','dot'),'visible','on')
+% set(findobj(gcf,'tag','dot'),'visible','off','userdata',0);
+% setfocus(gca); drawnow
+% set(findobj(gcf,'tag','dot'),'visible','on','userdata',0);
+
+
+% try;          setfocus(findobj(gcf,'tag','waitnow'));   end         % deFocus edit-fields
+% sel();
+% selstop();
+% set(findobj(gcf,'tag','dot'),'visible','on');
+% selstop();
+% set(e,'KeyPressFcn',@keys);
 
 
 
@@ -6615,7 +6735,9 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
                 c=get(hs,'userdata');% get thresholded contourData
                 
             else
-                c=contourc(u.bg2d,u.contourlines);
+                bg=u.bg2d;
+                bg([1 end],:)=0; bg(:,[1 end])=0;
+                c=contourc(bg,u.contourlines);
             end
             
             c2=contourdata(c);

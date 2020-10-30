@@ -17,11 +17,11 @@ end
 callback='';
 % When the object is a 'uicontrol' the function of the object would be 
 % executed. Therefore I have to set it to '', and set it back after the mouseclick
-if strcmp(get(h, 'Type'), 'uicontrol')
-    callback=get(h, 'Callback');
-    set(h, 'Callback', '');
-    drawnow; % Update the figure data
-end
+% if strcmp(get(h, 'Type'), 'uicontrol')
+%     callback=get(h, 'Callback');
+%     set(h, 'Callback', '');
+%     drawnow; % Update the figure data
+% end
 figh=get(h, 'Parent');
 unit_root=get(0, 'Unit');
 unit_fig=get(figh, 'Unit');
@@ -47,11 +47,11 @@ Input.mousePress(16);
 %-----------------------------------------------------------------------------
 % set all parameters that were changed back to the starting values
 set(0, 'PointerLocation', mouse_coord);
-if strcmp(get(h, 'Type'), 'uicontrol')
-    drawnow;   % When there is no 'drawnow', the original Callback- String
-               % will be executed, even the Callback String is set to '';
-    set(h, 'Callback', callback);
-end
+% if strcmp(get(h, 'Type'), 'uicontrol')
+%     drawnow;   % When there is no 'drawnow', the original Callback- String
+%                % will be executed, even the Callback String is set to '';
+%     set(h, 'Callback', callback);
+% end
 set(0, 'Unit', unit_root);
 set(figh, 'Unit', unit_fig);
 set(h, 'Unit', unit_obj);
