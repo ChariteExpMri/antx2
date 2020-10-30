@@ -185,9 +185,8 @@
 %   -TODO: test MAC & LINUX
 % #ra 30 Oct 2020 (14:50:30)
 % [SIGMA RAT template] (Barrière et al., 2019) added to gdrive
-%    PAPER            : https://rdcu.be/b9tKX
-%                     : https://doi.org/10.1038/s41467-019-13575-7
-%   - access via link: https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
+%   - Paper           : https://rdcu.be/b9tKX  or https://doi.org/10.1038/s41467-019-13575-7
+%   - access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
 %     or ANT menu: EXTRAS/download templates
 % 
 % 
