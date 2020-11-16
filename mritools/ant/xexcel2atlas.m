@@ -232,6 +232,7 @@ fx=e(:,v.inewID );
 fx=cellfun(@(a){ [num2str(a)]}, fx);
 fx(cellfun(@isempty, fx))={'NaN'};
 fx=regexprep(fx,{'^\s+$' },{'NaN'});
+fx(regexpi2(fx,'\D')) ={'NaN'}; %no digit values
 fx=cellfun(@(a){ [str2num(a)]}, fx);
 e(:,v.inewID )=fx;
 

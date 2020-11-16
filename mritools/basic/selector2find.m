@@ -1,6 +1,6 @@
 
 % ==============================================
-%%  searchfun 
+%%  searchfun
 % ===============================================
 
 function searchfun
@@ -34,7 +34,7 @@ pos=[0.25 .8 .7 hig];
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 %% column-selection
@@ -65,8 +65,8 @@ he=uicontrol('style','togglebutton','units','norm',...
 % ida=fullfile(matlabroot, 'toolbox\matlab\icons\zoom.mat');  ida=load(ida);
 % set(he, 'CData',ida.zoomCData);
 
-% zoom.mat       zoomplus.mat   zoomy.mat      
-% zoomminus.mat  zoomx.mat      
+% zoom.mat       zoomplus.mat   zoomy.mat
+% zoomminus.mat  zoomx.mat
 
 %pb search
 he=uicontrol('style','pushbutton','units','norm',...
@@ -89,7 +89,7 @@ he=uicontrol('style','pushbutton','units','norm',...
 set(he,'fontsize',8,'fontweight','bold','callback', @pbclearsearch);
 
 % ==============================================
-%%   
+%%
 % ===============================================
 %% movepanel
 
@@ -116,7 +116,7 @@ uv.controls=[...
     findobj(gcf,'tag','pdcolumnsearch')
     findobj(gcf,'tag','pbcolumnprevsearch')
     findobj(gcf,'tag','pbcolumnnextsearch')
-     findobj(gcf,'tag','pbmovepan')
+    findobj(gcf,'tag','pbmovepan')
     ];
 
 % 'pbmovepan'
@@ -155,21 +155,21 @@ try
     if newpos(2)-mid(2)+pos(4)>1; newpos(2)=1-pos(4)+mid(2); end
     
     df=pos(1:2)-newpos+mid;
-
+    
     hx=uv.controls;
     if length(hx)==1
         pos2=get(hx,'position');
     else
         pos2=cell2mat(get(hx,'position'));
     end
-%     df
+    %     df
     for i=1:length(hx)
         pos3=[ pos2(i,1:2)-df   pos2(i,[3 4])];
         if length(hx)==1
             set(hx,'position', pos3);
         else
             set(hx(i),'position', pos3);
-%             pos3
+            %             pos3
         end
     end
     
@@ -205,7 +205,7 @@ set(hs,'string','');
 uv.list=list;
 set(hs,'userdata',uv);
 
-% 
+%
 % hs=uicontrol('style','edit','units','norm','position',   pos,'tag', 'edsearch');
 % hl=uicontrol('style','listbox','units','norm','position',[pos(1) pos(2)-.15 pos(3) .15],'tag', 'lbsearch');
 % set(hl,'string',list)
@@ -234,7 +234,7 @@ end
 
 lb1=findobj(uv.fig2,'tag','lb1');
 if isempty(is)==1
-    return; 
+    return;
 end
 set(lb1,'value',is);
 if length(is)==1
@@ -256,8 +256,8 @@ try
     
     hs=findobj(gcf,'tag', 'edsearch');
     for i=1:length(hs)
-    uv=get(hs(i),'userdata');
-    try; delete( uv.controls);end
+        uv=get(hs(i),'userdata');
+        try; delete( uv.controls);end
     end
 end
 
@@ -344,12 +344,11 @@ if strcmp(arg,'hand')
         129	129	129	129	0	215	215	215	215	215	215	215	0	129	129	129
         129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129
         129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129];
+    end
     
-end
-
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    

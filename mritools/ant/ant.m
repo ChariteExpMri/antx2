@@ -872,6 +872,9 @@ mh2 = uimenu(mh,'Label',' show cases-file-matrix',                              
 mh2 = uimenu(mh,'Label',' GUI overlay image',                                              'Callback',{@menubarCB, 'overlayimageGui'});
 mh2 = uimenu(mh,'Label',' GUI overlay image2',                                             'Callback',{@menubarCB, 'overlayimageGui2'});
 mh2 = uimenu(mh,'Label',' fastviewer',                                                     'Callback',{@menubarCB, 'fastviewer'});
+
+mh2 = uimenu(mh,'Label',' Atlas viewer',                                                   'Callback',{@menubarCB, 'xatlasviewer'},'Separator','on');
+
 mh2 = uimenu(mh,'Label',' 3D-volume',                                                      'Callback',{@menubarCB, 'x3dvolume'});
 
 
@@ -1784,6 +1787,15 @@ elseif strcmp(task,'fastviewer')
     end
     
     xfastview;
+    %________________________________________________
+elseif strcmp(task,'xatlasviewer')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='atlasviewer';
+        return ;
+    end
+    
+    atlasviewer();    
+    
     %________________________________________________
 elseif strcmp(task,'x3dvolume')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here

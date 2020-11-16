@@ -182,14 +182,17 @@
 %   - advanced saving options, 
 %   - contour line segmentation
 %   - ROI manipulation (translate/rotate/flip/copy/replace)
-%   -TODO: test MAC & LINUX
+%   -TODO: test MAC & LINUX :  DONE!
 % #ra 30 Oct 2020 (14:50:30)
 % [SIGMA RAT template] (Barrière et al., 2019) added to gdrive
 %   - Paper           : https://rdcu.be/b9tKX  or https://doi.org/10.1038/s41467-019-13575-7
 %   - access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
 %     or ANT menu: EXTRAS/download templates
-% 
-% 
+%% #ra 16 Nov 2020 (01:37:17) 
+% [atlasviewer.m] added. This function allows to display an atlas such as 'AVGT.nii'+'ANO.nii
+% or any other atlas
+% access: ANT MENU: Graphics/Atlas viewer
+%   -TODO: test MAC & LINUX
 
 
 %----- EOF
