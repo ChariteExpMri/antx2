@@ -44,6 +44,9 @@
 % hit checkbox or label of a region to show/hide this region
 % hit ID of a region to shortly display the region. This works only if the region is found
 %     in the current slice
+% When hovering over the listbox a tooltip appears, displaying the following information for the 
+% region below the mouse pinter: region label,ID, number of children and volume of the region
+% (volume for the respective ID only and volume of ID and it's childdren)
 % ________________________________________________________________________________
 % [Separator] move listbox-image separator to chnage  listbox/axis size ratio
 % ________________________________________________________________________________
@@ -61,8 +64,10 @@
 % atlasviewer('F:\data3\atlasviewer_ratAtlas_test\AVGT.nii','F:\data3\atlasviewer_ratAtlas_test\ANO.nii')
 % atlasviewer([],'F:\data3\atlasviewer_ratAtlas_test\ANO.nii') % % no BG-image, here BG-image is generated via anotation file ('ANO.nii')
 % 
-% 
-% 
+% ________________________________________________________________________________
+% #lk *** OTHER ISSUES ***
+% FONTSIZE: fontsize of listbox and msgbox above slice can be changed: move mouse over object (listbox or
+%  msgbox) and hit[-] or [+] key to decrease increase fontsize
 % 
 % -----------------------
 % subfunctions: 
@@ -107,6 +112,10 @@ if exist('f2')~=1
 end
 
 [px name ext]=fileparts(f2);
+if isempty(px)
+    px=pwd;
+    f2=fullfile(px,[name ext]);
+end
 f3=fullfile(px,[name '.xlsx']);
 
 
@@ -264,6 +273,7 @@ end
 % ==============================================
 %%   calc volume
 % ===============================================
+waitspin(2,['calc Volume..' ]);
 % clc
 % tic
 ids=cell2mat(c(:,4));
@@ -534,6 +544,11 @@ set(hb,'backgroundcolor','w');
 set(hb,'position',[0.4 0.90833 0.06 0.04],'callback',@showboundaries,'value',0,'tag','showboundaries');
 set(hb,'tooltipstring',['show boundary' char(10) ' ..see contextmenu to change color/boundary type']);
 set(hb,'parent',pan1,'units','pixels','position',[53.92 -0.96 48 16]);
+c = uicontextmenu;
+hb.UIContextMenu = c;
+m1 = uimenu(c,'Label','change boundary color','Callback',{@boundary_color,'color'});
+m2 = uimenu(c,'Label','boundary type','Callback',{@boundary_color,'type'});
+
 
 %% help
 hb=uicontrol('style','pushbutton','string','','units','norm');
@@ -550,13 +565,6 @@ ic=getIcon('search');
 set(hb,'cdata',ic);
 set(hb,'tooltipstring','open finder panel to find region');
 set(hb,'parent',pan1,'units','pixels','position', [262.16 0 16 16]);
-
-
-
-c = uicontextmenu;
-hb.UIContextMenu = c;
-m1 = uimenu(c,'Label','change boundary color','Callback',{@boundary_color,'color'});
-m2 = uimenu(c,'Label','boundary type','Callback',{@boundary_color,'type'});
 
 %% alpha
 hb=uicontrol('style','edit','string',num2str(0.5),'units','norm');
@@ -886,7 +894,19 @@ elseif strcmp(e2.Key,'downarrow')
 elseif strcmp(e2.Key,'uparrow')
     listscroll(-1000);
 elseif strcmp(e2.Character,'-') ||  strcmp(e2.Character,'+')
-    ht=findobj(gcf,'tag','table');
+    hunderpointer=hittest(gcf);
+    
+    ht=(hunderpointer);
+    httag=get(ht,'tag');
+    switch httag
+        case {'table','msgbox'};
+           % '---> fontsize change here'
+        otherwise
+            return
+    end
+%     
+    
+%     ht=findobj(gcf,'tag','table');
     fs=get(ht,'fontsize');
     if strcmp(e2.Character,'-')
         if (fs-1)<2; return; end
@@ -1109,7 +1129,7 @@ if strcmp(get(hunderpointer,'type'),'figure') || strcmp(get(hunderpointer,'type'
         ms2{end+1,1}=[...
             'Volume:  Slice ' num2str(volslice) ' (of ' num2str(us.volume(ix)) ') qmm'   ];
         %ms2{end+1,1}=['\color[rgb]{1,0.5,0.5} text'];
-        set(hm,'string',ms2,'fontsize',7);
+        set(hm,'string',ms2);%,'fontsize',7);
         
         hinfo=findobj(gcf,'tag','infomouse');
         if isempty(hinfo)
