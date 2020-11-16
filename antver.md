@@ -1,11 +1,11 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:  % 16 Nov 2020 (01:37:17)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   16 Nov 2020 (01:37:17)  
     
 ------------------  
- % ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Nov 2020 (01:37:17)** </ins>  
-  **[atlasviewer.m]** added. This function allows to display an atlas such as 'AVGT.nii'+'ANO.nii  
-  or any other atlas  
-  access: ANT MENU: Graphics/Atlas viewer  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Nov 2020 (01:37:17)** </ins>  
+  **[atlasviewer.m]** added. This function allows to display an atlas (NIFTI file) for example the  
+  'ANO.nii' -file   
+  access: ANT-MENU: Graphics/Atlas viewer  
     -TODO: test MAC & LINUX  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**30 Oct 2020 (14:50:30)**</ins>  

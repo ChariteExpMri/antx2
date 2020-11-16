@@ -188,10 +188,10 @@
 %   - Paper           : https://rdcu.be/b9tKX  or https://doi.org/10.1038/s41467-019-13575-7
 %   - access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
 %     or ANT menu: EXTRAS/download templates
-%% #ra 16 Nov 2020 (01:37:17) 
-% [atlasviewer.m] added. This function allows to display an atlas such as 'AVGT.nii'+'ANO.nii
-% or any other atlas
-% access: ANT MENU: Graphics/Atlas viewer
+% #ra 16 Nov 2020 (01:37:17) 
+% [atlasviewer.m] added. This function allows to display an atlas (NIFTI file) for example the
+% 'ANO.nii' -file 
+% access: ANT-MENU: Graphics/Atlas viewer
 %   -TODO: test MAC & LINUX
 
 
