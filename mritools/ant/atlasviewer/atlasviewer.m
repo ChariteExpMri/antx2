@@ -1,21 +1,23 @@
 % #ok atlasviewer (atlasviewer.m)
-% display atlas (AVGT.nii + ANO.nii/ANO.xlsx)
+% Slicewise display atlas (AVGT.nii + ANO.nii/ANO.xlsx).
+% #lk ***IMAGES/RESSOURCES ***
 % #b background volume: #n atlas template  (NIFTI), ..."AVGT.nii"
-%       IF background volume is not defined (empty), BG-Image is defined using the ANO.nii
-%       (voxels with IDs (ANO>0) in ANO become '1' in BG-Image)
+%       IF background volume is not defined (empty), BG-Image is defined using via 'ANO.nii',
+%          i.e. all voxels with an ID (values>0) in ANO become '1' in BG-Image
 % #b foreground volume: #n This is the anotation volume (NIFTI), ..."ANO.nii"
 % 
-% #b excel-file #n This anotation excel table contains the labels ,colors,IDs & children
-%      -The filename should match with the anotation volume 
+% #b excel-file #n This anotation excel table contains the labels, colors, IDs & children
+%      -The filename should match with the anotation volume
 %      - EXAMPLE: for "ANO.nii" it is expected that the excelfile is "ANO.xlsx" and exists in the same
 %        folder as "ANO.nii"
-%     #r - If the "ANO.xlsx" is not found (does not exist) a pseudo-list with pseudo colors is created
+%     #r - If "ANO.xlsx" is not found a pseudo ID list with pseudo-colors is created
 % #b for more information see coltrol's tooltips
 % ________________________________________________________________________________
 % #lk *** UI controls ***
 % [show montage] ICON: Shows montage of slices in another figure. if no region selected the montage
-%               depicts all slices, otherwise only slices with selected regions are displayed
-%               -click onto slice in montage to bring slice to main gui
+%               depicts all slices, otherwise only slices with selected regions are displayed to
+%               preserve a given size for each slice 
+%               -click onto a slice to bring the slice to main gui
 % [dimension] pulldown {1,2,3}. The orientation/dimension to display.
 % [flip]  flip up/down slice (radio)
 % [trans] transpose slice  (radio)
@@ -55,7 +57,7 @@
 % atlasviewer()    % % no inputs... background & foregroundIMages will be selected via GUI
 % atlasviewer(backgroundImage, foregroundIMage); where backgroundImage and foregroundIMage are the
 % fullpath filenames of 'AVGT.nii' and 'ANO.nii', respectively.
-% g EXAMPLES
+% #g EXAMPLES
 % atlasviewer('F:\data3\atlasviewer_ratAtlas_test\AVGT.nii','F:\data3\atlasviewer_ratAtlas_test\ANO.nii')
 % atlasviewer([],'F:\data3\atlasviewer_ratAtlas_test\ANO.nii') % % no BG-image, here BG-image is generated via anotation file ('ANO.nii')
 % 
@@ -63,7 +65,7 @@
 % 
 % 
 % -----------------------
-%subfunctions: 
+% subfunctions: 
 % montage_slices.m
 % fun_search.m 
 
@@ -576,7 +578,7 @@ hb=uicontrol('style','pushbutton','string','','units','norm');
 set(hb,'backgroundcolor','w','tag','show_montage','value',2);
 set(hb,'position',[0.25 0.96 0.06 0.04],  'callback',@show_montage);
 set(hb,'tooltipstring','show montage');
-set(hb,'parent',pan1,'units','pixels','position',[60 22 16 16]);
+set(hb,'parent',pan1,'units','pixels','position',[50 22 16 16]);
 ic=getIcon('montage');
 set(hb,'cdata',ic);
 
@@ -599,14 +601,14 @@ hb=uicontrol('style','radio','string','trans','units','norm','fontsize',7);
 set(hb,'backgroundcolor','w','tag','transpose','value',1);
 set(hb,'position',[0.37 0.96 0.07 0.04],  'callback',@changedim);
 set(hb,'tooltipstring','transpose slice');
-set(hb,'parent',pan1,'units','pixels','position',[165 22 40 16]);
+set(hb,'parent',pan1,'units','pixels','position',[175 22 40 16]);
 
 %% hemisphere
 hb=uicontrol('style','radio','string','hemi','units','norm','fontsize',7);
 set(hb,'backgroundcolor','w','tag','hemisphere','value',0);
 set(hb,'position',[0.37 0.96 0.07 0.04],  'callback',@hemisphere);
 set(hb,'tooltipstring','show hemisphere only');
-set(hb,'parent',pan1,'units','pixels','position',[204 22 40 16]);
+set(hb,'parent',pan1,'units','pixels','position',[215 22 40 16]);
 
 set(gcf,'pointer','arrow');
 set(gcf,'SizeChangedFcn', @resizefig);
