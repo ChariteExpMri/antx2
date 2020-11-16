@@ -92,8 +92,12 @@ end
 if exist('f2')~=1
     msg='select Atlas''s Anotation file (ANO.nii) >>>as foreground image';
     disp(msg);
+    [patemp]=fileparts(t);
+    if isempty(patemp); 
+        patemp=pwd;
+    end
     %[t pa]=uigetfile(fullfile(pwd,'*.nii'),msg);
-    [t,sts] = spm_select(1,'any',msg,[],pwd,'.*.nii');
+    [t,sts] = spm_select(1,'any',msg,[],patemp,'.*.nii');
     if  isempty(t);
         return;
     end
@@ -520,7 +524,14 @@ hb=uicontrol('style','radio','string','all','units','norm');
 set(hb,'backgroundcolor','w');
 set(hb,'position',[0.4 0.90833 0.06 0.04],'callback',@showallregs,'value',0,'tag','showallregs');
 set(hb,'tooltipstring','show all regions');
-set(hb,'parent',pan1,'units','pixels','position',[24 0 48 16]);
+set(hb,'parent',pan1,'units','pixels','position',[20.16 -0.8 48 16]);
+
+%% showboundaries
+hb=uicontrol('style','radio','string','bnd','units','norm');
+set(hb,'backgroundcolor','w');
+set(hb,'position',[0.4 0.90833 0.06 0.04],'callback',@showboundaries,'value',0,'tag','showboundaries');
+set(hb,'tooltipstring',['show boundary' char(10) ' ..see contextmenu to change color/boundary type']);
+set(hb,'parent',pan1,'units','pixels','position',[53.92 -0.96 48 16]);
 
 %% help
 hb=uicontrol('style','pushbutton','string','','units','norm');
@@ -538,12 +549,7 @@ set(hb,'cdata',ic);
 set(hb,'tooltipstring','open finder panel to find region');
 set(hb,'parent',pan1,'units','pixels','position', [262.16 0 16 16]);
 
-%% showboundaries
-hb=uicontrol('style','radio','string','bnd','units','norm');
-set(hb,'backgroundcolor','w');
-set(hb,'position',[0.4 0.90833 0.06 0.04],'callback',@showboundaries,'value',0,'tag','showboundaries');
-set(hb,'tooltipstring',['show boundary' char(10) ' ..see contextmenu to change color/boundary type']);
-set(hb,'parent',pan1,'units','pixels','position',[64 0 48 16]);
+
 
 c = uicontextmenu;
 hb.UIContextMenu = c;
@@ -579,14 +585,14 @@ hb=uicontrol('style','popupmenu','string',{'1' '2' '3'},'units','norm');
 set(hb,'backgroundcolor','w','tag','dim','value',2);
 set(hb,'position',[0.25 0.96 0.06 0.04],  'callback',@changedim);
 set(hb,'tooltipstring','displayed dimension');
-set(hb,'parent',pan1,'units','pixels','position',[100 22 30 16]);
+set(hb,'parent',pan1,'units','pixels','position',[ 75 22 55 16]);
 
 %% flipud
 hb=uicontrol('style','radio','string','flip','units','norm','fontsize',7);
 set(hb,'backgroundcolor','w','tag','flipud','value',1);
 set(hb,'position',[0.32 0.96 0.06 0.04],  'callback',@changedim);
 set(hb,'tooltipstring','flip up/down slice');
-set(hb,'parent',pan1,'units','pixels','position',[135 22 30 16]);
+set(hb,'parent',pan1,'units','pixels','position',[135 22 40 16]);
 
 %% transpose
 hb=uicontrol('style','radio','string','trans','units','norm','fontsize',7);
