@@ -192,9 +192,15 @@
 % [atlasviewer.m] added. This function allows to display an atlas (NIFTI file) for example the
 % 'ANO.nii' -file 
 % access: ANT-MENU: Graphics/Atlas viewer
-%   -TODO: test MAC & LINUX
-
-
+%   -TODO: test MAC & LINUX   : DONE!
+% #ra 18 Nov 2020 (13:30:53)
+% [xdownloadtemplate.m] added: check internet connection status
+% new tutorial #bw ['tutorial_brukerImport.doc']  
+% This tutorial deals with conversion of Bruker data to nifti files.
+% - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+% 
+% 
+% 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
 

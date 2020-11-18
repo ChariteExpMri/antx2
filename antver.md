@@ -1,12 +1,23 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   16 Nov 2020 (01:37:17)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   18 Nov 2020 (13:30:53)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Nov 2020 (13:30:53)**</ins>  
+  **[xdownloadtemplate.m]** added: check internet connection status  
+  new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_brukerImport.doc']**    
+  This tutorial deals with conversion of Bruker data to nifti files.  
+  - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+    
+    
+    
+ ----- EOF  
+  make antvermd for GIT: antver('makeantver')  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Nov 2020 (01:37:17)** </ins>  
   **[atlasviewer.m]** added. This function allows to display an atlas (NIFTI file) for example the  
   'ANO.nii' -file   
   access: ANT-MENU: Graphics/Atlas viewer  
-    -TODO: test MAC & LINUX  
+    -TODO: test MAC & LINUX   : DONE!  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**30 Oct 2020 (14:50:30)**</ins>  
   **[SIGMA RAT template]** (Barrière et al., 2019) added to gdrive  
