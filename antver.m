@@ -153,7 +153,7 @@
 % [xdicom2nifti]: revised (now allows conversion using MRICRON or SPM)...Mac/Linux/WIN
 % #ra 22 Sep 2020 (13:30:09)
 % new tutorial #bw ['tutorial_convertDICOMs.doc']  
-% This tutorial deals with the conversion of dicom to nifti files.
+% This tutorial deals with the conversion of dicom to NIFTI files.
 % - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % #ra 06 Oct 2020 (03:45:46)
 % [xdraw] draw a (multi-) mask manually , improved version, allows otsu-segmentation, new image drawing
@@ -194,12 +194,17 @@
 % access: ANT-MENU: Graphics/Atlas viewer
 %   -TODO: test MAC & LINUX   : DONE!
 % #ra 18 Nov 2020 (13:30:53)
-% [xdownloadtemplate.m] added: check internet connection status
-% new tutorial #bw ['tutorial_brukerImport.doc']  
-% This tutorial deals with conversion of Bruker data to nifti files.
-% - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+% - [xdownloadtemplate.m] added: check internet connection status
+% - new tutorial #bw ['tutorial_brukerImport.doc']  
+%   This tutorial deals with conversion of Bruker data to NIFTI files.
+%   access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % 
 % 
+% 
+
+
+
+
 % 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

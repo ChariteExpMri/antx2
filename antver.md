@@ -3,15 +3,10 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Nov 2020 (13:30:53)**</ins>  
-  **[xdownloadtemplate.m]** added: check internet connection status  
-  new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_brukerImport.doc']**    
-  This tutorial deals with conversion of Bruker data to nifti files.  
-  - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
-    
-    
-    
- ----- EOF  
-  make antvermd for GIT: antver('makeantver')  
+  - **[xdownloadtemplate.m]** added: check internet connection status  
+  - new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_brukerImport.doc']**    
+    This tutorial deals with conversion of Bruker data to NIFTI files.  
+    access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Nov 2020 (01:37:17)** </ins>  
   **[atlasviewer.m]** added. This function allows to display an atlas (NIFTI file) for example the  
@@ -61,7 +56,7 @@
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**22 Sep 2020 (13:30:09)**</ins>  
   new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_convertDICOMs.doc']**    
-  This tutorial deals with the conversion of dicom to nifti files.  
+  This tutorial deals with the conversion of dicom to NIFTI files.  
   - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**22 Sep 2020 (00:14:08)**</ins>  
