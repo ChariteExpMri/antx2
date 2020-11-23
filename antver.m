@@ -198,11 +198,13 @@
 % - new tutorial #bw ['tutorial_brukerImport.doc']  
 %   This tutorial deals with conversion of Bruker data to NIFTI files.
 %   access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+% #ra 23 Nov 2020 (15:32:33)
+% - [xrename]: extended functionality: now allows basic math operations of images such as
+%   ROI extraction, image thresholding, combine images (mask an image by another image)
+% - other options of [xrename]: scale image, change voxel resolution (see help of xrename)
+%   access via ANT-menu: Tools/manipulate files
 % 
 % 
-% 
-
-
 
 
 % 

@@ -1,7 +1,13 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   18 Nov 2020 (13:30:53)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   23 Nov 2020 (15:32:33)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Nov 2020 (15:32:33)**</ins>  
+  - **[xrename]**: extended functionality: now allows basic math operations of images such as  
+    ROI extraction, image thresholding, combine images (mask an image by another image)  
+  - other options of **[xrename]**: scale image, change voxel resolution (see help of xrename)  
+    access via ANT-menu: Tools/manipulate files  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Nov 2020 (13:30:53)**</ins>  
   - **[xdownloadtemplate.m]** added: check internet connection status  
   - new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_brukerImport.doc']**    

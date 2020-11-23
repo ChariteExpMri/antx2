@@ -205,7 +205,7 @@ u=setticksNlines(u);
  axis normal;
 %  set(gca,'position',[ .05 0.002    0.3000    0.8000],'fontsize',5);
 %  set(gca,'position',[ .15 0.002    0.3000    0.78000],'fontsize',5);
-set(gca,'position',[ .15 0.002    0.7000    0.78000],'fontsize',6);
+set(gca,'position',[ .22 0.002    0.65    0.7000],'fontsize',6);
 % caxis([0 size(cmap,1)-1]);
 
 

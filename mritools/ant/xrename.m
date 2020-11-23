@@ -1,53 +1,60 @@
 
 %% #bc [xrename] RENAME/DELETE/EXTRACT/EXPAND/COPY file(s) from selected ant-mousefolders
+% #wb THESE TAKSKS CAN BE PERFORMED IN THE MOMENT:  
+% #b - rename file
+% #b - copy+rename file
+% #b - delete file
+% #b - extract/exand 4d file
+% #b - mathematical operation (masking, roi extraction, combining images) ..see below
+% #b - set voxel resolution
+% #b - scale image by voxel factor
+% % __________________________________________________________________________________________________________________
 % - select one/several images TO RENAME/DELETE/EXTRACT/EXPAND/COPY volumes,aka. files
 % - dirs:  works on preselected dirs (not all dirs), i..e mouse-folders in [ANT] have to be selected before
 % - 'newname'-column contains the new filename (file-extension is not needed)
-% - to copy a file , the [EXTRACT VOLNUM]-column must contain the ":" tag (":" tag without "")
-%  - "##" (double-hash) in '[NEWNAME]-column will delete the file
-%  - examples made here are either with "" or ''  -->indon't use "" or ''  (example use 1:5 but not "1:5" , same for the (double-hash) )
+% - copy   a file: type 'copy' or ':'in the [TASK]-column
+% - delete a file: type '##','del' or 'delete' in the [TASK]-column 
+%                  or type "##" in the '[NEWNAME]-column
 %  - file-deletion: in case of errornous deletion --> deleted files are temporally stored in the recycle-nin
 % __________________________________________________________________________________________________________________
 % #yg GUI-USAGE________________________________________________
 %
 %% #by RENAME FILES
-%     - in the [NEWNAME]-column type a new name (but not "##" this would delete the file)
-%     - the [EXTRACT VOLNUM]-column must be empty or type "rename"
-%
+%     - type a new name in the [NewName] column (but not "##" this would delete the file)
+%     - the [TASK]-column must be empty or type "rename"
 %% [RENAME]: rename "T2_TurboRARE.nii" to "t2.nii"
 %% -----------------------------------------------------------
-%% [current filename]    [new file name]  [extract volume]
+%%       [FileName]    [NewName]           [TASK]
 %% T2_TurboRARE.nii       t2.nii                               !! the new file name is "t2.nii"
 %%  or
 %% T2_TurboRARE.nii       t2.nii            rename             !! the new file name is "t2.nii"   
 %__________________________________________________________________________________________________________________
 %% #by COPY FILES
-%     - in the [NEWNAME]-COLUMN type a file-name (but not "##" this would delete the file)
-%     - the [EXTRACT VOLNUM]-column must contain ":"  (the ":" means take all containing volums) or
+%     - in the [NewName]-COLUMN type a file-name (but not "##" this would delete the file)
+%     - the [TASK]-column must contain ":" (the ":" means take all containing volums) or
 %       type "copy"
-%
 %% [example COPY]: copy T2_TurboRARE.nii and name it "t2.nii"
-%% ---------------------------------------------------------------------------
-%% [current filename]    [new file name]  [extract volume]
+%%         [FileName]    [NewName]            [TASK]
 %% T2_TurboRARE.nii       t2.nii                 :            !! use ":" to copy the file
 %%  or
 %% T2_TurboRARE.nii       t2.nii               copy           !! use "copy" to copy the file
 %__________________________________________________________________________________________________________________
 %% #by DELETE FILES
-%    - in the [NEWNAME]-COLUMN type "##"  or "delete"  (without ")  
-%    - the [EXTRACT COLNUM]-column must be empty
+%    - in the [NewName]-COLUMN type "##"  or "delete"  (without "); the [TASK]-column is empty
+%    - or: [NewName] is empty and  [TASK]-column contains "##"
 %
-%% [example DELETE]: delete "T2_TurboRARE.nii"   (use ##)
-%% --------------------------------------------------------------
-%% [current filename]    [new file name]  [extract volume]
+%% [examples]: delete "T2_TurboRARE.nii"    
+%%       [FileName]      [NewName]            [TASK]
 %% T2_TurboRARE.nii       _##                                      !! use "##", to delete the volume
-%% or
 %% T2_TurboRARE.nii       delete                                   !! type delete, to delete the volume
+%% T2_TurboRARE.nii                             ##                 !! type delete, to delete the volume
+%% T2_TurboRARE.nii                             del                !! type delete, to delete the volume
+%% T2_TurboRARE.nii                             delete             !! type delete, to delete the volume
 %__________________________________________________________________________________________________________________
-%% #by EXTRACT FILES
-%   extract 1/more volumes from 4d volume and save this in a single file
+%% #by EXTRACT 3D-volumes
+%   extract 1/more volumes from 4D volume and save as 3D or 4D-volume 
 %   - a new filename in the [NEWNAME]-column must be given (do not use '##'  ..this would delete the orig. file)
-%   - in the [EXTRACT VOLNUM]-COLUMN -type the matlabstyle-like index-indications to extract the respective volume(s):
+%   - in the [Task]-column -type matlabstyle-like index-indications to extract the respective volume(s):
 %    EXAMPLES:  single volume   :  "1" or "2" or "5" or "end"   ... to extract the 1st or 2nd or 5th or last single volume
 %               multiple volumes: "2:3" or "5:end-1" or ":"     ... extract multiple volumes, here either 2nd & 3rd vol, or 5th to last-1 vol or all vols
 %                                  "[2 4 10]" or "[end-3 end]"    ... extract multiple volumes, here either 2nd & 4th & 10th vol, or from the last-3 to the last vol
@@ -56,20 +63,20 @@
 %
 %% [example EXTRACT]: extract volumes 3 to 6 from "DTI_EPI_seg_30dir_sat_1.nii" and save this as "new.nii" (4d-nifti):
 %% ------------------------------------------------------------------------------------------------------------
-%% [current filename]            [new file name]  [extract volume]
+%%                  [FileName]    [NewName]         [TASK]
 %% DTI_EPI_seg_30dir_sat_1.nii      new.nii             3:6          !! note, this creates one (!) 4d volume containing the volumes 3-to-6
 %% ----------------------------------------------------------------
 %__________________________________________________________________________________________________________________
 %% #by EXPAND FILES
 % #r EXPAND: expands a 4d-volume into separate 3d-volumes
 %    -new filename in the [NEWNAME]-column must be given (but not '##'  ..this would delete the orig. file)
-%     in the [EXTRACT VOLNUM]-COLUMN -type the matlabstyle-like index-indications to expand the respective volume(s) and add a "s"
+%     in the [TASK]-COLUMN -type the matlabstyle-like index-indications to expand the respective volume(s) and add a "s"
 %     EXAMPLES: single volume   : "1s" or "2s" or "5s" or "ends" (or "end s")   ... to expand the 1st or 2nd or 5th or last single volume
 %               multiple volumes: "2:3" or "5:end-1" or ":"     ... expand multiple volumes, here either 2nd & 3rd vol, or 5th to last-1 vol or all vols
 %                                  "[2 4 10]" or "[end-3 end]"    ... expand multiple volumes, here either 2nd & 4th & 10th vol, or from the last-3 to the last vol
 %       --> don't forget brackets (matlabstyle) IF NEEDED
 %       --> for concatenation, don't forget brackets (matlabstyle) IF NEEDED
-%       --> don't forget to put the "s" tag somewhere (with/without spaces) in the  [EXTRACT VOLNUM]-COLUMN
+%       --> don't forget to put the "s" tag somewhere (with/without spaces) in the [TASK]-COLUMN
 %    OUTPUT: extracted file(s) have always 3dims with the filename from [NEWNAME]-column and a numeric index which volume was expanded
 %    EXAMPLES:  "1s"      ... newname_001.nii,                "5s" ... newname_005.nii
 %               "2:3"     ... newname_002.nii,newname_003.nii
@@ -79,22 +86,78 @@
 %
 %% [example EXPAND]: expand volumes 1:10 from "DTI_EPI_seg_30dir_sat_1.nii" and save volumes as "new_xxx.nii", where xxx is the number of the volume
 %% ------------------------------------------------------------------------------------------------------------
-%% [current filename]            [new file name]  [extract volume]
+%%                  [FileName]    [NewName]         [TASK]
 %% DTI_EPI_seg_30dir_sat_1.nii      new.nii            1:10s         !! note the "s", this is mandatory to expand the [s]lices 1-10
 %% ---------------------------------------------------------------
 %__________________________________________________________________________________________________________________
 %
-%
-% #r -----simple example------
-% #g  to rename  a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [EXTRACT VOLNUM]-COLUMN is empty
-% #g  to copy    a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [EXTRACT VOLNUM]-COLUMN  is ":"  (without "")
+%% #by MATHEMATICAL OPERATIONS (ma:)
+% SIMPLE MATHEMATICAL OPERATIONS CAN BE Done using the [TASK]-column
+% examples: threshold image, extract ROI from atlas image, combine mask(s) with image etc.  
+% #k used CONVENTIONS:
+% #k  'mo: '      .. use 'mo:' to indicate a math operation, 
+% #k  'i'         .. is the internal input image,
+% #k  'i+number'  .. refers to another image  in the [TASK]-column; (the respective images must be indicated with 'i+number' ...see examples)
+% #k  'o'         .. is the internal output image 
+% #k  'dt'        .. <optional>; use 'dt=number' to set the datatype of the stored image ...see spm_type
+% #k  structure:   is allways:  'mo: o=...do something with i and or combine with i1/i2...etc ' 
+% #g EXAMPLES:
+% #r NOTE the columns in z.files correspond to 'FileName', 'NewName' and 'TASK'-columns in the GUI-TABLE!
+% ==============================================
+%%  #g get right Striatum-mask of SIGMA-RAT atlas (striatum: id=73) via 'AVGThemi.nii' (internally refered via 'i1') 
+%%  #g and save file as 'striatum_Right.nii'
+% z.files={ 'ANO.nii' 	'striatum_Right.nii' 	'mo: o=(i1==2).*(i==73);'                                                   
+%          'AVGThemi.nii' 	'' 	  'i1' };                                                           
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) ); 
+% ==============================================
+%%   #g recode left/right Striatum of SIGMA-RAT atlas (id=73); store with datatype=2 ('dt=2')
+% z.files={ 'ANO.nii' 	'striatum_newID.nii' 	'mo: o=(i1==1).*(i==73)*3; o=o+(i1==2).*(i==73)*4; dt=2;'                                                   
+%          'AVGThemi.nii' 	'' 	  'i1' };                                                           
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) ); 
+% ==============================================
+%%  #g  mask 'x_t2.nii' with 'AVGTmask.nii', here 'AVGTmask.nii' is internally refered as 'i1' 
+%%  #g i.e. multiply all voxels larger than 0 with 'x_t2.nii'
+% z.files={ 'x_t2.nii' 	'x_t2Masked.nii' 	'mo: o=(i1>0).*i;'                                                   
+%          'AVGTmask.nii' 	'' 	         'i1' };                                                           
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) ); 
+% ==============================================
+%% #g threshold 't2.nii' with thresholded GM- and WM-segmentation images'
+%% #g i.e.  threshold GM and WM independently at 0.3, add both masks and make all values above 0 1, than
+%% #g multiply with 't2.nii' and store as 't2Masked.nii'
+%% #g  note that GM and WM are internally referenced via i1 and i2
+% z.files={ 't2.nii' 	't2Masked.nii' 	'mo: o=(((i1>0.3)+(i2>0.3))>0).*i;'                                                   
+%          'c1t2.nii' 	'' 	         'i1'  
+%          'c2t2.nii' 	'' 	         'i2' };   
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) ); 
+% 
+%__________________________________________________________________________________________________________________
+%% #by voxel resolution (vr:)
+% change voxel resolution of an image via  the [TASK]-column
+% example: in [TASK]-column type :  "vr: .1 .1 .1" to change the voxel resolution of an image (previous vox resolution was: [.09 .09 .09])
+%          "vr: .1 .1 .1"  this is identical to "vr: .1"
+% #g change voxel resolution of 'AVGT.nii' to [.1 .1 .1] and save as 'test33.nii'
+% z.files={ 'AVGT.nii' 	'test33.nii' 	'vr: .1' };                                                     
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );   
+%__________________________________________________________________________________________________________________
+%% #by voxel scaling (vf:)
+% change voxel scaling of an image via  the [TASK]-column
+% this will scal up an image ...PURPOSE: scale up an image ba factor 10 to use software tools for human brain (and it's resolution)
+% example: in [TASK]-column type :  "vf: 10 10 10"  or 'vf: 10' to scale up the brain in x,y,z-direction by factor 10
+% #g inflate 'AVGT.nii' by voxel fator 1.5,1.5 and 1 in  x,y,z direction and store as 'inflated'
+% z.files={ 'AVGT.nii' 	'inflated.nii' 	'vf: 1.5 1.5 1' };                                            
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );   
+%__________________________________________________________________________________________________________________
+% 
+% #r -----simple examples------
+% #g  to rename  a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN is empty
+% #g  to copy    a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN  is ":"  (without "")
 % #g  to delete  a file:  name in [NEWNAME]-column  is '##'
-% #g  to extract a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [EXTRACT VOLNUM]-COLUMN is something like "1", "2","1:3","end","end-1:end",":" (without "")
-% #g  to expand  a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [EXTRACT VOLNUM]-COLUMN is something like "1s", "2s","1:3s","ends","end-1:ends",":s" (without "")
+% #g  to extract a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN is something like "1", "2","1:3","end","end-1:end",":" (without "")
+% #g  to expand  a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN is something like "1s", "2s","1:3s","ends","end-1:ends",":s" (without "")
 %
 %% #r NOTE: DIFFERENCE OF EXTRACTION AND EXPANSION
 % INPUT:
-%       -expansion differs from extraction only, that for expansion the 's' tag is added in the [EXTRACT VOLNUM]-COLUMN
+%       -expansion differs from extraction only, that for expansion the 's' tag is added in the [TASK]-COLUMN
 % OUTPUT:
 %  -extraction : extracts one or more volumes from a 3 or 4dim volume (of course one canot extract more than one volume from a 3d-volume-file)
 %                and writes this as a 3 or 4dim volume with the filename specified in  [NEWNAME]-column
@@ -271,8 +334,8 @@ if exist('extractnum')
         extractnum=extractnum(:);
         ix = cellfun('isclass', extractnum, 'double');
         extractnum(ix) =cellfun(@num2str,extractnum(ix),'UniformOutput',0);
-        extractnum=regexprep(regexprep(extractnum,'^0',''),'\s+','');
-        extractnum=regexprep(regexprep(extractnum,'NaN',''),'\s+','');
+        extractnum=regexprep(regexprep(extractnum,'^0',''),'\s+',' ');
+        extractnum=regexprep(regexprep(extractnum,'NaN',''),'\s+',' ');
         if size(he,1) == size(extractnum,1)
             he(:,3)=extractnum;
         else
@@ -302,8 +365,11 @@ v=getuniquefiles(pa);
 %%  get pairings of old&newfile (optional via gui) and extractionNUmber
 %———————————————————————————————————————————————
 
-he=renamefiles(v,he, showgui);
-
+[he tbout]=renamefiles(v,he, showgui);
+try
+iadd=find(~cellfun(@isempty,  regexpi(tbout(:,3), '^##$|^del$|^delete$')));
+he=[he; tbout(iadd,1:3)];
+end
 % he
 %
 % return
@@ -316,7 +382,7 @@ if isempty(he); return; end
 fi   =he(:,1);
 finew=he(:,2);
 volnum=he(:,3);
-
+ he_aux={};
 recycle('on'); %set recycle-bin to on
 
 for i=1:size(pa,1)      %PATH
@@ -351,8 +417,178 @@ for i=1:size(pa,1)      %PATH
                         movefile(s1,s2,'f');
                         disp(['renamed: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
                     end
+               elseif ~isempty(regexpi(volnum{j},'^##$|^del$|^delete$')); %delete     
+                  % 'delete me'
+                   delete(s1);
+                   if exist(s1)==0
+                       cprintf([0 .5 0],['file deleted: '  strrep(s1,filesep,[filesep filesep]) '\n']);
+                   else
+                       cprintf([1 0 1],['could not delete: '  strrep(s1,filesep,[filesep filesep]) '\n']);
+                   end
+                    
+                 
+                    
+                elseif strfind(volnum{j},'vf:'); %vox factor
+                    % ==============================================
+                    %% VOXELFACTOR : scaling up down by voxfactor multiplication
+                    % ===============================================
+                    try
+                        code=volnum{j};
+                        copyfile(s1,s2,'f');
+                        vox=str2num(regexprep(code,'vf:' ,''));
+                        if length(vox)==1
+                            hm=diag([vox vox vox 1]);
+                        else
+                            hm= diag([vox(:)' 1]);
+                        end
+                        hx=spm_get_space(s2);
+                        spm_get_space(s2, hm*hx);
+                        
+                        hxnew=spm_get_space(s2);
+                        vec =spm_imatrix(hx);
+                        vec2 =spm_imatrix(hxnew);
+                        voxsi=sprintf('[%2.3f %2.3f %2.3f]',  vec(7), vec(8), vec(9));
+                        voxsi2=sprintf('[%2.3f %2.3f %2.3f]', vec2(7),vec2(8),vec2(9));
+                        
+                        disp(['New IMG with altered voxSize: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
+                            ' new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
+                       % regexprep()
+                    catch
+                        disp('problem with voxelfactor');
+                        continue
+                    end
+                    % ==============================================
+                    %%
+                    % ===============================================
+                elseif strfind(volnum{j},'vr:'); %vox factor
+                    % ==============================================
+                    %% voxel resolution
+                    % ===============================================
+                    try
+                        code=volnum{j};
+                        vox=str2num(regexprep(code,'vr:' ,''));
+                        if length(vox)==1; vox=repmat(vox ,[1 3]); end
+                        
+                        [ha a ]=rgetnii(s1);
+                        if all((mod(a(:),1) == 0))  ;%INTEGER
+                            interp=0;
+                        else
+                            interp=1;
+                        end
+                        [BB voxold]=world_bb(s1);
+                        delete(s2);
+                        resize_img5(s1,s2, vox, BB, [], interp);
+                        voxsi=sprintf('[%2.3f %2.3f %2.3f]',  voxold(1), voxold(2), voxold(3));
+                        voxsi2=sprintf('[%2.3f %2.3f %2.3f]', vox(1)   , vox(2)     ,vox(3));
+                        disp(['New IMG with altered voxSize: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
+                            ' new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
+                        try; delete(regexprep(s2,'.nii$','.mat')); end
+                    catch
+                        disp('problem with voxel resolution');
+                        continue
+                    end
+                elseif ~isempty( regexpi(volnum{j} ,'^i\d+')  )
+                    % just a catcher...do nothing
+                    
+                    
+                elseif strfind(volnum{j},'mo:'); %vox factor
+                    % ==============================================
+                    %% mathematical operation
+                    % ===============================================
+                    try
+                         code=volnum{j};
+                         
+                       %code='ma: (i<.5)=0; (i>=.5)=1;'
+                        %code='ma: (i<.5)=.5'
+                        %code='ma: i+4'
+                        %code='ma: i=(i1==1).*(i==73);'
+                        
+                        code=regexprep(code,{'mo:' ''},'');
+                        img =regexpi(code,'i\d+','match');
+                        
+                        %if ~isempty(img)                % USE ANOTHER IMAGE-OPERATION
+                           dt=[];
+                            img2=strrep(img,'i','u');
+                            for im=1:length(img)
+                                r1= regexpi(tbout(:,3),['^\s{0,10}' img{im} '\s{0,10}$']);
+                                fileaux   =tbout{find(~cellfun('isempty',r1)),1};
+                                tblin=tbout(find(~cellfun('isempty',r1)),1:3);
+                                he_aux=[he_aux; tblin];
+                                fpfileaux =fullfile(fileparts(s1),fileaux);
+                                [hdum dum]=rgetnii(fpfileaux);
+                                eval([  img2{im} '=dum;' ]);
+                            end
+                            [hu u]=rgetnii(s1);
+                            code2=regexprep(code,'i','u');
+                            %evalstr=['mo=' code2 ';' ];
+                            evalstr=[  code2 ';' ];
+                            eval(evalstr);
+                            
+                            
+                            if hu.dt(1)==2
+                               hu.dt(1) =4;
+                            end
+                            if ~isempty(dt)
+                                hu.dt(1)=dt(1);
+                            end
+                            
+                            %disp(hu.dt);
+                            
+                            delete(s2);
+                            rsavenii(s2,hu,o);
+                            %[hb b]=rgetnii(s2);unique(b)
+                            disp(['New IMG ..math operation: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
+                                ]);
+%                         else                            % SAME IMAGE IMAGE-OPERATION
+%                             
+%              
+%                            code2=[ regexprep(code,{'(' ,'i'},{'g3(' 'g2'})];
+%                             mis=regexprep(strsplit(code2,';')',' ','');
+%                             mis(cellfun('isempty' ,mis))=[];
+%                             imis=cellfun('isempty' ,regexpi(mis,'g3'));
+%                             mis(imis)=cellfun(@(a){['g3=' a]} , mis(imis) );
+%                             code2= [strjoin(mis,';') ';'];
+%                             
+%                             [ha a ]=rgetnii(s1);
+%                             g5=zeros(size(a));
+%                             
+%                             for vol=1:size(a,4)
+%                                 g1=a(:,:,:,vol);
+%                                 si=size(g1);
+%                                 g2=g1(:); g3=g2;%zeros(size(g2));
+%                                 
+%                                 eval([code2 ';']);
+%                                 g4=reshape(g3,[si]);
+%                                 g5(:,:,:,vol)=g4;
+%                             end
+%                             %                         try; delete(s2); end
+%                             %                         try; ha=rmfield(ha,'pinfo');end
+%                             %                            try; ha=rmfield(ha,'dt');end
+%                             % %                         ha.pinfo=[1]
+%                             %                        try; ha=rmfield(ha,'private');end
+%                             if ha.dt(2)==2
+%                                 ha.dt(2)=4;
+%                             end
+%                             delete(s2);
+%                             rsavenii(s2,ha,g5);
+%                             %[hb b]=rgetnii(s2);unique(b)
+%                             disp(['New IMG ..math operation: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
+%                                 ]);
+%                         end
+                    catch
+                        disp('problem with math operation');
+                        continue
+                    end
+                    
+                    
+                    
+                    
                 else
-                    %% extractvolume
+                    % ==============================================
+                    %%   %% extractvolume
+                    % ===============================================
+
+                    
                     thisvol= lower(volnum{j});
                     save_separately =0;
                     
@@ -443,7 +679,13 @@ end%path
 %———————————————————————————————————————————————
 %%   batch
 %———————————————————————————————————————————————
-z.files=he;
+if ~isempty(he_aux)
+    [~,idx]=unique(  strcat(he_aux(:,1),he_aux(:,2),he_aux(:,3)) , 'rows'); %REMOVE IDENTICAL
+    he_aux=he_aux(idx,:);
+    z.files=[he;he_aux];
+else
+    z.files=he;
+end
 makebatch(z);
 
 drawnow;
@@ -460,7 +702,7 @@ antcb('update');
 %________________________________________________
 %%  rename files
 %________________________________________________
-function he=renamefiles(v,he, showgui)
+function [he tbout]=renamefiles(v,he, showgui)
 % keyboard
 
 %% predefined file-rename
@@ -483,19 +725,21 @@ if showgui == 0
     ishange=find(~cellfun('isempty' ,tb(:,2))) ;
     if isempty(ishange)
         he=[];
+        tbout=tb;
     else
         he= tb(ishange,1:3);
+        tbout=tb;
     end
     return
 end
 
 %% GUI
 tb       = [v.tb(:,1)  newname  extractvolnum  v.tb(:,2:end) ] ;
-tbh      = [ v.tbh(1)  'NEW NAME (no extension)' 'extract volnum' v.tbh(2:end)];
+tbh      = [ v.tbh(1)  'NEW NAME (no extension)' 'TASK (extract volnum)' v.tbh(2:end)];
 
 % tb    =tb(: ,[1 end 2:end-1 ]); % 2nd element is new name
 % tbh   =tbh(:,[1 end 2:end-1 ]);
-tbh{1}='current filename';  %give better name
+tbh{1}='Filename';  %give better name
 tbh   =upper(tbh);
 
 tbeditable=[0 1 1   zeros(1,length(v.tbh(2:end))) ]; %EDITABLE
@@ -512,7 +756,7 @@ end
 f = fg; set(gcf,'menubar','none','units','normalized','position',[    0.3049    0.0867    0.6000    0.8428]);
 tx=uicontrol('style','text','units','norm','position',[0 .95 1 .05 ],...
     'string',      '..rename/copy/delete/extract/expand NIFTIs, see [help]...',... % UPPER-TITLE
-    'fontweight','bold','backgroundcolor','w');
+    'fontweight','bold','backgroundcolor','w','tag','msg');
 
 
 [~,MLvers] = version;
@@ -536,6 +780,15 @@ else
     t.BackgroundColor = [1 1 1; 0.9451    0.9686    0.9490];
     
 end
+% waitspin(1,'wait...');
+drawnow;
+
+ht=findobj(gcf,'tag','table');
+jscrollpane = javaObjectEDT(findjobj(ht));
+viewport    = javaObjectEDT(jscrollpane.getViewport);
+jtable      = javaObjectEDT( viewport.getView );
+% set(jtable,'MouseClickedCallback',@selID)
+set(jtable,'MousemovedCallback',@mousemovedTable);
 
 
 % MAKE BUTTONS
@@ -544,15 +797,15 @@ end
 % h{end+1,1}=['- dirs:  works on preselected dirs (not all dirs), i..e mouse-folders in [ANT] have to be selected before'];
 % h{end+1,1}=[' - [newname]-column contains the new filename (file-extension is not needed)'];
 % h{end+1,1}=[' - NOTE: "##" (double-hash) in [NEWNAME]-column will delete the file'];
-% h{end+1,1}=[' - NOTE: strings such as "1", "2","1:3","end","end-1:end",":"  (without ""!) in [EXTRACT VOLNUM]-COLUMN WILL EXTRACT THE VOLUME(S) '];
+% h{end+1,1}=[' - NOTE: strings such as "1", "2","1:3","end","end-1:end",":"  (without ""!) in [TASK]-COLUMN WILL EXTRACT THE VOLUME(S) '];
 % h{end+1,1}=['         and writes a new file with this data...but only if a new filename in the [NEWNAME]-column is given AND!...'];
 % h{end+1,1}=['        the new filename is not "##"'];
 % h{end+1,1}=[' - NOTE: to simply rename a file (no deletion/no extraction) the new file is not allowed to be named "##" AND ! the '];
-% h{end+1,1}=['         [EXTRACT VOLNUM]-column must be empty'];
+% h{end+1,1}=['         [TASK]-column must be empty'];
 % h{end+1,1}=[' ------simple example------'];
-% h{end+1,1}=[' #g  to rename  a file:  name in [NEWNAME]-column  is "something" but not "##"   &    [EXTRACT VOLNUM]-COLUMN is empty'];
+% h{end+1,1}=[' #g  to rename  a file:  name in [NEWNAME]-column  is "something" but not "##"   &    [TASK]-COLUMN is empty'];
 % h{end+1,1}=[' #g  to delete  a file:  name in [NEWNAME]-column  is "##"'];
-% h{end+1,1}=[' #g  to extract a file:  name in [NEWNAME]-column  is "something" but not "##"   &    [EXTRACT VOLNUM]-COLUMN is something like "1", "2","1:3","end","end-1:end",":" (without "")'];
+% h{end+1,1}=[' #g  to extract a file:  name in [NEWNAME]-column  is "something" but not "##"   &    [TASK]-COLUMN is something like "1", "2","1:3","end","end-1:end",":" (without "")'];
 % h{end+1,1}=[''];
 
 
@@ -594,56 +847,131 @@ hlp=help(mfilename);
 h=[h0; strsplit2(hlp,char(10))' ; h ];
 
 setappdata(gcf,'phelp',h);
-pb=uicontrol('style','pushbutton','units','norm','position',[.45 0.02 .15 .03 ],'string','Help','fontweight','bold','backgroundcolor','w',...
+
+set(gcf,'name',[' manipulate file [' mfilename '.m]'],'NumberTitle','off');
+set(gcf,'SizeChangedFcn', @resizefig);
+% ==============================================
+%%   controls
+% ===============================================
+
+%% HELP
+pb=uicontrol('style','pushbutton','units','norm','position',[.45 0 .15 .03 ],'string','Help','fontweight','bold','backgroundcolor','w',...
     'callback',   'uhelp(getappdata(gcf,''phelp''),1); set(gcf,''position'',[    0.2938    0.4094    0.6927    0.4933 ]);'          );%@renameFile
-% set(gcf,''position'',[ 0.55    0.7272    0.45   0.1661 ]);
+set(pb,'tooltipstring','get some help');
+set(pb,'units','pixels');
 
-
-pb=uicontrol('style','pushbutton','units','norm','position',[.05 0.02 .15 .03 ],'string','OK','fontweight','bold','backgroundcolor','w',...
+%% OK
+pb=uicontrol('style','pushbutton','units','norm','position',[.05 0 .15 .03 ],'string','OK','fontweight','bold','backgroundcolor','w',...
     'callback',   'set(gcf,''userdata'',get(findobj(gcf,''tag'',''table''),''Data''));'          );%@renameFile
-pb=uicontrol('style','pushbutton','units','norm','position',[.8 0.02 .15 .03 ],'string','CANCEL','fontweight','bold','backgroundcolor','w',...
+set(pb,'tooltipstring','OK..proceed','tag','ok');
+set(pb,'units','pixels');
+
+%% CANCEL
+pb=uicontrol('style','pushbutton','units','norm','position',[.8 0 .15 .03 ],'string','CANCEL','fontweight','bold','backgroundcolor','w',...
     'callback',   'set(gcf,''userdata'',0);'          );%@renameFile
+set(pb,'tooltipstring','cancel');
+set(pb,'units','pixels');
 
 
+us.tb  =tb;
+us.tbh =tbh;
+set(gcf,'userdata',us);
+% ==============================================
+%%   
+% ===============================================
+
+% waitspin(0,'Done!');
 drawnow;
 
 
+% ==============================================
+%%   wait
+% ===============================================
 
 waitfor(f, 'userdata');
 % disp('geht weiter');
-tb=get(f,'userdata');
-%% cancel
-if isnumeric(tb)
-    if tb==0
-        he=[];
-        close(f);
-        return;
+try
+    tb=get(f,'userdata');
+    %% cancel
+    if isnumeric(tb)
+        if tb==0
+            he=[];
+            tbout=tb;
+            close(f);
+            return;
+        end
     end
+    
+    %%
+    
+    % ikeep=find(cellfun('isempty' ,tb(:,2))) ;
+    ishange=find(~cellfun('isempty' ,tb(:,2))) ;
+    if isempty(ishange)
+        he=[];
+        tbout=tb;
+    else
+        he= tb(ishange,1:3);
+        tbout=tb;
+    end
+    % oldnames={};
+    % for i=1:length(ikeep)
+    %     [pas fis ext]=fileparts(tb{ikeep(i),1});
+    %     tb(ikeep(i),2)={[fis ext]};
+    % end
+    % oldnames={};
+    % for i=1:length(ishange)
+    %     [pas  fis  ext]=fileparts(tb{ishange(i),1});
+    %     [pas2 fis2 ext2]=fileparts(tb{ishange(i),2});
+    %     tb(ishange(i),2)={[fis2 ext]};
+    % end
+    % he=tb;
+    %     disp(tb);
+    close(f);
+catch
+    [he tbout]=deal({});
 end
 
-%%
+% ==============================================
+%%   
+% ===============================================
 
-% ikeep=find(cellfun('isempty' ,tb(:,2))) ;
-ishange=find(~cellfun('isempty' ,tb(:,2))) ;
-if isempty(ishange)
-    he=[];
-else
-    he= tb(ishange,1:3);
+function resizefig(e,e2)
+ht=findobj(gcf,'tag','table'); %table
+hb=findobj(gcf,'tag','ok');   %OK-btn
+
+hm=findobj(gcf,'tag','msg'); %message
+
+ht_pos=get(ht,'position');
+hm_pos=get(hm,'position');
+
+hbunit=get(hb,'units');
+set(hb,'units','norm');
+hb_pos=get(hb,'position');
+set(hb,'units','pixels');
+
+
+ht_pos2=[ht_pos(1)  hb_pos(2)+hb_pos(4)  ht_pos(3)   1-(hb_pos(2)+hb_pos(4)+hb_pos(4)/2  )  ];
+
+if ht_pos2(4)<.2
+%     ht_pos2=[ht_pos(1)  hb_pos(2)+hb_pos(4)  ht_pos(3)   1-(hb_pos(2)+hb_pos(4)+hb_pos(4)/2  )  ];
+
+    return
 end
-% oldnames={};
-% for i=1:length(ikeep)
-%     [pas fis ext]=fileparts(tb{ikeep(i),1});
-%     tb(ikeep(i),2)={[fis ext]};
-% end
-% oldnames={};
-% for i=1:length(ishange)
-%     [pas  fis  ext]=fileparts(tb{ishange(i),1});
-%     [pas2 fis2 ext2]=fileparts(tb{ishange(i),2});
-%     tb(ishange(i),2)={[fis2 ext]};
-% end
-% he=tb;
-%     disp(tb);
-close(f);
+
+
+set(ht,'position',ht_pos2)
+
+
+% hb_pospix=get(hb,'position');
+% set(ht,'units','pixels');
+% ht_pos2=get(ht,'position');
+% ht_pos3=[ht_pos2(1:3) ht_pos2(4)-hb_pospix(4)/2];
+% set(ht,'position',ht_pos3);
+
+
+
+
+
 
 
 %________________________________________________
@@ -740,3 +1068,131 @@ v.tb =[li cellstr(num2str(ncount)) tb];
 v.tbh=[{'Unique-Files-In-Study', '#found'} tbh];
 
 
+% ==============================================
+%%   
+% ===============================================
+
+function waitspin(status,msg)
+if status==1
+     hv=findobj(gcf,'tag','waitspin');
+     try; delete(hv); end
+     
+    try
+        % R2010a and newer
+        iconsClassName = 'com.mathworks.widgets.BusyAffordance$AffordanceSize';
+        iconsSizeEnums = javaMethod('values',iconsClassName);
+        SIZE_32x32 = iconsSizeEnums(2);  % (1) = 16x16,  (2) = 32x32
+        jObj = com.mathworks.widgets.BusyAffordance(SIZE_32x32, msg);  % icon, label
+    catch
+        % R2009b and earlier
+        redColor   = java.awt.Color(1,0,0);
+        blackColor = java.awt.Color(0,0,0);
+        jObj = com.mathworks.widgets.BusyAffordance(redColor, blackColor);
+    end
+    % jObj.getComponent.setFont(java.awt.Font('Monospaced',java.awt.Font.PLAIN,1))
+    jObj.setPaintsWhenStopped(true);  % default = false
+    jObj.useWhiteDots(false);         % default = false (true is good for dark backgrounds)
+    [hj hv]=javacomponent(jObj.getComponent, [10,10,80,80], gcf);
+    set(hv,'units','norm');
+    set(hv,'position',[.6 .2 .20 .20]);
+    set(hv,'tag','waitspin')
+    jObj.getComponent.setBackground(java.awt.Color(1.0, 0.78, 0.0));  % orange
+    jObj.start;
+    
+    
+    hv=findobj(gcf,'tag','waitspin');
+%     us=get(gcf,'userdata');
+%     us.hwaitspin =hv;
+%     us.jwaitspin =jObj;
+%     set(gcf,'userdata',us);
+    setappdata(hv,'userdata',jObj);
+    
+elseif status==2
+    hv=findobj(gcf,'tag','waitspin');
+    hv=hv(1);
+    jObj=getappdata(hv,'userdata');
+%     us=get(gcf,'userdata');
+%     jObj=us.jwaitspin;
+    jObj.setBusyText(msg); %'All done!');
+    jObj.getComponent.setBackground(java.awt.Color(1.0, 0.78, 0.0));  % orange
+    set(hv,'visible','on');
+    drawnow;
+elseif status==0
+     hv=findobj(gcf,'tag','waitspin');
+     hv=hv(1);
+    jObj=getappdata(hv,'userdata');
+    %us=get(gcf,'userdata');
+    %jObj=us.jwaitspin;
+    jObj.stop;
+    jObj.setBusyText(msg); %'All done!');
+    jObj.getComponent.setBackground(java.awt.Color(.4667,    0.6745,    0.1882));  % green
+%     pause(.2);
+    %jObj.getComponent.setVisible(false);
+    %set(us.hwaitspin,'visible','off');
+    set(hv,'visible','off');
+end
+% ===============================================
+function mousemovedTable(e,e2)
+e2.getPoint;
+jtable=e;
+% index = jtable.convertColumnIndexToModel(e2.columnAtPoint(e2.getPoint())) + 1
+idx=e.rowAtPoint(e2.getPoint())+1;
+col=e.columnAtPoint(e2.getPoint())+1;
+% disp(col);
+% return
+
+
+% us=get(gcf,'userdata');
+% idc=idx+1;
+try
+   if col==1
+       ms=['<html><font color="blue"><b>' 'Filename' '</font></b><br>' ...
+           '<font color="black">'  ...
+           ''];
+   elseif col==2
+       ms=['<html><font color="blue"><b>' 'new filename' '</font></b><br>'  ...
+           '<font color="black">'  ...
+           'type (copy+modify) new file name here (with ot without "nii."-extension)'];
+   elseif col==3
+      ms=['<html><font color="blue"><b>' 'TASK (mathematical operation)' '</b></font><br>'  ...
+           '<font color="black">'  ...
+           '<b>copy file    :</b>  type ":" or "copy" <br>'...
+           '<b>rename file  :</b>  type "rename" <br>'...
+           '<b>delete file:</b>  type "##" or "del" or "delete"        <br>'...
+           '<b>extract 4D-volume:</b>  type index such as "[2 4 10]"   <br>' ...
+           '<b>voxel factor (vf):</b>  type "vf: 1.5" to scale up image by factor 1.5  <br>' ...
+           '<b>voxel resolution (vr):</b>  type "vr: [0.1 0.1 0.1]" to define a new voxel resolution  <br>' ...
+           '<b>math operation (mo):</b>  <font color="green"> --> see HELP <font color="black"> <br>' ...
+           '<font color="red"> ..Don''t forget to type a new filename in column-2!' 
+           ];
+   else  
+       us=get(gcf,'userdata');
+       colname=us.tbh{col};
+       drawnow;
+       if col==4
+           ms=['<html><font color="blue"><b>' colname '</font></b><br>' ...
+               '<font color="black"> number of files found'  ...
+               ''];
+       else
+           ms=['<html><font color="blue"><b>' colname '</font></b><br>' ...
+               '<font color="black">'  ...
+               ''];
+       end
+       
+       
+  
+   end
+
+% ms=[us.c{idc,1} char(10) 'ID: '  num2str(us.c{idc,4}) char(10) ...
+%     'children: '  num2str(length(us.c{idc,5}))];
+
+%     ms=['<html><font color="black"><b>' us.c{idc,1} '</font><br>'...
+%         '<font color="red">'       ' ID: ' num2str(us.c{idc,4})       '</font>' ...
+%         '</b><font color="blue">'     ' ; #children: ' num2str(length(us.c{idc,5})) '</font></b><br>' ...
+%         '</b><font color="grey">'     ' VOL (ID) : ' num2str(us.volume(idc)) ' qmm ' '</font></b><br>' ...
+%         '</b><font color="grey">'     ' VOL (tot): ' num2str(us.volumetot(idc)) ' qmm ' '</font></b><br>' ...
+%         ...
+%         '</html>'];
+    
+    jtable.setToolTipText(ms);
+end
