@@ -26,7 +26,7 @@
          This tutorial explains the following steps:  
                 1. Manual segment images --> draw masks  
                 2. Split datasets using the multitube masks  
-         &#8618; ![#0D9D06](https://via.placeholder.com/25/0D9D06/000000?text=blob) access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+         &#8618; ![#0D9D06](https://via.placeholder.com/20/0D9D06/000000?text=-->) access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Nov 2020 (15:32:33)**</ins>  
   - **[xrename]**: extended functionality: now allows basic math operations of images such as  

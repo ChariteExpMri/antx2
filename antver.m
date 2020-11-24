@@ -284,7 +284,7 @@ tb(1,:)={ '#yk'    '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text
 tb(2,:)={ '#ok'    '![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) '  'green' } ;
 tb(3,:)={ '#ra'    '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
 tb(4,:)={ '#bw'    '![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+) '  'margenta' } ;
-tb(5,:)={ '#gw -->' '&#8618; ![#0D9D06](https://via.placeholder.com/25/0D9D06/000000?text=blob)'  'green arrow' } ;
+tb(5,:)={ '#gw -->' '&#8618; ![#0D9D06](https://via.placeholder.com/20/0D9D06/000000?text=-->)'  'green arrow' } ;
 
 
 s2=[];
