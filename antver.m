@@ -125,7 +125,7 @@
 % #ra 24 Aug 2020 (09:27:02)
 % new tutorial #bw ["tutorial_orientation_and_manucoreg.doc"] 
 % This tutorial deals with image orientation for template registration and manual coregistration.
-% - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+%   #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % #ra 24 Aug 2020 (12:08:22)
 % - getanatomicallabels [sub_atlaslabel2xls.m]: fixed bug.. writing excel table (mac) because newer cell2table-version
 % variable names must match with Matlab variable style. This happens when animal names (such as "20130422_TF_001_m1_s3_e6_p1")
@@ -140,7 +140,7 @@
 % manual coregistration [displaykey3inv.m]: update help 
 % #ra 07 Sep 2020 (03:41:16)
 % [xdownloadtemplate] DOWNLOAD TEMPLATES VIA GUI (faster alternative compared to webside).
-% Access via Extras/donwload templates  --> unresolved/untested: proxy settings 
+%    #gw -->  Access via Extras/donwload templates  --> unresolved/untested: proxy settings 
 % #ra 14 Sep 2020 (13:14:15)
 % [xdownloadtemplate] DOWNLOAD TEMPLATES VIA GUI ..modified using curl (MAC/Linux) and wget.exe (windows)
 % - Function was tested with and without proxies using Win, MAC & Linux
@@ -154,11 +154,11 @@
 % #ra 22 Sep 2020 (13:30:09)
 % new tutorial #bw ['tutorial_convertDICOMs.doc']  
 % This tutorial deals with the conversion of dicom to NIFTI files.
-% - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+%    #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % #ra 06 Oct 2020 (03:45:46)
 % [xdraw] draw a (multi-) mask manually , improved version, allows otsu-segmentation, new image drawing
 % tools, calculate volume for each mask-region, save as mask or save masked background image
-% - access via ANT-menu: Tools/draw mask
+%    #gw --> access via ANT-menu: Tools/draw mask
 % #ra 07 Oct 2020 (12:56:31)
 % -[xdraw] : debug, added measuring tool (distance in mm/pixel and angle)
 % #ra 13 Oct 2020 (10:46:14)
@@ -172,7 +172,7 @@
 % 
 % - PARAMTER SETTING [antconfig] (gear wheel icon) has finally obtained a help window.
 %    #gw -->  Access: When creating a new project (Menu: Main/new project) or selecting the [gear wheel icon]  
-%  obtain the help window via bulb-icon (lower left corner of the paramter file)
+%    obtain the help window via bulb-icon (lower left corner of the paramter file)
 % #ra 14 Oct 2020 (02:03:47)
 % - [xdraw] drawing mask tool now includes a 3D-otsu segmentation 
 % #ra 14 Oct 2020 (17:53:20)
@@ -182,7 +182,7 @@
 %   - advanced saving options, 
 %   - contour line segmentation
 %   - ROI manipulation (translate/rotate/flip/copy/replace)
-%   -TODO: test MAC & LINUX :  DONE!
+%   - TODO: test MAC & LINUX :  DONE!
 % #ra 30 Oct 2020 (14:50:30)
 % [SIGMA RAT template] (Barrière et al., 2019) added to gdrive
 %   - Paper           : https://rdcu.be/b9tKX  or https://doi.org/10.1038/s41467-019-13575-7
@@ -221,13 +221,13 @@
 %             11. Coregister ‘t2.nii’ onto BOLD (RS-) Data
 %             12. Mask first EPI-image with brain mask
 %             13. Scale up 4D data for FSL
-%        #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+%            #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % -  NEW TUTORIAL  #bw ['tutor_multitube_manualSegment.doc']
 %    PROBLEM: Several animals located in one image (I call this "multitube")
 %        This tutorial explains the following steps:
 %               1. Manual segment images --> draw masks
 %               2. Split datasets using the multitube masks
-%            #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+%             #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 %
 %
 

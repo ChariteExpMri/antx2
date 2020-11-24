@@ -20,13 +20,13 @@
               11. Coregister ‘t2.nii’ onto BOLD (RS-) Data  
               12. Mask first EPI-image with brain mask  
               13. Scale up 4D data for FSL  
-         &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+             &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
   -  NEW TUTORIAL  ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutor_multitube_manualSegment.doc']**  
      PROBLEM: Several animals located in one image (I call this "multitube")  
          This tutorial explains the following steps:  
                 1. Manual segment images --> draw masks  
                 2. Split datasets using the multitube masks  
-             &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+              &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Nov 2020 (15:32:33)**</ins>  
   - **[xrename]**: extended functionality: now allows basic math operations of images such as  
@@ -57,7 +57,7 @@
     - advanced saving options,   
     - contour line segmentation  
     - ROI manipulation (translate/rotate/flip/copy/replace)  
-    -TODO: test MAC & LINUX :  DONE!  
+    - TODO: test MAC & LINUX :  DONE!  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**14 Oct 2020 (17:53:20)**</ins>  
   - **[xdraw]** drawing mask tool: added contours and contour-based segmentation, completed help  
@@ -76,7 +76,7 @@
     
   - PARAMTER SETTING **[antconfig]** (gear wheel icon) has finally obtained a help window.  
      &#8618;  Access: When creating a new project (Menu: Main/new project) or selecting the **[gear wheel icon]**    
-   obtain the help window via bulb-icon (lower left corner of the paramter file)  
+     obtain the help window via bulb-icon (lower left corner of the paramter file)  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 Oct 2020 (12:56:31)**</ins>  
   -**[xdraw]** : debug, added measuring tool (distance in mm/pixel and angle)  
@@ -84,12 +84,12 @@
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Oct 2020 (03:45:46)**</ins>  
   **[xdraw]** draw a (multi-) mask manually , improved version, allows otsu-segmentation, new image drawing  
   tools, calculate volume for each mask-region, save as mask or save masked background image  
-  - access via ANT-menu: Tools/draw mask  
+     &#8618; access via ANT-menu: Tools/draw mask  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**22 Sep 2020 (13:30:09)**</ins>  
   new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_convertDICOMs.doc']**    
   This tutorial deals with the conversion of dicom to NIFTI files.  
-  - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+     &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**22 Sep 2020 (00:14:08)**</ins>  
   **[xdicom2nifti]**: revised (now allows conversion using MRICRON or SPM)...Mac/Linux/WIN  
@@ -107,7 +107,7 @@
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 Sep 2020 (03:41:16)**</ins>  
   **[xdownloadtemplate]** DOWNLOAD TEMPLATES VIA GUI (faster alternative compared to webside).  
-  Access via Extras/donwload templates  --> unresolved/untested: proxy settings   
+     &#8618;  Access via Extras/donwload templates  --> unresolved/untested: proxy settings   
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**01 Sep 2020 (12:49:32)**</ins>  
   manual coregistration **[displaykey3inv.m]**: update help   
@@ -128,7 +128,7 @@
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Aug 2020 (09:27:02)**</ins>  
   new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **["tutorial_orientation_and_manucoreg.doc"]**   
   This tutorial deals with image orientation for template registration and manual coregistration.  
-  - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+    &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 Aug 2020 (16:49:32)**</ins>  
   **[paramgui]** new version, (multi-icon style, execution-history)  
