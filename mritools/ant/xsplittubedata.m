@@ -93,7 +93,7 @@ p=paramadd(p,x);%add/replace parameter
 %% show GUI
 if showgui==1
     [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .475 .6 .2 ],...
-        'title',' ','info',{@uhelp, [mfilename '.m']});
+         'title',[ 'split multitube data' '[' mfilename '.m]'],'info',{@uhelp, [mfilename '.m']});
     if isempty(m);    return ;    end
     fn=fieldnames(z);
     z=rmfield(z,fn(regexpi2(fn,'^inf\d')));

@@ -1,18 +1,49 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   23 Nov 2020 (15:32:33)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   24 Nov 2020 (14:08:48)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Nov 2020 (14:08:48)**</ins>  
+  - new tutorial #bw **['tutorial_prepareforFSL.doc']**  
+    PROBLEM: How to use the backtransformed template brain mask for resting-state  
+    data processed via FSL. IMPORTANT..this tutorial is not finished!  
+      This tutorial explains the following steps  
+                1. Set ANT path, make study folder +start ANT GUI  
+                2. Download template  
+                3. Define a project  
+                4. Import Bruker data  
+                5. Import templates for this study  
+                6. Create a ‘t2.nii’ image  
+                7. Examine Orientation  
+                8. Register ‘t2.nii’ to the template  
+                9. Back-transform template brain mask to native space  
+              10. Extract 1st image of the 4D BOLD series  
+              11. Coregister ‘t2.nii’ onto BOLD (RS-) Data  
+              12. Mask first EPI-image with brain mask  
+              13. Scale up 4D data for FSL  
+         #g --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+  - new tutorial #bw **['tutor_multitube_manualSegment.doc']**  
+     PROBLEM: Several animals located in one image (I call this "multitube")  
+         This tutorial explains the following steps:  
+                1. Manual segment images --> draw masks  
+                2. Split datasets using the multitube masks  
+         ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+) &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+   
+   
+    
+ ----- EOF  
+  make antvermd for GIT: antver('makeantver')  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Nov 2020 (15:32:33)**</ins>  
   - **[xrename]**: extended functionality: now allows basic math operations of images such as  
     ROI extraction, image thresholding, combine images (mask an image by another image)  
   - other options of **[xrename]**: scale image, change voxel resolution (see help of xrename)  
-    access via ANT-menu: Tools/manipulate files  
+    #g --> access via ANT-menu: Tools/manipulate files  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Nov 2020 (13:30:53)**</ins>  
   - **[xdownloadtemplate.m]** added: check internet connection status  
-  - new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_brukerImport.doc']**    
+  - new tutorial #bw **['tutorial_brukerImport.doc']**    
     This tutorial deals with conversion of Bruker data to NIFTI files.  
-    access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+    #g --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Nov 2020 (01:37:17)** </ins>  
   **[atlasviewer.m]** added. This function allows to display an atlas (NIFTI file) for example the  
@@ -21,7 +52,7 @@
     -TODO: test MAC & LINUX   : DONE!  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**30 Oct 2020 (14:50:30)**</ins>  
-  **[SIGMA RAT template]** (Barri�re et al., 2019) added to gdrive  
+  **[SIGMA RAT template]** (Barrière et al., 2019) added to gdrive  
     - Paper           : https://rdcu.be/b9tKX  or https://doi.org/10.1038/s41467-019-13575-7  
     - access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9  
       or ANT menu: EXTRAS/download templates  
@@ -61,7 +92,7 @@
   - access via ANT-menu: Tools/draw mask  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**22 Sep 2020 (13:30:09)**</ins>  
-  new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_convertDICOMs.doc']**    
+  new tutorial #bw **['tutorial_convertDICOMs.doc']**    
   This tutorial deals with the conversion of dicom to NIFTI files.  
   - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
@@ -100,7 +131,7 @@
   will be renamed (adding a prefix 's' such as "s20130422_TF_001_m1_s3_e6_p1").  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Aug 2020 (09:27:02)**</ins>  
-  new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **["tutorial_orientation_and_manucoreg.doc"]**   
+  new tutorial #bw **["tutorial_orientation_and_manucoreg.doc"]**   
   This tutorial deals with image orientation for template registration and manual coregistration.  
   - access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
@@ -216,7 +247,7 @@
   **[maskgenerator]** added region-lection list and online link to compare selected regions  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**04 Nov 2019 (11:35:28)**</ins>  
-  set up GITHUB repository ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  https://github.com/ChariteExpMri/antx2/  
+  set up GITHUB repository #bw https://github.com/ChariteExpMri/antx2/  
   -primary checks macOS, Linux MINT  
   -updated **[uhelp]**  
 <!---->

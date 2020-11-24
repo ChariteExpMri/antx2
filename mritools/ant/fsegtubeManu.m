@@ -62,7 +62,8 @@ u.f1=f1;
 delete(findobj(gcf,'tag','segmanu'));
 fg;
 u.him=imagesc(squeeze(max(a,[],3)));
-set(gcf,'units','norm','tag','segmanu');
+set(gcf,'units','norm','tag','segmanu','NumberTitle','off',...
+    'name',['munual segmentation' '[' mfilename '.m]' ]);
 axis off
 set(gcf,'userdata',u);
 axis image;axis normal;
@@ -155,13 +156,22 @@ set(ti,'position',[0  tpos(2)+.01 tpos(3) ],'HorizontalAlignment','left');
   
   %% pb ok
  hb=uicontrol('style','pushbutton','units','norm','string','ok');
- set(hb,'position',[ 0.885 0.01 .1 .05]);
- set(hb,'tooltipstring','ok,mask drawn..done');
+ set(hb,'position',[ 0.785 0.01 .1 .05]);
+ set(hb,'tooltipstring','ok,mask drawn..proceed');
  set(hb,'callback',@xok,'tag','xok');
+ 
+ 
+   %% pb cancel
+ hb=uicontrol('style','pushbutton','units','norm','string','cancel');
+ set(hb,'position',[ 0.885 0.01 .1 .05]);
+ set(hb,'tooltipstring','cancel this');
+ set(hb,'callback',@xcancel,'tag','xcancel');
+  
+ 
   
    %% pb help
  hb=uicontrol('style','pushbutton','units','norm','string','help');
- set(hb,'position',[ 0.885 0.06 .1 .05]);
+ set(hb,'position',[ 0.885 0.12 .1 .05]);
  set(hb,'tooltipstring','some help');
  set(hb,'callback',@xhelp,'tag','xhelp');
   
@@ -184,7 +194,7 @@ hf=findobj(0,'tag','segmanu');
 hdim=findobj(hf,'tag','xdim');
 dim=get(hdim,'value');
 
-if isfield(u,'m')==1
+if isfield(u,'m')==1 && u.isOK==1
     classes=[1:size(u.m,dim)];
     v.classes  =classes(:)';
     v.nclasses =length(classes);
@@ -441,10 +451,17 @@ function xhelp(e,e2)
 uhelp([mfilename '.m']);
 
 function xok(e,e2)
-% hf=findobj(0,'tag','segmanu');;
-% u=get(gcf,'userdata');
-% u.isOK=1;
-% set(hf,'userdata',u);
+hf=findobj(0,'tag','segmanu');;
+u=get(gcf,'userdata');
+u.isOK=1;
+set(hf,'userdata',u);
+ uiresume(gcf);
+ 
+ function xcancel(e,e2)
+hf=findobj(0,'tag','segmanu');;
+u=get(gcf,'userdata');
+u.isOK=0;
+set(hf,'userdata',u);
  uiresume(gcf);
 
 function keyx(e,e2)

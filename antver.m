@@ -197,16 +197,39 @@
 % - [xdownloadtemplate.m] added: check internet connection status
 % - new tutorial #bw ['tutorial_brukerImport.doc']  
 %   This tutorial deals with conversion of Bruker data to NIFTI files.
-%   access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+%   #g --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % #ra 23 Nov 2020 (15:32:33)
 % - [xrename]: extended functionality: now allows basic math operations of images such as
 %   ROI extraction, image thresholding, combine images (mask an image by another image)
 % - other options of [xrename]: scale image, change voxel resolution (see help of xrename)
-%   access via ANT-menu: Tools/manipulate files
-% 
-% 
-
-
+%   #g --> access via ANT-menu: Tools/manipulate files
+% #ra 24 Nov 2020 (14:08:48)
+% - new tutorial #bw ['tutorial_prepareforFSL.doc']
+%   PROBLEM: How to use the backtransformed template brain mask for resting-state
+%   data processed via FSL. IMPORTANT..this tutorial is not finished!
+%     This tutorial explains the following steps
+%               1. Set ANT path, make study folder +start ANT GUI
+%               2. Download template
+%               3. Define a project
+%               4. Import Bruker data
+%               5. Import templates for this study
+%               6. Create a ‘t2.nii’ image
+%               7. Examine Orientation
+%               8. Register ‘t2.nii’ to the template
+%               9. Back-transform template brain mask to native space
+%             10. Extract 1st image of the 4D BOLD series
+%             11. Coregister ‘t2.nii’ onto BOLD (RS-) Data
+%             12. Mask first EPI-image with brain mask
+%             13. Scale up 4D data for FSL
+%        #g --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+% - new tutorial #bw ['tutor_multitube_manualSegment.doc']
+%    PROBLEM: Several animals located in one image (I call this "multitube")
+%        This tutorial explains the following steps:
+%               1. Manual segment images --> draw masks
+%               2. Split datasets using the multitube masks
+%        #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+%
+%
 % 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
@@ -254,10 +277,12 @@ it=find(~cellfun(@isempty,regexpi(s1,['#\w+.*(\d\d:\d\d:\d\d)'])));
 it(end+1)=size(s1,1);
 
 % https://stackoverflow.com/questions/11509830/how-to-add-color-to-githubs-readme-md-file
-tb(1,:)={ '#yk'   '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
-tb(2,:)={ '#ok'   '![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) '  'green' } ;
-tb(3,:)={ '#ra'   '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
-tb(4,:)={ '#bw'   '![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+) '  'margenta' } ;
+tb(1,:)={ '#yk'    '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
+tb(2,:)={ '#ok'    '![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) '  'green' } ;
+tb(3,:)={ '#ra'    '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
+tb(4,:)={ '#bw'    '![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+) '  'margenta' } ;
+tb(4,:)={ '#gw -->' '![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+) &#8618;'  'arrow' } ;
+
 
 s2=[];
 for i=length(it)-1:-1:1
