@@ -3,7 +3,7 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Nov 2020 (14:08:48)**</ins>  
-  - new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_prepareforFSL.doc']**  
+  - NEW TUTORIAL  ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_prepareforFSL.doc']**  
     PROBLEM: How to use the backtransformed template brain mask for resting-state  
     data processed via FSL. IMPORTANT..this tutorial is not finished!  
       This tutorial explains the following steps  
@@ -20,8 +20,8 @@
               11. Coregister ‘t2.nii’ onto BOLD (RS-) Data  
               12. Mask first EPI-image with brain mask  
               13. Scale up 4D data for FSL  
-         #g --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
-  - new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutor_multitube_manualSegment.doc']**  
+         &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+  -  NEW TUTORIAL  ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutor_multitube_manualSegment.doc']**  
      PROBLEM: Several animals located in one image (I call this "multitube")  
          This tutorial explains the following steps:  
                 1. Manual segment images --> draw masks  
@@ -32,24 +32,24 @@
   - **[xrename]**: extended functionality: now allows basic math operations of images such as  
     ROI extraction, image thresholding, combine images (mask an image by another image)  
   - other options of **[xrename]**: scale image, change voxel resolution (see help of xrename)  
-    #g --> access via ANT-menu: Tools/manipulate files  
+        &#8618;  access via ANT-menu: Tools/manipulate files  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Nov 2020 (13:30:53)**</ins>  
   - **[xdownloadtemplate.m]** added: check internet connection status  
   - new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_brukerImport.doc']**    
     This tutorial deals with conversion of Bruker data to NIFTI files.  
-    #g --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+      &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Nov 2020 (01:37:17)** </ins>  
   **[atlasviewer.m]** added. This function allows to display an atlas (NIFTI file) for example the  
   'ANO.nii' -file   
-  access: ANT-MENU: Graphics/Atlas viewer  
+       &#8618;   access: ANT-MENU: Graphics/Atlas viewer  
     -TODO: test MAC & LINUX   : DONE!  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**30 Oct 2020 (14:50:30)**</ins>  
   **[SIGMA RAT template]** (Barrière et al., 2019) added to gdrive  
     - Paper           : https://rdcu.be/b9tKX  or https://doi.org/10.1038/s41467-019-13575-7  
-    - access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9  
+    - &#8618;  access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9  
       or ANT menu: EXTRAS/download templates  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**25 Oct 2020 (21:33:14)**</ins>  
@@ -75,7 +75,7 @@
   is created. Second, mutual information is used as metric for rigid transformation.  
     
   - PARAMTER SETTING **[antconfig]** (gear wheel icon) has finally obtained a help window.  
-   Access: When creating a new project (Menu: Main/new project) or selecting the **[gear wheel icon]**    
+     &#8618;  Access: When creating a new project (Menu: Main/new project) or selecting the **[gear wheel icon]**    
    obtain the help window via bulb-icon (lower left corner of the paramter file)  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 Oct 2020 (12:56:31)**</ins>  

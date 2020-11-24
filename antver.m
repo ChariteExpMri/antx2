@@ -171,7 +171,7 @@
 % is created. Second, mutual information is used as metric for rigid transformation.
 % 
 % - PARAMTER SETTING [antconfig] (gear wheel icon) has finally obtained a help window.
-%  Access: When creating a new project (Menu: Main/new project) or selecting the [gear wheel icon]  
+%    #gw -->  Access: When creating a new project (Menu: Main/new project) or selecting the [gear wheel icon]  
 %  obtain the help window via bulb-icon (lower left corner of the paramter file)
 % #ra 14 Oct 2020 (02:03:47)
 % - [xdraw] drawing mask tool now includes a 3D-otsu segmentation 
@@ -186,25 +186,25 @@
 % #ra 30 Oct 2020 (14:50:30)
 % [SIGMA RAT template] (Barrière et al., 2019) added to gdrive
 %   - Paper           : https://rdcu.be/b9tKX  or https://doi.org/10.1038/s41467-019-13575-7
-%   - access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
+%   - #gw -->  access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
 %     or ANT menu: EXTRAS/download templates
 % #ra 16 Nov 2020 (01:37:17) 
 % [atlasviewer.m] added. This function allows to display an atlas (NIFTI file) for example the
 % 'ANO.nii' -file 
-% access: ANT-MENU: Graphics/Atlas viewer
+%      #gw -->   access: ANT-MENU: Graphics/Atlas viewer
 %   -TODO: test MAC & LINUX   : DONE!
 % #ra 18 Nov 2020 (13:30:53)
 % - [xdownloadtemplate.m] added: check internet connection status
 % - new tutorial #bw ['tutorial_brukerImport.doc']  
 %   This tutorial deals with conversion of Bruker data to NIFTI files.
-%   #g --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+%     #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % #ra 23 Nov 2020 (15:32:33)
 % - [xrename]: extended functionality: now allows basic math operations of images such as
 %   ROI extraction, image thresholding, combine images (mask an image by another image)
 % - other options of [xrename]: scale image, change voxel resolution (see help of xrename)
-%   #g --> access via ANT-menu: Tools/manipulate files
+%       #gw -->  access via ANT-menu: Tools/manipulate files
 % #ra 24 Nov 2020 (14:08:48)
-% - new tutorial #bw ['tutorial_prepareforFSL.doc']
+% - NEW TUTORIAL  #bw ['tutorial_prepareforFSL.doc']
 %   PROBLEM: How to use the backtransformed template brain mask for resting-state
 %   data processed via FSL. IMPORTANT..this tutorial is not finished!
 %     This tutorial explains the following steps
@@ -221,8 +221,8 @@
 %             11. Coregister ‘t2.nii’ onto BOLD (RS-) Data
 %             12. Mask first EPI-image with brain mask
 %             13. Scale up 4D data for FSL
-%        #g --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
-% - new tutorial #bw ['tutor_multitube_manualSegment.doc']
+%        #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+% -  NEW TUTORIAL  #bw ['tutor_multitube_manualSegment.doc']
 %    PROBLEM: Several animals located in one image (I call this "multitube")
 %        This tutorial explains the following steps:
 %               1. Manual segment images --> draw masks
