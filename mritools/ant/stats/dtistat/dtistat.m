@@ -1372,17 +1372,30 @@ cprintf([1 0 1],['loading group-assignment (xls-file)...wait..' ]);
 
 hf=findobj(0,'tag','dtistat');
 us=get(hf,'userdata');
+ext=[];
 try
-[pas fis ext]=fileparts(file);
+    [pas fis ext]=fileparts(file);
 end
 if exist('file')==0 || isempty(ext)
-    
-    [fi pa]=uigetfile(pwd,'select group assignment file (excel file)','*.xls');
-    if pa==0;
+    % ==============================================
+    %%  UI: group-assignment
+    % ===============================================
+    %[fi pa]=uigetfile(pwd,'select group assignment file (excel file)','*.xls');
+    msg={...
+        'Select the group-assignment file (Excel file).'
+        'This excel-file contains: '
+        '  1) The animal-names in column-1 '
+        '  2) A group-assignment tag (numeric or string) in column-2' };
+    [t] = cfg_getfile2(1,'any',msg,[],pwd,'.xls|.xlsx.|txt');
+    % ==============================================
+    %%
+    % ===============================================
+
+    file=char(t);
+    if file==0
         cprintf([1 0 1],['process aborted.\n' ]);
         return;
     end
-    file=fullfile(pa,fi);
 end
 file=char(file);
 [pathx xname ext]=fileparts(file);
