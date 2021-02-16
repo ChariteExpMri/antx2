@@ -3984,11 +3984,13 @@ elseif exportType==2 %SINLGE EXCELsheet
             cellcol=lut(cellcolidx,:);
             xlscolorizeCells(filename,sheetname, cellcolpos, cellcol);
         else
-            D2=d2(2:end,:);
-            H2=d2(1,:);
+            %D2=d2(2:end,:);
+            %H2=d2(1,:);
+            D2=d2;
             
-            H2new=regexprep(H2,{'(' ,  ')' , ' ' '-' ,'#',':'},{ '_' ,'','','_','','_'});
-            T=cell2table(D2,'VariableNames',H2new);
+            %H2new=regexprep(H2,{'(' ,  ')' , ' ' '-' ,'#',':'},{ '_' ,'','','_','','_'});
+            %%T=cell2table(D2,'VariableNames',H2new);
+            T=cell2table(D2);
             writetable(T,filename,'Sheet',sheetname );
             
         end
