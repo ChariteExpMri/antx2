@@ -1690,7 +1690,11 @@ elseif isnumeric(input{1})
         disp(['could not found following mouse-indices: ' regexprep(num2str(del(:)'),'\s+',';')]);
     end
     set(lb3,'value',isect);
-elseif ~isempty(strfind(input{1},'.nii') )
+% elseif ~isempty(strfind(char(input{1}),'.nii') )
+else
+    if ischar(input{1})==1
+        input{1}=cellstr(input{1});
+    end
     
     if iscell(input{1})            %FULLPATH SEARCH
         dirin=input{1};

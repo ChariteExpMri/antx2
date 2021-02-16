@@ -156,7 +156,13 @@
 % xvol3d('plotslice','cmap','hot','nanval',0,'transp',[.05],'thresh',[-2 120]); % plot via slice
 % xvol3d('imagefocus',2);                               % set foucs to image-2
 % xvol3d('plotslice','cmap','jet','nanval',0,'transp',[.04],'thresh',[nan nan]); % plot via slice
-
+% 
+% 
+% #wg *** Related Functions ****
+% sub_plotconnections
+% sub_plotregions
+% sub_intensimg
+% 
 
 function varargout=xvol3d(varargin)
 
@@ -466,7 +472,7 @@ set(hs,'tag','winselection','NumberTitle','off','name','xvol3d-selection');
 % brainMASK
 hb=uicontrol(hs,'style','pushbutton','units','norm');
 set(hb,'position',[0.01 .9 .8 .05],'string','load brain mask');
-set(hb,'callback',@cb_loadbrainmask);
+set(hb,'callback',@cb_loadbrainmask,'backgroundcolor',[ 0.9922    0.9176    0.7961]);
 set(hb,'tooltipstring','load brain mask ("AVGThemi.nii")');
 
 %% __________________________________________________________________________________________________
@@ -480,7 +486,7 @@ set(hb,'tooltipstring','get some help');
 % ATLAS
 hb=uicontrol(hs,'style','pushbutton','units','norm');
 set(hb,'position',[0.01 .8 .5 .05],'string','load atlas');
-set(hb,'callback',@cb_loadatlas);
+set(hb,'callback',@cb_loadatlas,'backgroundcolor',[ 0.9922    0.9176    0.7961]);
 set(hb,'tooltipstring','load ATLAS ("ANO.nii")');
 
 hb=uicontrol(hs,'style','pushbutton','units','norm');
@@ -496,7 +502,7 @@ set(hb,'tooltipstring','select external file (excel file) with preselected regio
 hb=uicontrol(hs,'style','pushbutton','units','norm');
 set(hb,'position',[0.7 .75 .2 .05],'string','by IDs','tag','preselectByID');
 set(hb,'callback',@cb_selectbyID  ,'fontsize',8);
-set(hb,'tooltipstring','preselected regions by ID');
+set(hb,'tooltipstring','preselected regions by ID via user inferface');
 
 
 
@@ -529,7 +535,7 @@ end
 
 hb=uicontrol(gcf,'style','pushbutton','units','norm');
 set(hb,'position',[0.01 .61 .5 .035],'string','load stat img');
-set(hb,'callback',@cb_loadstatimg);
+set(hb,'callback',@cb_loadstatimg,'backgroundcolor',[ 0.9922    0.9176    0.7961]);
 set(hb,'tooltipstring','load an image=NIFTI-file (incidence map/statisit)');
 
 hb=uicontrol(gcf,'style','pushbutton','units','norm','fontsize',8);
@@ -785,10 +791,12 @@ hb=uicontrol(gcf,'style','radio','units','norm','string','save','value',0);
 set(hb,'position',[.75 0 .5 .04],'tooltipstring','save as movie','tag','rotsave');
 set(hb,'fontsize',8,'backgroundcolor','w');
 
-% NODES AND CONNECTIONS
+% ==============================================
+%%    NODES AND CONNECTIONS
+% ===============================================
 hb=uicontrol(gcf,'style','pushbutton','units','norm','string','nodes&links');
 set(hb,'position',[.0 .2 .4 .04],'tooltipstring','plot nodes & links','tag','nodesandlinks');
-set(hb,'fontsize',8,'callback', @nodesandlinks);
+set(hb,'fontsize',8,'callback', @nodesandlinks,'backgroundcolor',[ 0.9922    0.9176    0.7961]);
 
 
 % ==============================================
@@ -1578,7 +1586,7 @@ end
 
 function rotHideControls(mode)
 hf=findobj(0,'tag','xvol3d');
-tags={'explodeview' 'exploderenew'  'showbrain'  'showlabel'};
+tags={'explodeview' 'exploderenew'  'showbrain'  'showlabel' 'preferences'};
 if mode==1;     do='off'; else;  do='on';  end
 for i=1:length(tags); 
     set(findobj(hf,'tag',tags{i}),'visible',do);
@@ -1683,12 +1691,24 @@ hs=findobj(0,'tag','xvol3d'); u=get(hs,'userdata');
 
 if exist('IDs')==0
     %ids= input('select IDs : ', 's');
-    
-    prompt = {'Enter IDs/ROI-indices to preselect'};
+    % ==============================================
+%%   
+% ===============================================
+
+    prompt = {['Enter one several IDs/ROI-indices as preselection.' char(10) ...
+         '   When done, hit [OK], than hit ["plot regions"]-Btn to show these regions.' char(10) ...
+         ' Example lists with IDS: [1 2 3] or [1 3:10] ' char(10) ....<
+         ...
+         ]...
+         };
     title = 'Preselect Regions';
     definput = {''};
-    answer = inputdlg(prompt,title,[1 40],definput);
+    answer = inputdlg(prompt,title,[1 100],definput);
     ids    = str2num(char(answer));
+    % ==============================================
+%%   
+% ===============================================
+
 else
     ids= IDs;
 end
@@ -1803,10 +1823,27 @@ loadbrainmask();
 
 function loadbrainmask(maskfile)
 prepareWindow
-if exist('maskfile')~=1; maskfile=[]; end
+if exist('maskfile')~=1; 
+    maskfile=[]; 
+end
 hs=findobj(0,'tag','xvol3d'); u=get(hs,'userdata');
+
+%% ------------reload  Question
+if isfield(u,'mask')==1 && exist(u.mask)==2
+    [pa fi ext]=fileparts(u.mask);
+    choice = questdlg(...
+        ['Use loaded Maskfile (' [fi ext] ')?'], ...
+        'Maskfile(Nifti)', ...
+        '[Yes]','[No] .. select another Maskfile','[Yes]');
+    if ~isempty(strfind(choice,['[No]']))
+        u=rmfield(u ,'mask');
+    end
+end
+
+%% ------------
+
 if isfield(u,'mask')==0  || ~isempty(maskfile)
-    fprintf('..loading brain mask');
+    fprintf('..select brain mask');
     
     if exist('maskfile')~=1 || isempty(maskfile)
         [fi pa]=uigetfile(fullfile(pwd,'*.nii'),'select "AVGTmask.nii"');
@@ -1815,7 +1852,6 @@ if isfield(u,'mask')==0  || ~isempty(maskfile)
     end
     u.mask=fullfile(maskfile);
     set(hs,'userdata',u);
-    disp('..saving mask');
 end
 
 
@@ -1824,7 +1860,24 @@ if ~isempty(hbrain)
     fprintf('..deleting old brain mask');
     delete(hbrain);
 end
+ fprintf('..loading brain mask');
 [ha a]=rgetnii(u.mask);
+% ==============================================
+%%   info notbinary Mask
+% ===============================================
+uni=unique(a);
+if length(unique(a))>2
+    [pas fis ext]=fileparts(u.mask);
+    h = msgbox({['Maskfile ("' fis ext '") is not binary!'],...
+        ['  - Number of different values (' num2str(length(uni)) ') exceeds 2!'], ...
+        ['  - minValue: ' num2str(min(uni)) '; maxValue: ' num2str(max(uni))],...
+        },'Maskfile');
+end
+% ==============================================
+%%   
+% ===============================================
+
+
 [x,y,z,d2] = reducevolume(a,[1,1,1]);
 d2 = smooth3(d2);
 
@@ -1925,6 +1978,188 @@ set(hb,'string','Label','tooltipstring',['show/hide atlas region labels' char(10
 set(hb,'callback',@showlabel);
 
 
+% ==============================================
+%%   %preferences ICON
+% ===============================================
+
+icon=[1 1 1 0.992156862745098 0.662745098039216 0.262745098039216 0.529411764705882 1 1 0.56078431372549 0.247058823529412 0.63921568627451 0.992156862745098 1 1 1;1 1 1 0.733333333333333 0 0 0.0274509803921569 0.388235294117647 0.435294117647059 0.0274509803921569 0 0 0.67843137254902 1 1 1;1 1 1 0.905882352941176 0 0 0 0 0 0 0 0 0.811764705882353 1 1 1;0.992156862745098 0.858823529411765 0.968627450980392 0.435294117647059 0 0 0 0 0 0 0 0 0.333333333333333 0.929411764705882 0.858823529411765 0.992156862745098;0.67843137254902 0 0.0274509803921569 0 0 0 0 0 0 0 0 0 0 0 0 0.623529411764706;0.262745098039216 0 0 0 0 0 0.286274509803922 0.733333333333333 0.756862745098039 0.364705882352941 0 0 0 0 0 0.223529411764706;0.56078431372549 0.0274509803921569 0 0 0 0.223529411764706 0.992156862745098 1 1 1 0.364705882352941 0 0 0 0.0509803921568627 0.63921568627451;1 0.435294117647059 0 0 0 0.592156862745098 1 1 1 1 0.733333333333333 0 0 0 0.490196078431373 1;1 0.435294117647059 0 0 0 0.545098039215686 1 1 1 1 0.67843137254902 0 0 0 0.435294117647059 1;0.56078431372549 0.0274509803921569 0 0 0 0.137254901960784 0.929411764705882 1 1 0.968627450980392 0.223529411764706 0 0 0 0.0274509803921569 0.490196078431373;0.262745098039216 0 0 0 0 0 0.137254901960784 0.490196078431373 0.545098039215686 0.168627450980392 0 0 0 0 0 0.223529411764706;0.662745098039216 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.623529411764706;0.992156862745098 0.811764705882353 0.968627450980392 0.388235294117647 0 0 0 0 0 0 0 0 0.388235294117647 0.929411764705882 0.811764705882353 0.992156862745098;1 1 1 0.905882352941176 0 0 0 0 0 0 0 0 0.905882352941176 1 1 1;1 1 1 0.756862745098039 0 0 0.0274509803921569 0.435294117647059 0.450980392156863 0.0274509803921569 0 0 0.733333333333333 1 1 1;1 1 1 0.992156862745098 0.662745098039216 0.247058823529412 0.529411764705882 1 1 0.592156862745098 0.223529411764706 0.623529411764706 0.992156862745098 1 1 1];
+icon=imresize(icon,[8 8],'nearest');
+icon=repmat(icon,[1 1 3]);
+hb=uicontrol('style','togglebutton','value',0,'units','norm','tag','preferences');
+set(hb,'position',[0.075+3*.05 0.005 .025 .035],'backgroundcolor','w','fontsize',5);
+set(hb,'cdata',icon);
+set(hb,'tooltipstring','preferences...open preference-panel');
+set(hb,'callback',@openpreferencePanel);
+% set(hb,'string','<html>&#9881;')
+% set(hb,'string','<html>&#x2638;')
+% ==============================================
+%%   PREFERENCE PANEL
+% ===============================================
+function openpreferencePanel(e,e2)
+hf=findobj(0,'tag','xvol3d');
+delete(findobj(hf,'tag','prefpanel'));
+if get(findobj(hf,'tag','preferences'),'value')==0; return; end
+hb=uipanel(hf,'tag','prefpanel','fontsize',6,'backgroundcolor',get(hf,'color'));
+pos=[0 300 3*16 2*16];
+set(hb,'unit','pixels','position',pos);
+% -----BGcol axes
+hc=uicontrol('parent',hb, 'style','pushbutton','value',0,'units','pixels','tag','change_bgcolor');
+set(hc,'position',[0 pos(4)-16 16 16],'string','BG','fontsize',6)
+set(hc,'tooltipstring','change Background-color');
+set(hc,'callback',{@preferencesTasks,'change_bgcolor'});
+% -----MOVE axes
+hc=uicontrol('parent',hb, 'style','pushbutton','value',0,'units','pixels','tag','moveaxes_ini');
+set(hc,'position',[16 pos(4)-16 16 16],'string','<html>&#9769;','fontsize',6)
+set(hc,'tooltipstring','move axes position');
+set(hc,'callback',{@preferencesTasks,'moveaxes_ini'});
+% -----SIZE axes
+hc=uicontrol('parent',hb, 'style','pushbutton','value',0,'units','pixels','tag','resizeaxes');
+set(hc,'position',[32 pos(4)-16 16 16],'string','aR','fontsize',6)
+set(hc,'tooltipstring','resize axes ');
+set(hc,'callback',{@preferencesTasks,'resizeaxes'});
+
+% % -----CBAR connection move
+% hc=uicontrol('parent',hb, 'style','pushbutton','value',0,'units','pixels','tag','move_cbarConnection');
+% set(hc,'position',[0 pos(4)-16*2 16 16],'string','w','fontsize',6)
+% set(hc,'tooltipstring','move node/link-related Colorbar');
+% set(hc,'callback',{@preferencesTasks,'move_cbarConnection'});
+% set(hc,'string','<html><font size=4>CB&#9769<font size=3><br><font color=red>&#9632<font color=yellow>&#9632<font color=blue>&#9632;')
+% 
+
+% --------------------------------------------------------------------------------
+function preferencesTasks(e,e2,task)
+hf=findobj(0,'tag','xvol3d');
+if strcmp(task,'change_bgcolor')
+    col=uisetcolor(get(hf,'color'),'select background-color');
+    try; 
+        set(hf,'color',col);
+        set(findobj(hf,'tag','prefpanel'),'backgroundcolor',col);
+        set(findobj(hf,'tag','explodeview'),'backgroundcolor',col);
+        
+       try; set(findobj(hf,'tag','labellistbox'),'backgroundcolor',[get(hf,'color')]); end
+    end
+elseif strcmp(task,'moveaxes_ini')
+    delete(findobj(hf,'tag','moveaxes_dragicon'));
+    delete(findobj(hf,'tag','moveaxes_delete'));
+    %moveICON
+    ax0=findobj(gcf,'tag','ax0');
+    axpos=get(ax0,'position');
+    hc=uicontrol(hf, 'style','pushbutton','value',0,'units','norm','tag','moveaxes_dragicon');
+    set(hc,'position',[axpos(1)+axpos(3)/2 axpos(2)+axpos(4)/2 .03 .03],'backgroundcolor','y',...
+        'string','<html>&#9769;','fontsize',7);
+    set(hc,'tooltipstring','drag me to move axes');
+    set(hc,'units','pixels');
+    pos=get(hc,'position');
+    pos2=[pos(1:2) 16 16];
+    set(hc,'position',pos2) ;%,'callback', {@preferencesTasks,'moveaxes_drag'});
+    
+    hv=findobj(hf,'tag','moveaxes_dragicon');
+    hdrag = findjobj(hv);
+    set(hdrag,'MouseDraggedCallback',{@drag_object,'moveaxes_dragicon',{'ax0' 'moveaxes_delete'} }); %'listFontsizeIncrease'
+
+    %delete icon
+    hc=uicontrol(hf, 'style','pushbutton','value',0,'units','norm','tag','moveaxes_delete');
+    set(hc,'position',[.5 .5 .03 .03],'backgroundcolor','y','string','x','fontsize',7);
+    set(hc,'tooltipstring','ok..drag axes done');
+    set(hc,'units','pixels');
+    set(hc,'position',[pos2(1)+16 pos2(2:end)],'callback', {@preferencesTasks,'moveaxes_delete'});
+  
+elseif strcmp(task,'moveaxes_delete')
+    delete(findobj(hf,'tag','moveaxes_dragicon'));
+    delete(findobj(hf,'tag','moveaxes_delete'));
+elseif strcmp(task,'resizeaxes')
+    
+      % ==============================================
+      %% resize axes
+      % ===============================================
+      warning off;
+      ax0=findobj(hf,'tag','ax0');
+      pos=get(ax0,'position');
+      prompt={['Enter axes position [x0 y0 H W], range: 0-1:' char(10) ...
+          'or keep field <empty> to use default axes position'] ,...
+          };
+      name='Axes Position ';
+      numlines=1;
+      defaultanswer={regexprep(num2str(pos),'\s+','  ')};
+      as=inputdlg(prompt,name,numlines,defaultanswer);
+      posn=str2num(as{1});
+      
+      us=get(hf,'userdata');
+      if isfield(us,'ax0pos')==0
+          us.ax0pos=get(ax0,'position');
+          set(hf,'userdata',us);
+      end
+      if isempty(posn)
+          set(ax0,'position',us.ax0pos);
+          %'default position'
+      elseif length(posn)==4
+          set(ax0,'position',posn);
+      else
+          msgbox('something went wrong...enter 4 values');
+          return
+      end
+      % ==============================================
+      %%
+      % ===============================================
+
+
+%   elseif strcmp(task,'moveaxes_drag')  
+%       'q'
+%       hv=findobj(hf,'tag','moveaxes_dragicon');
+%        hdrag = findjobj(hv);
+%        set(hdrag,'MouseDraggedCallback',{@drag_object,'moveaxes_dragicon',{} }); %'listFontsizeIncrease'
+end
+
+
+
+
+function drag_object(e,e2,tag,othertags)
+% tag='cbarmoveBtn'
+hv=findobj(gcf,'tag',tag);
+hv=hv(1);
+
+
+units_hv =get(hv ,'units');
+units_fig=get(gcf,'units');
+units_0  =get(0  ,'units');
+
+set(hv  ,'units','pixels');
+set(gcf ,'units','pixels');
+set(0   ,'units','pixels');
+
+posF=get(gcf,'position')   ;
+posS=get(0  ,'ScreenSize') ;
+pos =get(hv,'position');
+mp=get(0,'PointerLocation');
+
+xx=mp(1)-posF(1);
+if xx<0; xx=0; end
+if xx>(posF(3)-pos(3)); xx=posF(3)-pos(3); end
+yy=mp(2)-posF(2);
+if yy<0; yy=0; end
+if yy>(posF(4)-pos(4)); yy=(posF(4)-pos(4)); end
+set(hv,'position',[ xx yy pos(3:4)]);
+
+set(hv ,'units'  ,units_hv);
+set(gcf,'units'  ,units_fig);
+set(0  ,'units'  ,units_0);
+df=[pos(1)-xx pos(2)-yy];
+% -----------------------------
+if exist('othertags')==1
+    othertags=cellstr(othertags);
+    for i=1:length(othertags)
+        hv=findobj(gcf,'tag',othertags{i});
+%         try; hv=hv(1); end
+        units_hv =get(hv ,'units');
+        set(hv  ,'units','pixels');
+        
+        pos =get(hv,'position');
+        pos2=[ pos(1)-df(1) pos(2)-df(2) pos(3:4)];
+      set(hv,'position',pos2);
+        set(hv ,'units'  ,units_hv);
+    end 
+end
+
 
 function showlabel_ext(par)
 hf=findobj(0,'tag','xvol3d');
@@ -1951,6 +2186,10 @@ delete(findobj(ha,'tag','txlabel2')),
 
 try
     hreg=findobj(0,'tag','regionselect');
+   if isempty(hreg); 
+       msgbox('no regions selected & loaded') ;
+       return
+   end
     set(findobj(hreg,'tag','lab'),'value',get(hr,'value'));
 end
 
@@ -2123,6 +2362,10 @@ mode=get(hr,'value');
 
 ha=findobj(hf,'tag','ax0');
 hp=findobj(ha,'tag','region');
+if isempty(hp)
+    msgbox('no regions loaded & selected');
+%     return
+end
 
 % if length(hp)==1; hp={hp}; end
 if length(hp)==1

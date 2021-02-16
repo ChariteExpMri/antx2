@@ -63,6 +63,7 @@ else %no subheader
     nline2color=1;
 end
 
+numLines = size(data,1)+size(subheader,1)+size(header,1); %number of lines
 
 exc=actxserver('excel.application');
 [PATHSTR,NAME,EXT] = fileparts(filename);
@@ -108,7 +109,8 @@ es=wb.Activesheet;
 % es.Range('A2:V2').Cell.Font.Size=8;
 
 es.Range(['A1:' col2{length(header)}  '1']).Cell.Font.Bold=1;
-es.Range(['A1:' col2{length(header)}  '1000']).Cell.Font.Size=8;
+% es.Range(['A1:' col2{length(header)}  '1000']).Cell.Font.Size=8;
+es.Range(['A1:' col2{length(header)}  num2str(numLines)]).Cell.Font.Size=8;
 
 % range=invoke(es,'Range',['A1:' char(beg+i) num2str(2) ]);
 range=invoke(es,'Range',['A1:' col2{length(header)}  num2str(1) ]);
@@ -116,6 +118,9 @@ borders=get(range,'Borders');
 borderspec=get(borders,'Item',4);
 set(borderspec,'ColorIndex',1);
 set(borderspec,'Linestyle',1);
+
+% %es.Range("A1:A1").Select
+es.Range('A1').Activate;
 
 invoke(es.Columns,'AutoFit');
 if exist('sheetname_new')
@@ -133,7 +138,8 @@ try
     es.Application.ActiveWindow.FreezePanes = true;
 end
 
-
+% 
+wb.Worksheets.Item(1).Activate; %activate first sheet
 %---------------------------
 wb.Save();
 wb.Close();

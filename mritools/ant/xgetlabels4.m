@@ -581,11 +581,38 @@ vmask=stats2(vals3,s,voxvol);
 
 p.par2  = cell2mat([   vbrain(:,2)  vmask(:,2)   ]);
 p.par2h ={'#brainvol' '#maskvol'}';
+
+% --------------------
+tb     = [p.par p.par2]';    % table   ID x paramter
+tbh    = p.parh;             %  parmatereLabel ('frequency'    'percOverlapp' ...)
+labadd = p.par2h;            % additional artifical labels ('#brainvol'    '#maskvol')
+% ---------------------
+
+%% Add "volPercBrain"-Column
+if s.volPercBrain==1
+    ic_vol    =find(strcmp(tbh,'vol'));         %column regionspecific volume to read
+    ic_volref =find(strcmp(tbh,'volref'));      % column of volref--> the COLUMN "volPercBrain" is appended right to it
+    if isempty(ic_volref);
+        ic_vol=ic_vol+1;
+    end
+    
+    brainvol      = sum(bm(:)>0).*abs(det(hbm.mat(1:3,1:3)));  %using Mask...hemisphere-param-dependent
+    
+    if ~isempty(ic_vol)
+        newParam      =tb(:,ic_vol)./brainvol*100;
+        newParamLabel ='volPercBrain';
+        tbh= [tbh(    1:ic_volref); newParamLabel ; tbh(ic_volref+1   :length(tbh))   ];
+        tb = [ tb(:  ,1:ic_volref)  newParam         tb(:,ic_volref+1 :size(tb,2))    ];
+    end
+    
+end
+
+
 % ==============================================
 %%   OUT
-pp.tb     = ([p.par p.par2]') ;
-pp.tbh    = [p.parh;]'       ;
-pp.labadd =  p.par2h;
+pp.tb     =  tb ; %([p.par p.par2]') ;
+pp.tbh    =  tbh; %[p.parh;]'       ;
+pp.labadd =  labadd; %p.par2h;
 pp.name   =name;
 pp.voxvol =voxvol;
 

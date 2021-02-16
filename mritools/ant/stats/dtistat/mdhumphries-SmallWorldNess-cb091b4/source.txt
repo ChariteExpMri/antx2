@@ -1,0 +1,3 @@
+
+download:
+https://de.mathworks.com/matlabcentral/fileexchange/61987-small-world-ness

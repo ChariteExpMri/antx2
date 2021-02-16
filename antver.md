@@ -1,7 +1,13 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   24 Nov 2020 (14:08:48)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   16 Feb 2021 (15:46:57)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Feb 2021 (15:46:57)**</ins>  
+   - DTI-statistic and 2d-matrix/3d-volume visualization was extended   
+     functions: **[dtistat.m]**, **[xvol3d.m]** and **[sub_plotconnections.m]**  
+   - get anatomical labels **[xgetlabels4.m]**: The paramter volume percent brain ("volpercbrain") was  
+     re-introduced in the resulting Excel-table  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Nov 2020 (14:08:48)**</ins>  
   - NEW TUTORIAL  ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  **['tutorial_prepareforFSL.doc']**  
     PROBLEM: How to use the backtransformed template brain mask for resting-state  
@@ -12,12 +18,12 @@
                 3. Define a project  
                 4. Import Bruker data  
                 5. Import templates for this study  
-                6. Create a â€˜t2.niiâ€™ image  
+                6. Create a ‘t2.nii’ image  
                 7. Examine Orientation  
-                8. Register â€˜t2.niiâ€™ to the template  
+                8. Register ‘t2.nii’ to the template  
                 9. Back-transform template brain mask to native space  
               10. Extract 1st image of the 4D BOLD series  
-              11. Coregister â€˜t2.niiâ€™ onto BOLD (RS-) Data  
+              11. Coregister ‘t2.nii’ onto BOLD (RS-) Data  
               12. Mask first EPI-image with brain mask  
               13. Scale up 4D data for FSL  
              &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
@@ -27,6 +33,7 @@
                 1. Manual segment images --> draw masks  
                 2. Split datasets using the multitube masks  
               &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+   
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Nov 2020 (15:32:33)**</ins>  
   - **[xrename]**: extended functionality: now allows basic math operations of images such as  
@@ -47,7 +54,7 @@
     -TODO: test MAC & LINUX   : DONE!  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**30 Oct 2020 (14:50:30)**</ins>  
-  **[SIGMA RAT template]** (BarriÃ¨re et al., 2019) added to gdrive  
+  **[SIGMA RAT template]** (Barrière et al., 2019) added to gdrive  
     - Paper           : https://rdcu.be/b9tKX  or https://doi.org/10.1038/s41467-019-13575-7  
     - &#8618;  access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9  
       or ANT menu: EXTRAS/download templates  

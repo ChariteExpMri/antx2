@@ -17,21 +17,23 @@
 % <optional> SELECT ONE or several other IMAGES to transform (here the calculated transformation 
 % rule is applied)
 %
-%% #by RUN-def: 
+%% #by PARAMETERS: 
 % function xcoreg(showgui,x)
 % showgui: (optional)  :  0/1   :no gui/open gui
 % x      : (optional)  : struct with following parameters:
-%     z.TASK      : task(s) to perform , visualization TASKS and ONE registration task can be combined !!  
-%                  [1] : visualize the overlay of images before ANY registration is performed
-%                  [3] : visualize the overlay of images after a registration is performed (this step
+%  #b z.TASK      : task(s) to perform , visualization TASKS and ONE registration task can be combined !!  
+%                #n [1]: visualize the overlay of images before ANY registration is performed
+%                #n [3]: visualize the overlay of images after a registration is performed (this step
 %                        can only run, if a registration is performed in advance)
-%                  [2] : affine coregistration
-%                  [20]: affine coregistration with previous manual registering (roughly shifted 
+%                #m [2]: SPM rigid-body coregistration
+%               #m [20]: SPM rigid-body coregistration coregistration with previous manual registering (roughly shifted 
 %                          manually via gui)
-%                  [10]: centering only   : only centering (set origin to midpoint of the Ref-image,
+%               #n [10]: centering only   : only centering (set origin to midpoint of the Ref-image,
 %                        this step is automatically done in [2]&[20])
 %                                           -this is a necessary step for warping using elastix
-%                  [100]: elastix registration (without SPM coregistration), with multiple paramter
+%               #m [50]: reorient only   : only reorient image based on "x.preRotate"-angles
+%                        For this, "x.preRotate" has to be defined (3 rotation angles in radians)    
+%               #m [100]: Elastix registration (without SPM coregistration), with single/multiple parameter
 %                        files (regid&|affine&|bspline) 
 % 
 %                  example combinations: [=combinations of one registration task AND visualization task]
@@ -42,26 +44,76 @@
 %                              registration befor AND afterwards 
 %                  not valid combinations: [=combinations of multiple registration-task ARE NOT ALLOWED]
 %                  [10 20] or [2 20] ...     
-%               
+%  #b IMAGES             
 %     z.targetImg1:    THE ONE TARGET-IMAGE , example: { 'c_2_T2_ax_mousebrain_1.nii' };                                                                 
 %     z.sourceImg1:    THE ONE SOURCE-IMAGE , (this image should be "transformed" to the target-image )
 %                        example: { 'c_nan2neu_2.nii' };                                                                            
 %     z.sourceImgNum1: WHICH volume to use if source image is a 4dim volume    , default: 1                                                                                           
 %     z.applyImg1:     <OPTIONAL> OTHER (ONE/MULTIPLE; 3D OR 4D) IMAGES TO REGISTER USING THE 
-%                      ABOVE ESTIMATED TRANSFORMATION RULE                                                                                          
+%                      ABOVE ESTIMATED TRANSFORMATION RULE  
+% ------------------------------------------
+% #b SPM-Coregistration PARAMETER        	 
+% x.cost_fun      :  objective function: [nmi] norm. mutual Info, [mi] mutual Info, 
+%                    [ecc] entropy corrcoef,[ncc] norm. crosscorr
+%                    Default:  nmi
+% x.sep           : optimisation sampling steps (mm)  [4  2  1  0.5  0.1  0.05];	
+%                   Increase the first value(s) to increase the 'search-field' (larger displacement)
+% x.tol           : tolerences for accuracy of each param:  [0.01  0.01  0.01  0.001  0.001  0.001];	
+% x.fwhm          : smoothing to apply to 256x256 joint histogram:  [7  7]; 
+% -----------------
+% x.centerering   : make copy of targetIMG & set origin to "center" ,than apply centeringTRafo
+%                   to all coregistered images. Default: [0]	
+% -----------------
+% #b RESLICING VOLUME  PARAMETER (OPTIONAL)
+% x.reslicing     : reslice images,  [0] no, do not reslice, [1] reslice to target Image (targetImg1) 
+%                  Default: [0]		
+% x.interpOrder   : interpolation order for reslicing: 
+%                         [0]nearest neighbour, [1] trilinear interpolation, 
+%                         ["auto"] to autodetect interpolation order; Default: 'auto';
+% x.prefix        : file prefix for the new resliced volume (if empty, overwrite the soureIMG  )
+%                   Default: 'r'
+% -----------------
+% #b ELASTIX  PARAMETER (OPTIONAL)
+% use Elastix (rigide,affine, bsline) instead of SPM-coregistration or after SPM coregistration 
+% x.warping       :   USE ELASTIX-registration  {0|1: no|yes}
+%                     #r This Paramter has to bet set to [1]! when using Elastix-registration here.
+%                     #r So even when using rigid-body coregistration via Elastix
+%                     #r Sorry for misusing the variable-name here! 
+%                      Default: [0]		
+% x.warpParamfile :  the Elastixs parameterfile(s) to apply. Several parameter files (rigid, affine, bspline)
+%                    can be combined in the correct order
+%                   Example-1: use rigid-body coregistration
+%                   x.warpParamfile={'f:\antx2\mritools\elastix\paramfiles\trafoeuler5_MutualInfo.txt' };
+%                   Example-2: use rigid-body coregistration, followed by affine regisitration
+%                   x.warpParamfile={'f:\antx2\mritools\elastix\paramfiles\trafoeuler5_MutualInfo.txt' ...
+%                                    'f:\antx2\mritools\elastix\paramfiles\Par0025affine.txt'}; 
+% x.warpPrefix    : prefix out the output file  (if empty, it will overwrite the output of the previously affine registered file)
+%                   Default: 'c_';	
+% -----------------
+% #b PRE-ROTATE IMAGES (Reorient images) (OPTIONAL)
+% Use this option to reorient  images based on 3 rotation angles (radians)
+%    AIM: 
+%    a) as only action: for this define "x.preRotate" and set "z.TASK" to [50]!
+%    b) reorient image prior to registration: for this define "x.preRotate" and set "z.TASK" 
+%      to [100] (for using Elastix) or [2] (using SPM-coregistration) !
+% x.preRotate    : the 3 rotation angles (in radians)
+% % ------------------------------------------
+% #b  x.cleanup       : remove interim steps {0|1: no|yes}; Default: [1]
 % 
-%  #g one can use up to 5 independent other coregistrations in one pipeline:
-%  #g example scenario: - image [A] should be reguistered to image [B], and transformation rule 
-%  #g                     applied to images [E,F]
-%  #g                   - additionally and independently ...
-%  #g                     image [G] should be reguistered to image [H], and transformation rule
-%  #g                     applied to images [I,J]
-%  #g                 --> this case is usefull, if transform [A] to [B] and [G] to [H] have different
-%  #g                     transformation rules
-%  #g thus, if other independent coregistrations needed, use z.targetImg2/z.sourceImg2/applyImg3 .
-%  #g ..to.. z.targetImg5/z.sourceImg5/applyImg5
+% #g ==============================================================================
+% #g BLOCK-2, BLOCK-3... etc .. other coregistrations in the same pipeline
+% #g ==============================================================================
+%   one can use up to 5 independent other coregistrations in the same pipeline:
+%   example scenario: - image [A] should be registered to image [B], and transformation rule 'x'
+%                       is applied to images [E,F]
+%                     - additionally and independently ...
+%                       image [G] should be reguistered to image [H], and transformation rule 'y'
+%                       is applied to images [I,J]
+%                   --> this case is usefull, if transform [A] to [B] and [G] to [H] have different
+%                       transformation rules
+%   thus, if other independent coregistrations needed, use z.targetImg2/z.sourceImg2/applyImg3 .
+%   ..to.. z.targetImg5/z.sourceImg5/applyImg5
 % 
-%   for further parameters-->see gui
 % 
 %% #by RUN: 
 % xcoreg(1) or  xcoreg    ... open PARAMETER_GUI 
@@ -127,11 +179,39 @@
 % z.warping      = [1];             %% nonlinear warp                                                  
 % z.warpParamfile= 'o:\antx\mritools\elastix\paramfiles\p33_bspline.txt';
 % z.warpPrefix   = 'warped';  
-% xcoreg(0,z);             %%  GUI  
+% xcoreg(0,z);             %% NO-GUI  
+% 
+% ==============================================
+%%  #b EXAMPLE: ROTATE/REORIENT IMAGE ONLY
+%  rotate image 'source.nii' by "z.preRotate"-angles
+%  the output 'c_source.nii' is rotated by "z.preRotate"-angles
+% ===============================================
+% z=[];                                                                                 
+% z.TASK='50';                         % % reorient image(s) only                                                   
+% z.targetImg1='';                                                          
+% z.sourceImg1={ 'source.nii' };                                                            
+% z.sourceImgNum1=[1];       
+% z.applyImg1    = {};
+% z.preRotate=[pi/2 pi/2 pi/2];                                                                                                                     
+% xcoreg(1,z); %OPEN GUI
+% ==============================================
+%%  #b EXAMPLE: REORIENT IMAGE followed by Elastix rigid-body registration
+%  (1) Rotate image 'm1.nii' to obtain the same orientation as 'AVGT.nii' via "z.preRotate"-angles.
+%  (2) Than, use Elastix rigid-body registration
+% ===============================================
+% z=[];                                                                                 
+% z.TASK         ='100';            % % use ELASTIX registration
+% z.targetImg1   ={ 'AVGT.nii' };                                                          
+% z.sourceImg1   ={ 'm1.nii' };                                                            
+% z.warpParamfile={ 'f:\antx2\mritools\elastix\paramfiles\trafoeuler5_MutualInfo.txt' };
+% z.cleanup      =[1];    
+% z.preRotate    =[1.5708    3.1416         0]
+% xcoreg(0,z);    %No- GUI
+% 
 %
 %% #by RE-USE BATCH: see 'anth' [..anthistory] -variable in workspace
 % 
-  
+% 
 
 
 
@@ -192,6 +272,7 @@ p={...
     '[1+3] display & displayResult' '[1+3] coregister & displayResult' ...
     '[20] coregister with previous manual registering byHand' ...
     '[10] centering only'...
+    '[50] reorient image only, x.preRotate must be defined'...
     '[100] noSPMregistration, only elastix'};
     %
     'targetImg1'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
@@ -212,14 +293,20 @@ p={...
     'prefix'       'r'      'file prefix for the new resliced volume (if empty, overwrite the soureIMG  )'   '' 
     
     
-    'inf2001'       [ '% NONLINEAR WARPING  (OPTIONAL) '    repmat('_',[1,90])]   '' ''
-    'warping'       [0]                                  'do subsequent nonlinear warping [0|1],  ' ,'b'
+    'inf2001'       [ '% ELASTIX: rigid,affine, bspline  (OPTIONAL) '    repmat('_',[1,90])]   '' ''
+    'warping'       [0]        'USE ELASTIX, example..do subsequent nonlinear warping [0|1],  ' ,'b'
     'warpParamfile'  fullfile(fileparts(fileparts(which('ant.m'))),'elastix','paramfiles' ,'p33_bspline.txt')      'parameterfile used for warping'  {@getparmfiles }
     'warpPrefix'   'c_'                            'prefix out the output file after warping (if empty, it will overwrite the output of the previously affine registered file)'  ''
     'cleanup'      [1]  'remove interim steps'  'b'      
 
+    'inf2011'       [ '% pre-rotate image '    repmat('_',[1,90])]   '' ''
+    'preRotate'     []  'pre-rotate image prior to any task [3 values;  string or numerical],   ' ,{ '1.5708 3.1416 0'}
+    
+
+    
+    
     %
-    %     'inf200'      [repmat('�',[1,100])]                            '' ''
+    'inf200'        ''                           '' ''
     'inf201'      [ '%___  BLOCK-2 (optional)  '    repmat('_',[1,90])]   '' ''
     'targetImg2'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
     'sourceImg2'      {''}                'source image [t2], (moved image)'             {@selector2,li,{'SourceImage'},'out','list','selection','single'}
@@ -308,6 +395,26 @@ elseif find(task==100)
      end
     [t t2]=initialize(z,pa);
     do_coregister(t2,z,'noSPMregistration');
+    
+elseif find(task==50)         %                  REOIRENT only
+    z.warping=0;
+    
+    % empty target--> replace with source (which is never used/manipulated)
+    fnames=fieldnames(z);
+    ztarget=fnames(regexpi2(fnames,'targetImg.*'));
+    zsource=regexprep(ztarget,'targetImg','sourceImg');
+    for j=1:length(ztarget)
+        if isfield(z,zsource{j}) && isfield(z,ztarget{j})
+            source=getfield(z,zsource{j});
+            if isempty(char(getfield(z,ztarget{j}))) % if target is empty--> set target as source
+                z=setfield(z,ztarget{j},source);
+            end
+        end
+    end
+    
+    
+    [t t2]=initialize(z,pa);
+    do_coregister(t2,z,'reorient_only');
 end
 
 %% SHOW AFTERWARDS
@@ -381,9 +488,10 @@ atic=tic;
 proc=cell2mat(t2(:,1));
 nprocs=unique(proc);
 
+
 for i=1:length(nprocs)
     g=t2(proc==i,:);
-    
+    displog={};
     
     s=[];
     s.t     =  g(regexpi2(g(:,4),'t'),6);
@@ -411,7 +519,28 @@ for i=1:length(nprocs)
         end
         %% dd
         
+        %% ----------PREROTATE-----------------------------------------
+        if isfield(z,'preRotate') && ~isempty(z.preRotate)
+            rotangle=z.preRotate;
+          if ~isnumeric(rotangle);  rotangle=str2num(rotangle); end
+          if length(rotangle)==3
+              for jj=1:length(s.ac)
+                  Bvec      =[ [0 0 0] [rotangle]  1 1 1 0 0 0];
+                  fsetorigin(s.ac{jj},   spm_imatrix(inv(spm_matrix(Bvec)))    );
+                  fprintf(['pre-rotate..'  ]);
+              end
+          end
+          if strcmp(modus,'reorient_only')
+              try; displog={s.ac{1} }'; end
+              fprintf(['\b\b [done] ELA ' sprintf('%2.2fmin',toc(atic)/60) '\n']);
+              try; showinfo2([ 'reorient: ' fileparts(displog{1}) ], displog{1}); end
+              
+              continue
+          end
+            
+        end
         
+        %% ---------------------------------------------------
         %% PRERGISTER MANUALLY
         if strcmp(modus,'preregister')
             s=preregister(s,z);
@@ -480,6 +609,7 @@ for i=1:length(nprocs)
                     end
                 end
             end
+           try; displog={s.tc{1},s.ac{1}}'; end
         end
         
         %===========================================
@@ -500,7 +630,7 @@ for i=1:length(nprocs)
                 %% BACKTRAFO: were [ s.ac{j},toback] is a copy of s.ac{j}
                 % ftrafo_img2img(s.tc{1},s.t{1}  ,     s.ac{j},toback)
             end
-            
+            try; displog={s.tc{1},s.ac{1}}'; end
         end
         
                 
@@ -530,6 +660,8 @@ for i=1:length(nprocs)
             % matlabbatch{1}.spm.spatial.coreg.write.roptions.wrap = [0 0 0];
             % matlabbatch{1}.spm.spatial.coreg.write.roptions.mask = 0;
             % matlabbatch{1}.spm.spatial.coreg.write.roptions.prefix = 'Q';
+            
+             try; displog={s.tc{1}, stradd(s.ac{1},prefix,1) }'; end
         end
         
 %         if z.warping==0
@@ -541,7 +673,7 @@ for i=1:length(nprocs)
         %===========================================
         %
         if z.warping ==  1
-            fprintf(['\b\b, warping..'  ]);
+            fprintf(['\b\b, Elastix..'  ]);
 %             z.warpParamfile=fullfile(fileparts(fileparts(which('ant.m'))),'elastix','paramfiles' ,'p33_bspline.txt')
 %             z.warpPrefix='bspline';
 %             keyboard
@@ -588,9 +720,14 @@ for i=1:length(nprocs)
                 
                 newfile=fullfile( pa2,[ z.warpPrefix  regexprep(fis,'^c_','') ext  ] );
                 movefile(im2,newfile ,'f');
+                if jj==1
+                     try; displog={s.tc{1}, newfile }'; end
+                end
 %                 try; showinfo2(' warped images',s.t{1},newfile); end
                 %fprintf(['.. \b\b\b [done] ..ELA ' sprintf('%2.2fmin',toc(atic)/60) '\n']);
             end
+            
+           % try; displog={s.tc{1}, s.ac{1} }'; end
             
             %% clean up warping
             if z.cleanup~=1
@@ -614,9 +751,11 @@ for i=1:length(nprocs)
 % % % %             spm_jobman('run',matlabbatch);
 % % % %         end
         
-        fprintf(['\b\b [done] ELA ' sprintf('%2.2fmin',toc(atic)/60) '\n']);
 
-        
+
+        fprintf(['\b\b [done] ELA ' sprintf('%2.2fmin',toc(atic)/60) '\n']);
+        try; showinfo2([ 'coreg: ' fileparts(displog{1}) ], displog{1},displog{2}); end
+
     catch
         %%PROBLEM
         

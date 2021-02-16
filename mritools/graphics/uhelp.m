@@ -1,11 +1,14 @@
 
 % #ko [uhelp] isplay a function's HELP or a CELL array in text window.
-% 
+%
 % #wo _SHORTCUTS_   #k    available in READMODE (RM) AND EDITMODE (EM)
 % #g [ctrl+"+"/"-"] #n increase/decrease fontsize
-% #g [ctrl+c]       #n copy selection 
-% #g [ctrl+f]       #n finder panel (use [ESC] or [x]-button to close finder panel)
-% #g [ctrl+up/down]      #n scroll to begin/end
+% #g [ctrl+c]       #n copy selection
+% #g [ctrl+f]       #n finder panel: find specific word/text
+%                      use [ESC] or [x]-button to close finder panel
+% #g [ctrl+j]       #n jumper panel: jump to specific line
+%                      (use [ESC] or [x]-button to close jumper panel)
+% #g [ctrl+up/down] #n scroll to begin/end
 % ------- #b Window Position #n --------------------
 % #g [ctrl+alt+left]   #n position help window to left side with 50% screensize
 % #g [ctrl+alt+right]  #n position help window to right side with 50% screensize
@@ -24,22 +27,22 @@
 % #g [ctrl+m]       #n toggle READMODE (RM) / EDITMODE (EM)
 % #g [ctrl+t]       #n toggle adjust window to  textwidth
 % #g [alt+up/down]  #n change fonttype
-% 
+%
 % ##  see also contextmenu
 %
 % #k =====================================================================================
-% #wo _INPUT PARAMETER_  
+% #wo _INPUT PARAMETER_
 % uhelp additional infos
 % 2nd arg : 0/1 to make a new window(1) or overwrite the old one
 % additional pairwise infows
 % 'cursor' :   'start' or 'end'  -position the cursor in listbox
-% 'lbpos'  :  [x y w h]          -position if the listbox default: [0 0 1 1] 
-% 'fontsize': value              -set listbox fontsize 
+% 'lbpos'  :  [x y w h]          -position if the listbox default: [0 0 1 1]
+% 'fontsize': value              -set listbox fontsize
 % 'name'    : (string)           - name of the figure (appears in the upper window frame)
 % 'bgcolor' : [R G B]/matlab-color-string - background color; example ..'bgcolor','r'.. or 'bgcolor',[1 .9 .9]...
-% 
+%
 % EXAMPLES
-% uhelp(his, 1, 'cursor' ,'end','lbpos',[0 .025 1 .95] );           
+% uhelp(his, 1, 'cursor' ,'end','lbpos',[0 .025 1 .95] );
 % uhelp(cell, 0/1, 'cursor' ,'end' )   ;%places cursor to the end
 %% ##wg _______EXAMPLES_______________________________________________
 %% #bl              MOUSE-LISTBOX
@@ -59,7 +62,7 @@
 % % uhelp({' #cm rote KORRELATION #k ccrrc #ky blob';' #c deddeede'});
 % uhelp(e2)
 %
-
+%
 %
 % HREF-matlab-workspace
 % disp(['BATCH: <a href="matlab: uhelp({'' #r RED'' ;'' #g green''},1,''cursor'',''end'')">' 'show history' '</a>'  ]);
@@ -136,7 +139,7 @@
 % rr=uhelp(' #rb haalo',[],'export',1)
 
 %---------------------------------------------
-% For more information, see <a href="matlab: 
+% For more information, see <a href="matlab:
 % web('http://www.mathworks.com')">the MathWorks Web site</a>.
 % rev: datestr(now) - copy selection bug
 
@@ -161,16 +164,16 @@ if nargin>2
 else
     paras=struct();
 end
- parasin=paras;
+parasin=paras;
 
 %% EXPORT HTML ONLY________________________________________________________
 if isfield(paras,'export')
     if ~iscell(fun) %call help of a function
         
-%         if 0 %%% M-files ..not implmented
-%             e=help(fun);
-%             e2=strsplit2(e,char(10))';
-%         end
+        %         if 0 %%% M-files ..not implmented
+        %             e=help(fun);
+        %             e2=strsplit2(e,char(10))';
+        %         end
         e2=cellstr(fun);
     else %CELL as input
         e2=fun;
@@ -208,7 +211,7 @@ if ~iscell(fun) %call help of a function
     if isempty(e); %allow string as input
         e=fun;
     end
-        
+    
     %     ix=strfind(e,char(10));%replace Carriage return
     %     ix=[1 ix length(e)];
     %     for i=1:length(ix)-1 %make a cell
@@ -276,10 +279,10 @@ if isempty(varargin) ||  varargin{1}==0
         % disp('####  new fig');
         % hfig=figure('visible','off');
         hfig=figure(335);
-%         set(hfig,  'visible','off','units','normalized','position',posfig);%[0.5757    0.0822    0.3889    0.4667]);
+        %         set(hfig,  'visible','off','units','normalized','position',posfig);%[0.5757    0.0822    0.3889    0.4667]);
         set(hfig,  'visible','off','units','normalized','position',[0.5757    0.0822    0.3889    0.4667]);
-
-       set(hfig,'CloseRequestFcn',@closeFig);
+        
+        set(hfig,'CloseRequestFcn',@closeFig);
         %     hfig=findobj(0,'Number', 335);
         %         set(hfig,'visible','off','units','normalized','position',posfig);
     end
@@ -290,9 +293,9 @@ else
 end
 
 if ischar(fun)
-   if exist(fun) ==2 % file
-       set(hfig,'name', ['[HELP] ' fun], 'NumberTitle', 'off');
-   end
+    if exist(fun) ==2 % file
+        set(hfig,'name', ['[HELP] ' fun], 'NumberTitle', 'off');
+    end
 end
 
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
@@ -313,7 +316,7 @@ if ~isfield(paras,'lbpos')
 end
 
 if figexist==0
-%     figure(hfig);
+    %     figure(hfig);
     %mlock();
     set(hfig,'tag','uhelp','color',[1 1 1]);
     set(hfig,'units','normalized','menubar','none',...
@@ -338,7 +341,7 @@ end
 %         set(ui,'FontName',  x.FontName,'FontAngle',x.FontAngle,...
 %             'FontWeight',x.FontWeight,'fontsize',x.fontsize);
 %         set(ui,'backgroundcolor','w');
-%         
+%
 %     end
 %     if isfield(paras,'position');
 %         set(hfig,'position',paras.position);
@@ -375,20 +378,20 @@ if figexist==0
     b1 = uicontrol('Style', 'togglebutton', 'String', '<>','fontsize',8,...%'pushbutton'
         'units','normalized','TooltipString','adjust window to text',...
         'Position', [0.055 0 .04 .035], 'Callback', @adjustwindow,'tag','adjustwindow','backgroundcolor',[1 1 1]);
-   % if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
-   set(b1,'value',0);
-   set(b1,'units','pixels');
-   
+    % if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
+    set(b1,'value',0);
+    set(b1,'units','pixels');
+    
     %----------------------------------
     %         editor-mode button
     %----------------------------------
     b1 = uicontrol('Style', 'togglebutton', 'String', 'EM','tag', 'EM','fontsize',8,...%'pushbutton'
         'units','normalized','TooltipString','toogle READMODE/EDITORMODE[EM]',...
         'Position', [0.095 0 .04 .035], 'Callback', @editormode,'backgroundcolor',[1 1 1]);
-   % if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
-   set(b1,'value',0);
-   set(b1,'units','pixels');
-   
+    % if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
+    set(b1,'value',0);
+    set(b1,'units','pixels');
+    
     %----------------------------------
     %      text lineNumber
     %----------------------------------
@@ -398,15 +401,15 @@ if figexist==0
         '#N number of selected lines' ...
         ],'tag','txtline',...
         'Position', [0.135 0 .13 .035], 'Callback', @txtline,'backgroundcolor',[     0.8627    0.8627    0.86277]);
-   % if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
-%    set(b1,'value',0);
-   set(b1,'units','pixels');
+    % if x.aot==1; set(b1,'value',1); else; set(b1,'value',0);end
+    %    set(b1,'value',0);
+    set(b1,'units','pixels');
     
-     %----------------------------------
+    %----------------------------------
     %     main functions
     %----------------------------------
     if exist('showfun.m')==2
-        if isempty(findobj(hfig,'tag','helpMainfunctions')) 
+        if isempty(findobj(hfig,'tag','helpMainfunctions'))
             p=showfun;
             p=cellfun(@(a) {[a '.m']},p);
             b1 = uicontrol('Style', 'popupmenu', 'string',p,'fontsize',7,...%'pushbutton'
@@ -416,8 +419,9 @@ if figexist==0
             set(b1,'units','pixels');
         end
     end
-   
+    
     finder_ini();
+    jumper_ini();
 end
 
 if figexist==0
@@ -435,7 +439,7 @@ if figexist==0
     %----------------------------------
     %%         context
     %----------------------------------
-   
+    
     cmenu = uicontextmenu;
     
     item4 = uimenu(cmenu, 'Label','copy  selection', 'Callback', {@gcontext, 4});%copy
@@ -443,7 +447,7 @@ if figexist==0
     item42 = uimenu(cmenu, 'Label','copy  column'            , 'Callback', {@gcontext, 42},'tag' ,'copycolumn','enable','off');%copy columnwise
     
     
-     item20 = uimenu(cmenu, 'Label','toggle: [RM] Read Mode [EM] Editor Mode ',   'Callback', {@gcontext,20},'separator','on');%switch mode
+    item20 = uimenu(cmenu, 'Label','toggle: [RM] Read Mode [EM] Editor Mode ',   'Callback', {@gcontext,20},'separator','on');%switch mode
     
     item8 = uimenu(cmenu, 'Label','save table as Figure (reloadable)', 'Callback', {@gcontext, 8},'separator','on');%save
     
@@ -458,16 +462,16 @@ if figexist==0
     item1 = uimenu(cmenu, 'Label','font',     'Callback', {@gcontext, 1});
     set(item1,'Separator','on');
     item2 = uimenu(cmenu, 'Label','backgroundcolor', 'Callback', {@gcontext, 2},'Separator','off');
-  
     
-   %====================================
+    
+    %====================================
     
     item5 = uimenu(cmenu, 'Label','<html><font color=red>evaluate selection', 'Callback', {@gcontext, 5},'Separator','on');% evaluate
     item6 = uimenu(cmenu, 'Label','help',   'Callback', {@gcontext, 6});%help
     item7 = uimenu(cmenu, 'Label','<html><font color=green>see in Matlabs DOC browser',   'Callback', {@gcontext,7},'Separator','on');%help
     item7 = uimenu(cmenu, 'Label','<html><font color=green>see in Matlabs WEB browser',   'Callback', {@gcontext,77});%help
     
-   
+    
     %====================================
     item3 = uimenu(cmenu, 'Label','save Config as global variable "uhelp_properties" (session-preserved)',...
         'Callback', @saveconfig_global,'Separator','on');
@@ -479,9 +483,9 @@ if figexist==0
     
     drawnow;
     
-   
+    
     set(ui,'UIContextMenu', cmenu);
-
+    
     %----------------------------------
     %           keys
     %----------------------------------
@@ -519,7 +523,7 @@ if figexist==0 %selection color listbox
     highlightedcolorLB();
 end
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -548,13 +552,13 @@ if figexist==0
             set(hfig,'position',x.fgpos);
         end
     end
-   drawnow;
+    drawnow;
     try;     aot(x.aot);aot(x.aot);  end %AOT
     set(hfig,'toolbar','none');
 else
-%     if isfield(paras,'position')
-%         set(hfig,'position',paras.position);
-%     end
+    %     if isfield(paras,'position')
+    %         set(hfig,'position',paras.position);
+    %     end
 end
 
 
@@ -666,7 +670,7 @@ function helpMainfunctions(e,e2)
 tx= findobj(Huhelp,'tag','txt');
 if strcmp(get(tx,'style'),'listbox')==0;
     errordlg('select READ MODE first ','HELP FCTn');
-   return 
+    return
 end
 
 hc=findobj(Huhelp,'tag','helpMainfunctions');
@@ -706,8 +710,8 @@ if strcmp(get(tx,'style'),'listbox')
         jListbox.setSelectionAppearanceReflectsFocus(0);
         %
         v2=[ 0 0 0];%color
-%         v=[ 0.98    0.98    0.98];
-%         v=[0.9451    0.9686    0.9490];
+        %         v=[ 0.98    0.98    0.98];
+        %         v=[0.9451    0.9686    0.9490];
         v=[0.8941    0.9412    0.9020];
         % v=uisetcolor
         set(jListbox, 'SelectionForeground',java.awt.Color(v2(1),v2(2),v2(3))); % java.awt.Color.brown)
@@ -725,10 +729,160 @@ end
 %     tx=get(hs,'string')
 %     iv=regexpi2(tx,'mean');
 %     set(hs,'value',iv)
-%     
+%
 % elseif strcmp(type,'edit')
 %     'ed'
 % end
+
+function jump(e,e2,task)
+if strcmp(task,'close')
+    try; delete(findobj(gcf,'tag','jump_close') ); end
+    try; delete(findobj(gcf,'tag','jump_lb') ); end
+    try; delete(findobj(gcf,'tag','jump_title') ); end
+    try; delete(findobj(gcf,'tag','jump_move') ); end
+    try; delete(findobj(gcf,'tag','jump_scale')); end
+    try; delete(findobj(gcf,'tag','jump_showall')); end
+    
+    
+    
+elseif strcmp(task,'jumpto')
+    LB=findobj(gcf,'tag','txt');
+    if strcmp(get(LB,'Style'),'edit')
+        msgbox('jumping works only in the READ-MODE (RM)');
+        return
+    end
+    hb=findobj(gcf,'tag','jump_lb');
+    uv=get(hb,'userdata');
+    if isempty(hb.Value); return; end
+    line=uv.idx(hb.Value);
+    
+    if line>size(get(LB,'string'),1)
+        warndlg(['Can''t jump to line-' num2str(line) '.' char(10) ...
+            ['Number of available lines is '  num2str(size(get(LB,'string'),1)) '.']],'oops');
+        return
+        
+    end
+    set(LB,'value',line);
+    txtline([],[]);
+    set(LB,'ListboxTop',line);
+    
+elseif strcmp(task,'move')
+    
+    id =findobj(gcf,'tag','jump_move');
+    id2=[findobj(gcf,'tag','jump_close')
+        findobj(gcf,'tag','jump_lb')
+        findobj(gcf,'tag','jump_title');
+        findobj(gcf,'tag','jump_scale')
+        findobj(gcf,'tag','jump_showall')];
+    hf=gcf;%Huhelp;
+    set(id,'units','norm');
+    set(id2,'units','norm');
+    try
+        units=get(0,'units');
+        set(0,'units','norm');
+        mp=get(0,'PointerLocation');
+        set(0,'units',units);
+        fp  =get(hf,'position');
+        hp  =id; %findobj(hf,'tag','move', '-and' ,'userdata',id);
+        pos =get(hp,'position');
+        mid=pos(3:4)/2;
+        newpos=[(mp(1)-fp(1))./(fp(3))  (mp(2)-fp(2))./(fp(4))];
+        if newpos(1)-mid(1)<0; newpos(1)=mid(1); end
+        if newpos(2)-mid(2)<0; newpos(2)=mid(2); end
+        if newpos(1)-mid(1)+pos(3)>1; newpos(1)=1-pos(3)+mid(1); end
+        if newpos(2)-mid(2)+pos(4)>1; newpos(2)=1-pos(4)+mid(2); end
+        df=pos(1:2)-newpos+mid;
+        hx=id;
+        hx=[id ;id2];
+        pos2=get(hx,'position');
+        %if isnumeric(pos2)==0
+        try
+            pos2=cell2mat(pos2);
+        end
+        for i=1:length(hx)
+            pos3=[ pos2(i,1:2)-df   pos2(i,[3 4])];
+            set(hx(i),'position', pos3);
+        end
+    end
+    set(id,'units','pixels');
+    set(id2,'units','pixels');
+    
+elseif strcmp(task,'scale')
+    id =findobj(gcf,'tag','jump_scale');
+    id2=findobj(gcf,'tag','jump_lb');
+    id3=findobj(gcf,'tag','jump_close');
+    hf=gcf;%Huhelp;
+    set(id,'units','norm');
+    set(id2,'units','norm');
+    set(id3,'units','norm');
+    try
+        units=get(0,'units');
+        set(0,'units','norm');
+        mp=get(0,'PointerLocation');
+        set(0,'units',units);
+        fp  =get(hf,'position');
+        hp  =id; %findobj(hf,'tag','move', '-and' ,'userdata',id);
+        pos =get(hp,'position');
+        mid=pos(3:4)/2;
+        newpos=[(mp(1)-fp(1))./(fp(3))  (mp(2)-fp(2))./(fp(4))];
+        if newpos(1)-mid(1)<0; newpos(1)=mid(1); end
+        if newpos(2)-mid(2)<0; newpos(2)=mid(2); end
+        if newpos(1)-mid(1)+pos(3)>1; newpos(1)=1-pos(3)+mid(1); end
+        if newpos(2)-mid(2)+pos(4)>1; newpos(2)=1-pos(4)+mid(2); end
+        df=pos(1:2)-newpos+mid;
+        hx=id;
+        %hx=[id ;id2];
+        pos2=get(hx,'position');
+        %if isnumeric(pos2)==0
+        try
+            pos2=cell2mat(pos2);
+        end
+        for i=1:length(hx)
+            pos3=[ pos2(i,1:2)-df   pos2(i,[3 4])];
+            %set(hx(i),'position', pos3);
+        end
+        pos4=get(id2,'position');
+        pos5=[pos4(1)  pos3(2)  (pos3(1)-pos4(1))+pos3(3)   pos4(4)+(pos4(2)-pos3(2))   ];
+        %disp(pos5);
+        
+        pos6=get(id3,'position');
+        if pos5(4)>0.05 && pos5(3)>0.05
+            set(id2,'position', pos5);
+            set(id3,'position', [pos5(1)+pos5(3)-pos6(3) pos5(2)+pos5(4)  pos6(3:4)]);
+            set(hx(i),'position', pos3);
+        end
+        %         disp(pos4);
+        %         disp(pos3);
+    end
+    set(id,'units','pixels');
+    set(id2,'units','pixels');
+    set(id3,'units','pixels');
+    
+elseif strcmp(task,'show_all')
+    us=get(gcf,'userdata');
+    showall=get(findobj(gcf,'tag','jump_showall'),'value');
+    if isempty(showall)
+        showall=1;
+    end
+    tx= findobj(gcf,'tag','txt');
+    if showall==1 %meta 1
+        idx=unique(regexpi2(us.e0,' #\w\w'));
+    elseif showall==2 %meta 2
+        idx=unique(regexpi2(us.e0,'#'));
+    elseif showall==3 %entire text/all
+        idx=[1:size(us.e0,1)]';
+    end
+    if isempty(idx);
+        return;
+    end
+    list=tx.String(idx);
+    list=cellfun(@(a,b){['<html><pre>' a ') ' b]},cellstr(num2str(idx)),   regexprep(list,'<html><pre>','') );
+    lb=findobj(gcf,'tag','jump_lb');
+    set(lb,'string',list,'value',1);
+    uv.idx=idx;
+    set(lb,'userdata',uv);
+    %% LISTBOX
+end
 
 
 function keyx(h,e)
@@ -738,48 +892,49 @@ try
 catch
     return
 end
-    
- 
+
+
 
 
 if strcmp(e.Key,'escape')
-   finder_cb_removefinder([],[],'ipn1');
+    finder_cb_removefinder([],[],'ipn1');
+    try; jump([],[],'close');end
 end
 
 if strcmp(e.Modifier,'alt') %copy selection
     % positioning
-   if strcmp(e.Key      ,'uparrow')
-       fontlist = listfonts;
-       tx = findobj(Huhelp,'tag','txt');
-       inum=find(   strcmp(fontlist, get(tx,'FontName')   ) );
-       if inum>=2
-           disp(['FONT(' num2str(inum-1) '/' num2str(length(fontlist))  '): ' fontlist{inum-1}]);
-           set(tx,'FontName',fontlist{inum-1}); 
-       end
-   elseif strcmp(e.Key      ,'downarrow')
-       fontlist = listfonts;
-       tx = findobj(Huhelp,'tag','txt');
-       inum=find(   strcmp(fontlist, get(tx,'FontName')   ) );
-       if inum<=length(fontlist)-1
-           disp(['FONT(' num2str(inum+1) '/' num2str(length(fontlist))  '): ' fontlist{inum+1}]);
-           set(tx,'FontName',fontlist{inum+1}); 
-       end
-   end
-end
-
-%  e
-
-if strcmp(e.Modifier,'command') %MAC: copy selection
-    if strcmp(e.Key  ,'c') 
-            gcontext([], [], 4); %copy
+    if strcmp(e.Key      ,'uparrow')
+        fontlist = listfonts;
+        tx = findobj(Huhelp,'tag','txt');
+        inum=find(   strcmp(fontlist, get(tx,'FontName')   ) );
+        if inum>=2
+            disp(['FONT(' num2str(inum-1) '/' num2str(length(fontlist))  '): ' fontlist{inum-1}]);
+            set(tx,'FontName',fontlist{inum-1});
+        end
+    elseif strcmp(e.Key      ,'downarrow')
+        fontlist = listfonts;
+        tx = findobj(Huhelp,'tag','txt');
+        inum=find(   strcmp(fontlist, get(tx,'FontName')   ) );
+        if inum<=length(fontlist)-1
+            disp(['FONT(' num2str(inum+1) '/' num2str(length(fontlist))  '): ' fontlist{inum+1}]);
+            set(tx,'FontName',fontlist{inum+1});
+        end
     end
 end
- 
- 
+
+
+
+if strcmp(e.Modifier,'command') %MAC: copy selection
+    if strcmp(e.Key  ,'c')
+        gcontext([], [], 4); %copy
+    end
+end
+%  e
+%  e.Character
 if strcmp(e.Modifier,'control') %copy selection
     
-    if strcmp(e.Key  ,'c') 
-            gcontext([], [], 4); %copy
+    if strcmp(e.Key  ,'c')
+        gcontext([], [], 4); %copy
     elseif strcmp(e.Character      ,'1')  || strcmp(e.Character      ,'0')  || strcmp(e.Key      ,'f1')
         set(Huhelp,'position',[0    0.0706         0.5    0.8983]);
     elseif strcmp(e.Character  ,'2') || strcmp(e.Character      ,'9')  || strcmp(e.Key      ,'f2')
@@ -798,7 +953,7 @@ if strcmp(e.Modifier,'control') %copy selection
         end
     elseif strcmp(e.Character,   '6')
         set(Huhelp,'position',[ 0.0028    0.0817    0.7500    0.4128]);
-    elseif strcmp(e.Key,'p')  %position  
+    elseif strcmp(e.Key,'p')  %position
         hf=Huhelp;
         us=get(hf,'userdata');
         posall=...
@@ -831,17 +986,21 @@ if strcmp(e.Modifier,'control') %copy selection
         set(hf,'userdata',us);
         
         
-    elseif strcmp(e.Character,'j')
-        try
-            %         us=get(get(h,'parent'),'userdata');
-            us=get(h,'userdata');
-            sc=get(0,'ScreenSize');
-            sc=sc(3:4);
-            p=round (get(0,'PointerLocation'));
-            p(2)=sc(2)-p(2);
-            %     p
-            us.jFrame.setLocation(p(1)*2,p(2)*2);
-        end
+    elseif strcmp(e.Key,'j')  %jump
+        jumper_openpanel()
+        
+        return
+        
+        %         try
+        %             %         us=get(get(h,'parent'),'userdata');
+        %             us=get(h,'userdata');
+        %             sc=get(0,'ScreenSize');
+        %             sc=sc(3:4);
+        %             p=round (get(0,'PointerLocation'));
+        %             p(2)=sc(2)-p(2);
+        %             %     p
+        %             us.jFrame.setLocation(p(1)*2,p(2)*2);
+        %         end
     elseif strcmp(e.Character,'s')
         try
             %         us=get(get(h,'parent'),'userdata');
@@ -863,9 +1022,27 @@ if strcmp(e.Modifier,'control') %copy selection
         
         
     elseif strcmp(e.Character,'+')
+        hu=hittest(gcf);
+        tag=get(hu,'tag');
+        if strfind(tag,'jump')
+            hb=findobj(gcf,'tag','jump_lb');
+            %if get(hb,'fontsize')>1
+            set(hb,'fontsize',get(hb,'fontsize')+1);
+            return
+        end
         tx= findobj(Huhelp,'tag','txt');
         set(tx,'fontsize', get(tx,'fontsize')+1)  ;
     elseif strcmp(e.Character,'-')
+        hu=hittest(gcf);
+        tag=get(hu,'tag');
+        if strfind(tag,'jump')
+            hb=findobj(gcf,'tag','jump_lb');
+            if get(hb,'fontsize')>1
+                set(hb,'fontsize',get(hb,'fontsize')-1);
+            end
+            return
+        end
+        
         tx= findobj(Huhelp,'tag','txt');
         if get(tx,'fontsize')-1 >1
             set(tx,'fontsize', get(tx,'fontsize')-1)  ;
@@ -898,25 +1075,25 @@ if strcmp(e.Modifier,'control') %copy selection
             uicontrol(lb1);
         end
         % ----------------------------------------------------------------'
-   elseif strcmp(e.Key          ,'m'); %EDITOR.MODE TOGGLE    
-       hc=findobj(Huhelp,'tag','EM');
-       set(hc,'value',~(get(hc,'value')));
-       gcontext([],[], 20);
-       return
-           % ----------------------------------------------------------------'
-   elseif strcmp(e.Key          ,'t'); %ADJUST TEXT TOGGLE  
-       hc=findobj(Huhelp,'tag','adjustwindow');
-       set(hc,'value',~(get(hc,'value')));
-       adjustwindow();
-       return    
+    elseif strcmp(e.Key          ,'m'); %EDITOR.MODE TOGGLE
+        hc=findobj(Huhelp,'tag','EM');
+        set(hc,'value',~(get(hc,'value')));
+        gcontext([],[], 20);
+        return
+        % ----------------------------------------------------------------'
+    elseif strcmp(e.Key          ,'t'); %ADJUST TEXT TOGGLE
+        hc=findobj(Huhelp,'tag','adjustwindow');
+        set(hc,'value',~(get(hc,'value')));
+        adjustwindow();
+        return
     end
     
     
-   
- 
+    
+    
     if strcmp(e.Key,'f')
         finder_MAIN_OpenPanel([],[]);
-    end 
+    end
 end
 
 
@@ -1021,11 +1198,11 @@ try
         selend=r.getSelectionEnd    ;
         
         
-         jVScroll = jhEdit.getVerticalScrollBar;
-         g.scrollDown=jVScroll.getValue;
-         g.height   =r.getHeight;
-         g.perc     =g.scrollDown/g.height;
-         g.sel=sort([cartpos selstart selend]);
+        jVScroll = jhEdit.getVerticalScrollBar;
+        g.scrollDown=jVScroll.getValue;
+        g.height   =r.getHeight;
+        g.perc     =g.scrollDown/g.height;
+        g.sel=sort([cartpos selstart selend]);
         
         %disp(['caret-selection: ' num2str(g.sel) ]);
         setappdata(tx,'selectionindex',g);
@@ -1037,58 +1214,58 @@ try
         sel=sort([cartpos selstart selend]);
         minval=max(find(ichar<=sel(1) ));
         maxval=max(find(ichar<=sel(end)  ));
-       Nsel=maxval-minval+1 ;
-       val=unique([minval maxval]);
-       
-%        clc;
-%        disp(minval);
-%        disp(maxval);
-%         ichar=regexpi(txt,char(10));
-%         charbef=find(ichar>sel(1));
-%         minval=min(charbef);
-%         if isempty(minval)
-%             minval=max(minval)+1;
-%         end
-%         val=unique([minval  min(find(ichar>=sel(end)))]);
-%         %tag='EM';
-%         tag='';
-%         
-%         charbefEnd=find(ichar>=sel(3));
-%         maxval=min(charbefEnd);
-%         if isempty(maxval)
-%             maxval=length(ichar)+1;
-%         end
-%          Nsel=maxval-minval+1 ;
-% %         maxval=2;
-%         
+        Nsel=maxval-minval+1 ;
+        val=unique([minval maxval]);
+        
+        %        clc;
+        %        disp(minval);
+        %        disp(maxval);
+        %         ichar=regexpi(txt,char(10));
+        %         charbef=find(ichar>sel(1));
+        %         minval=min(charbef);
+        %         if isempty(minval)
+        %             minval=max(minval)+1;
+        %         end
+        %         val=unique([minval  min(find(ichar>=sel(end)))]);
+        %         %tag='EM';
+        %         tag='';
+        %
+        %         charbefEnd=find(ichar>=sel(3));
+        %         maxval=min(charbefEnd);
+        %         if isempty(maxval)
+        %             maxval=length(ichar)+1;
+        %         end
+        %          Nsel=maxval-minval+1 ;
+        % %         maxval=2;
+        %
     end
     
     tg='';
     %if length(val)>1; tg='+'; end;
     %msg=[ tag ' ' num2str(minval) tg  '/' num2str(size(get(tx, 'string'),1)) ' #' num2str(Nsel)  ];
-%     clc;
-%     disp(maxval-minval+1);
-%     disp(Nsel);
-   
-
-    if length(val)>1; 
+    %     clc;
+    %     disp(maxval-minval+1);
+    %     disp(Nsel);
+    
+    
+    if length(val)>1;
         if maxval-minval+1==Nsel
-        tg=['-' num2str(maxval)]; 
+            tg=['-' num2str(maxval)];
         else
-         tg=['..' num2str(maxval)];    
+            tg=['..' num2str(maxval)];
         end
     end;
-%     msg=[ num2str(minval)  tg  '/' num2str(size(get(tx, 'string'),1)) ' #' num2str(Nsel)  ];
-
-  msg=[ '<HTML><b>' num2str(minval)  tg  '/' num2str(size(get(tx, 'string'),1))  ...
-      '<FONT color="blue"><b> #' num2str(Nsel)  ];
-  msg_NoHTML = regexprep( msg, '<.*?>', '' );
-  
+    %     msg=[ num2str(minval)  tg  '/' num2str(size(get(tx, 'string'),1)) ' #' num2str(Nsel)  ];
+    
+    msg=[ '<HTML><b>' num2str(minval)  tg  '/' num2str(size(get(tx, 'string'),1))  ...
+        '<FONT color="blue"><b> #' num2str(Nsel)  ];
+    msg_NoHTML = regexprep( msg, '<.*?>', '' );
+    
     if length(msg_NoHTML)<=12
         fs=7;
     else
         fs=6;
-    end    
+    end
     set(findobj(Huhelp,'tag','txtline'),'string',msg,'fontsize',fs);
     hc=findobj(Huhelp,'tag','txtline');
     set(hc,'style','pushbutton')
@@ -1101,8 +1278,8 @@ function adjustwindow(v,v2)
 v=findobj(Huhelp,'tag','adjustwindow');
 val=get(v,'value');
 if val==1 && isempty(get(v,'userdata'))
-   us2.figposition= get(Huhelp,'position');
-   set(v,'userdata',us2);
+    us2.figposition= get(Huhelp,'position');
+    set(v,'userdata',us2);
 end
 
 if val==1
@@ -1131,8 +1308,8 @@ if val==1
 else
     if ~isempty(get(v,'userdata'))
         us2=get(v,'userdata');
-       pos=get(Huhelp,'position');
-       set(Huhelp,'position',[pos(1:2) us2.figposition(3)  pos(4)]);
+        pos=get(Huhelp,'position');
+        set(Huhelp,'position',[pos(1:2) us2.figposition(3)  pos(4)]);
     end
     
 end
@@ -1145,10 +1322,10 @@ function editormode(v,v2)
 gcontext([],[], 20);
 % val=get(v,'value');
 % if val==1
-%     
+%
 % else
-%     
-%     
+%
+%
 % end
 
 
@@ -1176,7 +1353,7 @@ if UHELP_RunOnce_Flag0001==1
     UHELP_RunOnce_Flag0001 = 0;
 end
 %———————————————————————————————————————————————
-%%   
+%%
 %———————————————————————————————————————————————
 
 
@@ -1213,7 +1390,7 @@ else
     vec=1:nlinstp:si;
     curlinTop=get(tx,'ListboxTop');
     if strcmp(evnt.Key,'leftarrow');
-       % ixnewtop=vecnearest2(vec,curlinTop)-1;
+        % ixnewtop=vecnearest2(vec,curlinTop)-1;
         ixnewtop=max(find(vec<curlinTop-1));
         if ixnewtop>0
             set(tx,'ListboxTop', vec(ixnewtop)  )  ;
@@ -1222,10 +1399,10 @@ else
         ixnewtop=vecnearest2(vec,curlinTop)+1;
         if ixnewtop<=length(vec);
             set(tx,'ListboxTop', vec(ixnewtop) )  ;
-        end 
-%       elseif strcmp(evnt.Key, 'w')   
-         % 'adjustWindow'
-%       adjustwindow([],[]);
+        end
+        %       elseif strcmp(evnt.Key, 'w')
+        % 'adjustWindow'
+        %       adjustwindow([],[]);
         
     end
     
@@ -1286,7 +1463,7 @@ if mode==1
     set(Huhelp,'menubar','none','toolbar','none');
     ix= uisetfont(r );
     try
-    set(tx,'fontsize',ix.FontSize);
+        set(tx,'fontsize',ix.FontSize);
     catch
         return
     end
@@ -1369,17 +1546,17 @@ elseif mode==3
 elseif mode==4 || mode==5%[4] copy selection or [5]evaluate selection
     
     tx= findobj(Huhelp,'tag','txt');
-    if strcmp(get(tx,'style'),'edit') 
-      
-            jhEdit = findjobj(tx);
-            r = jhEdit.getComponent(0).getComponent(0);
-            txt=char(r.getText);
-            %txt2copy=txt(r.getSelectionStart+1:r.getSelectionEnd);
-            txt2copy=get(r,'SelectedText');
+    if strcmp(get(tx,'style'),'edit')
+        
+        jhEdit = findjobj(tx);
+        r = jhEdit.getComponent(0).getComponent(0);
+        txt=char(r.getText);
+        %txt2copy=txt(r.getSelectionStart+1:r.getSelectionEnd);
+        txt2copy=get(r,'SelectedText');
         if mode==4
             clipboard('copy',txt2copy);
             return
-        else  
+        else
             try
                 try
                     cprintf([0 .5 0],[ 'RUN:\n' ]);
@@ -1434,7 +1611,7 @@ elseif mode==6
     hlp=strsplit2(hlp,char(10))';
     uhelp(hlp,1);
     hf2=Huhelp;
-%     set(hf2,'tag','uhelphelp')
+    %     set(hf2,'tag','uhelphelp')
     
     
     %
@@ -1538,7 +1715,7 @@ elseif mode==20 %SWITCH DO EDIT MODE
     HF=Huhelp;
     
     %% change to EDITMODE
-    if strcmp(get(tx,'style'),'listbox') 
+    if strcmp(get(tx,'style'),'listbox')
         
         % change COLORBUTTON + label
         hc=findobj(HF,'tag','EM');
@@ -1549,27 +1726,27 @@ elseif mode==20 %SWITCH DO EDIT MODE
         set(hc,'tooltipstring',tt);
         
         
-         %----LISTBOX_TOP-PART1
-         hEdit=findobj(HF,'tag','txt');
-         jhEdit = findjobj(hEdit);
-         jVScroll = jhEdit.getVerticalScrollBar;
-         tx= findobj(HF,'tag','txt');
-         scrollDown=jVScroll.getValue;
-         r = jhEdit.getComponent(0).getComponent(0);
-         height=r.getHeight;
-         perc=scrollDown/height;
-         %disp([scrollDown height perc ]);
+        %----LISTBOX_TOP-PART1
+        hEdit=findobj(HF,'tag','txt');
+        jhEdit = findjobj(hEdit);
+        jVScroll = jhEdit.getVerticalScrollBar;
+        tx= findobj(HF,'tag','txt');
+        scrollDown=jVScroll.getValue;
+        r = jhEdit.getComponent(0).getComponent(0);
+        height=r.getHeight;
+        perc=scrollDown/height;
+        %disp([scrollDown height perc ]);
         %----------------------------
         
         s1=get(tx,'string');
         val=get(tx,'value');
-%         lbtop=get(tx,'ListboxTop');
+        %         lbtop=get(tx,'ListboxTop');
         
         us=get(HF,'userdata');
         set(tx,'string',us.e0);
         set(tx,'style','edit','HorizontalAlignment','left');
         set(tx,'value',val);
-%         set(tx,'ListboxTop',lbtop);
+        %         set(tx,'ListboxTop',lbtop);
         us.e2=s1;
         set(HF,'userdata',us)
         set(tx,'ButtonDownFcn',@txtline);
@@ -1579,17 +1756,17 @@ elseif mode==20 %SWITCH DO EDIT MODE
         uicontrol(hEdit);
         jhEdit = findjobj(hEdit);
         set(jhEdit, 'HorizontalScrollBarPolicy', 32);
-          
+        
         r = jhEdit.getComponent(0).getComponent(0);
         r.setWrapping(0);
         set(r,'Editable',1) ;
         set(r,'MouseMovedCallback',@caretmoved);
-%         set(r,'ActionPerformedCallback','123');
-      % set(jhEdit, 'CaretPositionChangedCallback', 'disp(''rrrr'')');%https://de.mathworks.com/matlabcentral/answers/143259-caretpositionchanged-callback-for-editbox-not-working
-      %set(jhEdit.getComponent(0).getComponent(0), 'CaretUpdateCallback', 'disp(''rrrr'')')
-       set(jhEdit.getComponent(0).getComponent(0), 'CaretUpdateCallback', @txtline);
-
-       
+        %         set(r,'ActionPerformedCallback','123');
+        % set(jhEdit, 'CaretPositionChangedCallback', 'disp(''rrrr'')');%https://de.mathworks.com/matlabcentral/answers/143259-caretpositionchanged-callback-for-editbox-not-working
+        %set(jhEdit.getComponent(0).getComponent(0), 'CaretUpdateCallback', 'disp(''rrrr'')')
+        set(jhEdit.getComponent(0).getComponent(0), 'CaretUpdateCallback', @txtline);
+        
+        
         txt=char(r.getText);
         
         try
@@ -1611,49 +1788,49 @@ elseif mode==20 %SWITCH DO EDIT MODE
             r.setSelectionStart(cartposnew(1));
             r.setSelectionEnd(cartposnew(2)-1);
             
-%             jVScroll = jhEdit.getHorizontalScrollBar;
-%             jVScroll.setValue(1);
+            %             jVScroll = jhEdit.getHorizontalScrollBar;
+            %             jVScroll.setValue(1);
             
-%             r.setCaretPosition(cartposnew(1));
-%             
-%             r.setSelectionStart(cartposnew(1));
-%             r.setSelectionEnd(cartposnew(2));
+            %             r.setCaretPosition(cartposnew(1));
+            %
+            %             r.setSelectionStart(cartposnew(1));
+            %             r.setSelectionEnd(cartposnew(2));
             
             
         end
-       
-          
-          % jVScroll.setValue(cartposnew);
-          %jVScroll = jhEdit.getVerticalScrollBar;
-          %drawnow;
-          %sv=jVScroll.getValue;
-          %jVScroll.setValue(sv+300);
-          
-            %----LISTBOX_TOP-PART2
-            hEdit=findobj(HF,'tag','txt');
-            jhEdit = findjobj(hEdit);
-            jVScroll = jhEdit.getVerticalScrollBar;
-            tx= findobj(HF,'tag','txt');
-            %scrollDown=jVScroll.getValue;
-            r = jhEdit.getComponent(0).getComponent(0);
-            height=r.getHeight;
-            scrollDown2=round(perc*height);
-            %disp({nan scrollDown2 height perc});
-            jVScroll.setValue(scrollDown2);
-            %----------------------------
-            % HORZONTAL SCROLL TO START
-            jVScroll = jhEdit.getHorizontalScrollBar;
-            jVScroll.setValue(1);
- 
-          txtline([],[]);
-          set( findobj(HF,'tag','txtline'),'backgroundcolor' ,[1 1 0]);
-          set(findobj(HF,'tag','copyverticalselection'),'enable','on');
-          set(findobj(HF,'tag','copycolumn'),'enable','on');
-         r.repaint;
-   
+        
+        
+        % jVScroll.setValue(cartposnew);
+        %jVScroll = jhEdit.getVerticalScrollBar;
+        %drawnow;
+        %sv=jVScroll.getValue;
+        %jVScroll.setValue(sv+300);
+        
+        %----LISTBOX_TOP-PART2
+        hEdit=findobj(HF,'tag','txt');
+        jhEdit = findjobj(hEdit);
+        jVScroll = jhEdit.getVerticalScrollBar;
+        tx= findobj(HF,'tag','txt');
+        %scrollDown=jVScroll.getValue;
+        r = jhEdit.getComponent(0).getComponent(0);
+        height=r.getHeight;
+        scrollDown2=round(perc*height);
+        %disp({nan scrollDown2 height perc});
+        jVScroll.setValue(scrollDown2);
+        %----------------------------
+        % HORZONTAL SCROLL TO START
+        jVScroll = jhEdit.getHorizontalScrollBar;
+        jVScroll.setValue(1);
+        
+        txtline([],[]);
+        set( findobj(HF,'tag','txtline'),'backgroundcolor' ,[1 1 0]);
+        set(findobj(HF,'tag','copyverticalselection'),'enable','on');
+        set(findobj(HF,'tag','copycolumn'),'enable','on');
+        r.repaint;
+        
     else
         %%  CHANGE TO READMODE
-       % change COLORBUTTON + label
+        % change COLORBUTTON + label
         hc=findobj(HF,'tag','EM');
         set(hc,'backgroundcolor',[1 1 1],'string','RM');
         tt= strsplit(get(hc,'tooltipstring'),char(10));
@@ -1663,137 +1840,137 @@ elseif mode==20 %SWITCH DO EDIT MODE
         
         
         %----LISTBOX_TOP-PART1
-         hEdit=findobj(HF,'tag','txt');
-         jhEdit = findjobj(hEdit);
-         jVScroll = jhEdit.getVerticalScrollBar;
-         tx= findobj(HF,'tag','txt');
-         scrollDown=jVScroll.getValue;
-         r = jhEdit.getComponent(0).getComponent(0);
-         % SELECTED TEXT
-         cartline(1)= r.getSelectionStart;
-         cartline(2)= r.getSelectionEnd;
-         
-         
-         height=r.getHeight;
-         perc=scrollDown/height;
-         %disp([scrollDown height perc ]);
-         
-         
-         g=getappdata(tx,'selectionindex');
-         if ~isempty(g)
-             cartline=[min(g.sel) max(g.sel)];
-               height=g.height;
-               perc  =g.perc;
-         end
-         
-         txt=char(r.getText);
-         %cartline
-         
-         
-         
-         
-        %----------------------------
-          us=get(HF,'userdata');
-          if 0
-              % TEST_WRITE-LOCKED-MODE
-              set(tx,'string',us.e2); %%OLD TEXT
-              
-          end
-          
-          % TEST_WRITEABLE-MODE
-          txt=regexprep(txt,[char(10) char(10)],[ char(10) ' ' char(10)]);
-          txt=regexprep(txt,[char(10) char(10)],[ char(10) ' ' char(10)]);
-          
-          
-          e0=strsplit(txt,char(10))';
-          
-          
-          e0=regexprep(e0,[char(10) char(10)],[ char(10) 'X' char(10)]);
-          e0=regexprep(e0,[char(10) char(10)],[ char(10) 'X' char(10)]);
-          
-          e2=htmlcolorize(e0)  ;
-           set(tx,'string',e2); %%MODIFIED TEXT
-          us.e2=e2;
-          us.e0=e0;
-          set(HF,'userdata',us);
-          
-          set(tx,'style','listbox');
-          
-          
-          %---selected text MIMIC
-          cartline=sort(cartline);
-          ichar=[regexpi(txt,char(10))];
-          if isempty(ichar)
-              ichar=1;
-          end
-             
-          ichar=unique([1 ichar ichar(end)+10000]);
-          value=unique([max(find(ichar<(1+cartline(1)))):max(find(ichar<(1+cartline(2))))]);
-          if isempty(value);                  value=1; end
-           if value<1;                        value=1; end
-          if value>size(get(tx,'string'),1);  value=size(get(tx,'string'),1); end
-         
-          set(tx,'value',value);
-          %-------
-          
-            %----LISTBOX_TOP-PART2
-            for i=1:2
-                try
-                    pause(0.05);
-                    drawnow
-                    hEdit=findobj(HF,'tag','txt');
-                    jhEdit = findjobj(hEdit);
-                    jVScroll = jhEdit.getVerticalScrollBar;
-                    drawnow;
-                    tx= findobj(HF,'tag','txt');
-                    %scrollDown=jVScroll.getValue;
-                    r = jhEdit.getComponent(0).getComponent(0);
-                    drawnow;
-                    height=r.getHeight;
-                    scrollDown2=round(perc*height);
-                    %disp({nan scrollDown2 height perc});
-                    jVScroll.setValue(scrollDown2);
-                    drawnow;
-                    r.repaint;
-                end
-            end
-          %----------------------------
-          
-%           ht=findobj(HF,'tag','txtline');
-%           try
-%               str=get(ht,'string');
-%               %currline=str2num(regexprep(strtok(get(ht,'string'),'/'),'\D','')) ;
-%               str_NoHTML = regexprep( str, '<.*?>', '' );
-%               currline=str2num(regexprep(str_NoHTML,'[-|/|\.\.].*',''));
-%               if isempty(currline); currline=1; end
-%               set(tx,'value',currline);
-%           catch
-%               set(tx,'value',currline);
-%           end
-          txtline([],[]);
-          set( findobj(HF,'tag','txtline'),'backgroundcolor' ,[0.8627    0.8627    0.8628]);
-          highlightedcolorLB();
-          set(findobj(HF,'tag','copyverticalselection'),'enable','off');
-          set(findobj(HF,'tag','copycolumn'),'enable','off');
-          
-%           %----LISTBOX_TOP-PART2
-%           hEdit=findobj(HF,'tag','txt');
-%           jhEdit = findjobj(hEdit);
-%           jVScroll = jhEdit.getVerticalScrollBar;
-%           tx= findobj(HF,'tag','txt');
-%           %scrollDown=jVScroll.getValue;
-%           r = jhEdit.getComponent(0).getComponent(0);
-%           height=r.getHeight;
-%           scrollDown2=round(perc*height);
-%           %disp({nan scrollDown2 height perc});
-%           jVScroll.setValue(scrollDown2);
-%           %----------------------------
-%           drawnow;
-
-
+        hEdit=findobj(HF,'tag','txt');
+        jhEdit = findjobj(hEdit);
+        jVScroll = jhEdit.getVerticalScrollBar;
+        tx= findobj(HF,'tag','txt');
+        scrollDown=jVScroll.getValue;
+        r = jhEdit.getComponent(0).getComponent(0);
+        % SELECTED TEXT
+        cartline(1)= r.getSelectionStart;
+        cartline(2)= r.getSelectionEnd;
+        
+        
+        height=r.getHeight;
+        perc=scrollDown/height;
+        %disp([scrollDown height perc ]);
+        
+        
+        g=getappdata(tx,'selectionindex');
+        if ~isempty(g)
+            cartline=[min(g.sel) max(g.sel)];
+            height=g.height;
+            perc  =g.perc;
         end
-
-    elseif mode==41 %copy vertical selection
+        
+        txt=char(r.getText);
+        %cartline
+        
+        
+        
+        
+        %----------------------------
+        us=get(HF,'userdata');
+        if 0
+            % TEST_WRITE-LOCKED-MODE
+            set(tx,'string',us.e2); %%OLD TEXT
+            
+        end
+        
+        % TEST_WRITEABLE-MODE
+        txt=regexprep(txt,[char(10) char(10)],[ char(10) ' ' char(10)]);
+        txt=regexprep(txt,[char(10) char(10)],[ char(10) ' ' char(10)]);
+        
+        
+        e0=strsplit(txt,char(10))';
+        
+        
+        e0=regexprep(e0,[char(10) char(10)],[ char(10) 'X' char(10)]);
+        e0=regexprep(e0,[char(10) char(10)],[ char(10) 'X' char(10)]);
+        
+        e2=htmlcolorize(e0)  ;
+        set(tx,'string',e2); %%MODIFIED TEXT
+        us.e2=e2;
+        us.e0=e0;
+        set(HF,'userdata',us);
+        
+        set(tx,'style','listbox');
+        
+        
+        %---selected text MIMIC
+        cartline=sort(cartline);
+        ichar=[regexpi(txt,char(10))];
+        if isempty(ichar)
+            ichar=1;
+        end
+        
+        ichar=unique([1 ichar ichar(end)+10000]);
+        value=unique([max(find(ichar<(1+cartline(1)))):max(find(ichar<(1+cartline(2))))]);
+        if isempty(value);                  value=1; end
+        if value<1;                        value=1; end
+        if value>size(get(tx,'string'),1);  value=size(get(tx,'string'),1); end
+        
+        set(tx,'value',value);
+        %-------
+        
+        %----LISTBOX_TOP-PART2
+        for i=1:2
+            try
+                pause(0.05);
+                drawnow
+                hEdit=findobj(HF,'tag','txt');
+                jhEdit = findjobj(hEdit);
+                jVScroll = jhEdit.getVerticalScrollBar;
+                drawnow;
+                tx= findobj(HF,'tag','txt');
+                %scrollDown=jVScroll.getValue;
+                r = jhEdit.getComponent(0).getComponent(0);
+                drawnow;
+                height=r.getHeight;
+                scrollDown2=round(perc*height);
+                %disp({nan scrollDown2 height perc});
+                jVScroll.setValue(scrollDown2);
+                drawnow;
+                r.repaint;
+            end
+        end
+        %----------------------------
+        
+        %           ht=findobj(HF,'tag','txtline');
+        %           try
+        %               str=get(ht,'string');
+        %               %currline=str2num(regexprep(strtok(get(ht,'string'),'/'),'\D','')) ;
+        %               str_NoHTML = regexprep( str, '<.*?>', '' );
+        %               currline=str2num(regexprep(str_NoHTML,'[-|/|\.\.].*',''));
+        %               if isempty(currline); currline=1; end
+        %               set(tx,'value',currline);
+        %           catch
+        %               set(tx,'value',currline);
+        %           end
+        txtline([],[]);
+        set( findobj(HF,'tag','txtline'),'backgroundcolor' ,[0.8627    0.8627    0.8628]);
+        highlightedcolorLB();
+        set(findobj(HF,'tag','copyverticalselection'),'enable','off');
+        set(findobj(HF,'tag','copycolumn'),'enable','off');
+        
+        %           %----LISTBOX_TOP-PART2
+        %           hEdit=findobj(HF,'tag','txt');
+        %           jhEdit = findjobj(hEdit);
+        %           jVScroll = jhEdit.getVerticalScrollBar;
+        %           tx= findobj(HF,'tag','txt');
+        %           %scrollDown=jVScroll.getValue;
+        %           r = jhEdit.getComponent(0).getComponent(0);
+        %           height=r.getHeight;
+        %           scrollDown2=round(perc*height);
+        %           %disp({nan scrollDown2 height perc});
+        %           jVScroll.setValue(scrollDown2);
+        %           %----------------------------
+        %           drawnow;
+        
+        
+    end
+    
+elseif mode==41 %copy vertical selection
     % ==============================================
     %%   copy vertical/or columnwise selection
     % ===============================================
@@ -1813,13 +1990,13 @@ elseif mode==20 %SWITCH DO EDIT MODE
     range=[get(r2,'SelectionStart') get(r2,'SelectionEnd')];
     tx=char(r2.getText);
     
- 
-    txdum=regexprep(tx,'\d','v'); 
+    
+    txdum=regexprep(tx,'\d','v');
     if range(1)==0; range(1)=1; end
     if double(txdum(range(1)))~=10
-    txdum(range(1))=num2str(1); 
+        txdum(range(1))=num2str(1);
     else
-      txdum(range(1)+1)=num2str(1);   
+        txdum(range(1)+1)=num2str(1);
     end
     txdum(range(2))=num2str(2);
     
@@ -1844,9 +2021,9 @@ elseif mode==20 %SWITCH DO EDIT MODE
     end
     
     mat2clip(tx4); %COPY TO CLIPBOARD
-%     disp(tx4);
-  
-elseif mode==42 %copycolumn 
+    %     disp(tx4);
+    
+elseif mode==42 %copycolumn
     gcontext(obj, event, 41);
     
 end
@@ -1999,8 +2176,8 @@ end
 
 htmlline=regexpi2(e2,'<html>');
 if ~isempty(htmlline); %underscore
-   % e2=regexprep( e2  ,'_','<u>_</u>');
-   e2(htmlline)=regexprep( e2(htmlline)  ,'_','<u>_</u>');
+    % e2=regexprep( e2  ,'_','<u>_</u>');
+    e2(htmlline)=regexprep( e2(htmlline)  ,'_','<u>_</u>');
 end
 
 function caretmoved(e,e2)
@@ -2017,7 +2194,7 @@ id=find(cellfun('isempty',id)==0);
 function finder_ini()
 
 w(:,:,1) =...
-   [ 0    0  154  156  151  144  144  128  119   87   45    0    0    0    0    0
+    [ 0    0  154  156  151  144  144  128  119   87   45    0    0    0    0    0
     0    0  157  255  255  245  222  196  170  126   68   65    0    0    0    0
     0    0  154  255  255  255  250  234  217  161  131  175   49    0    0    0
     0    0  154  223   99  100   99   99   99   61  153  208  155   65    0    0
@@ -2051,7 +2228,7 @@ w(:,:,2) =...
     0    0  113  255  255  255  255  255  255  255  255  255  209   91  255   95
     0    0  113  113  113  113  113  113  113  113  113  113  113   62   91   91];
 w(:,:,3) =...
-   [0    0  200  204  198  195  194  191  187  159  141    0    0    0    0    0
+    [0    0  200  204  198  195  194  191  187  159  141    0    0    0    0    0
     0    0  200  255  255  248  240  222  213  190  154  157    0    0    0    0
     0    0  200  255  255  255  252  237  235  211  185  212  148    0    0    0
     0    0  200  242  189  190  188  187  191  156  205  229  204  156    0    0
@@ -2070,11 +2247,114 @@ w(:,:,3) =...
 
 hb=uicontrol('Style','pushbutton', 'Position',[25 25 16, 16], ...
     'CData',w./255,    'BackgroundColor','w');
-set(hb,'units','norm'); 
+set(hb,'units','norm');
 set(hb,'position',[.405 0 .027 .03]);
 set(hb,'callback',{@finder_MAIN_OpenPanel});
-set(hb,'tooltipstring','find string');
+set(hb,'tooltipstring','finder panel  --> [ctrl+f]');
 set(hb,'units','pixel');
+
+function jumper_ini()
+
+ic(:,:,1)=[255 255 255 255 255 255 255 255 255 255 225 48 48 225 255 255;255 255 255 255 255 255 255 255 255 255 143 0 0 143 255 255;255 255 255 255 255 244 118 104 160 217 217 29 29 217 255 255;255 255 255 255 193 35 1 8 0 0 92 238 255 255 255 255;255 255 255 200 2 27 182 250 63 0 0 88 255 255 255 255;255 255 255 242 144 239 255 171 0 0 0 4 225 255 255 255;255 255 255 255 255 255 234 22 0 0 140 2 61 129 162 247;255 255 255 255 255 255 99 0 0 84 255 105 15 0 0 176;255 255 255 255 255 255 57 0 0 193 255 255 255 239 215 254;255 255 255 255 255 162 208 53 0 12 151 255 255 255 255 255;243 130 120 120 108 1 91 253 134 7 0 120 255 255 255 255;186 0 0 0 0 1 182 255 255 111 0 125 255 255 255 255;255 192 184 184 184 204 255 255 246 20 7 231 255 255 255 255;255 255 255 255 255 255 255 255 151 0 96 255 255 255 255 255;255 255 255 255 255 255 255 255 41 1 209 255 255 255 255 255;255 255 255 255 255 255 255 255 70 95 255 255 255 255 255 255];
+ic(:,:,2)=[255 255 255 255 255 255 255 255 255 255 225 48 48 225 255 255;255 255 255 255 255 255 255 255 255 255 143 0 0 143 255 255;255 255 255 255 255 244 118 104 160 217 217 29 29 217 255 255;255 255 255 255 193 35 1 8 0 0 92 238 255 255 255 255;255 255 255 200 2 27 182 250 63 0 0 88 255 255 255 255;255 255 255 242 144 239 255 171 0 0 0 4 225 255 255 255;255 255 255 255 255 255 234 22 0 0 140 2 61 129 162 247;255 255 255 255 255 255 99 0 0 84 255 105 15 0 0 176;255 255 255 255 255 255 57 0 0 193 255 255 255 239 215 254;255 255 255 255 255 162 208 53 0 12 151 255 255 255 255 255;243 130 120 120 108 1 91 253 134 7 0 120 255 255 255 255;186 0 0 0 0 1 182 255 255 111 0 125 255 255 255 255;255 192 184 184 184 204 255 255 246 20 7 231 255 255 255 255;255 255 255 255 255 255 255 255 151 0 96 255 255 255 255 255;255 255 255 255 255 255 255 255 41 1 209 255 255 255 255 255;255 255 255 255 255 255 255 255 70 95 255 255 255 255 255 255];
+ic(:,:,3)=[255 255 255 255 255 255 255 255 255 255 225 48 48 225 255 255;255 255 255 255 255 255 255 255 255 255 143 0 0 143 255 255;255 255 255 255 255 244 118 104 160 217 217 29 29 217 255 255;255 255 255 255 193 35 1 8 0 0 92 238 255 255 255 255;255 255 255 200 2 27 182 250 63 0 0 88 255 255 255 255;255 255 255 242 144 239 255 171 0 0 0 4 225 255 255 255;255 255 255 255 255 255 234 22 0 0 140 2 61 129 162 247;255 255 255 255 255 255 99 0 0 84 255 105 15 0 0 176;255 255 255 255 255 255 57 0 0 193 255 255 255 239 215 254;255 255 255 255 255 162 208 53 0 12 151 255 255 255 255 255;243 130 120 120 108 1 91 253 134 7 0 120 255 255 255 255;186 0 0 0 0 1 182 255 255 111 0 125 255 255 255 255;255 192 184 184 184 204 255 255 246 20 7 231 255 255 255 255;255 255 255 255 255 255 255 255 151 0 96 255 255 255 255 255;255 255 255 255 255 255 255 255 41 1 209 255 255 255 255 255;255 255 255 255 255 255 255 255 70 95 255 255 255 255 255 255];
+ic=imresize(ic,[12 12],'bilinear');
+w=uint8(ic);
+
+hb=uicontrol('Style','pushbutton', 'Position',[100 100 16, 16], ...
+    'CData',w,    'BackgroundColor','w');
+set(hb,'units','norm');
+set(hb,'position',[.433 0 .027 .03]);
+set(hb,'callback',{@jumper_openpanel});
+set(hb,'tooltipstring','jumper panel  --> [ctrl+j]','tag','jumper_pb');
+set(hb,'units','pixel');
+
+
+
+function jumper_openpanel(e,e2)
+jump([],[],'close');
+
+us=get(gcf,'userdata');
+%idx=unique(regexpi2(us.e0,'#'));
+%         idx=[1:size(us.e0,1)]';
+%         if isempty(idx);
+%             return;
+%         end
+%         list=tx.String(idx);
+%         list=cellfun(@(a,b){['<html><pre>' a ') ' b]},cellstr(num2str(idx)),   regexprep(list,'<html><pre>','') );
+%
+%% LISTBOX
+hb=uicontrol('style','listbox');
+set(hb,'tag','jump_lb','units','norm','position',[ .68 .49 .3 .4]);
+%set(hb,'string',list,'fontsize',7);
+set(hb,'units','pixels');
+pos=get(hb,'position');
+set(hb,'callback',{@jump,'jumpto'})
+
+jump([],[],'show_all');
+set(hb,'fontsize',5);
+
+
+
+%% TITLE
+hb3=uicontrol('style','text','units','pixels','tag','jump_title');
+set(hb3,'string','jump to ...','tooltipstring','select meta-line to jump to line');
+set(hb3,'position', [pos(1)+16  pos(2)+pos(4) 16*5 16],'fontweight','bold',...
+    'HorizontalAlignment','left','backgroundcolor',[ 1     1     0]);
+%% radio show all ()
+%hb5=uicontrol('style','radio','units','pixels','value',0);
+popstr={'meta1'  'meta2' 'all'};
+hb5=uicontrol('style','popupmenu','units','pixels');
+set(hb5,'string','all','tooltipstring',...
+    ['resolution:' char(10) ...
+    '{meta1}: show few tags' char(10)...
+    '{meta2}: show more tags' char(10)...
+    '{all} show entire text ']);
+set(hb5,'position', [pos(1)+16+16*4  pos(2)+pos(4) 16*3.5 16]);
+set(hb5,'callback',{@jump,'show_all'},'tag','jump_showall');
+set(hb5,'backgroundcolor','w');
+set(hb5,'string',popstr,'value',1);
+
+
+
+%% MOVE
+v=uint8(finder_geticon('hand'));
+v(v==v(1,1))=255;
+if size(v,3)==1; v=repmat(v,[1 1 3]); end
+v=double(v)/255;
+s=v; n=0;
+hb4=uicontrol('Style','pushbutton', 'Position',[25 25 16, 16], ...
+    'CData',s,'tag','jump_move','BackgroundColor','w');
+set(hb4,'units','pixels','position',[pos(1) pos(2)+pos(4) 16 16]);
+set(hb4,'tooltipstring','move floating panel to another position ');
+%set(hb4,'callback',{@jump,'move'})
+
+je = findjobj(hb4); % hTable is the handle to the uitable object
+set(je,'MouseDraggedCallback',{@jump,'move'} );
+
+%% scale
+picon=fullfile(matlabroot,'toolbox','matlab','icons');
+fi=fullfile(picon,'tool_double_arrow.gif');
+[a ar]=imread(fi);
+s=round(ind2rgb(a,ar)*255);
+s=uint8(s);
+hb4=uicontrol('Style','pushbutton', 'Position',[25 25 16, 16], ...
+    'CData',s,'tag','jump_scale','BackgroundColor','w');
+set(hb4,'units','pixels','position',[pos(1)+pos(3)-16 pos(2) 16 16]);
+set(hb4,'tooltipstring','scale floating panel ');
+%set(hb4,'callback',{@jump,'move'})
+
+je = findjobj(hb4); % hTable is the handle to the uitable object
+set(je,'MouseDraggedCallback',{@jump,'scale'} );
+
+
+
+%% CLOSE
+hb2=uicontrol('style','pushbutton','units','pixels');
+set(hb2,'string','x','tooltipstring','close jumping window');
+set(hb2,'position', [pos(1)+pos(3)-16  pos(2)+pos(4) 16 16]);
+set(hb2,'callback',{@jump,'close'},'tag','jump_close');
+
 
 
 function  finder_MAIN_OpenPanel(e,e2)
@@ -2082,9 +2362,9 @@ function  finder_MAIN_OpenPanel(e,e2)
 %=======================
 hfig=Huhelp;
 figure(hfig);
-delete(findobj(hfig,'userdata','ipn1')); 
-delete(findobj(hfig,'userdata','ipn2')); 
-delete(findobj(hfig,'userdata','ipn3'));  
+delete(findobj(hfig,'userdata','ipn1'));
+delete(findobj(hfig,'userdata','ipn2'));
+delete(findobj(hfig,'userdata','ipn3'));
 delete(findobj(hfig,'tag','mission'))
 
 units=get(hfig,'units');
@@ -2228,13 +2508,13 @@ if strcmp(type,'listbox')  % 'lb';
         set(hed,'backgroundcolor',[1 1 1]);
         return
     end
-   
+    
     
     sel=get(hs,'value');
     if length(sel)>1; sel=sel(1); end
     
     if par==1
-         sel=get(hs,'value');
+        sel=get(hs,'value');
         if length(sel)>1; sel=sel(1)-1; end
         if sel>=max(iv);
             if   strcmp(get(e,'tag'),'ed_findstring'); % if in editbox, cursor ends..go back to begin
@@ -2244,7 +2524,7 @@ if strcmp(type,'listbox')  % 'lb';
                 sel=0;
             end
         end
-       
+        
         sel=iv(min(find(iv>sel)));
         set(hs,'value',sel);
     elseif par==-1

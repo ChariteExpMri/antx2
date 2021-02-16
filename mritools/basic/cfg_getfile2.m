@@ -647,7 +647,7 @@ persistent lastfiltertoken
 
 
 if isempty(lastfiltertoken)
-    regexplist={'.' '.*.nii' '^startStr.*endStr$' '\.(doc|txt)$'   '^((?!notStr).)*$'};
+    regexplist={'.' '.*.nii' '.*xlsx|.*nii' '^startStr.*endStr$' '\.(doc|txt)$'   '^((?!notStr).)*$'};
     lastfiltertoken =[lastfiltertoken; regexplist];
 end
 

@@ -229,9 +229,15 @@
 %               2. Split datasets using the multitube masks
 %             #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 %
-%
-
-
+% #ra 16 Feb 2021 (15:46:57)
+%  - DTI-statistic and 2d-matrix/3d-volume visualization was extended 
+%    functions: [dtistat.m], [xvol3d.m] and [sub_plotconnections.m]
+%  - get anatomical labels [xgetlabels4.m]: The paramter volume percent brain ("volpercbrain") was
+%    re-introduced in the resulting Excel-table
+% 
+% 
+% 
+% 
 
 
 %----- EOF

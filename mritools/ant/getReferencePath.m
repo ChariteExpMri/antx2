@@ -5,7 +5,7 @@
 function [ref ]=getReferencePath
 ref=[];
 
-us.animals= {'mouse' ,'rat','etruscianshrew'};
+us.animals= {'mouse' ,'rat','etruscianshrew' 'gerbil'};
 makefigure(us);
 
 

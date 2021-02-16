@@ -1,24 +1,24 @@
 %% #by DTIstatistik for DSIstudio-RESULTS (DTIparameters & DTIconnectivity)
 % This function can be used for post-hoc analysis after processing DTI data
 % using #b DSI-studio #n or #b MRtrix.
-% Statistical tests can be done for group-differences regarding: 
+% Statistical tests can be done for group-differences regarding:
 %     (1) DTI-parameters: such as FA, ADC, AXIAL/RADIAL DIFFUSIVITY
 %  or (2) DTI-connectivity metrics: i.e. metrics concerning structural links between regions.
 % #r ------------------------------------------------------------------------
 % #r NOTE: Access via command line has been changed (apologies for this).
 % #r ------------------------------------------------------------------------
-% 
+%
 %% #ky INPUT FILE TYPES
 % FUNCTION DEALS WITH ONE OF THE FOLLOWING INPUT FILE TYPES:
-% DTI parameter   - ascii-files (example: "##_dti_parameter_stat.txt") #b (DSI-studio) 
-% DTI connectivity - mat-files   (example: "__dti_1000K_seed_rk4_end.mat") #b (DSI-studio) 
-%                  - csv-filess  (example: connectome_di_sy_length.csv) #b (MRtrix)  
+% DTI parameter   - ascii-files (example: "##_dti_parameter_stat.txt") #b (DSI-studio)
+% DTI connectivity - mat-files   (example: "__dti_1000K_seed_rk4_end.mat") #b (DSI-studio)
+%                  - csv-filess  (example: connectome_di_sy_length.csv) #b (MRtrix)
 %
 %% #ky  GROUP-ASSIGNMENT
 % - An excelfile must be prepared with mouseIDs and group-assignment.
 % - #r The GROUP-ASSIGNMENT excelfile is mandatory for "DTI parameter" and "DTI connectivities".
 % - The excelfile must contain 2 columns (mouse-id & groupassignment) in the first excel-sheet
-% - [mouseID]        : 1st column contains mouseIDS/names 
+% - [mouseID]        : 1st column contains mouseIDS/names
 %                      -The mouseIDs must match animal folders names or must be part of the filename.
 % - [groupassignment]: 2nd column contains subgroup labels such that each mouse is assigned to a group.
 %                      -The groupassignment label can be arbitrarily chosen.
@@ -48,44 +48,44 @@
 %
 %_________________________________________________________________________________________________
 %% #ry HOW TO PROCESS (SEQUENCE OF MANUAL STEPS)
-% 
+%
 % There are two different pipelines (1) DTI-parameters and (2) DTI-connectivity.
-% #b  (1) DTI-parameter 
+% #b  (1) DTI-parameter
 % set matlab's current path to the directory of the data
 % use [load group assignment] (button) to load the group assignment
 % use [load DTI parameter] (button) to select the data files
 % modify toggles (within, test, FDR etc.) to adjust the paramter (type of test etc..)
 % use [stat DTI parameter] (button) to calculate statistics for DTI-PARAMETER
-% use [show Results] (button) to show/redisplay results 
+% use [show Results] (button) to show/redisplay results
 % use [plot data] (button) to plot data/results (use right pulldown to select the type of plotting)
 % use [export data] (button) to export results (excel-file)
-% 
+%
 % #b  (2) DTI-connectivity
 % set matlab's current path to the directory of the data
 % use [load group assignment] (button) to load the group assignment
-% select from [DTIstudio/MRtrix] (pulldown), depending which processing software was used for DTI connectivity data 
+% select from [DTIstudio/MRtrix] (pulldown), depending which processing software was used for DTI connectivity data
 % use [load DTI connectivities] (button) to select the  DTI-CONNECTIVITY FILES
-% OPTIONAL: use [make COI file] (button) and/or [load COI file](button) to make a COI/load a COI-file 
+% OPTIONAL: use [make COI file] (button) and/or [load COI file](button) to make a COI/load a COI-file
 % modify toggles (within, test, FDR etc.) to adjust the paramter (type of test etc..)
-% use [stat Connectivity] (button) to calculate the statistics for DTI-CONNECTIVITY FILES. 
+% use [stat Connectivity] (button) to calculate the statistics for DTI-CONNECTIVITY FILES.
 % OPTIONAL: use [save calculation] (button) to save the calculation (mat-file, for time-consuming jobs)
 %          This allows to just start dtistat.m the next time, modify some of the toggles (FDR etc.) and reload
 %          a calculation via [load calculation]
-% use [show Results] (button) to show/redisplay results 
+% use [show Results] (button) to show/redisplay results
 % use [plot data] (button) to plot data/results (use right pulldown to select the type of plotting)
 % use [export data] (button) to export results (excel-file)
 % use [export4xvol3d] (button) to export connections for xvol3d-visualization
 %_________________________________________________________________________________________________
 %% #ry GUI (controls and behaviour)
-% 
+%
 % #b ______________GROUP ASSSIGNMENT_______________________________________________________________
-% 
+%
 % [load group assignment] (button)   : Load excelfile with group assignment.
-% 
+%
 % #b _______________DTI parameter or DTI connectivities____________________________________________
 % [load DTI parameter]    (button)   : Load DTI-PARAMETER FILES (see INPUT FILE TYPES) via GUI.
 % [load DTI connectivities] (button) : Load DTI-CONNECTIVITY FILES (see INPUT FILE TYPES)  via GUI.
-% [DTIstudio/MRtrix]    (pulldown)   : Depending on processing software for DTI connectivity data select 
+% [DTIstudio/MRtrix]    (pulldown)   : Depending on processing software for DTI connectivity data select
 %                                       one of the input data:
 %                                             "DSIstudio" for DSI studio data, or
 %                                             "MRtrix"    for MRtrix data.
@@ -93,12 +93,12 @@
 %                                      the pulldown before hitting the [load DTI connectivities] button.
 %                                      #r For "DTI connectivities" only.
 % #b _____________CONNECTIONS OF INTERESTS_________________________________________________________
-% [load COI file]         (button)   : optional, load Connections-of-Interest/COI-file  (excelfile file). 
-%                                      This file has to be created first, using the [make COI file]-button. 
+% [load COI file]         (button)   : optional, load Connections-of-Interest/COI-file  (excelfile file).
+%                                      This file has to be created first, using the [make COI file]-button.
 %                                      #r For "DTI connectivities" only.
-%                                      #The COI-file can be loaded before, or after calculation. 
-%                                      Currently, the COI-file is used to reduce the number of region-by-region 
-%                                       pairs and thus improve the statistical output when dealing with 
+%                                      #The COI-file can be loaded before, or after calculation.
+%                                      Currently, the COI-file is used to reduce the number of region-by-region
+%                                       pairs and thus improve the statistical output when dealing with
 %                                      multiple comparisons (FDR approach).
 %                                      EXAMPLE: 308 seeds/regions produce 47278 region-by-region pairs (i.e. without
 %                                      combinations of itself and without redundant reorders such as "A--B" and "B--A").
@@ -123,36 +123,50 @@
 % [qFDR]                  (edit)     : The desired false discovery rate (default: 0.05).
 % [show SIGS only]        (checkbox) : If selected, only significant results will be shown.
 % [sort Results]          (chckbox)  : if selected, results will be sorted by p-value.
-% [reverse contrast]      (chckbox)  : Default group-comparison is A>B, if selected B>A comparison is
-%                                      done (changes the sign of the test statistic, usefull for DTI-visulaization)
+% [reverse contrast]      (chckbox)  : Default: group 'A' vs 'B'
+%                                      If selected the order is reversed 'B' vs 'A'.
+%                                      -This option only changes the sign of the statistical TestValue
+%                                       (positive vs negative t-value) and does not change the direction
+%                                       (tail) of the test
 % [noSeeds]               (edit)     : Number of seeds.  #r For "DTI connectivities" only.
 %                                      Connectivity-matrizes (weights) will be normalized by noSeeds
 %                                      prior calculation of connectivity metrics.
+% [prop thresh]           (checkbox)   : for MRtrix data only, set proportonal threshold
+% [threshold]           (edit)         : for MRtrix data only, value to threshold via proportonal threshold
+%                                       - can be 'max' to use value with maximal small worldness score
+%                                         or a value between 0 and 1
+%                                      ---> see tooltip
+% [logarithmize]         (checkbox)   : for MRtrix data only, logarithmize data
+%
+%
+%        dtistat('set', 'propthresh',1,'thresh','max','log',1)
+%
 % #b __________CALCULATION_________________________________________________________________________
 % [stat DTI parameter]    (button)   : Calculate statistic for DTI-PARAMETER.
 %                                      FILES (DTI-PARAMETER FILES must be loaded before.
 %                                      #r For "DTI parameter" only.
-% [stat Connectivity]     (button)   : Calculate statistic for DTI-CONNECTIVITY FILES. 
+% [stat Connectivity]     (button)   : Calculate statistic for DTI-CONNECTIVITY FILES.
 %                                      DTI-CONNECTIVITY FILES must be loaded before.
 %                                      #r For "DTI connectivities" only.
 % [save calculation]      (button)   : Save a calculation (mat-file). This might be useful if statistical
 %                                      calculation for DTI connectivities is very time-consuming.
-%                                      (For more than 200 regions/nodes implying metric calculations for 40000 
-%                                      interconnections.). After calculation, use [save calculation] to 
+%                                      (For more than 200 regions/nodes implying metric calculations for 40000
+%                                      interconnections.). After calculation, use [save calculation] to
 %                                      save the data as mat-file (GUI to select output filename).
 %                                      For later usage, open "dtistat" window, hit [load calculation] and select
 %                                      the previously saved calculation. If necessary, adjust the toggles (FDR etc.).
 %                                      #r Assumed for "DTI connectivities", but works also for "DTI parameter".
-% [load calculation]      (button)   : Load an existing calculation (mat-file). See [save calculation].  
-% 
+% [load calculation]      (button)   : Load an existing calculation (mat-file). See [save calculation].
+%
 % #b _____________REPORT/EXPORT____________________________________________________________________
 % [show Results]          (button)   : Show/redisplay results without re-calculation.
-%                                      -Useful when changing the toggle states(FDR/qFDR/showSigsonly/sortResult etc) 
+%                                      -Useful when changing the toggle states(FDR/qFDR/showSigsonly/sortResult etc)
 %                                       or when using  [load calculation].
 % [plot data]             (button)   : plot data/results (use right pulldown to select the type of plotting)
 % [export data]           (button)   : Export results (excel-file).
+% 
 % [export4xvol3d]         (button)   : Export (significant) connections as excel-file. Use this option to
-%                                      visualize connections via xvol3d.  #r For "DTI connectivities" only. 
+%                                      visualize connections via xvol3d.  #r For "DTI connectivities" only.
 %__________________________________________________________________________________________________
 %% #ry COMMAND LINE OPTIONS
 % #r ------------------------------------------------------------------------
@@ -161,9 +175,9 @@
 % Most commands can be set via command line.
 % All available commands must be declared as input argument of "dtistat.m"
 % Commands and subcommands are highlighted green in the tooltip of the respective button/checkbox/etc.
-% 
+%
 % #b _____SET COMMAND______________________________________________________________________________
-% SET: can be used to change state of toggles/pulldown menues/edit fields. First argument is 'set', 
+% SET: can be used to change state of toggles/pulldown menues/edit fields. First argument is 'set',
 % followed by pairwise inputs. Subcommands of SET can be used in one set-command or splitted in several
 % set-commands
 % dtistat('set', arg1,val1, arg2,val2 ...); %pattern
@@ -182,28 +196,32 @@
 % dtistat('set','within',0,'test','ttest2','FDR',1,'qFDR',0.05,'showsigsonly',0,'sort',1,'rc',0,'nseeds',1000);
 %
 % #b _____OTHER COMMANDS___________________________________________________________________________
-% 
+%
 % dtistat('new');                                  % #g new dtistat-window
 % dtistat('group',excel-file);                     % #g load a group assignment; excel-file is the filename of the group assignment
 % dtistat('confiles',files,'labelfile',labelfile); % #g load connectivity files. #r FOR "DTI-connectivities" only.
 %                                                  % #g files is a cell of connectivity-files
 %                                                  % #g labelfile is a textfile with regions associated with the connectivity-files
-% 
+%
 % dtistat('paramfiles',files);                     % #g load parameter files. #r FOR "DTI-parameter" only.
 %                                                  % #g files is a cell of parameter-files
 %
 % dtistat('calcconnectivity');                     % #g calculate statistic for DTI-connectivities
 % dtistat('calcparameter');                        % #g calculate statistic for DTI-parameter
-% 
-% dtistat('savecalc','__test1.mat');               % #g save calculations as '__test1.mat' in the current folder 
-% dtistat('loadcalc','__test1.mat');               % #g load a previous calculations, here '__test1.mat' from the current folder as 
+%
+% dtistat('savecalc','__test1.mat');               % #g save calculations as '__test1.mat' in the current folder
+% dtistat('loadcalc','__test1.mat');               % #g load a previous calculations, here '__test1.mat' from the current folder as
 % dtistat('showresult');                           % #g show results
-% dtistat('export','_testExport3.xlsx');           % #g export results
+% #g EXPORT
+% dtistat('export','_testExport3.xlsx');           % #g export results with default export option
+% dtistat('set','exportType',1);                   % set export type to '1': EXCEL file, sheet-wise results 
+% dtistat('export','test1.xlsx','exportType',1)    % #g save as EXCEL file, sheet-wise results 
+% dtistat('export','test2.xlsx','exportType',2)    % #g save as EXCEL file, results in single sheet
 % dtistat('export4xvol3d');                        % #g export connection for xvol3d-visualization; with GUI. #g For silent mode
 %                                                  % #g  see example below,
 % %r COI-FILES
 % dtistat('loadcoi','coi_TEST1.xlsx');             % #g load a COI-file,connection-of-interest-file (excel-file); see GUI for more help
-% dtistat('makecoi','__COI_blanko.xlsx');          % #g save a COI-BLANKO-file (excel-file). Here, blanko '__COI_blanko.xlsx' is saved 
+% dtistat('makecoi','__COI_blanko.xlsx');          % #g save a COI-BLANKO-file (excel-file). Here, blanko '__COI_blanko.xlsx' is saved
 %                                                  % #g the current folder
 %__________________________________________________________________________________________________
 %% #ky example command line: DTI-CONNECTIONS
@@ -216,16 +234,16 @@
 % dtistat('confiles',files,'labelfile','lutSIM.txt');                    % #g load confiles and use label-file (here: 'lutSIM.txt', stored in current directory)
 % dtistat('calcconnectivity');                                           % #g calculate statistic for connectivity
 % dtistat('savecalc','__test1.mat');                                     % #g save calculation in pwd as '__test1.mat'
-% 
+%
 % dtistat('new');                                                        % #g make new "dtistat"-window
-% dtistat('loadcalc','__test1.mat');                                     % #g load previous calculation '__test1.mat' from pwd 
+% dtistat('loadcalc','__test1.mat');                                     % #g load previous calculation '__test1.mat' from pwd
 % dtistat('set','inputsource','MRtrix','FDR',1,'qFDR',0.05,'showsigsonly',0,'sort',1); % #g restore some toggle settings
 % dtistat('showresult');                                                 % #g show results
-% 
+%
 % dtistat('export','_testExport3.xlsx');                                 % #g export results as '_testExport3.xlsx' in current folder
 % dtistat('export4xvol3d');                                              % #g export data for xvol3d with GUI
 %__________________________________________________________________________________________________
-%% #ky example command line: Export DTI-connections for xvol3d 
+%% #ky example command line: Export DTI-connections for xvol3d
 % % #k For silent mode: set x.gui to [0];
 % x=[];
 % x.ano        =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\ANO.nii';	   % #g select Atlas (Nifti); such as "ANO.nii"
@@ -238,7 +256,7 @@
 % x.LRtag      =  [0];               % #g left/right hemispheric tag in atlas labels:  {0} remove or {1} keep
 % x.gui        =  [1];               % #g show paramter GUi;  {1}silent mode (no GUI); {0} show gui
 % dtistat('export4xvol3d',x);        % #g export data for xvol3d with GUI with pre-selected parameter
-% 
+%
 %_________________________________________________________________________________________________
 %% #ky example command line: DSIstudio-DTI Parameter
 % cd('O:\data2\x01_maritzen\Maritzen_DTI') ;                           % #g go to the main directory
@@ -250,14 +268,15 @@
 % dtistat('calcparameter');                                            % #g calculate statistics
 % dtistat('showresult');                                               % #g show results
 % dtistat('savecalc','__test1.mat');                                   % #g save calculation in pwd as '__test1.mat'
-% 
+%
 % dtistat('new');                                                      % #g make new "dtistat"-window
-% dtistat('loadcalc','__test1.mat');                                   % #g load previous calculation '__test1.mat' from pwd 
+% dtistat('loadcalc','__test1.mat');                                   % #g load previous calculation '__test1.mat' from pwd
 % dtistat('set','inputsource','DSIstudio','within',0,'test','ttest2'); % #g reset some toggle states
 % dtistat('showresult');                                               % #g show results again
-% 
-% 
-
+%
+%
+%% b SUBFUNFTIONS
+% dti_changeMatrix.m   : change matrix (example: keep only left hemispheric connections)
 
 
 
@@ -283,7 +302,7 @@ if isempty(hf);     createGui; end
 % ===============================================
 
 if nargin~=0
-   
+    
     if mod(length(varargin),2)==0
         par=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
     else % odd
@@ -293,7 +312,7 @@ if nargin~=0
     commandline(par);
     return
 else
-   createGui();
+    createGui();
 end
 
 function commandline(p)
@@ -320,27 +339,32 @@ if isfield(p,'set')
         set(hc,'value',p.within) ;
         hgfeval(get(hc,'callback'),hc);
     end
- % --test----------------------------------------------
+    % --test----------------------------------------------
     if isfield(p,'test')
         hc=findobj(hf,'tag','typeoftest1');
         li=get(hc,'string'); va=get(hc,'value');
         if isnumeric(p.test)
             set(hc,'value' ,p.test );
         else
-            set(hc,'value' ,find(strcmp(li,p.test )) );
+            val=find(strcmp(li,p.test )) ;
+            if isempty(val)
+                msgbox([ {['Unknown Test : "' p.test '"!' ]};{'Chose one of the following tests: '} ; cellfun(@(a){ [ sprintf('   ') '* ' a '' ]} , li)]);
+                return
+            end
+            set(hc,'value' ,val);
         end
     end
-  % --FDR----------------------------------------------
+    % --FDR----------------------------------------------
     if isfield(p,'FDR')
         hc=findobj(hf,'tag','isfdr');
         set(hc,'value' ,p.FDR );
     end
-      % --FDR-qvalue----------------------------------------------
+    % --FDR-qvalue----------------------------------------------
     if isfield(p,'qFDR')
         hc=findobj(hf,'tag','qFDR');
         set(hc,'string' ,num2str(p.qFDR) );
     end
-      % --showsigsonly----------------------------------------------
+    % --showsigsonly----------------------------------------------
     if isfield(p,'showsigsonly')
         hc=findobj(hf,'tag','showsigsonly');
         set(hc,'value' ,p.showsigsonly );
@@ -350,16 +374,41 @@ if isfield(p,'set')
         hc=findobj(hf,'tag','issort');
         set(hc,'value' ,p.sort );
     end
-        % --sort results----------------------------------------------
+    % --sort results----------------------------------------------
     if isfield(p,'rc')
         hc=findobj(hf,'tag','reversecontrast');
         set(hc,'value' ,p.rc );
     end
-            % --sort results----------------------------------------------
+    % --sort results----------------------------------------------
     if isfield(p,'nseeds')
         hc=findobj(hf,'tag','noSeeds');
         set(hc,'string' , num2str(p.nseeds ));
-    end 
+    end
+    
+    
+    if isfield(p,'propthresh')
+        hc=findobj(hf,'tag','isproportthreshold');
+        set(hc,'value' , (p.propthresh ));
+    end
+    if isfield(p,'thresh')
+        hc=findobj(hf,'tag','threshold');
+        set(hc,'string' , num2str(p.thresh ));
+    end
+    if isfield(p,'log')
+        hc=findobj(hf,'tag','logarithmize');
+        set(hc,'value' , (p.log ));
+    end
+    if isfield(p,'tail')
+        hc=findobj(hf,'tag','tail');
+        
+        set(hc,'value' , find(strcmp(hc.String,p.tail)));
+    end
+    
+    if isfield(p,'exportType')
+        hc=findobj(hf,'tag','exportType');
+        set(hc,'value' , (p.exportType ));
+    end
+    
     
 end
 
@@ -387,21 +436,21 @@ if isfield(p,'loadcalc')
     return
 end
 if isfield(p,'new')
-   delete(findobj(0,'tag','dtistat'));
+    delete(findobj(0,'tag','dtistat'));
     dtistat();
     return
 end
 if isfield(p,'showresult')
- redisplay();
-  return
+    redisplay();
+    return
 end
 if isfield(p,'export')
- export2excel(p);
-  return
+    export2excel(p);
+    return
 end
 if isfield(p,'export4xvol3d')
- export4xvol3d(p);
-  return
+    export4xvol3d(p);
+    return
 end
 if isfield(p,'loadcoi')
     loadroi(p);
@@ -468,7 +517,7 @@ if 0
     dtistat('export4xvol3d','r');
     
     
-    x=[];            	 
+    x=[];
     x.ano        =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\ANO.nii';	% select corresponding Atlas (Nifti-file); such as "ANO.nii"
     x.hemi       =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\AVGThemi.nii';	% select corresponding Hemisphere Mask (Nifti-file); such as "AVGThemi.nii"
     x.cs         =  'diff';	% connection strength (cs) or other parameter to export/display via xvol3d
@@ -528,6 +577,9 @@ us.noSeeds     = 10^6;
 us.reversecontrast =0;
 us.props=props;
 
+us.isproportthreshold=1;
+us.threshold         ='max';
+us.logarithmize     =1;
 
 % ==============================================
 %%     prepare GUI
@@ -544,38 +596,57 @@ set(hf,'userdata',us);
 %----GROUP ASSIGNMENT
 h=uicontrol('style','pushbutton','units','norm','position',[0 .85 .2 .05],...
     'string','load group assignment','tag','loaddata','callback',@loadgroupassignment,...
+    'backgroundcolor',[0.8392    0.9098    0.8510],...
     'tooltipstring',...
-    ['load excel-file with the group-assignment' char(10)...
-    '<font color="black">command: <b><font color="green">group</font>'...
+    ['<b> Load group-assignment (EXCEL-file) </b>' char(10)...
+        ...
+    '<b><font color="blue">command: </b>   "group"' char(10) ...
+    '<font color="black">dtistat(''group'')                           ;<font color="green">% load group-assignment-via UI' char(10) ...
+    '<font color="black">dtistat(''group'',''MyGroupAssignment.xlsx'');<font color="green">% load group-assignment-file "MyGroupAssignment.xlsx"' char(10) ...
+%     '<font color="black">dtistat(''confiles'',LIST);<font color="green">% load connectivity files, specified in LIST(cell-arry with fullpath-names) ' char(10) ...
+   
     ]);
 % ==============================================
 %%   DTI parameter &  DTI connectities
 % ===============================================
 
-h=uicontrol('style','pushbutton','units','norm','position',[0 .8 .2 .05],...
-    'string','load DTI parameter','tag','loaddata','callback',@loadDTIparameter,...
-    'tooltipstring',...
-    ['load mouse-specific DTI-parameter files' char(10)...
-    'This data deal with parameter such as: FA, ADC, AXIAL/RADIAL DIFFUSIVITY.' char(10)...
-    '<font color="black">command: <b><font color="green">paramfiles</font>'...
-    ]);
+% h=uicontrol('style','pushbutton','units','norm','position',[0 .8 .2 .05],...
+%     'string','load DTI parameter','tag','loaddata','callback',@loadDTIparameter,...
+%     'tooltipstring',...
+%     ['load mouse-specific DTI-parameter files' char(10)...
+%     'This data deal with parameter such as: FA, ADC, AXIAL/RADIAL DIFFUSIVITY.' char(10)...
+%     '<font color="black">command: <b><font color="green">paramfiles</font>'...
+%     ]);
 
-h=uicontrol('style','pushbutton','units','norm','position',[0.2 .8 .2 .05],...
+
+h=uicontrol('style','pushbutton','units','norm','position',[0.00098569 0.79759 0.2 0.05],...[0.2 .8 .2 .05],...
     'string','load DTI connectivities','tag','loaddata','callback',@loadDTIConnectivity,...
-    'tooltipstring',...
-    ['load mouse-specific DTI-connectivity files' char(10)...
-    'This data deal with connections between regions.' char(10)...
-    '<font color="black">command: <b><font color="green">confiles</font>'...
+    'backgroundcolor',[0.8392    0.9098    0.8510],...
+     'tooltipstring',...
+    ['<b>Load DTI-connectivity files </b>' char(10)...
+    ...'This data deal with connections between regions.' char(10)...
+    ...
+    '<b><font color="blue">command: </b>   "confiles"' char(10) ...
+    '<font color="black">dtistat(''confiles'');<font color="green">% load connectivity files via UI' char(10) ...
+    '<font color="black">dtistat(''confiles'',LIST);<font color="green">% load connectivity files, specified in LIST(cell-arry with fullpath-names) ' char(10) ...
+    
     ]);
 
 %----inputsource
 source={'DSIstudio','MRtrix'};
-h=uicontrol('style','popupmenu','units','norm','position',[.22 .85 .18 .05],...
+h=uicontrol('style','popupmenu','units','norm','position',[0.20277 0.79282 0.18 0.05],...[.22 .85 .18 .05],...
     'string',source ,'tag','inputsource',...
     'tooltipstring',...
-    ['select DTI input source' char(10)...
-    'Only for DTI-connectivities (not for DTI-parameter).' char(10) ...
-    '<font color="black">command: <b><font color="green">inputsource</font>'...
+    ['<b> Select DTI input source. </b>' char(10)...
+    '<font color="black"> Specify the data input type.' char(10) ...
+    '<font color="red"> Only for DTI-connectivities data!' char(10) ...
+    '<font color="black">' char(10) ...
+        ...
+    '<b><font color="blue">command: </b>   "inputsource"' char(10) ...
+    '<font color="black">dtistat(''set'', ''inputsource'',1);             <font color="green">% use DSIstudio' char(10) ...
+    '<font color="black">dtistat(''set'', ''inputsource'',''DSIstudio''); <font color="green">% use DSIstudio' char(10) ...
+    '<font color="black">dtistat(''set'', ''inputsource'',2);             <font color="green">% use MRtrix' char(10) ...
+    '<font color="black">dtistat(''set'', ''inputsource'',''MRtrix'');    <font color="green">% use MRtrix' char(10) ...    
     ]);
 set(h,'value',2);
 
@@ -588,6 +659,7 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.45 .8 .12 .05],...
     'load excel-file with connections of interest (COI)' char(10) ...
     '<font color="black">command: <b><font color="green">loadcoi</font>'...
     ]);
+set(h,'visible','off');
 % ==============================================
 %%   make COIFILE
 % ===============================================
@@ -599,44 +671,93 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.57 .8 .12 .05],...
     'the connections of interest (COI  of interest (COI)' char(10) ...
     '<font color="black">command: <b><font color="green">makecoi</font>'...
     ]);
+set(h,'visible','off');
 
+
+roifiletype={'all' 'left connections' 'right connections'};
+h=uicontrol('style','popupmenu','units','norm',...
+    'position',[0.5724 0.84044 0.12 0.05],...
+    'string',roifiletype,'tag','ROIfileType',...
+    'tooltipstring',[...
+    'DEFINE COIfile-Type ' char(10) ....
+    'This file can be stored/changed and used via [loadCOI]-BTN'  char(10) ....
+    '..see make COIfile' char(10) ....
+    %     'the connections of interest (COI  of interest (COI)' char(10) ...
+    %     '<font color="black">command: <b><font color="green">makecoi</font>'...
+    ]);
+set(h,'visible','off');
+
+% ==============================================
+%%   help /close resultfile/batch
+% ===============================================
 
 %help
 h=uicontrol('style','pushbutton','units','norm','position',[.8 .85 .15 .05],...
-    'string','help','tag','help','callback',@xhelp,...
+    'string','help','tag','Help','callback',@xhelp,...
     'tooltipstring',['function help']);
-
 
 %close resultfiles
 h=uicontrol('style','pushbutton','units','norm','position',[.8 .8 .15 .05],...
     'string','close result windows','tag','closeresultwindows','callback',@closeresultwindows,'fontsize',6,...
     'tooltipstring','close open result windows');
 
-
-%--------between vs within
-h=uicontrol('style','checkbox','units','norm','position',[.1 .65 .2 .05],'string','within',...
+%get Batch
+h=uicontrol('style','pushbutton','units','norm','position',[0.80096 0.74997 0.15 0.05],...
+    'string','get batch','tag','getbatch','callback',@getbatch,'fontsize',6,...
+    'tooltipstring','get batch/code');
+% ==============================================
+%%    -between vs within
+% ===============================================
+h=uicontrol('style','checkbox','units','norm','position',[0.11348 0.64998 0.2 0.05],...
+    'string','within',...
     'tag','F1design','backgroundcolor','w','callback',@call_f1design,...
-    'tooltipstring',['testing type:' char(10) ...
+    'tooltipstring',[...'testing type:' char(10) ...
+    '<b> Between vs Within Test-Type. </b>' char(10) ...
     ' [ ] BETWEEN DESIGN: compare independent groups ' char(10) ...
-    ' [x] WITHIN DESIGN:  compare same mice at different time points ' char(10) ...
-    '<font color="black">command: <b><font color="green">within</font>'...
+    ' [x] WITHIN DESIGN:  compare within the same anima (different time points) ' char(10) ...
+    ...
+    '<b><font color="blue">command: </b>   "within"' char(10) ...
+    '<font color="black">dtistat(''set'', ''within'',0); <font color="green">% use BETWEEN (two-sample/independent design)>' char(10) ...
+    '<font color="black">dtistat(''set'', ''within'',1); <font color="green">% ues WITHIN(dependent design)</font>' char(10) ...
     ]);
+
+
+
 
 % ==============================================
 %%   type of test
 % ===============================================
 h=uicontrol('style','popupmenu','units','norm','position',[.15 .65 .2 .05],...
-    'string',{'ttest2' 'WST' 'permutation','permutation2'},'tag','testsbetween',...
+    'string',{'ttest2' 'WST' 'permutation','permutation2' 'BM'},'tag','testsbetween',...
     'position',[.2 .645 .1 .05],'tag','typeoftest1',...
-    'tooltipstring',['Type of test type:' char(10) ...
-    ' *** BETWEEN DESIGN ' char(10) ...
-    '   ttest2 (parametric) ' char(10) ...
-    '   WST,aka Wilcoxon rank sum test (non-parmametric) ' char(10) ...
-    '   permutation/permutation2: two different permutation tests' char(10) ...
+    'tooltipstring',[...
+    '<b>Type of statistical test.:</b>' char(10) ...
+    ' <b>*** BETWEEN DESIGN </b>' char(10) ...
+    '  * ttest2 (parametric) ' char(10) ...
+    '  * WST,aka Wilcoxon rank sum test (non-parmametric) ' char(10) ...
+    '  * permutation/permutation2: two different permutation tests' char(10) ...
+    '  * Brunner-Munzel (BM) test' char(10) ...
+    '<b>-----------------------------------' char(10) ...
+    ' <b>*** WITHIN DESIGN </b>'  char(10) ...
+    '<font color="red">        ..not implemented so far! </font>' char(10) ...
     '      ' char(10)...
-    ' *** WITHIN DESIGN ' char(10) ...
-    '    ..not implemented so far'    char(10) ...
-    '<font color="black">command: <b><font color="green">test</font>'...
+    ...
+    '<b><font color="blue">command: </b>   "test"' char(10) ...
+    '<font color="black">dtistat(''set'', ''test'',''ttest2''); <font color="green">%use two-sample t-test</font>' char(10) ...
+    '<font color="black">dtistat(''set'', ''test'',''WST'');    <font color="green">%use Wilcoxon rank sum test</font>' char(10) ...
+    
+    ]);
+
+
+%% TAIL
+h=uicontrol('style','popup','units','norm','position',[0.30991 0.66426 0.1 0.03],...[0.43847 0.66664 0.1 0.03],...
+    'string',{'both','left','right'},...
+    'tag','tail','backgroundcolor','w','value',1,'HorizontalAlignment','left','fontsize',7,...
+    'tooltipstring',...
+    ['<b>' 'tail of statistical test' '</b>' char(10) ...
+    '<b><font color="blue">command: </b>   "tail"' char(10) ...
+    '<font color="black">dtistat(''set'',''tail'',''left''); <font color="green">%  set test direction to left-side</font>' char(10) ...
+    '<font color="black">dtistat(''set'',''tail'',''both''); <font color="green">%  undirected test</font>' char(10) ...
     ]);
 
 % ==============================================
@@ -646,61 +767,131 @@ h=uicontrol('style','popupmenu','units','norm','position',[.15 .65 .2 .05],...
 h=uicontrol('style','checkbox','units','norm','position',[.01 .55 .2 .05],'string','use FDR',...
     'tag','isfdr','backgroundcolor','w','value',us.isfdr,'fontsize',7,...
     'tooltipstring',...
-    ['use FDR for treatment of multiple comparisons (MCP)' char(10) ...
-    '<font color="black">command: <b><font color="green">FDR</font>'...
+   ['<b> use FDR for treatment of multiple comparisons (MCP). </b>' char(10) ...
+    '<b><font color="blue">command: </b>   "FDR"' char(10) ...
+    '<font color="black">dtistat(''set'', ''FDR'',0); <font color="green">%do not use FDR</font>' char(10) ...
+    '<font color="black">dtistat(''set'', ''FDR'',1); <font color="green">%       use FDR</font>' char(10) ...
+
+    
     ]);
 
 % showSigs
 h=uicontrol('style','checkbox','units','norm','position',[.15 .55 .2 .05],'string','show SIGs only',...
     'tag','showsigsonly','backgroundcolor','w','value',us.showsigsonly,'fontsize',7,...
     'tooltipstring',...
-    ['show significant results only' char(10) ...
-    '<font color="black">command: <b><font color="green">showsigsonly</font>'...
+    ['<b> Show significant results only. </b>' char(10) ...
+    '<b><font color="blue">command: </b>   "showsigsonly"' char(10) ...
+    '<font color="black">dtistat(''set'', ''showsigsonly'',0); <font color="green">%show full result</font>' char(10) ...
+    '<font color="black">dtistat(''set'', ''showsigsonly'',1); <font color="green">%show significant results</font>' char(10) ...
+
     ]);
 
 %sort
 h=uicontrol('style','checkbox','units','norm','position',[.32 .55 .2 .05],'string','sort Results',...
     'tag','issort','backgroundcolor','w','value',us.issort,'fontsize',7,...
     'tooltipstring',...
-    ['sort Results according p-value' char(10) ...
-    '<font color="black">command: <b><font color="green">sort</font>'...
+    ['<b>Sort results according p-value. </b>' char(10) ...
+    '<b><font color="blue">command: </b>   "sort"' char(10) ...
+    '<font color="black">dtistat(''set'', ''sort'',0); <font color="green">%do not sort result</font>' char(10) ...
+    '<font color="black">dtistat(''set'', ''sort'',1); <font color="green">%sort results</font>' char(10) ...
+
     ]);
 
 %reverse contrast
 h=uicontrol('style','checkbox','units','norm','position',[.47 .55 .2 .05],'string','reverse contrast',...
     'tag','reversecontrast','backgroundcolor','w','value',us.reversecontrast,'fontsize',7,...
-    'tooltipstring',['Reverse Contrast/Groups:' char(10) ...
-    '  [ ] A>B, where "A" and "B" are the groups to be compared ' char(10) ...
-    '  [x] B>A, .. flip contrast ' char(10) ...
-    '<font color="black">command: <b><font color="green">rc</font>'...
+    'tooltipstring',[...
+    '<b> Reverse order of Groups: </b>' char(10) ...
+    '  [ ] A vs B, where "A" and "B" are the groups to be compared ' char(10) ...
+    '  [x] B vs A, .. flip group order' char(10) ...
+    '<b><font color="red"> This changes only the sign of the statistical test-value (t-value)! </font></b>' char(10) ...
+    '<b><font color="blue">command: </b>   "rc"' char(10) ...
+    '<font color="black">dtistat(''set'', ''rc'',1); <font color="green">%reverse group-order</font>' char(10) ...
+
     ]);
 
 
 
-%% qvalue
+%% qFDR-value
+tt=['<b> Desired false discovery rate. {default: 0.05}. </b>' char(10) ...
+    '<b><font color="blue">command: </b>   "qFDR"' char(10) ...
+    '<font color="black">dtistat(''set'', ''qFDR'',0.01); <font color="green">%set q-FDR to 0.01</font>' char(10) ...
+
+    ];
+%EDIT
 h=uicontrol('style','edit','units','norm','position',[.01 .52 .05 .03],'string',num2str(us.qFDR),...
     'tag','qFDR','backgroundcolor','w','value',1,'fontsize',7,...
-     'tooltipstring',...
-     ['desired false discovery rate. {default: 0.05}' char(10) ...
-    '<font color="black">command: <b><font color="green">qFDR</font>'...
-    ]);
-
- 
+    'tooltipstring',tt);
+%label
 h=uicontrol('style','text','units','norm','position',[.06 .52 .05 .03],'string','qFDR',...
-    'backgroundcolor','w');
+    'backgroundcolor','w','tooltipstring',tt);
 
 
 %% noSeeds
-tt=[' number of seeds (noSeeds)' char(10) ...
+tt=['<b> Number of seeds (noSeeds)  </b>' char(10) ...
     ' connectivity-matrizes (weights) will be normalized by noSeeds prior calculation of connectivity metrics' char(10) ...
-    '<font color="black">command: <b><font color="green">nseeds</font>'...
+    '<font color="red">not used for MRtrix data!</font>' char(10) ...
+    '<b><font color="blue">command: </b>   "nseeds"' char(10) ...
+    '<font color="black">dtistat(''set'', ''nseeds'',1e6); <font color="green">%set number of seets to 1e6</font>' char(10) ...
     ];
-h=uicontrol('style','edit','units','norm','position',[.8 .52 .1 .03],'string',num2str(us.noSeeds),...
+h=uicontrol('style','edit','units','norm','position',[0.83132 0.6095 0.1 0.03],'string',num2str(us.noSeeds),...
     'tag','noSeeds','backgroundcolor','w','value',1,'HorizontalAlignment','left',...
     'tooltipstring',tt,'fontsize',7);
 
 h=uicontrol('style','text','units','norm','string','noSeeds',...
-    'backgroundcolor','w','position',[.7 .52 .1 .03],'HorizontalAlignment','right', 'tooltipstring',tt);
+    'backgroundcolor','w','position',[0.72418 0.6095 0.1 0.03],'HorizontalAlignment','right', 'tooltipstring',tt);
+
+
+%% proportional threshold
+h=uicontrol('style','checkbox','units','norm','position',[0.74739 0.54998 0.2 0.05],...
+    'string','proport threshold',...
+    'tag','isproportthreshold','backgroundcolor','w','value',us.isproportthreshold,'fontsize',7,...
+    'tooltipstring',...
+    ['<b>' 'use propotional threshold to threshold data' '</b>' char(10) ...
+    '<font color="black">! <b><font color="red">for MRtrix data only !</font></b>' char(10) ...
+    ...
+    '<b><font color="blue">command: </b>   "propthresh"' char(10) ...
+    '<font color="black">dtistat(''set'', ''propthresh'',0); <font color="green">%  no proportional threshold</font>' char(10) ...
+    '<font color="black">dtistat(''set'', ''propthresh'',1); <font color="green">%  use proportional threshold</font>' char(10) ...
+    ]);
+
+%% threshold-txt
+tt= ['threshold value when use propotional threshold to threshold data'  ...
+    '<br><font color="black">! <b><font color="red">for MRtrix data only !</font></b>' ...
+    '<br>"thresholds" the connectivity matrix by preserving a ' ....
+    '<br> proportion p (value between 0 and 1) of the strongest weights. All other weights, and' ...
+    '<br>all weights on the main diagonal (self-self connections) are set to 0.'...
+    '<br>-----------------------'...
+    '<br>if value is set to "max" : a threshold with the maximal small worldness-score is used  '...
+    '<br>otherwise set value for example to 0.2 (keep 20% data)  ,0.8 (keep 80% data)...  '...
+    '<br>'...
+    '<b><font color="blue">command: </b>   "thresh"'  char(10) ... ...
+    '<font color="black">dtistat(''set'',''thresh'',''max''); <font color="green">%use threshold with the maximal small worldness-score</font>' char(10) ...
+    '<font color="black">dtistat(''set'',''thresh'',0.2); <font color="green">%keep 20% of data</font>' char(10) ...
+
+    ];
+
+h=uicontrol('style','text','units','norm','string','threshold',...
+    'backgroundcolor','w','position',[0.74561 0.51903 0.1 0.03],'HorizontalAlignment','right', 'tooltipstring',tt);
+%% threshold-edit
+h=uicontrol('style','edit','units','norm','position',[0.85275 0.5238 0.07 0.03],'string',num2str(us.threshold),...
+    'tag','threshold','backgroundcolor','w','value',1,'HorizontalAlignment','left',...
+    'tooltipstring',tt,'fontsize',7);
+
+% %% logarithmize
+h=uicontrol('style','checkbox','units','norm','position',[0.80453 0.47856 0.13 0.03],...
+    'string','logarithmize',...
+    'tag','logarithmize','backgroundcolor','w','value',us.logarithmize,'fontsize',7); 
+ set(h,'tooltipstr',...
+     ['<b>' 'logarithmize data' '</b>' char(10) ...
+    '<b><font color="blue">command: </b>   "log"' char(10) ...
+    '<font color="black">dtistat(''set'', ''log'',0); <font color="green">%  use raw data</font>' char(10) ...
+    '<font color="black">dtistat(''set'', ''log'',1); <font color="green">%  logarithmize data</font>' char(10) ...
+    ]);
+
+
+
+
 
 % ==============================================
 %%   TYPE OF CALCULATION
@@ -709,21 +900,23 @@ h=uicontrol('style','text','units','norm');
 set(h,'position',[0.1 .45 .2 .03],'backgroundcolor','w', 'string',' calculate..');
 
 
-%DTI-PARAMETER
-h=uicontrol('style','pushbutton','units','norm','position',[0 .4 .2 .05],...
-    'string','stat DTI parameter',...
-    'tag','statDTIparameter','backgroundcolor',[0.8941    0.9412    0.9020],'callback',@statDTIparameter,...
-    'tooltipstring',...
-    ['calculate statistic for DTI parameter' char(10) ...
-    '<font color="black">command: <b><font color="green">calcparameter</font>'...
-    ]);
+% %DTI-PARAMETER
+% h=uicontrol('style','pushbutton','units','norm','position',[0 .4 .2 .05],...
+%     'string','stat DTI parameter',...
+%     'tag','statDTIparameter','backgroundcolor',[0.8941    0.9412    0.9020],'callback',@statDTIparameter,...
+%     'tooltipstring',...
+%     ['calculate statistic for DTI parameter' char(10) ...
+%     '<font color="black">command: <b><font color="green">calcparameter</font>'...
+%     ]);
 %DTI-CONNECTIVITIES
-h=uicontrol('style','pushbutton','units','norm','position',[0.2 .4 .2 .05],...
+h=uicontrol('style','pushbutton','units','norm','position',[0.099197 0.40238 0.2 0.05], ...[0.2 .4 .2 .05],...
     'string','stat Connectivity',...
     'tag','statconnectivity','backgroundcolor',[0.8941    0.9412    0.9020],'callback',@statconnectivity,...
     'tooltipstring',...
-    ['calculate statistic for connectivity data' char(10) ...
-    '<font color="black">command: <b><font color="green">calcconnectivity</font>'...
+    ['<b>' 'calculate statistic for connectivity data' '</b>' char(10) ...
+       ...
+    '<b><font color="blue">command: </b>   "calcconnectivity"' char(10) ...
+    '<font color="black">dtistat(''calcconnectivity''); <font color="green">%  calculate the statistic</font>' char(10) ...
     ]);
 
 
@@ -737,8 +930,12 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.43 .4 .15 .05],...
     'string','load calculation',...
     'tag','calcLoad','backgroundcolor','w','callback',@calcLoad,...
     'tooltipstring',...
-    ['load a calculation' char(10) '..useful for timeconsuming calculations' char(10) ...
-    '<font color="black">command: <b><font color="green">loadcalc</font>'...
+    ['<b>' 'load a calculation' char(10) '..useful for timeconsuming calculations'  '</b> ' char(10) ...
+    'Calculation must be performed and saved before loading a calculation.' char(10) ...
+    ...
+    '<b><font color="blue">command: </b>   "loadcalc"' char(10) ...
+    '<font color="black">dtistat(''loadcalc''); <font color="green">%  load calculation via userInterface </font>' char(10) ...
+    '<font color="black">dtistat(''loadcalc'', ''myCalc.mat''); <font color="green">%  load calculation "myCalc.mat" </font>' char(10) ...
     ]);
 
 %SAVECALC
@@ -746,8 +943,11 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.58 .4 .15 .05],...
     'string','save calculation',...
     'tag','calcSave','backgroundcolor','w','callback',@calcSave,...
     'tooltipstring',...
-    ['save a calculation' char(10) '..useful for timeconsuming calculations' char(10) ...
-    '<font color="black">command: <b><font color="green">savecalc</font>'...
+    ['<b>' 'save a calculation' '</b> ' char(10)...
+    '..useful for timeconsuming calculations' char(10) ...
+    '<b><font color="blue">command: </b>   "savecalc"' char(10) ...
+   ...
+   '<font color="black">dtistat(''savecalc'',''myCalc.mat''); <font color="green">%  save calculation "myCalc.mat" </font>' char(10) ...
     ]);
 % ==============================================
 %%   Show results
@@ -755,10 +955,12 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.58 .4 .15 .05],...
 
 h=uicontrol('style','pushbutton','units','norm','string','show Results',...
     'tag','redisplay','backgroundcolor','w','callback',@redisplay,'fontweight','bold');
-set(h,'position',[0.13 .35 .14 .05],'backgroundcolor','w');
+set(h,'position',[0.13 .35 .14 .05],'backgroundcolor',[1.0000    0.8431         0]);
 set(h,'tooltipstring',...
     ['Show tabled results' char(10) ...
-    '<font color="black">command: <b><font color="green">show</font>'...
+    '<b><font color="blue">command: </b>   "showresult"' char(10) ...
+    '<font color="black">dtistat(''showresult''); <font color="green">%  show Results in extra window </font>' char(10) ...
+
     ]);
 % ==============================================
 %%   plot results
@@ -770,7 +972,7 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.13 .3 .14 .05],...
     'tooltipstring','visualize results: for type of visulization see right pulldown menu');
 
 h=uicontrol('style','popupmenu','units','norm','position',[0.27 .3 .15 .05],...
-    'string',{'matrix' 'plot3d'},'tag','menuplot','backgroundcolor','w',...
+    'string',{'matrix' 'matrix_oldversion' 'plot3d'},'tag','menuplot','backgroundcolor','w',...
     'tooltipstring','type of visualization to show');
 % ==============================================
 %%   export
@@ -779,10 +981,31 @@ h=uicontrol('style','popupmenu','units','norm','position',[0.27 .3 .15 .05],...
 h=uicontrol('style','pushbutton','units','norm','position',[0.13 .25 .14 .05],...
     'string','export Results',...
     'tag','export','backgroundcolor','w','callback',@export,...
-    'tooltipstring',...
-    ['export results (excelfile)' char(10) ...
-    '<font color="black">command: <b><font color="green">export</font>'...
+    'tooltipstring',[...
+    '<b> EXPORT/Save Results: ' '</b>' char(10) ...
+    '<b><font color="blue">command: </b>   "export"' char(10) ...
+    '<font color="black">dtistat(''export'',''test1.xlsx''); <font color="green">% use default exportType, save Excelfile "test1.xlsx" </font>' char(10) ...
+    '<font color="black">dtistat(''export'',''test1.xlsx'',''exportType'',1); <font color="green">%  use exportType-"1", save Excelfile "test1.xlsx" </font>' char(10) ...
     ]);
+
+list={'EXCEL:separate sheets' 'EXCEL:single sheet (old style)'};
+listtt=cellfun(@(a,b){[' '  num2str(a) ')' b ]} ,num2cell(1:length(list)),list);
+h=uicontrol('style','popupmenu','units','norm','position',[0.27062 0.24763 0.15 0.05],...
+    'string',list,'tag','exportType','backgroundcolor','w',...
+    'fontsize',7,    'value',1,...
+    'tooltipstring',[...
+    '<b> EXPORT OPTION: ' '</b>' char(10) ...
+    strjoin(listtt,char(10))  char(10) ...
+    '<b><font color="blue">command: </b>   "exportType"' char(10) ...
+    '<font color="black">dtistat(''set'',''exportType'',1);<font color="green">%set exportType to "1"</font>' char(10) ...
+    '<font color="black">dtistat(''export'',''test1.xlsx'',''exportType'',1);<font color="green">%set exportType to "1" and save Excelfile "test1.xlsx" </font>' char(10) ...
+...
+    ]);
+
+% ==============================================
+%%   export volume
+% ===============================================
+
 
 h=uicontrol('style','pushbutton','units','norm','position',[0.13 .20 .14 .05],...
     'string','export4xvol3d','fontsize',7,...
@@ -793,7 +1016,29 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.13 .20 .14 .05],..
     '<font color="black">command: <b><font color="green">export4xvol3d</font>'...
     ]);
 
-% 
+%
+
+% ==============================================
+%%   resize matrix
+% ===============================================
+h=uicontrol('style','pushbutton','units','norm','position',[0.53668 0.85711 0.14 0.05],...[0.004557 0.92853 0.14 0.05],...
+    'string','change matrix',...
+    'tag','reshapeMatrix','backgroundcolor','w','callback',@cb_reshapeMatrix,...
+    'tooltipstring',...
+    ['reduce DTI data Matrix:' char(10) ...
+    'reduce matrix to connections of interest' char(10) ...
+    'and save the reduced data-matrix' char(10) ...
+    %'<font color="black">command: <b><font color="green">export</font>'...
+    ]);
+
+% ==============================================
+%%   separatorLines
+% ===============================================
+h=uicontrol('style','pushbutton','units','norm','backgroundcolor','r');
+set(h,'position',[0.004557 0.71902 0.6 0.005]);
+
+h=uicontrol('style','pushbutton','units','norm','backgroundcolor','r');
+set(h,'position',[0.004557 0.49761 0.6 0.005]);
 
 
 % ==============================================
@@ -810,7 +1055,7 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.13 .20 .14 .05],..
 
 
 
-tooltip2html(); %make HTML-tooltips 
+tooltip2html(); %make HTML-tooltips
 % ==============================================
 %%     inputs
 % ===============================================
@@ -819,7 +1064,7 @@ tooltip2html(); %make HTML-tooltips
 % ===============================================
 
 function tooltip2html();
-%make HTML-tooltips 
+%make HTML-tooltips
 hf=findobj(0,'tag','dtistat');
 ch=get(hf,'children');
 for i=1:length(ch)
@@ -858,6 +1103,56 @@ file=fullfile(pax,[name '.mat']);
 w=load(file);
 set(hf,'userdata',w.u);
 % disp(['loaded existing calculation: ' file]);
+
+% update GUI parameter -------------
+if isfield(w.u.pw,'z')==1
+    z= w.u.pw.z;
+    
+    
+    try;  set(findobj(hf,'tag','issort')       , 'value',  z.issort  );catch; disp(lasterr); end
+    try;    set(findobj(hf,'tag','isfdr')        , 'value',  z.isfdr  );catch; disp(lasterr); end
+    try;    set(findobj(hf,'tag','showsigsonly') , 'value',  z.showsigsonly  );catch; disp(lasterr); end
+    
+    try;    set(findobj(hf,'tag','qFDR') , 'string',  num2str(z.qFDR)  );catch; disp(lasterr); end
+    try;    set(findobj(hf,'tag','noSeeds') , 'string',  num2str(z.noSeeds)  );catch; disp(lasterr); end
+    
+    try;     set(findobj(hf,'tag','reversecontrast') , 'value',  z.reversecontrast  );catch; disp(lasterr); end
+    
+    try;     hb=findobj(hf,'tag','typeoftest1');
+        set(hb,'value',find(strcmp(hb.String,z.Test)));
+    catch; disp(lasterr); end
+    
+    
+    try;    set(findobj(hf,'tag','inputsource')        , 'value',  z.inputsource  );   catch; disp(lasterr); end
+    try;     set(findobj(hf,'tag','isproportthreshold') , 'value',  z.isproportthreshold  );catch; disp(lasterr); end
+    try;     set(findobj(hf,'tag','threshold')          , 'string', num2str(z.threshold)  );catch; disp(lasterr); end
+    try;     set(findobj(hf,'tag','logarithmize')       , 'value',  z.logarithmize  );catch; disp(lasterr); end
+    
+    %     vartype=1;
+    % % us.typeoftest1=1;  %[1]ttest2,[2]WRS
+    % hf=findobj(0,'tag','dtistat');
+    % z.issort        =get(findobj(hf,'tag','issort'),'value');
+    % z.isfdr         =get(findobj(hf,'tag','isfdr'),'value');
+    % z.showsigsonly  =get(findobj(hf,'tag','showsigsonly'),'value');
+    % z.qFDR          =str2num(get(findobj(hf,'tag','qFDR'),'string'));
+    % z.vartype       =vartype;
+    % z.noSeeds       =str2num(get(findobj(hf,'tag','noSeeds'),'string'));
+    %
+    % hb=findobj(gcf,'tag','typeoftest1');
+    % z.Test         =hb.String{hb.Value};
+    %
+    % z.inputsource         = get(findobj(hf,'tag','inputsource'),'value');
+    %
+    % z.isproportthreshold  = get(findobj(hf,'tag','isproportthreshold'),'value');
+    % z.threshold           = get(findobj(hf,'tag','threshold'),'string');
+    % z.logarithmize        = get(findobj(hf,'tag','logarithmize'),'value');
+    %
+    
+    
+end
+
+%-----------------------------------
+
 cprintf([1 0 1],['loaded: '  strrep(file,filesep,[filesep filesep])  '\n' ]);
 % ==============================================
 %%    SAVE CALC
@@ -884,7 +1179,7 @@ end
 if isempty(pax); pax=pwd; end
 file=fullfile(pax,[name '.mat']);
 
-   
+
 save(file,'u');
 % disp('calculation saved');
 showinfo2(['calculation saved: ' ] ,file );
@@ -1053,7 +1348,7 @@ set(hf,'userdata',us);
 
 htests=findobj(hf,'tag','typeoftest1');
 if val==0 %between
-    set(htests,'string',{'ttest2' 'WST' 'permutation' 'permutation2'});
+    set(htests,'string',{'ttest2' 'WST'  'permutation' 'permutation2' 'BM'});
 else
     set(htests,'string',{'ttest' 'xx' 'yy'});
 end
@@ -1073,10 +1368,14 @@ confiles
 
 
 function groupfile(file)
+cprintf([1 0 1],['loading group-assignment (xls-file)...wait..' ]);
+
 hf=findobj(0,'tag','dtistat');
 us=get(hf,'userdata');
-cprintf([1 0 1],['loading group-assignment (xls-file)...wait..' ]);
-if exist('file')==0
+try
+[pas fis ext]=fileparts(file);
+end
+if exist('file')==0 || isempty(ext)
     
     [fi pa]=uigetfile(pwd,'select group assignment file (excel file)','*.xls');
     if pa==0;
@@ -1085,7 +1384,11 @@ if exist('file')==0
     end
     file=fullfile(pa,fi);
 end
-
+file=char(file);
+[pathx xname ext]=fileparts(file);
+if isempty(pathx)
+    file=fullfile(pwd,[xname ext]) ;
+end
 
 us.groupfile=file;
 set(hf,'userdata',us);
@@ -1094,6 +1397,13 @@ set(hf,'userdata',us);
 [~,~,a]=xlsread(file);
 cprintf([1 0 1],['done.\n' ]);
 a(1,:)=[];
+
+idel=find(strcmp(cellfun(@(a){[ num2str(a)]} , a(:,1)),'NaN'));
+a(idel,:)=[];
+a=cellfun(@(a){[ num2str(a)]},a); % to string
+a(regexpi2(a(:,1),'NaN'),:)=[] ; %remove nan
+a(regexpi2(a(:,2),'NaN'),:)=[] ;
+
 cprintf([0 .5 0],['==========================================\n' ]);
 cprintf([0 .5 0],['       group-assignment\n' ]);
 cprintf([.5 .5 .5],['The first two columns constitute the animal name and the group assignment, respectively. \n' ]);
@@ -1101,9 +1411,6 @@ disp(a);
 cprintf([0 .5 0],['==========================================\n' ]);
 
 
-a=cellfun(@(a){[ num2str(a)]},a); % to string
-a(regexpi2(a(:,1),'NaN'),:)=[] ; %remove nan
-a(regexpi2(a(:,2),'NaN'),:)=[] ;
 tb=tabulate((a(:,2)));
 gp='';
 for i=1:size(tb,1)
@@ -1129,7 +1436,7 @@ if exist('par')==1
     if isfield(par,'paramfiles')
         if sum(strcmp(par.paramfiles,'paramfiles'))==0
             files=par.paramfiles;
-        end 
+        end
     end
 end
 
@@ -1216,6 +1523,29 @@ cprintf([repmat(.6,[1 3])],['Done.\n' ]);
 us.dtiparameter=d2;
 set(hf,'userdata',us);
 
+
+% ==============================================
+%%     load connectivity files
+% ===============================================
+function cb_reshapeMatrix(e,e3)
+
+
+dti_changeMatrix;
+cprintf([0 .5 0],[ 'DONE.' '\n' ]);
+
+% 'a'
+%
+%
+% s=dbstack;
+% % line=s(2).line;
+% [s.name ': ' num2str(s.line)];
+%
+% which([mfilename '.m'])
+% eval(['edit ' which([mfilename '.m']) ]);
+% hEditor = matlab.desktop.editor.getActive;
+% hEditor.goToLine(s.line);
+
+
 % ==============================================
 %%     load connectivity files
 % ===============================================
@@ -1241,9 +1571,18 @@ end
 % ===============================================
 if exist('par')==1
     if isfield(par,'confiles') ==1;     files    =cellstr(par.confiles);      end
-    if isfield(par,'labelfile')==1;     labelfile=cellstr(par.labelfile);      end 
+    if isfield(par,'labelfile')==1;     labelfile=cellstr(par.labelfile);      end
 end
 
+if exist('files')~=0
+    if iscell(files) %
+        if isempty(files) || strcmp(files{1},'confiles')==1
+            clear files
+        end
+    else
+        clear files
+    end
+end
 
 % ==============================================
 %%  CONFILES
@@ -1285,7 +1624,7 @@ if exist('files')==0
     
     % [fi,sts] = cfg_getfile2(inf,'mat',msg,[],pwd,'.*rk4_end.mat|.*_connectivities.mat');
     [fi,sts] = cfg_getfile2(inf,dtype,msg,[],pwd, flt);
-      
+    
 else
     fi=files;
 end
@@ -1294,15 +1633,15 @@ end
 %%   LABEL-FILE
 % ===============================================
 if source==2 %mrtrix
-  if exist('labelfile')  ~=1
-    msg={'select one(!) label-file (*.txt) for MRtrix'};
-    [fi2,sts] = cfg_getfile2(1,'any',msg,[],pwd, '.*.txt');
-    labelfile=char(fi2);
-    if isempty(char(fi))
-        cprintf([1 0 1],['process aborted\n' ]);
-        return
+    if exist('labelfile')  ~=1
+        msg={'select one(!) label-file (*.txt) for MRtrix'};
+        [fi2,sts] = cfg_getfile2(1,'any',msg,[],pwd, '.*.txt');
+        labelfile=char(fi2);
+        if isempty(char(fi))
+            cprintf([1 0 1],['process aborted\n' ]);
+            return
+        end
     end
-  end
 end
 
 % ==============================================
@@ -1343,7 +1682,7 @@ end
 
 cprintf([1 0 1],['selection of DTI data done.\n' ]);
 
-
+c={};
 con=[];
 names={};
 for i=1:size(fi,1)
@@ -1357,7 +1696,12 @@ for i=1:size(fi,1)
         [~,namex]=fileparts(fi{i});  %mousename
         ac=a.connectivity;           %connectMAtrix
     elseif source==2
-        ac   =csvread(fi{i});
+        try
+            ac   =csvread(fi{i});
+        catch
+            msgbox(['failed to read:' fi{i}]);
+            error(['failed to read:' fi{i}]);
+        end
         namex=namesMRtrix{i};
         label=t(:,2);
     end
@@ -1392,6 +1736,10 @@ for i=1:size(fi,1)
         connames=la(ind)  ;
     end
     
+    % adding entire matrix for proport threshold
+    c.info_mat_ind={'mat: matrices' 'ind:index for condata "condatat=mat(ind) "'};
+    c.mat(:,:,i)=ac;
+    c.ind       =ind;
     
     
     %% check
@@ -1399,8 +1747,9 @@ for i=1:size(fi,1)
 end
 cprintf([0 0 1],['Done.\n']);
 
-c={};
+% c={};
 c.mousename=names;
+c.lutfile  =char(labelfile);
 c.files    =files;
 c.conlabels=connames;
 c.condata  =con;
@@ -1412,6 +1761,179 @@ c.label      =label;
 us.con=c;
 
 set(hf,'userdata',us);
+
+
+
+
+
+function [out expo]=calc_networkparameter(x,y, us,z)
+% out: output as text document
+% expo: output for export (cell)
+out=[];
+noSeeds=z.noSeeds;
+
+% ==============================================
+%%    %%   params
+% ===============================================
+%     z.f1design   =0;
+%     z.typeoftest1=1;
+%     z.vartype    =1;
+%     z.qFDR       =0.05;
+%     z.issort    =1;
+%     z.showsigsonly=1;
+%
+
+
+% ==============================================
+%%   construct matrizes
+% ===============================================
+
+iv=[ones(1,size(x,2))   2*ones(1,size(y,2))];
+su=[x y];
+
+si=us.con.size;
+cmat=zeros([si length(iv)]);
+for i=1:length(iv)
+    v=su(:,i);
+    s=zeros(prod(si),1);
+    s(us.con.index)=v;
+    s=reshape(s,[si]);
+    s2=s+s';
+    s2(isnan(s2))=0;
+    cmat(:,:,i)  =s2;
+end
+
+% ==============================================
+%%          get nw-parameter
+% ===============================================
+if ~isempty(regexpi(us.con.files{1},'.csv$')); %FOR MATRIX: - do not Seed-division
+    d=cmat;
+    disp('    - no division by number of seeds');
+    
+else
+    d=cmat./noSeeds;     % normalize weights by number of seeds (  %noSeeds=10^6;)
+    disp(['    - division by number of seeds ('  num2str(noSeeds) ')']  );
+end
+% clc;
+disp('calc network metrics');
+cprintf([1 0 1],[' *** CALC NETWORK METRICS  ***  \n' ]);
+cprintf([0.4941    0.4941    0.4941],['..depending of the number of nodes..this process might take a while  \n' ]);
+cprintf([0.4941    0.4941    0.4941],['..use [save calculation] to save the calculation connectivity statistic afterwards..   \n' ]);
+cprintf([0.4941    0.4941    0.4941],['..use [load calculation] to load an already calculated connectivity statistic (i.e. omit re-calculation)   \n' ]);
+
+cprintf([0 0.45 0],[' ONSET: ' datestr(now,'HH:MM:SS') '; #ANIMAL: ' num2str(size(d,3))  ...
+    '; #NODES: '  num2str(size(d,1)) '\n' ]);
+
+%
+%==================================== select data /testbed  ===============================================================
+% d2=d(1:10,1:10,:); %check
+%  d2=d(1:50,1:50,:);%check
+%   d2=d(1:100,1:100,:);%check
+d2     = d; %FINAL
+label2 = us.con.label(1:size(d2,1));
+
+%==================================== Parallel PROC if [PCT] available  =============================================
+try
+    cpus=feature('numCores');
+    pp = gcp('nocreate');
+    if isempty(pp)
+        parpool( cpus);
+    else
+        %poolsize = p.NumWorkers
+    end
+    % delete(gcp('nocreate'))
+end
+
+%===================================== ================================================
+% ==============================================
+%%   SMALL WORLDNESS-1
+% ===============================================
+% % % addpath('C:\Users\skoch\Desktop\mdhumphries-SmallWorldNess-cb091b4');
+% % % disp('lin-2458');
+
+if z.inputsource==2
+    swtype     =[1 2];
+    %     stepsize   = 0.1;
+    %     doplot     = 1;
+    %     d2=smallwordnesswrapper(d2,swtype,stepsize,doplot);
+    swordl=[];
+    for i=1:size(d2,3)
+        atic=tic;
+        [dum  swlabel]=   smallworldness_sub(double(d2(:,:,i)>0),swtype) ;
+        swordl(i,:)=dum;
+        %disp( [ 't2_(min):' num2str(toc(atic)/60)]);
+        
+    end
+    swordLabel=swlabel ;% {'S_ws' 'S_trans' 'S_ws_MC' 'S_trans_MC'};
+end
+
+% return
+%===================================== REFERENCE PROGRESSBAR================================================
+N  =size(d2,3) ;
+
+tic
+cprintf([0 0.45 0],['  TARGET STATE: ' ]);
+for i=1:N
+    cprintf([0 0.45 0],['.|']);
+end
+fprintf(1,'\n');
+%===================================== PARFOR LOOP================================================
+cprintf([0.9294 0.6941 0.1255],[' CURRENT STATE:  ' ]);
+
+np =[];
+npv=[];
+vectorMetriclabel={};
+scalarMetriclabel={};
+parfor i=1:N
+    % for i=1:N
+    fprintf('\b.|\n');%fprintf(1,['.|']);
+    dx=d2(:,:,i);
+    ws= calcConnMetrics(dx);
+    np(:,i)    =ws.sc;   %SCALAR
+    npv(:,:,i) =ws.vec;  %VEC
+    
+    k=i;
+    if k==1
+        vectorMetriclabel{i} = ws.veclabel;  %vectorMetriclabel
+        scalarMetriclabel{i} = ws.sclabel;   %scalarMetricLabel
+    end
+end
+vectorMetriclabel=vectorMetriclabel{1};
+scalarMetriclabel=scalarMetriclabel{1}';
+% vecml     ={'efficiency_wei(dx,1)'  'modularity_und(dx)' 'clustering_coef_wu(dx)' 'degrees_und(dx)'};
+% paramlabel=['assortativity_wei(dx,0)'      'transitivity_wu(dx)'   'efficiency_wei(dx,0)'  vecml]';
+
+
+cprintf([0 0.45 0],[' calculation DONE (ET: ' sprintf('%2.2f',toc/60)  'min).\n' ]);
+
+% ==============================================
+%%   SMALL WORLDNESS-2: update
+% ===============================================
+if z.inputsource==2
+    scalarMetriclabel =[scalarMetriclabel; swordLabel(:) ];
+    np         = ([np;swordl']);
+end
+% ==============================================
+%%   to struct
+% ===============================================
+nw.np        =np                  ;%scalarMetric
+nw.nplabel   =scalarMetriclabel   ;
+nw.npv       =npv                 ;%vectorMetric
+nw.npvlabel  =vectorMetriclabel   ;
+
+nw.label     =label2       ;
+nw.grpidx    =iv           ;
+
+% ==============================================
+%%   statistic
+% ===============================================
+% % %%
+% % if 1
+% %     nw=evalin('base','nw');
+% % end
+if z.f1design==0
+    [out expo]= indepstat_nwparameter(nw,z);
+end
 
 
 
@@ -1439,6 +1961,8 @@ end
 a(1,:)=[];
 a=cellfun(@(a){[ num2str(a)]},a);
 a=a(:,1:2);
+idel=find(strcmp(cellfun(@(a){[ num2str(a)]} , a(:,1)),'NaN')); %remove NAN
+a(idel,:)=[];
 % ==============================================
 %%   check order
 % ===============================================
@@ -1454,19 +1978,6 @@ else
     ids=regexprep(ids,'_Con.*|_con.*|_CON.*','');
     
 end
-
-
-%% check
-% delete some files/ids and reorder
-if 0
-    xx(5:8)=[];
-    a(10:15,:)=[];
-    a=flipud(a);
-end
-
-
-
-
 
 
 a2=a(:,1);
@@ -1507,22 +2018,6 @@ if ~isempty(idel)
 end
 
 
-if 0
-    a2(idel,:)=[];
-    a(idel,:) =[];
-    if param==1
-        xx(idel) =[];
-    elseif param==2
-        xx.mousename(idel)=[];
-        xx.condata(:,idel)=[];
-    end
-end
-
-
-%% check
-% a(1:6 ,2)  ={'v1'}
-% a(7:12,2)  ={'v2'}
-% a(13:end,2)={'v3'}
 
 disp('__________________________________________________')
 disp(' ASSIGNMENT (assignment-ID, DTI-idx, DTI-id)');
@@ -1549,7 +2044,7 @@ end
 %%    pairwisecomparisons
 % ===============================================
 comb   =combnk(grp,2);
-combstr=cellfun(@(a,b){[ a ' > ' b]},comb(:,1),comb(:,2));
+combstr=cellfun(@(a,b){[ a ' vs ' b]},comb(:,1),comb(:,2));
 
 grpsize=[];
 for i=1:length(grp)
@@ -1561,7 +2056,7 @@ end
 
 
 % combstr=cellfun(@(a,b){[ a ' > ' b]},comb(:,1),comb(:,2));
-us.contrast=[[grp{1} '>' grp{2}]];
+us.contrast=[[grp{1} ' vs ' grp{2}]];
 us.grpnames=grp ;%comb;
 us.grpsize=grpsize;
 
@@ -1605,7 +2100,8 @@ for i=1:max(len)
 end
 disp('____________________________________________________________________________________________');
 
-
+disp(char(plog([],[{ ['GroupName  (N=' num2str(sum(us.grpsize)) ')' ]   'n'};...
+    [us.grpnames(:) num2cell(us.grpsize)']],0,'Sub-groups','s=8')));
 
 
 
@@ -1639,6 +2135,71 @@ z.showsigsonly  =get(findobj(hfig,'tag','showsigsonly'),'value');
 z.qFDR          =str2num(get(findobj(hfig,'tag','qFDR'),'string'));
 z.vartype       =vartype;
 z.noSeeds       =str2num(get(findobj(hfig,'tag','noSeeds'),'string'));
+
+hb=findobj(gcf,'tag','typeoftest1');
+z.Test         =hb.String{hb.Value};
+z.reversecontrast        = get(findobj(hfig,'tag','reversecontrast'),'value');
+
+
+% ==============================================
+%%   proportional threshold data
+% ===============================================
+
+z.inputsource         = get(findobj(hfig,'tag','inputsource'),'value');
+
+z.isproportthreshold  = get(findobj(hfig,'tag','isproportthreshold'),'value');
+z.threshold           = get(findobj(hfig,'tag','threshold'),'string');
+z.logarithmize        = get(findobj(hfig,'tag','logarithmize'),'value');
+
+hb= findobj(hfig,'tag','tail');
+va=get(hb,'value');
+li=get(hb,'string');
+z.tail   =li{va};
+
+if z.inputsource==2 && param==2  % MAtrix
+    swtype     =[1 2];
+    stepsize   = 0.1;
+    doplot     = 1;
+    
+    z2.isproportthreshold=z.isproportthreshold;
+    z2.threshold          =z.threshold;
+    z2.logarithmize       =z.logarithmize;
+    
+    z2.swtype     =[1 2];
+    z2.stepsize   = 0.1;
+    z2.doplot     = 1;
+    
+    
+    %d2=smallwordnesswrapper(xx.mat,swtype,stepsize,doplot)
+    if z2.isproportthreshold==1
+        d2=smallwordnesswrapper(xx.mat,z2);
+    else
+        d2=xx.mat;
+        
+        d2=xx.mat;
+        if z2.logarithmize==1
+            d2=log(d2);
+            d2(isinf(d2))=0;
+        end
+        
+    end
+    
+    
+    for i=1:size(d2,3)
+        dum  =d2(:,:,i);
+        dum2=dum(xx.ind);
+        if i==1
+            DP=zeros([numel(dum2)   size(d2,3)] );
+        end
+        DP(:,i)=dum2;
+    end
+else
+    
+    
+end
+% ==============================================
+%%
+% ===============================================
 
 
 
@@ -1683,17 +2244,23 @@ if z.f1design==0 %between
                     y(:,j)=d(k,:);
                 end
                 groupmembers={'##tobe implemented yet' 'soon'};
+                
             elseif param==2
                 paramname='connectivity';
-                x=xx.condata(:,i1);
-                y=xx.condata(:,i2);
+                if z.inputsource==2
+                    x=DP(:,i1);
+                    y=DP(:,i2);
+                else
+                    x=xx.condata(:,i1);
+                    y=xx.condata(:,i2);
+                end
                 groupmembers=  {xx.mousename(i1)' xx.mousename(i2)'};
             end
             grouplabel=comb(i,:);
             
             if z.typeoftest1==1
                 stattype='ttest2';
-                [h p ci st]=ttest2(x',y');
+                [h p ci st]=ttest2(x',y','tail',z.tail);
                 [out hout]=getMESD(x,y,vartype);
                 res    =[ h'   p'  st.tstat'   out   st.df'     ] ;
                 reshead=['H'  'p'    'T'      hout     'df'     ];
@@ -1713,7 +2280,7 @@ if z.f1design==0 %between
                         %                         d2( find(d2>(mean(d2)+tr*std(d2)) | d2<(mean(d2)-tr*std(d2))  ) )=[];
                         %                        [p h st]=ranksum(d1,d2);
                         %                         disp([length(d1)  length(d2)]);
-                        [p h st]=ranksum(x(j,:),y(j,:));
+                        [p h st]=ranksum(x(j,:),y(j,:),'tail',z.tail);
                         try
                             res(j,:)=[h p st.zval];
                         catch
@@ -1725,7 +2292,7 @@ if z.f1design==0 %between
                 else                                                 % RS-SCORE
                     for j=1:size(x,1)
                         try
-                            [p h st]=ranksum(x(j,:),y(j,:));
+                            [p h st]=ranksum(x(j,:),y(j,:),'tail',z.tail);
                             res(j,:)=[h p st.ranksum];
                         end
                     end
@@ -1743,12 +2310,17 @@ if z.f1design==0 %between
                 res    =[ h  px    out];
                 reshead=['H' 'p'  hout];
                 %reshead={'H' 'p' 'ME' 'SD' 'SE' 'n1' 'n2'};
-                [hv px]=ttest2(x',y');
+                [hv px]=ttest2(x',y','tail',z.tail);
                 ikeep=find(~isnan(hv));
             elseif z.typeoftest1==4
                 stattype='perm2';
                 %tic;[pv,to,cr,al]=mult_comp_perm_t2_nan(x',y',5000,0,.05); toc
-                [p,T,cr,al]=mult_comp_perm_t2_nan(x',y',5000,0,.05);
+                if     strcmp(z.tail,'both');  tail= 0;
+                elseif strcmp(z.tail,'left');  tail=-1;
+                elseif strcmp(z.tail,'right'); tail= 1;
+                end
+                
+                [p,T,cr,al]=mult_comp_perm_t2_nan(x',y',5000,tail,.05);
                 p(find(isnan(T)))=1;
                 h=p<0.05;
                 [out hout]=getMESD(x,y,vartype);
@@ -1758,23 +2330,107 @@ if z.f1design==0 %between
                 
                 [hv px]=ttest2(x',y');
                 ikeep=find(~isnan(hv));
-                
-                
-                
-                
                 %             [p,T,cr,al]=mult_comp_perm_t2_nan(x(ix,:)',y(ix,:)',5000,0,.05);
+             elseif z.typeoftest1==5 %BM
+                 if 1
+                     stattype='BM';
+                     
+                     if strcmp(z.tail,'both')~=1
+                        msgbox( [ 'Brunner-Munzel-test' char(10) ....
+                            'This test requires a two-tailed mode!' char(10)...
+                            ' ... set "tail" to "both"  ']);
+                         return
+                         
+                     end
+                     
+                     
+                     
+                     res=nan(size(x,1),[3]);
+                     [out hout]=getMESD(x,y,vartype);
+                     
+                     
+                     %                  [p1 h st]=ranksum(x(1,:),y(1,:),'tail','both'); p1
+                     %                  [p2 h st]=ranksum(x(1,:),y(1,:),'tail','left'); p2
+                     %                  [p3 h st]=ranksum(x(1,:),y(1,:),'tail','right');p3
+                     %
+                     %
+                     %                  [h p1]=ttest2(x(1,:),y(1,:),'tail','both');p1
+                     %                  [h p2]=ttest2(x(1,:),y(1,:),'tail','left');p2
+                     %                  [h p3]=ttest2(x(1,:),y(1,:),'tail','right');p3
+                     
+                     for j=1:size(x,1)
+                         try
+                             %[p h st]=ranksum(x(j,:),y(j,:),'tail',z.tail);
+                             [p SS]=brunner_munzel(x(j,:),y(j,:));
+                             res(j,2:3)=[ p SS];
+                         end
+                     end
+                     res(:,1)=double(res(:,2)<0.05);
+                     res    =[ res          out];
+                     reshead=['H' 'p' 'Z' hout];
+                     
+                     %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
+                     ikeep=find(~isnan(res(:,1)));
+                 end
+                 
+%                  if 0
+%                      stattype='BM';
+%                      res=nan(size(x,1),[3]);
+%                      [out hout]=getMESD(x,y,vartype);
+%                      
+%                      if regexpi(us.props.wst_stat,'Z','ignorecase')==1    % Z-SCORE
+%                          for j=1:size(x,1)
+%                              
+%                              %                         d1=x(j,:); d2=y(j,:);
+%                              %                         tr=2.5;
+%                              %                         d1( find(d1>(mean(d1)+tr*std(d1)) | d1<(mean(d1)-tr*std(d1))  ) )=[];
+%                              %                         d2( find(d2>(mean(d2)+tr*std(d2)) | d2<(mean(d2)-tr*std(d2))  ) )=[];
+%                              %                        [p h st]=ranksum(d1,d2);
+%                              %                         disp([length(d1)  length(d2)]);
+%                              [p h st]=ranksum(x(j,:),y(j,:),'tail',z.tail);
+%                              try
+%                                  res(j,:)=[h p st.zval];
+%                              catch
+%                                  res(j,:)=[h p nan];
+%                              end
+%                          end
+%                          res    =[ res          out];
+%                          reshead=['H' 'p' 'zval' hout];
+%                      else                                                 % RS-SCORE
+%                          for j=1:size(x,1)
+%                              try
+%                                  [p h st]=ranksum(x(j,:),y(j,:),'tail',z.tail);
+%                                  res(j,:)=[h p st.ranksum];
+%                              end
+%                          end
+%                          res    =[ res          out];
+%                          reshead=['H' 'p' 'RS' hout];
+%                      end
+%                      
+%                      %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
+%                      ikeep=find(~isnan(res(:,1)));
+%                  end
+                 
+                
                 
             end
             
             % ==============================================
             %%   deal with missings
             % ===============================================
+            ck1=sum(abs([x y]),2);
+            inan   =find(isnan(ck1));
+            izeros =find(ck1==0);
+            idel=sort([inan(:);izeros(:)]) ;
+            ikeep=setdiff( [1:size(x,1)]  , idel  );
             
-            xex =sum(~isnan(x),2)./size(x,2);
-            yex =sum(~isnan(y),2)./size(y,2);
-            ix=find((xex>.9)&(yex>.9)&(~isnan(h(:)))  );  %90% of data must exist
-            ikeep=ix;
-            ikeep=1:size(x,1);
+            if 0 %OLD
+                xex =sum(~isnan(x),2)./size(x,2);
+                yex =sum(~isnan(y),2)./size(y,2);
+                ix=find((xex>.9)&(yex>.9)&(~isnan(h(:)))  );  %90% of data must exist
+                ikeep=ix;
+                ikeep=1:size(x,1);
+            end
             
             
             
@@ -1802,6 +2458,8 @@ if z.f1design==0 %between
                 pw.networkmetrics     =out;
                 pw.networkmetricsExport=expo;
             end
+            
+            pw.z=z; %GUI-PARAMETER
             
             us.pw(n)=pw;
             
@@ -1859,6 +2517,18 @@ z.showsigsonly  =get(findobj(hfig,'tag','showsigsonly'),'value');
 z.qFDR          =str2num(get(findobj(hfig,'tag','qFDR'),'string'));
 z.noSeeds       =str2num(get(findobj(hfig,'tag','noSeeds'),'string'));
 
+
+
+z.inputsource         = get(findobj(hfig,'tag','inputsource'),'value');
+z.isproportthreshold  = get(findobj(hfig,'tag','isproportthreshold'),'value');
+z.threshold           = get(findobj(hfig,'tag','threshold'),'string');
+z.logarithmize        = get(findobj(hfig,'tag','logarithmize'),'value');
+
+hb=findobj(hfig,'tag','tail');
+va=get(hb,'value');
+li=get(hb,'string');
+z.tail   =li{va};
+
 %groupsizes
 % tab=tabulate(cell2mat(us.tb(:,2)));
 %     groupsize=cellfun(  @(a,b)  {['n group-' a ': '  sprintf('%2.0d',b )] }      ,tab(:,1),tab(:,2) );
@@ -1878,37 +2548,66 @@ sz{end+1,1}=['__________________________________________________________________
 
 
 % sz{end+1,1}=['MODE          : '      us.pw(1).mode          ];
-sz{end+1,1}=['Group file:        '      us.groupfile];
+sz{end+1,1}        =['Group-fileName:        '    '"'  us.groupfile  '"'  ];
+
+[lutfilePath ,lutfile,ext]=fileparts(us.con.lutfile);
+sz{end+1,1}        =['LUT-filePath:          '       '"' [lutfilePath] '"' ];
+sz{end+1,1}        =['LUT-fileName:          '       '"' [lutfile ext] '"' ];
+
+[~,connectivityFile,ext]=fileparts(us.con.files{1});
+sz{end+1,1}        =['connectivity-fileName: '       '"' [connectivityFile ext] '"' ];
 
 
-if isfield(us,'roifile')
-    roifile=us.roifile;
+if isfield(us,'coifile') && ~isempty(us.coifile)
+    coifile=us.coifile;
+    cprintf([ .0745 0.62 1],['using COI-FILE: YES    (FILE: '  strrep(coifile,filesep,[filesep filesep]) ')\n' ]);
 else
-    roifile='none';
+    coifile='none';
 end
-sz{end+1,1}=['ROI/COI file:      '       roifile];
+% sz{end+1,1}        =['ROI/COI file:           '       coifile];
 
-sz{end+1,1}=['groups (size):     '      grp];
+sz{end+1,1}        =['groups (size):          '      grp];
+
+
+
 
 try
-    sz{end+1,1}=['# pairwise nodes:  '      num2str(length(us.pw(1).lab))];
+    sz{end+1,1}    =['# number of nodes:       '      num2str(size(us.con.conlabels,1))];
+end
+
+try
+    sz{end+1,1}    =['# number of pairwise nodes tested:       '      num2str(length(us.pw(1).lab))];
 end
 
 
 
 
-sz{end+1,1}=['pairwise test:     '      us.pw(1).stattype];
-sz{end+1,1}=['FDR-correction:    '      regexprep(num2str(z.isfdr),{'1' '0'},{'yes','no'})];
+sz{end+1,1}        =['pairwise test:          '      us.pw(1).stattype];
+sz{end+1,1}        =['FDR-correction:         '      regexprep(num2str(z.isfdr),{'1' '0'},{'yes','no'})];
 if z.isfdr==1
-    sz{end+1,1}=['FDR-qValue:        '      num2str(z.qFDR)];
+    sz{end+1,1}    =['FDR-qValue:             '      num2str(z.qFDR)];
 end
-sz{end+1,1}=['sorting:           '      regexprep(num2str(z.issort),{'1' '0'},{'yes','no'})];
-sz{end+1,1}=['showsigsonly:      '      regexprep(num2str(z.showsigsonly),{'1' '0'},{'yes','no'})];
+sz{end+1,1}        =['sorting:                '      regexprep(num2str(z.issort),{'1' '0'},{'yes','no'})];
+sz{end+1,1}        =['showsigsonly:           '      regexprep(num2str(z.showsigsonly),{'1' '0'},{'yes','no'})];
 
-if strcmp(us.pw(1).mode,'DTI CONNECTIVITY')
-    sz{end+1,1}=['noSeeds:           '      num2str(z.noSeeds)   ' (for NW-metrics only)'];
+if z.inputsource==1
+    if strcmp(us.pw(1).mode,'DTI CONNECTIVITY')
+        sz{end+1,1}=['noSeeds:                '      num2str(z.noSeeds)   ' (for NW-metrics only)'];
+        sz{end+1,1}=['Devision by NoSeeds:    '     'yes' ' (for NW-metrics only)'];
+    end
+end
+if z.inputsource==2
+    sz{end+1,1}   =['Devision by NoSeeds:    '     'no' ' (for NW-metrics only)'];
+    sz{end+1,1}   =['proportional threshold: '      num2str(z.isproportthreshold)   ' (MRtrix only)'];
+    sz{end+1,1}   =['threshold value:        '      num2str(z.threshold)            ' (MRtrix only)'];
+    sz{end+1,1}   =['logarithmize data:      '      num2str(z.logarithmize)         ' (MRtrix only)'];
 end
 
+sz{end+1,1}        =['tail (stat. test):     '      z.tail];
+
+
+
+sz{end+1,1}       =['DATE:                   '     datestr(now)];
 % char(sz)
 
 
@@ -1939,7 +2638,8 @@ for i=1:size(us.pw,2)
         ival=find(~isnan(sum(cell2mat(dat(:,2:3)),2)));
         H=zeros(size(dat,1),1);
         % Hx=fdr_bh([dat{ival,3}]',z.qFDR,'pdep','no');
-        [Hx, crit_p, adj_ci_cvrg, adj_p]=fdr_bh([dat{ival,3}]',z.qFDR,'pdep','no');
+        cprintf([ .0745 0.62 1],['PAIRWISE CONNECTIONS***' '\n' ]);
+        [Hx, crit_p, adj_ci_cvrg, adj_p]=fdr_bh([dat{ival,3}]',z.qFDR,'pdep','yes');
         
         
         H(ival)=Hx;
@@ -1967,7 +2667,7 @@ for i=1:size(us.pw,2)
         ip=find(strcmp(head,'p'));
         [dat isort]= sortrows(dat,ip);
     end
-
+    i
     % ----- showsigsonly  ----------------------------
     if z.showsigsonly==1
         dat= dat(find([dat{:,2}]==1),:);
@@ -2047,7 +2747,12 @@ if strcmp(us.pw(1).parameter,'connectivity')
         nw=[nw ; repmat('_',[1 100] )];
         nw=[nw; [' #yk NETWORK METRICS:  '        us.pw(i).str ]];
         nw=[nw ; repmat('_',[1 100] )];
-        nw=[nw; us.pw(i).networkmetrics];
+        
+        nettable=us.pw(i).networkmetricsExport;
+        lg=networks_readoutput( nettable ,z);
+        
+        nw=[nw; lg];
+        %nw=[nw; us.pw(i).networkmetrics];
     end
     %     uhelp(nw,1);
     sz=[sz;nw];
@@ -2081,6 +2786,99 @@ if doexport==1
 end
 
 cprintf([0 .5 0],['Done.\n' ]);
+
+
+
+function lg=networks_readoutput( nettable ,z)
+%%  concatenate to readable cell
+% nettable =
+%     'SCALAR NETWORK METRICS'    {10x18 cell}
+%     'EFFICIENCY_WEI(DX,1)'      {21x18 cell}
+%     'MODULARITY_UND(DX)'        {21x18 cell}
+%     'CLUSTERING_COEF_WU(DX)'    {21x18 cell}
+%     'DEGREES_UND(DX)'           {21x18 cell}
+% netmet=nettable(:,1)
+% ==============================================
+%%
+% ===============================================
+if 0
+    nettable=us.pw(i).networkmetricsExport
+end
+lg={};
+netmet=nettable(:,1);
+for jj=1:length( netmet)
+    metric=netmet{jj};
+    if jj==1
+        str=['SCALAR NETWORK METRICS'];
+    else
+        str=[ ' #  [' upper(metric) ']' '         ..network metric  '];
+    end
+    ddum=nettable{jj,2};
+    hd  =ddum(1,:);
+    d   =ddum(2:end,:);
+    reshead2=hd(2:end);
+    % ==============================================
+    %  sort
+    % ===============================================
+    if z.issort      ==1;
+        d=sortrows(d,[find(strcmp(hd,'p'))])  ; %sort after p-value
+        %d=sortrows(d,[4 3])
+    else
+        d=sortrows(d,[1])  ;
+    end
+    % ==============================================
+    %  showsigsonly
+    % ===============================================
+    if length(hd)==1 && strcmp(hd,'Result')
+        
+    else
+        if z.showsigsonly==1
+            if z.isfdr==1
+                icol=find(strcmp(hd,'Hfdr'));
+                if isempty(icol);
+                    keyboard ;
+                end
+                
+            else
+                icol=find(strcmp(hd,'Huncor'));
+                if isempty(icol);
+                    keyboard ;
+                end
+            end
+            d=d( find(cell2mat(d(:,icol))==1), : );
+        end
+    end
+    if ~isempty(d)
+        isnum=cellfun(@isnumeric,d);
+        d2      =d;
+        reshead3=reshead2;
+        for ii=1:size(d,2)
+            if isempty(   find(isnum(:,ii) )); continue; end
+            if any((sign(cell2mat(d(find(isnum(:,ii) ),ii))))==-1) == 1   %negativ values
+                d2(:,ii)= cellfun(@(a){sprintf('% .5g',a)},d2(:,ii));
+                reshead3{ii}=[' ' reshead3{ii}];
+            else %positiv values
+                d2(:,ii)= cellfun(@(a){sprintf('%.5g',a)},d2(:,ii));
+            end
+        end
+        if jj==1
+            col1name='PARAMETER ';
+        else
+            col1name='REGION ';
+        end
+        ds=[[col1name reshead3];d2 ];
+        df=plog([],ds,0,str,'s=0;upperline=0;a=1');
+    else
+        lin=repmat('=',[1 length(str)+15]);
+        df={lin; [str  ' --> ns.'];lin};
+        
+    end
+    lg =[lg; df];%log results
+end%ntestchunks
+
+
+
+
 
 
 
@@ -2229,8 +3027,43 @@ end
 
 
 if strcmp(us.pw(1).parameter,'connectivity')
-    if type==1
+    if type==1    %dti_plotmatrix
+        cprintf([1 0 1],['wait... '    '\n' ]);
         
+        
+        %% ------------get the atlas
+        choice='another';
+        if isfield(us,'atlas')==1
+            [choice] = questdlg(...
+                {'Use this atlas?' ...
+                [us.atlas]}, ...
+                ['select corresponding Atlas (excelfile with color-coding)'  ], ...
+                'Yes','select another atlas','cancel','Yes');
+        end
+        
+        if ~isempty(strfind(choice,'cancel'))
+            return
+        elseif ~isempty(strfind(choice,'another'))
+            [pa fi ext]=fileparts(us.groupfile);
+            if isempty(pa); pa=pwd; end
+            [t,sts] = spm_select(1,'any','select corresponding Atlas (excelfile with color-coding)' ,'',pa,'.*.xlsx');
+            if isempty(t);
+                msgbox('corresponding Atlas (excelfile) not defined ...abort process');
+                return
+            end
+            us.atlas=t;
+            hf=findobj(0,'tag','dtistat');
+            set(hf,'userdata',us);
+        end
+        %% ---
+        
+        
+        
+        dti_plotmatrix(us);
+        cprintf([1 0 1],['done.'    '\n' ]);
+        
+        
+    elseif type==2 %'matrix'
         for j=1:size(us.pw,2)
             r=us.pw(j);
             
@@ -2251,18 +3084,121 @@ if strcmp(us.pw(1).parameter,'connectivity')
                 s=zeros(prod(si),1);
                 val=r.tb(:,3);
                 if k==1
-                    ms=[r.stattype '(' r.tbhead{3} ') uncorrectd'];
+                    ms=[r.stattype '(' r.tbhead{3} ') uncorrectd (matrix-size: ' num2str(si(1)) 'x' num2str(si(1))  ')'];
                 elseif k==2
                     val=val.*(r.tb(:,2)<.05);
-                    ms=[r.stattype '(' r.tbhead{3} ') using p<0.05'];
+                    ms=[r.stattype '(' r.tbhead{3} ') using p<0.05   (n=' num2str(sum(val~=0)) '/' num2str(numel(val)) ')'];
                 elseif k==3
                     val=val.*r.fdr;
-                    ms=[r.stattype '(' r.tbhead{3} ') FDRcorrected'];
+                    ms=[r.stattype '(' r.tbhead{3} ') FDRcorrected   (n=' num2str(sum(val~=0)) '/' num2str(numel(val))  ')'];
                 end
-                s(us.con.index)=val;
+                if length(us.con.index)==length(val)
+                    s(us.con.index)=val;
+                else
+                    % ==============================================
+                    %%
+                    % ===============================================
+                    
+                    si=us.con.size;
+                    s=zeros(prod(si),1);
+                    %----------------------
+                    %si=size(ac);
+                    tria=triu(ones(si));
+                    tria(tria==1)=nan;
+                    tria(tria==0)=1;
+                    ind       =find(tria(:)==1); %index in 2d-Data
+                    
+                    vz=zeros(size(ind));
+                    vz(r.ikeep)=val;
+                    
+                    s(ind)=vz;
+                    
+                    %----------------------
+                    
+                    if 0
+                        s2=reshape(s,[si]);
+                        fg,imagesc(s2)
+                    end
+                    % ==============================================
+                    %%
+                    % ===============================================
+                    
+                    %                     lab=r.lab;
+                    %                     la=repmat({''}, [length(lab)  2]);
+                    %                     for i=1:length(lab)
+                    %                         la(i,:)= strsplit(lab{i},'--');
+                    %                     end
+                    %                     unila=unique(la);
+                    %
+                    %                     so=zeros(length(unila));
+                    %
+                    %
+                    
+                    
+                    % ==============================================
+                    %%
+                    % ===============================================
+                    
+                    
+                end
                 s=reshape(s,[si]);
                 s(isnan(s))=0;
                 
+                %                 im=imagesc(s);
+                %                 if k==1
+                %                     clim=caxis;
+                %                 else
+                %                     caxis(clim);
+                %                 end
+                
+                pval=zeros(prod(si),1);
+                
+                if length(us.con.index)==length(r.tb(:,2))
+                    pval(us.con.index)=r.tb(:,2);
+                else
+                    zv=zeros(size(us.con.index));
+                    zv(r.ikeep)=r.tb(:,2);
+                    pval(us.con.index)=zv;
+                    
+                end
+                pval=reshape(pval,[si]);
+                
+                labelmatrix=us.con.labelmatrix;
+                
+                % ===========================================================================
+                if 1 %REDUCE MATRIX
+                    if 1%k==1  %reduce matrix
+                        % [ix iy]=find(pval~=0)
+                        ix=find(sum(abs(s),1)==0);
+                        iy=find(sum(abs(s),2)==0);
+                        
+                        
+                        
+                        
+                        %                                             te=pdum(:); te(te==0)=[];
+                        %                                             te1=pval(:); te1(te1==0)=[];
+                        %                                             [length(te) length(te1)]
+                    end
+                    
+                    pdum=pval;
+                    pdum(iy,:)=[];
+                    pdum(: ,ix)=[];
+                    pval=pdum;
+                    
+                    
+                    sdum=s;
+                    sdum(iy,:)=[];
+                    sdum(: ,ix)=[];
+                    s=sdum;
+                    
+                    
+                    dum=labelmatrix;
+                    dum(iy,:) =[];
+                    dum(: ,ix)=[];
+                    labelmatrix=dum;
+                    
+                end
+                % ===========================================================================
                 im=imagesc(s);
                 if k==1
                     clim=caxis;
@@ -2270,12 +3206,9 @@ if strcmp(us.pw(1).parameter,'connectivity')
                     caxis(clim);
                 end
                 
-                pval=zeros(prod(si),1);
-                pval(us.con.index)=r.tb(:,2);
-                pval=reshape(pval,[si]);
                 
-                
-                sx.pval=pval;
+                sx.pval       =pval;
+                sx.labelmatrix=labelmatrix;
                 set(im,'userdata',sx)
                 ht=title(ms,'fontsize',8);
                 set(gca,'fontsize',6);
@@ -2299,8 +3232,9 @@ if strcmp(us.pw(1).parameter,'connectivity')
             set(ha(1),'position',[px(1) px(2) .4 px(4)]);
             
         end%pw
+        set(gcf,'menubar','figure');
         
-    elseif type==2
+    elseif type==3
         show3d;
     end %type
     
@@ -2308,7 +3242,9 @@ if strcmp(us.pw(1).parameter,'connectivity')
     
 end
 
-
+% ==============================================
+%%   motion
+% ===============================================
 function motion(e,e2,para)
 
 ha=(gca);
@@ -2335,7 +3271,7 @@ us=get(hf,'userdata');
 
 try
     
-    labx=us.con.labelmatrix(po(1),po(2));
+    %labx=us.con.labelmatrix(po(1),po(2));
     %       disp(labx)
     
     
@@ -2349,16 +3285,24 @@ try
     
     
     sx=get(ch,'userdata');
-    pval=num2str(sx.pval(po(2),po(1)));
+    pval =num2str( sx.pval(        po(2),po(1)));
+    labx =         sx.labelmatrix( po(2),po(1));
     
     %     pval
     %     return
     
-    msg=[ labx{1} '\color{magenta} [' val ']' '\color{blue} p[' pval ']'  ];
+    %     msg=[ labx{1} '\color{magenta} [' val ']' '\color{blue} p[' pval ']'  ];
+    %     msg=strrep(msg,'_' ,'\_');
+    
+    msg={[ labx{1}   ]};
+    msg(end+1,1)={['\color{magenta} STAT-score: [' val ']'  '\color{blue}     p-value: [' pval ']'] };
     msg=strrep(msg,'_' ,'\_');
+    %     size(msg)
     if isempty(tx)
         axes(ax);
         te=text(0,.5,msg,'fontsize',6,'tag','txt1','interpreter','tex');
+        
+        
     else
         set(tx,'string',msg);
     end
@@ -2371,155 +3315,6 @@ end
 function xhelp(e,e2)
 uhelp([mfilename '.m']);
 
-
-function [out expo]=calc_networkparameter(x,y, us,z)
-% out: output as text document
-% expo: output for export (cell)
-out=[];
-noSeeds=z.noSeeds;
-
-% ==============================================
-%%    %%   params
-% ===============================================
-%     z.f1design   =0;
-%     z.typeoftest1=1;
-%     z.vartype    =1;
-%     z.qFDR       =0.05;
-%     z.issort    =1;
-%     z.showsigsonly=1;
-%
-
-
-% ==============================================
-%%   construct matrizes
-% ===============================================
-
-iv=[ones(1,size(x,2))   2*ones(1,size(y,2))];
-su=[x y];
-
-si=us.con.size;
-cmat=zeros([si length(iv)]);
-for i=1:length(iv)
-    v=su(:,i);
-    s=zeros(prod(si),1);
-    s(us.con.index)=v;
-    s=reshape(s,[si]);
-    s2=s+s';
-    s2(isnan(s2))=0;
-    cmat(:,:,i)  =s2;
-end
-
-% ==============================================
-%%          get nw-parameter
-% ===============================================
-d=cmat./noSeeds;     % normalize weights by number of seeds (  %noSeeds=10^6;)
-% clc;
-disp('calc network metrics');
-cprintf([1 0 1],[' *** CALC NETWORK METRICS  ***  \n' ]);
-cprintf([0.4941    0.4941    0.4941],['..depending of the number of nodes..this process might take a while  \n' ]);
-cprintf([0.4941    0.4941    0.4941],['..use [save calculation] to save the calculation connectivity statistic afterwards..   \n' ]);
-cprintf([0.4941    0.4941    0.4941],['..use [load calculation] to load an already calculated connectivity statistic (i.e. omit re-calculation)   \n' ]);
-
-cprintf([0 0.45 0],[' ONSET: ' datestr(now,'HH:MM:SS') '; #ANIMAL: ' num2str(size(d,3))  ...
-    '; #NODES: '  num2str(size(d,1)) '\n' ]);
-
-%
-%==================================== select data /testbed  ===============================================================
-% d2=d(1:10,1:10,:); %check
-%  d2=d(1:50,1:50,:);%check
-%   d2=d(1:100,1:100,:);%check
-d2     = d; %FINAL
-label2 = us.con.label(1:size(d2,1));
-
-%==================================== Parallel PROC if [PCT] available  =============================================
-try
-    cpus=feature('numCores');
-    pp = gcp('nocreate');
-    if isempty(pp)
-        parpool( cpus);
-    else
-        %poolsize = p.NumWorkers
-    end
-    % delete(gcp('nocreate'))
-end
-%===================================== REFERENCE PROGRESSBAR================================================
-np =[];
-npv=[];
-tic
-N=size(d2,3) ;
-cprintf([0 0.45 0],['  TARGET STATE: ' ]);
-for i=1:N
-    cprintf([0 0.45 0],['.|']);
-end
-fprintf(1,'\n');
-
-%===================================== PARFOR LOOP================================================
-cprintf([0.9294 0.6941 0.1255],[' CURRENT STATE:  ' ]);
-parfor i=1:N
-    fprintf('\b.|\n');%fprintf(1,['.|']);
-    dx=d2(:,:,i);
-    ws= calcConnMetrics(dx);
-    np(:,i)    =ws.sc;   %SCALAR
-    npv(:,:,i) =ws.vec;  %VEC
-end
-vecml     ={'efficiency_wei(dx,1)'  'modularity_und(dx)' 'clustering_coef_wu(dx)' 'degrees_und(dx)'};
-paramlabel=['assortativity_wei(dx,0)'      'transitivity_wu(dx)'   'efficiency_wei(dx,0)'  vecml]';
-cprintf([0 0.45 0],[' calculation DONE (ET: ' sprintf('%2.2f',toc/60)  'min).\n' ]);
-
-% ==============================================
-%%  OLD - slow
-% ===============================================
-if 0
-    % metricCommand={'output=efficiency_wei(W,0)','output=efficiency_wei(W,1)','[~,output]=modularity_und(W)',...
-    %     'output=assortativity_wei(W,0)','output=clustering_coef_wu(W)','output=degrees_und(W)',...
-    %     'output=transitivity_wu(W)'};
-    np=[];
-    
-    parfor i=1:size(d,3)
-        fprintf(1,' %d ',i);
-        dx=d(:,:,i);
-        
-        vec   = ([efficiency_wei(dx,1)  modularity_und(dx) clustering_coef_wu(dx) degrees_und(dx)' ]);
-        vecm  = mean(vec);
-        
-        sc    = [ assortativity_wei(dx,0)        transitivity_wu(dx)     efficiency_wei(dx,0)   vecm];
-        if i==1
-            vecml ={'efficiency_wei(dx,1)'  'modularity_und(dx)' 'clustering_coef_wu(dx)' 'degrees_und(dx)'};
-            paramlabel=['assortativity_wei(dx,0)'      'transitivity_wu(dx)'   'efficiency_wei(dx,0)'  vecml]';
-            np=zeros(length(sc),size(d,3)); %PREALLOC
-        end
-        np(:,i)    =sc;   %SCALAR
-        npv(:,:,i) =vec;  %VEC
-    end
-    fprintf(1,'\n');
-end
-% ==============================================
-%%   to struct
-% ===============================================
-nw.np        =np           ;
-nw.nplabel   =paramlabel   ;
-nw.npv       =npv          ;
-nw.npvlabel  =vecml        ;
-
-nw.label     =label2       ;
-nw.grpidx    =iv           ;
-
-
-% ==============================================
-%%   statistic
-% ===============================================
-% % %%
-% % if 1
-% %     nw=evalin('base','nw');
-% % end
-
-
-
-
-
-if z.f1design==0
-    [out expo]= indepstat_nwparameter(nw,z);
-end
 
 % ==============================================
 %%   [subs]
@@ -2625,16 +3420,75 @@ for jj=1:ntestchunks
         [hv px]=ttest2(x',y');
         ikeep=find(~isnan(hv));
         
-        %             [p,T,cr,al]=mult_comp_perm_t2_nan(x(ix,:)',y(ix,:)',5000,0,.05);
-        
+       elseif z.typeoftest1==5 %BM
+           if 1
+               stattype='BM';
+               res=nan(size(x,1),[3]);
+               [out hout]=getMESD(x,y,vartype);
+               
+               for j=1:size(x,1)
+                   %[p h st]=ranksum(x(j,:),y(j,:));
+                   [p SS]=brunner_munzel(x(j,:),y(j,:));
+                   res(j,2:3)=[ p SS];
+               end
+               res(:,1)=double(res(:,2)<0.05);
+               res    =[res           out];
+               reshead=['H' 'p' 'Z' hout];
+               inan=isnan(res(:,2));
+               res(inan,1)=nan;
+               ikeep=find(~isnan(res(:,1)));
+           end
+%            
+%            if 0
+%                stattype='WRS';
+%                res=nan(size(x,1),[3]);
+%                [out hout]=getMESD(x,y,vartype);
+%                
+%                if regexpi(us.props.wst_stat,'Z','ignorecase')==1    % Z-SCORE
+%                    for j=1:size(x,1)
+%                        [p h st]=ranksum(x(j,:),y(j,:));
+%                        try
+%                            res(j,:)=[h p st.zval];
+%                        catch
+%                            res(j,:)=[h p nan];
+%                        end
+%                    end
+%                    res    =[res           out];
+%                    reshead=['H' 'p' 'zval' hout];
+%                else                                                  % RS-SCORE
+%                    for j=1:size(x,1)
+%                        try
+%                            [p h st]=ranksum(x(j,:),y(j,:));
+%                            res(j,:)=[h p st.ranksum];
+%                        end
+%                    end
+%                    res    =[res           out];
+%                    reshead=['H' 'p' 'RS' hout];
+%                    %reshead={'H' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
+%                end
+%                
+%                ikeep=find(~isnan(res(:,1)));
+%                
+%            end
+
+          
+          
+          
+          
     end
     
     
     % FDR
-    inonan=find(~isnan(sum(out(:,1:3),2)));
-    %     Hfdr=fdr_bh(res(inonan,2) ,z.qFDR,'pdep','yes');
-    [Hfdr, crit_p, adj_ci_cvrg, adj_p]=fdr_bh(res(inonan,2) ,z.qFDR,'pdep','yes');
-    res2      =[Hfdr res adj_p];
+    idxkeep=ikeep;
+    res1=res(idxkeep,:);
+    if isempty(res1)
+        res2=[];
+    else
+        %idxkeep=find(~isnan(sum(out(:,1:3),2)));
+        %     Hfdr=fdr_bh(res(inonan,2) ,z.qFDR,'pdep','yes');
+        [Hfdr, crit_p, adj_ci_cvrg, adj_p]=fdr_bh(res1(:,2) ,z.qFDR,'pdep','yes');
+        res2      =[Hfdr res1 adj_p];
+    end
     reshead2  =[ {'Hfdr' 'Huncor' } reshead(2:end) 'adj_pFDR'] ;
     
     
@@ -2645,12 +3499,12 @@ for jj=1:ntestchunks
     
     
     if jj==1
-        label=nw.nplabel;
+        label=nw.nplabel(idxkeep);
         str=['SCALAR NETWORK METRICS'];
         metric=str;
         
     else
-        label=nw.label;
+        label=nw.label(idxkeep);
         metric=upper( nw.npvlabel{jj-1} );
         str=[ ' #  [' metric ']' '         ..network metric  '];
     end
@@ -2665,13 +3519,15 @@ for jj=1:ntestchunks
     
     
     d= [label num2cell(res2)];
-    
-    if z.issort      ==1;           d=sortrows(d,[4 3])            ;end
-    if z.showsigsonly==1;
-        %         d=d(find([d{:,3}]==33),:);
-        d=d(find([d{:,3}]==1),:);
-    end
     if ~isempty(d)
+        if z.issort      ==1;
+            d=sortrows(d,[4 ]);
+        end
+        %     if z.showsigsonly==1;
+        %         %         d=d(find([d{:,3}]==33),:);
+        %         d=d(find([d{:,3}]==1),:);
+        %     end
+        
         
         %% SIGN
         %d(:,4)=cellfun(@(a){sprintf(' %5.4g',a)},d(:,4)) ;   % p-values other format
@@ -2793,22 +3649,28 @@ export2excel();
 % us      : userdata of dtistat
 % filename: optional use FP-filename otherwise gui opens ; example: fullfile(pwd,'_result.xlsx');
 function export2excel(par)
-
+hf=findobj(0,'tag','dtistat');
 if exist('par')==1
     if isfield(par,'export')
         if strcmp(par.export,'export')==0
             filename=par.export;
         end
-        
     end
+     if isfield(par,'exportType')
+         hc=findobj(hf,'tag','exportType');
+         set(hc,'value',par.exportType);  
+         drawnow;
+     end
 end
 
-hf=findobj(0,'tag','dtistat');
+
+
+
+
 us=get(hf,'userdata');
 
 % fprintf(' ... exporting results.. ');
 cprintf([1 0 1],['exporting results (excelfile) ..wait..' ]);
-
 
 %========== excel filename ===============================================================
 if exist('filename')~=1
@@ -2822,114 +3684,269 @@ end
 [pax name ext]=fileparts(filename);
 if isempty(pax); pax=pwd; end
 filename=fullfile(pax,[name '.xlsx']);
-%=========================================================================
-try
-    delete(filename);
-end
-if exist(filename)==2
-    error('process canceled...excel document is still open');
-end
-%=========================================================================
+
+% ==============================================
+%%  get exportType
+% ===============================================
+exportType=get(findobj(hf,'tag','exportType'),'value');
 
 
+% ==============================================
+%%   EXPORT
+% ===============================================
 
-pws=length(us.pw);
-%% colorize cells
-lut=[...
-    1.0000         0         0
-    1.0000    0.8431         0
-    0    1.0000         0
-    0    1.0000    1.0000
-    1.0000    1.0000         0
-    1.0000         0    1.0000
-    0.6000    0.2000         0
-    0.9255    0.8392    0.8392
-    0.7569    0.8667    0.7765
-    0.9529    0.8706    0.7333
-    1.0000    0.6000    0.6000];
-
-%% INFO  ============================================
-infox={'INFO-DTI STATISTIC'   ['#Date: ' datestr(now)]};
-for i=1:pws
-    dum= [us.pw(i).tbexportinfo  cell(length( us.pw(i).tbexportinfo),1)];
-    infox=[infox; dum ];
+if exportType==1 %sheetwise EXCEL
     
-    % groups
-    infox=[infox; cell(1,2) ];
-    infox=[infox; {' GROUPS: ' []} ];
-    dum0=cellfun(@(a,b){[ [a;[repmat('#',[1,10]); b]] ]} , us.pw(i).grouplabel, us.pw(i).groupmembers );
-    dum=cell(max(length(dum0{1}),length(dum0{2})),2);
-    dum(1:length(dum0{1}) , 1)  =dum0{1};
-    dum(1:length(dum0{2}) , 2)  =dum0{2};
-    infox=[infox; dum ];
+    %     hf=findobj(0,'tag','dtistat');
+    %     us=get(hf,'userdata');
+    %     filename0=fullfile(pwd,'dum2.xlsx')
     
-end
-
-xlswrite(filename,infox, 'info' );
-xlsAutoFitCol(filename,'info','A:F');
-xlscolorizeCells(filename,'info' , [1,1], [1 0 0  ]);
-
-%% for each PW   ============================================
-
-for s=1:pws
-    dat      = us.pw(s).tbexport;
-    sheetname= us.pw(s).str;
-    if isfield(us.pw(s),'networkmetricsExport');
-        dat=[dat;us.pw(s).networkmetricsExport];
-    end
-    
-    
-    d2={};
-    ncoltot=1+max(cell2mat(cellfun(@(a){size(a,2)},dat(:,2))));
-    i_head=[];
-    npara=1;
-    cellcolpos=[];  %cellposition to colorize
-    cellcolidx=[];  % index of color used
-    for j=1:size(dat,1)
-        par=dat(j,1);
-        dx=dat{j,2};
-        
-        nrow=max([size(par,1) size(dx,1)]);
-        ncol=[size(par,2)+size(dx,2)];
-        dt=cell(nrow, ncol);
-        dt(1:size(par,1),1)=par;
-        dt(:,            2:end)=dx;
-        dt(end);
-        dt=[dt   repmat(cell(1,ncoltot-size(dt,2)),[size(dt,1)  1])];
-        
-        dt=[dt;cell(1,size(dt,2) )];
-        i_head(end+1,1) =size(d2,1)+1;
-        d2=[d2; dt];
-        
-        %% colorize  ==================================
-        
-        %% colorize header
-        cellcolpos=[  cellcolpos;    [ [repmat( i_head(end),[ncoltot  1])]  [1: ncoltot]']];
-        cellcolidx=[cellcolidx;      repmat(npara,[ncoltot 1]) ];
-        
-        %% colorize 1st col
-        cellcolpos=[cellcolpos;      [   [i_head(end):size(d2,1)-1]'   repmat(1,[size(dt,1)-1 1]) ]];
-        cellcolidx=[cellcolidx;      repmat(npara,[size(dt,1)-1 1])];
-        
-        
-        npara=npara+1;
-    end
-    
-    %% write data
-    xlswrite(filename,d2, sheetname );
-    %  xlsAutoFitCol(filename,sheetname,'A:Z');
-    
+    filename0=filename;
+    delete(filename0);
+    % ==============================================
+    %%   export separate SHEETs
+    % ===============================================
+    pws=length(us.pw);
     
     %% colorize cells
-    cellcol=lut(cellcolidx,:);
-    xlscolorizeCells(filename,sheetname, cellcolpos, cellcol);
+    lut=[...
+        1.0000         0         0
+        1.0000    0.8431         0
+        0    1.0000         0
+        0    1.0000    1.0000
+        1.0000    1.0000         0
+        1.0000         0    1.0000
+        0.6000    0.2000         0
+        0.9255    0.8392    0.8392
+        0.7569    0.8667    0.7765
+        0.9529    0.8706    0.7333
+        1.0000    0.6000    0.6000];
     
-end
-
-cprintf([1 0 1],['done.\n' ]);
-% fprintf(' [Done]\n ');
-disp([' open xlsfile: <a href="matlab: system(''' filename ''')">' filename '</a>']);
-
+    timex=datestr(now);
+    
+    %% for each PW   ============================================
+    for i=1:pws
+        if length(pws)==1
+            filename=filename0;
+        else
+            filename=stradd(filename0,['_' num2str(i)],2)
+        end
+        
+        delete(filename);
+        
+        % ==============================================
+        %%   infos
+        % ===============================================
+        cprintf([1 0 1],['saving comparison-' num2str(i) ',  sheet: ' '"info"' ' ...'  '\n']);
+        
+        infox={'INFO-DTI STATISTIC'   ['#DateSaved: ' timex]};
+        infox(end+1,:)={'COMPARISON:'  us.pw(i).str};
+        infox(end+1,:)={''  ''};
+        %infox(end+1,:)={'date Saved'  timex};
+        
+        dv=us.pw(i).tbexportinfo;
+        dv=regexprep(dv,{'\s*'},{' '});
+        dv=regexprep(dv,{' #wr '},{''});
+        sp={};
+        for k=1:size(dv,1)
+            ico=regexpi(dv{k},':');
+            if isempty(ico)
+                if length(unique(double(dv{k})))==1
+                    sp(k,:)={'' ''};
+                else
+                    sp(k,:)={ dv{k} ''};
+                end
+            else
+                sp(k,:)= {dv{k}(1:ico(1)) regexprep(dv{k}(ico(1)+1:end),'^\s*','') };
+            end
+        end
+        sp(cellfun(@isempty,sp(:,1)),:)=[];
+        
+        %date-issue
+        idate=regexpi2(sp(:,1),'date');
+        sp(idate,2)=cellfun(@(a){['"' a '"']} ,sp(idate,2));
+        
+        
+        
+        infolist=[{'PARAMETER:' 'Value'  }; [sp ]   ];
+        infox=[infox; infolist ];
+        
+        %dum= [us.pw(i).tbexportinfo  cell(length( us.pw(i).tbexportinfo),1)];
+        %infox=[infox; dum ];
+        
+        % groups
+        infox=[infox; cell(1,2) ];
+        infox=[infox; {'GROUPS:' ''} ];
+        
+        %     dum0=cellfun(@(a,b){[ [a;[repmat('=',[1,10]); b]] ]} , us.pw(i).grouplabel, us.pw(i).groupmembers );
+        dum0=cellfun(@(a,b){[ [a;[repmat('_',[1,10]); b]] ]} , ...
+            cellfun(@(a){['GroupName: "' a '"']} ,us.pw(i).grouplabel),...
+            us.pw(i).groupmembers );
+        dum=cell(max(length(dum0{1}),length(dum0{2})),2);
+        dum(1:length(dum0{1}) , 1)  =dum0{1};
+        dum(1:length(dum0{2}) , 2)  =dum0{2};
+        infox=[infox; dum ];
+        
+        %     disp(infox);
+        
+        
+        % ==============================================
+        %%  save INFO
+        % ===============================================
+        
+        %     xlswrite(filename,infox, 'info' );
+        %     xlsAutoFitCol(filename,'info','A:F');
+        %     xlscolorizeCells(filename,'info' , [1,1], [1 0 0  ]);
+        
+        sheetname='info';
+        pwrite2excel(filename,{1 sheetname   },infox(1,:),[],infox(2:end,:));
+        
+        % COLORIZE
+        cols=[...
+            1.0000    0.8431         0  %comparison
+            0.8549    0.7020    1.0000  %Paramter
+            0.8549    0.7020    1.0000  %value
+            1 0 0                       %groups
+            ];
+        icompar =regexpi2(infox(:,1),'COMPARISON:');
+        iparam  =regexpi2(infox(:,1),'PARAMETER:');
+        igroups =find(strcmp(infox(:,1),'GROUPS:'));
+        colorcells=[ icompar 2; iparam 1; iparam 2; igroups 1];
+        xlscolorizeCells(filename,sheetname , colorcells, cols);
+        % ==============================================
+        %%   sheets
+        % ===============================================
+        dat      = us.pw(i).tbexport;
+        if isfield(us.pw(i),'networkmetricsExport');
+            dat=[dat;us.pw(i).networkmetricsExport];
+        end
+        for j=1:size(dat,1)
+            sheetname=dat{j};
+            hd=dat{j,2}(1,:);
+            try
+                d =dat{j,2}(2:end,:);
+            catch %n.s.
+                d=repmat({''},[ 1 length(hd)]);
+            end
+            
+            cprintf([1 0 1],['saving comparison-' num2str(i) ',  sheet: "' sheetname '" ...'  '\n']);
+            pwrite2excel(filename,{j+1 sheetname   },hd,[],d);
+        end
+        cprintf([1 0 1],['done.\n' ]);
+        % fprintf(' [Done]\n ');
+        disp([' open xlsfile: <a href="matlab: system(''' filename ''')">' filename '</a>']);
+    end % pws
+    
+elseif exportType==2 %SINLGE EXCELsheet
+    
+    
+    %=========================================================================
+    try
+        delete(filename);
+    end
+    if exist(filename)==2
+        error('process canceled...excel document is still open');
+    end
+    %=========================================================================
+    
+    
+    
+    pws=length(us.pw);
+    %% colorize cells
+    lut=[...
+        1.0000         0         0
+        1.0000    0.8431         0
+        0    1.0000         0
+        0    1.0000    1.0000
+        1.0000    1.0000         0
+        1.0000         0    1.0000
+        0.6000    0.2000         0
+        0.9255    0.8392    0.8392
+        0.7569    0.8667    0.7765
+        0.9529    0.8706    0.7333
+        1.0000    0.6000    0.6000];
+    
+    %% INFO  ============================================
+    infox={'INFO-DTI STATISTIC'   ['#Date: ' datestr(now)]};
+    for i=1:pws
+        dum= [us.pw(i).tbexportinfo  cell(length( us.pw(i).tbexportinfo),1)];
+        infox=[infox; dum ];
+        
+        % groups
+        infox=[infox; cell(1,2) ];
+        infox=[infox; {' GROUPS: ' []} ];
+        dum0=cellfun(@(a,b){[ [a;[repmat('#',[1,10]); b]] ]} , us.pw(i).grouplabel, us.pw(i).groupmembers );
+        dum=cell(max(length(dum0{1}),length(dum0{2})),2);
+        dum(1:length(dum0{1}) , 1)  =dum0{1};
+        dum(1:length(dum0{2}) , 2)  =dum0{2};
+        infox=[infox; dum ];
+        
+    end
+    
+    xlswrite(filename,infox, 'info' );
+    xlsAutoFitCol(filename,'info','A:F');
+    xlscolorizeCells(filename,'info' , [1,1], [1 0 0  ]);
+    
+    %% for each PW   ============================================
+    
+    for s=1:pws
+        dat      = us.pw(s).tbexport;
+        sheetname= us.pw(s).str;
+        if isfield(us.pw(s),'networkmetricsExport');
+            dat=[dat;us.pw(s).networkmetricsExport];
+        end
+        
+        
+        d2={};
+        ncoltot=1+max(cell2mat(cellfun(@(a){size(a,2)},dat(:,2))));
+        i_head=[];
+        npara=1;
+        cellcolpos=[];  %cellposition to colorize
+        cellcolidx=[];  % index of color used
+        for j=1:size(dat,1)
+            par=dat(j,1);
+            dx=dat{j,2};
+            
+            nrow=max([size(par,1) size(dx,1)]);
+            ncol=[size(par,2)+size(dx,2)];
+            dt=cell(nrow, ncol);
+            dt(1:size(par,1),1)=par;
+            dt(:,            2:end)=dx;
+            dt(end);
+            dt=[dt   repmat(cell(1,ncoltot-size(dt,2)),[size(dt,1)  1])];
+            
+            dt=[dt;cell(1,size(dt,2) )];
+            i_head(end+1,1) =size(d2,1)+1;
+            d2=[d2; dt];
+            
+            %% colorize  ==================================
+            
+            %% colorize header
+            cellcolpos=[  cellcolpos;    [ [repmat( i_head(end),[ncoltot  1])]  [1: ncoltot]']];
+            cellcolidx=[cellcolidx;      repmat(npara,[ncoltot 1]) ];
+            
+            %% colorize 1st col
+            cellcolpos=[cellcolpos;      [   [i_head(end):size(d2,1)-1]'   repmat(1,[size(dt,1)-1 1]) ]];
+            cellcolidx=[cellcolidx;      repmat(npara,[size(dt,1)-1 1])];
+            
+            
+            npara=npara+1;
+        end
+        
+        %% write data
+        xlswrite(filename,d2, sheetname );
+        %  xlsAutoFitCol(filename,sheetname,'A:Z');
+        
+        
+        %% colorize cells
+        cellcol=lut(cellcolidx,:);
+        xlscolorizeCells(filename,sheetname, cellcolpos, cellcol);
+        
+    end
+    cprintf([1 0 1],['done.\n' ]);
+    % fprintf(' [Done]\n ');
+    disp([' open xlsfile: <a href="matlab: system(''' filename ''')">' filename '</a>']);
+end %EXPORTTYPE
 
 
 
@@ -2944,13 +3961,149 @@ function loadroifile(e,e2)
 loadroi('gui');
 
 function loadroi(par)
+if exist('par')==1
+    if isfield(par,'loadcoi')
+        if sum(strcmp(par.loadcoi,'loadcoi'))==0
+            filename=par.loadcoi;
+        end
+    end
+end
+
+hf=findobj(0,'tag','dtistat');  figure(hf);
+hb=findobj(hf,'tag','loadroifile');
+us=get(hf,'userdata');    %### critical
+us.coifile  =[];
+us.coilabels=[];
+
+
+% ==============================================
+%%   SET ZERO CON-data
+% ===============================================
+if isfield(us,'con_backup')==0
+    us.con_backup=us.con; %use backup-file
+    set(hf,'userdata',us);
+end
+
+
+
+if exist('filename')~=1;%strcmp(filename,'gui')
+    [fi pa]=uigetfile(fullfile(pwd,'*.xlsx'),'load COI-file (excel-format) or "CANCEL" to use original data');
+    
+    if isnumeric(fi);
+        disp(' no COI-file selected - remove COI dependency');
+        try; us.coifile  =[];   end
+        try; us.coilabels=[];   end
+        try; us.con=us.con_backup ;end
+        set(hf,'userdata',us);
+        return;
+    end
+    filename  =fullfile(pa,fi);
+end
+if strcmp(filename,'none')
+    disp(' no COI-file selected - remove COI dependency');
+    try; us.coifile  =[];   end
+    try; us.coilabels=[];   end
+    try; us.con=us.con_backup ;end
+    set(hf,'userdata',us);
+    return;
+else
+    cprintf([0   .5 0],['... reading COI-file ..wait..\n' ]);
+    [~,~,x]=xlsread(filename);
+end
+
+%depending on old or new coi-file
+icoi=find(strcmp(x(1,:),'COI'));
+if icoi==2 %old COI-file
+    coi=x(2:end,1:2); % label/connection x indicators
+    coi=cellfun(@(a){[ num2str(a)  ]} , coi  );
+    
+    coi(regexpi2(coi(:,1),'NaN'),:) =[];
+    coi(regexpi2(coi(:,2),'NaN'),:) =[];
+    coi(:,2)=cellfun(@(a){[ 1  ]} , coi(:,2)  );  %everything-somehow tagged in cui-column becomes numeric-"1"
+elseif icoi==3 %new COI-file : separated regions of connections in coi-file
+    coi=x(2:end,[1 2 icoi]);
+    coi=cellfun(@(a){[ num2str(a)  ]} , coi  );
+    coi(regexpi2(coi(:,1),'NaN'),:) =[];
+    coi(regexpi2(coi(:,2),'NaN'),:) =[];
+    coi(regexpi2(coi(:,3),'NaN'),:) =[];
+    conlabels=cellfun(@(a,b){[a '--' b]}, coi(:,1),coi(:,2));
+    coi=[conlabels coi(:,3)];
+    coi(:,2)=cellfun(@(a){[ 1  ]} , coi(:,2)  ); %everything-somehow tagged in cui-column becomes numeric-"1"
+else
+    error('no "COI"-label found in header of COI-file');
+end
+
+cprintf([0   .5 0],[' [' num2str(size(coi,1)) ' COIs found]' '\n' ]);
+
+
+% ==============================================
+%%   SET ZERO CON-data
+% ===============================================
+if isfield(us,'con_backup')==0
+    us.con_backup=us.con; %use backup-file
+end
+
+us.coifile=filename;
+
+c=us.con_backup;
+
+iuse=zeros(size(coi,1),1);
+for i=1:size(coi,1)
+    iuse(i,1)=find(strcmp(c.conlabels,coi{i,1}));
+end
+inouse=setdiff(1:size(c.condata,1),iuse);
+
+c.condata(inouse,:)=0;
+
+inouse_index=c.index(inouse) ; %idx for 2d-data
+iuse_index  =c.index(iuse)   ; %idx for 2d-data
+
+si_mat=size(c.mat);
+mat =reshape(c.mat,[si_mat(1)*si_mat(2) si_mat(3)]);
+mat2=zeros(size(mat));
+mat2(iuse_index,:)=mat(iuse_index,:);
+mat2=reshape(mat2,[si_mat(1) si_mat(2) si_mat(3)]);
+
+
+us.con.condata=c.condata;
+us.con.mat    =mat2;
+
+set(hf,'userdata',us);
+disp('set other connections to zero-value');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% ==============================================
+%%   old
+% ===============================================
+function loadroi_old______(par)
 
 if exist('par')==1
     if isfield(par,'loadcoi')
         if sum(strcmp(par.loadcoi,'loadcoi'))==0
             filename=par.loadcoi;
         end
-    end 
+    end
 end
 
 hf=findobj(0,'tag','dtistat');  figure(hf);
@@ -3009,8 +4162,11 @@ us.roilabels=roi;
 us.roifile  =filename;
 set(hf,'userdata',us);
 
+% ==============================================
+%%   old version
+% ===============================================
 
-if 1 % calculated already done apply for calculated data
+if 0 % calculated already done apply for calculated data
     % line 1760
     %% ROI
     if isfield(us,'roifile')
@@ -3022,8 +4178,6 @@ if 1 % calculated already done apply for calculated data
     
 end
 cprintf([0   .5 0],['[Done]\n.' ]);
-
-
 
 function us=prunebyROIS(us)
 %%  find connections of interest
@@ -3078,7 +4232,7 @@ if checklabels==0
     return
 end
 
-    
+
 
 
 if exist('par')==1
@@ -3086,7 +4240,7 @@ if exist('par')==1
         if sum(strcmp(par.makecoi,'makecoi'))==0
             filename=par.makecoi;
         end
-    end 
+    end
 end
 
 cprintf([0 .5 0],['creating COI-blanko-file ..wait..' ]);
@@ -3142,6 +4296,47 @@ labs = [ca cb];
 head={'connectionA' 'connectionB' 'COI' 'INFO'};
 tb=cell(size(conlab,1),4);
 tb(:,1:2)=labs;
+
+% ==============================================
+%%   COItype
+% ===============================================
+hb=findobj(hf,'tag','ROIfileType');
+COItype=get(hb,'value');
+%     {'all'              }
+%     {'left connections' }
+%     {'right connections'}
+if COItype==1
+    a=tb;
+    a(:,3)={1};
+    tb=a;
+elseif COItype==2
+    a=tb;
+    idel=regexpi2(a(:,1),'^R_');
+    a(idel,:)=[];
+    idel=regexpi2(a(:,2),'^R_');
+    a(idel,:)=[];
+    a(:,3)={1};
+    tb=a;
+elseif COItype==3
+    a=tb;
+    idel=regexpi2(a(:,1),'^L_');
+    a(idel,:)=[];
+    idel=regexpi2(a(:,2),'^L_');
+    a(idel,:)=[];
+    a(:,3)={1};
+    tb=a;
+    
+end
+
+disp(['COIfile: number of current connection in COIfile: ' num2str(size(tb,1))]);
+
+
+
+
+% ==============================================
+%%
+% ===============================================
+
 tb=[head;tb];
 msg={...
     'This COI-file is used denote the connections of Interest (COIs) and thereby reduces the number'
@@ -3151,7 +4346,7 @@ msg={...
     '___INSTRUCTION___'
     '# The first two columns represent the connection between two regions (read it row-wise),'
     '   i.e. fibre connections between "connectionA" (column-1) and "connectionB" (column-2).'
-    '# Please denote Connections of Interests in column-3 ("COI") by inserting the number "1" (without quote signs).' 
+    '# Please denote Connections of Interests in column-3 ("COI") by inserting the number "1" (without quote signs).'
     '# Leave all other cells in column-3 ("COI") blank, i.e. "connections of no interest" are not denoted!'
     '# Rows can be reordered/sorted, but content of each row must be preserved (i.e. when sorting according column-A'
     '   all other columns must be ordered in the same way.'
@@ -3230,18 +4425,69 @@ end
 
 function [out]=calcConnMetrics(dx)
 
-vec   = ([efficiency_wei(dx,1)  modularity_und(dx) clustering_coef_wu(dx) degrees_und(dx)' ]);
-vecm  = mean(vec);
-sc    = [ assortativity_wei(dx,0)        transitivity_wu(dx)     efficiency_wei(dx,0)   vecm];
-out.sc =sc;
-out.vec=vec;
+%--------- vectorial metric ---------------------------
+p.v_effic   = efficiency_wei(dx,1);
+p.v_clust   = clustering_coef_wu(dx);
+p.v_degre   = degrees_und(dx)';
+%---------scalar metric ---------------------------
+p.s_assort =assortativity_wei(dx,0)  ;
+p.s_transi =transitivity_wu(dx);
+p.s_effici =efficiency_wei(dx,0) ;
 
+[~, p.s_modul]=modularity_und(dx);
 
+%---------mean of vectorial metrics--------------------------
+p.s_effic_mean= mean(p.v_effic);
+p.s_clust_mean= mean(p.v_clust);
+p.s_degre_mean= mean(p.v_degre);
 
+% ==============================================
+%%   output
+% ===============================================
+clear out;
+out.sc_info='scalar metrics'     ;% SCALARS metrics-----------------------------------
+out.sc     =[...
+    p.s_assort
+    p.s_transi
+    p.s_effici
+    p.s_modul
+    ...
+    p.s_effic_mean
+    p.s_clust_mean
+    p.s_degre_mean
+    ]'; %scalar
+out.sclabel={...
+    'assortativity_wei(dx,0)'
+    'transitivity_wu(dx)'
+    'efficiency_wei(dx,0)'
+    'modularity_und(dx),Q'
+    ...
+    'efficiency_wei(dx,1),MEAN'
+    'clustering_coef_wu(dx),MEAN'
+    'degrees_und(dx),MEAN'
+    }';
+
+out.vec_info ='vector metrics'     ;% vector metrics -----------------------------------
+out.vec      =[    p.v_effic                   p.v_clust               p.v_degre];
+out.veclabel ={'efficiency_wei(dx,1)'  'clustering_coef_wu(dx)' 'degrees_und(dx)'};
+
+% ==============================================
+%%   old
+% ===============================================
+if 0
+    vec   = ([efficiency_wei(dx,1)  modularity_und(dx) clustering_coef_wu(dx) degrees_und(dx)' ]);
+    vecm  = mean(vec);
+    sc    = [ assortativity_wei(dx,0)        transitivity_wu(dx)     efficiency_wei(dx,0)   vecm];
+    out.sc =sc;
+    out.vec=vec;
+    
+    vecml     ={'efficiency_wei(dx,1)'  'modularity_und(dx)' 'clustering_coef_wu(dx)' 'degrees_und(dx)'};
+    paramlabel=['assortativity_wei(dx,0)'      'transitivity_wu(dx)'   'efficiency_wei(dx,0)'  vecml]';
+end
 
 
 function export4xvol3d_btn(e,e2)
- export4xvol3d()
+export4xvol3d()
 
 
 
@@ -3254,10 +4500,14 @@ function export4xvol3d(x)
 % #wb PARAMETER
 % 'ano'  : Select the corresponding Atlas (a Nifti-file) here. Mandatory to read the region locations.
 %          Example: path of "ANO.nii".
-% 'hemi' : Sselect corresponding Hemisphere Mask (a Nifti-file) here. Mandatory to sepearate regions
+% 'hemi' : Select corresponding Hemisphere Mask (a Nifti-file) here. Mandatory to sepearate regions
 %          into left and right hemishere. Example path of "AVGThemi.nii"'.
 % 'cs'   : Connection strength (cs) or another parameter to export and display via xvol3d.
 %          Default: 'diff' -paramter as this is the mean diff value between two groups.
+% 'sort': Sort the connection list in Excel-file 
+%         (0) no sorting 
+%         (1) sort after CS-value; ..this is sign-sensitive
+%         (2)sort after p-value;   
 % 'outputname' : A string served as outputname. Default 'DTIconnections'.
 % 'contrast' : The contrast to save. Chose one from the list or select 'all' to export all contrasts
 %              -also possible to use the index/indices such as [1] or [2 3] depending if contrasts exist
@@ -3266,10 +4516,13 @@ function export4xvol3d(x)
 %                'all'   : save all connections (independent from its significance).
 %                'uncor' : save connections with p-value <0.05
 %                'FDR'   : save only connections with FDR corrected significances.
+%                'manual': select connections manually
 % 'underscore': remove/keep underscores in atlas label strings:  {0} remove or {1} keep underscores
 %               in exported labels. Default: 0.
 % 'LRtag      : remove/keep left/right hemispheric tag in atlas label strings:  {0} remove or {1} keep
 %               left/right hemispheric tag
+% 
+% 
 % ##HELP_export4dvol3d_off
 
 cprintf([.7 .7 .7],['The exported excelfiles can be used for xvol3d (nodes&links)  .\n' ]);
@@ -3302,7 +4555,7 @@ if exist('x')==1
 else
     if isfield(us,'export4xvol3d')% load pre-assigned parameters
         x=us.export4xvol3d;
-    end   
+    end
 end
 
 
@@ -3312,16 +4565,17 @@ p={...
     'ano'     ''        'select corresponding Atlas (Nifti-file); such as "ANO.nii"'  {'f'}
     'hemi'    ''        'select corresponding Hemisphere Mask (Nifti-file); such as "AVGThemi.nii"'  {'f'}
     'cs'     cslist{1}  'connection strength (cs) or other parameter to export/display via xvol3d'  cslist
+    'sort'     0        'sort connection list: (0)no sorting ; (1)sort after CS-value; (2)sort after p-value;'  {0,1,2}
     
     
     'inf2'              '##'   '' ''
     'outputname'    'DTIconnections'   'output name string'   {'DTIconnections'  'DTIoutput' 'DTI4xvol3d'}
     'contrast'      contrastlist{2}   'constrast to save (see list (string) or numeric index/indices)' contrastlist
     
-    'keep'       'all'    'connections to keep in file {''all'' ''FDR'' ''uncor''}'  {'all' 'FDR' 'uncor'}
+    'keep'       'all'    'connections to keep in file {''all'' ''FDR'' ''uncor'' ''manual selection'' ''p<0.001'' ''p<0.0001''}'  {'all' 'FDR' 'uncor' 'manual' 'p<0.001' 'p<0.0001'}
     
-    'underscore' 0   '{0,1} underscores in atlas labels:  {0} remove or {1} keep '                  'b'
-    'LRtag' 0   '{0,1} left/right hemispheric tag in atlas labels:  {0} remove or {1} keep '   'b'
+    'underscore'  0   '{0,1} underscores in atlas labels:  {0} remove or {1} keep '                  'b'
+    'LRtag'       1   '{0,1} left/right hemispheric tag in atlas labels:  {0} remove or {1} keep '   'b'
     };
 p=paramadd(p,x);
 
@@ -3379,7 +4633,7 @@ else
 end
 if isempty(num)
     if strcmp(z.contrast,'all')
-       num=1:npw;
+        num=1:npw;
     end
 end
 
@@ -3397,15 +4651,15 @@ for i=num% pws/contrasts
         HqFDR =findobj(hf,'tag','qFDR');
         qFDR  =str2num(get(HqFDR,'string'));
         
-         [Hfdr]=fdr_bh( d(:,strcmp(hd,'p')) ,qFDR,'pdep','no');
-         us.pw(i).fdr=double(Hfdr);
-         hd(strcmp(hd,'H'))={'Huncor'};
-         hd=['Hfdr' hd];
-         d=[us.pw(i).fdr(:) d]; 
+        [Hfdr]=fdr_bh( d(:,strcmp(hd,'p')) ,qFDR,'pdep','no');
+        us.pw(i).fdr=double(Hfdr);
+        hd(strcmp(hd,'H'))={'Huncor'};
+        hd=['Hfdr' hd];
+        d=[us.pw(i).fdr(:) d];
     end
     % -------------------------------------
     % conection-strength or other paramter
-    % -------------------------------------    
+    % -------------------------------------
     cs=d(:, (strcmp(hd,  z.cs )));
     hd=['cs' hd];
     d =[cs   d ];
@@ -3414,38 +4668,69 @@ for i=num% pws/contrasts
     % labels
     % ---------------------------------
     lab=us.pw(i).lab;
-    [Lab1 Lab2] =strtok(lab,'--');
-    Lab2=regexprep(Lab2,'^--','');
+    %[Lab1 Lab2] =strtok(lab,'--'); ERRORprone
+    
+    w1=regexp(lab, '--','split');
+    Lab1=cellfun(@(a) a(1) ,w1);
+    Lab2=cellfun(@(a) a(2) ,w1);
+    
     labm=[Lab1 Lab2];
     % ---------------------------------
     % 'keep' selection
     % ---------------------------------
     isurv=1:size(d,1);
-    if strcmp(z.keep,'FDR')  % {'all' 'FDR' 'uncor'}
-        isurv=find(d(:,find(strcmp(hd,'Hfdr'))));
-    elseif strcmp(z.keep,'uncor')
-        isurv=find(d(:,find(strcmp(hd,'Huncor'))));
+    if strcmp(z.keep,'manual')
+        %----- MANUAL SELECTION
+        hse  =['Node1' 'Node2'  hd(1:5) ];
+        se   =[labm num2cell(d(:,1:5))];
+        se   =cellfun(@(a){num2str(a)} ,se);
+        titlex='select connections here (use "sort after" option)';
+        isurv=selector2(se,hse,'iswait',1,'position',[0.0778  0.0772  0.8  0.8644],'title',titlex);
+        d    = d(isurv,:);
+        labm = labm(isurv,:);
+    elseif strcmp(z.keep(1),'p'   ) && ~isempty(regexpi(z.keep,'<|>')) %p-threshold
+        opstr=['res=' strrep(z.keep,'p','pvalue') ';'];
+        pvalue=d(:,find(strcmp(hd,'p')));
+        eval(opstr);
+        isurv=find(res==1); 
+        
+         d    = d(isurv,:);
+        labm = labm(isurv,:);
+    else
+        %---------threshold
+        % uncor,Hfdr
+        if strcmp(z.keep,'FDR')  % {'all' 'FDR' 'uncor'}
+            isurv=find(d(:,find(strcmp(hd,'Hfdr'))));
+        elseif strcmp(z.keep,'uncor')
+            isurv=find(d(:,find(strcmp(hd,'Huncor'))));
+        end
+        d    = d(isurv,:);
+        labm = labm(isurv,:);
+        
     end
-    d    = d(isurv,:);
-    labm = labm(isurv,:);
     
-    
-   
-    
+ % ==============================================
+%%   msgbox if empty
+% ===============================================
+ if isempty(d)
+    msgbox('no data survived...process canceled');
+    return
+ end
+  
     % ==============================================
     %% get coordinates
     % ===============================================
     a2=a(:); m2=m(:);
     aL=a2.*(m2==1); %LEftt
     aR=a2.*(m2==2); %RIGHT
-
+    
     cords={};
     for j1=1:size(labm,1)
         for j2=1:size(labm,2)
             labthis=labm{j1,j2};
             
             %hemispheric code
-            ishemis=[~isempty(regexpi(labthis,'^R_'))         ~isempty(regexpi(labthis,'^L_'))  ];
+            ishemis=[~isempty(regexpi(labthis,'^L_'))  ~isempty(regexpi(labthis,'^R_'))          ];
             labthis2=labthis;
             hem=0;
             if sum(ishemis)
@@ -3453,15 +4738,28 @@ for i=num% pws/contrasts
                 hem=find(ishemis);
             end
             
-            %find label
-            il=regexpi2(b(:,1),['^' labthis2 '$|^' strrep(labthis2,'_',' ')  '$' ]);
+            %find  %...problem with PARENTESIS
+            %%%il=regexpi2(b(:,1),['^' labthis2 '$|^' strrep(labthis2,'_',' ')  '$' ]);
+            
+            il=find(strcmp(b(:,1), labthis2) | strcmp(b(:,1), strrep(labthis2,'_',' ')   ));
+            
             if isempty(il)
-                disp('PROBLEM:LABEL NOT FOUND')
-                keyboard
+                %%% il=regexpi2(b(:,1),['^' labthis '$|^' strrep(labthis,'_',' ')  '$' ]);
+                il=find(strcmp(b(:,1), labthis) | strcmp(b(:,1), strrep(labthis,'_',' ')   ));
+                
+                if isempty(il)
+                    disp('PROBLEM:LABEL NOT FOUND')
+                    keyboard
+                end
             end
             ID=cell2mat(b(il,4));
-            CH=str2num(cell2mat(b(il,5)));
+            if isnumeric(b{il,5})
+                CH=cell2mat(b(il,5));
+            else
+                CH=str2num(cell2mat(b(il,5)));
+            end
             idall=[ID; CH(:)];
+            idall(isnan(idall))=[];
             
             %get voxel
             if hem==0
@@ -3504,6 +4802,21 @@ for i=num% pws/contrasts
     d2=[labm                  cords      num2cell(d)];
     
     % ---------------------------------
+    % sort after cs value
+    % ---------------------------------
+   
+    if z.sort==1  %ascending;
+         icolSort=find(strcmp(h2,'cs'));
+        d2=sortrows(d2,icolSort);
+    elseif z.sort==2 %descending
+         icolSort=find(strcmp(h2,'p'));
+        d2= (sortrows(d2,icolSort));
+    end
+    
+    
+    
+    
+    % ---------------------------------
     % output name
     % ---------------------------------
     pa=fileparts(us.groupfile);
@@ -3526,7 +4839,7 @@ for i=num% pws/contrasts
             'FILE: ' [name ext] char(10) ...
             'PATH: ' pax char(10) ...
             'CLOSE file manually..than hit [OK]']
-      
+        
         h=(msgbox(msg,'WARNNG'));
         
         set(h,'units','norm')
@@ -3551,5 +4864,179 @@ for i=num% pws/contrasts
 end% pws/contrasts
 cprintf([1 0 1],['Done.\n' ]);
 
+
+
+% ==============================================
+%%   batch
+% ===============================================
+
+function getbatch(e,e2)
+code=generatCode();
+
+function code=generatCode()
+
+code={};
+code{end+1,1}=' ';
+code{end+1,1}=['% #bo ---  DTIstatistic(dtistat.m) -----'];
+
+
+
+
+
+hf=findobj(0,'tag','dtistat');
+if isempty(hf);
+    dtistat;
+    hf=findobj(0,'tag','dtistat');
+end
+us=get(hf,'userdata');
+
+
+
+
+% ==============================================
+%%
+% ===============================================
+
+
+% dtistat('confiles',confiles  ,'labelfile',lutfile(1));
+%  dtistat('group','group_#assignment.xlsx');
+%
+
+% ==============================================
+%%   files (groupassignment,files,lut)
+% ===============================================
+try; grpfile = us.groupfile; catch; grpfile='UNDEFINED'; end
+try; lutfile =us.con.lutfile; catch; lutfile='UNDEFINED'; end
+try; confiles=us.con.files; catch; confiles={'''UNDEFINED'''}; end
+
+
+
+d={['groupingfile = ''' char(grpfile) '''; % % group-assignment File (Excel-file) ']};
+if size(confiles,1)==1
+    e=[ 'confiles     = {'  char(confiles) '}; % % connectivity-Files'];
+else
+    
+    [pa fi ext]=fileparts2(confiles);
+    if length(unique(fi))==1
+        confile=[fi{1} ext{1}];
+        
+        e=cellfun(@(a){ [ sprintf('\t') '''' a '''' ]} , pa);
+        e=[ 'paths          = {...     % % connectivity-folders '  ;e; [sprintf('\t') '};']];
+        
+        e{end+1,1}=['confileName  = '  '''' confile  ''';               % % connectivity FileName' ];
+        e{end+1,1}=...
+            [ 'confiles     = stradd(paths,[filesep confileName],2);  % % fullpath-connectivity-Files '];
+    else
+        e=cellfun(@(a){ [ sprintf('\t') '''' a '''' ]} , confiles);
+        e=[ 'confiles     = {...     % % connectivity-Files '  ;e; [sprintf('\t') '};']];
+    end
+    
+    
+    
+end
+f={['lutfile      = ''' char(lutfile) '''; % % LUT-File (txt-file) ']};
+code=  [code;  ;d; e; f;{''}];
+
+arg={};
+h=findobj(hf,'tag','inputsource');
+arg{1,1}='inputsource';
+arg{1,2}=h.String{h.Value};
+code{end+1,1}=makecode(arg);
+
+
+
+code{end+1,1}=['dtistat(''group'', groupingfile);                        % % LOAD groupAssignment (ExcelFile)'];
+code{end+1,1}=['dtistat(''confiles'', confiles  ,''labelfile'',lutfile); % % LOAD connectivity-Files & LUTfile'];
+
+% ==============================================
+%%   other paramter
+% ===============================================
+
+
+% -----------tests/tail etc----------------------------
+arg={};
+h=findobj(hf,'tag','F1design');
+arg{1,1}='within';
+arg{1,2}=(h.Value);
+
+h=findobj(hf,'tag','typeoftest1');
+arg{2,1}='test';
+arg{2,2}=h.String{h.Value};
+
+h=findobj(hf,'tag','tail');
+arg{3,1}='tail';
+arg{3,2}=h.String{h.Value};
+code{end+1,1}=makecode(arg);
+% -----------FDR /sort results etc----------------------------
+arg={};
+h=findobj(hf,'tag','isfdr');
+arg{1,1}='FDR';
+arg{1,2}=(h.Value);
+
+h=findobj(hf,'tag','qFDR');
+arg{2,1}='qFDR';
+arg{2,2}=str2num(h.String);
+
+h=findobj(hf,'tag','showsigsonly');
+arg{3,1}='showsigsonly';
+arg{3,2}=(h.Value);
+
+h=findobj(hf,'tag','issort');
+arg{4,1}='sort';
+arg{4,2}=(h.Value);
+
+h=findobj(hf,'tag','reversecontrast');
+arg{5,1}='rc';
+arg{5,2}=(h.Value);
+code{end+1,1}=makecode(arg);
+
+%% -----------Threshold/noSeeds etc----------------------------
+arg={};
+h=findobj(hf,'tag','noSeeds');
+arg{1,1}='nseeds';
+arg{1,2}=str2num(h.String);
+
+h=findobj(hf,'tag','isproportthreshold');
+arg{2,1}='propthresh';
+arg{2,2}=(h.Value);
+
+h=findobj(hf,'tag','threshold');
+arg{3,1}='thresh';
+arg{3,2}=(h.String);
+
+h=findobj(hf,'tag','logarithmize');
+arg{4,1}='log';
+arg{4,2}=(h.Value);
+
+code{end+1,1}=makecode(arg);
+
+% ==============================================
+%%   calculate
+% ===============================================
+code{end+1,1}=' ';
+% code{end+1,1}='% ---calculate';
+code{end+1,1}='% dtistat(''calcconnectivity''); % % CALCULATION (uncomment line to execute) ';
+% code{end+1,1}='% ---showResults';
+code{end+1,1}='% dtistat(''showresult'');       % % SHOW RESULT (uncomment line to execute) ';
+code{end+1,1}='% dtistat(''savecalc'',''calc_test1.mat'');  % %save calculation';
+code{end+1,1}='% dtistat(''export'',''test1.xlsx'',''exportType'',1);  % %save Result as ExelFile';
+
+
+uhelp(code,1,'name','batch');
+
+function code=makecode(arg);
+lin='';
+for i=1:size(arg,1)
+    lin=[lin '''' arg{i,1} '''' ',' ];
+    if ischar(arg{i,2})
+        lin=[lin '''' num2str(arg{i,2}) ''''  ];
+    else
+        lin=[lin  num2str(arg{i,2})    ];
+    end
+    if i<size(arg,1)
+        lin=[lin ','];
+    end
+end
+code=['dtistat(''set'',' lin ' );'];
 
 

@@ -697,10 +697,12 @@ cnames{1,:}={'BrBG', 'PiYG', 'PRGn', 'PuOr', 'RdBu', 'RdGy', 'RdYlBu', 'RdYlGn',
 cnames{2,:}={'Blues','BuGn','BuPu','GnBu','Greens','Greys','Oranges','OrRd','PuBu','PuBuGn','PuRd',...
     'Purples','RdPu', 'Reds', 'YlGn', 'YlGnBu', 'YlOrBr', 'YlOrRd'};
 % cnames{3,:}={'Accent', 'Dark2', 'Paired', 'Pastel1', 'Pastel2', 'Set1', 'Set2', 'Set3'};
+cnames{3}=cellfun(@(a){[a '_flip']} ,cnames{1,:});
+cnames{4}=cellfun(@(a){[a '_flip']} ,cnames{2,:});
 
 othermaps=cmaps_other();
-cnames2=[cnames{1} cnames{2}];
-cmaplist=[cmaplist othermaps(:,1)' cnames2];
+cnames2=[cnames{1} cnames{2} cnames{3} cnames{4}];
+cmaplist=[cmaplist othermaps(:,1)' cnames2 ];
 
 
 
@@ -738,17 +740,27 @@ elseif strfind(cmap,'FLIP')
      
 elseif ~isempty(find(strcmp(cmaplist,cmap)))
     %iv=find(strcmp(cmaplist,cmap))
-    
     %      F=cbrewer(ctypes{itype}, cnames{itype}{iname}, ncol);
-    
-    [~,F]=evalc(['cbrewer(''div'',''' cmap ''', 64);']);
-    if isempty(F)
-        %             F=cbrewer('seq', cmap, 64);
-        [~,F]=evalc(['cbrewer(''seq'',''' cmap ''', 64);']);
-    end
-    cmap2=F;
-    if isempty(F)
-        cmap2=eval(cmap);
+    if isempty(strfind(cmap,'_flip'))
+        [~,F]=evalc(['cbrewer(''div'',''' cmap ''', 64);']);
+        if isempty(F)
+            [~,F]=evalc(['cbrewer(''seq'',''' cmap ''', 64);']);
+        end
+        cmap2=F;
+        if isempty(F)
+            cmap2=eval(cmap);
+        end
+    else
+        cmap=strrep(cmap,'_flip','');
+        [~,F]=evalc(['cbrewer(''div'',''' cmap ''', 64);']);
+        if isempty(F)
+            [~,F]=evalc(['cbrewer(''seq'',''' cmap ''', 64);']);
+        end
+        cmap2=F;
+        if isempty(F)
+            cmap2=eval(cmap);
+        end
+       cmap2= flipud(cmap2);
     end
     
 else

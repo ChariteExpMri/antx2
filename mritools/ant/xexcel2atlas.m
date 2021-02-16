@@ -32,8 +32,8 @@
 %                     for the "caudoputamen" is [4].
 %           default: empty, ..and .. #b must be selected                   
 %                         
-% #k 'columnNewID'         Column index in the "excelfile" containing the new IDs #b (default: 2).
-% #k 'columnHemispherType' Column index in the "excelfile" containing the hemisphere Type #b (default: 3).
+% #k 'columnNewID'         Column index in the "excelfile" containing the new IDs
+% #k 'columnHemispherType' Column index in the "excelfile" containing the hemisphere Type.
 % 
 % #k 'hemisphereIDstyle'  If regions from left and right hemispheres are treated separately, define the numeric "gap"
 %                       for the new right hemispheric IDs (right hemispheric ID-offset).
@@ -53,6 +53,12 @@
 %                       gap2000    : the right hemispheric ID-offset is 2000
 %                       any numeric value:  a numeric value that defines the gap
 %                #r The numeric gap must be larger than the maimum value of the new IDs
+% #k 'columnNewRegionName'   - optional. specify the excelfile column containing new Region names (use "none" or column index)'   {'none' 1:10}
+%                          'none': no column with new regions specified
+%                           index (numeric): the column index containing new Region names 
+%                          #r INMPORTANT: Currently, the new Region Names are only forwarded to the *_info.xlsx-table
+%                          #r specifically to sheet "NEW IDS" as a lookup table. To ffurther use the new Region Names, 
+%                          #r Please replace the old labels with the new Region Names
 %                                  
 % #k 'outputName'          The filename (string) of the output file #b (must be defined, default: 'dummyMask').
 % #k 'outputDir'           The output directory, #b must be selected, if empty the location of the "excelfile" is used.
@@ -86,7 +92,20 @@
 % z.singleMasksType     = [3];                                                 % % specify single mask value {1|2|3}: (1) binary,(2) new ID ,(3) both as separate outputs ("saveSingleMasks" must be "1")                          
 % z.LRstringPosition    = 'prefix';                                            % % position of the output label string denoting the LEFT/RIGHT hemishere {prefix|suffix}                                                           
 % xexcel2atlas(1,z);    
-
+%% #ko BATCH EXAMPLE with predefined new Region Names (see help of columnNewRegionName)
+% z=[];                                                                                                                                                                                                                                      
+% z.atlas               = 'F:\data3\groeschel_audio_atlasfusion\templates\ANO.nii';                                % % select ATLAS (must be a NIFTI-file, such as "ANO.nii" in template folder)                                             
+% z.excelfile           = 'F:\data3\groeschel_audio_atlasfusion\Allen2017HikishimaLR_201204_JZ_MG_input.xlsx';     % % select modified ANO.xlsx file (corresponding, but modified EXCELFILE of the "atlas")                                  
+% z.columnNewID         = [6];                                                                                     % % excelfile column containing the new IDs (column index)                                                                
+% z.columnHemispherType = [7];                                                                                     % % excelfile column containing the hemisphere Type (column index)                                                        
+% z.columnNewRegionName = [8];                                                                                     % % (optional)excelfile column containing new Region names (use "none" or column index)                                   
+% z.hemisphereIDstyle   = 'successive';                                                                            % % for hemispeheric separation, define right hemispheric ID-offset {successive|gap100|gap1000|gap2000} or a numeric value
+% z.outputName          = 'atl_auditsys_08dec20';                                                                  % % filename (string) of the output file"                                                                                 
+% z.outputDir           = 'test1';                                                                                 % % select outputdirectory, if empty output is stored where "excelfile" is located                                        
+% z.saveSingleMasks     = [0];                                                                                     % % for debugging {0|1}: (1) saves also the input regions as separate masks (in new created subfolder)                    
+% z.singleMasksType     = [3];                                                                                     % % specify single mask value {1|2|3}: (1) binary,(2) new ID ,(3) both as separate outputs ("saveSingleMasks" must be "1")
+% z.LRstringPosition    = 'prefix';                                                                                % % position of the output label string denoting the LEFT/RIGHT hemishere {prefix|suffix}                                 
+% xexcel2atlas(1,z);
 
 function xexcel2atlas(showgui, x)
 
@@ -94,12 +113,12 @@ if 0
     z=[];
     z.atlas               = { 'f:\data1\AtlasGenerator\templates\ANO.nii' };     % % select ATLAS (must be a NIFTI-file, such as "ANO.nii" in template folder)
     z.excelfile           = { 'f:\data1\AtlasGenerator\WU_newAtlas.xlsx' };      % % select modified ANO.xlsx file (corresponding, but modified EXCELFILE of the "atlas")
-    z.columnNewID         = [2];                                                 % % which column in "excelfile" contains the new IDs (column index)
-    z.columnHemispherType = [3];                                                 % % which column in "excelfile" contains the hemisphere Type (column index)
+    z.columnNewID         = [6];                                                 % % which column in "excelfile" contains the new IDs (column index)
+    z.columnHemispherType = [7];                                                 % % which column in "excelfile" contains the hemisphere Type (column index)
     z.hemisphereIDstyle   = 'successive';                                        % % for hemispeheric separation, define right hemispheric ID-offset {successive|gap100|gap1000|gap2000} or a numeric value
     z.outputName          = 'TEST2';                                           % % filename (string) of the output file"
     z.outputDir           = 'F:\data1\AtlasGenerator';                           % % select outputdirectory, if empty output is stored where "excelfile" is located
-    z.saveSingleMasks     = [1];                                                 % % for debugging {0|1}: (1) saves also the input regions as separate masks (in new created subfolder)
+    z.saveSingleMasks     = [0];                                                 % % for debugging {0|1}: (1) saves also the input regions as separate masks (in new created subfolder)
     z.singleMasksType     = [3];                                                 % % specify single mask value {1|2|3}: (1) binary,(2) new ID ,(3) both as separate outputs ("saveSingleMasks" must be "1")
     z.LRstringPosition    = 'prefix';                                            % % position of the output label string denoting the LEFT/RIGHT hemishere {prefix|suffix}
     xexcel2atlas(1,z);
@@ -124,14 +143,16 @@ p={...
     'inf3'     '==================================='        '' ''
     'atlas'       ''      'select ATLAS (must be a NIFTI-file, such as "ANO.nii" in template folder)'   {  @selectatlas}
     'excelfile'   ''      'select modified ANO.xlsx file (corresponding, but modified EXCELFILE of the "atlas")'   {  @selectexcelfile}
-    'columnNewID'         2     'which column in "excelfile" contains the new IDs (column index)'   { 1:10}
-    'columnHemispherType' 3     'which column in "excelfile" contains the hemisphere Type (column index)'   { 1:10}
-    'hemisphereIDstyle'   'gap100' 'for hemispeheric separation, define right hemispheric ID-offset {successive|gap100|gap1000|gap2000} or a numeric value'  {'successive' 'gap100' 'gap1000'  'gap2000'}
+    'columnNewID'         6         'excelfile column containing the new IDs (column index)'   { 1:10}
+    'columnHemispherType' 7         'excelfile column containing the hemisphere Type (column index)'   { 1:10}
+    'columnNewRegionName' 'none'    '(optional)excelfile column containing new Region names (use "none" or column index)'   {'none' 1:10}
+    ...
+    'hemisphereIDstyle'   'successive' 'for hemispeheric separation, define right hemispheric ID-offset {successive|gap100|gap1000|gap2000} or a numeric value'  {'successive' 'gap100' 'gap1000'  'gap2000'}
     ...
     %     'hemisphere'   '(3) both united'    'HEMISPHERE: define mask & relation to hemisphere' {'(1) left','(2) right','(3) both united' '(4) both separated '}
     'outputName'  'dummyMask'      'filename (string) of the output file"'   ''
     'outputDir'   ''               'select outputdirectory, if empty output is stored where "excelfile" is located'   {'d'}
-    'saveSingleMasks'   1          'for debugging {0|1}: (1) saves also the input regions as separate masks (in new created subfolder)' {'b'}        
+    'saveSingleMasks'   0          'for debugging {0|1}: (1) saves also the input regions as separate masks (in new created subfolder)' {'b'}        
     'singleMasksType'   3          'specify single mask value {1|2|3}: (1) binary,(2) new ID ,(3) both as separate outputs ("saveSingleMasks" must be "1")' {1,2,3}        
     'LRstringPosition'   'prefix'  'position of the output label string denoting the LEFT/RIGHT hemishere {prefix|suffix}' {'prefix','suffix'}
     ...
@@ -151,9 +172,12 @@ end
 %===========================================
 %%   process
 %===========================================
+cprintf([1 0 1],['wait... '    '\n' ]);
 xmakebatch(z,p, mfilename)
 
 process(z);
+cprintf([1 0 1],['done... '    '\n' ]);
+
 
 
 %===========================================
@@ -176,13 +200,23 @@ end
 
 %% ________________________________________________________________________________________________
 function process(z)
+warning off;
 
 z.atlas    =char(z.atlas);
 z.excelfile=char(z.excelfile);
 z.outputName =char(z.outputName);
 z.outputDir  =char(z.outputDir);
 
-if isempty(z.outputDir);     z.outputDir=fileparts(z.excelfile);  end
+[pa pa2 ext]=fileparts(z.outputDir); % MAKKE DIR
+% if exist(z.outputDir)~=7
+    if isempty(pa) ; pa =pwd; end
+    if isempty(pa2); pa2='test1'; end
+    z.outputDir=fullfile(pa,pa2);
+    mkdir(z.outputDir);
+% end
+
+
+% if isempty(z.outputDir);     z.outputDir=fileparts(z.excelfile);  end
 [~,z.nameout]=fileparts(z.outputName);  %OUTPUTNAME
 
 
@@ -226,6 +260,13 @@ v.ichild=regexpi2(he,['^' 'children' '$']);
 v.iID   =regexpi2(he,['^' 'ID' '$']);
 v.inewID          =z.columnNewID;
 v.ihemisphereType =z.columnHemispherType;
+
+
+v.newRegionName   =z.columnNewRegionName; %new regionName
+if ischar(v.newRegionName) % implied none
+    v.newRegionName=0;
+end
+    
 
 %========================= check typos
 fx=e(:,v.inewID );
@@ -280,7 +321,11 @@ end
 nodes=nodes(isort,:);
 tb2  =tb(isort,:);
 
-
+if v.newRegionName==0 %new region NAME
+    newRegionName=repmat({''},[size(tb2,1) 1]);
+else
+   newRegionName= tb2(:,v.newRegionName);
+end
 
 % ====================================================================
 %%   TABLE: set "modif tag" if several regions exist in a new ID
@@ -288,8 +333,8 @@ tb2  =tb(isort,:);
 % =====================================================================
 
 
-tb3=[ tb2(:,[v.iregion v.inewID v.ihemisphereType v.iID  ])  nodes(:,1) nodes(:,2)];
-htb3={         'label' 'newID'   'hemisphereType'  'id'     'numnodes' 'nodes'  };
+tb3=[ tb2(:,[v.iregion v.inewID v.ihemisphereType v.iID  ])  nodes(:,1) nodes(:,2)   newRegionName];
+htb3={         'label' 'newID'   'hemisphereType'  'id'     'numnodes' 'nodes'      'myRegionName' };  
 
 newids      =cell2mat(tb3(:,2));
 newidsuni   =unique(newids);
@@ -298,6 +343,7 @@ oldLabel    ={};
 clustnum    ={};
 numid2merge ={};
 allchild    ={};
+myRegionName={};
 imeta=zeros(size(tb3,1),1);
 for i=1:length(newidsuni)
     il =find(newids==newidsuni(i));
@@ -322,18 +368,52 @@ for i=1:length(newidsuni)
     newLabel(il,1)    = { [tb3{il(imax),1} tag_modif]};
     clustnum(il,1)    = { i };
     numid2merge(il,1) = {length(il)};
+    
+    myregionNameList=unique(cellfun(@(a){[ num2str(a)]} ,{tb3{il,7}}));
+    myregionNameList(strcmp(myregionNameList,'NaN'))=[];
+    if isempty(myregionNameList);
+        myregionNameList{1}='';
+    end
+    myregionNameList=strjoin(myregionNameList,'_');
+    
+    
+    myRegionName(il,1)= {myregionNameList}; %{tb3{il(imax),7}};
     %allchild(il,:)    = repmat({length(chall) chall},[length(il) 1]);
 end
 
 htb4={'label'  'oldlabel' 'cluster' 'labelDOnator'   'members' ...
-     'newID'    'HemiType' 'oldID'   'nodescount'    'nodes' };
-tb4 =[newLabel  tb3(:,1) clustnum num2cell(imeta) numid2merge    tb3(:,2:6) ];
+     'newID'    'HemiType' 'oldID'   'nodescount'    'nodes'   ...
+     'myRegionName'};
+tb4 =[newLabel  tb3(:,1) clustnum num2cell(imeta) numid2merge    tb3(:,2:6) myRegionName];
+
+
+
 
 if 0 %TEST
     % uhelp( plog([],[  htb4; sortrows(tb4,2)] ),1);
     uhelp( plog([],[  htb4; tb4] ),1);
     
 end
+
+% ==============================================
+%%  %check hemitype
+% ===============================================
+ihemitype_ck=find(strcmp(htb4,'HemiType'));
+sumHemitypeNan=sum(isnan(cell2mat(tb4(:,ihemitype_ck))));
+if sumHemitypeNan~=0
+    
+    
+    uhelp( plog([],[  htb4(:,[2 6 7 8]); tb4(:,[2 6 7 8])],0,' #r HEMISPHERE-TYPE not defined ("NAN")...change excelfile'),1);
+    
+    h = errordlg(...
+        ['HemisphereType(1,2,3,4) not defined for some regions in excelfile...see help window ',...
+        'HemisphereType-ERROR' char(10) ' ...process terminated..']);
+    
+    return
+end
+% ==============================================
+%%   
+% ===============================================
 
 
 % ==============================================
@@ -343,13 +423,13 @@ end
 % next id with more nodes
 % ===============================================
 
-w.inodecount =find(strcmp(htb4,'nodescount'));
-w.inode      =find(strcmp(htb4,'nodes'     ));
-w.ilabel     =find(strcmp(htb4,'label'     ));
-w.icluster   =find(strcmp(htb4,'cluster'     ));
-w.ioldlabel  =find(strcmp(htb4,'oldlabel'     ));
-w.ioldID     =find(strcmp(htb4,'oldID'     ));
-
+w.inodecount    =find(strcmp(htb4,'nodescount'));
+w.inode         =find(strcmp(htb4,'nodes'     ));
+w.ilabel        =find(strcmp(htb4,'label'     ));
+w.icluster      =find(strcmp(htb4,'cluster'     ));
+w.ioldlabel     =find(strcmp(htb4,'oldlabel'     ));
+w.ioldID        =find(strcmp(htb4,'oldID'     ));
+w.imyRegionName =find(strcmp(htb4,'myRegionName'     ));
 
 allnodes=unique(cell2mat(tb4(:,w.inode))); % UNIQUENESS OF ALL NODES
 reducednodes={};
@@ -441,6 +521,7 @@ u.inewID              = find(strcmp(htb5,'newID'));
 u.ilabel              = find(strcmp(htb5,'label'));
 u.ioldlabel           = find(strcmp(htb5,'oldlabel'));
 u.ioldID              = find(strcmp(htb5,'oldID'));
+u.myRegionName        = find(strcmp(htb5,'myRegionName'));
 
 tic
 al=a(:).*(m(:)==1);
@@ -585,6 +666,7 @@ end
 % ==============================================
 %%   change "L/R"-tag from suffix to prefix position (if selected)  
 % ===============================================
+lrtag=zeros(size(tb6,1));
 if strcmp(z.LRstringPosition,'prefix')
     ilabel=find(strcmp(htb6,'label'));
     for i=1:size(tb6,1)
@@ -595,8 +677,30 @@ if strcmp(z.LRstringPosition,'prefix')
             tb6(i,ilabel)={['R ' regexprep(tb6{i,ilabel},' R$','')]};
         end
     end
-    
 end
+% ==============================================
+%%   set L/R for myREGIONName  
+% ===============================================
+ilabel=find(strcmp(htb6,'label'));
+pref_suff =[regexp(tb6(:,ilabel),'^L |^R ','match')  regexp(tb6(:,ilabel),' L&| R&','match')];
+sums=sum(cell2mat(cellfun(@(a){[ length(a)]} , pref_suff )));
+if sum(sums)==0
+    idx=0;
+else
+    idx=find(sums==max(sums));
+end
+
+imyRegionName=find(strcmp(htb6,'myRegionName'));
+if idx==1
+    tb6(:,imyRegionName)  = cellfun(@(a,b){[ char(a)     b]}   ,pref_suff(:,1),tb6(:,imyRegionName) );
+else
+    tb6(:,imyRegionName)  = cellfun(@(a,b){[ b      char(a)]}  ,pref_suff(:,2),tb6(:,imyRegionName) );
+end
+%remove singulare L/R-labels
+tb6(:,imyRegionName)=regexprep(tb6(:,imyRegionName),{'^L $|^R $| L$| R$' }, {''});
+
+
+
 
 % ==============================================
 %%   save [0] save merged mask (nifti)
@@ -605,8 +709,22 @@ end
 % %     z.outputDir=fileparts(z.excelfile);
 % % end
 % % [~,z.nameout]=fileparts(z.outputName);
+% try; delete(z.outputDir); end
+try; mkdir(z.outputDir); end
+disp(['saving DIR: '  z.outputDir  ]);
+
 niftifile=fullfile( z.outputDir, [ z.nameout '.nii']);
-rsavenii(niftifile, ha,(reshape(s,ha.dim)));
+s2=double((reshape(s,ha.dim)));
+pause(.5);
+rsavenii(niftifile, ha,s2);
+showinfo2('new mask/atlas ',niftifile);
+
+%-----copy excelfile to output Directory
+[pa3 fi3 ext3]=fileparts(z.excelfile);
+file_XLS_inCopy=fullfile(z.outputDir,[strrep(fi3,'_input','') '__input' ext3]);
+if exist(file_XLS_inCopy)~=2
+    copyfile( z.excelfile ,file_XLS_inCopy,'f');
+end
 
 % ==============================================
 %%   make FINAL  INFO Table
@@ -697,7 +815,11 @@ isexcel=ispc;
 % xx=sortrows(xx,)
 % uhelp( plog([],[  hxx; xx] ),1);
 
+
+
 fileout=fullfile( z.outputDir, [ z.nameout '_INFO.xlsx']);
+try; delete(fileout); end                                      % DELETE XLS-FILE
+
 if isexcel==1
     pwrite2excel(fileout,{1 'INFO' },hxx,[],xx);
 else
@@ -727,10 +849,14 @@ volreg=voxvol.*counts;
 TB4 =[yy num2cell(volreg)];
 hTB4=[hxx(1:2) 'volume'];
 
+imyRegionName=find(strcmp(hxx,'myRegionName'));
+TB5  =[xx(io,[1:2 imyRegionName   ])  num2cell(volreg)] ;
+hTB5 =[hxx(  [1:2 imyRegionName   ])         'volume' ];
+
 if isexcel==1
-    pwrite2excel(fileout,{2 'NEW_IDS' },hTB4,[],TB4);
+    pwrite2excel(fileout,{2 'NEW_IDS' },hTB5,[],TB5);
 else
-    sub_write2excel_nopc(fileout,'NEW_IDS',hTB4,TB4);
+    sub_write2excel_nopc(fileout,'NEW_IDS',hTB5,TB5);
 end
 
 % ==============================================
@@ -772,8 +898,23 @@ else
     sub_write2excel_nopc(fileout,'output2',['ID' hb2(2:end)],[b2]);
 end
 
+% ------use myReguibNames as output--------------------
+b3=b2;
+myregnames=b(:,regexpi2(hxx,'myRegionName'));
+b3(:,2)=myregnames;
+
+if isexcel==1
+    pwrite2excel(fileout,{7 'output3_myRegionName' },hb2,[],b3);
+else
+    sub_write2excel_nopc(fileout,'output3_myRegionName',['ID' hb2(2:end)],[b3]);
+end
+
+
+
+
+
 % ==============================================
-%%   save [7] OUTPUT analogon to ANO.xlsx
+%%   save [ ] OUTPUT analogon to ANO.xlsx
 % ===============================================
 fileout2=fullfile( z.outputDir, [ z.nameout '.xlsx']);
 hg={'Region'	'colHex'	'colRGB'	'ID'	'Children'};
@@ -847,7 +988,7 @@ lg0=[' #ky WARNING  ';...
     { ' #b EXAMPLE1 [0 1 0]: ID is not found in atlas, but found in the  ID-column in the excelfile,' };...
     { ' #b    this ID has no childs' };...
     { ' #b EXAMPLE2 [0 1 1]: same as before, but now childs are found #r THAT MEANS THAT ' };...
-    { '  #r EVERYTHING IS OK WITH THIS ID, because mostlikely the ID''s children have been found' };...
+    { '  #r EVERYTHING IS OK WITH THIS ID, because most likely the ID''s children have been found' };...
     { '  #r  and incorporated into the ATLAS' };...
     ];
 if ~isempty([(inovolorig(:)) ;(inovolnew(:))])
@@ -936,7 +1077,18 @@ if ~isempty([(inovolorig(:)) ;(inovolnew(:))])
             ' Thus, regions with [0 1 0] vector do not appear in the new Atlas:'; ...
             unique(lg2,'rows')];
     end
-    msg=[[lg3; lg0; lgm; lgm2]];
+    
+    
+    if exist('b3')==1
+       msg_regname         ={'using "MyRegionName"-column: yes'} ;
+       msg_regname{end+1,1}=['Missing regionNames in "MyRegionName"-column: ' ...
+           num2str(length(find(cellfun(@isempty,b3(:,2))))) ' regions were not labelled !!!'];
+    
+    else
+      msg_regname         ={'using "MyRegionName"-column: no'} ;
+    end
+    
+    msg=[[lg3; msg_regname;  lg0; lgm; lgm2]];
     
     %     h=warndlg(msg);
     uhelp(plog([],[msg],'style=1'),1);
@@ -945,7 +1097,7 @@ if ~isempty([(inovolorig(:)) ;(inovolnew(:))])
    % pwrite2file(fileout ,msg );
     
     if isexcel==1
-        pwrite2excel(fileout,{7 'WARNING' },{'importantNote'},[],msg);
+        pwrite2excel(fileout,{8 'WARNING' },{'importantNote'},[],msg);
     else
         sub_write2excel_nopc(fileout,'WARNING',{'importantNote'},msg);
     end

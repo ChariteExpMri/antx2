@@ -124,6 +124,8 @@ VO.fname=outname;
 if exist('dt')==1
     if length(dt)==2
         VO.dt =dt;
+    elseif length(dt)==1
+        VO.dt(1) =dt;
     end
 end
     

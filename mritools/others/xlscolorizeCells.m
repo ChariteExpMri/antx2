@@ -180,6 +180,11 @@ invoke(thissheet.Columns,'AutoFit');
 
 %%colorize cells
 % myCell = 'A3';
+
+if size(xcol,1)<size(xpos,1)
+    xcol=repmat(xcol,[size(xpos,1) 1]);
+end
+
 for j=1:length(xcol)
     Range = thissheet.Range(xpos{j});
     Range.Interior.Color=xcol(j);

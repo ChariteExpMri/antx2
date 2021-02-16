@@ -24,8 +24,12 @@ if isempty(ext);    ext='.nii'; end
 
 if ndims(d)==3
     h(1).fname=fullfile(pa,[ fi  ext]);
-    if exist('dt')==1 && length(dt)==2
-        h.dt=dt;
+    if exist('dt')==1
+        if length(dt)==2
+            h.dt=dt;
+        else
+            h.dt=[dt 0];
+        end
     end
  %     try; h=rmfield(h,'pinfo'); end
      try; h=rmfield(h,'private');end
@@ -41,8 +45,12 @@ else % 4d-data
         dum.n     = [k 1];
         dum.fname =fullfile(pa,[ fi  ext]);
         
-        if exist('dt')==1 && length(dt)==2
-            dum.dt=dt;
+        if exist('dt')==1
+            if length(dt)==2
+                h.dt=dt;
+            else
+                h.dt=[dt 0];
+            end
         end
 %         try; dum=rmfield(dum,'pinfo'); end
         try; dum=rmfield(dum,'private');end

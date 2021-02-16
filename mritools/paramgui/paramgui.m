@@ -2452,7 +2452,7 @@ drawnow;
 us=get(gcf,'userdata');
 if ~isempty(findobj(gcf,'tag','pulldown')) ; return; end
 
-
+try
 carpos=us.jCodePane.getLineFromPos(us.jCodePane.getCaretPosition());
 % pnt= us.jCodePane.getPointFromPos(carpos)
 %    xy=[pnt.x pnt.y]
@@ -2460,6 +2460,9 @@ carpos=us.jCodePane.getLineFromPos(us.jCodePane.getCaretPosition());
 height=us.jCodePane.getHeight();
 yd=us.jCodePane.getLineHeight();
 numli=us.jCodePane.getNumLines();
+catch
+   return 
+end
 
 % carpos
 

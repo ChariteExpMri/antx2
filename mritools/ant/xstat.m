@@ -686,6 +686,10 @@ if strcmp(xtype,'twosamplettest')
         'group_col'      2      'column number with group assignment  (used when comparing groups, "regress_col" must be empty)' ''
         'data_dir'       ''     'data directory (upper directory) contains dirs with mice data' 'd'
         'inputimage'     ''     'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
+        'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
+        'AVGT' '' 'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
+        'ANO'  '' 'select the ATLAS-file (path of "ANO.nii")' 'f'
+        'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
         'grp_comparison' '1vs2' 'groups to compare, use EXCELgroupnames(example: "GroupNameString1vsGroupNameString2") or alphabet. order (example: "1vs2"), or ' {'1vs2' '1vs3' '2vs3'  };
         'mask'          'local' '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' {'d' 'f' 'local'};
         'smoothing'       1       '<optional>smooth data' 'b'
@@ -702,6 +706,10 @@ elseif strcmp(xtype,'pairedttest')
         'mouseID_colT2'  1  'column number with the MouseIDs for T2' ''
         'data_dir'       '' 'data directory (upper directory) contains dirs with mice data' 'd'
         'inputimage'     '' 'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
+        'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
+        'AVGT' '' 'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
+        'ANO'  '' 'select the ATLAS-file (path of "ANO.nii")' 'f'
+        'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
         'mask'          'local' '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' {'d' 'f' 'local'};
         'smoothing'       1       '<optional>smooth data' 'b'
         'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
@@ -719,6 +727,10 @@ elseif strcmp(xtype,'regression')
         'regress_col'    2  'column number with regression values (used for multiple regression,"group_col" must be empty)' ''
         'data_dir'       '' 'data directory (upper directory) contains dirs with mice data' 'd'
         'inputimage'     '' 'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
+        'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
+        'AVGT' '' 'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
+        'ANO'  '' 'select the ATLAS-file (path of "ANO.nii")' 'f'
+        'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
         'mask'          'local' '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' {'d' 'f' 'local'};
         'smoothing'       1       '<optional>smooth data' 'b'
         'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
@@ -736,6 +748,10 @@ elseif strcmp(xtype,'onewayanova')
         'regress_col'    []  '<optional> column number(s) with regression values,otherwise empty (examples: age+gender --> regression columns are [4 5])' ''
         'data_dir'       '' 'data directory (upper directory) contains dirs with mice data' 'd'
         'inputimage'     '' 'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
+        'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
+        'AVGT' '' 'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
+        'ANO'  '' 'select the ATLAS-file (path of "ANO.nii")' 'f'
+        'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
         'mask'          'local' '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' {'d' 'f' 'local'};
         'smoothing'       1       '<optional>smooth data' 'b'
         'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
@@ -752,6 +768,10 @@ elseif strcmp(xtype,'onewayanova')
         'regress_col'    []     '<optional>  column number addressing regression values,otherwise empty' ''
         'data_dir'       ''     'data directory (upper directory) contains dirs with mice data' 'd'
         'inputimage'     ''     'NIFTI image name, from which the statistic is made (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
+         'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
+        'AVGT' '' 'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
+        'ANO'  '' 'select the ATLAS-file (path of "ANO.nii")' 'f'
+        'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
         'mask'          'local' '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' {'d' 'f' 'local'};
         'smoothing'       1       '<optional>smooth data' 'b'
         'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
@@ -771,7 +791,8 @@ if showgui==1
     hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
     
     try
-    [m x a paras]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .6 .3 ],'info',hlp); %% {@doc,'paramgui.m'}
+    [m x a paras]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .6 .35 ],...
+        'info',hlp,'title',[mfilename '.m']); 
     if isempty(m); 
        error('__process terminated___________________');
     end
@@ -897,6 +918,14 @@ end
 %%   read excel
 %———————————————————————————————————————————————
 [~,~,a]=xlsread(x.excelfile, x.sheetnumber);
+
+if numel(a)==1
+   msgbox(['error: sheet-' num2str(x.sheetnumber) ' has only 1-element' char(10) ...
+       'most likely the sheet-index is not correct']) ;
+   error('abbort: sheet is empty');
+end
+
+
 he=a(1,:); %header
 
 if strcmp(xtype,'twosamplettest')
@@ -1078,14 +1107,21 @@ xvv.x=x;
 xvv.s=s;
 xvv.p=p;
 
+% ==============================================
+%%  save parameter 
+% ===============================================
+par=x;
+save(fullfile(outdir,'xstatParameter.mat'),'par');
+
+% ==============================================
+%%   save MIP
+% ===============================================
+mipfile=fullfile(outdir,'xstatMIP.mat');
+makeMIP(x.AVGT,'show',0,'save', mipfile);
 
 
 
 
-
-
-
-% function prefs
 
 
 function pref=getprefs
@@ -1111,20 +1147,71 @@ if sum([~isempty(findobj(0,'tag','Graphics'))
     delete(findobj(0,'tag','Interactive'));
     delete(findobj(0,'tag','Interactive'));
     
-    useotherspm(1);
+    %useotherspm(1);
+    hf=findobj(0,'tag','vvstat');
+    try; us=get(hf,'userdata'); end
+    global xvv
+    xvv_bk=xvv;
     spm fmri
+    hf=findobj(0,'tag','vvstat');
+    if isempty(hf)
+        try
+        xstat;
+        hf=findobj(0,'tag','vvstat');
+        set(hf,'userdata',us);
+        global xvv
+        xvv=xvv_bk;
+        end
+    end
+    
 end
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 %% local defs
 
 pref=getprefs;
+% ==============================================
+%%   
+% ===============================================
+global xvv
+if ~isempty(xvv)
+    if isfield(xvv,'s')==0
+        outdir=uigetdir(pwd,'select outdir-directory (location of "SPM.mat")');
+        if isnumeric(outdir)==1; disp('user cancelation'); return; end
+        xvv.s.output_dir=outdir;
+        par=load(fullfile(outdir,'xstatParameter.mat')); par=par.par;
+        
+        xvv.s.ANO =par.ANO;
+        xvv.s.AVGT=par.AVGT;
+    end
+        
+        
+        outdir=xvv.s.output_dir;
+        pref.mip = fullfile(outdir, 'xstatMIP.mat');
+        pref.anofile   =xvv.s.ANO  ;%'F:\data3\eranet_VBM_test\templates\ANO.nii' ;%  which('sANO.nii' );
+        pref.template  =xvv.s.AVGT  ;%which('sAVGT.nii');
+    
+else
+    disp('xvv: empty');
+end
 
-pref.mip=which('AllenMip.mat');
+    
 
-pref.anofile   =which('sANO.nii' );
-pref.fibfile   =which('sFIBT.nii' );
 
-pref.template  =which('sAVGT.nii');
+
+% ==============================================
+%%   
+% ===============================================
+
+
+'##'
+
+
+if 0
+    pref.mip=which('AllenMip.mat');
+    pref.anofile   =which('sANO.nii' );
+    pref.fibfile   =which('sFIBT.nii' );
+    pref.template  =which('sAVGT.nii');
+end
 % pref.nmaxclust= 3    ; %    ; - number of maxima per cluster [3]
 % pref.clustdist= 0.5  ; %mm  ; - distance among clusters {mm} [8]
 % 
@@ -1132,16 +1219,40 @@ pref.template  =which('sAVGT.nii');
 % pref.clustersize  =    30 ;
 % pref.mcp          = 'FWE' ;
 
+if 0
+    pref.mip= 'F:\data3\eranet_VBM_test\testmip.mat';
+    file='F:\data3\eranet_VBM_test\templates\AVGT.nii';
+    pref.mips      =makeMIP(file);
+    % pref.mip=which('AllenMip.mat');
+    pref.anofile   ='F:\data3\eranet_VBM_test\templates\ANO.nii' ;%  which('sANO.nii' );
+    % pref.fibfile   =which('sFIBT.nii' );
+    pref.template  ='F:\data3\eranet_VBM_test\templates\AVGT.nii'  ;%which('sAVGT.nii');
+end
 
+%% atlas
+[atpa atname atext]=fileparts(pref.anofile);
+pref.anofileXLS=fullfile(atpa,[atname '.xlsx']);
+[~,~,a]=xlsread(pref.anofileXLS);
+a(find(strcmp(cellfun(@(a){[ num2str(a)]} ,(a(:,1))),'NaN')),:)=[];
 
+%----------------------------
 global lab
 if isempty(lab)
     [lab.ha lab.a  lab.xyz lab.xyzind]=rgetnii(pref.anofile)  ;% rgetnii(fullfile('O:\data\voxelwise_Maritzen4tool\templates','ANO.nii'));
-    [lab.hf lab.f  lab.fxyz lab.fxyzind]=rgetnii(pref.fibfile)  ;% r
-    xx = load('gematlabt_labels.mat');
-    [table at] = buildtable(xx.matlab_results{1}.msg{1});
-    lab.at=at;
-    disp('..loading atlas');
+    %[lab.hf lab.f  lab.fxyz lab.fxyzind]=rgetnii(pref.fibfile)  ;% r
+    
+    %% OLD VEERSION
+    if 0
+        xx = load('gematlabt_labels.mat');
+        [table at] = buildtable(xx.matlab_results{1}.msg{1});
+        lab.at=at;
+        disp('..loading atlas');
+    end
+    
+    %% NEW ANT-VERSION
+    
+    lab.at =a(2:end,:);%xlsTable
+    lab.hat=a(1    ,:);%header
 end
 
 if isfield(lab,'template')==0
@@ -1401,22 +1512,37 @@ ix        =find(d2==min(d2));
 
 ca      =lab.xyzind(:,ix);
 id      =lab.a(ca(1),ca(2),ca(3));
-ixatlas =find([lab.at(:).id]==id);
 
-idfib       =lab.f(ca(1),ca(2),ca(3));
-ixfibatlas  =find([lab.at(:).id]==idfib);
+% ==============================================
+%%   old ANT-version
+% ===============================================
 
+% ixatlas =find([lab.at(:).id]==id);  % OLD-antVersion
+% idfib       =lab.f(ca(1),ca(2),ca(3));
+% ixfibatlas  =find([lab.at(:).id]==idfib);
+% if isempty(ixatlas);
+%     atlasname=[' &empty;GM '] ;%'no GM region'; %disp('no region found');
+% else
+%     atlasname=lab.at(ixatlas).name;
+% end
+% 
+% if isempty(ixfibatlas);
+%     atlasfibname=[' &empty;WM ']; %disp('no region found');
+% else
+%     atlasfibname=lab.at(ixfibatlas).name;
+% end
+% ==============================================
+%%   new VERSION via xls-file
+% ===============================================
+ixatlas =find(cell2mat(lab.at(:,4))==id);
 if isempty(ixatlas);
-    atlasname=[' &empty;GM '] ;%'no GM region'; %disp('no region found');
+    atlasname=[' &empty;GM '];
 else
-    atlasname=lab.at(ixatlas).name;
+    atlasname=lab.at{ixatlas,1};
 end
+ixfibatlas=[];
+atlasfibname='';%[' &empty;WM '];
 
-if isempty(ixfibatlas);
-    atlasfibname=[' &empty;WM ']; %disp('no region found');
-else
-    atlasfibname=lab.at(ixfibatlas).name;
-end
 
 
 %% get value
@@ -1548,13 +1674,17 @@ if isfield(lab,'clusterregions')==0
         
         ca      =lab.xyzind(:,ix);
         id      =lab.a(ca(1),ca(2),ca(3));
-        ixatlas =find([lab.at(:).id]==id);
+        % OLD-ANTver
+        %ixatlas =find([lab.at(:).id]==id);
+        % NEW ANTver
+        ixatlas =find(cell2mat(lab.at(:,4))==id);
         if isempty(ixatlas);
             %             disp('no region found');
             %clusterregions{i}=lab.at(ixatlas).name
         else
             %             disp(lab.at(ixatlas).name);
-            clusterregions{i}=lab.at(ixatlas).name;
+            %clusterregions{i}=lab.at(ixatlas).name;  % OLD VERSION
+            clusterregions{i} =lab.at{ixatlas,1}  ; % NEW VERSION
         end
     end
     lab. clusterregions=clusterregions;
@@ -2510,7 +2640,8 @@ end
 
 outdir=s.output_dir;
 try; delete(fullfile(outdir,'SPM.mat'));end
-try; rmdir(outdir,'s'); end
+try; delete(fullfile(outdir,'*.nii'));end
+% try; rmdir(outdir,'s'); end
 mkdir(outdir);
 
 % 

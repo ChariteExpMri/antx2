@@ -71,8 +71,9 @@ end
 fg;
 hk=gcf;
 set(hk,'units','normalized','menubar','none'); 
-set(hk,'position',[0.2986    0.4000    0.5611    0.4667]);
-set(hk,'tag','regionselect','NumberTitle','off','name','regions');
+% set(hk,'position',[0.2986    0.4000    0.5611    0.4667]);
+set(hk,'position',[0.2986    0.4000    0.3535    0.4667]);
+set(hk,'tag','regionselect','NumberTitle','off','name',['regions (' mfilename '.m)'] );
 
 hv=uicontrol('Style', 'text','string','');
 mxlen=[];
@@ -132,7 +133,7 @@ delete(findobj(gcf,'tag','sortx'));
 for i=1:size(tv,2)
     hw=uicontrol('style','pushbutton','units','norm',...
         'string',['sort-' columnname{i}],'fontsize',7);
-    set(hw,'tag','sortx','position',[  [i]*0.15-.15 .9 .15 .05 ]);
+    set(hw,'tag','sortx','position',[  [i]*0.1-.1 .9 .1 .03 ]);
     set(hw,'callback',@sortx,'userdata',i)
 end
 
@@ -150,11 +151,11 @@ catch
 end
 
 hw=uicontrol('style','edit','units','norm','string',transdefault,'fontsize',8);
-set(hw,'tag','alpha','position',[  [6]*0.15-.15 .9 .05 .03 ]);
+set(hw,'tag','alpha','position',[0.2822 0.95826 0.05 0.03]);
 set(hw,'tooltipstr','region transparency used when selected');
 
 hw=uicontrol('style','edit','units','norm','string',transdefault,'fontsize',8);
-set(hw,'tag','alphaall','position',[  [6]*0.15-.15+.05 .9 .05 .03 ]);
+set(hw,'tag','alphaall','position',[0.33295 0.95826 0.05 0.03]);
 set(hw,'tooltipstr','set region transparency for all regions','callback',@settransparencyAllregs);
 
 % ==============================================
@@ -162,21 +163,28 @@ set(hw,'tooltipstr','set region transparency for all regions','callback',@settra
 % ===============================================
 
 hw=uicontrol('style','radio','units','norm');
-set(hw,'tag','selectallregions','position',[  .9 .9 .15 .03 ],...
+set(hw,'tag','selectallregions','position',[0 0.96071 0.12 0.04],...
     'fontsize',8,'string','all regs');
 set(hw,'tooltipstr','select/unselect all regions','backgroundcolor','w');%,
 set(hw,'callback',{@selectallregions});
 
 hw=uicontrol('style','pushbutton','units','norm');
-set(hw,'tag','deselectallregions','position',[  .9 .94 .08 .04 ],...
-    'fontsize',8,'string','deselect all');
+set(hw,'tag','deselectallregions','position',[0.11986 0.96303 0.12 0.035],...
+    'fontsize',8,'string','deselect all','fontsize',7);
 set(hw,'tooltipstr','deselect all regions','backgroundcolor','w');%,
 set(hw,'callback',{@selectallregions,'deselectAll'});
+
+
+%% instantUpdate
+hb=uicontrol('style','radio','units','norm','string','instant update','value',1);
+set(hb,'position',[3.1432e-05 0.9297 0.2 0.032],'tag','instantUpdate','backgroundcolor','w');
+set(hb,'tooltipstring','update plot immediately when region is check/unchecked',...
+    'fontsize',6,'fontweight','normal');
 
 % LABEL
 %Label 
 hw=uicontrol('style','togglebutton','units','norm');
-set(hw,'tag','lab','position',[  .76 .94 .04 .04 ],...
+set(hw,'tag','lab','position',[  .8 .94 .08 .04 ],...
     'fontsize',7,'string','Lab');
 set(hw,'tooltipstr','show region labels','backgroundcolor','w');%,
 set(hw,'callback',{@showlabel});
@@ -188,10 +196,18 @@ end
 
 %Label prop
 hw=uicontrol('style','pushbutton','units','norm');
-set(hw,'tag','labelprop','position',[  .8 .94 .04 .04 ],...
+set(hw,'tag','labelprop','position',[0.79958 0.90113 0.08 0.04],...
     'fontsize',7,'string','Lprop');
 set(hw,'tooltipstr','set region label properties','backgroundcolor','w');%,
 set(hw,'callback',{@labelprop});
+
+
+%plot
+hw=uicontrol('style','pushbutton','units','norm');
+set(hw,'tag','plotregions','position',[0.50883 0.95112 0.08 0.04],...
+    'fontsize',7,'string','(re)plot');
+set(hw,'tooltipstr','plot regions','backgroundcolor',[0.9922    0.9176    0.7961]);%,
+set(hw,'callback',{@plotregions});
 
 
 % ==============================================
@@ -359,12 +375,59 @@ set(regs,'facealpha',str2num(get(e,'string')));
 set(findobj(findobj(0,'tag','winselection'),'tag','regiontransparency'),...
     'string',get(e,'string'));
 
+function plotregions(e,e2)
+% ==============================================
+%%   
+% ===============================================
+hf=findobj(0,'tag','xvol3d');
+hr=findobj(0,'tag','regionselect');
+u=get(hr,'userdata');
+d=u.t.Data;
+ix=find(cell2mat(d(:,1))==1);
+delete(findobj(hf,'tag','region'));
+
+cprintf([ 0.8510    0.3294    0.1020],['...wait...updating regions..wait..\n' ]);
+ixno=setdiff(1:size(d,1),ix );
+for i=1:length(ixno)
+%     task   =0;
+    regID  =str2num(d{ixno(i),3});
+%     label  =(d{ixno(i),2});
+%     regcol =str2num((d{ixno(i),5}));
+% %     cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label ' [ID: ' num2str(regID) ']' ]);
+%     paintregion(task,regID,label,regcol);
+    
+    thisreg=findobj(findobj(0,'tag','xvol3d'),'userdata',regID);
+    delete(thisreg);
+   updateLUtable(regID); 
+end
+
+
+
+
+
+for i=1:length(ix)
+    task   =1;
+    regID  =str2num(d{ix(i),3});
+    label  =(d{ix(i),2});
+    regcol =str2num((d{ix(i),5}));
+    cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label ' [ID: ' num2str(regID) ']' ]);
+    paintregion(task,regID,label,regcol);
+end
+
+ cprintf([ 0.8510    0.3294    0.1020],['DONE\n' ]);
+% ==============================================
+%%   
+% ===============================================
 
 function CellSelectionCallback(e,e2)
-
-
+hr=findobj(0,'tag','regionselect');
+is_instantUpdate=get(findobj(hr,'tag','instantUpdate'),'value');
+if is_instantUpdate==0
+    return
+end
 ic=e2.Indices;
-
+% ic
+% 
 try
     if ic(2)==1;
         stat=e2.Source.Data{ic(1),ic(2)};
@@ -484,16 +547,18 @@ set(u2.t,'Data',dx);
 set(hf,'userdata',u);  
 
 
+
+
 for i=1:length(ix)
     regID  =str2num(u.tv{ix(i),3});
     label  =        u.tv{ix(i),2};
     regcol =str2num(u.tv{ix(i),5});
     
     
-%     disp([msg label]);
-% ' [ID: ' num2str(regID) ']' 
-cprintf([ 0.8510    0.3294    0.1020],[msg label ' [ID: ' num2str(regID) '] \n']);
-
+    %     disp([msg label]);
+    % ' [ID: ' num2str(regID) ']'
+    cprintf([ 0.8510    0.3294    0.1020],[msg label ' [ID: ' num2str(regID) '] \n']);
+    
     paintregion(task,regID,label,regcol);
 end
 

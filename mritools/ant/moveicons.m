@@ -23,47 +23,48 @@ clipboard('copy',[ '[' regexprep(num2str(pos),'\s+' ,' ')  ']' ] );
 mi.hb=[];
 
 function moving_whichcontrol(e,e2)
-global mi
-
-if isempty(mi.hb)
-    ev=hittest(gcf);
-    try
-        set(ev,'enable','off');
-    end
-else
-    hb=mi.hb;
+try
+    global mi
     
-    p1=get(hb,'position');
-    co=get(gcf,'CurrentPoint');
-    hpar=get(hb,'parent');
-    ;
-    if strcmp(get(hpar,'type'),'figure');
-       upar0= get(hpar,'units');
-       uhb0 = get(hb,'units');
-       
-       set(hb,'units',upar0);
-       pos=get(hb,'position');
-       pos2=[ co(1) co(2) pos(3:4)];
-       set(hb,'position',pos2);
-       
-       set(hb,'units',uhb0);
-       set(hpar,'units',upar0);
+    if isempty(mi.hb)
+        ev=hittest(gcf);
+        try
+            set(ev,'enable','off');
+        end
     else
-        z=sign(mi.co(end-1,:)-co);
-        mov=p1(3:4)/100;
-        movs=mov.*z;
+        hb=mi.hb;
         
-        p2=[p1(1)-movs(1)  p1(2)-movs(2) p1(3:4)] ;
-        set(hb,'position', p2);
-        
-        
+        p1=get(hb,'position');
+        co=get(gcf,'CurrentPoint');
+        hpar=get(hb,'parent');
+        ;
+        if strcmp(get(hpar,'type'),'figure');
+            upar0= get(hpar,'units');
+            uhb0 = get(hb,'units');
+            
+            set(hb,'units',upar0);
+            pos=get(hb,'position');
+            pos2=[ co(1) co(2) pos(3:4)];
+            set(hb,'position',pos2);
+            
+            set(hb,'units',uhb0);
+            set(hpar,'units',upar0);
+        else
+            z=sign(mi.co(end-1,:)-co);
+            mov=p1(3:4)/100;
+            movs=mov.*z;
+            
+            p2=[p1(1)-movs(1)  p1(2)-movs(2) p1(3:4)] ;
+            set(hb,'position', p2);
+            
+            
+            
+        end
         
     end
     
+    mi.co(end+1,:)=get(gcf,'CurrentPoint');
 end
-
-mi.co(end+1,:)=get(gcf,'CurrentPoint');
-
 
 
 
