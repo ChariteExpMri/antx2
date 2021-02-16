@@ -3659,8 +3659,9 @@ function export(e,e2)
 export2excel();
 
 
-% us      : userdata of dtistat
-% filename: optional use FP-filename otherwise gui opens ; example: fullfile(pwd,'_result.xlsx');
+
+
+
 function export2excel(par)
 hf=findobj(0,'tag','dtistat');
 if exist('par')==1
@@ -3675,9 +3676,6 @@ if exist('par')==1
          drawnow;
      end
 end
-
-
-
 
 
 us=get(hf,'userdata');
@@ -3736,6 +3734,9 @@ if exportType==1 %sheetwise EXCEL
         1.0000    0.6000    0.6000];
     
     timex=datestr(now);
+    
+    
+      
     
     %% for each PW   ============================================
     for i=1:pws
@@ -3812,20 +3813,31 @@ if exportType==1 %sheetwise EXCEL
         %     xlscolorizeCells(filename,'info' , [1,1], [1 0 0  ]);
         
         sheetname='info';
-        pwrite2excel(filename,{1 sheetname   },infox(1,:),[],infox(2:end,:));
         
-        % COLORIZE
-        cols=[...
-            1.0000    0.8431         0  %comparison
-            0.8549    0.7020    1.0000  %Paramter
-            0.8549    0.7020    1.0000  %value
-            1 0 0                       %groups
-            ];
-        icompar =regexpi2(infox(:,1),'COMPARISON:');
-        iparam  =regexpi2(infox(:,1),'PARAMETER:');
-        igroups =find(strcmp(infox(:,1),'GROUPS:'));
-        colorcells=[ icompar 2; iparam 1; iparam 2; igroups 1];
-        xlscolorizeCells(filename,sheetname , colorcells, cols);
+        if ispc==1
+            pwrite2excel(filename,{1 sheetname   },infox(1,:),[],infox(2:end,:));
+            
+            % COLORIZE
+            cols=[...
+                1.0000    0.8431         0  %comparison
+                0.8549    0.7020    1.0000  %Paramter
+                0.8549    0.7020    1.0000  %value
+                1 0 0                       %groups
+                ];
+            icompar =regexpi2(infox(:,1),'COMPARISON:');
+            iparam  =regexpi2(infox(:,1),'PARAMETER:');
+            igroups =find(strcmp(infox(:,1),'GROUPS:'));
+            colorcells=[ icompar 2; iparam 1; iparam 2; igroups 1];
+            xlscolorizeCells(filename,sheetname , colorcells, cols);
+        else
+            d2=infox(2:end,:);
+            h2=infox(1,:);
+            
+            h2new=regexprep(h2,{'(' ,  ')' , ' ' '-' ,'#',':'},{ '_' ,'','','_','','_'});
+            T=cell2table(d2,'VariableNames',h2new);
+            writetable(T,filename,'Sheet',sheetname );
+            
+        end
         % ==============================================
         %%   sheets
         % ===============================================
@@ -3843,11 +3855,20 @@ if exportType==1 %sheetwise EXCEL
             end
             
             cprintf([1 0 1],['saving comparison-' num2str(i) ',  sheet: "' sheetname '" ...'  '\n']);
-            pwrite2excel(filename,{j+1 sheetname   },hd,[],d);
+            if ispc==1
+                pwrite2excel(filename,{j+1 sheetname   },hd,[],d);
+            else
+                d2=d;
+                h2=hd;
+                
+                h2new=regexprep(h2,{'(' ,  ')' , ' ' '-' ,'#',':'},{ '_' ,'','','_','','_'});
+                T=cell2table(d2,'VariableNames',h2new);
+                writetable(T,filename,'Sheet',sheetname );
+            end
         end
         cprintf([1 0 1],['done.\n' ]);
         % fprintf(' [Done]\n ');
-        disp([' open xlsfile: <a href="matlab: system(''' filename ''')">' filename '</a>']);
+        showinfo2('Excelfile',filename);
     end % pws
     
 elseif exportType==2 %SINLGE EXCELsheet
@@ -3896,9 +3917,18 @@ elseif exportType==2 %SINLGE EXCELsheet
         
     end
     
-    xlswrite(filename,infox, 'info' );
-    xlsAutoFitCol(filename,'info','A:F');
-    xlscolorizeCells(filename,'info' , [1,1], [1 0 0  ]);
+    if ispc==1
+        xlswrite(filename,infox, 'info' );
+        xlsAutoFitCol(filename,'info','A:F');
+        xlscolorizeCells(filename,'info' , [1,1], [1 0 0  ]);
+    else
+        d2=infox(2:end,:);
+        h2=infox(1,:);
+        
+        h2new=regexprep(h2,{'(' ,  ')' , ' ' '-' ,'#',':'},{ '_' ,'','','_','','_'});
+        T=cell2table(d2,'VariableNames',h2new);
+        writetable(T,filename,'Sheet','info' );
+    end
     
     %% for each PW   ============================================
     
@@ -3946,20 +3976,39 @@ elseif exportType==2 %SINLGE EXCELsheet
             npara=npara+1;
         end
         
-        %% write data
-        xlswrite(filename,d2, sheetname );
-        %  xlsAutoFitCol(filename,sheetname,'A:Z');
+        if ispc==1
+            %% write data
+            xlswrite(filename,d2, sheetname );
+            %  xlsAutoFitCol(filename,sheetname,'A:Z');
+            %% colorize cells
+            cellcol=lut(cellcolidx,:);
+            xlscolorizeCells(filename,sheetname, cellcolpos, cellcol);
+        else
+            D2=d2(2:end,:);
+            H2=d2(1,:);
+            
+            H2new=regexprep(H2,{'(' ,  ')' , ' ' '-' ,'#',':'},{ '_' ,'','','_','','_'});
+            T=cell2table(D2,'VariableNames',H2new);
+            writetable(T,filename,'Sheet',sheetname );
+            
+        end
         
-        
-        %% colorize cells
-        cellcol=lut(cellcolidx,:);
-        xlscolorizeCells(filename,sheetname, cellcolpos, cellcol);
         
     end
     cprintf([1 0 1],['done.\n' ]);
     % fprintf(' [Done]\n ');
-    disp([' open xlsfile: <a href="matlab: system(''' filename ''')">' filename '</a>']);
+    %disp([' open xlsfile: <a href="matlab: system(''' filename ''')">' filename '</a>']);
+    showinfo2('Excelfile',filename);
 end %EXPORTTYPE
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4869,9 +4918,22 @@ for i=num% pws/contrasts
         end
         
     end
-    
-    pwrite2excel(fileout,{1 'nodes'},h2,[],d2);
+   
+    % ==============================================
+    %%   exort EXCEL-file
+    % ===============================================
+    if ispc==1 %PC
+        pwrite2excel(fileout,{1 'nodes'},h2,[],d2);
+    else %MAC/UNIX
+        h2new=regexprep(h2,{'(' ,  ')' , ' ' },{ '_' ,'',''});
+        T=cell2table(d2,'VariableNames',h2new);
+        writetable(T,fileout,'Sheet','nodes' );
+    end
     showinfo2('saved: ',fileout);
+    % ==============================================
+    %%
+    % ===============================================
+
     
     
 end% pws/contrasts
