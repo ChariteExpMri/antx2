@@ -394,7 +394,24 @@ if 0
 end
 
 [~,aa,a]=xlsread(filenode);
+if numel((a{1}))==1
+    %% ------ get sheetNumber
+    prompt = {['First sheet seems to be empty!' char(10)  ...
+        'Enter the corect Excel sheet-number: ' char(10) ... 
+        ]};
+    dlgtitle = 'Sheet Number';
+    dims = [1 35];
+    definput = {'2'};
+    answer = inputdlg(prompt,dlgtitle,dims,definput);
+    sheetno=str2num(answer{1});
+    if sheetno==0
+        return
+    end
+    [~,aa,a]=xlsread(filenode,sheetno);
+    %% ------
+end
 a=a(1:size(aa,1),:);
+
 
 % CONN-STRENGTH
 ha=a(1,:);
@@ -1232,6 +1249,11 @@ if get(findobj(ht,'tag','linkintensity'),'value')==1 % LINK inteinsity
     intens4colorbar=intens2;
     intens2=intens2-min(intens2);
     intens2=round((intens2./max(intens2))*(size(cmap,1)-1)+1);
+    
+    if sum(isnan(intens2))==length(intens2) % dummy in case of no selection
+        intens2(:)=double(5); %dummy
+    end
+    
     intens3=cmap(intens2,:);
     
     
