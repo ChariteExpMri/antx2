@@ -1,22 +1,22 @@
 
 function sub_plotregions(varargin)
 
-% fg; 
+% fg;
 % hs=gcf;
 % set(hs,'units','norm','menubar','none','position',[0.1632    0.4178    0.1410    0.5211]);
-% 
-% 
+%
+%
 %COMAND LINES
 % sub_plotregions('clear')
 % sub_plotregions('transp',0.5); %set region transparency
 
 if nargin~=0
-%     if length(varargin)==1
-%         par=struct();
-%         par=setfield(par,varargin{1},varargin{1});
-%     else
-%         par=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
-%     end
+    %     if length(varargin)==1
+    %         par=struct();
+    %         par=setfield(par,varargin{1},varargin{1});
+    %     else
+    %         par=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+    %     end
     
     if mod(length(varargin),2)==0
         par=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
@@ -33,8 +33,8 @@ if nargin~=0
     
     
     
-    if isfield(par,'clear');      
-          selectallregions([],[],'deselectAll');    
+    if isfield(par,'clear');
+        selectallregions([],[],'deselectAll');
     end
     if isfield(par,'transp')
         %par.transp=0.1
@@ -43,7 +43,7 @@ if nargin~=0
         hgfeval(get(hc,'callback'),hc);
     end
     
-
+    
     return
 end
 
@@ -56,7 +56,7 @@ hs=findobj(0,'tag','xvol3d'); u=get(hs,'userdata');
 % ==============================================
 %%   uitable
 % ===============================================
-hs=findobj(0,'tag','xvol3d'); 
+hs=findobj(0,'tag','xvol3d');
 u=get(hs,'userdata');
 tv=[num2cell(logical(zeros(size(u.lu(:,1),1),1)))  u.lu(:,1)  ...
     cellfun(@(a){ [num2str(a)]}, u.lu(:,4)) ...
@@ -70,7 +70,7 @@ end
 
 fg;
 hk=gcf;
-set(hk,'units','normalized','menubar','none'); 
+set(hk,'units','normalized','menubar','none');
 % set(hk,'position',[0.2986    0.4000    0.5611    0.4667]);
 set(hk,'position',[0.2986    0.4000    0.3535    0.4667]);
 set(hk,'tag','regionselect','NumberTitle','off','name',['regions (' mfilename '.m)'] );
@@ -80,12 +80,12 @@ mxlen=[];
 for i=1:size(tv,2)
     i2len=cell2mat(cellfun(@(a){ [length(a)]},tv(:,i)));
     str=tv{max(find(i2len==max(i2len))),i};
-    if isnumeric(str); str=num2str(str); 
+    if isnumeric(str); str=num2str(str);
     elseif islogical(str); str=num2str(str); end
     set(hv,'string',str);
     ext=get(hv,'Extent');
     mxlen(1,i)=ext(3);
-   % disp(mxlen);
+    % disp(mxlen);
 end
 ColumnWidth=['auto' num2cell(mxlen(2:end)+10)];
 delete(hv);
@@ -98,32 +98,45 @@ editable=logical([1 0 0 1 1]);
 
 % Create the uitable
 t = uitable;
-%  jTabGroup = findjobj(t); 
-% jtable = jTabGroup.getViewport.getView; 
-% 
-% %Now turn the JIDE sorting on 
-% jtable.setSortable(true);      % or: set(jtable,'Sortable','on'); 
-% jtable.setAutoResort(true); 
-% jtable.setMultiColumnSortable(true); 
-% jtable.setPreserveSelectionsAfterSorting(true);        
-        
+%  jTabGroup = findjobj(t);
+% jtable = jTabGroup.getViewport.getView;
+%
+% %Now turn the JIDE sorting on
+% jtable.setSortable(true);      % or: set(jtable,'Sortable','on');
+% jtable.setAutoResort(true);
+% jtable.setMultiColumnSortable(true);
+% jtable.setPreserveSelectionsAfterSorting(true);
 
 
-set(t,'Data', tv,... 
-            'ColumnName', columnname,...
-            'ColumnFormat', columnformat,...
-            'ColumnEditable', editable,...
-            'ColumnWidth',    ColumnWidth,...
-            'RowName',[]);
-        
+
+set(t,'Data', tv,...
+    'ColumnName', columnname,...
+    'ColumnFormat', columnformat,...
+    'ColumnEditable', editable,...
+    'ColumnWidth',    ColumnWidth,...
+    'RowName',[]);
+
 
 
 drawnow;
-        
-set(t,'units','normalized','position',[0 0 1 .9])        
- set(t,'CellSelectionCallback',@CellSelectionCallback)
+
+set(t,'units','normalized','position',[0 0 1 .9])
+set(t,'CellSelectionCallback',@CellSelectionCallback)
 set(t,'CellEditCallback',@CellSelectionCallback)
 u.t=t;
+
+ cmenu = uicontextmenu;
+ item1= uimenu(cmenu, 'Label','<html><font color=blue>select this','Callback', {@tableMenu, 'selectThis'} );
+ item1= uimenu(cmenu, 'Label','<html><font color=blue>de-select this','Callback', {@tableMenu, 'deselectThis'});
+ %  item1= uimenu(cmenu, 'Label','show list in extra window','Callback', {@tableMenu, 'exportList'},'tag','exportList');
+  set(t,'UIContextMenu',cmenu);
+
+
+
+
+
+
+
 set(gcf,'userdata',u);
 % ==============================================
 %%   sort
@@ -182,7 +195,7 @@ set(hb,'tooltipstring','update plot immediately when region is check/unchecked',
     'fontsize',6,'fontweight','normal');
 
 % LABEL
-%Label 
+%Label
 hw=uicontrol('style','togglebutton','units','norm');
 set(hw,'tag','lab','position',[  .8 .94 .08 .04 ],...
     'fontsize',7,'string','Lab');
@@ -209,6 +222,12 @@ set(hw,'tag','plotregions','position',[0.50883 0.95112 0.08 0.04],...
 set(hw,'tooltipstr','plot regions','backgroundcolor',[0.9922    0.9176    0.7961]);%,
 set(hw,'callback',{@plotregions});
 
+%clear regions
+hw=uicontrol('style','pushbutton','units','norm');
+set(hw,'tag','clearregions','position',[0.5888 0.95112 0.08 0.04],...
+    'fontsize',7,'string','clear');
+set(hw,'tooltipstr','clear regions from plot','backgroundcolor',[1 1 1]);%,
+set(hw,'callback',{@clearregions});
 
 % ==============================================
 %%   OS-dependency
@@ -220,6 +239,11 @@ end
 % ==============================================
 %%   color pre-selected regions
 % ===============================================
+hr=findobj(0,'tag','regionselect');
+figure(hr);
+try
+    waitspin(1,'BUSY','drawing regions');
+end
 
 ix=find(cell2mat(u.tv(:,1))==1);
 for i=1:length(ix)
@@ -228,19 +252,96 @@ for i=1:length(ix)
     regcol =str2num(u.tv{ix(i),5});
     
     
-    cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label]);
+    cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label '\n']);
     task=1;
     paintregion(task,regID,label,regcol)
 end
-
-
-
+cprintf([ 0.8510    0.3294    0.1020],['..DONE. ' '\n']);
 labeldefaults();
 
+
+figure(hk);
+try
+    waitspin(0,'Done');
+end
 
 % ==============================================
 %%   showlabels
 % ===============================================
+function clearregions(e,e2)
+hf=findobj(0,'tag','xvol3d');
+delete(findobj(hf,'tag','region')); %delete previous table
+
+function tableMenu(e, e2,task)
+if strcmp(task, 'selectThis') ||  strcmp(task, 'deselectThis')
+    if strcmp(task, 'selectThis') 
+        doPaint=1;
+    elseif strcmp(task, 'deselectThis')
+        doPaint=0;
+    end
+    hr=findobj(0,'tag','regionselect');
+    u=get(hr,'userdata');
+    hj=findjobj(u.t);
+    hv=hj.getViewport.getView;
+    rows =double(hv.getSelectedRows)+1;
+    col  =hv.getSelectedColumn+1;
+    %     getSelectedColumn     %     getSelectedColumnCount
+    %     getSelectedColumns     %     getSelectedRow     %     getSelectedRowCount
+    
+    dat=u.t.Data;%(rows,:);
+    figure(hr);
+    try
+        waitspin(1,'BUSY','drawing regions');
+    end
+    
+    
+      %-----[1] UPDATE TABLE ..get viewPosition
+      % https://de.mathworks.com/matlabcentral/answers/28285-how-to-control-uitable-scroller-position
+            viewport    = javaObjectEDT(hj.getViewport);
+            P = viewport.getViewPosition();
+       %--------------------     
+            
+    for i=1:length(rows)
+        try
+            ic=[rows(i) col];
+            
+           %--[2]---UPDATE TABLE ...
+            u.t.Data{ic(1),1}=logical(doPaint);      %update TABLE
+            %--------------------     
+
+      
+            
+            regID=str2num(dat{ic(1),3});
+            label=dat{ic(1),2};
+            % datvec=dat(ic(1),:);
+            regcol=str2num(dat{ic(1),5});%./255;
+            
+            if doPaint==1
+                %disp(['..painting: ' label]);
+                cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label ' [ID: ' num2str(regID) ']\n' ]);
+                paintregion(doPaint,regID,label,regcol);
+            else
+                %disp(['..unpainting: ' label]);
+                cprintf([ 0.8510    0.3294    0.1020],['..unpainting: ' label  ' [ID: ' num2str(regID) ']\n' ]);
+                paintregion(doPaint,regID,label,regcol);
+            end
+        catch
+             cprintf([ 1 0 0],['   ..could not paint: ' label ' [ID: ' num2str(regID) ']\n' ]);
+        end
+    end
+    
+      %-----[3] set TABLE to oriiginal-viewPosition 
+     drawnow() %This is necessary to ensure the view position is set after matlab hijacks it
+     viewport.setViewPosition(P);
+     %--------------------     
+     try
+         figure(hr);
+        waitspin(0);
+    end
+
+end
+
+
 function showlabel(e,e2)
 hf=findobj(0,'tag','xvol3d');
 figure(hf);
@@ -260,8 +361,8 @@ function labeldefaults()
 hf=findobj(0,'tag','xvol3d');
 u=get(hf,'userdata');
 
-if isfield(u,'lab'); 
-    return; 
+if isfield(u,'lab');
+    return;
 end
 
 if isfield(u,'lab')==0; u.lab.dummi=1; end
@@ -316,7 +417,7 @@ set(hf,'userdata',u);
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
 function sortx(e,e2)
 % 'a'
@@ -327,11 +428,11 @@ dat=u.t.Data;
 
 if u.tsort(col)==0
     if col==1
-       dx=[ dat num2cell(double(cell2mat(dat(:,col))))];
-       dat2=sortrows(dx,size(dx,2)); dat2(:,end)=[];
-    elseif col==3    
-       dx=[ dat  num2cell(str2num(char(dat(:,col))))];
-       dat2=sortrows(dx,size(dx,2)); dat2(:,end)=[];
+        dx=[ dat num2cell(double(cell2mat(dat(:,col))))];
+        dat2=sortrows(dx,size(dx,2)); dat2(:,end)=[];
+    elseif col==3
+        dx=[ dat  num2cell(str2num(char(dat(:,col))))];
+        dat2=sortrows(dx,size(dx,2)); dat2(:,end)=[];
     else
         dat2=sortrows(dat,col);
     end
@@ -340,12 +441,12 @@ if u.tsort(col)==0
     set(gcf,'userdata',u);
     set(e,'backgroundcolor',[1 0 0]);
 elseif u.tsort(col)==1
-      if col==1
-       dx=[ dat num2cell(double(cell2mat(dat(:,col))))];
-       dat2=flipud(sortrows(dx,size(dx,2))); dat2(:,end)=[];
-    elseif col==3    
-       dx=[ dat  num2cell(str2num(char(dat(:,col))))];
-       dat2=flipud(sortrows(dx,size(dx,2))); dat2(:,end)=[]; 
+    if col==1
+        dx=[ dat num2cell(double(cell2mat(dat(:,col))))];
+        dat2=flipud(sortrows(dx,size(dx,2))); dat2(:,end)=[];
+    elseif col==3
+        dx=[ dat  num2cell(str2num(char(dat(:,col))))];
+        dat2=flipud(sortrows(dx,size(dx,2))); dat2(:,end)=[];
     else
         dat2=flipud(sortrows(dat,col));
     end
@@ -377,10 +478,15 @@ set(findobj(findobj(0,'tag','winselection'),'tag','regiontransparency'),...
 
 function plotregions(e,e2)
 % ==============================================
-%%   
+%%
 % ===============================================
 hf=findobj(0,'tag','xvol3d');
 hr=findobj(0,'tag','regionselect');
+figure(hr);
+try
+    waitspin(1,'BUSY','drawing regions');
+end
+    
 u=get(hr,'userdata');
 d=u.t.Data;
 ix=find(cell2mat(d(:,1))==1);
@@ -389,16 +495,16 @@ delete(findobj(hf,'tag','region'));
 cprintf([ 0.8510    0.3294    0.1020],['...wait...updating regions..wait..\n' ]);
 ixno=setdiff(1:size(d,1),ix );
 for i=1:length(ixno)
-%     task   =0;
+    %     task   =0;
     regID  =str2num(d{ixno(i),3});
-%     label  =(d{ixno(i),2});
-%     regcol =str2num((d{ixno(i),5}));
-% %     cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label ' [ID: ' num2str(regID) ']' ]);
-%     paintregion(task,regID,label,regcol);
+    %     label  =(d{ixno(i),2});
+    %     regcol =str2num((d{ixno(i),5}));
+    % %     cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label ' [ID: ' num2str(regID) ']' ]);
+    %     paintregion(task,regID,label,regcol);
     
     thisreg=findobj(findobj(0,'tag','xvol3d'),'userdata',regID);
     delete(thisreg);
-   updateLUtable(regID); 
+    updateLUtable(regID);
 end
 
 
@@ -410,24 +516,52 @@ for i=1:length(ix)
     regID  =str2num(d{ix(i),3});
     label  =(d{ix(i),2});
     regcol =str2num((d{ix(i),5}));
-    cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label ' [ID: ' num2str(regID) ']' ]);
+    cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label ' [ID: ' num2str(regID) ']\n' ]);
     paintregion(task,regID,label,regcol);
 end
 
- cprintf([ 0.8510    0.3294    0.1020],['DONE\n' ]);
+try
+    figure(hr);
+    waitspin(0,'done');
+end
+cprintf([ 0.8510    0.3294    0.1020],['DONE\n' ]);
 % ==============================================
-%%   
+%%
 % ===============================================
 
 function CellSelectionCallback(e,e2)
 hr=findobj(0,'tag','regionselect');
 is_instantUpdate=get(findobj(hr,'tag','instantUpdate'),'value');
+ic=e2.Indices;
+if isempty(ic); return; end
+if size(ic,1)>1; return; end %sveral rows selected
+if ic(2)==2 || ic(2)==3 %hit regionLabel or ID
+    u=get(hr,'userdata');
+    lab = u.t.Data{ic(1),2};
+    ID  = str2num(u.t.Data{ic(1),3});
+    hf=findobj(0,'tag','xvol3d');
+    hreg=findobj(hf,'tag','region');
+    if isempty(hreg); return, end
+    try
+        IDlist=cell2mat(get(hreg,'userdata'));
+        ix=find(IDlist==ID);
+        if isempty(ix); return, end
+        
+        t=0.005;
+        col=get(hreg(ix),'facecolor');
+        set(hreg(ix),'facecolor','r'); drawnow; pause(t);
+        set(hreg(ix),'facecolor','y'); drawnow; pause(t);
+        set(hreg(ix),'facecolor','b'); drawnow; pause(t);
+        set(hreg(ix),'facecolor',col); drawnow;
+    end
+    return
+end
+
 if is_instantUpdate==0
     return
 end
-ic=e2.Indices;
-% ic
-% 
+% if ic(2)~=1; return; end
+%
 try
     if ic(2)==1;
         stat=e2.Source.Data{ic(1),ic(2)};
@@ -439,13 +573,13 @@ try
         regcol=str2num(dat{ic(1),5});%./255;
         
         if stat==1
-              %disp(['..painting: ' label]);
-              cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label ' [ID: ' num2str(regID) ']' ]);
+            %disp(['..painting: ' label]);
+            cprintf([ 0.8510    0.3294    0.1020],['..painting: ' label ' [ID: ' num2str(regID) ']\n' ]);
             task=1;
             paintregion(task,regID,label,regcol)
         else
             %disp(['..unpainting: ' label]);
-            cprintf([ 0.8510    0.3294    0.1020],['..unpainting: ' label  ' [ID: ' num2str(regID) ']' ]);
+            cprintf([ 0.8510    0.3294    0.1020],['..unpainting: ' label  ' [ID: ' num2str(regID) ']\n' ]);
             task=0;
             paintregion(task,regID,label,regcol)
         end
@@ -453,17 +587,18 @@ try
         setcolor(ic);
     end
 end
-cprintf([ 0.8510    0.3294    0.1020],['\n']);
+% cprintf([ 0.8510    0.3294    0.1020],['\n']);
 % ==============================================
 %% SETCOLOR
 % ==============================================
 function setcolor(ic);
-    hf=findobj(0,'tag','regionselect');
-    u=get(hf,'userdata');
-    dx=u.t.Data;
-    
-if ic(2)==4;  
-     newcol=uisetcolor;
+hf=findobj(0,'tag','regionselect');
+u=get(hf,'userdata');
+dx=u.t.Data;
+
+if ic(2)==4;
+    newcol=uisetcolor;
+    if newcol==0; return; end
     dx{ic(1),ic(2)+1}=regexprep(num2str(newcol),'\s+',' ');
     
     if 0
@@ -471,7 +606,7 @@ if ic(2)==4;
         scroll = jScrollpane.getVerticalScrollBar.getValue;  % get the current position of the scroll
         %set(handles.myuitable, 'Data', out);
         u.t.Data=dx;
-      drawnow
+        drawnow
         jScrollpane.getVerticalScrollBar.setValue(scroll);     % set scroll position to the end
         %jScrollpane.getVerticalScrollBar.setValue(scroll);
     end
@@ -483,41 +618,41 @@ if ic(2)==4;
         %jtable.setValueAt(java.lang.String('This value will be inserted'),0,0); % to insert this value in cell (1,1)
         jtable.setValueAt(java.lang.String(newcolStr),ic(1)-1,5-1); % to insert this value in cell (1,1)
     end
-        
     
-%     jscrollpane = javaObjectEDT(findjobj(u.t));
-%     viewport    = javaObjectEDT(jscrollpane.getViewport);
-%     jtable      = javaObjectEDT( viewport.getView );
-%     scroll=jscrollpane.getVerticalScrollBar.getValue;  % get the current position of the scroll
-%        u.t.Data=dx;
-% %     drawnow
-% %     scroll
-%     jtable.scrollRowToVisible(ic(1));
-% %     jscrollpane.getVerticalScrollBar.setValue(ic(1));  
     
-  
+    %     jscrollpane = javaObjectEDT(findjobj(u.t));
+    %     viewport    = javaObjectEDT(jscrollpane.getViewport);
+    %     jtable      = javaObjectEDT( viewport.getView );
+    %     scroll=jscrollpane.getVerticalScrollBar.getValue;  % get the current position of the scroll
+    %        u.t.Data=dx;
+    % %     drawnow
+    % %     scroll
+    %     jtable.scrollRowToVisible(ic(1));
+    % %     jscrollpane.getVerticalScrollBar.setValue(ic(1));
+    
+    
 end
-    
-    regID=str2num(dx{ic(1),3});
-    hp=findobj(findobj(0,'tag','xvol3d'),'userdata',regID);
-    set(hp,'facecolor',str2num(dx{ic(1),5}));
-    
- updateLUtable(regID)   
- 
- 
+
+regID=str2num(dx{ic(1),3});
+hp=findobj(findobj(0,'tag','xvol3d'),'userdata',regID);
+set(hp,'facecolor',str2num(dx{ic(1),5}));
+
+updateLUtable(regID);
+
+
 function selectallregions (e,e2,deselect)
 hf=findobj(0,'tag','regionselect');
 u2=get(hf,'userdata');
- dx=u2.t.Data;
+dx=u2.t.Data;
 
 
- 
- if exist('deselect'); %DESELECT ALL
-     if strcmp(deselect,'deselectAll');  
-         set(findobj(hf,'tag','selectallregions'),'value',0);
-         e=findobj(hf,'tag','selectallregions');
-     end
- end
+
+if exist('deselect'); %DESELECT ALL
+    if strcmp(deselect,'deselectAll');
+        set(findobj(hf,'tag','selectallregions'),'value',0);
+        e=findobj(hf,'tag','selectallregions');
+    end
+end
 %  return
 %  jscroll = findjobj(u2.t);
 %  jtable = jscroll.getViewport.getComponent(0);
@@ -530,8 +665,8 @@ if get(e,'value')==1
     task=1;
     ix=find(cell2mat(u.tv(:,1))==1);
     msg='painting ';
-     dx(:,1)={true};
-
+    dx(:,1)={true};
+    
 else
     
     dt=u.t.Data;  % cuurently displaed data
@@ -539,12 +674,12 @@ else
     u.tv(:,1)={0};
     task=0;
     %ix=1:size(u.tv,1);
-     msg='unpainting ';
-     dx(:,1)={false};
-     ix=find(ismember(u.tv(:,3),selectedIDs));
+    msg='unpainting ';
+    dx(:,1)={false};
+    ix=find(ismember(u.tv(:,3),selectedIDs));
 end
 set(u2.t,'Data',dx);
-set(hf,'userdata',u);  
+set(hf,'userdata',u);
 
 
 
@@ -563,10 +698,10 @@ for i=1:length(ix)
 end
 
 
- % ==============================================
+% ==============================================
 %%   updateLUtable ...to reopen regselection window
 % ===============================================
-function updateLUtable(regID) 
+function updateLUtable(regID)
 % update lu and selectedRegion
 hf=findobj(0,'tag','xvol3d');       u =get(hf,'userdata');
 hr=findobj(0,'tag','regionselect'); ur=get(hr,'userdata');
@@ -585,18 +720,18 @@ lusel =u.selectedRegion(ilu,1);
 
 % if tbsel~=lusel
 %    disp('different');
-   
-   u.selectedRegion(ilu)  =tbsel; %update un/selection
-   u.lu{ilu,3}             = char(tb(itb,5)); %update color
-   set(hf,'userdata',u);
+
+u.selectedRegion(ilu)  =tbsel; %update un/selection
+u.lu{ilu,3}             = char(tb(itb,5)); %update color
+set(hf,'userdata',u);
 % u.lu(ilu,:)
-% ans = 
+% ans =
 %   Columns 1 through 3
 %     'Primary somatosen�'    [188064]    '0.094118 0.50196 �'
 %   Columns 4 through 5
 %     [329]    '981;201;1047;1070�'
 % tb(itb,:)
-% ans = 
+% ans =
 %   Columns 1 through 4
 %     [1]    'Primary somatosen�'    '329'    'c'
 %   Column 5
@@ -625,7 +760,7 @@ idvec=cell2mat(lu(:,iID));
 ix=find(idvec==regID);
 ch=lu{ix,ich};
 if isnumeric(ch)==0
-   ch= str2num(char(ch));
+    ch= str2num(char(ch));
 end
 ch(isnan(ch))=[];
 
@@ -635,32 +770,32 @@ if task==1
     delete(findobj(findobj(0,'tag','xvol3d'),'userdata',regID));
     
     hp=[];
-    r=zeros(size(u.atl)); 
+    r=zeros(size(u.atl));
     for i=1:length(nodes)
-       r((u.atl==nodes(i)))=1; 
+        r((u.atl==nodes(i)))=1;
     end
-    disp(sum(r(:)));
+   % disp(sum(r(:)));
     if sum(r(:))>1130000;%1000 ;%
         [x,y,z,d2] = reducevolume(r,[2 2 2]);
     else
         [x,y,z,d2] = reducevolume(r,[1 1 1 ]);
     end
     d2 = smooth3(d2);
-       
+    
     if unique(r(:))==0
-         cprintf([ 0.8510    0.3294    0.1020],['..not FOUND IN ATLAS']);
-       return
+        cprintf([ 0.8510    0.3294    0.1020],['..not FOUND IN ATLAS']);
+        return
     end
     
     figure(findobj(0,'tag','xvol3d'));
     
     FV=isosurface(x,y,z,d2,.001);
-    FV2=smoothpatch(FV,1,10); 
+    FV2=smoothpatch(FV,1,10);
     
     px = patch(FV2,...
         'FaceColor','blue','EdgeColor','none');
     set(px,'tag','region');
-   % set(px,'facealpha',.1,'userdata',unis(i,:));
+    % set(px,'facealpha',.1,'userdata',unis(i,:));
     set(px,'facecolor',regcol);
     set(px,'userdata',regID);
     
@@ -672,13 +807,13 @@ if task==1
     
 elseif task==0
     
-   % findobj(findobj(0,'tag','xvol3d'),'tag','region')
-   thisreg=findobj(findobj(0,'tag','xvol3d'),'userdata',regID);
-   delete(thisreg);
+    % findobj(findobj(0,'tag','xvol3d'),'tag','region')
+    thisreg=findobj(findobj(0,'tag','xvol3d'),'userdata',regID);
+    delete(thisreg);
     
 end
 
-updateLUtable(regID)
+updateLUtable(regID);
 
 
 

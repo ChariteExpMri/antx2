@@ -1695,15 +1695,18 @@ if exist('IDs')==0
 %%   
 % ===============================================
 
-    prompt = {['Enter one several IDs/ROI-indices as preselection.' char(10) ...
-         '   When done, hit [OK], than hit ["plot regions"]-Btn to show these regions.' char(10) ...
-         ' Example lists with IDS: [1 2 3] or [1 3:10] ' char(10) ....<
+    prompt = {[...
+        'Enter list of numeric region-IDs (as preselection)' char(10) ...
+         '   \color{blue} '...
+         ' When done, hit [OK], than hit ["plot regions"]-Btn to show these regions.' char(10) ...
+         ' Example region-ID lists: [1 2 3] or [1 3:10] ' char(10) ....<
+          ' \color{red} - a Zero-value deletes a previously entered list ID-list ' char(10)
          ...
          ]...
          };
     title = 'Preselect Regions';
     definput = {''};
-    answer = inputdlg(prompt,title,[1 100],definput);
+    answer = inputdlg(prompt,title,[1 100],definput,struct('Interpreter','tex'));
     ids    = str2num(char(answer));
     % ==============================================
 %%   
@@ -1712,22 +1715,48 @@ if exist('IDs')==0
 else
     ids= IDs;
 end
-
-idall=cell2mat(u.lu(:,regexpi2(u.hlu,'ID')));
-ixID=zeros(length(ids),1);
-for i=1:length(ids)
-    ixID(i,1)= find(idall==ids(i));
-end
-iuse=find(ixID~=0);
-ids =ids(iuse);
-isel=ixID(iuse);
-
-% isel=find(cell2mat(cellfun(@(a){ [str2num(num2str(a))]}, reg(:,isel1) ))==1); %selected rows
-if ~isfield(u,'selectedRegion')
+% if ~isfield(u,'selectedRegion')
+%     u.selectedRegion=zeros(size(u.lu,1),1);
+% end
+hf=findobj(0,'tag','xvol3d');
+hr=findobj(0,'tag','regionselect');
+if length(ids)==1 && ids==0                   % EMPTY ,clear preselection (ID=0)
     u.selectedRegion=zeros(size(u.lu,1),1);
-end
-u.selectedRegion(isel)=1;
+    
+    disp('..forget selected regions');
+    delete(findobj(hf,'tag','region')); %delete previous table
+    if ~isempty(hr)
+        u2=get(hr,'userdata')
+        u2.t.Data(:,1)={false};
+    end
+    set(hs,'userdata',u);
+    
 
+else      
+    idall=cell2mat(u.lu(:,regexpi2(u.hlu,'ID')));
+    ixID=zeros(length(ids),1);
+    for i=1:length(ids)
+        ixID(i,1)= find(idall==ids(i));
+    end
+    iuse=find(ixID~=0);
+    ids =ids(iuse);
+    isel=ixID(iuse);
+    
+    
+    % isel=find(cell2mat(cellfun(@(a){ [str2num(num2str(a))]}, reg(:,isel1) ))==1); %selected rows
+    u.selectedRegion=zeros(size(u.lu,1),1);
+    u.selectedRegion(isel)=1;
+    
+   
+    set(hs,'userdata',u);
+    disp('..remember selected regions');
+    delete(findobj(hf,'tag','region')); %delete previous table
+    if ~isempty(hr)
+        delete(hr);
+        sub_plotregions();
+    end
+    
+end
 
 %
 % if ~isempty(icol2)  %UPDATE COLOR IN LU-table
@@ -1740,8 +1769,7 @@ u.selectedRegion(isel)=1;
 %         end
 %     end
 % end
-set(hs,'userdata',u);
-disp('..saving selected regions');
+
 
 
 

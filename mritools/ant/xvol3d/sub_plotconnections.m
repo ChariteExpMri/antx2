@@ -899,7 +899,13 @@ if strcmp(task,'OK')==1
         fiout=fullfile(pa,fi);
         [pa fi]=fileparts(fiout);
         fiout=fullfile(pa,[fi '.xlsx']);
-        pwrite2excel(fiout,{1 'connections' },[ht],[],[t]);
+        if ispc==1
+            pwrite2excel(fiout,{1 'connections' },[ht],[],[t]);
+        else
+            T=cell2table(t,'VariableNames',ht);
+            %% T=cell2table(D2);
+            writetable(T,fiout,'Sheet','connections' );
+        end
         showinfo2('saved Exsample node/link-Excelfile',fiout);
     elseif ~isempty(strfind(str,'[getAtlasID]'  ))
         % ==============================================
@@ -1043,6 +1049,8 @@ for j=1:length(maps)
     %eval(['map=' cmapname ';']);
     ilin=round(linspace(1,size(map,1),7));
     map=map(ilin,:);
+    map(map>1)=1;
+    map(map<0)=0;
     map=round(map*255);
     maphex=repmat({''},[size(map,1) 1]);
     for i=1:size(map,1)
