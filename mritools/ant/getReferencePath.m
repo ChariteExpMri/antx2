@@ -23,7 +23,11 @@ if ~isempty(us) && isfield(us,'isOK')==1 && us.isOK==1
     hsp=findobj(gcf,'tag','species');
     va=get(hsp,'value');
     li=get(hsp,'string');
+    if ~isempty(va)
     ref.species=li{va};  %species
+    else
+      ref.species=us.species ; 
+    end
     
     %     ref.path=get(findobj(gcf,'tag','edpath'),'string');
     %     ref.path=strrep(ref.path,'ref path: - ','');
@@ -125,6 +129,16 @@ if exist(infofile)==2
         us.voxsize=voxsize;
         msg{end+1,1}=sprintf('default voxel-size: [%2.3f %2.3f %2.3f] mm',us.voxsize);
     end
+     if exist('species')
+        us.species=species;
+        hs=findobj(gcf,'tag','species');
+        ival=find(strcmp(hs.String,species));
+        if isempty(ival)
+           hs.String= [hs.String(:); species];
+        end
+        ival=find(strcmp(hs.String,species));
+        hs.Value=ival;
+     end
 else
     disp(['parameterfile not found: ' infofile]) ;
     disp(['please check the following fields [voxelsize],[species]']);

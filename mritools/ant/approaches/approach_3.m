@@ -161,6 +161,18 @@ if isfield(s,'species') && strcmp(s.species,'rat')  %##RAT
     set_ix2(parafiles2{1},'MaximumStepLength', 1); %
     %%rm_ix2(parafiles2{2},'MaximumStepLength'); <# etwas schlechter
     %         //(MaximumStepLength 0.006),(MaximumStepLength 0.145833)
+elseif isfield(s,'species') && strcmp(s.species,'cat')  %##CAT
+    parafiles2=replacefilepath(parafiles(:),s.pa);
+    copyfilem(parafiles,parafiles2)
+    set_ix2(parafiles2{1},'MaximumStepLength', 1); %
+    set_ix2(parafiles2{2},'MaximumStepLength', 1); % default(MaximumStepLength 0.015)
+   % rm_ix2(parafiles2{2},'MaximumStepLength');
+    
+   set_ix2(parafiles2{2},'MaximumNumberOfIterations', 2000);
+%     set_ix2(parafiles2{2},'FinalGridSpacingInVoxels', [2 2 2]);
+    
+    %%rm_ix2(parafiles2{2},'MaximumStepLength'); <# etwas schlechter
+    %         //(MaximumStepLength 0.006),(MaximumStepLength 0.145833)
 else
     parafiles2=replacefilepath(parafiles(:),s.pa); %##MOUSE
     copyfilem(parafiles,parafiles2)

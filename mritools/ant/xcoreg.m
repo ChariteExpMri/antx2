@@ -211,7 +211,9 @@
 %
 %% #by RE-USE BATCH: see 'anth' [..anthistory] -variable in workspace
 % 
-% 
+% update 01.04.21: 
+% preRotate & pre-elastix-registration work with 4D-data
+% if sourceImgage is 4D, it uses the 1st volume
 
 
 
@@ -502,14 +504,20 @@ for i=1:length(nprocs)
     try
         %%TARGET-IMGAGES
         s.tc=stradd(s.t,  'c_');
+        deletem(s.tc);
         copyfilem(  s.t,  s.tc);
         %%SOURCE-IMGAGES
         s.sc=stradd(s.s,  'c_');
+        deletem(s.sc);
+        deletem(regexprep(s.sc,'.nii$','.mat'));
         copyfilem(  s.s,  s.sc);
+        
         
         
         %%APPLY-IMGAGES
         s.ac=stradd(s.a,  'c_');
+        deletem(s.ac);
+        deletem(regexprep(s.ac,'.nii$','.mat'));
         copyfilem(  s.a,  s.ac);
         
         %% images
@@ -519,14 +527,25 @@ for i=1:length(nprocs)
         end
         %% dd
         
-        %% ----------PREROTATE-----------------------------------------
+        %% ----------PREROTATE (3d or 4d)-----------------------------------------
         if isfield(z,'preRotate') && ~isempty(z.preRotate)
+            warning off;
             rotangle=z.preRotate;
           if ~isnumeric(rotangle);  rotangle=str2num(rotangle); end
           if length(rotangle)==3
               for jj=1:length(s.ac)
                   Bvec      =[ [0 0 0] [rotangle]  1 1 1 0 0 0];
-                  fsetorigin(s.ac{jj},   spm_imatrix(inv(spm_matrix(Bvec)))    );
+                  hh=spm_vol(s.ac{jj});
+                  if length(hh)==1   % 3D
+                      fsetorigin(s.ac{jj},   spm_imatrix(inv(spm_matrix(Bvec)))    );
+                  else                %4D
+                      hh2=hh;
+                      M=inv(spm_matrix(Bvec));
+                      for ivol=1:length(hh2)
+                         hh2(ivol).mat = M*hh(ivol).mat;
+                      end
+                      spm_create_vol(hh2);        
+                  end
                   fprintf(['pre-rotate..'  ]);
               end
           end
@@ -700,6 +719,17 @@ for i=1:length(nprocs)
             moimg=s.sc{1};
             pout  =fullfile(fileparts(moimg),'regwarp'); mkdir(pout);
             
+            % check if movingIMG is 4D-volume
+            hmov=spm_vol(moimg);
+            is4D=length(hmov)>1;
+            if is4D %4D
+                w =spm_read_vols(hmov(1));
+                hw=hmov(1);
+                moimg=fullfile(pout, 'movimg3D.nii');
+                rsavenii(  moimg,   hw,w   );  % write 1st 3D volume as movIMG to "paout"
+            end
+            
+            
             [infox rimg, trafofile]=evalc('run_elastix( fximg, moimg,    pout  ,pfile,  [],[]    ,[],[],[])');
             trafofile  =cellstr(trafofile);
             trafofile2 =trafofile{end};
@@ -715,27 +745,50 @@ for i=1:length(nprocs)
                 end
                 set_ix(trafofile2,'FinalBSplineInterpolationOrder',interporder);
                 
+                if length(hu)==1       % 3D ###############
                 [infox im2,tr2]= evalc( 'run_transformix(timg,[],trafofile2,pout,'''')'     );
                 [pa2 fis ext]=fileparts(timg);
-                
                 newfile=fullfile( pa2,[ z.warpPrefix  regexprep(fis,'^c_','') ext  ] );
                 movefile(im2,newfile ,'f');
+                else                   % 4D ###############
+                    for kk=1:length(hu)
+                        tempfi=fullfile(pout,'temp4d.nii');
+                        hut=hu(kk);
+                        hut.n(1)=1;
+                        rsavenii(tempfi, hut, u(:,:,:,kk) );
+                        [infox im2,tr2]= evalc( 'run_transformix(tempfi,[],trafofile2,pout,'''')'     );
+                        [hat0 at0]=rgetnii(im2);
+                        if kk==1
+                           at  = zeros([size(at0) length(hu)]);
+                           hat =hat0;
+                        else
+                          hat(kk)     =hat0;
+                          hat(kk).n(1)=kk;
+                        end
+                        at(:,:,:,kk)=at0;
+                    end%kk (3dvol in 4d)
+                    newfile=timg;
+                    rsavenii(  newfile     , hat,at);  
+                end %3D/4D
+                
                 if jj==1
                      try; displog={s.tc{1}, newfile }'; end
                 end
 %                 try; showinfo2(' warped images',s.t{1},newfile); end
                 %fprintf(['.. \b\b\b [done] ..ELA ' sprintf('%2.2fmin',toc(atic)/60) '\n']);
-            end
+            end %  EACH-VOLUME TO REGISTER
             
            % try; displog={s.tc{1}, s.ac{1} }'; end
-            
+           % ---------------------------------------------------------------------------- 
             %% clean up warping
             if z.cleanup~=1
+                try; delete(fullfile(pout,'*.nii')); end
                 try; rmdir(pout, 's'); end
             end
             try; delete(refvol3d); end  % delete 3d refVOL
-        end%warping
-        
+        end%DO ELASTIX (warping)
+ % ---------------------------------------------------------------------------- 
+       
 
         
 % % % %       %% bla  

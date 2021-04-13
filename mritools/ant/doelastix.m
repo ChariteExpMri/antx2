@@ -272,7 +272,7 @@ switch task
         if exist('arg4')
             if iscell(arg4)
                 try;                z.fiximgMSK=arg4{1} ; catch; z.fiximgMSK=[]; end
-                try;                z.movimgMSK=arg4{1} ; catch; z.movimgMSK=[]; end
+                try;                z.movimgMSK=arg4{2} ; catch; z.movimgMSK=[]; end
             end
         end
         if exist('params'); %  ADDITIONAL PARAMETERSTRUCT

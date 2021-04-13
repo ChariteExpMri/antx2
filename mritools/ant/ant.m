@@ -1035,7 +1035,10 @@ if 1
                 %make help
                 if ~isempty(strfind(class(hj),'MenuItem'))  %no separators in
                     try
-                        set(hj,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
+                      set(hj,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
+                        % LEFT/RIGHT MOUSE_CLICK
+%                         hj=handle(hj, 'CallbackProperties');
+%                         set(hj,'MousePressedCallback', {@menuclick_cb,hm,hj});
                     catch
                         hj2=handle(hj, 'CallbackProperties');
                         set(hj2,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
@@ -1045,7 +1048,14 @@ if 1
         end%j
     end
 end
-
+% % % % % % Right.click "menu" for help--> not implemented
+% % % % % % function menuclick_cb(e,e2,hm,hj)
+% % % % % % 'q'
+% % % % % % e2.getButton
+% % % % % % if double(e2.getButton)==3
+% % % % % %     'rightclick'
+% % % % % %     showfunctionhelp(e,e2,hm,hj);
+% % % % % % end
 
 
 % function bla

@@ -235,7 +235,10 @@
 %  - get anatomical labels [xgetlabels4.m]: The paramter volume percent brain ("volpercbrain") was
 %    re-introduced in the resulting Excel-table
 % 
-% 
+% #ra 13 Apr 2021 (21:52:21)
+% - CAT-atlas (Stolzberg et al., 2017) added to google-drive
+%   #gw -->  access via link : https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
+%   paper: https://onlinelibrary.wiley.com/doi/abs/10.1002/cne.24271
 % 
 % 
 

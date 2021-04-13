@@ -33,7 +33,7 @@ t2destpath=fileparts(t2);
 
 
 % if 1
-%  
+%
 %     cnt=1
 %     matlabbatch={};
 %     matlabbatch{1}.spm.tools.animal.oldseg.data = {t2};
@@ -44,7 +44,7 @@ t2destpath=fileparts(t2);
 %     matlabbatch{1}.spm.tools.animal.oldseg.output.cleanup = 0;
 %     matlabbatch{1}.spm.tools.animal.oldseg.opts.tpm = template(1:3); % Define Templates here
 %     matlabbatch{1}.spm.tools.animal.oldseg.opts.ngaus = [2 2 2 4]' ;
-%  
+%
 %     matlabbatch{1}.spm.tools.animal.oldseg.opts.regtype = 'animal';
 %     matlabbatch{1}.spm.tools.animal.oldseg.opts.warpreg = 1;
 %     matlabbatch{1}.spm.tools.animal.oldseg.opts.warpco =  1.75;
@@ -53,8 +53,8 @@ t2destpath=fileparts(t2);
 %     matlabbatch{1}.spm.tools.animal.oldseg.opts.samp = 0.1;
 %     matlabbatch{1}.spm.tools.animal.oldseg.opts.msk = {''};
 %     spm_jobman('serial',  matlabbatch);
-%     
-%     
+%
+%
 % %     cnt = cnt + 1;
 % matlabbatch={}; cnt=1
 % matlabbatch{cnt}.spm.util.imcalc.input =  {
@@ -69,10 +69,10 @@ t2destpath=fileparts(t2);
 % matlabbatch{cnt}.spm.util.imcalc.options.interp = 1;
 % matlabbatch{cnt}.spm.util.imcalc.options.dtype  = 4;
 % spm_jobman('serial',  matlabbatch);
-% 
+%
 % end
-% 
-% 
+%
+%
 % cnt = 1;
 % matlabbatch{cnt}.spm.spatial.preproc.data           = {t2}  ;%{t2nii{1}}; %% T2file
 % matlabbatch{cnt}.spm.spatial.preproc.opts.warpreg   =   1; % Original 1 (funzt okay: 50)
@@ -112,7 +112,7 @@ pr.fudge    = 0.5000;
 pr.samp     = 0.2100;
 pr.output   = struct('GM',[0 0 1],'WM',[0 0 1],'CSF',[0 0 0]) ; %[1x1 struct]
 % output
-% ans = 
+% ans =
 %          GM: [0 0 1]
 %          WM: [0 0 1]
 %         CSF: [0 0 0]
@@ -147,7 +147,7 @@ if isfield(param,'species')==1
     % ==============================================
     %%  override parameter for "RAT"
     % ===============================================
-    if strcmp(param.species,'rat')
+    if strcmp(param.species,'rat')% override for "rat"
         
         job.opts.warpco  = 3.75  ;
         job.opts.samp    = 0.25  ;
@@ -160,7 +160,46 @@ if isfield(param,'species')==1
             rsavenii(msk2, h,d>0,[2 0]);
             job.opts.msk=msk2;
         end
-    end% override for "rat"
+    elseif strcmp(param.species,'cat')% override for "cat"
+        %         mouse:
+        %          job.opts.warpco = 1.75
+        %          job.opts.samp   = 0.1
+        %          tpm: {3x1 cell}
+        %        ngaus: [4x1 double]
+        %      regtype: 'animal'
+        %      warpreg: 1
+        %       warpco: 1.7500
+        %      biasreg: 1.0000e-04
+        %     biasfwhm: 5
+        %         samp: 0.1000
+        %          msk: {''}
+        % http://91.121.177.56/axon-4.5/en/processes/segment_SPM_noLinks.html    
+        disp('cat-parameter-new');
+        job.opts.warpco   =  25;% 6;% 10, 25  ;
+        job.opts.samp     =  2;% 0.7 ; %0.25*factor2.8  %3;%3, 2(no vis diff to 3)
+        job.opts.biasfwhm =  10; %10,  7.5 (7.5 slow >20min). 5: really slow (>4h)
+        
+         if 0
+            job.opts.warpco  = 10;% 10, 25  ;
+            job.opts.samp    = 3;%3, 2(no vis diff to 3)
+            job.opts.biasfwhm= 8 ; %10,  7.5 (7.5 slow >20min). 5: really slow (>4h)
+        end
+        
+        
+        %         job.opts.warpco  = 25  ;
+        %         job.opts.samp    = 3  ;
+        %         job.opts.biasfwhm=20
+        %
+        [t2pathorig subdir]=fileparts(fileparts(t2));
+        msk1=fullfile(t2pathorig,'_msk.nii');
+        if exist(msk1)==2
+            [h,d ]=rreslice2target(msk1, t2, [], 0,[2 0])  ;
+            msk2=fullfile(t2pathorig,subdir,[ '_mskBin.nii']);
+            rsavenii(msk2, h,d>0,[2 0]);
+            job.opts.msk=msk2;
+        end
+        
+    end
 end
 
 % ==============================================
@@ -175,12 +214,12 @@ if 1
         parm=override();
         cd(pabef);
         if isfield(parm,'segm') && isfield(parm.segm,'opts')
-           fields=fieldnames(parm.segm.opts);
-           disp('overriding parameters from "override.m"-function');
-           for i=1:length(fields)
-              job.opts= setfield(job.opts,  fields{i}   ,getfield(parm.segm.opts,fields{i}) );
-           end
-        end 
+            fields=fieldnames(parm.segm.opts);
+            disp('overriding parameters from "override.m"-function');
+            for i=1:length(fields)
+                job.opts= setfield(job.opts,  fields{i}   ,getfield(parm.segm.opts,fields{i}) );
+            end
+        end
     end
 end
 

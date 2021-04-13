@@ -9,7 +9,7 @@
 %     pos        figure position; default: [ 0.3049    0.4311    0.1174    0.4544];
 %     postab     position of the uitable; default: [0 0.05 .89 .95]; 
 %     editable   vector of indices of editable columns {default: [1]...first column is editable}
-% 
+%    autoresize  0/1; [1] fit columns to figure
 %% EXAMPLE-1
 %     tbh={'show' 'ColumnName'};
 %     tb={[1]    'x'
@@ -73,6 +73,7 @@ p.tooltip  =''  ;%tooltipstring
 p.pos      =[ 0.3049    0.4311    0.1174    0.4544]; %figure position
 p.postab   =[0 0.05 .89 .95];  %table position
 p.editable =[1] ;% indices of editable columns
+p.autoresize=0  ; %auto resize table to figure[0,1]
 
 % ==============================================
 %%  defaults
@@ -115,6 +116,13 @@ set(t,'TooltipString',p.tooltip);
 editable=repmat(false,[1 length(tbh)]);
 editable(p.editable)=true; %make speicif columns editable
 t.ColumnEditable=editable;
+
+%autoresize table
+if p.autoresize==1
+    jscroll = findjobj(t);
+    jTable = jscroll.getViewport.getView;
+    jTable.setAutoResizeMode(jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+end
 
 % select all
 hb=uicontrol('parent',gcf, 'style','radio','units','pixels','tag','prefTable_select');

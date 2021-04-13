@@ -4,7 +4,7 @@ function  filenameout=rsavenii(filename,h,d, dt)
 %% save Nifti
 %  filenameout=rsavenii(filename,h,d, dt)
 %             rsavenii(filename,h,d)
-% filenameout=rsavenii(filename,h,d) 
+% filenameout=rsavenii(filename,h,d)
 %% in
 % filename: filename to save (.nii not needed)
 % h       : header -->fname is replaced by new filename
@@ -15,6 +15,8 @@ function  filenameout=rsavenii(filename,h,d, dt)
 % rsavenii('test',h,d )
 % rsavenii('test2.nii',h,d )
 % works with 4d
+
+% remove both pinfo and private ( removing of pinfo  allows to store TPMs with dataType: 2
 
 warning off;
 
@@ -31,8 +33,11 @@ if ndims(d)==3
             h.dt=[dt 0];
         end
     end
- %     try; h=rmfield(h,'pinfo'); end
-     try; h=rmfield(h,'private');end
+    
+    if sum((round(d(:))-d(:)).^2)~=0
+        try; h=rmfield(h,'pinfo'); end
+        try; h=rmfield(h,'private');end
+    end
     
     h=spm_create_vol(h);
     h=spm_write_vol(h,  d);
@@ -52,8 +57,12 @@ else % 4d-data
                 h.dt=[dt 0];
             end
         end
-%         try; dum=rmfield(dum,'pinfo'); end
-        try; dum=rmfield(dum,'private');end
+        %         try; dum=rmfield(dum,'pinfo'); end
+        %         try; dum=rmfield(dum,'private');end
+        if sum((round(d(:))-d(:)).^2)~=0
+            try; h=rmfield(h,'pinfo'); end
+            try; h=rmfield(h,'private');end
+        end
         
         
         hh2(k,1)=dum;
@@ -65,4 +74,3 @@ else % 4d-data
     end
     try; delete(regexprep(dum.fname,'.nii','.mat')); end
 end
-     
