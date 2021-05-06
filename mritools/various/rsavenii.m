@@ -44,7 +44,10 @@ if ndims(d)==3
     filenameout=h.fname;
     
 else % 4d-data
-    
+    % ==============================================
+    %% 4D
+    % ===============================================
+    clear hh2
     for k=1:size(d,4) ; %size(h,1)
         dum       = h(1);
         dum.n     = [k 1];
@@ -63,14 +66,17 @@ else % 4d-data
             try; h=rmfield(h,'pinfo'); end
             try; h=rmfield(h,'private');end
         end
-        
-        
         hh2(k,1)=dum;
-        if k==1
-            %mkdir(fileparts(hh2.fname));
-            spm_create_vol(hh2);
-        end
+    end
+    spm_create_vol(hh2);
+    
+    for k=1:size(d,4)
         spm_write_vol(hh2(k),d(:,:,:,k));
     end
+    
+    
     try; delete(regexprep(dum.fname,'.nii','.mat')); end
+    % ==============================================
+    %%
+    % ===============================================
 end

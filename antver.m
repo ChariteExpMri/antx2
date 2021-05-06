@@ -241,7 +241,10 @@
 %   paper: https://onlinelibrary.wiley.com/doi/abs/10.1002/cne.24271
 % 
 % 
-
+% #ra 06 May 2021 (10:29:16)
+% fixed BUG in "rsavenii.m" (issue only for writing 4D-data only)
+% 
+% 
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

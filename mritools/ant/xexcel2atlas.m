@@ -492,6 +492,15 @@ if 0
     uhelp( plog([],[  hxx; xx] ),1);
 end
 
+% ==============================================
+%%   
+% ===============================================
+% if 1
+%      uhelp( plog([],[  htb5; tb5] ),1);
+% end
+
+
+
 
 
 
@@ -636,6 +645,13 @@ for i=  1:size(tb5,1)
 end
 % toc
 
+
+
+
+
+
+
+
 % ==============================================
 %   volume after "overpainting"
 % ===============================================
@@ -645,12 +661,12 @@ for i=1:size(tb6,1)
     VOLnew(i,1)=voxvol*nvox;
 end
 tb6=[tb6 num2cell(VOLnew)];
-
+htb6=[htb5 'finalID' 'VOLorig' 'VOLnew'];
 % ==============================================
 %%   fill table with new "finalID"
 % ===============================================
 
-htb6=[htb5 'finalID' 'VOLorig' 'VOLnew'];
+
 
    
 if 0
@@ -951,8 +967,9 @@ volnewIDS=cell2mat(TB4(:,3));   %NEW ID get VOLUME TO check if nonfinder-newDs f
 inovol   =find(volnewIDS==0);
 if ~isempty(inovol)
     lg3={' #kr PROBLEM  '};
+    lg3{end+1,1}= ['The following newIDs may not exist in the output-file!'];
     for i=1:length(inovol)
-        lg3{end+1,1}=  [ 'newID[' num2str(TB4{inovol(i),1}) '] "' num2str(TB4{inovol(i),2}) '" has no volume!'];
+        lg3{end+1,1}=  [ 'newID[' num2str(TB4{inovol(i),1}) '] "' num2str(TB4{inovol(i),2}) '" has no volume-->This newID might not exist in the output file  !'];
     end
     lg3=[lg3; ['  ...please inspect "' [ z.nameout '_INFO.xlsx'] '" to find the reason']];
 end
@@ -1098,10 +1115,118 @@ if ~isempty([(inovolorig(:)) ;(inovolnew(:))])
     
     if isexcel==1
         pwrite2excel(fileout,{8 'WARNING' },{'importantNote'},[],msg);
+        
     else
         sub_write2excel_nopc(fileout,'WARNING',{'importantNote'},msg);
     end
     
+end
+
+
+
+% ============================================== ==============================================
+% ==============================================
+%%   recheck atlas...backCOnstruction
+% ===============================================
+[hr r]=rgetnii(niftifile);
+unir=unique(r); unir(unir==0)=[];
+length(unir)
+% ==============================================
+%%   
+% ===============================================
+a2=a(:);
+r2=r(:);
+rt1=[];
+for i=1:length(unir)
+    oids=unique(a2(find(r2==unir(i)))); %uriginal-IDS
+    rt1=[rt1; [repmat(unir(i), [length(oids) 1]) oids ] ]; % ID_newAtlas ID_origAtlas
+end
+hrt1={'newID' 'origID'};
+% ==============================================
+%%   
+% ===============================================
+uni_origat=unique(rt1(:,2));
+oID       =cell2mat(e(:,v.iID));
+icol2extract=[v.iregion v.iID  ];%v.inewID 
+if isfield(v,'newRegionName')==1
+    icol2extract=[icol2extract  v.newRegionName ];
+end
+
+rt2=num2cell(rt1);
+for i=1:length(uni_origat)
+    is=find(oID==uni_origat(i)); %search for original atlas/table
+    lin=e(is,icol2extract);
+    %----------
+    is2=find(rt1(:,2)==uni_origat(i)); % find in new look-uptable
+    blk=[repmat(lin,[ length(is2) 1])];
+    rt2(is2, 3:3+length(lin)-1 )=blk;
+end
+% uhelp( plog([],[ hrt2; rt2] ),1);
+
+hrt2={'newID_Nifti' 'origID_Nifti' 'origLabel_xls' 'origID_xls'};
+if isfield(v,'newRegionName')==1
+  hrt2=[hrt2 'proposedRegionName']  ;
+end
+
+if isexcel==1
+    pwrite2excel(fileout,{9     'Back_reconstr1' },hrt2,[],rt2);
+else
+    sub_write2excel_nopc(fileout,'Back_reconstr1',hrt2,[rt2]);
+end
+
+% ==============================================
+%%   resconstruction-2 --> back to origTable
+% ===============================================
+m2=m(:);
+am1=a2.*(m2==1);
+am2=a2.*(m2==2);
+ID_orig=cell2mat(e(:,v.iID));
+uni_IDa2=unique(a2);
+nl=histc(am1,uni_IDa2);
+nr=histc(am2,uni_IDa2);
+nl=nl.*abs(det(ha.mat(1:3,1:3)));
+nr=nr.*abs(det(ha.mat(1:3,1:3)));
+% [ID_origSort isort]=sort(ID_orig)
+
+
+ID_nifti=repmat({''},[length(ID_orig),1]);
+for i=1:length(rt1(:,2))
+    is=find(ID_orig==rt1(i,2));
+    ID_nifti{is}=[ID_nifti{is} num2str(rt1(i,1)) ';' ];
+end
+
+ID_volLRS=repmat({''},[length(ID_orig),1]);
+for i=1:length(ID_orig)
+    %-----get orig Volume for left and right ID---------
+    iv=find(uni_IDa2==ID_orig(i));
+    vol_lrs=[nl(iv) nr(iv) nl(iv)+nr(iv)]; %volume: L,R,Sum
+    ID_volLRS{i}  =regexprep(num2str(vol_lrs),'\s+',';');
+end
+vc1=[v.iregion v.iID v.inewID];
+vc2=[];
+if isfield(v,'newRegionName')==1
+    vc2=[vc2 v.newRegionName ]   ;
+end
+vc2=[vc2 v.ichild];
+
+her=[he(vc1) 'ID_in_newNIFTI'  'Volume_origNIFTI_Le_Ri_Sum' he(vc2)];
+er=[e(:,vc1) ID_nifti ID_volLRS e(:,vc2)];
+
+her{3}='proposed_newID';
+% uhelp( plog([],[her; er] ),1);
+
+
+
+if isexcel==1
+    pwrite2excel(fileout,{10     'Back_reconstr2' },her,[],er);
+    try
+        xlscolorizeCells(fileout,'Back_reconstr2','2:2:end,[3]',[ 0.8706    0.9216    0.9804] );
+        xlscolorizeCells(fileout,'Back_reconstr2','2:2:end,[4]',[ 0.8941    0.9412    0.9020] );
+        xlscolorizeCells(fileout,'Back_reconstr2','2:2:end,[5]',[ 0.9843    0.9686    0.9686] );
+    end
+    
+else
+    sub_write2excel_nopc(fileout,'Back_reconstr2',her,er);
 end
 
 % ==============================================
@@ -1109,6 +1234,7 @@ end
 % ===============================================
 % disp('...done');
 disp(sprintf('DONE (%2.2fs)',toc  ));
+
 return
 
 
