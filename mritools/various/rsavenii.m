@@ -47,6 +47,12 @@ else % 4d-data
     % ==============================================
     %% 4D
     % ===============================================
+    removefields=0;
+    if sum((round(d(:))-d(:)).^2)~=0
+        removefields=1;
+    end
+    
+    
     clear hh2
     for k=1:size(d,4) ; %size(h,1)
         dum       = h(1);
@@ -55,19 +61,21 @@ else % 4d-data
         
         if exist('dt')==1
             if length(dt)==2
-                h.dt=dt;
+                dum.dt=dt;
             else
-                h.dt=[dt 0];
+                dum.dt=[dt 0];
             end
         end
         %         try; dum=rmfield(dum,'pinfo'); end
         %         try; dum=rmfield(dum,'private');end
-        if sum((round(d(:))-d(:)).^2)~=0
-            try; h=rmfield(h,'pinfo'); end
-            try; h=rmfield(h,'private');end
+        if removefields==1 ;%sum((round(d(:))-d(:)).^2)~=0
+            try; dum=rmfield(dum,'pinfo'); end
+            try; dum=rmfield(dum,'private');end
         end
         hh2(k,1)=dum;
     end
+    
+    
     spm_create_vol(hh2);
     
     for k=1:size(d,4)
@@ -75,7 +83,10 @@ else % 4d-data
     end
     
     
-    try; delete(regexprep(dum.fname,'.nii','.mat')); end
+    try; 
+        [ps name ext]=fileparts(dum.fname);
+        delete(fullfile(ps,[name '.mat']));
+    end
     % ==============================================
     %%
     % ===============================================
