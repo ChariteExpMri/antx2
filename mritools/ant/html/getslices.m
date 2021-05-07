@@ -43,8 +43,22 @@ function [d s]=get_slices(f,orient,slicesnum,slicesmm,show,volnum )
 f = cellstr(f);
 V = spm_vol(f{1});
 
-if exist('volnum')~=1; volnum=1; end %4dvolume
-V=V(volnum);
+if exist('volnum')~=1;
+    volnum1=1;    %1st image
+    volnum2=1;    %2nd image
+else
+    if length(volnum)==1
+        volnum1 =volnum;    %1st image
+        volnum2 =1;    %2nd image
+    elseif length(volnum)==2
+        volnum1=volnum(1);    %1st image
+        volnum2=volnum(2);    %2nd image
+    end
+end %4dvolume
+
+
+
+V=V(volnum1);
 
 orientlabel={'axial', 'coronal', 'sagittal'};
 if isnumeric(orient);     orient=orientlabel{orient}; end
@@ -164,6 +178,10 @@ d=zeros([fliplr(vdims(1:2)) nslices ]);
 
 if length(f)==2
     V=spm_vol(f{2});
+    V=V(volnum2);
+%     if length(V)>1
+%     V=V(1);
+%     end
 end
 %  V=spm_vol(fullfile(pwd,'Rct.nii'));
 for is=1:nslices

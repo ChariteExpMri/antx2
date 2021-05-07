@@ -1,5 +1,9 @@
 
-function out=saveslices_gif(s1,s2, flip,outpath)
+function out=saveslices_gif(s1,s2, flip,outpath,outputstr)
+tagstr='';
+if exist('outputstr')==1
+    tagstr=char(outputstr);
+end
 
 if 0
     pa='O:\data4\phagozytose\dat\20190219CH_Exp1_M8'
@@ -102,7 +106,7 @@ if exist('o')==1
 
 if exist('o')==1
     [~,name]=fileparts(os.V.fname);
-    name3=[name '_animated.gif'];
+    name3=[tagstr name '_animated.gif'];
     gifname=fullfile(outpath,[name3]);
     imwrite(d3,cmap1,gifname,'gif', 'Loopcount',inf,'DelayTime',.5);
     imwrite(o3,cmap2,gifname,'gif','WriteMode','append','DelayTime',.5);
@@ -111,14 +115,14 @@ else
 end
 
 [~,name1]=fileparts(ds.V.fname);
-name1=[name1 '.gif'];
+name1=[tagstr name1 '.gif'];
 gifname1=fullfile(outpath,[name1]);
 imwrite(d3,cmap1,gifname1,'gif');
 
 
 if exist('o')==1
     [~,name2]=fileparts(os.V.fname);
-    name2=[name2 '.gif'];
+    name2=[tagstr name2 '.gif'];
     gifname2=fullfile(outpath,[name2]);
     imwrite(o3,cmap2,gifname2,'gif');
 else
