@@ -1,4 +1,15 @@
 
+%% write html file with overlay of specific images 
+% pa=...
+%     {
+%     'F:\data3\graham_ana4\dat\20190122GC_MPM_01'
+%     'F:\data3\graham_ana4\dat\20190122GC_MPM_02'
+%     };
+% filepairs={'AVGT.nii','x_T1.nii' }
+% outpath='F:\data3\graham_ana4\check'
+% checkreghtml(pa,filepairs,outpath)
+% checkreghtml(pa,filepairs,outpath,struct('size',300))
+
 
 
 function checkreghtml(datapaths, filepairs,outpath,p0)
@@ -59,7 +70,7 @@ writeCSS(cssfile,p);
 
 
 header=[ '[' fname1 ''  '-' '' fname2 ']' ];
-l=htmlprep(htmlfile,cssfile,header );
+l=htmlprep(htmlfile,'styles.css',header );
 % ==============================================
 %%
 % ===============================================
@@ -113,11 +124,11 @@ for i=1:length(pas)
     if i==length(pas)
         l{end+1}='<br><br>';
     end
-    pwrite2file(htmlfile, l);
-    
-    
-    
+    pwrite2file(htmlfile, l);  
 end
+
+
+showinfo2('checkRegHtml',htmlfile);
 
 function l1=addInfo(l, vi,p);
 
@@ -203,11 +214,14 @@ l={[ '<font color=green>' '<h5> ' num2str(idx) ']'  sp    aname   '</h5>'  '<fon
 %      exist(gifs{2})==2  isempty(strfind(gifs{2},'ERROR:')) ;
 %      ]
  
+
+gifsFP=cellfun(@(a){[  fileparts(htmlfile)   filesep a   ]},gifs);
+
  
  %% ___animated gif_____________________________________________________________________________________________
  
- if exist(gifs{1})==2 && isempty(strfind(gifs{1},'ERROR:')) && ...
-         exist(gifs{2})==2 && isempty(strfind(gifs{2},'ERROR:'))
+ if exist(gifsFP{1})==2 && isempty(strfind(gifsFP{1},'ERROR:')) && ...
+         exist(gifsFP{2})==2 && isempty(strfind(gifsFP{2},'ERROR:'))
      l{end+1,1}= ['<input type="button" value="start animation" onclick="document.getElementById(''' idtag ''').src=''' gifs{3} '''"> '] ;
      l{end+1,1}= ['<input type="button" value="stop animation"  onclick="document.getElementById(''' idtag ''').src=''' gifs{2} '''"> '] ;
      l{end+1,1}= ['<input type="button" onclick="zoomimage(1,200,''' idtag ''')" value="-zoom" />'] ;
@@ -222,10 +236,10 @@ l={[ '<font color=green>' '<h5> ' num2str(idx) ']'  sp    aname   '</h5>'  '<fon
  end
   %% ___statig IMAG1_____________________________________________________________________________________________
 
- if exist(gifs{1})==2 && isempty(strfind(gifs{1},'ERROR:'))
+ if exist(gifsFP{1})==2 && isempty(strfind(gifsFP{1},'ERROR:'))
      l{end+1,1}= ['<div class="grid fixed"><style="border:none;><img src="' gifs{1} '" width="' num2str(siz) '" height="' num2str(siz) '" /></div>'] ;
  else
-      if isempty(strfind(gifs{1},'ERROR:'))==1
+      if isempty(strfind(gifsFP{1},'ERROR:'))==1
          col='gray';
      else
          col='red';
@@ -234,10 +248,10 @@ l={[ '<font color=green>' '<h5> ' num2str(idx) ']'  sp    aname   '</h5>'  '<fon
  end
    %% ___statig IMAG2_____________________________________________________________________________________________
 
- if exist(gifs{2})==2 && isempty(strfind(gifs{2},'ERROR:'))
+ if exist(gifsFP{2})==2 && isempty(strfind(gifsFP{2},'ERROR:'))
      l{end+1,1}= ['<div class="grid fixed"><style="border:none;><img src="' gifs{2} '" width="' num2str(siz) '" height="' num2str(siz) '" /></div>'] ;
  else
-     if isempty(strfind(gifs{2},'ERROR:'))==1
+     if isempty(strfind(gifsFP{2},'ERROR:'))==1
          col='gray';
      else
          col='red';

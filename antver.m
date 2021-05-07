@@ -243,7 +243,8 @@
 % 
 % #ra 06 May 2021 (10:29:16)
 % fixed BUG in "rsavenii.m" (issue only for writing 4D-data only)
-% 
+% % #ra 07 May 2021 (22:15:55)
+% -->started.. [checkreghtml]: make html-page of overlay of arbitrary pairs of images for selected animals 
 % 
 
 %----- EOF

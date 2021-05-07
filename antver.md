@@ -1,7 +1,10 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   06 May 2021 (10:29:16)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   % 07 May 2021 (22:15:55)  
     
 ------------------  
+  % ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 May 2021 (22:15:55)**</ins>  
+  -->started.. **[checkreghtml]**: make html-page of overlay of arbitrary pairs of images for selected animals   
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 May 2021 (10:29:16)**</ins>  
   fixed BUG in "rsavenii.m" (issue only for writing 4D-data only)  
 <!---->
