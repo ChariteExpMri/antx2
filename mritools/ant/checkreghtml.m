@@ -31,6 +31,7 @@ if 0
         };
 %     filepairs={'x_T1.nii', 'AVGT.nii';}
     filepairs={'AVGT.nii','x_T1.nii' }
+    filepairs={'AVGT.nii','blob.nii' }
     outpath='F:\data3\graham_ana4\check'
     
     checkreghtml(pa,filepairs,outpath)
@@ -78,6 +79,8 @@ l=htmlprep(htmlfile,'styles.css',header );
 
 
 for i=1:length(pas)
+    %fprintf('%s','.');
+    pdisp(i,1); 
     
     px=pas{i};
     % fname1='x_T1.nii'
@@ -126,9 +129,46 @@ for i=1:length(pas)
     end
     pwrite2file(htmlfile, l);  
 end
-
+disp('Done.');
 
 showinfo2('checkRegHtml',htmlfile);
+
+%———————————————————————————————————————————————
+%%   add index
+%———————————————————————————————————————————————
+
+
+[filesfp] = spm_select('FPList',outpath,'.*.html');
+filesfp=cellstr(filesfp);
+filesfp(regexpi2(filesfp,'index.html'))=[];
+
+s2={'<html><br><br>'};
+s2{end+1,1}=[[ '<font color=blue>'  '<h2>' 'OVERLAYS' '</h2>'  '<font color=black>' ];];
+s2{end+1,1}=[[ '<font color=green>' '<h4>' ['Path: ' outpath ] '</h4>'  '<font color=black>' ];];
+
+for i=1:length(filesfp)
+    [~ ,file]=fileparts(filesfp{i});
+    k=dir(filesfp{i});
+    s2{end+1,1}=[...
+        ' &#9864;  <a href="' file '"target="_blank">' file  '</a>' ...
+        [    ' <p style="color:blue;display:inline;font-family=''Courier New''; font-size:10px;">' ...
+        [ 'Created: '  k(1).date ]   '</p>'] ...
+        '<br>'];
+    %     <a href="url">link text</a>
+end
+% <p style="display:inline">...</p>
+
+
+s2{end+1,1}=['<pre><p style="color:blue;font-family=''Courier New''; font-size:10px;">' [ 'Created: '  datestr(now)]   '</p></pre>'];
+
+indexfile=fullfile(outpath,'index.html');
+pwrite2file(indexfile, s2);
+showinfo2('INDEXfile',indexfile);
+
+%———————————————————————————————————————————————
+%%   
+%———————————————————————————————————————————————
+
 
 function l1=addInfo(l, vi,p);
 
