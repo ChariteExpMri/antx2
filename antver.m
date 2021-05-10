@@ -246,7 +246,7 @@
 % #ra 07 May 2021 (22:15:55)
 % -->started [checkreghtml]: make html-page of overlay of arbitrary pairs of images for selected animals 
 % #ra 10 May 2021 (20:39:32)
-% [xcheckreghtml] implemented. This function create HTML-files with overlay of arbitrary images. 
+% [xcheckreghtml] implemented. This function create HTML-files with overlays of arbitrary images. 
 %  The HTML-files can be used to check the registration, can be zipped and send to others.
 % #gw --> access via ANT-menu: Graphics/generate HTML-file
 % 

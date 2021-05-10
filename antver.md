@@ -3,7 +3,7 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**10 May 2021 (20:39:32)**</ins>  
-  **[xcheckreghtml]** implemented. This function create HTML-files with overlay of arbitrary images.   
+  **[xcheckreghtml]** implemented. This function create HTML-files with overlays of arbitrary images.   
    The HTML-files can be used to check the registration, can be zipped and send to others.  
   &#8618; access via ANT-menu: Graphics/generate HTML-file  
 <!---->
