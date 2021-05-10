@@ -243,9 +243,15 @@
 % 
 % #ra 06 May 2021 (10:29:16)
 % fixed BUG in "rsavenii.m" (issue only for writing 4D-data only)
-% % #ra 07 May 2021 (22:15:55)
-% -->started.. [checkreghtml]: make html-page of overlay of arbitrary pairs of images for selected animals 
+% #ra 07 May 2021 (22:15:55)
+% -->started [checkreghtml]: make html-page of overlay of arbitrary pairs of images for selected animals 
+% #ra 10 May 2021 (20:39:32)
+% [xcheckreghtml] implemented. This function create HTML-files with overlay of arbitrary images. 
+%  The HTML-files can be used to check the registration, can be zipped and send to others.
+% #gw --> access via ANT-menu: Graphics/generate HTML-file
 % 
+% 
+
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

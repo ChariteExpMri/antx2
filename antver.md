@@ -1,9 +1,14 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   % 07 May 2021 (22:15:55)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   10 May 2021 (20:39:32)  
     
 ------------------  
-  % ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 May 2021 (22:15:55)**</ins>  
-  -->started.. **[checkreghtml]**: make html-page of overlay of arbitrary pairs of images for selected animals   
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**10 May 2021 (20:39:32)**</ins>  
+  **[xcheckreghtml]** implemented. This function create HTML-files with overlay of arbitrary images.   
+   The HTML-files can be used to check the registration, can be zipped and send to others.  
+  &#8618; access via ANT-menu: Graphics/generate HTML-file  
+<!---->
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 May 2021 (22:15:55)**</ins>  
+  -->started **[checkreghtml]**: make html-page of overlay of arbitrary pairs of images for selected animals   
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 May 2021 (10:29:16)**</ins>  
   fixed BUG in "rsavenii.m" (issue only for writing 4D-data only)  

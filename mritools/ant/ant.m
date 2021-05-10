@@ -866,7 +866,7 @@ mh2 = uimenu(mh,'Label','<html><font color="black"> apply 2d-registration to oth
 
 
 
-
+% ---------------------
 mh = uimenu(f,'Label','Graphics');
 mh2 = uimenu(mh,'Label',' show cases-file-matrix',                                         'Callback',{@menubarCB, 'casefilematrix'},'Separator','on');
 mh2 = uimenu(mh,'Label',' GUI overlay image',                                              'Callback',{@menubarCB, 'overlayimageGui'});
@@ -874,19 +874,16 @@ mh2 = uimenu(mh,'Label',' GUI overlay image2',                                  
 mh2 = uimenu(mh,'Label',' fastviewer',                                                     'Callback',{@menubarCB, 'fastviewer'});
 
 mh2 = uimenu(mh,'Label',' Atlas viewer',                                                   'Callback',{@menubarCB, 'xatlasviewer'},'Separator','on');
-
 mh2 = uimenu(mh,'Label',' 3D-volume',                                                      'Callback',{@menubarCB, 'x3dvolume'});
 
+mh2 = uimenu(mh,'Label','<html><b>generate HTML-file with overlays</html>',                'Callback',{@menubarCB,  'call_xcheckreghtml'},'Separator','on');
 
-
+% ---------------------
 mh = uimenu(f,'Label','Study');
 mh2 = uimenu(mh,'Label',' open studie''s configfile folder',                              'Callback',{@menubarCB, 'folderConfigfile'},'Separator','on');
 mh2 = uimenu(mh,'Label',' open studie''s template folder',                                'Callback',{@menubarCB, 'folderTemplate'});
 mh2 = uimenu(mh,'Label',' preselect mouse-folder',                                        'Callback',{@menubarCB, 'preselectfolder'},'Separator','on', 'userdata','->preselect mouse/mousefolder by id/name/containing nifti-files (or file combinationa) or textfile');
-
-
-
-
+% ---------------------
 
 %% 3nd row
 mh = uimenu(f,'Label','Statistic');
@@ -897,6 +894,7 @@ mh2 = uimenu(mh,'Label',' label-based statistic',                               
 mh2 = uimenu(mh,'Label',' SPM-statistic',                                                          'Callback',{@menubarCB, 'spm_statistic'});
 mh2 = uimenu(mh,'Label',' DTI-statistic',                                                          'Callback',{@menubarCB, 'dti_statistic'});
 
+% ---------------------
 
 %% 4th row
 mh = uimenu(f,'Label','Snips');
@@ -1814,7 +1812,14 @@ elseif strcmp(task,'x3dvolume')
     end
     
     xvol3d();    
+    %________________________________________________
+elseif strcmp(task,'call_xcheckreghtml')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xcheckreghtml';
+        return ;
+    end
     
+    xcheckreghtml();
     %________________________________________________
     
 elseif strcmp(task,'makeANOpseudocolors')

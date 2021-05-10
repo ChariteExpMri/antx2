@@ -15,9 +15,13 @@
 function checkreghtml(datapaths, filepairs,outpath,p0)
 warning off
 
-p.size=400; %imageSize 
-p.gridspace=20 ; %grid-space (pixel): 25 is good
-
+p.size      =400; %imageSize 
+p.grid      =1; %show grid
+p.gridspace =20 ; %grid-space (pixel): 25 is good
+p.gridcolor =[1 0 0];
+p.dim       =2;  %dimension to plot
+p.slices    ='n6';
+p.outputstring  =''; %<optional: outputstring
 
 if exist('p0')
     p=catstruct(p,p0);
@@ -46,9 +50,18 @@ fname1=filepairs{1};
 fname2=filepairs{2};
 
 % name=[fname1 '__' fname2]
- [~,tag1]=fileparts(fname1);
- [~,tag2]=fileparts(fname2);
- name=[tag1 '--' tag2];
+[~,tag1]=fileparts(fname1);
+[~,tag2]=fileparts(fname2);
+name=[tag1 '--' tag2];
+if ~isempty(p.outputstring)
+    
+    if strcmp(p.outputstring(1),'_')==0
+        name=[name '_' p.outputstring];
+        
+    else
+        name=[name p.outputstring];
+    end
+end
 
 % ==============================================
 %%
@@ -59,19 +72,19 @@ subpath=name;
 subpathFP=fullfile(outpath,subpath);
 mkdir(subpathFP);
 
-
+p.subpath=subpath;
 
 % ==============================================
 %%
 % ===============================================
 htmlfile=fullfile(outpath,[ 'r_' name '.html']);
-cssfile=fullfile(outpath,'styles.css');
+cssfile=fullfile(outpath,subpath,'styles.css');
 writeCSS(cssfile,p);
 
 
 
 header=[ '[' fname1 ''  '-' '' fname2 ']' ];
-l=htmlprep(htmlfile,'styles.css',header );
+l=htmlprep(htmlfile,'styles.css',header,p );
 % ==============================================
 %%
 % ===============================================
@@ -96,9 +109,10 @@ for i=1:length(pas)
     f1=fullfile(px,fname1);
     f2=fullfile(px,fname2);
     isOK=0;
+    slices=num2str(p.slices);
     if exist(f1) && exist(f2)
-        [d ds]=getslices(f1,     2,'n6',[],0 );
-        [o os]=getslices({f1 f2},2,'n6',[],0 );
+        [d ds]=getslices(f1,     p.dim,slices,[],0 );
+        [o os]=getslices({f1 f2},p.dim,slices,[],0 );
         gifs   = saveslices_gif({d,ds},{o os}, 1,subpathFP,aname);
         vi(1,:)={fname1  spm_vol(f1)};
         vi(2,:)={fname2  spm_vol(f2)};
@@ -322,7 +336,7 @@ l1=[l0;l];
 % ==============================================
 %%   htmlprep(outpath)
 % ===============================================
-function lf=htmlprep(htmlfile,cssfile,header)
+function lf=htmlprep(htmlfile,cssfile,header,p)
 
 
 sp='&nbsp';
@@ -346,7 +360,7 @@ add2={
 l={
     '<html>'
     '<head>'
-    [ '<link rel="stylesheet" href="' cssfile '">']
+    [ '<link rel="stylesheet" href="' fullfile(p.subpath,cssfile) '">']
     };
 
 JS=getJS;
@@ -440,6 +454,16 @@ pwrite2file(htmlfile, l)
 % ===============================================
 function writeCSS(cssfile,p)
 
+col=round(p.gridcolor.*255);
+col=cellfun(@(a){[  num2str(a)  ]},num2cell(col)); %to strCell
+% ---
+gridtransp=0;
+if p.grid==1
+    gridtransp=1;
+end
+
+    
+
 css={
     %'div { border-style: none!important;  padding-bottom: 0px;    padding-top: -0px;}'
     '*,'
@@ -466,8 +490,8 @@ css={
     '  left: 0;'
     '  width: 100%;'
     '  height: 100%;'
-    '  background: linear-gradient(to right, rgba(255, 0, 0, 0.7) 0px, transparent 1px);'
-    %  '   background: linear-gradient(0deg, transparent 24%,  rgba(255, 255, 255, 0.7) 25%);'
+    ['  background: linear-gradient(to right, rgba(' col{1} ', '  col{2} ','  col{3} ',' num2str(gridtransp) ') 0px, transparent 1px);']
+    %'  background: linear-gradient(to right, rgba(255, 0, 0, 0.7) 0px, transparent 1px);'
     '  background-size: 10%;'
     '}'
     '.grid::before {'
