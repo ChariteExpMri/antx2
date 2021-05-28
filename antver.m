@@ -250,8 +250,13 @@
 %  The HTML-files can be used to check the registration, can be zipped and send to others.
 % #gw --> access via ANT-menu: Graphics/generate HTML-file
 % 
+% #ra 29 May 2021 (01:20:40)
+% [xrealign.m]  --> realign 3D-(time)-series or 4D volume using SPM-realign function
 % 
-
+% 
+% 
+% 
+% 
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

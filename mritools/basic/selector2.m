@@ -6,8 +6,10 @@
 % pairwise varargins
 % 'iswait'      :  0/1      : [0] for debugging modus
 % 'out'         : 'list'    : first outputargument is the selected list (tb) not the selected indices
-% 'out'         : 'col-id'  : first outputargument is the specified column, example 'col-2'-->get column 2
-%'help'         : strcell   : adds a helpbutton,    ...'help',{'HELP';'dothisNthat'},...
+%               : 'col-id'  : first outputargument is the specified column, EXAMPLE: 'col-2'-->get column 2
+%               : column-index or aray of column-indices; EXAMPLE: ..out,[3 4],...  get columns 3 and 4
+% 
+% 'help'        : strcell   : adds a helpbutton,    ...'help',{'HELP';'dothisNthat'},...
 % 'position'    :[x y w h]   :position of fig
 % 'finder'      :0/1  : shows an additonal finder WINDOW, default 0
 % title         : title string in window-header
@@ -533,14 +535,22 @@ if iswait==1
         varargout{1}        =dm2(:,2:end);
         
         if isfield(params,'out')
-            if strcmp(params.out,'list')
-                ids         =dm2(:,2:end);
-               varargout{1} =cell2mat(dm2(:,1));
-            elseif  strfind(params.out,'col')
-                column=str2num(regexprep(params.out,'col-','','ignorecase'));
-                 ids         =dm2(:,column+1);
-               varargout{1} =cell2mat(dm2(:,1));
+            if isnumeric(params.out)
+          
+                column =params.out;
+                ids    =dm2(:,column+1);
+                varargout{1} =cell2mat(dm2(:,1));
+            else
+                if strcmp(params.out,'list')
+                    ids         =dm2(:,2:end);
+                    varargout{1} =cell2mat(dm2(:,1));
+                elseif  strfind(params.out,'col')
+                    column=str2num(regexprep(params.out,'col-','','ignorecase'));
+                    ids         =dm2(:,column+1);
+                    varargout{1} =cell2mat(dm2(:,1));
+                end
             end
+            
         end
         
     else

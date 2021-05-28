@@ -27,6 +27,9 @@ if exist('p0')
     p=catstruct(p,p0);
 end
 
+
+p.dim =str2num(p.dim);
+
 if 0
     pa=...
         {

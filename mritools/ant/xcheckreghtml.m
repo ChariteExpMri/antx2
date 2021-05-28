@@ -145,7 +145,7 @@ p={...
     'outputstring'    ''                  'optional Output string added (suffix) to the HTML-filename and image-directory '  ''
     'inf1' ''  '____PARAMETER____'  ''
     'slices'  'n6'   'SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image'  {'n2' 'n3' 'n4' 'n5' 'n6'  '2' '3' '4' '5' '6'}
-    'dim'     '2'    'Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital'  {1,2,3}
+    'dim'     2      'Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital'  {1,2,3}
     'size'    400    'Image size in HTML file (in pixels)' {100 200 300 400 500}
     'grid'    1      'Show line grid on top of image {0,1}'  'b'
     'gridspace'  20  'Space between grid lines (in pixels)'  { 5 10 20 30}
