@@ -252,6 +252,7 @@
 % 
 % #ra 29 May 2021 (01:20:40)
 % [xrealign.m]  --> realign 3D-(time)-series or 4D volume using SPM-realign function
+% #gw --> access via ANT-menu: Tools/re-align images
 % 
 % 
 % 

@@ -835,6 +835,8 @@ mh2 = uimenu(mh,'Label',' register exvio to invivo',                            
 mh2 = uimenu(mh,'Label',' register CT image',                                              'Callback',{@menubarCB, 'registerCT'},          'userdata', '');
 mh2 = uimenu(mh,'Label',' register images manually',                                       'Callback',{@menubarCB, 'registermanually'},    'userdata', '');
 
+mh2 = uimenu(mh,'Label',' re-align images (3Dseries/4D)',                                    'Callback',{@menubarCB, 'realignImages'},         'userdata', '');
+
 
 % mh2 = uimenu(mh,'Label','<html><font color="black"> coregister slices 2D <font color="red"><i> *NEW*',                                           'Callback',{@menubarCB, 'coregister2D'});
 mh2 = uimenu(mh,'Label',' manipulate files (rename/copy/delete/extract/expand)',       'Callback',{@menubarCB, 'renamefile_simple'},'userdata','with this function, it is easy to rename/copy/delete/extract or expand NIFTI-FILES(VOLUMES)','Separator','on');
@@ -1432,6 +1434,17 @@ elseif strcmp(task,'registermanually')
     
     statusMsg(1,' register images manually');
     xcoregmanu(1);
+    statusMsg(0);
+    
+        %________________________________________________
+elseif strcmp(task,'realignImages')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xrealign';
+        return ;
+    end
+    
+    statusMsg(1,' realign Images');
+    xrealign(1);
     statusMsg(0);
         
     %________________________________________________

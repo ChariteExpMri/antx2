@@ -30,7 +30,10 @@
 %      z.outputname       = 'wau.nii';
 %      example 4D: 'WAU' or 'wau.nii' : output is 'WAU.nii' or 'wau.nii'
 %      for 3D using "wau"  : 'mau_00001.nii/mau_00002.nii...' becomes 'wau_00001.nii/wau_00002.nii...'
-%         
+% #b isparallel : use parallel-processing
+%       [0] no
+%       [1] yes..use Parallel processing
+% 
 %  #r ___________________________________________________________
 %  #r NOTE: FOR SPM PARAMETERS (eoptions/roptions)..see below
 %  #r ___________________________________________________________
@@ -352,6 +355,7 @@ p={...
     'merge4D'          1 'merge 3D-series to 4D-volume: [0]no,keep 3D-volumes, [1]save as 4D-volume' {0,1}
     'outputname'     ''  'optional: rename outputfile; if empty the output-filename is "roptions_prefix"+"inputfilename"' ''
   
+    'isparallel'     1  'parallel-processing: [0]no,[1]yes'  {0,1}
 'inf20' '%' '' ''    
     
 'inf33' '___ ESTIMATION OPTIONS __________' '' ''    
@@ -394,14 +398,33 @@ xmakebatch(z,p, mfilename);
 % ===============================================
 
 
-
-
-for i=1: length(pa)
-    px=pa{i};
-    proc(z,px)
+if z.isparallel==1
+    timex=tic;
+    parfor i=1: length(pa)
+        px=pa{i};
+        f1=fullfile(px,num2str([char(z.image3D) char(z.image4D)]));
+        try
+            cprintf([1 .5 0],[ num2str(i) '/' num2str(length(pa)) '__REALIGNING: ' strrep(f1,[filesep],[filesep filesep]) '\n']);
+        catch
+            fprintf(  [ num2str(i) '/' num2str(length(pa)) '__REALIGNING: ' strrep(f1,[filesep],[filesep filesep]) '\n']);
+        end
+        proc(z,px);
+    end
+    cprintf(-[1 .5 0],sprintf(['DONE (dT=%2.2f min).\n'],toc(timex)/60));
+else
+    timex=tic;
+    for i=1: length(pa)
+        px=pa{i};
+        f1=fullfile(px,num2str([char(z.image3D) char(z.image4D)]));
+        try
+            cprintf([1 .5 0],[ num2str(i) '/' num2str(length(pa)) '__REALIGNING: ' strrep(f1,[filesep],[filesep filesep]) '\n']);
+        catch
+            fprintf(  [ num2str(i) '/' num2str(length(pa)) '__REALIGNING: ' strrep(f1,[filesep],[filesep filesep]) '\n']);
+        end
+        proc(z,px);
+    end
+    cprintf(-[1 .5 0],sprintf(['DONE (dT=%2.2f min).\n'],toc(timex)/60));
 end
-
-
 
 
 
@@ -460,7 +483,7 @@ if is4D==1 && z.convertDataType~=0
     % ==============================================
     %% change dataType and rewrite 4D volume
     % ===============================================
-    fi= spm_select('FPList', pxtemp, ['^' name '_\d{5}.nii'])
+    fi= spm_select('FPList', pxtemp, ['^' name '_\d{5}.nii']);
     fi=cellstr(fi);
     
     dT=z.convertDataType;
@@ -549,8 +572,9 @@ end
 % toc
 % 
 fprintf('..realign Data..');
-[o1 o2]=spm_jobman('run',matlabbatch);
-fprintf(['done (dT=%2.2fmin\n'],toc(timx)/60);
+% [o1 o2]=spm_jobman('run',matlabbatch);
+[arg o1 o2]=evalc('spm_jobman(''run'',matlabbatch)');
+fprintf(['done (dT=%2.2fmin)\n'],toc(timx)/60);
 
 
 
