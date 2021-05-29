@@ -355,7 +355,7 @@ p={...
     'merge4D'          1 'merge 3D-series to 4D-volume: [0]no,keep 3D-volumes, [1]save as 4D-volume' {0,1}
     'outputname'     ''  'optional: rename outputfile; if empty the output-filename is "roptions_prefix"+"inputfilename"' ''
   
-    'isparallel'     1  'parallel-processing: [0]no,[1]yes'  {0,1}
+    'isparallel'     1  'parallel-processing: [0]no,[1]yes'  'b'
 'inf20' '%' '' ''    
     
 'inf33' '___ ESTIMATION OPTIONS __________' '' ''    
@@ -577,7 +577,7 @@ fprintf('..realign Data..');
 fprintf(['done (dT=%2.2fmin)\n'],toc(timx)/60);
 
 
-
+[~, animal]=fileparts(px);
 
 
 
@@ -596,7 +596,7 @@ if is4D==0 && z.merge4D==1
     
     fprintf('..creating 4D-image ..');
     V4 = spm_file_merge(fi,f2,dT);
-    fprintf(['done (dT=%2.2fmin)\n'],toc(timx)/60);
+    fprintf(['Done (dT=%2.2fmin)\n'],toc(timx)/60);
     
     %% delete 3D-series
     for i=1:length(fi)
@@ -607,9 +607,9 @@ if is4D==0 && z.merge4D==1
     if ~isempty(z.outputname)
         f5=fullfile(px,[strrep(z.outputname,'.nii','') '.nii']);
         movefile(f4,f5,'f');
-        showinfo2('alignedFile(4D)',f5);
+        showinfo2(['alignedFile(4D)[' animal ']' ],f5);
     else
-        showinfo2('alignedFile(4D)',f4);
+        showinfo2(['alignedFile(4D)[' animal ']' ],f4);
     end
     
     
@@ -623,20 +623,20 @@ elseif is4D==0 && z.merge4D==0
         movefilem(fis,fis2);
         
         f5  =fis2{1};
-        showinfo2('aligned series(1st image)',f5);
+        showinfo2(['aligned series(1st image)[' animal ']' ],f5);
         
     else
         f4  =o1{1}.sess.rfiles{1};
-        showinfo2('aligned series(1st image)',f4);
+        showinfo2(['aligned series(1st image)[' animal ']' ],f4);
     end
 else
     f4=fullfile(px,[z.roptions_prefix  name2 '.nii']);
     if ~isempty(z.outputname)
         f5=fullfile(px,[strrep(z.outputname,'.nii','') '.nii']);
         movefile(f4,f5,'f');
-        showinfo2('alignedFile(4D)',f5);
+        showinfo2(['alignedFile(4D)[' animal ']' ],f5);
     else
-        showinfo2('alignedFile(4D)',f4);
+        showinfo2(['alignedFile(4D)[' animal ']' ],f4);
     end
 end
 
