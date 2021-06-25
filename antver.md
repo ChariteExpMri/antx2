@@ -1,10 +1,15 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   29 May 2021 (01:20:40)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   25 Jun 2021 (12:05:36)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**25 Jun 2021 (12:05:36)**</ins>  
+  **[xrealign_elastix]**: multimodal realignment of 4D data (timeseries) using ELASTX and mutual information  
+  &#8618; access via ANT-menu: Tools/realign images (ELASTIX, multimodal)  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**29 May 2021 (01:20:40)**</ins>  
   **[xrealign.m]**  --> realign 3D-(time)-series or 4D volume using SPM-realign function  
-  &#8618; access via ANT-menu: Tools/re-align images  
+  &#8618; access via ANT-menu: Tools/realign images (SPM, monomodal)  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**10 May 2021 (20:39:32)**</ins>  
   **[xcheckreghtml]** implemented. This function create HTML-files with overlays of arbitrary images.   

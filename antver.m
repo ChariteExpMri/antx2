@@ -252,8 +252,11 @@
 % 
 % #ra 29 May 2021 (01:20:40)
 % [xrealign.m]  --> realign 3D-(time)-series or 4D volume using SPM-realign function
-% #gw --> access via ANT-menu: Tools/re-align images
+% #gw --> access via ANT-menu: Tools/realign images (SPM, monomodal)
 % 
+% #ra 25 Jun 2021 (12:05:36)
+% [xrealign_elastix]: multimodal realignment of 4D data (timeseries) using ELASTX and mutual information
+% #gw --> access via ANT-menu: Tools/realign images (ELASTIX, multimodal)
 % 
 % 
 % 

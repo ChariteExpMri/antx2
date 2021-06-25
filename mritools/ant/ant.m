@@ -835,7 +835,8 @@ mh2 = uimenu(mh,'Label',' register exvio to invivo',                            
 mh2 = uimenu(mh,'Label',' register CT image',                                              'Callback',{@menubarCB, 'registerCT'},          'userdata', '');
 mh2 = uimenu(mh,'Label',' register images manually',                                       'Callback',{@menubarCB, 'registermanually'},    'userdata', '');
 
-mh2 = uimenu(mh,'Label',' re-align images (3Dseries/4D)',                                    'Callback',{@menubarCB, 'realignImages'},         'userdata', '');
+mh2 = uimenu(mh,'Label',' realign images (SPM, monomodal)'       , 'Callback',{@menubarCB, 'realignImages'}          ,'userdata','','Separator','on'  );
+mh2 = uimenu(mh,'Label',' realign images (ELASTIX, multimodal)'  , 'Callback',{@menubarCB, 'realignImagesMultimodal'},'userdata','','Separator','off'  );
 
 
 % mh2 = uimenu(mh,'Label','<html><font color="black"> coregister slices 2D <font color="red"><i> *NEW*',                                           'Callback',{@menubarCB, 'coregister2D'});
@@ -1446,7 +1447,17 @@ elseif strcmp(task,'realignImages')
     statusMsg(1,' realign Images');
     xrealign(1);
     statusMsg(0);
-        
+        %________________________________________________
+elseif strcmp(task,'realignImagesMultimodal')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xrealign_elastix';
+        return ;
+    end
+    
+    statusMsg(1,' realign Images');
+    xrealign_elastix(1);
+    statusMsg(0);
+                
     %________________________________________________
 elseif strcmp(task,'coregister2D')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
