@@ -879,7 +879,9 @@ mh2 = uimenu(mh,'Label',' fastviewer',                                          
 mh2 = uimenu(mh,'Label',' Atlas viewer',                                                   'Callback',{@menubarCB, 'xatlasviewer'},'Separator','on');
 mh2 = uimenu(mh,'Label',' 3D-volume',                                                      'Callback',{@menubarCB, 'x3dvolume'});
 
-mh2 = uimenu(mh,'Label','<html><b>generate HTML-file with overlays</html>',                'Callback',{@menubarCB,  'call_xcheckreghtml'},'Separator','on');
+
+mh2 = uimenu(mh,'Label','<html>check 4D-volume (realignment)</html>',        'Callback',{@menubarCB,  'call_show4d'},'Separator','on');
+mh2 = uimenu(mh,'Label','<html><b>generate HTML-file with overlays</html>',     'Callback',{@menubarCB,  'call_xcheckreghtml'},'Separator','on');
 
 % ---------------------
 mh = uimenu(f,'Label','Study');
@@ -1835,7 +1837,18 @@ elseif strcmp(task,'x3dvolume')
         return ;
     end
     
-    xvol3d();    
+    xvol3d();  
+     %________________________________________________
+elseif strcmp(task,'call_show4d')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='show4d';
+        return ;
+    end
+    
+    global an
+    show4d( an.datpath);   
+    
+    
     %________________________________________________
 elseif strcmp(task,'call_xcheckreghtml')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here

@@ -258,6 +258,11 @@
 % [xrealign_elastix]: multimodal realignment of 4D data (timeseries) using ELASTX and mutual information
 % #gw --> access via ANT-menu: Tools/realign images (ELASTIX, multimodal)
 % 
+% #ra 28 Jun 2021 (15:36:53)
+% [show4d]: SHOW 4D-VOLUME / check quality of realignment of 4D-volume
+% function allows to display a 4D-volume and it's realigned version side-by-side
+% For quality assessment, the 1st volume is displayed on top (as contour plot) of the selected (3D)-volume 
+% #gw --> access via ANT-menu: Graphics/check 4D-volume (realignment)
 % 
 % 
 % 

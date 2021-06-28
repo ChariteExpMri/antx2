@@ -1,10 +1,17 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   25 Jun 2021 (12:05:36)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   28 Jun 2021 (15:36:53)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Jun 2021 (15:36:53)**</ins>  
+  **[show4d]**: SHOW 4D-VOLUME / check quality of realignment of 4D-volume  
+  function allows to display a 4D-volume and it's realigned version side-by-side  
+  For quality assessment, the 1st volume is displayed on top (as contour plot) of the selected (3D)-volume   
+  &#8618; access via ANT-menu: Graphics/check 4D-volume (realignment)  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**25 Jun 2021 (12:05:36)**</ins>  
   **[xrealign_elastix]**: multimodal realignment of 4D data (timeseries) using ELASTX and mutual information  
   &#8618; access via ANT-menu: Tools/realign images (ELASTIX, multimodal)  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**29 May 2021 (01:20:40)**</ins>  
   **[xrealign.m]**  --> realign 3D-(time)-series or 4D volume using SPM-realign function  
