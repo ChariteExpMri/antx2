@@ -473,6 +473,10 @@ elseif strcmp(task,'save')
     hed=findobj(gcf,'tag','s_setfilename_save_ed');
     fileout=get(hed,'string');
     [pa fi ext]=fileparts(fileout);
+    if isempty(pa)
+        pa=fileparts(v.f1);
+    end
+        
     if exist(pa)~=7;   
         msgbox('no filename specified to save file');
         return; 

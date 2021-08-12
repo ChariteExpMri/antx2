@@ -908,6 +908,8 @@ mh = uimenu(f,'Label','Snips');
 mh2 = uimenu(mh,'Label',' get corrected lesion volume',                                  'Callback',{@menubarCB, 'getlesionvolume'});
 mh2 = uimenu(mh,'Label',' make IncidenceMaps',                                           'Callback',{@menubarCB, 'makeIncidenceMaps'});
 
+% mh2 = uimenu(mh,'Label',' DEBUG-functions'                                          );
+% mh3 = uimenu(mh2,'Label',' check PATHS (project/study/data)',          'Callback',{@menubarCB, 'makeIncidenceMaps'});
 % mh2 = uimenu(mh,'Label',' generate ANO.nii in pseudocolors',    'Callback',{@menubarCB, 'makeANOpseudocolors'});
 
 
@@ -926,6 +928,8 @@ mh2 = uimenu(mh,'Label','contact',                                              
  
 mh2   = uimenu(mh,'Label','troubleshoot' );
 msub1 = uimenu(mh2,'Label','check ELASTIX installation',                          'Callback',{@menubarCB, 'check_ELASTIX_installation'});
+msub1 = uimenu(mh2,'Label','check path-names (project/datasets/ANTX-TBX)',         'Callback',{@menubarCB, 'check_pathnames'});
+
 
 
 mh2 = uimenu(mh,'Label','visit ANTx2 repository (Github)',                                  'Callback',{@menubarCB, 'visitGITHUB'},'separator','on');
@@ -2062,6 +2066,15 @@ elseif strcmp(task,'check_ELASTIX_installation')
        
     
     elastix_checkinstallation;
+    %________________________________________________
+elseif strcmp(task,'check_pathnames')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='checkpath';
+        return ;
+    end
+       
+    
+    checkpath;    
     %________________________________________________
 elseif strcmp(task,'antsettings')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here

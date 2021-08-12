@@ -534,23 +534,34 @@ set(hb,'tooltipstring',['set contrast' char(10) 'if there are several contrasts.
     ,'callback',@set_contrast);
 %% contrastname
 hb=uicontrol('style','text','units','norm', 'string', sx.us.pw(1).str);
-set(hb,'position',[0.11964 0.94405 0.10714 0.047619],'tag','contrast_str');
-set(hb,'tooltipstring',['contrast name'],'backgroundcolor',[1.0000  0.8431 0],'fontweight','bold');
+% set(hb,'position', [0.0035714 0.92262 0.10714 0.047619],'tag','contrast_str');
+set(hb,'position', [0.003 0.9 0.24 0.05],'tag','contrast_str');
+% set(hb,'position',[0.11964 0.94405 0.10714 0.047619],'tag','contrast_str');
+set(hb,'tooltipstring',['contrast name'],'backgroundcolor',[1.0000  0.8431 0],...
+'fontweight','bold','fontsize',6,'horizontalalignment','center');
 
 
-%% THRESHTYPE
+%% THRESHTYPE (pulldown: all,etc)
 hb=uicontrol('style','popupmenu','units','norm', 'string', {'all' , 'thresh', 'FDR'});
-set(hb,'position',[0.0125 0.91071 0.10714 0.047619],'tag','threshtype');
+set(hb,'position',[0.0 0.83452 0.09 0.047619],'tag','threshtype');
+% set(hb,'position',[0.0125 0.91071 0.10714 0.047619],'tag','threshtype');
 set(hb,'tooltipstring',['threshold Type' char(10) ' all: show all connections ' char(10) ... 
     ' thresh: show connections with p-values below defined threshold' char(10) ...
     ' FDR: show only FDR-corrected connections']...
     ,'callback',@set_threshtype);
 
-%% THRESHOLD
+%% THRESHOLD (edit 0.05 )
 hb=uicontrol('style','edit','units','norm', 'string', num2str(sx.thresh));
-set(hb,'position',[0.11786 0.92024 0.10714 0.035],'tag','thresh');
+set(hb,'position',[0.089286 0.84405 0.10714 0.035],'tag','thresh');
+% set(hb,'position',[0.11786 0.92024 0.10714 0.035],'tag','thresh');
 set(hb,'tooltipstring',['enter the p-value threshold' 'only values below threshold will be displayed'],...
     'callback',@set_thresh,'enable','off');
+
+%% sortoption (pulldown: origin,etc...)
+hb=uicontrol('style','popupmenu','units','norm', 'string', sx.sortopt);
+set(hb,'position',[0.0 0.79405 0.10714 0.047619],'tag','sorttype');
+set(hb,'tooltipstring',['sorting Type:' char(10) 'how to sort the data' char(10) ' (y-axis stays fixed)'],...
+    'callback',@set_sorttype);
 
 
 %% UPDATE
@@ -600,11 +611,11 @@ set(hb,'position',[[0.0035714 0.37024 0.13714 0.035]],'tag','clim');
 set(hb,'callback',@set_clim);
 set(hb,'tooltipstring',['manual colorlimits' char(10) ' enter a negative and positive value']);
 
-%% sortoption
-hb=uicontrol('style','popupmenu','units','norm', 'string', sx.sortopt);
-set(hb,'position',[0.010714 0.85357 0.10714 0.047619],'tag','sorttype');
-set(hb,'tooltipstring',['sorting Type:' char(10) 'how to sort the data' char(10) ' (y-axis stays fixed)'],...
-    'callback',@set_sorttype);
+% %% sortoption
+% hb=uicontrol('style','popupmenu','units','norm', 'string', sx.sortopt);
+% set(hb,'position',[0.0089286 0.83214 0.10714 0.047619],'tag','sorttype');
+% set(hb,'tooltipstring',['sorting Type:' char(10) 'how to sort the data' char(10) ' (y-axis stays fixed)'],...
+%     'callback',@set_sorttype);
 
 
 %% HELP
@@ -627,7 +638,8 @@ function set_contrast(e,e2)
 num=get(findobj(gcf,'tag','contrast'),'value');
 sx=get(gcf,'userdata');
 contrastname=sx.us.pw(num).str;
-set(findobj(gcf,'tag','contrast_str'),'string',contrastname,'fontweight','bold','fontsize',8);
+set(findobj(gcf,'tag','contrast_str'),'string',contrastname);
+% ,'fontweight','bold','fontsize',8);
 sx.pwnumber=num;
 set(gcf,'userdata',sx);
 
@@ -664,13 +676,29 @@ set(gcf,'userdata',sx);
 
 function showtable(e,e2)
 sx=get(gcf,'userdata');
+
+
+contrastname=get(findobj(gcf,'tag','contrast_str'),'string');
+hcontrast   =findobj(gcf,'tag','contrast');
+contrast   =[ '['  hcontrast.String{hcontrast.Value} ']'] ;
+
+htreshtype   =findobj(gcf,'tag','threshtype');
+treshtype   =htreshtype.String{htreshtype.Value};
+threshold='';
+if strcmp(treshtype,'thresh')==1
+    threshold=[' at p=' num2str(get(findobj(gcf,'tag','thresh'),'string')) '']; 
+end
+header=[contrast ' ' contrastname  '       (treshold: ' treshtype '' threshold  ')'];
+
 try;
-    uhelp( plog([],[  sx.htb;sx.tb] ),1);
+    %uhelp( plog([],[  sx.htb;sx.tb] ),1);
+    uhelp( plog([],[  sx.htb;sx.tb],0, header ),1);
 end
 
 
 function update(e,e2)
 prepdata();
+try; set_showlabel([],[]); end
 
 function set_showlabel(e,e2)
 e=findobj(gcf,'tag','set_showlabel');
@@ -689,23 +717,24 @@ if get(e,'value')==0
 else
     ax1_pos=get(ax1,'position');
     ax1_pos=[.5 .5 .5 .4];
-     set(ax1,'position',ax1_pos)
-    set(ax2,'position',  [ ax1_pos(1)   ax1_pos(2)-sx.wid-sx.gap     ax1_pos(3)   sx.wid ]);
-    set(ax3,'position',  [ ax1_pos(1)-sx.wid-sx.gap   ax1_pos(2)   sx.wid  ax1_pos(4)    ]);
-
-    if sx.labelmode==1
-        set(ax2,'xtick',[1:length(sx.la2)],'xticklabels',strrep(sx.la2,'_',' '));
-        set(ax3,'ytick',[1:length(sx.la1)],'yticklabels',strrep(sx.la1,'_',' '));
-        %set(ax3,'yTickLabelRotation',30);
-    elseif sx.labelmode==2
-        iver=find(sum(sx.s,2));
-        ihor=find(sum(sx.s,1));
-        set(ax2,'xtick',[ihor],'xticklabels',strrep(sx.la2(ihor),'_',' '));
-        set(ax3,'ytick',[iver],'yticklabels',strrep(sx.la1(iver),'_',' '));
+    set(ax1,'position',ax1_pos)
+    try;    set(ax2,'position',  [ ax1_pos(1)   ax1_pos(2)-sx.wid-sx.gap     ax1_pos(3)   sx.wid ]);end
+    try;    set(ax3,'position',  [ ax1_pos(1)-sx.wid-sx.gap   ax1_pos(2)   sx.wid  ax1_pos(4)    ]);end
+    try
+        if sx.labelmode==1
+            set(ax2,'xtick',[1:length(sx.la2)],'xticklabels',strrep(sx.la2,'_',' '));
+            set(ax3,'ytick',[1:length(sx.la1)],'yticklabels',strrep(sx.la1,'_',' '));
+            %set(ax3,'yTickLabelRotation',30);
+        elseif sx.labelmode==2
+            iver=find(sum(sx.s,2));
+            ihor=find(sum(sx.s,1));
+            set(ax2,'xtick',[ihor],'xticklabels',strrep(sx.la2(ihor),'_',' '));
+            set(ax3,'ytick',[iver],'yticklabels',strrep(sx.la1(iver),'_',' '));
+        end
+        
+        set(ax2,'xTickLabelRotation',sx.xTickLabelRotation);
+        set([ax2 ax3],'fontsize',sx.label_fs);
     end
-   
-   set(ax2,'xTickLabelRotation',sx.xTickLabelRotation);
-   set([ax2 ax3],'fontsize',sx.label_fs);
 end
 dragbtn_ini();
 

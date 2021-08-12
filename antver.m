@@ -264,8 +264,15 @@
 % For quality assessment, the 1st volume is displayed on top (as contour plot) of the selected (3D)-volume 
 % #gw --> access via ANT-menu: Graphics/check 4D-volume (realignment)
 % 
+% #ra 12 Aug 2021 (18:49:17)
+% [xcheckreghtml.m] ... fixed BUG: "dimension"-parameter error with string/double vartype 
+% [checkpath] checks whether paths-names of ANTx-TBX, a study-project/template and data-sets contain special characters 
+% Special characters might result in errors & crashes.
+% #gw --> access via ANT-menu: Extras/troubleshoot/check path-names
 % 
+%
 % 
+%
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
