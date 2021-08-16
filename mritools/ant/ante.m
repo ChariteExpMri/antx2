@@ -340,9 +340,9 @@ if isempty(e.Modifier)
         end
     end
 elseif ~isempty(strfind(e.Modifier,'control'))
-    if strcmp(e.Character,'+') || strcmp(e.Character,'-')
+    if strcmp(e.Key,'rightarrow') || strcmp(e.Character,'leftarrow')
         rotstep=1;
-        if strcmp(e.Character,'-');
+        if strcmp(e.Key,'leftarrow');
             rotstep=-1;
         end
         ht=findobj(gcf,'type','text','-and','UserData','xtick');
