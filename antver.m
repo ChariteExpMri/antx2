@@ -271,8 +271,13 @@
 % #gw --> access via ANT-menu: Extras/troubleshoot/check path-names
 % 
 %
-% 
+% #ra 16 Aug 2021 (11:18:29)
+% [case-filematrix] add file functionality: copy/delete/export files ; file information  
 %
+% 
+% 
+
+
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
