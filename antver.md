@@ -1,9 +1,13 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   16 Aug 2021 (11:18:29)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   16 Aug 2021 (13:35:35)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Aug 2021 (13:35:35)**</ins>  
+  test: gitHub with "personal access token"  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Aug 2021 (11:18:29)**</ins>  
   **[case-filematrix]** add file functionality: copy/delete/export files ; file information    
+   
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**12 Aug 2021 (18:49:17)**</ins>  
   **[xcheckreghtml.m]** ... fixed BUG: "dimension"-parameter error with string/double vartype   
@@ -11,7 +15,6 @@
   Special characters might result in errors & crashes.  
   &#8618; access via ANT-menu: Extras/troubleshoot/check path-names  
     
-   
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Jun 2021 (15:36:53)**</ins>  
   **[show4d]**: SHOW 4D-VOLUME / check quality of realignment of 4D-volume  

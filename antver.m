@@ -270,11 +270,11 @@
 % Special characters might result in errors & crashes.
 % #gw --> access via ANT-menu: Extras/troubleshoot/check path-names
 % 
-%
 % #ra 16 Aug 2021 (11:18:29)
 % [case-filematrix] add file functionality: copy/delete/export files ; file information  
 %
-% 
+% #ra 16 Aug 2021 (13:35:35)
+% test: gitHub with "personal access token"
 % 
 
 
