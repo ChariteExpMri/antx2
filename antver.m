@@ -274,7 +274,7 @@
 % [case-filematrix] add file functionality: copy/delete/export files ; file information  
 %
 % #ra 16 Aug 2021 (13:35:35)
-% test: gitHub with "personal access token" : upload-seems to work
+% test: gitHub with "personal access token" : upload-seems to work/chk(TunnelBlick)
 % 
 
 

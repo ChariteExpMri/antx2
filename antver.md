@@ -3,7 +3,7 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Aug 2021 (13:35:35)**</ins>  
-  test: gitHub with "personal access token" : upload-seems to work  
+  test: gitHub with "personal access token" : upload-seems to work/chk(TunnelBlick)  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Aug 2021 (11:18:29)**</ins>  
   **[case-filematrix]** add file functionality: copy/delete/export files ; file information    
