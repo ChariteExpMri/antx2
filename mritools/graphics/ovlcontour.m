@@ -38,6 +38,17 @@ function[hfig]=ovlcontour(fi,dim,slices,crop,tff,cont,namestr,params)
 % ovlcontour(fi)  ; %use default settings 
 %% EXP4
 % ovlcontour({f1;f2},2,['8 25'],[.08 0 0.05 0.05],[1 1 0],[2 2 1], 'R');
+% 
+%  #by  SHORTCUTS 
+%  #b [left arrow]         #k  toggle background & foreground image 
+%  #b [right arrow]        #k  show fusion of background & foreground image
+%  #b [up/down arrow]      #k decrease/increase fusion transparency
+%  #b [c]                  #k change  between multiple colormaps
+%  #b [left mouse click]   #k toggle background & foreground image 
+%  #b [right mouse click]  #k context menu 
+ 
+%     uhelp(h,0,'position',[ 0.6330    0.5178    0.3535    0.40]);
+    
 
 if 0
     % aa='V:\projects\atlasRegEdemaCorr\nii32\s20150908_FK_C1M01_1_3_1_1\_Atpl_mouseatlasNew_left.nii'
@@ -69,6 +80,18 @@ if exist('crop')==0;             crop=[];          end;   if isempty(crop); crop
 if exist('tff')==0;                 tff=[];             end;    if isempty(tff); tff=[1 1 0]                     ;end
 if exist('cont')==0;            cont=[];          end;    if isempty(cont); cont=[2 1]                     ;end
 if exist('namestr')==0;     namestr=[];    end;    if isempty(namestr); namestr=''                     ;end
+
+%input
+us.input.fi        =fi;
+us.input.dim       =dim;
+us.input.slices    =slices;
+us.input.crop      =crop;
+us.input.tff       =tff;
+us.input.cont      =cont;
+us.input.namestr   =namestr;
+us.input.params    =params;
+
+
 
 if exist('params')~=1  %placeholder if params not exists
     params.dummy='dummy';
@@ -278,6 +301,9 @@ end
 end
 
 try; us.cmap=cmap; end
+
+
+
 set(gcf,'userdata',us);
 
 
@@ -293,28 +319,100 @@ ptitle([ namestr ' (' f1 ' - ' f2 ')']);
 
 set(gcf,'color','k','InvertHardcopy','off');
 drawnow;
-
+set(gcf,'WindowButtonDownFcn',@toggleimage);
 if 0
     print(gcf,'-djpeg','-r300',fullfile(pwd,'test3.jpg'));
 end
 
+if 1
+    % contextMenu
+    cmenu = uicontextmenu;
+    hs = uimenu(cmenu,'label','<html><font color=blue>show overlay',           'Callback',{@hcontext, 'showoverlay'});
+    hs = uimenu(cmenu,'label','<html><font color=blue>show background image',  'Callback',{@hcontext, 'showbackground'});
+    hs = uimenu(cmenu,'label','<html><font color=blue>show foreground image',  'Callback',{@hcontext, 'showforeground'});
+    
+    hs = uimenu(cmenu,'label','change paramter (view,slices)',  'Callback',{@hcontext, 'changeParams'});
+    
+    hs = uimenu(cmenu,'label','<html><font color=gray>show help',  'Callback',{@hcontext, 'showhelp'},'separator','on');
+    
+    him=findall(gcf,'type','image');
+    set(him,'UIContextMenu',cmenu);
+end
+
+
+
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 %% addon functions
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+function hcontext(e,e2,task)
+% task
+if strcmp(task,'showoverlay')
+    replot(3);
+elseif strcmp(task,'showbackground')
+    us=get(gcf,'userdata');
+    us.mode=2;
+    set(gcf,'userdata',us);
+    replot(1);
+elseif strcmp(task,'showforeground')
+    us=get(gcf,'userdata');
+    us.mode=1;
+    set(gcf,'userdata',us);
+    replot(1);
+elseif strcmp(task,'showhelp')
+    uhelp(mfilename);
+    
+elseif strcmp(task,'changeParams')
+    us=get(gcf,'userdata');
+    answer = inputdlg({'change view(1,2,3)' 'slice step (show each nth slice)'},'',1, ...
+        {num2str(us.input.dim)  (us.input.slices)});
+    
+    fis   =us.input.fi;
+    orient=us.input.dim;
+    slices=us.input.slices;
+    crop  =us.input.crop;
+    tff   =us.input.tff;
+    cont  =us.input.cont;
+    namestr=us.input.namestr;
+    params=us.input.params;
+    
+    as=str2num(char(answer{1}));
+%     if as==1 || as==2 || as==3 ;
+%        
+%     end
+     orient=as;
+     slices=answer{2};
+    
+    ovlcontour(fis,orient,slices,crop,tff,cont, namestr,params);
+    
+    
+end
+
+
+function toggleimage(e,e2)
+% disp(rand(1,2));
+% replot(1);
+seltype=get(gcf,'SelectionType');
+if strcmp(seltype,'normal') || strcmp(seltype,'open')
+    replot(1);
+% elseif strcmp(seltype,'alt')  
+end
+
+
+
+
+
 function keys(he,e)
-
-
-
 us=get(gcf,'userdata');
-
 if strcmp(e.Character,'h')
-    h={};
-    h{end+1,1}=[' #by  SHORTCUTS  '      ];
-    h{end+1,1}=[' #b [left arrow]     #k  toggle to show background & foreground image only'      ];
-    h{end+1,1}=[' #b [right arrow]    #k  show fusion of background & foreground image'      ];
-    h{end+1,1}=[' #b [up/down arrow]  #k decrease/increase fusion transparency'      ];
-    h{end+1,1}=[' #b [c]              #k change  between multiple colormaps'      ];
-    uhelp(h,0,'position',[ 0.6330    0.5178    0.3535    0.40]);
+    uhelp(mfilename);
+    
+%     h={};
+%     h{end+1,1}=[' #by  SHORTCUTS  '      ];
+%     h{end+1,1}=[' #b [left arrow]     #k  toggle to show background & foreground image only'      ];
+%     h{end+1,1}=[' #b [right arrow]    #k  show fusion of background & foreground image'      ];
+%     h{end+1,1}=[' #b [up/down arrow]  #k decrease/increase fusion transparency'      ];
+%     h{end+1,1}=[' #b [c]              #k change  between multiple colormaps'      ];
+%     uhelp(h,0,'position',[ 0.6330    0.5178    0.3535    0.40]);
     
 end
 

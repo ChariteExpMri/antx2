@@ -220,6 +220,7 @@ set(gca,'units','norm');%,'position',[0.1 .13 .7 .83]);
 set(gcf,'WindowButtonMotionFcn',{@matrixmotion, ma, filesuni,cases});
 % set(gcf,'position',[0 0 1 1]);
 set(gcf,'WindowButtonDownFcn',{@matrixbuttondown, ma, filesuni,cases});
+set(gcf,'KeyPressFcn',@keys);
 
 %ELEMENTS
 hp=uicontrol('Style', 'pushbutton',     'String', 'resize' , ...
@@ -245,6 +246,12 @@ hp=uicontrol('Style', 'pushbutton',     'String', 'help','units','normalized' , 
     'tag','help_filematrix','callback' , @help_filematrix);
 set(hp,'fontsize',12,'tooltipstring','help')   ;
 
+%% replot
+hp=uicontrol('Style', 'pushbutton',     'String', 'replot','units','normalized' ,   'Position', [0.9379 0.97958 0.06 0.02],...
+    'tag','replot_filematrix','callback' , @replot_filematrix);
+set(hp,'fontsize',10,'tooltipstring','replot case-file-matrix')   ;
+
+
 %% SELECT FOLDERS/FILES
 hp=uicontrol('Style', 'radiobutton',     'String', 'select File/Folders','units','normalized' ,   'Position', [.6 .98 .15 .02],...
     'tag','selectobject','callback' , @getfolder);
@@ -260,6 +267,14 @@ taskselection={
     'copy <unique> fullpath folders to clipboard #MATLAB-CELLSTYLE'
     'copy <unique>          files   to clipboard #MATLAB-CELLSTYLE'
     'copy          fullpath files   to clipboard #MATLAB-CELLSTYLE'
+    '------------'
+    'tabulate values (Me, SD, Min, Max, counts (n==0; n==1))'
+    'header information'
+    '------------'
+    'make image copy (copy+rename image(s) ..stored in local folder) '
+    'export files (export selected files; keep folder structure)'
+    '------------'
+    'delete image  (this will delete the selected images)'
     } ;
 hp=uicontrol('Style', 'popupmenu',    'units','normalized' , 'Position', [.75 .98 .1 .02],...
     'tag','select','callback' , @foldertask,...
@@ -305,6 +320,39 @@ drawnow;
 % label=repmat({'ee'},[100 1])
 % set(datacursormode(gcf), 'DisplayStyle','datatip', 'SnapToDataVertex','off','Enable','on', 'UpdateFcn',{@showlabel,label});
 
+function replot_filematrix(e,e2)
+delete(findobj(0,'tag','casefilematrix'));
+r=ante;
+r.filematrix();
+
+function keys(he,e)
+% e
+if isempty(e.Modifier)
+    if strcmp(e.Character,'+') || strcmp(e.Character,'-')
+        fontstep=1;
+        if strcmp(e.Character,'-');
+            fontstep=-1;
+        end
+        ht=findobj(gcf,'type','text');
+        nFS=get(ht(1),'fontsize')+fontstep;
+        if nFS>0
+            set(ht,'fontsize',nFS);
+        end
+    end
+elseif ~isempty(strfind(e.Modifier,'control'))
+    if strcmp(e.Character,'+') || strcmp(e.Character,'-')
+        rotstep=1;
+        if strcmp(e.Character,'-');
+            rotstep=-1;
+        end
+        ht=findobj(gcf,'type','text','-and','UserData','xtick');
+        nROT=get(ht(1),'Rotation')+rotstep;
+       % if nFS>0
+            set(ht,'Rotation',nROT);
+        %end
+    end
+    
+end
 
 function casefile_exportfiles
 
@@ -505,16 +553,6 @@ showinfo2(['export-folder'],outdir) ;
 
 
 
-
-
-
-
-
-
-
-
-
-
 function foldertask(h,e)
 hsel=findobj(gcf,'tag','selected');
 if isempty(hsel); return; end
@@ -563,9 +601,118 @@ elseif get(h,'value')  ==9                              %FP-IMAGES
     clip2clipcell;
 end
 
+liststring=h.String{h.Value};
+if strfind(liststring, 'make image copy')
+    f0= s.fpimages;
+    prompt = {'[alternative-1] Enter prefix','[alternative-2] Enter suffix:', '[alternative-3] Enter new name'};
+    dlg_title = 'copy file and rename file Input';
+    %num_lines = 1;
+    defaultans = {'','' ''};
+    num_lines = [ones(size(defaultans')) ones(size(defaultans'))*75];
+    out = inputdlg(prompt,dlg_title,num_lines,defaultans);
+    
+    if ~isempty(out{1})
+        f1= (stradd(f0,out{1},1));
+    elseif ~isempty(out{2})
+        f1= (stradd(f0,out{2},2));
+    elseif ~isempty(out{3})
+        opts.Interpreter = 'tex';
+        opts.Default = 'cancel';
+        quest = ['copy and rename file(s) as "' [strrep(out{3},'.nii','') '.nii' ] '"' char(10) ...
+            '\color{magenta} CAUTION: multiple selected files from the same folder can be overwritten, when assigning a new name to the copied files  '];
+        ask = questdlg(quest,'copy&rename files',...
+            'proceed','cancel',opts);
+        f1= (cellfun(@(a){[ a filesep strrep(out{3},'.nii','dd') '.nii' ]},fileparts2(f0)));
+        if strcmp(ask,'cancel')
+            return
+        end
+    end
+    copyfilem(f0,f1);
+    disp('files created...click [replot] to visualize in case-filematrix-window');
+elseif strfind(liststring, 'delete image')
+    f0= s.fpimages;
+    for i=1:length(f0)
+        try
+            delete(f0{i});
+        end
+    end
+    disp('files deleted...click [replot] to visualize in case-filematrix-window');
+    
+elseif strfind(liststring,'tabulate values')
+    f0= s.fpimages;
+    tg={};
+    for i=1:length(f0)
+        [ha a]=rgetnii(f0{i});
+        a=a(:);
+        
+        td=[...
+            min(a) max(a) mean(a) median(a) std(a)  length(unique(a)) ...
+            length(find(a<0)) length(find(a>0)) length(find(a==0)) ...
+            length(find(a<1)) length(find(a>1)) length(find(a==1)) ...
+            ];
+        tg=[tg; [f0{i} num2cell(td)]];
+     end    
+        htd={'Name' 'Min'  'Max' 'ME' 'Med' 'SD' 'Cardinality' ...
+            'N<0' 'N>0'  'N==0' ...
+            'N<1' 'N>1'  'N==1' };
+        footn={'*** ME .. Mean; Med..Median; uniques..; Cardinality...number of different elements in image (uniqueness) '}
+        ta= plog([],[ htd;tg],0, 'Image Values/Parameters','al=1;space=0' );
+        ta=[ta; footn];
+    uhelp( ta,1);
+elseif strfind(liststring,'header information')
+    % ==============================================
+    %%
+    % ===============================================
+    f0= s.fpimages;
+    tg={' #ko IMAGE HEADER '};
+    for i=1:length(f0)
+        [ha]=spm_vol(f0{i});
+        
+        
+        v.name    =       [' #b NAME: ' f0{i}];
+        v.size    =sprintf(' size    : %dx%dx%dx%d',[ha(1).dim length(ha)]);
+        ha=ha(1);
+        
+        v.dt      =sprintf(' dt      : %d %d',[ha.dt]);
+        v.pinfo   =sprintf(' pinfo   : %2.10f %2.10f %2.10f',[ha.pinfo]);
+        v.mat1    =        ' mat     : ';
+        v.mat2    =plog([],ha.mat,0,'','plotlines=0');
+        v.n       =sprintf(' n       : %d %d',[ha.n]);
+        v.descrip =       [' descrip : ' ha.descrip ];
+        
+        tg0=[ v.name; v.size;v.dt; v.pinfo; v.mat1; v.mat2; v.n; v.descrip ;'  '];
+        tg=[tg; tg0];
+        
+    end
+    uhelp( tg,1);
+    % ==============================================
+    %%
+    % ===============================================
+  elseif strfind(liststring,'export files')  
+     paout= uigetdir(pwd, 'select target/"export-to" folder');
+     if isnumeric(paout); return; end
+      % ==============================================
+      %%
+      % ===============================================
+      f0= s.fpimages;
+      for i=1:length(f0)
+          f1=f0{i};
+          [pa1  name ext]=fileparts(f1);
+          [pa2 animal]=fileparts(pa1);
+          
+          f2=fullfile(paout, animal, [name ext ]);
+          if exist(f1)==2
+              mkdir(fullfile(paout,animal))
+              copyfile(f1,f2,'f');
+              showinfo2(['EXPORTED: ' f1 ' '],f2)
+          end
+      end
+      
+      % ==============================================
+      %%
+      % ===============================================
 
-
-
+end
 
 function txt = showlabel(varargin)
 label = varargin{3};
@@ -593,7 +740,9 @@ h{end+1,1}=[' #b                                    #k: [ ] default: select one 
 h{end+1,1}=[' #b [select jobs]-pulldown  #k : perform one of these jobs on selected files/folders'      ];
 h{end+1,1}=[' #k       -to apply a job [selectFiles/Folders] has to be set to [x] and several files/folders has to be picked before'      ];
 h{end+1,1}='';
-
+h{end+1,1}=[' #by  SHORTCUTS  '      ];
+h{end+1,1}=[' #b [+/-]-key        #k : increase/decrease fontsize'      ];
+h{end+1,1}=[' #b [ctr+][+/-]-key  #k : rotate folder labels'      ];
 h{end+1,1}=[''      ];
 h{end+1,1}=[''      ];
 h{end+1,1}=[''      ];
@@ -612,12 +761,35 @@ function getfolder(h,e)
 %     end
 %     us=get(hfig,'userdata');
 
+% 'raw'
+
 if get(h,'value')==1
     delete(findobj(gcf,'tag','selected')); %DELETE PREV. MARKS
     
     %         us.WindowButtonDownFcn=  get(hfig,'WindowButtonDownFcn');
     %         set(hfig,'WindowButtonDownFcn',[]);
     %         set(hfig,'userdata',us);
+    
+      %      % contextMenu
+      cmenu = uicontextmenu;
+      hs = uimenu(cmenu,'label','select all files from this folder (colum-wise selection)',         'Callback',{@hcontext, 'selallfilefromdir'});
+      hs = uimenu(cmenu,'label','deselect all files from this folder (colum-wise selection)',       'Callback',{@hcontext, 'deselallfilefromdir'});
+
+      hs = uimenu(cmenu,'label','select this files from all folders (row-wise selection)',      'Callback',{@hcontext, 'selfilefromalldir'},'separator','on');
+      hs = uimenu(cmenu,'label','delect this files from all folders (row-wise selection)',       'Callback',{@hcontext, 'deselfilefromalldir'});
+
+      hs = uimenu(cmenu,'label','select all',         'Callback',{@hcontext, 'selectall'},'separator','on');
+      hs = uimenu(cmenu,'label','deselect all',       'Callback',{@hcontext, 'deselectall'});
+      
+%       hs = uimenu(cmenu,'label','<html><font color=blue>show background image',  'Callback',{@hcontext, 'showbackground'});
+%       hs = uimenu(cmenu,'label','<html><font color=blue>show foreground image',  'Callback',{@hcontext, 'showforeground'});
+%       hs = uimenu(cmenu,'label','change paramter (view,slices)',  'Callback',{@hcontext, 'changeParams'});
+%       hs = uimenu(cmenu,'label','<html><font color=gray>show help',  'Callback',{@hcontext, 'showhelp'},'separator','on');
+      
+      him=findall(gcf,'type','image');
+      set(him,'UIContextMenu',cmenu);
+      %       set(gcf,'WindowButtonMotionFcn',[]);
+      
 else
     %         DO SOMETHING
     hsel=findobj(gcf,'tag','selected');
@@ -631,8 +803,83 @@ else
     
     delete(findobj(gcf,'tag','selected'));
     %         set(hfig,'WindowButtonDownFcn',us.WindowButtonDownFcn);
+    
+    him=findall(gcf,'type','image');
+    set(him,'UIContextMenu',[]);
 end
 
+function hcontext(e,e2,task)
+% 'a'
+if strcmp(task,'selallfilefromdir') || strcmp(task,'deselallfilefromdir') || ...
+        strcmp(task,'selfilefromalldir') || strcmp(task,'deselfilefromalldir')  || ...
+        strcmp(task,'selectall') || strcmp(task,'deselectall')
+    
+    cp=get(gca,'CurrentPoint');
+    cp=round(cp(1,1:2));
+    us=get(gcf,'userdata');
+    
+    hselected=findobj(gcf,'tag','selected');
+    try
+        cox=cell2mat([get(hselected,'xdata') get(hselected,'ydata')]);
+    catch
+        cox=([get(hselected,'xdata') get(hselected,'ydata')]);
+    end
+    %     if isempty(cox)
+    %         iexist=[];
+    %     else
+    %         iexist=find(cox(:,1)==cp(1) & cox(:,2)==cp(2));
+    %     end
+    %     if ~isempty(iexist)  %delete  SELECTION agaon
+    %         delete(hselected(iexist));
+    %         return
+    %     else  %SELECTION OF FOLDERS
+    
+    if      strcmp(task,'selallfilefromdir') || strcmp(task,'deselallfilefromdir')
+        mod=1;
+        ncounts =length(us.filesuni);
+        ncounts2=1;
+    elseif strcmp(task,'selfilefromalldir') || strcmp(task,'deselfilefromalldir')
+        mod=2;
+        ncounts=length(us.cases);
+        ncounts2=1;
+    elseif strcmp(task,'selectall') || strcmp(task,'deselectall')
+        mod=3;
+        ncounts=length(us.cases);
+        ncounts2=length(us.filesuni);
+    end
+    
+    global an
+    hold on;
+    for j=1:ncounts2
+        for i=1:ncounts
+            if     mod==1
+                cx=[cp(1)  i   ];
+            elseif mod==2
+                cx=[i     cp(2)];
+            elseif mod==3
+                cx=[i     j    ];
+            end
+            
+            try
+                iexist=find(cox(:,1)==cx(1) & cox(:,2)==cx(2));
+            catch
+                iexist=[];
+            end
+            if ~isempty(iexist)
+                delete(hselected(iexist));
+            end
+            if strcmp(task,'selallfilefromdir') || strcmp(task,'selfilefromalldir') || strcmp(task,'selectall')
+                sus.image   = us.filesuni{cx(2)};
+                sus.folder  = us.cases{cx(1)};
+                sus.fpimage =fullfile(an.datpath, us.cases{cx(1)},us.filesuni{cx(2)});
+                if exist(sus.fpimage)==2
+                    plx= plot(cx(1),cx(2),'k*','markersize',12,'tag','selected');
+                    set(plx,'userdata',sus);
+                end
+            end
+        end
+    end
+end
 
 function resize(he,er)
 po=get(gcf,'position');
@@ -712,8 +959,34 @@ if button==0; return; end
 
 
 
+
 hgetfolder    = findobj(gcf,'tag','selectobject');
 isfoldersel   = get(hgetfolder, 'value');
+
+ if isfoldersel==1
+   if strcmp(get(gcf,'SelectionType'),'alt')
+       return
+   end
+ end
+%         %      % contextMenu
+%         cmenu = uicontextmenu;
+%         hs = uimenu(cmenu,'label','<html><font color=blue>show overlay',           'Callback',{@hcontext, 'showoverlay'});
+%         hs = uimenu(cmenu,'label','<html><font color=blue>show background image',  'Callback',{@hcontext, 'showbackground'});
+%         hs = uimenu(cmenu,'label','<html><font color=blue>show foreground image',  'Callback',{@hcontext, 'showforeground'});
+%         hs = uimenu(cmenu,'label','change paramter (view,slices)',  'Callback',{@hcontext, 'changeParams'});
+%         hs = uimenu(cmenu,'label','<html><font color=gray>show help',  'Callback',{@hcontext, 'showhelp'},'separator','on');
+%         
+%         him=findall(gcf,'type','image');
+%         set(him,'UIContextMenu',cmenu);
+%         
+%         return       
+%     end
+% else
+%     him=findall(gcf,'type','image');
+%         set(him,'UIContextMenu',[]);
+% end
+
+
 
 % return
 
