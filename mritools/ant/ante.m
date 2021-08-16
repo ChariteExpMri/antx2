@@ -340,7 +340,7 @@ if isempty(e.Modifier)
         end
     end
 elseif ~isempty(strfind(e.Modifier,'control'))
-    if strcmp(e.Key,'rightarrow') || strcmp(e.Character,'leftarrow')
+    if strcmp(e.Key,'rightarrow') || strcmp(e.Key,'leftarrow')
         rotstep=1;
         if strcmp(e.Key,'leftarrow');
             rotstep=-1;
@@ -741,8 +741,8 @@ h{end+1,1}=[' #b [select jobs]-pulldown  #k : perform one of these jobs on selec
 h{end+1,1}=[' #k       -to apply a job [selectFiles/Folders] has to be set to [x] and several files/folders has to be picked before'      ];
 h{end+1,1}='';
 h{end+1,1}=[' #by  SHORTCUTS  '      ];
-h{end+1,1}=[' #b [+/-]-key        #k : increase/decrease fontsize'      ];
-h{end+1,1}=[' #b [ctr+][+/-]-key  #k : rotate folder labels'      ];
+h{end+1,1}=[' #b [+/-]                     #k : increase/decrease fontsize'      ];
+h{end+1,1}=[' #b [ctr][left/right arrow]  #k : rotate folder labels'      ];
 h{end+1,1}=[''      ];
 h{end+1,1}=[''      ];
 h{end+1,1}=[''      ];
