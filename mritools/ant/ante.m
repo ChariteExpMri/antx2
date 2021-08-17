@@ -157,7 +157,7 @@ bg=repmat(ma==0,[1 1 3]);
 
 
 fg;
-set(gcf,'tag','casefilematrix');
+set(gcf,'tag','casefilematrix','NumberTitle','off','name','case-file-matrix');
 image(ma2+bg);
 for i=1:size(ma,2)-1;     vline(i+.5,'color','k');      end
 for i=1:size(ma,1)-1;    hline(i+.5,'color','k');       end
@@ -232,7 +232,7 @@ hp=uicontrol('Style', 'radiobutton',     'String', 'BG-flip' ,...
     'units','normalized' ,    'tag','rbflipBG');
 set(findobj(gcf,'tag','rbflipBG'),'position',[.05 .98 .05 .02],'fontsize',10,'userdata',0,'value',0);
 
-hp=uicontrol('Style', 'popup',     'String', 't2.nii|AVGT.nii|ANOpcol.nii|w_t2.nii|x_t2.nii|none','units','normalized' ,   'Position', [.1 .9 .1 .05],...
+hp=uicontrol('Style', 'popup',     'String', 't2.nii|AVGT.nii|w_t2.nii|x_t2.nii|none','units','normalized' ,   'Position', [.1 .9 .1 .05],...
     'tag','popbackground');
 set(hp,'position',[.1 .9 .2 .1],'fontsize',12,'tooltipstring','select background image')   ;
 
@@ -312,6 +312,7 @@ set(findobj(gcf,'style','radiobutton'),'units','norm','fontunits','norm');
 u.cases    =cases;
 u.filesuni =filesuni;
 u.pas      =pas;
+u.ma       =ma;
 set(gcf,'userdata',u);
 %--------------------------
 
@@ -401,7 +402,8 @@ end
 i=-1;
 delete(findobj(gcf,'tag','rbselectall'));
 hc=uicontrol('style','radio','units','normalized','tag','rbselectall');
-set(hc,'position',[pos2(1)   pos2(2)+i*ucstep-ucstep  pos2(3)*2 ucstep]);
+% set(hc,'position',[pos2(1)   pos2(2)+i*ucstep-ucstep  pos2(3)*2 ucstep]);
+set(hc,'position',[pos2(1)   pos2(2)+i*ucstep-ucstep  0.07 ucstep]);
 set(hc,'tooltipstring', 'select all files' ,'fontsize',6,'string','all files' );
 col=[1.0000    0.8431         0];
 set(hc,'BackgroundColor',col);
@@ -444,7 +446,8 @@ end
 i=-1;
 delete(findobj(gcf,'tag','rbselectalldirs'));
 hc=uicontrol('style','radio','units','normalized','tag','rbselectalldirs');
- set(hc,'position',[pos3(1)+i*ucstep-ucstep/2 pos3(2)  ucstep.*.95 rbhigh2]);
+%  set(hc,'position',[pos3(1)+i*ucstep-ucstep/2 pos3(2)  ucstep.*.95 rbhigh2]);
+  set(hc,'position',[0 pos3(2)  .07 rbhigh2]);
 set(hc,'tooltipstring', 'select all animal directories' ,'fontsize',6,'string','all dirs' );
 col=[1.0000    0.8431         0];
 set(hc,'BackgroundColor',col);
@@ -720,6 +723,58 @@ txt   = label{get(varargin{2}, 'DataIndex')};
 
 function help_filematrix(h,e)
 
+% ----------------------------------------------------
+% ankCFM_start  www
+
+% ##m CASE-FILEM-MATRIX' 
+% shows all nifti-files (y-axes) of all folders (x-axes)  
+% #by  OVERLAY   
+%  to overlay image onto another image >>select background-IMAGE from [image]-pulldown 
+%  to swap foreground and background image usE [BG]-radiobutton
+%  #r Select the right background image (native space: "t2.nii"; standard space: "AVGT.nii" or "x_t2.nii" 
+%  #by  DISPLAY - MOUSE 
+%  #g [left  click] #k  on cell to show this volume/overlayed volumes 
+%  #g [right click] #k  on cell to show this volume/overlayed volume in MRICRON 
+%  #g [left double-click] #k  to open the directory and mark selected file 
+%  #by  UICONTROLS   
+%  #b [RESIZE]-BUTTON  #k : toggle window in hakf screen or full screen view 
+%  #b [BG]-radiobutton  #k : swap foreground and background images 
+%  #b [image]-pulldown  #k : select a background image here 
+%  #b [SHOW IMAGEHEADER]-radiobutton  #k : shows the header of the image under the hovered mousePointer 
+% 
+%  #b [selectFiles/Folders]-radiobutton  #k: [x] select multiple images/folder for further jobs 
+%  #b                                    #k: [ ] default: select one image and display image/overlay 
+%  #r see right context-menu for further options (enabled only when [selectFiles/Folders]-radiobutton is set;[x])
+%  #b [select jobs]-pulldown  #k : perform one of these jobs on selected files/folders 
+%  #k       -to apply a job [selectFiles/Folders] has to be set to [x] and several files/folders has to be picked
+% 
+%  #b [REPLOT]-BUTTON  #k : replot case-file-matrix 
+%               -usefull when changing the animal selection from ANT main gui
+%               -usefull when copying+renaming/delete files
+%  #by  SHORTCUTS
+%  #b [+/-]                     #k : increase/decrease fontsize
+%  #b [ctr][left/right arrow]  #k : rotate folder labels
+
+% ankCFM_stop
+% ----------------------------------------------------
+% ==============================================
+%%   
+% ===============================================
+
+w=preadfile(which('ante.m')); w=w.all;
+ s1=min(regexpi2(w,'ankCFM_start'))+1;
+ s2=min(regexpi2(w,'ankCFM_stop'))-1;
+ w2=w(s1:s2);
+ w2=regexprep(w2,'^%','');
+ 
+ uhelp(w2);
+% ==============================================
+%%   
+% ===============================================
+
+ 
+ return
+
 h={' ##m CASE-FILEM-MATRIX'};
 h{end+1,1}=[ ' shows all nifti-files (y-axes) of all folders (x-axes) '                      ];
 h{end+1,1}=[' #by  OVERLAY  '      ];
@@ -772,7 +827,13 @@ if get(h,'value')==1
     
       %      % contextMenu
       cmenu = uicontextmenu;
-      hs = uimenu(cmenu,'label','select all files from this folder (colum-wise selection)',         'Callback',{@hcontext, 'selallfilefromdir'});
+      
+     hs = uimenu(cmenu,'label','show current image in Matlab',         'Callback',{@hcontext, 'showImageIntern'},'separator','on');
+     hs = uimenu(cmenu,'label','show current image using MRICRON',         'Callback',{@hcontext, 'showMRICRON'},'separator','off');
+     hs = uimenu(cmenu,'label','open folder of current image',                     'Callback',{@hcontext, 'openPath'},'separator','off');
+
+      
+      hs = uimenu(cmenu,'label','select all files from this folder (colum-wise selection)',         'Callback',{@hcontext, 'selallfilefromdir'},'separator','on');
       hs = uimenu(cmenu,'label','deselect all files from this folder (colum-wise selection)',       'Callback',{@hcontext, 'deselallfilefromdir'});
 
       hs = uimenu(cmenu,'label','select this files from all folders (row-wise selection)',      'Callback',{@hcontext, 'selfilefromalldir'},'separator','on');
@@ -879,7 +940,217 @@ if strcmp(task,'selallfilefromdir') || strcmp(task,'deselallfilefromdir') || ...
             end
         end
     end
+elseif strcmp(task,'showMRICRON')
+    button=2;
+    showImage(button);
+elseif strcmp(task,'showImageIntern')
+    button=1;
+    showImage(button);
+elseif strcmp(task,'openPath')
+    button=3;
+    showImage(button);
+
+%line
+% matrixbuttondown([],[], us.ma, us.filesuni,us.cases)
+
+
+
 end
+
+
+
+function showImage(button);
+
+ax=findobj(gcf,'type','axes');
+cp=get(ax,'CurrentPoint');
+cp=round(cp(1,1:2));
+us=get(gcf,'userdata');
+
+ma       =us.ma;
+filesuni =us.filesuni;
+pas      =us.pas;
+cases    =us.cases;
+
+if ma(cp(2),cp(1))==0 %NONexist File
+    return
+end
+
+
+
+
+
+
+
+% ma(cp(2),cp(1))
+%  return
+
+global an
+hp=findobj(gcf,'tag','popbackground');
+list=get(hp,'string'); if  ischar(list); list=cellstr(list); end
+bgimg=list{get(hp,'value')};
+orient=2; %orientation
+if strcmp(bgimg,'t2.nii')
+    orient=3;
+end
+
+
+f1=fullfile(an.datpath, cases{cp(1)},bgimg);
+f2=fullfile(an.datpath, cases{cp(1)},filesuni{cp(2)});
+
+templatepath=fullfile(fileparts(an.datpath),'templates');
+
+if exist(f1)~=2
+    f1=fullfile(   templatepath ,bgimg);
+end
+if exist(f2)~=2
+    f2=fullfile(   templatepath ,filesuni{cp(2)});
+end
+
+[pax fix extx]=fileparts(f1);
+flipbg=get(findobj(gcf,'tag','rbflipBG'),'value'); %FLIP BG
+if flipbg==1
+    if strcmp(fix,'none')==0
+        f1a=f1;
+        f1=f2;
+        f2=f1a;
+    else
+        f1=f2;
+    end
+    
+end
+
+
+
+
+[pa1 fi ext]=fileparts(f2);
+if     ~strcmp(ext,'.nii'); return ; end  %no NIFTIfile
+fis={f1 f2};
+% return
+strings=[f1 '  - ' f2];
+oneImage=0;
+if strcmp(bgimg,'none');
+    fis={f2};
+    oneImage=1;
+    if regexpi(filesuni{cp(2)},'i\w_') ==1  %inverse warped
+        orient=3;
+    end
+end  % no background chosen
+% ovlcontour(fis,orient,['2'],[.08 0 0.05 0.05],[1 1 0],{[] .3 [ ] }, strings);
+cmap=jet;
+if oneImage==1;
+    cmap=gray;
+end
+
+%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%% DEPENDENT MOUSE_CLICK
+
+if button==1
+    try
+        ovlcontour(fis,orient,['2'],[.08 0 0.05 0.05],[1 1 0],{[cmap] .3 [ ] }, strings,...
+            struct('position', [0.601    0.1783    0.3889    0.4667] ));
+    catch
+        lasterrrorx=lasterror ;
+        
+        cprintf([1 0 1],[ repmat('_',[1 100])  '\n']);
+        disp(lasterrrorx.message);
+        cprintf([1 0 1],['possible reason: set background image in the upper pulldown menu to "none" '  '\n']);
+        cprintf([1 0 1],[ repmat('_',[1 100])  '\n']);
+        
+    end
+    
+    %     set(gcf,'position',[0.5701    0.1783    0.3889    0.4667]);
+    % elseif strcmp(mouse_seltype,'alt')
+    %     if flipbg==1
+    %         explorerpreselect(f1);
+    %     else
+    %         explorerpreselect(f2);
+    %     end
+    %    disp(['renamed: <a href="matlab: explorerpreselect(''' f2 ''')">' f2 '</a>'  ]);
+elseif  button==2
+    if ispc
+        p=[fullfile(fileparts(fileparts(fileparts(which('ant.m')))),'mricron','mricron.exe') ];
+        if exist(p)~=2;  disp('mricron-path not found'); return; end
+    elseif ismac
+        p=[fullfile(fileparts(fileparts(fileparts(which('ant.m')))),'mricron','MRIcroGL.app') ];
+        if exist(p)~=7;  disp('MRIcroGL.app-path not found'); return; end
+    else
+        disp(['mricron/MRIcroGL.app not provided for other OS-ante.m' ])
+    end
+    
+    
+    %----------------------------------------------
+    %% SINGLE IMAGE
+    %----------------------------------------------
+    if strcmp(bgimg,'none')==1
+       if ispc
+        m1=[' ' f2 ' -c -0'];
+        system(['start ' [p m1 ] ]);
+        try
+            system(which('rmricronmove.exe'));%rightPositioning
+            pause(1);
+            system(which('rmricronmove.exe'));%rightPositioning
+        end
+       elseif ismac
+           pa_mricrongl=fullfile((fileparts(fileparts(fileparts(which('ant.m'))))),'mricron','MRIcroGL.app/Contents/MacOS/MRIcroGL');
+           vm=[pa_mricrongl ' -S "begin LOADIMAGE(''' f2 ''');ORTHOVIEW(0.5,0.5,0.5);COLORNAME(''Grayscale'');end."'];
+           system([vm ' &']);
+       end
+%----------------------------------------------
+    else
+        %----------------------------------------------
+        %% OVERLAY
+        %----------------------------------------------
+
+        %         if flipbg==1
+        %             g2=f2;
+        %             g1=f1;
+        %         else
+        g1=f1;
+        g2=f2;
+        %         end
+        if ispc
+            % start mricron .\templates\ch2.nii.gz -c -0 -l 20 -h 140 -o .\templates\ch2bet.nii.gz -c -1 10 -h 130
+            m1=[' ' g1 ' -c -0'];
+            m2=[' -o ' g2 ' -c -13'];
+            system(['start ' [p m1 m2] ]);
+            try
+                system(which('rmricronmove.exe'));%rightPositioning
+                pause(1);
+                system(which('rmricronmove.exe'));%rightPositioning
+            end
+        elseif ismac
+            pa_mricrongl=fullfile((fileparts(fileparts(fileparts(which('ant.m'))))),'mricron','MRIcroGL.app/Contents/MacOS/MRIcroGL');
+            % pa='/Volumes/O/antx/mricron/MRIcroGL.app/Contents/MacOS/MRIcroGL'
+            % f1='/Users/skoch/Desktop/test/x_t2.nii'
+            % f2='/Users/skoch/Desktop/test/ANOpcol.nii'
+            vm=[pa_mricrongl ' -S "begin LOADIMAGE(''' f1 ''');OVERLAYLOAD(''' f2 ''');ORTHOVIEW(0.5,0.5,0.5); OVERLAYCOLORNAME(1,''ACTC'');end."'];
+            system([vm ' &']);
+        end
+    end
+elseif  button==3
+    if flipbg==1
+        explorerpreselect(f1);
+    else
+        explorerpreselect(f2);
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function resize(he,er)
 po=get(gcf,'position');
@@ -894,15 +1165,11 @@ function matrixmotion(he,er, ma, filesuni,cases)
 hfig=he;
 ax=findobj(hfig,'type','axes');
 cp=get(ax,'CurrentPoint');
-
-try
-    
+try 
     cp=round(cp(1,1:2));
-    
     % h=title(  ['                 ' filesuni{cp(2)}    '       -   '    cases{cp(1)} ],'interpreter','none',...
     %     'tag','title','HorizontalAlignment','left');%,'verticalalignment','cap');
     set(hfig,'name',['                 ' filesuni{cp(2)}    '       -   '    cases{cp(1)} ]);
-    
     %% display header Info
     if get(findobj(gcf,'tag','showimageheader'),'value')==1
         global an
@@ -911,27 +1178,16 @@ try
         hb=ha(1);
         hdr=[struct2list(hb) ;  ['4th dim= ' num2str(size(ha,1))]   ];
         hdr=cellfun(@(a) {[' ' a]},hdr);
-        
-        %
-        %     ieq=regexpi(hdr,'=')
-        %     iempt=cellfun('isempty',ieq)
-        %     ieq(iempt)={0}
-        %     mxeq=max(cell2mat(ieq));
-        %
-        
+              
         hf2=findobj(0,'tag','msgx');
         if isempty(hf2)
-            %uhelp(hdr,0,'fontsize',8,'position',[ 0.6309    0.7456    0.3590    0.1972]);
-            
+            %uhelp(hdr,0,'fontsize',8,'position',[ 0.6309    0.7456    0.3590    0.1972]);   
             hf2=figure('color','w','units','normalized','position',[    0.4875    0.6778    0.2063    0.2078],...
-                'tag','msgx','menubar','none','NumberTitle','off');
-            
-            
+                'tag','msgx','menubar','none','NumberTitle','off'); 
             p=uicontrol('style','edit','units','norm','position',[0 0 1 .98],'max',1000,'backgroundcolor','w');
             set(p,'string',hdr,'HorizontalAlignment','left','tag','txtm');
             % set(gcf,'menubar','none')
-            set(hf2,'position',[    0.6483    0.7744    0.3073    0.1933]);
-            
+            set(hf2,'position',[    0.6483    0.7744    0.3073    0.1933]); 
         else
             hlb=findobj(hf2,'tag','txtm') ;
             set(hlb,'string',hdr);
@@ -939,16 +1195,10 @@ try
         
         %[  filesuni{cp(2)}    '   -   '    cases{cp(1)} ]
         set(findobj(0,'tag','msgx'),'name', [  filesuni{cp(2)}    '   -   '    cases{cp(1)} ]  );
-        drawnow;
-        
-        figure(he);
-        
-        
+        drawnow; 
+        figure(he); 
     end
-    
-    
 end
-
 
 function matrixbuttondown(he,er, ma, filesuni,cases)
 
