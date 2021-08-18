@@ -44,6 +44,7 @@ function[hfig]=ovlcontour(fi,dim,slices,crop,tff,cont,namestr,params)
 %  #b [right arrow]        #k  show fusion of background & foreground image
 %  #b [up/down arrow]      #k decrease/increase fusion transparency
 %  #b [c]                  #k change  between multiple colormaps
+%  #b [i]                  #k show image information 
 %  #b [left mouse click]   #k toggle background & foreground image 
 %  #b [right mouse click]  #k context menu 
  
@@ -332,6 +333,7 @@ if 1
     hs = uimenu(cmenu,'label','<html><font color=blue>show foreground image',  'Callback',{@hcontext, 'showforeground'});
     
     hs = uimenu(cmenu,'label','change paramter (view,slices)',  'Callback',{@hcontext, 'changeParams'});
+    hs = uimenu(cmenu,'label','show image information',  'Callback',{@hcontext, 'showimageinfo'},'separator','on');
     
     hs = uimenu(cmenu,'label','<html><font color=gray>show help',  'Callback',{@hcontext, 'showhelp'},'separator','on');
     
@@ -360,6 +362,9 @@ elseif strcmp(task,'showforeground')
     replot(1);
 elseif strcmp(task,'showhelp')
     uhelp(mfilename);
+    
+elseif strcmp(task,'showimageinfo')
+    show_imageinfo();
     
 elseif strcmp(task,'changeParams')
     us=get(gcf,'userdata');
@@ -431,6 +436,8 @@ if strcmp(e.Character,'c')
     us.cmap=us.cmapall{us.cmapval};
     set(gcf,'userdata',us);
     replot(3);
+elseif strcmp(e.Character,'i')
+    show_imageinfo();
 end
 
 
@@ -449,6 +456,40 @@ elseif strcmp(e.Key,'downarrow')
    replot(3,-1);
 end
     
+
+function show_imageinfo()
+  %———————————————————————————————————————————————
+    %%  image information
+    %———————————————————————————————————————————————
+    us=get(gcf,'userdata');
+    o={};
+    o(end+1,1)={' #b files: ' };
+    o=[o; us.input.fi(:)];
+    
+    h1=spm_vol(us.input.fi{1});
+    dim4=length(h1);
+    h1=h1(1);
+    h1.dim=[h1.dim dim4];
+    h1=struct2list2(h1,'H1');
+    o(end+1,1)={' #k HEADER: image-1 ' };
+    o=[o; h1];
+    
+    if length(us.input.fi)==2
+        h2=spm_vol(us.input.fi{2});
+        dim4=length(h2);
+        h2=h2(1);
+        h2.dim=[h2.dim dim4];
+        h2=struct2list2(h2,'H2');
+        o(end+1,1)={' #k HEADER: image-2 ' };
+        o=[o; h2];
+    end
+    o=[o; {'';'';''}];
+    
+    uhelp(o);
+    set(gcf,'name','image information','numbertitle','off');
+    %———————————————————————————————————————————————
+    %%
+    %———————————————————————————————————————————————
 
 function replot(do,alpha)
 us=get(gcf,'userdata');

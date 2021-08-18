@@ -19,6 +19,25 @@
 % __________________________________________________________________________________________________________________
 % #yg GUI-USAGE________________________________________________
 %
+%% CONTEXT MENU
+% Select a file/several files from first column and use the #b context menu.
+% The options from the context menu can be used to fill the 2nd (new name) and 3rd column (task)
+% #r WARNING: If you select several files be carefull because renaming/expanding several files from
+% #r the same directory with the same output-filename will be subsequently overwritten by the new file.
+% -----------------------------------
+% #k From the context menu you can chose:
+% #k 'enter 2nd & 3rd column extended': #n for selected file(s) allows to fill the 2nd column and 3rd column
+%   - allows to select (i.e. use) already filled input from then 2nd or 3rd column
+%   #r - see warning
+% #k 'copy & rename file' : #n copy and rename selected file(s) ...the file is copied and then renamed
+%   #r - see warning
+% #k 'rename file'        : #n rename selected file(s) ...the file is renamed 
+%   #r - see warning
+% #k 'clear all fields'   : #n just clears all fields in 2nd and 3rd column
+% #k 'delete file'        : #n delete selected file(s) ...this files will be permanently removed
+% #k 'show image info'    : #n show image information (file paths; existence of files; header information)
+% 
+%
 %% #by RENAME FILES
 %     - type a new name in the [NewName] column (but not "##" this would delete the file)
 %     - the [TASK]-column must be empty or type "rename"
@@ -364,8 +383,8 @@ v=getuniquefiles(pa);
 %———————————————————————————————————————————————
 %%  get pairings of old&newfile (optional via gui) and extractionNUmber
 %———————————————————————————————————————————————
-
-[he tbout]=renamefiles(v,he, showgui);
+s.pa=pa; %additional struct
+[he tbout]=renamefiles(v,he,s, showgui);
 try
 iadd=find(~cellfun(@isempty,  regexpi(tbout(:,3), '^##$|^del$|^delete$')));
 he=[he; tbout(iadd,1:3)];
@@ -702,7 +721,7 @@ antcb('update');
 %________________________________________________
 %%  rename files
 %________________________________________________
-function [he tbout]=renamefiles(v,he, showgui)
+function [he tbout]=renamefiles(v,he,s, showgui)
 % keyboard
 
 %% predefined file-rename
@@ -790,6 +809,7 @@ jtable      = javaObjectEDT( viewport.getView );
 % set(jtable,'MouseClickedCallback',@selID)
 set(jtable,'MousemovedCallback',@mousemovedTable);
 
+set(jtable,'MouseClickedCallback',@mouseclickedTable);
 
 % MAKE BUTTONS
 % h={' #yg  ***RENAME FILES  ***'} ;
@@ -875,6 +895,8 @@ set(pb,'units','pixels');
 
 us.tb  =tb;
 us.tbh =tbh;
+us.hj =jtable;
+us.s  =s;
 set(gcf,'userdata',us);
 % ==============================================
 %%   
@@ -882,6 +904,13 @@ set(gcf,'userdata',us);
 
 % waitspin(0,'Done!');
 drawnow;
+
+% ==============================================
+%%   context menu
+% ===============================================
+contextmenu_make();
+
+
 
 
 % ==============================================
@@ -931,9 +960,356 @@ catch
     [he tbout]=deal({});
 end
 
+function contextmenu_make()
+us=get(gcf,'userdata');
+ht=findobj(gcf,'tag','table');
+cmenu = uicontextmenu;
+% hs = uimenu(cmenu,'label','enter 2nd & 3rd column',             'Callback',{@hcontext, 'enter2and3'},'separator','on');
+hs = uimenu(cmenu,'label','enter 2nd & 3rd column extended',     'Callback',{@hcontext, 'enter2and3_extended'},'separator','on');
+
+
+hs = uimenu(cmenu,'label','copy & rename file'    ,         'Callback',{@hcontext, 'copyNrename'},'separator','off');
+hs = uimenu(cmenu,'label','rename file'           ,         'Callback',{@hcontext, 'rename'},'separator','off');
+
+hs = uimenu(cmenu,'label','clear all fields'      ,         'Callback',{@hcontext, 'clearfields'},'separator','on');
+
+hs = uimenu(cmenu,'label','delete file'           ,         'Callback',{@hcontext, 'deleteFile'},'separator','on');
+
+hs = uimenu(cmenu,'label','<html><font color=green>  show image info'           ,         'Callback',{@hcontext, 'showimageinfo'},'separator','on');
+
+
+
+% hs = uimenu(cmenu,'label','show current image using MRICRON',         'Callback',{@hcontext, 'showMRICRON'},'separator','off');
+% hs = uimenu(cmenu,'label','open folder of current image',                     'Callback',{@hcontext, 'openPath'},'separator','off');
+% 
+% 
+% hs = uimenu(cmenu,'label','select all files from this folder (colum-wise selection)',         'Callback',{@hcontext, 'selallfilefromdir'},'separator','on');
+% hs = uimenu(cmenu,'label','deselect all files from this folder (colum-wise selection)',       'Callback',{@hcontext, 'deselallfilefromdir'});
+% 
+% hs = uimenu(cmenu,'label','select this files from all folders (row-wise selection)',      'Callback',{@hcontext, 'selfilefromalldir'},'separator','on');
+% hs = uimenu(cmenu,'label','delect this files from all folders (row-wise selection)',       'Callback',{@hcontext, 'deselfilefromalldir'});
+% 
+% hs = uimenu(cmenu,'label','select all',         'Callback',{@hcontext, 'selectall'},'separator','on');
+% hs = uimenu(cmenu,'label','deselect all',       'Callback',{@hcontext, 'deselectall'});
+
+set(ht,'UIContextMenu',cmenu);
+
+
+function pan_callback(e,e2,task)
+if strcmp(task,'pop1')
+    he=findobj(gcf,'tag','pan_ed_col2');
+    hb=findobj(gcf,'tag','pan_pop_col2');
+    set(he,'string',hb.String{hb.Value});
+elseif strcmp(task,'pop2')
+    he=findobj(gcf,'tag','pan_ed_col3');
+    hb=findobj(gcf,'tag','pan_pop_col3');
+    
+    list=get(hb,'userdata');
+    set(he,'string',list{hb.Value,1});
+%     set(he,'string',hb.String{hb.Value});
+elseif strcmp(task,'cancel')
+    set(findobj(gcf,'tag','pan1'),'userdata','cancel');
+%     delete(findobj(gcf,'tag','pan1'));
+    uiresume(gcf);
+elseif strcmp(task,'ok')
+    set(findobj(gcf,'tag','pan1'),'userdata','ok');
+     uiresume(gcf);
+end
+
+function hcontext(e,e2,task)
+us=get(gcf,'userdata');
+if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'rename') ||...
+        strcmp(task,'deleteFile') ||  strcmp(task,'enter2and3_extended') ||  strcmp(task,'clearfields')  
+    e=us.hj;
+    selrows=get(e,'SelectedRows');
+    
+    
+    if strcmp(task,'enter2and3')
+        
+        
+        prompt = {[' [column-2] ' us.tbh{2} ' ..Enter here'] [' [column-3] ' us.tbh{3} ' ..Enter here']};
+        dlg_title = 'same operation on different files --> see help for more information';
+        num_lines = [ones(size(prompt')) ones(size(prompt'))*75];
+        defaultans = {'' ''};
+        out = inputdlg(prompt,dlg_title,num_lines,defaultans);
+        
+    elseif strcmp(task,'enter2and3_extended')
+        % ==============================================
+        %%
+        % ===============================================
+       ht= findobj(gcf,'tag','table');
+        
+        delete(findobj(0,'tag','pan1'));
+        hp = uipanel('Title','enter 2nd/3rd column','FontSize',8,...
+            'BackgroundColor','white','units','norm','tag','pan1');
+        set(hp,'position',[0.25 .5   .3 .15]);
+        %---------------------
+        %TXT
+        hb=uicontrol(hp,'style','text','units','norm','tag','pan_tx_col2','string','column-2: NEW FILENAME');
+        set(hb,'position',[0    .75   .8 .2],'backgroundcolor','w','horizontalalignment','left');
+        
+        hb=uicontrol(hp,'style','edit','units','norm','tag','pan_ed_col2');
+        set(hb,'position',[0    .6  .5 .2]);
+        set(hb,'tooltipstring','enter new filename (column-2) here or choose from right popup-menu');
+        
+        list1=unique(ht.Data(:,2));
+        list1(strcmp(list1, ''))=[];
+        list1=[list1 ; {''} ;'_test1.nii' ; '_test2.nii' ];
+        
+        hb=uicontrol(hp,'style','popupmenu','units','norm','tag','pan_pop_col2');
+        set(hb,'position',[.55  .6 .45 .2],'string',list1);
+        set(hb,'tooltipstring','selected item from popup-menu is used to fill the left edit box');
+        set(hb,'callback',{@pan_callback,'pop1'});
+        %----------------
+        %TXT
+        hb=uicontrol(hp,'style','text','units','norm','tag','pan_tx_col2','string','column-3: TASK');
+        set(hb,'position',[0     .4 .8 .2],'backgroundcolor','w','horizontalalignment','left');
+        
+        hb=uicontrol(hp,'style','edit','units','norm','tag','pan_ed_col3');
+        set(hb,'position',[0     .25 .5 .2]);
+        set(hb,'tooltipstring','enter code here for column-3 or choose from right popup-menu');
+        
+        list2=unique(ht.Data(:,3));
+        list2(strcmp(list2, ''))=[];
+        %list2=[list2 ; {''} ;':';'copy';'del'; '1:ends' ];
+        lis={...
+            ':'       'copy this file ("copy", same as ":")'
+            'del'     'delete this file ("del", same as "##")'
+            '1:ends'  'expand entire 4D-file to separate 3D-files ("1:ends")'
+            '1:3s'    'expand the first 3D-volumes of 4D-file to separate 3D-files ("1:3s")'
+            ''        'empty this field'  
+            };
+        listbk=[[list2 ; {''} ;lis(:,1) ] [list2 ; {''} ;lis(:,2) ]];
+        
+         
+        hb=uicontrol(hp,'style','popupmenu','units','norm','tag','pan_pop_col3');
+        set(hb,'position',[.55   .25 .45 .2],'string',listbk(:,2));
+        set(hb,'tooltipstring','selected item from popup-menu is used to fill the left edit box');
+        set(hb,'callback',{@pan_callback,'pop2'});
+        set(hb,'userdata',listbk)
+        
+        %----------ok/cancel-------
+        hb=uicontrol(hp,'style','pushbutton','units','norm','tag','pan_ed_ok');
+        set(hb,'position',[0.1    0  .3 .2],'string','OK');
+        set(hb,'tooltipstring','ok..insert fields now');
+        set(hb,'callback',{@pan_callback,'ok'});
+        
+        hb=uicontrol(hp,'style','pushbutton','units','norm','tag','pan_ed_cancel');
+        set(hb,'position',[.6    0  .3 .2],'string','Cancel');
+        set(hb,'tooltipstring','cancel operation');
+        set(hb,'callback',{@pan_callback,'cancel'});
+        
+        
+        uiwait(gcf);
+
+        
+        hb=findobj(gcf,'tag','pan1');
+        col2=get(findobj(gcf,'tag','pan_ed_col2'),'string');
+        col3=get(findobj(gcf,'tag','pan_ed_col3'),'string');
+        out={col2 col3};
+        isOK=strcmp(get(hb,'userdata'),'ok');
+        delete(hb);
+        if isOK==0
+            return
+        end
+        
+        % ==============================================
+        %%
+        % ===============================================
+
+        
+    elseif strcmp(task,'copyNrename')
+        prompt = {[' enter new filename ']};
+        dlg_title = 'copy and  rename file';
+        num_lines = [ones(size(prompt')) ones(size(prompt'))*75];
+        defaultans = {''};
+        out = inputdlg(prompt,dlg_title,num_lines,defaultans);
+    elseif strcmp(task,'rename')
+        prompt = {[' enter new filename ']};
+        dlg_title = 'rename file';
+        num_lines = [ones(size(prompt')) ones(size(prompt'))*75];
+        defaultans = {''};
+        out = inputdlg(prompt,dlg_title,num_lines,defaultans);
+     elseif strcmp(task,'deleteFile')
+         out={'','del'};
+    elseif strcmp(task,'clearfields') 
+        out={'',''};
+        selrows=[1:size(us.tb,1)]-1;
+    end
+    
+    
+    
+    if length(out)==0;         return ;    end
+    
+    if strcmp(task,'copyNrename'); out{2}=':'; end
+    if strcmp(task,'rename');      out{2}=''; end
+    
+    jtable=e;
+    
+    for i=1:length(selrows)
+        jtable.setValueAt(java.lang.String(out{1}), selrows(i), 1); % to insert this value in cell (1,1)
+    end
+    if length(out)==2
+        for i=1:length(selrows)
+            jtable.setValueAt(java.lang.String(out{2}), selrows(i), 2); % to insert this value in cell (1,1)
+        end
+    end
+    
+  elseif strcmp(task,'showimageinfo') 
+       e=us.hj;
+    iselrows=get(e,'SelectedRows')+1;
+    files=us.tb(iselrows,1);
+    show_imageinfo(files);
+end
+
+
+function show_imageinfo(files);
 % ==============================================
 %%   
 % ===============================================
+us=get(gcf,'userdata');
+pa=us.s.pa;
+%———————————————————————————————————————————————
+%%  image information
+%———————————————————————————————————————————————
+filelist={};
+for j=1:length(files)
+    filelist=[filelist; {' #ky num' [' #ko image #b "' files{j} '"' ] ''}];
+    for i=1:size(pa,1)
+        fn=fullfile(pa{i},files{j});
+        fn2={i fn ' #g file exist'};
+        if exist(fn)~=2
+            fn2={i fn ' #r file not found'};
+        end
+        filelist=[filelist; fn2];
+    end
+   filelist=[filelist; repmat({''},1,size(filelist,2))]; 
+end
+% uhelp( plog([],[ filelist],0, '','al=1;space=0' ),1);
+% oo=plog([],[ filelist],0, ' #wk *** [1] FILE INFORMATION ***','al=1;space=0' );
+oo=plog([],[ filelist],0, '','al=1;space=0;plotlines=0' );
+
+% uhelp(oo);
+% % ==============================================
+%%   more specific info
+% ===============================================
+o={};
+for i=1:size(filelist,1)
+    if ~isempty(strfind(filelist{i,1},'num'))
+     o(end+1,1)={[ '  #ko ' repmat(' ',[1 70]) ]};
+    o(end+1,1)={[ ' ' filelist{i,2}] };
+    o(end+1,1)={[ '  #ko ' repmat(' ',[1 70]) ]};
+    elseif isnumeric(filelist{i,1})
+        
+        
+        o=[o; [' #k ' cell2line(filelist(i,:),1,' ')]];
+        
+        if isempty(strfind(filelist{i,3},'not'))
+            file=filelist{i,2};
+            h1=spm_vol(file);
+            dim4=length(h1);
+            h1=h1(1);
+            h1.dim=[h1.dim dim4]; %add 4th dim
+            %
+            
+            t={};
+            t=[t; '   dim:     ' sprintf('[%d %d %d %d]',[h1.dim ]) ];
+            t=[t; '   dt:      ' sprintf('[%d %d]',[h1.dt ]) ];
+            if sum(h1.pinfo==round(h1.pinfo))
+                t=[t; '   pinfo:   ' sprintf('[%d %d %d]',[h1.pinfo ]) ];
+            else
+                t=[t; '   pinfo:   ' sprintf('[%2.5f %2.5f %2.5f]',[h1.pinfo ]) ];
+            end
+            t=[t; '   mat:     '];
+            mat=plog([],num2cell(h1.mat),[0],'s','plotlines=0;d=4');
+            t=[t; cellfun(@(a) {[ repmat(' ',[1 10]) a]},  mat)];
+            %t=[t; plog([],num2cell(h1.mat),[0],'s','plotlines=0')];
+            t=[t; '   n:       ' sprintf('[%d %d]',[h1.n ]) ];
+            t=[t; '   descrip: ' h1.descrip ];
+            t=[t; repmat('-',[1 70])];
+            o=[o; t];
+        else
+           o=[o; repmat('-',[1 70])]; 
+        end
+%         o=[o; {'';'';''}];
+    end
+end
+o=[o; {'';'';''}];
+uhelp([' #wk *** [1] FILE INFORMATION ***'; oo; ' '; ' #wk *** [2] HEADER INFORMATION ***';' '; o]);
+set(gcf,'name','image information','numbertitle','off');
+
+
+
+
+% ==============================================
+%%   
+% ===============================================
+function mouseclickedTable(e,e2)
+
+
+if get(e2,'Button')==3 %context menu
+    
+    
+    return
+    us=get(gcf,'userdata');
+    ht=findobj(gcf,'tag','table');
+    
+    
+     cmenu = uicontextmenu;
+      
+     hs = uimenu(cmenu,'label','show current image in Matlab',         'Callback',{@hcontext, 'showImageIntern'},'separator','on');
+     hs = uimenu(cmenu,'label','show current image using MRICRON',         'Callback',{@hcontext, 'showMRICRON'},'separator','off');
+     hs = uimenu(cmenu,'label','open folder of current image',                     'Callback',{@hcontext, 'openPath'},'separator','off');
+
+      
+      hs = uimenu(cmenu,'label','select all files from this folder (colum-wise selection)',         'Callback',{@hcontext, 'selallfilefromdir'},'separator','on');
+      hs = uimenu(cmenu,'label','deselect all files from this folder (colum-wise selection)',       'Callback',{@hcontext, 'deselallfilefromdir'});
+
+      hs = uimenu(cmenu,'label','select this files from all folders (row-wise selection)',      'Callback',{@hcontext, 'selfilefromalldir'},'separator','on');
+      hs = uimenu(cmenu,'label','delect this files from all folders (row-wise selection)',       'Callback',{@hcontext, 'deselfilefromalldir'});
+
+      hs = uimenu(cmenu,'label','select all',         'Callback',{@hcontext, 'selectall'},'separator','on');
+      hs = uimenu(cmenu,'label','deselect all',       'Callback',{@hcontext, 'deselectall'});
+      
+
+      set(ht,'UIContextMenu',cmenu);
+      
+      return
+    
+    
+    
+    
+    
+    % ==============================================
+    %% mass rename
+    % ===============================================
+    selrows=get(e,'SelectedRows');
+    prompt = {[' [column-2] ' us.tbh{2} ' ..Enter here'] [' [column-3] ' us.tbh{3} ' ..Enter here']};
+    dlg_title = 'same operation on different files --> see help for more information';
+    %num_lines = 1;
+    defaultans = {'' ''};
+    num_lines = [ones(size(defaultans')) ones(size(defaultans'))*75];
+    out = inputdlg(prompt,dlg_title,num_lines,defaultans);
+    
+   if length(out)==0
+       return
+   end
+    
+    jtable=e;
+    
+    for i=1:length(selrows)
+        jtable.setValueAt(java.lang.String(out{1}), selrows(i), 1); % to insert this value in cell (1,1)
+    end
+     for i=1:length(selrows)
+        jtable.setValueAt(java.lang.String(out{2}), selrows(i), 2); % to insert this value in cell (1,1)
+    end
+
+    
+    % ==============================================
+    %%
+    % ===============================================
+
+end
 
 function resizefig(e,e2)
 ht=findobj(gcf,'tag','table'); %table

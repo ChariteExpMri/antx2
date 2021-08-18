@@ -22,12 +22,14 @@
 % - If two images are displayed you can click on the image to toggle between BG- and FG-image
 % [#] change number of displayed slices
 % [-] change orientation {sagital, coronal, axial}
-% [.] fuse images (toggle betwee two different fusion modes)
+% [,] fuse images (toggle betwee two different fusion modes)
 % [f] flip up/down image
 % [n] change color of BG image
 % [m] change color of FG image
 % [left arrow/right arrow] - go to next/previous mouse
-
+% [ctrl+][left arrow/right arrow] - change rotation of animal labels 
+% [+/-] - change fontsize of animal labels 
+% 
 %% other input uses;
 %  checkRegist({image})  ; % open specific images
 % examples
@@ -660,6 +662,39 @@ if strcmp(e2.Key,'leftarrow')
 elseif strcmp(e2.Key,'rightarrow')
     mouse([],[],1);
 end
+
+hf=findobj(0, 'tag','checkRegist');
+us=get(hf,'userdata');
+
+
+% if isempty(e.Modifier)
+%     e
+%     if strcmp(e.Character,'+') || strcmp(e.Character,'-')
+%         fontstep=1;
+%         if strcmp(e.Character,'-');
+%             fontstep=-1;
+%         end
+%         ht=us.ax2;
+%         nFS=get(ht,'fontsize')+fontstep;
+%         if nFS>0
+%             set(ht,'fontsize',nFS);
+%         end
+%     end
+% elseif ~isempty(strfind(e.Modifier,'control'))
+%     if strcmp(e.Key,'rightarrow') || strcmp(e.Key,'leftarrow')
+%         rotstep=1;
+%         if strcmp(e.Key,'leftarrow');
+%             rotstep=-1;
+%         end
+%         ht=findobj(gcf,'type','text','-and','UserData','xtick');
+%         nROT=get(ht(1),'Rotation')+rotstep;
+%        % if nFS>0
+%             set(ht,'Rotation',nROT);
+%         %end
+%     end
+%     
+% end
+
 
 function ax2click(e,e2)
 currpoi=get(get(e,'parent'),'CurrentPoint');

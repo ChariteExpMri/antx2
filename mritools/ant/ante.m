@@ -155,7 +155,7 @@ colmat2=permute(repmat(colmat,[1 1 size(ma,2)]),  [1 3 2]);
 ma2=repmat(ma,[1 1 3]).*colmat2;
 bg=repmat(ma==0,[1 1 3]);
 
-
+delete(findobj(0,'tag','casefilematrix'));
 fg;
 set(gcf,'tag','casefilematrix','NumberTitle','off','name','case-file-matrix');
 image(ma2+bg);
@@ -320,6 +320,8 @@ casefile_exportfiles();
 drawnow;
 % label=repmat({'ee'},[100 1])
 % set(datacursormode(gcf), 'DisplayStyle','datatip', 'SnapToDataVertex','off','Enable','on', 'UpdateFcn',{@showlabel,label});
+
+set(gcf,'WindowButtonMotionFcn',{@matrixmotion, ma, filesuni,cases});
 
 function replot_filematrix(e,e2)
 delete(findobj(0,'tag','casefilematrix'));
@@ -768,6 +770,7 @@ w=preadfile(which('ante.m')); w=w.all;
  w2=regexprep(w2,'^%','');
  
  uhelp(w2);
+ set(gcf,'name','case-file-matrix-help','numbertitle','off');
 % ==============================================
 %%   
 % ===============================================
@@ -1161,7 +1164,6 @@ elseif po(3)>=.5; po(3)=.5;
 end
 
 function matrixmotion(he,er, ma, filesuni,cases)
-
 hfig=he;
 ax=findobj(hfig,'type','axes');
 cp=get(ax,'CurrentPoint');
@@ -1169,7 +1171,7 @@ try
     cp=round(cp(1,1:2));
     % h=title(  ['                 ' filesuni{cp(2)}    '       -   '    cases{cp(1)} ],'interpreter','none',...
     %     'tag','title','HorizontalAlignment','left');%,'verticalalignment','cap');
-    set(hfig,'name',['                 ' filesuni{cp(2)}    '       -   '    cases{cp(1)} ]);
+    set(hfig,'name',['[CFM] [ANIMAL]: "'       cases{cp(1)} '"    -  [FILE]: "' filesuni{cp(2)} '"' ]);
     %% display header Info
     if get(findobj(gcf,'tag','showimageheader'),'value')==1
         global an

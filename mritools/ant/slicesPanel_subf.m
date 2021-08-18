@@ -276,23 +276,27 @@ end
 function KeyPressFcn2(e,e2)
 him=findobj(gcf,'tag','imo');
 
-if strcmp(e2.Key,'leftarrow')
-%     mouse([],[],-1);
-    hb=findobj(gcf,'tag','prev');
-    cb=get(hb,'callback');
-    hgfeval(cb{1},[],[],cb{2});
-    
-elseif strcmp(e2.Key,'rightarrow')
-    %     mouse([],[],1);
-    hb=findobj(gcf,'tag','next');
-    cb=get(hb,'callback');
-    hgfeval(cb{1},[],[],cb{2});
+if isempty(e2.Modifier)
+    if strcmp(e2.Key,'leftarrow')
+        %     mouse([],[],-1);
+        hb=findobj(gcf,'tag','prev');
+        cb=get(hb,'callback');
+        hgfeval(cb{1},[],[],cb{2});
+        
+    elseif strcmp(e2.Key,'rightarrow')
+        %     mouse([],[],1);
+        hb=findobj(gcf,'tag','next');
+        cb=get(hb,'callback');
+        hgfeval(cb{1},[],[],cb{2});
+    end
 end
+
+
 if strcmp(e2.Character,'#')
    xslixe
     showit([]);
 end
-if strcmp(e2.Character,'-')
+if strcmp(e2.Character,',')
    us=get(him,'userdata');
    
    try
@@ -347,6 +351,36 @@ if strcmp(e2.Key,'3')
     showit([]);
 end
 
+if isempty(e2.Modifier)
+    if strcmp(e2.Character,'+') || strcmp(e2.Character,'-')
+        us=get(gcf,'userdata');
+        fontstep=1;
+        if strcmp(e2.Character,'-');
+            fontstep=-1;
+        end
+        ht=us.ax2;
+        nFS=get(ht,'fontsize')+fontstep;
+        if nFS>0
+            set(ht,'fontsize',nFS);
+        end
+    end
+elseif ~isempty(strfind(e2.Modifier,'control'))
+    if strcmp(e2.Key,'rightarrow') || strcmp(e2.Key,'leftarrow')
+        us=get(gcf,'userdata');
+       
+        rotstep=1;
+        if strcmp(e2.Key,'leftarrow');
+            rotstep=-1;
+        end
+        
+        %ht=findobj(gcf,'type','text','-and','UserData','xtick');
+        ht=us.ax2;
+        nROT=get(ht,'XTickLabelRotation')+rotstep;
+        % if nFS>0
+        set(ht,'XTickLabelRotation',nROT);
+        %end
+    end   
+end
 
 
 

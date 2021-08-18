@@ -276,8 +276,13 @@
 % #ra 16 Aug 2021 (13:35:35)
 % test: gitHub with "personal access token" : upload-seems to work/chk(TunnelBlick)
 % 
-
-
+% #ra 18 Aug 2021 (12:24:04)
+%  [xrename] : added context menu for easier file manipulation (copying/renaming/expansion/deletion)
+% and additional file information (file paths; existence of files; header information)
+% 
+% 
+% 
+% 
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
