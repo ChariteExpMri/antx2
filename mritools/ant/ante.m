@@ -380,7 +380,11 @@ dd=get(him,'cdata');
 % him2=image(dd(:,1,:))
 
 tx=findobj(ax1,'type','text','-and','tag','files');
-txpos=cell2mat(get(tx,'position'));
+try
+    txpos=cell2mat(get(tx,'position'));
+catch
+    txpos=get(tx,'position');
+end
 
 %% ====================
 % hc=uicontrol('style','radio','units','normalized','tag','rbselect')
@@ -388,7 +392,7 @@ txpos=cell2mat(get(tx,'position'));
 delete(findobj(gcf,'tag','rbselect'));
 % set(ax2,'ydir','reverse')
 % ucstep=(pos2(4)-pos2(2))/(size(tx,1))+.0045
-ucstep=pos2(4)/size(tx,1); 
+ucstep=pos2(4)/(size(tx,1)+0); 
 rbhigh2=ucstep; %used for files-RB
 for i=1:size(tx,1)
     hc=uicontrol('style','radio','units','normalized','tag','rbselect');
@@ -405,7 +409,8 @@ i=-1;
 delete(findobj(gcf,'tag','rbselectall'));
 hc=uicontrol('style','radio','units','normalized','tag','rbselectall');
 % set(hc,'position',[pos2(1)   pos2(2)+i*ucstep-ucstep  pos2(3)*2 ucstep]);
-set(hc,'position',[pos2(1)   pos2(2)+i*ucstep-ucstep  0.07 ucstep]);
+% set(hc,'position',[pos2(1)   pos2(2)+i*ucstep-ucstep  0.07 ucstep]);
+set(hc,'position',[0 0.09 .07 .025]);
 set(hc,'tooltipstring', 'select all files' ,'fontsize',6,'string','all files' );
 col=[1.0000    0.8431         0];
 set(hc,'BackgroundColor',col);
@@ -416,7 +421,8 @@ set(hc,'userdata',0)
 i=-3;
 delete(findobj(gcf,'tag','pbexport'));
 hc=uicontrol('style','pushbutton','units','normalized','tag','pbexport');
-set(hc,'position',[pos2(1)   pos2(2)+i*ucstep-ucstep  pos2(3)*3 ucstep*1.5]);
+% set(hc,'position',[pos2(1)   pos2(2)+i*ucstep-ucstep  pos2(3)*3 ucstep*1.5]);
+set(hc,'position',[0 0.0 .07 .025]);
 set(hc,'tooltipstring', 'export files' ,'fontsize',7,'string','export');
 set(hc,'callback',@exportfiles);
 %% ====================  
@@ -431,7 +437,8 @@ pos3=pos; pos3([2 4])=[0 .02];
 ucstep=pos3(3)/length(u.cases);
 for i=1:length(u.cases)
     hc=uicontrol('style','radio','units','normalized','tag','rbselectdirs');
-    set(hc,'position',[pos3(1)+i*ucstep-ucstep pos3(2)  ucstep.*.99 rbhigh2]);
+%     set(hc,'position',[pos3(1)+i*ucstep-ucstep pos3(2)  ucstep.*.99 rbhigh2]);
+    set(hc,'position',[pos3(1)+i*ucstep-ucstep pos3(2)  ucstep.*.99 .025]);
     set(hc,'tooltipstring', u.cases{i} ,'fontsize',2 );
 %     col=[1 1 1];%[ 0.9922    0.9176    0.7961];
    
@@ -449,7 +456,8 @@ i=-1;
 delete(findobj(gcf,'tag','rbselectalldirs'));
 hc=uicontrol('style','radio','units','normalized','tag','rbselectalldirs');
 %  set(hc,'position',[pos3(1)+i*ucstep-ucstep/2 pos3(2)  ucstep.*.95 rbhigh2]);
-  set(hc,'position',[0 pos3(2)  .07 rbhigh2]);
+%   set(hc,'position',[0 pos3(2)  .07 rbhigh2]);
+  set(hc,'position',[0.1 0.0 .07 .025]);
 set(hc,'tooltipstring', 'select all animal directories' ,'fontsize',6,'string','all dirs' );
 col=[1.0000    0.8431         0];
 set(hc,'BackgroundColor',col);
