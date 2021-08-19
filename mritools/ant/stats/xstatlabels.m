@@ -287,7 +287,7 @@ h=uicontrol('style','pushbutton','units','norm','position', [0 .45 .2 .05],'stri
 
 h=uicontrol('style','pushbutton','units','norm','position', [0 .4 .2 .05],'string',' select regions',...
     'tag','regions','backgroundcolor','w','callback',@regions,...
-    'TooltipString', 'select specific anatomical regions','fontsize',8);
+    'TooltipString', 'select specific anatomical regions via GUI','fontsize',8);
 %process
 h=uicontrol('style','pushbutton','units','norm','position',[0.2 .4 .2 .05],'string','process',...
     'tag','process','backgroundcolor','w','callback',@process,'fontweight','bold',...
@@ -1396,6 +1396,11 @@ if us.isfdr==1
     sz{end+1,1}=['FDR-qValue: '      num2str(us.qFDR)];
 end
 
+% number of tests 
+ for i=1:length(us.pw)
+   sz{end+1,1}=  ['No of tests   : '      num2str(length(us.pw(i).ikeep))   ' for "' us.pw(i).str '"' ]
+ end
+
 sz{end+1,1}=['sorting       : '      regexprep(num2str(us.issort),{'1' '0'},{'yes','no'})];
 sz{end+1,1}=['showsigsonly  : '      regexprep(num2str(us.showsigsonly),{'1' '0'},{'yes','no'})];
 sz{end+1,1}='abbreviations : [p]         pvalue                          [t|RS] test-dependent test-statistic/parameter ';
@@ -1483,11 +1488,12 @@ for i=1:size(us.pw,2)
             sz=[sz;sy ];
             
             
-       sx(2:end,3)=  cellfun(@(a){sprintf(' %1.4g',a)},sx(2:end,3)); % p-values other format
-
+            sx(2:end,3)=  cellfun(@(a){sprintf(' %1.4g',a)},sx(2:end,3)); % p-values other format
             
             
-            [~,sz]=plog(sz,sx,0,[us.pw(i).str],'s=0','plotlines=0');
+            
+            %[~,sz]=plog(sz,sx,0,[us.pw(i).str],'s=0','plotlines=0');
+            [~,sz]=plog(sz,sx,0,[us.pw(i).str],'s=0;d=5;al=1','plotlines=0');
             sz=[sz;{'  '}];
         end
         

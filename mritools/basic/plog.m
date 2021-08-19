@@ -107,7 +107,7 @@ if  isempty(title)==1 ;
 %     title=['••• ' title ' •••'] ;
 end
 
-if  exist('d')~=1 ;    dec=3; else; dec=d; end %'dec'
+if  exist('d')~=1 ;    dec=4; else; dec=d; end %'dec'
 if  exist('s')~=1 ;    spacer=1; else; spacer=s;end%'spacer'
 if  exist('cr')~=1 ;   cariageReturn=1; else; cariageReturn=cr;end%'cariageReturn'
 
@@ -196,7 +196,7 @@ try
 catch
     dum=X(:); dum=cell2mat(dum(cellfun(@isnumeric,dum)));
     ff=ceil(log10(max(max(dum))))+dec+3;
-    %     ff=6;
+    ff=0;
     %     X=char(X);
     % end
 end
@@ -244,6 +244,7 @@ for i=1:N %CODE DECIMALS AND DISTANCES
     d1='';
     for j=1:M
         if ischar(e{i,j})
+            
             e{i,j} =[   sprintf(['%#',num2str(ff-dec-1), 's '],e{i,j}) ];
         else
             if round(e{i,j})==e{i,j}
@@ -279,11 +280,13 @@ end
 % end
 
 %% remove spaces
-if 0
+if 1
     for i=1:M;%add spacer and middleOrientation
         wr=char(e(:,i));
-        wr(:,sum(double(wr)==double(' '),1)==size(wr,1) )=[];
-        e(:,i)=cellstr(wr);
+        spacidx=find(   sum(double(wr)==double(' '),1)==size(wr,1)   ==0);
+        
+        %wr(:,sum(double(wr)==double(' '),1)==size(wr,1) )=[];
+        e(:,i)=cellstr(wr(:,min(spacidx):max(spacidx)));
     end
 end
 

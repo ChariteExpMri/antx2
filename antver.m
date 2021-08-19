@@ -280,6 +280,8 @@
 %  [xrename] : added context menu for easier file manipulation (copying/renaming/expansion/deletion)
 % and additional file information (file paths; existence of files; header information)
 % 
+% #ra 19 Aug 2021 (21:02:37) 
+% [xstat] added pulldown to select the statistical method to treat the multiple comparison problem
 % 
 % 
 % 

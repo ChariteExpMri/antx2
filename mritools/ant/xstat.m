@@ -449,7 +449,28 @@ set(h2,'tooltipstring','view results','backgroundcolor','w','fontweight','bold',
     'HorizontalAlignment','left','tag', 'txtpath');
 
 
-
+%% ———————— preselection ———————————————————————————————————————
+h2=uicontrol('style','popupmenu','units','norm') ;      %TXT
+set(h2, 'position',[0 .49 .15 .05]);
+set(h2, 'position',[0 .485 .19 .05],'fontsize',7);
+set(h2,'tag','selcorecttion');
+set(h2,'tooltipstring','select statistical correction method here');
+%%
+lis={...
+    'uncorrected at 0.001, clustersize=1'     {'none' '0.001'  '1' }
+    'uncorrected at 0.001, clustersize=100'   {'none' '0.001'  '100' }
+    'uncorrected at 0.005, clustersize=1'     {'none' '0.005'  '1' }
+    'uncorrected at 0.005, clustersize=100'   {'none' '0.005'  '100' }
+    'uncorrected at 0.0001, clustersize=1'    {'none' '0.0001' '1' }
+    'uncorrected at 0.0001, clustersize=100'  {'none' '0.0001' '100' }
+    'FWE at 0.05, clustersize=1'              {'FWE'  '0.05'   '1' }
+    'FWE at 0.01, clustersize=1'              {'FWE'  '0.01'   '1' }
+    'FWE at 0.001, clustersize=1'             {'FWE'  '0.001'  '1' }
+    'FDR at 0.05, clustersize=1'              {'FDR'  '0.05'   '1' }
+    };
+set(h2,'string',lis(:,1));
+set(h2,'userdata',lis,'callback',@radio_selectStatCorect);
+%%
 
 
 %% ———————— MCP ———————————————————————————————————————
@@ -652,7 +673,13 @@ hfig=findobj(0,'tag','vvstat');
 set(hfig,'CloseRequestFcn','closereq');
 close(hfig);
 
-
+function radio_selectStatCorect(e,e2)
+hr=findobj(gcf,'tag','selcorecttion');
+lis=get(hr,'userdata');
+sel=lis{hr.Value,2};
+set(findobj(gcf,'tag','mcp'),        'string', sel{1});
+set(findobj(gcf,'tag','thresh'),     'string', sel{2});
+set(findobj(gcf,'tag','clustersize'),'string', sel{3});
 
 
 function loadothercontrastini(e,e2)

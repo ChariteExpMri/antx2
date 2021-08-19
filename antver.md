@@ -1,10 +1,14 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   18 Aug 2021 (12:24:04)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   19 Aug 2021 (21:02:37)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**19 Aug 2021 (21:02:37)** </ins>  
+  **[xstat]** added pulldown to select the statistical method to treat the multiple comparison problem  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Aug 2021 (12:24:04)**</ins>  
    **[xrename]** : added context menu for easier file manipulation (copying/renaming/expansion/deletion)  
   and additional file information (file paths; existence of files; header information)  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Aug 2021 (13:35:35)**</ins>  
   test: gitHub with "personal access token" : upload-seems to work/chk(TunnelBlick)  
