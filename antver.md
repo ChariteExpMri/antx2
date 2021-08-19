@@ -1,7 +1,11 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   19 Aug 2021 (21:02:37)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   19 Aug 2021 (23:50:18)  
     
 ------------------  
+  #ba  <ins>**19 Aug 2021 (23:50:18)**</ins>  
+  **[xrename]** now allows to threshold an image  
+  &#8618;  access via ANT-menu: Tools/manipulate files  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**19 Aug 2021 (21:02:37)** </ins>  
   **[xstat]** added pulldown to select the statistical method to treat the multiple comparison problem  
 <!---->

@@ -282,6 +282,9 @@
 % 
 % #ra 19 Aug 2021 (21:02:37) 
 % [xstat] added pulldown to select the statistical method to treat the multiple comparison problem
+% #ba 19 Aug 2021 (23:50:18)
+% [xrename] now allows to threshold an image
+% #gw -->  access via ANT-menu: Tools/manipulate files
 % 
 % 
 % 

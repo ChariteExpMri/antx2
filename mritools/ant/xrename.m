@@ -8,6 +8,7 @@
 % #b - mathematical operation (masking, roi extraction, combining images) ..see below
 % #b - set voxel resolution
 % #b - scale image by voxel factor
+% #b - threshold image
 % % __________________________________________________________________________________________________________________
 % - select one/several images TO RENAME/DELETE/EXTRACT/EXPAND/COPY volumes,aka. files
 % - dirs:  works on preselected dirs (not all dirs), i..e mouse-folders in [ANT] have to be selected before
@@ -28,6 +29,7 @@
 % #k From the context menu you can chose:
 % #k 'enter 2nd & 3rd column extended': #n for selected file(s) allows to fill the 2nd column and 3rd column
 %   - allows to select (i.e. use) already filled input from then 2nd or 3rd column
+%   - this is the easiest way to fill columns 2 and 3
 %   #r - see warning
 % #k 'copy & rename file' : #n copy and rename selected file(s) ...the file is copied and then renamed
 %   #r - see warning
@@ -110,6 +112,24 @@
 %% ---------------------------------------------------------------
 %__________________________________________________________________________________________________________________
 %
+%% #by Threshold Image (tr:)
+% threshold image and save as new file
+% filled task code in column-3, EXAMPLES: 
+%    'tr: i>3=0'        threshold image, values above 3 are set to 0
+%    'tr: i<3=0'        threshold image, values below 3 are set to 0
+%    'tr: i <=4=0'      threshold image, values <=4 are set to 0
+%    'tr: i >=4=0'      threshold image, values >=4 are set to 0
+%    'tr: i ~=0=1'      threshold image, nonzero values are set to 1
+%    'tr: i<0=3; i>6=6' threshold image, values<0 are set to 3 and values>6 are set to 6
+% 
+% #k Combined thresholds (such as 'tr: i<0=3; i>6=6; ) will be executed from left to right and
+% #k must be separated by semicolon
+% #m see contextmenu/"enter 2nd & 3rd column extended" for examples (there: column-3 pulldown menu)
+% #r Don't forget to specify an output filename in the 2nd-column, otherwise the input file is overwritten!
+% #g CMD:  example: threshold image ('INPUT.nii'), values <0.7 set to 0, file stored as 'OUTPUT.nii'
+%     xrename(1, 'c2t2.nii' , 'zzz' , 'tr: i<.7=0');  % 1st arg indcates that GUI is poping up when executed    
+%__________________________________________________________________________________________________________________
+% 
 %% #by MATHEMATICAL OPERATIONS (ma:)
 % SIMPLE MATHEMATICAL OPERATIONS CAN BE Done using the [TASK]-column
 % examples: threshold image, extract ROI from atlas image, combine mask(s) with image etc.  
@@ -508,6 +528,61 @@ for i=1:size(pa,1)      %PATH
                     end
                 elseif ~isempty( regexpi(volnum{j} ,'^i\d+')  )
                     % just a catcher...do nothing
+               elseif strfind(volnum{j},'tr:'); %vox factor     
+                  try
+                    [pax fix ex]=fileparts(finew{j});
+                    s2=fullfile(pa{i},[fix '.nii' ]);
+                    if isempty(fix)
+                        s2=s1; % work on imputFile
+                    end
+                    if isempty(volnum{j})
+                        disp('..could not threshold image: --> no threshold defined...example: "tr:i<3=0" to set all values in image<3 to zero')
+                    end
+                    
+                    [ha a ]=rgetnii(s1);
+                    dims=[ha(1).dim max(size(ha))];
+                    a2=reshape(a,[prod(dims) 1]);
+                    
+                    %% --- threshold image
+                    code=volnum{j};
+                    %code='tr:    i==3=0';
+                    %code='tr:    i>3=0';
+                    %code='tr:    i<3=0';
+                    % code='tr:    i <=3=0;';
+                    %code='tr:    i >=3=0;';
+                    %code='tr:    i ~=3=0;';
+                    %code='tr:    i<0=3; i>6=6;';
+                    %a2=1:10
+                    %code=regexprep(code,'==','#');
+                    %                     code=regexprep(code,'==','EQ');
+                    %                     code=regexprep(code,'<=','LE');
+                    %                     code=regexprep(code,'>=','GTE');
+                    %                     code=regexprep(code,'<','LL');
+                    %                     code=regexprep(code,'>','GG');
+                    %                     code=regexprep(code,'~=','NE');
+                    
+                    rep1= {'==' '<=' '>='   '<'   '>'    '~='}  ;
+                    rep2= {'EQ' 'LE' 'GTE'  'LL'  'GG'   'NE'} ;
+                    code=regexprep(code,rep1,rep2);
+                    
+                    code=regexprep(code,{ ['tr:' '\s+']  'i' '=' },{'' 'a2(a2' ')='});
+                    code=[code ';'];
+                    code=regexprep(code,rep2,rep1);
+                    
+                    eval(code);
+
+                    a2=reshape(a2, dims);
+                    rsavenii(s2 ,ha,a2);
+                    showinfo2(['threshold image: ' s2 ' '],s2);
+                  catch
+                      disp([' ..threshold image...something went wrong  (internal code: "' code '")']);
+                  end
+                    
+                 %% test   
+                    
+                    
+                
+                    
                     
                     
                 elseif strfind(volnum{j},'mo:'); %vox factor
@@ -754,7 +829,11 @@ end
 
 %% GUI
 tb       = [v.tb(:,1)  newname  extractvolnum  v.tb(:,2:end) ] ;
-tbh      = [ v.tbh(1)  'NEW NAME (no extension)' 'TASK (extract volnum)' v.tbh(2:end)];
+%  tbh      = [ v.tbh(1)  'NEW FILENAME (no extension)' 'TASK (extract volnum)' v.tbh(2:end)];
+%  tbh      = [ v.tbh(1)  'NEW FILENAME               ' 'TASK                 ' v.tbh(2:end)];
+ tbh      = [ v.tbh(1)  'NEW FILENAME_______________' 'TASK_________________' v.tbh(2:end)];
+
+
 
 % tb    =tb(: ,[1 end 2:end-1 ]); % 2nd element is new name
 % tbh   =tbh(:,[1 end 2:end-1 ]);
@@ -1078,6 +1157,9 @@ if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'renam
             '1:ends'  'expand entire 4D-file to separate 3D-files ("1:ends")'
             '1:3s'    'expand the first 3D-volumes of 4D-file to separate 3D-files ("1:3s")'
             ''        'empty this field'  
+            'tr: i<=3=0'               'threshold image: set all values <=3 to ZERO  '
+            'tr: i<=3=1;i>20=20;'  'threshold image: set all values <=3 to ONE; and values >20 t0 20  '
+            'tr: i~=0=1;'          'threshold image: set all non-zero values to ONE'
             };
         listbk=[[list2 ; {''} ;lis(:,1) ] [list2 ; {''} ;lis(:,2) ]];
         
@@ -1522,13 +1604,15 @@ col=e.columnAtPoint(e2.getPoint())+1;
 % idc=idx+1;
 try
    if col==1
-       ms=['<html><font color="blue"><b>' 'Filename' '</font></b><br>' ...
+       ms=['<html><font color="blue"><b>' 'EXISTING FILES' '</font></b><br>' ...
            '<font color="black">'  ...
+           '  you can also select 1/several images and use the context menu' ...
            ''];
    elseif col==2
-       ms=['<html><font color="blue"><b>' 'new filename' '</font></b><br>'  ...
+       ms=['<html><font color="blue"><b>' 'NEW FILENAME' '</font></b><br>'  ...
            '<font color="black">'  ...
-           'type (copy+modify) new file name here (with ot without "nii."-extension)'];
+           'enter (copy+modify) a new file name here<br>' ...
+           '<font color="red">"nii."-extension is not necessary'];
    elseif col==3
       ms=['<html><font color="blue"><b>' 'TASK' '</b></font><br>'  ...
            '<font color="black">'  ...
@@ -1536,9 +1620,10 @@ try
            '<b>rename file  :</b>  type "rename" <br>'...
            '<b>delete file:</b>  type "##" or "del" or "delete"        <br>'...
            '<b>extract 4D-volume:</b>  type index such as "[2 4 10]"   <br>' ...
-           '<b>voxel factor     ("vf:.."):</b>  type "vf: 1.5" to scale up image by factor 1.5  <br>' ...
-           '<b>voxel resolution ("vr:.."):</b>  type "vr: [0.1 0.1 0.1]" to define a new voxel resolution  <br>' ...
-           '<b>math operation   ("mo:.."):</b>  "mo: o=i>.5"  <font color="green"> --> see HELP <font color="black"> <br>' ...
+           '<b>voxel factor     ("vf: .."):</b>  type "vf: 1.5" to scale up image by factor 1.5  <br>' ...
+           '<b>voxel resolution ("vr: .."):</b>  type "vr: [0.1 0.1 0.1]" to define a new voxel resolution  <br>' ...
+           '<b>math operation   ("mo: .."):</b>  "mo: o=i>.5"  <font color="green"> --> see HELP <font color="black"> <br>' ...
+           '<b>threshold image  ("tr: .."):</b>  "tr: i<3=0" to set all values below 3 to zero   <br>' ...
            '<font color="red"> ..Don''t forget to type a new filename in column-2!' 
            ];
    else  
