@@ -16,7 +16,7 @@
   **[xstat.m]**added pulldown to select the statistical method to treat the multiple comparison problem  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Aug 2021 (12:24:04)**</ins>  
-  **[xrename.m]** :added context menu for easier file manipulation (copying/renaming/expansion/deletion)  
+  **[xrename.m]**:added context menu for easier file manipulation (copying/renaming/expansion/deletion)  
   and additional file information (file paths; existence of files; header information)  
     
 <!---->

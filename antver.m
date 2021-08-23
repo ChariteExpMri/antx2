@@ -277,7 +277,7 @@
 % test: gitHub with "personal access token" : upload-seems to work/chk(TunnelBlick)
 % 
 % #ra 18 Aug 2021 (12:24:04)
-% #k [xrename.m] : #n added context menu for easier file manipulation (copying/renaming/expansion/deletion)
+% #k [xrename.m]: #n added context menu for easier file manipulation (copying/renaming/expansion/deletion)
 % and additional file information (file paths; existence of files; header information)
 % 
 % #ra 19 Aug 2021 (21:02:37) 
