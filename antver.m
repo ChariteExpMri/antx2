@@ -288,7 +288,7 @@
 % #ba 23 Aug 2021 (14:12:17)
 % #k [xcalcSNRimage.m]: #n convert image to SNR-image 
 % according to Gudbjartsson H, Patz S. 1995: The Rician distribution of noisy MRI data. Magn Reson Med.; 34(6): 910–914.)
-% - can be used for Fluorine-19 (19F)-contrast images 
+% -can be used for Fluorine-19 (19F)-contrast images 
 % #gw -->  access via ANT-menu: SNIPS/convert image to SNR-image
 % 
 % 
