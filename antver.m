@@ -286,7 +286,7 @@
 % #k [xrename.m]: #n now allows to threshold an image
 % #gw -->  access via ANT-menu: Tools/manipulate files
 % #ba 23 Aug 2021 (14:12:17)
-% #k [xcalcSNRimage.m]: #n convert image to SNR-image 
+% #k [xcalcSNRimage.m] #n convert image to SNR-image 
 % according to Gudbjartsson H, Patz S. 1995: The Rician distribution of noisy MRI data. Magn Reson Med.; 34(6): 910–914.)
 % -can be used for Fluorine-19 (19F)-contrast images 
 % #gw -->  access via ANT-menu: SNIPS/convert image to SNR-image
@@ -356,7 +356,7 @@ s2=[];
 for i=length(it)-1:-1:1
     dv2=s1(it(i):it(i+1)-1);
     
-    dv2=regexprep(dv2, {'\[','\]'},{'**[',']**' }); %bold inside brackets
+    dv2=regexprep(dv2, {'\[','\]'},{'** [','] **' }); %bold inside brackets
     
     l1=dv2{1};
     idat=regexpi(l1,'\d\d \w\w\w');
