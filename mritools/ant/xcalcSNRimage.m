@@ -195,6 +195,8 @@ if max(cellfun(@isempty,z.fileoutname)) && cellfun(@isempty,cellstr(z.suffix))
      usesuffix=1;
      z.suffix='__SNR';
      disp('no outputfilename or suffix specified ... using "__SNR" as suffix ');
+elseif ~cellfun(@isempty,cellstr(z.suffix)) 
+    usesuffix   =1;
 elseif length(z.file) == length(z.fileoutname) 
     %% filename and suffix have SAME length --> no suffix used
     usesuffix=0;
