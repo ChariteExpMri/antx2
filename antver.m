@@ -283,7 +283,7 @@
 % #ra 19 Aug 2021 (21:02:37) 
 % #k [xstat.m] #n added pulldown to select the statistical method to treat the multiple comparison problem
 % #ba 19 Aug 2021 (23:50:18)
-% #k [xrename.m] #n now allows to threshold an image
+% #k [xrename.m]: #n now allows to threshold an image
 % #gw -->  access via ANT-menu: Tools/manipulate files
 % #ba 23 Aug 2021 (14:12:17)
 % #k [xcalcSNRimage.m]: #n convert image to SNR-image 

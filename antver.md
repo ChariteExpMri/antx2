@@ -9,7 +9,7 @@
   &#8618;  access via ANT-menu: SNIPS/convert image to SNR-image  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**19 Aug 2021 (23:50:18)**</ins>  
-  **[xrename.m]**now allows to threshold an image  
+  **[xrename.m]**:now allows to threshold an image  
   &#8618;  access via ANT-menu: Tools/manipulate files  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**19 Aug 2021 (21:02:37)** </ins>  
