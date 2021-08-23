@@ -347,9 +347,9 @@ tb(3,:)={ '#ra'    '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text
 tb(4,:)={ '#bw'    '![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+) '  'margenta' } ;
 tb(5,:)={ '#gw -->' '&#8618;'  'green arrow' } ;
 tb(6,:)={ '#ba'    '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
-tb(7,:)={ '#k '    ''  'remove tag' } ;
-tb(8,:)={ ' #n '    ''  'remove tag' } ;
-tb(9,:)={ ' #b '    ''  'remove tag' } ;
+tb(7,:)={ '#k '     ' '  'remove tag' } ;
+tb(8,:)={ ' #n '    ' '  'remove tag' } ;
+tb(9,:)={ ' #b '    ' '  'remove tag' } ;
 
 
 s2=[];
