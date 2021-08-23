@@ -277,13 +277,13 @@
 % test: gitHub with "personal access token" : upload-seems to work/chk(TunnelBlick)
 % 
 % #ra 18 Aug 2021 (12:24:04)
-%  [xrename] : added context menu for easier file manipulation (copying/renaming/expansion/deletion)
+% #k [xrename.m] : #n added context menu for easier file manipulation (copying/renaming/expansion/deletion)
 % and additional file information (file paths; existence of files; header information)
 % 
 % #ra 19 Aug 2021 (21:02:37) 
 % #k [xstat.m] #n added pulldown to select the statistical method to treat the multiple comparison problem
 % #ba 19 Aug 2021 (23:50:18)
-% [xrename.m] now allows to threshold an image
+% #k [xrename.m] #n now allows to threshold an image
 % #gw -->  access via ANT-menu: Tools/manipulate files
 % #ba 23 Aug 2021 (14:12:17)
 % #k [xcalcSNRimage.m]: #n convert image to SNR-image 
