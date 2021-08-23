@@ -133,9 +133,12 @@ if ~ isempty(im2)
 end
 
 if isempty(im2)
+    if exist('msg2')~=1
+        msg2='';
+    end
     %SINGLE IMG
     disp([msg ' [' a.name ']: <a href="matlab: explorerpreselect(''' a.img ''');">' 'Explorer' '</a>' ...
-        ' or <a href="matlab: rmricron([], ''' a.img ''',[], 0)">' 'MRicron' '</a>'   ]);
+        ' or <a href="matlab: rmricron([], ''' a.img ''',[], 0)">' 'MRicron' '</a>' ' ' msg2  ]);
 end
 
 

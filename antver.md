@@ -1,7 +1,13 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   19 Aug 2021 (23:50:18)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   23 Aug 2021 (14:12:17)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Aug 2021 (14:12:17)**</ins>  
+  #k **[xcalcSNRimage.m]**: #n convert image to SNR-image   
+  according to Gudbjartsson H, Patz S. 1995: The Rician distribution of noisy MRI data. Magn Reson Med.; 34(6): 910–914.)  
+  - can be used for Fluorine-19 (19F)-contrast images   
+  &#8618;  access via ANT-menu: SNIPS/convert image to SNR-image  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**19 Aug 2021 (23:50:18)**</ins>  
   **[xrename]** now allows to threshold an image  
   &#8618;  access via ANT-menu: Tools/manipulate files  

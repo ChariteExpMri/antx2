@@ -285,9 +285,15 @@
 % #ba 19 Aug 2021 (23:50:18)
 % [xrename] now allows to threshold an image
 % #gw -->  access via ANT-menu: Tools/manipulate files
+% #ba 23 Aug 2021 (14:12:17)
+% #k [xcalcSNRimage.m]: #n convert image to SNR-image 
+% according to Gudbjartsson H, Patz S. 1995: The Rician distribution of noisy MRI data. Magn Reson Med.; 34(6): 910–914.)
+% - can be used for Fluorine-19 (19F)-contrast images 
+% #gw -->  access via ANT-menu: SNIPS/convert image to SNR-image
 % 
 % 
 % 
+
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
@@ -312,7 +318,7 @@ uhelp(r,0, 'cursor' ,'end');
 set(gcf,'NumberTitle','off', 'name', 'ANTx2 - VERSION');
 % uhelp('antver.m');
 if 0
-    clipboard('copy', [    ['% #ra '   datestr(now,'dd mmm yyyy (HH:MM:SS)') repmat(' ',1,0) ]           ]);
+    clipboard('copy', [    ['% #ba '   datestr(now,'dd mmm yyyy (HH:MM:SS)') repmat(' ',1,0) ]           ]);
     clipboard('copy', [    ['% #T '   datestr(now,'dd mmm yyyy (HH:MM:SS)') '' ]           ]);
 end
 
@@ -341,7 +347,9 @@ tb(3,:)={ '#ra'    '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text
 tb(4,:)={ '#bw'    '![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+) '  'margenta' } ;
 tb(5,:)={ '#gw -->' '&#8618;'  'green arrow' } ;
 tb(6,:)={ '#ba'    '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
-
+tb(7,:)={ '#k '    ''  'remove tag' } ;
+tb(7,:)={ '#n '    ''  'remove tag' } ;
+tb(7,:)={ '#b '    ''  'remove tag' } ;
 
 
 s2=[];

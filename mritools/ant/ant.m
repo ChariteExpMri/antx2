@@ -908,6 +908,8 @@ mh = uimenu(f,'Label','Snips');
 mh2 = uimenu(mh,'Label',' get corrected lesion volume',                                  'Callback',{@menubarCB, 'getlesionvolume'});
 mh2 = uimenu(mh,'Label',' make IncidenceMaps',                                           'Callback',{@menubarCB, 'makeIncidenceMaps'});
 
+mh2 = uimenu(mh,'Label','convert image to SNR-image',                                           'Callback',{@menubarCB, 'convert2SNRimage'});
+
 % mh2 = uimenu(mh,'Label',' DEBUG-functions'                                          );
 % mh3 = uimenu(mh2,'Label',' check PATHS (project/study/data)',          'Callback',{@menubarCB, 'makeIncidenceMaps'});
 % mh2 = uimenu(mh,'Label',' generate ANO.nii in pseudocolors',    'Callback',{@menubarCB, 'makeANOpseudocolors'});
@@ -1974,6 +1976,16 @@ elseif strcmp(task,'makeIncidenceMaps')
     
     statusMsg(1,' make INcidenceMap');
     xincidencemap;
+    statusMsg(0);
+        %________________________________________________
+elseif strcmp(task,'convert2SNRimage')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xcalcSNRimage';
+        return ;
+    end
+    
+    statusMsg(1,' convert to SNR image');
+    xcalcSNRimage;
     statusMsg(0);
     %________________________________________________
     
