@@ -36,24 +36,24 @@
     
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Jun 2021 (15:36:53)**</ins>  
-  __[show4d]__: SHOW 4D-VOLUME / check quality of realignment of 4D-volume  
+   __[show4d.m]__: SHOW 4D-VOLUME / check quality of realignment of 4D-volume  
   function allows to display a 4D-volume and it's realigned version side-by-side  
   For quality assessment, the 1st volume is displayed on top (as contour plot) of the selected (3D)-volume   
   &#8618; access via ANT-menu: Graphics/check 4D-volume (realignment)  
     
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**25 Jun 2021 (12:05:36)**</ins>  
-  __[xrealign_elastix]__: multimodal realignment of 4D data (timeseries) using ELASTX and mutual information  
+   __[xrealign_elastix.m]__: multimodal realignment of 4D data (timeseries) using ELASTX and mutual information  
   &#8618; access via ANT-menu: Tools/realign images (ELASTIX, multimodal)  
     
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**29 May 2021 (01:20:40)**</ins>  
-  __[xrealign.m]__  --> realign 3D-(time)-series or 4D volume using SPM-realign function  
+   __[xrealign.m]__  --> realign 3D-(time)-series or 4D volume using SPM-realign function  
   &#8618; access via ANT-menu: Tools/realign images (SPM, monomodal)  
     
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**10 May 2021 (20:39:32)**</ins>  
-  __[xcheckreghtml]__ implemented. This function create HTML-files with overlays of arbitrary images.   
+   __[xcheckreghtml.m]__ implemented. This function create HTML-files with overlays of arbitrary images.   
    The HTML-files can be used to check the registration, can be zipped and send to others.  
   &#8618; access via ANT-menu: Graphics/generate HTML-file  
     

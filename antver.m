@@ -246,20 +246,20 @@
 % #ra 07 May 2021 (22:15:55)
 % -->started [checkreghtml]: make html-page of overlay of arbitrary pairs of images for selected animals 
 % #ra 10 May 2021 (20:39:32)
-% [xcheckreghtml] implemented. This function create HTML-files with overlays of arbitrary images. 
+% #k [xcheckreghtml.m] #n implemented. This function create HTML-files with overlays of arbitrary images. 
 %  The HTML-files can be used to check the registration, can be zipped and send to others.
 % #gw --> access via ANT-menu: Graphics/generate HTML-file
 % 
 % #ra 29 May 2021 (01:20:40)
-% [xrealign.m]  --> realign 3D-(time)-series or 4D volume using SPM-realign function
+% #k [xrealign.m] #n  --> realign 3D-(time)-series or 4D volume using SPM-realign function
 % #gw --> access via ANT-menu: Tools/realign images (SPM, monomodal)
 % 
 % #ra 25 Jun 2021 (12:05:36)
-% [xrealign_elastix]: multimodal realignment of 4D data (timeseries) using ELASTX and mutual information
+% #k [xrealign_elastix.m]: #n multimodal realignment of 4D data (timeseries) using ELASTX and mutual information
 % #gw --> access via ANT-menu: Tools/realign images (ELASTIX, multimodal)
 % 
 % #ra 28 Jun 2021 (15:36:53)
-% [show4d]: SHOW 4D-VOLUME / check quality of realignment of 4D-volume
+% #k [show4d.m]: #n SHOW 4D-VOLUME / check quality of realignment of 4D-volume
 % function allows to display a 4D-volume and it's realigned version side-by-side
 % For quality assessment, the 1st volume is displayed on top (as contour plot) of the selected (3D)-volume 
 % #gw --> access via ANT-menu: Graphics/check 4D-volume (realignment)
