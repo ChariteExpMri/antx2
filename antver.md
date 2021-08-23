@@ -13,7 +13,7 @@
   &#8618;  access via ANT-menu: Tools/manipulate files  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**19 Aug 2021 (21:02:37)** </ins>  
-  **[xstat.m]**added pulldown to select the statistical method to treat the multiple comparison problem  
+  **[xstat.m]**:added pulldown to select the statistical method to treat the multiple comparison problem  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Aug 2021 (12:24:04)**</ins>  
   **[xrename.m]**:added context menu for easier file manipulation (copying/renaming/expansion/deletion)  
