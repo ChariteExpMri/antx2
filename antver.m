@@ -356,7 +356,7 @@ s2=[];
 for i=length(it)-1:-1:1
     dv2=s1(it(i):it(i+1)-1);
     
-    dv2=regexprep(dv2, {'\[','\]'},{'** [','] **' }); %bold inside brackets
+    dv2=regexprep(dv2, {'\[','\]'},{'__[',']__' }); %bold inside brackets
     
     l1=dv2{1};
     idat=regexpi(l1,'\d\d \w\w\w');
