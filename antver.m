@@ -265,14 +265,14 @@
 % #gw --> access via ANT-menu: Graphics/check 4D-volume (realignment)
 % 
 % #ra 12 Aug 2021 (18:49:17)
-% [xcheckreghtml.m] ... fixed BUG: "dimension"-parameter error with string/double vartype 
+% #k [xcheckreghtml.m] #n ... fixed BUG: "dimension"-parameter error with string/double vartype 
 % [checkpath] checks whether paths-names of ANTx-TBX, a study-project/template and data-sets contain special characters 
 % Special characters might result in errors & crashes.
 % #gw --> access via ANT-menu: Extras/troubleshoot/check path-names
 % 
 % #ra 16 Aug 2021 (11:18:29)
-% [case-filematrix] add file functionality: copy/delete/export files ; file information  
-%
+% #k [case-filematrix] #n add file functionality: copy/delete/export files ; file information  
+% #gw -->  access via ANT-menu: Graphics/show case-file-matrix
 % #ra 16 Aug 2021 (13:35:35)
 % test: gitHub with "personal access token" : upload-seems to work/chk(TunnelBlick)
 % 

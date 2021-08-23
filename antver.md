@@ -25,11 +25,11 @@
     
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Aug 2021 (11:18:29)**</ins>  
-  __[case-filematrix]__ add file functionality: copy/delete/export files ; file information    
-   
+   __[case-filematrix]__ add file functionality: copy/delete/export files ; file information    
+  &#8618;  access via ANT-menu: Graphics/show case-file-matrix  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**12 Aug 2021 (18:49:17)**</ins>  
-  __[xcheckreghtml.m]__ ... fixed BUG: "dimension"-parameter error with string/double vartype   
+   __[xcheckreghtml.m]__ ... fixed BUG: "dimension"-parameter error with string/double vartype   
   __[checkpath]__ checks whether paths-names of ANTx-TBX, a study-project/template and data-sets contain special characters   
   Special characters might result in errors & crashes.  
   &#8618; access via ANT-menu: Extras/troubleshoot/check path-names  
