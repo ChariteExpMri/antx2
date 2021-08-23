@@ -3,7 +3,7 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Aug 2021 (14:12:17)**</ins>  
-  #k **[xcalcSNRimage.m]**: #n convert image to SNR-image   
+  **[xcalcSNRimage.m]**:convert image to SNR-image   
   according to Gudbjartsson H, Patz S. 1995: The Rician distribution of noisy MRI data. Magn Reson Med.; 34(6): 910–914.)  
   - can be used for Fluorine-19 (19F)-contrast images   
   &#8618;  access via ANT-menu: SNIPS/convert image to SNR-image  
@@ -334,9 +334,9 @@
      ..see Main/Create Study Templates  
    2)two new "get-orientation"-functions implemented. Functions can be used if the orientation of   
      the native image (t2.nii) is unknown. See animal listbox context menu   
-     (2a) "examineOrientation"       #k **[getorientation.m]** #n using apriori rotations,..   
+     (2a) "examineOrientation"       **[getorientation.m]**using apriori rotations,..   
           best orientation selected via eyeballing  
-     (2b) "getOrientationVia3points" #k **[manuorient3points.m]** #n using 3 manually tagged corresponding points in  
+     (2b) "getOrientationVia3points" **[manuorient3points.m]**using 3 manually tagged corresponding points in  
           source and reference image  
       --> 2b approach is easier and faster  for difficult rotations  
   function modifications: uhelp, plog  
