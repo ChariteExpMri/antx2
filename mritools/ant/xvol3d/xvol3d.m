@@ -132,6 +132,14 @@
 % xvol3d('set','brainalpha',1);     % set alpha transparency
 % xvol3d('set','material','metal','braincolor',[1 1 0]);  % example to combine parameter
 %
+% #k VIEW
+% select defined views from the context menu (when rotation is diabled)
+% xvol3d('view',0)       %--> show list of defined views
+% xvol3d('view',7)       %--> set view to "view back-top" similar as via context menu
+% xvol3d('view',[90 0])  %--> set view via azimuth and elevtion to example: 90,0
+% 
+% 
+%----------------------------------------------------------------------------------------------------
 % #b Example: plot two intensity images
 % cf
 % xvol3d('loadbrainmask',fullfile(pwd,'AVGThemi.nii')); % load brain mask
@@ -304,7 +312,9 @@ if nargin~=0;
             end
         end
     end
-    
+    if isfield(par,'view')
+        changeview(varargin{2});
+    end
     
     
     if isfield(par,'set');         setparameter(par) ;  end
@@ -997,6 +1007,14 @@ function RotationCallback(~,~)
 c=findobj(findobj(0,'tag','xvol3d'),'tag','camlight');
 c = camlight(c,'headlight');    % Create light
 
+hk=findobj(0,'tag','plotconnections'); %gui-2
+if ~isempty(hk)
+    if get(findobj(hk,'tag','stingview'),'value')==1
+        sub_sting();
+    end
+    %   'evals'
+end
+
 
 function plottr(par)
 if isfield(par,'plottr');
@@ -1521,6 +1539,11 @@ if get(e,'value')==1
         iterat=0;
     end
     
+     %-----sting
+    hk=findobj(0,'tag','plotconnections'); %gui-2
+    stingview=get(findobj(hk,'tag','stingview'),'value');
+    %--------
+   
     for i = 1:iterat
         %disp(i);
         camorbit(azstep,elstep,'data',[   0 0 1]);
@@ -1528,6 +1551,11 @@ if get(e,'value')==1
             c=findobj(findobj(0,'tag','xvol3d'),'tag','camlight');
             camlight(c,'headlight');
         end
+        %-----sting-2
+        if ~isempty(hk) && stingview==1
+            sub_sting();
+        end
+        %--------
         
         pause(sleeptime) ;
         if dosave==1
@@ -1936,20 +1964,47 @@ material dull
 set(p1,'facealpha',.05);
 set(p1,'facecolor',[0.9333    0.9333    0.9333]);
 
+
+
+setappdata(p1,'center', [mean(xlim) mean(ylim) mean(zlim)]);
+setappdata(p1,'lims', [xlim; ylim; zlim]);
+
 MAKEARROW;
 fprintf('..done\n');
 
 
-function MAKEARROW
+function MAKEARROW(par)
+%  lims=[xlim; ylim; zlim];
+ hf=findobj(0,'tag','xvol3d');
+ br=findobj(hf,'tag','brain');
+ lims=getappdata(br,'lims');
+ 
+ 
+ if exist('par')~=1
+    aroffset =.1;
+    arlength =.15;
+    % aroffset =.1;
+    % arlength =.15;
+   
+    %start 10% from left side
+    arStart=(lims(:,2)-lims(:,1)).*aroffset+lims(:,1);
+    arStop=(lims(:,2)-lims(:,1)).*arlength+arStart;
+else
+    aroffset=par.aroffset3' ;
+    arlength=par.arlength ;
+    arStart=(lims(:,2)-lims(:,1)).*aroffset+lims(:,1);
+    arStop=(lims(:,2)-lims(:,1)).*arlength+arStart;
+    
+  
+end
 % ==============================================
 %%
 % ===============================================
-aroffset =.1;
-arlength =.15;
-lims=[xlim; ylim; zlim];
-%start 10% from left side
-arStart=(lims(:,2)-lims(:,1)).*aroffset+lims(:,1);
-arStop=(lims(:,2)-lims(:,1)).*arlength+arStart;
+
+
+% aroffset2=[aroffset 0 0]';
+% arStart=(lims(:,2)-lims(:,1)).*aroffset2+lims(:,1);
+% arStop=(lims(:,2)-lims(:,1)).*arlength+arStart;
 % ==============================================
 
 % disp('astartstop');
@@ -2020,6 +2075,174 @@ set(hb,'tooltipstring','preferences...open preference-panel');
 set(hb,'callback',@openpreferencePanel);
 % set(hb,'string','<html>&#9881;')
 % set(hb,'string','<html>&#x2638;')
+
+
+% ==============================================
+%%   context menu
+% ===============================================
+% fg
+% ht=findobj(0,'tag','xvol3d');
+ht=gcf;
+cm = uicontextmenu;
+
+hs2 = uimenu(cm,'label','views',   'userdata','changeview'    ,  'separator','on');
+
+hs = uimenu(hs2,'label','view default;         view([-37.5 30]) ',          'Callback',{@hcontext, 'changeview'},'separator','on');
+hs = uimenu(hs2,'label','view top;             view([-90 90])   ',          'Callback',{@hcontext, 'changeview'},'separator','off');
+hs = uimenu(hs2,'label','view right;           view([0 0])      ',          'Callback',{@hcontext, 'changeview'},'separator','off');
+hs = uimenu(hs2,'label','view left;            view([-180 0])   ',          'Callback',{@hcontext, 'changeview'},'separator','off');
+hs = uimenu(hs2,'label','view front;           view([90 0])     ',          'Callback',{@hcontext, 'changeview'},'separator','off');
+hs = uimenu(hs2,'label','view back;            view([-90 0])     ',         'Callback',{@hcontext, 'changeview'},'separator','off');
+
+
+hs = uimenu(hs2,'label','view back-top;        view([-90 20])   ',          'Callback',{@hcontext, 'changeview'},'separator','on');
+hs = uimenu(hs2,'label','view left-top;        view([-180 46])   ',         'Callback',{@hcontext, 'changeview'},'separator','off');
+hs = uimenu(hs2,'label','view right-top;       view([0 46])   ',            'Callback',{@hcontext, 'changeview'},'separator','off');
+
+hs = uimenu(hs2,'label','view right-top-back;  view([-57 39]) ',            'Callback',{@hcontext, 'changeview'},'separator','on');
+hs = uimenu(hs2,'label','view left-top-back;   view([-123 39]) ',           'Callback',{@hcontext, 'changeview'},'separator','off');
+
+hs = uimenu(hs2,'label','view right2-top-back; view([-23 44]) ',            'Callback',{@hcontext, 'changeview'},'separator','off');
+hs = uimenu(hs2,'label','view left2-top-back;  view([-166 44]) ',           'Callback',{@hcontext, 'changeview'},'separator','off');
+
+hs = uimenu(hs2,'label','view front-right-top; view([40 40]) ',            'Callback',{@hcontext, 'changeview'},'separator','on');
+hs = uimenu(hs2,'label','view front-left-top;  view([130 40]) ',           'Callback',{@hcontext, 'changeview'},'separator','off');
+
+
+
+ hs2 = uimenu(cm,'label','change arrow position',       'Callback',{@hcontext, 'changearrow'},   'separator','on');
+
+set(ht,'UIContextMenu',cm);
+
+% ==============================================
+%%   contextMenu
+% ===============================================
+function hcontext(e,e2,task)
+
+if strcmp(task, 'changeview')
+    [~, cod]=strtok(e2.Source.Label,';');
+    if ~isempty(strfind(cod,'view'))
+        figure(findobj(0,'tag','xvol3d'));
+    eval([cod ';']);
+    RotationCallback();
+    end
+elseif strcmp(task, 'changearrow')
+    par.aroffset =0;
+    par.aroffset3 =[ 0 0 0];
+    par.arlength   =.15;
+%     par.arlength3 =[.15 .15 .15];
+    MAKEARROW(par);
+    mi=-.2;
+    ma=1.3;
+    
+    
+    hs=uicontrol('style','text','units','norm');
+    set(hs,'string','arrow-position [x,y,z]');
+    set(hs,'position',[0.05 0.53 0.15 0.03],'string','arrow position','backgroundcolor','w');
+    set(hs,'tag','arrowpos_title');
+    set(hs,'tooltipstring',[' arrow-position: USE sliders for moving arrows along X,Y,Z-direction  ']);
+    
+    hs=uicontrol('style','slider','units','norm');
+    set(hs,'position',[    0.05    0.5    0.2    0.03]);
+    set(hs,'min',mi,'max',ma, 'value',par.aroffset3(1));
+    set(hs,'callback',{@arrowpos_slid,1},'tag','arrowpos_slid1','userdata',par);
+    set(hs,'tooltipstring',[' arrow-position: along x-dim ']);
+    
+    
+    hs=uicontrol('style','slider','units','norm');
+    set(hs,'position',[    0.05    0.47    0.2    0.03]);
+    set(hs,'min',mi,'max',ma, 'value',par.aroffset3(2));
+    set(hs,'callback',{@arrowpos_slid,2},'tag','arrowpos_slid2','userdata',par);
+    set(hs,'tooltipstring',[' arrow-position: along y-dim ']);
+    
+    hs=uicontrol('style','slider','units','norm');
+    set(hs,'position',[    0.05    0.44    0.2    0.03]);
+    set(hs,'min',mi,'max',ma, 'value',par.aroffset3(3));
+    set(hs,'callback',{@arrowpos_slid,3},'tag','arrowpos_slid3','userdata',par);
+    set(hs,'tooltipstring',[' arrow-position: along z-dim ']);
+    
+    hs=uicontrol('parent',gcf,'style','push','units','norm','string','<html>x');
+    set(hs,'fontsize',6,'tag','changearrow_close',   'TooltipString','close');
+    set(hs,'callback',{@arrowpos_close});
+    set(hs,'position',[.25-.02 .53  .02 .03]);
+    set(hs,'tooltipstring',[' close ']);
+    
+    cm=uicontextmenu;
+    hs2 = uimenu(cm,'label','use default arrows position {0.1,0.1,0.1}',  'Callback',{@arrow_context,'origpos'},   'separator','on');
+    hs2 = uimenu(cm,'label','use {0,0,0} arrows position',        'Callback',{@arrow_context,'origposZero'},   'separator','off');
+    hs2 = uimenu(cm,'label','set arrow color',      'Callback',{@arrow_context,'arrowcol'},   'separator','on');
+
+    set(findobj(gcf,'tag','arrowpos_slid1'),'UIContextMenu',cm);
+    set(findobj(gcf,'tag','arrowpos_slid2'),'UIContextMenu',cm);
+    set(findobj(gcf,'tag','arrowpos_slid3'),'UIContextMenu',cm);
+
+
+end
+function arrowpos_close(e,e2)
+delete(findobj(gcf,'tag','arrowpos_slid1'));
+delete(findobj(gcf,'tag','arrowpos_slid2'));
+delete(findobj(gcf,'tag','arrowpos_slid3'));
+delete(findobj(gcf,'tag','changearrow_close'));
+delete(findobj(gcf,'tag','arrowpos_title'));
+
+function arrow_context(e,e2,task)
+if strcmp(task,'origpos') || strcmp(task,'origposZero')
+    if strcmp(task,'origposZero')==1
+        aroffset =0
+    else
+        aroffset =.1;
+    end
+    
+    set(findobj(gcf,'tag','arrowpos_slid1'),'value',aroffset);
+    set(findobj(gcf,'tag','arrowpos_slid2'),'value',aroffset);
+    set(findobj(gcf,'tag','arrowpos_slid3'),'value',aroffset);
+    arrowpos_slid();
+elseif strcmp(task,'arrowcol')
+    col=uisetcolor([],'select arrow color');
+    if length(col)~=3; return; end
+    set(findobj(gcf,'tag','arrow'),'facecolor',col);
+    
+end
+
+function arrowpos_slid(e,e2,tt)
+
+ps=[...
+    get(findobj(gcf,'tag','arrowpos_slid1'),'value')
+    get(findobj(gcf,'tag','arrowpos_slid2'),'value')
+    get(findobj(gcf,'tag','arrowpos_slid3'),'value')]';
+
+par=get(findobj(gcf,'tag','arrowpos_slid3'),'userdata');
+par.aroffset3=ps;
+
+% par=get(findobj(gcf,'tag','arrowpos_slid'),'userdata');
+% par.aroffset =get(e,'value');
+% par.arlength =.15;
+MAKEARROW(par);
+
+
+
+function changeview(in)
+figure(findobj(0,'tag','xvol3d'));
+if isnumeric(in) && length(in)==1
+  hc=  get(findobj(0,'tag','xvol3d'),'UIContextMenu');
+  hs=get(findobj(hc,'userdata','changeview'),'children');
+  viewlist=flipud(get(hs,'Label'));
+   if in<1 || in>length(viewlist); 
+       cprintf(-[1 0 1],[['view input must be 2 values [az,el] or 1 value as index from the following list:' ]  '\n']);
+       disp(char([cellfun(@(num,a) {[ 'index=' num2str(num) ':  ' a]}, num2cell(1:length(viewlist))', viewlist)]));
+       
+       return
+   end
+   [~, cod]=strtok(viewlist{in},';');
+   eval([cod ';']);
+    RotationCallback();
+else
+    view(in);
+    RotationCallback();
+end
+
+RotationCallback();
+
 % ==============================================
 %%   PREFERENCE PANEL
 % ===============================================

@@ -76,9 +76,39 @@ vdim2        = vdim/pp.scalefactor;
 brainSize    = pp.brainSize;
 
 %[I_border, gi] = PCNN3D(  a , 4  , vdim, brainSize );
+iserror=0;
 try
     [args ,I_border, gi] =  evalc('PCNN3D(  a , radelem  , vdim2, brainSize );');
+    iserror=0;
+    %get Guess for best iteration.
+    ix  = strfind(args,'Guess for best iteration is ');
+    ix2 = strfind(args,'.');
+    ank = ix2(min(find(ix2>ix)));
+    id  = str2num(regexprep(args(ix:ank-1),'\D',''));
+    sprintf('brainvolume: %2.2f [qmm]: ' ,gi(id));
+    
 catch
+    iserror=1 ;
+end
+if iserror==1
+    try
+        % [args ,I_border, gi] =  evalc(['PCNN3D(  a , ' num2str(radelem-1) '  , vdim2, brainSize );']);
+        [args ,I_border, gi] =  evalc(['PCNN3D(  a , ' num2str(radelem-1) '  , vdim2, brainSize );']);
+        iserror=0;
+        %get Guess for best iteration.
+        ix  = strfind(args,'Guess for best iteration is ');
+        ix2 = strfind(args,'.');
+        ank = ix2(min(find(ix2>ix)));
+        id  = str2num(regexprep(args(ix:ank-1),'\D',''))-2;
+        sprintf('brainvolume: %2.2f [qmm]: ' ,gi(id));
+        
+    catch
+        iserror=1;
+    end
+end
+
+
+if iserror==1
     err=lasterr;%lasterror;
     errmsg={ ...
         ['         *** ERROR ***'   ]
@@ -93,12 +123,12 @@ end
 
 % disp(args);
 
-%get Guess for best iteration.
-ix  = strfind(args,'Guess for best iteration is ');
-ix2 = strfind(args,'.');
-ank = ix2(min(find(ix2>ix)));
-id  = str2num(regexprep(args(ix:ank-1),'\D',''));
-sprintf('brainvolume: %2.2f [qmm]: ' ,gi(id));
+% %get Guess for best iteration.
+% ix  = strfind(args,'Guess for best iteration is ');
+% ix2 = strfind(args,'.');
+% ank = ix2(min(find(ix2>ix)));
+% id  = str2num(regexprep(args(ix:ank-1),'\D',''));
+% sprintf('brainvolume: %2.2f [qmm]: ' ,gi(id));
 
 if 0
     gi(find(gi<brainSize(1) | gi>brainSize(2)))=nan  ;%set nan outside brainsize

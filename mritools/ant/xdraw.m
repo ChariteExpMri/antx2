@@ -234,7 +234,7 @@
 % [F] apply median filter; default 'true', using the filter length defined in the right edit field 
 %
 
-% #lk *** [3.4] MULTI-CONTOUR Segmentation ***  
+% #lk *** [3.4] MULTI-CONTOUR Segmentation ***  (this is the panel below image)
 % This is a 2D (slice-wise)-method using multiple contourlines.
 % Activate #b [contour] #n radio and a proper number of contour lines
 % #g 1.) Move the pointer (brush) to a location that is surounded  by a contour line

@@ -1,18 +1,18 @@
-% 
+%
 % #wb plot node and links (connections)
-% #bo INPUT: excel-table with 
+% #bo INPUT: excel-table with
 % excel-table input column-names (column names must match with those below)
-% 'Label1'    : region/label name of node1   
-% 'Label2'    : region/label name of node2  
+% 'Label1'    : region/label name of node1
+% 'Label2'    : region/label name of node2
 % 'co1'       : 3d (x,y,z)-coordinates [mm] of node1  (->saved in single excel column)
 % 'co2'       : 3d (x,y,z)-coordinates [mm] of node2  (->saved in single excel column)
 % 'cs'        : connection strength or any other parameter to display
 %  #b --> go to [specific Task]--> select "save example node/connection Excel-file [exampleXLSX]"
 %  #b     to create an example Node/link excelfile which can be used as input
 % -------------------
-% #b Excel-file example: 
+% #b Excel-file example:
 %  COLUMN-A   COLUMN-B         COLUMN-C                    COLUMN-D              COLUMN-E
-%  'Label1'  'Label2'            'co1'                      'co2'                 'cs' 
+%  'Label1'  'Label2'            'co1'                      'co2'                 'cs'
 %  region1	  region2	 -0.80014 1.6151 -0.90994	 0.75024 1.6782 -0.90562	   -4
 %  region3	  region4	 -1.768 -1.1643 -1.39	     1.7447 -0.99306 -1.3838	   -0.148148148
 %  region5	  region6	 0.011078 -3.1784 -0.32861	 -0.047126 -0.63101 -1.2141 	2.518518519
@@ -21,11 +21,11 @@
 % #bo BUTTONS etc
 % #g ======load data, plot, help etc ========================
 % [load data]:    load node/link excel-file (see above)
-% [plot]:         plot nodes and links 
-% [clear]:        clear nodes and links 
+% [plot]:         plot nodes and links
+% [clear]:        clear nodes and links
 % [columns vis]:  show/hide specific table columns
-% [help]:          get some help 
-% 
+% [help]:          get some help
+%
 % #g ======COLOR,RADIUS, TRANSPARENCY of NODES AND LINKS ========================
 % [nodes COL]: set color of all nodes  [RGB-triplet]
 % [nodes RAD]: set radious of all nodes [value>0]
@@ -33,7 +33,7 @@
 % [link COL]:  set color of all links  [RGB-triplet]
 % [link RAD]:  set radious/width of all links [value>0]
 % [link TRA]:  set transparency of all links [0-1]
-% 
+%
 % #g    SELECTION
 % [select all]:     show/hide all nodes and lnks
 % [all nodes]:      show/hide all nodes
@@ -49,46 +49,49 @@
 %     * sort table after absolute CS-values
 %     * sort table after absolute Node1-labels (Label1)
 %     + save example ode/link Excelfile
-% 
+%
 % #g ============ LABELS ========================
 % [label]: show/hide label
 % [label prop]: set specific label properties
-% 
+%
 % #g ============ LINK COLOR/THICKNESS ========================
 % [CS2col]     colorize links using connection strength parameter [0,1]
-% [colormaps]  specify the colormap; applied only if [CS2col] is true 
-% [CS2RAD]     connection strength is expressed as link thickness (larger absolute values obtain a 
+% [colormaps]  specify the colormap; applied only if [CS2col] is true
+% [CS2RAD]     connection strength is expressed as link thickness (larger absolute values obtain a
 %              larger radius)
 % [EDIT field] right to [CS2RAD]: math. expression used to connection strength to radius
-%              (i.e. thickness of links) ..see tooltip for more information 
-% 
+%              (i.e. thickness of links) ..see tooltip for more information
+%
 % ==============================================
 % #bo Table editing
 % -table cells (colors), labels can be edited separately
 % use [c]-cell to select color from colorpicker
 % click onto a region/label cell to examine the location of the node in the image
-% 
+%
 % #bo   comandline options
 % sub_plotconnections('new'); % reopen gui + delete previous nodes/links
 % sub_plotconnections('load', 'F:\data1\patch3d_v3\sample_shrew\_testNodes2.xlsx'); % load data
 % sub_plotconnections('plot'); % plot/update data
-% 
+%
 % sub_plotconnections('set','allnodes',1); % show all nodes
 % %% set node/link paremeter (use 'set', followed by pairwise inputs)
 % sub_plotconnections('set','allnodes',1,'nodecol',[1 1 0],'noderad',3,'alllink',1,'linktra',.2,'linkrad',2 ); % set node and link parameter
 % sub_plotconnections('plot');% plot/update data
-% 
-% 
+%
+%
 % sub_plotconnections('set','cs2col',1); % colorize connection strength
 % sub_plotconnections('plot'); % plot/update data
-% 
+%
 % sub_plotconnections('set','nodelabel',1); % show labels
 % sub_plotconnections('plot'); % plot/update data
 % %% set label paremeter (use 'set', followed by pairwise inputs)
 % sub_plotconnections('set','fs',5,'fcol',[0 0 1],'fhorzal',1,'needlevisible',1,'needlelength',15,'needlecol',[0 .5 0] ); % LABEL parameter
 % sub_plotconnections('plot'); % plot/update data
+%
+% ----------subfunctions
+% sub_sting.m              
+% sub_stingprop.m
 
- 
 
 
 
@@ -123,9 +126,9 @@ end
 % ==============================================
 %%   inputs
 % ===============================================
-if nargin==0; 
-   % MAKE NEW FIGURE
-   newfig();
+if nargin==0;
+    % MAKE NEW FIGURE
+    newfig();
     return ;
 else
     if mod(length(varargin),2)==0
@@ -139,12 +142,12 @@ else
             par.set='set';
         end
     end
-   if isfield(par,'new');         newfig();    end
-   if isfield(par,'load');        conload([],[],par.load);    end
-   if isfield(par,'plot');        conplot([],[]         );    end
-   
-   if isfield(par,'set');   setvalue(par); end   
-   
+    if isfield(par,'new');         newfig();    end
+    if isfield(par,'load');        conload([],[],par.load);    end
+    if isfield(par,'plot');        conplot([],[]         );    end
+    
+    if isfield(par,'set');   setvalue(par); end
+    
 end
 
 % ==============================================
@@ -166,18 +169,53 @@ if 0
     sub_plotconnections('set','cs2col',1);% colorize connection strength
     sub_plotconnections('plot');%plot/update data
     
-     sub_plotconnections('set','nodelabel',1);%  show labels
-     sub_plotconnections('plot');%plot/update data
+    sub_plotconnections('set','nodelabel',1);%  show labels
+    sub_plotconnections('plot');%plot/update data
     % set label paremeter (use 'set', followed by pairwise inputs)
     sub_plotconnections('set','fs',5,'fcol',[0 0 1],'fhorzal',1,'needlevisible',1,'needlelength',15,'needlecol',[0 .5 0] );
     sub_plotconnections('plot');%plot/update data
-
+    
     
 end
 
 % ==============================================
 %%   data
 % ===============================================
+
+function labeldefaults()
+hf=findobj(0,'tag','plotconnections');
+u=get(hf,'userdata');
+
+if isfield(u,'lab')==0; u.lab.dummi=1; end
+if isfield(u.lab,'fs')           ==0;  u.lab.fs=7        ; end
+if isfield(u.lab,'fcol')         ==0;  u.lab.fcol=[0 0 0]  ; end
+if isfield(u.lab,'fhorzal')      ==0;  u.lab.fhorzal=2  ; end
+
+if isfield(u.lab,'needlevisible')==0;  u.lab.needlevisible=0; end
+if isfield(u.lab,'needlelength')==0;   u.lab.needlelength=0; end
+if isfield(u.lab,'needlecol')   ==0;   u.lab.needlecol=[0 0 0]  ; end
+if isfield(u.lab,'abbreviate')          ==0;   u.lab.abbreviate=0             ; end
+if isfield(u.lab,'abbreviationLength')  ==0;   u.lab.abbreviationLength=3     ; end
+
+if isfield(u.lab,'useNumbers')  ==0;            u.lab.useNumbers=1     ; end
+% ------------STING
+if isfield(u,'sting')==0; u.sting.dummi=1; end
+if isfield(u.sting,'stingview')           ==0;  u.sting.stingview   =0       ; end
+
+if isfield(u.sting,'linestyle')         ==0;  u.sting.linestyle   =':'                         ; end
+if isfield(u.sting,'linewidth')         ==0;  u.sting.linewidth   =0.8                         ; end
+if isfield(u.sting,'linecol'  )         ==0;  u.sting.linecol     =repmat(0.7,[1 3])           ; end
+if isfield(u.sting,'fs')                ==0;  u.sting.fs          =7                           ; end
+if isfield(u.sting,'fontbold')          ==0;  u.sting.fontbold    =1                           ; end
+if isfield(u.sting,'fontcol')           ==0;  u.sting.fontcol     =[0 0 0]                     ; end
+if isfield(u.sting,'isdebug')           ==0;  u.sting.isdebug     =0                           ; end
+
+if isfield(u.sting,'radiusfac')         ==0;  u.sting.radiusfac   =1.1                         ; end
+if isfield(u.sting,'sepmax')            ==0;  u.sting.sepmax      =10                          ; end
+if isfield(u.sting,'pointsfac')         ==0;  u.sting.pointsfac   =250                         ; end
+if isfield(u.sting,'volcenter')         ==0;  u.sting.volcenter   =1                         ; end
+
+set(hf,'userdata',u);
 
 function setvalue(par)
 try; par=rmfield(par,'set'); end
@@ -232,7 +270,7 @@ if isfield(par,'needlecol');       u.lab.needlecol     =  par.needlecol;       e
 
 
 set(u.t,'data',dx);
- set(ht,'userdata',u);
+set(ht,'userdata',u);
 %             dummi: 1
 %                fs: 7
 %              fcol: [0 0 0]
@@ -303,12 +341,12 @@ for i=1:size(cs,1)
     cprintf([0 .5 0],str);
     co=single(cs(i,1:3));
     
-%     iv=find( xi2(:,1)>co(1)-1 ); %& xi(:,2)>co(2)-1 & xi(:,2)<co(2)+1;
-%     xi2 =xi2(iv,:);
-%     ind2=ind2(iv,:);
-%     dis= (sum( abs(bsxfun(@minus, xi2, co))  ,2));
-%     imin2=(find(dis==min(dis)));
-%     c1=ind2(imin2,:);
+    %     iv=find( xi2(:,1)>co(1)-1 ); %& xi(:,2)>co(2)-1 & xi(:,2)<co(2)+1;
+    %     xi2 =xi2(iv,:);
+    %     ind2=ind2(iv,:);
+    %     dis= (sum( abs(bsxfun(@minus, xi2, co))  ,2));
+    %     imin2=(find(dis==min(dis)));
+    %     c1=ind2(imin2,:);
     %-----------
     iv=find( xi2(:,1)>co(1)-.5  & xi2(:,1)<co(1)+.5); %& xi(:,2)>co(2)-1 & xi(:,2)<co(2)+1;
     dis= (sum( abs(bsxfun(@minus, xi2(iv,:), co))  ,2));
@@ -316,7 +354,7 @@ for i=1:size(cs,1)
     c1=ind2(imin2,:);
     c1=c1([2 1 3 ]);
     
-%     disp(c1);
+    %     disp(c1);
     idx1=find(C1(:,1)==co(1) & C1(:,2)==co(2) & C1(:,3)==co(3));
     idx2=find(C2(:,1)==co(1) & C2(:,2)==co(2) & C2(:,3)==co(3));
     
@@ -325,7 +363,7 @@ for i=1:size(cs,1)
 end
 % toc
 cind={b1 b2};
-  cprintf([0 .5 0],'done\n');
+cprintf([0 .5 0],'done\n');
 
 % ==============================================
 %%   older ,slower version
@@ -361,7 +399,7 @@ if 0
     toc
 end
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -397,7 +435,7 @@ end
 if numel((a{1}))==1
     %% ------ get sheetNumber
     prompt = {['First sheet seems to be empty!' char(10)  ...
-        'Enter the corect Excel sheet-number: ' char(10) ... 
+        'Enter the corect Excel sheet-number: ' char(10) ...
         ]};
     dlgtitle = 'Sheet Number';
     dims = [1 35];
@@ -442,7 +480,7 @@ end
 % co1=a(:,regexpi2(ha,'co1'));
 % co2=a(:,regexpi2(ha,'co2'));
 % cc={co1 co2};
-% 
+%
 % cind={};
 % for i=1:length(cc)
 %     ds=str2num(char(cc{i}));
@@ -549,26 +587,26 @@ set(t,'fontsize',7);
 
 u.cind=cind; %coordinates integer
 set(gcf,'userdata',u);
- fprintf('..done\n');
- 
- 
- cmenu = uicontextmenu;
- item1= uimenu(cmenu, 'Label','[ ] short-list type','Callback', {@listMenu, 'changeList'},'tag','changeList');
- item1= uimenu(cmenu, 'Label','show list in extra window','Callback', {@listMenu, 'exportList'},'tag','exportList');
- 
- item1= uimenu(cmenu, 'Label',['<html><h1>INFO<pre><h2><font color="green"> **** SHORTCUTS ***'...
-     ' <br> [-/+]  ... change font size  '...
-     ' <br> [c]    ... change font color  '...
-     ' <br> [shift]+[arrowKey]    ... shift axes position'...
-     ],'separator','on');
- set(t,'UIContextMenu',cmenu);
- 
- %----shift axes
- hf=findobj(0,'tag','xvol3d');
- ax0=findobj(hf,'tag','ax0');
- pos=get(ax0,'position');
- set(ax0,'position',[.02 pos(2:end)]);
- figure(findobj(0,'tag','plotconnections'));
+fprintf('..done\n');
+
+
+cmenu = uicontextmenu;
+item1= uimenu(cmenu, 'Label','[ ] short-list type','Callback',       {@listMenu, 'changeList'},'tag','changeList');
+item1= uimenu(cmenu, 'Label','show list in extra window','Callback', {@listMenu, 'exportList'},'tag','exportList');
+
+item1= uimenu(cmenu, 'Label',['<html><h1>INFO<pre><h2><font color="green"> **** SHORTCUTS ***'...
+    ' <br> [-/+]  ... change font size  '...
+    ' <br> [c]    ... change font color  '...
+    ' <br> [shift]+[arrowKey]    ... shift axes position'...
+    ],'separator','on');
+set(t,'UIContextMenu',cmenu);
+
+%----shift axes
+hf=findobj(0,'tag','xvol3d');
+ax0=findobj(hf,'tag','ax0');
+pos=get(ax0,'position');
+set(ax0,'position',[.02 pos(2:end)]);
+figure(findobj(0,'tag','plotconnections'));
 
 % ==============================================
 %%
@@ -577,6 +615,7 @@ function makefigure();
 
 fg;
 hk=gcf;
+% u2=get(hk,'userdata');
 set(hk,'units','normalized','menubar','none');
 set(hk,'position',[0.2986    0.4000    0.5611    0.4667]);
 set(hk,'tag','plotconnections','NumberTitle','off','name',['regions' ' [' mfilename '.m]' ] );
@@ -588,12 +627,25 @@ set(hk,'tag','plotconnections','NumberTitle','off','name',['regions' ' [' mfilen
 % -------------LABEL&co----------------------------------------------------------------------------------
 %node label
 hb=uicontrol('style','radio','units','norm','string','label','value',1);
-set(hb,'position',[0.26611 0.93684 0.06 0.032],'tag','nodelabel','callback',{@select,'nodelabel'},'backgroundcolor','w');
+set(hb,'position',[0.26364 0.96303 0.06 0.032],'tag','nodelabel','callback',{@select,'nodelabel'},'backgroundcolor','w');
 set(hb,'tooltipstring','show node label','fontsize',8,'fontweight','bold');
 % label props
 hb=uicontrol('style','pushbutton','units','norm','string','label prop');
-set(hb,'position',[.265 .9 .09 .032],'tag','labelprop','callback',@labelprop,'backgroundcolor','w');
-set(hb,'tooltipstring','set label properties','fontsize',8,'fontweight','bold');
+set(hb,'position',[0.31314 0.96541 0.09 0.032],'tag','labelprop','callback',@labelprop,'backgroundcolor','w');
+set(hb,'tooltipstring','set label properties','fontsize',7,'fontweight','normal');
+set(hb,'position',[0.32057 0.96541 0.05 0.032],'string','props');
+% ----StingView--StingView label
+hb=uicontrol('style','checkbox','units','norm','string','sting','value',0);
+set(hb,'tag','stingview','callback',@cb_stingview,'backgroundcolor','w');
+set(hb,'tooltipstring','show node label as sting','fontsize',6,'fontweight','normal');
+set(hb,'position',[0.26611 0.91065 0.06 0.032]);
+
+hb=uicontrol('style','pushbutton','units','norm','string','prop');
+set(hb,'position',[0.31314 0.96541 0.09 0.032],'tag','stingprop','callback',@stingprop,'backgroundcolor','w');
+set(hb,'tooltipstring','set sting properties','fontsize',7,'fontweight','normal');
+set(hb,'position',[0.31683 0.91071 0.05 0.032],'string','props');
+
+
 
 % frame
 hb=uicontrol('style','frame','units','norm','string','label prop');
@@ -615,7 +667,7 @@ uistack(hb,'bottom');
 % hb=uicontrol('style','pushbutton','units','norm','string','node TRA');
 % set(hb,'position',[.22 .9 .06 .032],'tag','nodetra','callback',{@select,'nodetra'},'backgroundcolor','w');
 % set(hb,'tooltipstring','set node transparency','fontsize',8,'fontweight','bold');
- 
+
 % ----------------------------------------------------------------------
 %select nodes color
 hb=uicontrol('style','pushbutton','units','norm','string','node COL');
@@ -653,8 +705,8 @@ set(hb,'position',[0.59285 0.96303 0.07 0.03],'tag','selectAll','callback',@sele
     'fontsize',7,'fontweight','normal','backgroundcolor','w');
 set(hb,'tooltipstring',['select/deselect all nodes and links ' char(10)...
     '    [0]deselect all nodes andlinks ' char(10)...
-    '    [1]  select all nodes and links ' char(10)...  
-]);
+    '    [1]  select all nodes and links ' char(10)...
+    ]);
 %% select all nodes
 hb=uicontrol('style','radio','units','norm','string','all nodes','value',1);
 set(hb,'position',[0.59285 0.9297 0.1 0.032],'tag','allnodes','callback',{@select,'allnodes'},'backgroundcolor','w');
@@ -674,13 +726,13 @@ hb=uicontrol('style','radio','units','norm','string','select Row','value',0);
 set(hb,'position',[[0.67454 0.93684 0.1 0.032]],'tag','selectRow','backgroundcolor','w');
 set(hb,'tooltipstring',['select/unselect entire row' char(10) ...
     ' 0) : The SINGLE node OR link is selected/selected' char(10)...
-   '  1) : The entire ROW is selected: two nodes and the link'],...
+    '  1) : The entire ROW is selected: two nodes and the link'],...
     'fontsize',6,'fontweight','normal');
 %% specific TASK-BTN
 hb=uicontrol('style','pushbutton','units','norm','string','specific Task','value',1,'backgroundcolor','w');
 set(hb,'position',[[0.67578 0.90827 0.07 0.03]],'tag','selectSpecific','callback',{@selectSpecific},'fontsize',6);
 set(hb,'tooltipstring',...
-   [ '<html><b>SPECIFIC TASKS</b>  <br>'...
+    [ '<html><b>SPECIFIC TASKS</b>  <br>'...
     '   * specific selection of nodes/links  <br>'...
     '   * sorting after CS-score/label  <br>' ...
     '   * copy region-IDs to clipboard ...can be used for displaying the atlas-regions  <br>' ...
@@ -698,7 +750,7 @@ hb=uicontrol('style','radio','units','norm','string','CS2COL','value',0);
 set(hb,'position',[.81 .93684 .09 .032],'tag','linkintensity','callback',{@select,'linkintensity'},...
     'backgroundcolor','w','fontsize',7);
 set(hb,'tooltipstring',['<html><b>colorize connections</b><br>' ...,'fontsize',7);
-     '  if [x]: CS-parameter specifies the color of connections']);
+    '  if [x]: CS-parameter specifies the color of connections']);
 % ==============================================
 %%   colormap
 % ===============================================
@@ -788,6 +840,10 @@ u.dummi=1;
 set(hk,'userdata',u);
 labeldefaults();
 
+% ---post assign uicontrols
+hk=gcf;
+u2=get(hk,'userdata');
+set(findobj(hk,'tag','stingview'),'value',u2.sting.stingview);
 
 % ==============================================
 %%   OS-dependency
@@ -803,6 +859,20 @@ end
 % ==============================================
 %%   SUBS
 % ===============================================
+
+
+
+function cb_stingview(e,e2)
+hk=findobj(0,'tag','plotconnections'); %gui-2
+u2=get(hk,'userdata');
+u2.sting.stingview=get(findobj(hk,'tag','stingview'),'value');
+set(hk,'userdata',u2);
+sub_sting;
+
+
+
+
+
 function selectSpecific(e,e2)
 ht=findobj(0,'tag','plotconnections');
 hp=uipanel('parent',ht,'units','norm','backgroundcolor','w','fontweight','bold');
@@ -815,7 +885,7 @@ list={...
     '<html>select <b>LINKS</b> with <b>postive</b>  CS-values only [posVal]'
     '<html>select <b>LINKS</b> with <b>negative</b> CS-values only [negVal]'
     '<html><font color=green> select <b>ROWS</b> with <b>postive</b>  CS-values only [posValrow]'
-    '<html><font color=green> select <b>ROWS</b> with <b>negative</b> CS-values only [negValrow]'    
+    '<html><font color=green> select <b>ROWS</b> with <b>negative</b> CS-values only [negValrow]'
     ...
     '<html><font color=gray><b>_____SORTING__________________________ '
     'sort CS-values [sortCS]'
@@ -847,7 +917,7 @@ if isfield(u,'t')
     i_cs = find(strcmp(u.t.ColumnName,'cs'));
     csdata=str2num(char(u.t.Data(:,i_cs)));
 end
- 
+
 if strcmp(task,'OK')==1
     str    =   hl.String{hl.Value};
     if     ~isempty(strfind(str,'[posVal]'  ))        %LINK ONLY
@@ -954,8 +1024,8 @@ if strcmp(task,'OK')==1
             lab=lab(regexpi2(lab,'^R |^R_'));
         end
         if ~isfield(u2,'lu')
-           msgbox('No atlas loaded. Use [load atlas]-Button and select an atlas-file.','atlas-ID to clipboard') ;
-           return
+            msgbox('No atlas loaded. Use [load atlas]-Button and select an atlas-file.','atlas-ID to clipboard') ;
+            return
         end
         lablist=u2.lu(:,1);
         lablist=regexprep(lablist,{'_' },{' '}  );
@@ -967,7 +1037,7 @@ if strcmp(task,'OK')==1
         disp(['IDs (n=' num2str(length(ID)) ') copied to clipboard...hit [by IDs]-Btn and past IDs']);
         
         
-         
+        
     end
     
 end
@@ -981,17 +1051,17 @@ delete(hframe);
 
 function specific_selection(e,e2)
 % ==============================================
-%%   
+%%
 % ===============================================
 baustell=...
-{...
-   '[cs-pos]   "cs"-column: select positive values only '
-   '[cs-neg]   "cs"-column: select negative values only '
-   '[invert]   "cs"-column: invert selection' 
+    {...
+    '[cs-pos]   "cs"-column: select positive values only '
+    '[cs-neg]   "cs"-column: select negative values only '
+    '[invert]   "cs"-column: invert selection'
     }
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -1004,7 +1074,7 @@ if isfield(u,'ColumnWidth_bk')==0
     set(ht,'userdata',u)
 end
 % ==============================================
-%%   
+%%
 % ===============================================
 
 colnames=u.t.ColumnName;
@@ -1015,12 +1085,12 @@ tb=[num2cell(logical(cell2mat(u.t.ColumnWidth')~=0)) colnames]; %show is "1"
 tbh={'show' 'Column-Name'};
 out=uitable_checklist(tb,tbh,'title','show/hide Columns',...
     'tooltip',['<html><b>   show/hide table-columns:  </b><br>' ...
-    '   [_] hide column <br> '... 
+    '   [_] hide column <br> '...
     '   [x] show column <br>' ...' char(10) ...
     '<b><font color=red>red: mandatory columns</html>']);
 if isempty(out); return; end
 % ==============================================
-%%   
+%%
 % ===============================================
 c=cell2mat(out(:,1));
 ihide=find(c==0);
@@ -1029,10 +1099,10 @@ c0=cell2mat(tb(:,1));
 u.t.ColumnWidth(ihide)={0};
 ishow=find(c0==0 & c==1);
 if ~isempty(ishow)
-%     keyboard
-%     w1=cell2mat(u.t.ColumnWidth(:));
+    %     keyboard
+    %     w1=cell2mat(u.t.ColumnWidth(:));
     w0=cell2mat(u.ColumnWidth_bk(:));
-%     [c c0 w0 w1]
+    %     [c c0 w0 w1]
     u.t.ColumnWidth(ishow)=num2cell(w0(ishow));
 end
 
@@ -1058,10 +1128,10 @@ for j=1:length(maps)
     end
     
     v1=cellfun(@(a){[ '<span style="font-size: 30%;color:' '#' a ';font-weight:bold">&#9632;</span>']} ,maphex);
-%     ts=['<span style="font-size: 100%;color:black;font-weight:bold">' cmapname '</span>'];
+    %     ts=['<span style="font-size: 100%;color:black;font-weight:bold">' cmapname '</span>'];
     v1=cellfun(@(a){['<FONT color=#' a ' >&#9632;' ]} ,maphex);
-     ts=[ '<FONT color=black>'  repmat('&nbsp;', [1 1]) cmapname];
-   % ts=[ '<FONT color=black>'  repmat('&nbsp;', [1 Nspaces-length(cmapname)]) cmapname];
+    ts=[ '<FONT color=black>'  repmat('&nbsp;', [1 1]) cmapname];
+    % ts=[ '<FONT color=black>'  repmat('&nbsp;', [1 Nspaces-length(cmapname)]) cmapname];
     v2=['<html> '   strjoin(v1,'') ts];
     list{j,1}=v2;
 end
@@ -1079,25 +1149,24 @@ end
 
 
 
-function labeldefaults()
-hf=findobj(0,'tag','plotconnections');
-u=get(hf,'userdata');
-
-if isfield(u,'lab')==0; u.lab.dummi=1; end
-if isfield(u.lab,'fs')           ==0;  u.lab.fs=7        ; end
-if isfield(u.lab,'fcol')         ==0;  u.lab.fcol=[0 0 0]  ; end
-if isfield(u.lab,'fhorzal')      ==0;  u.lab.fhorzal=2  ; end
-
-if isfield(u.lab,'needlevisible')==0;  u.lab.needlevisible=0; end
-if isfield(u.lab,'needlelength')==0;   u.lab.needlelength=10; end
-if isfield(u.lab,'needlecol')   ==0;   u.lab.needlecol=[0 0 0]  ; end
-if isfield(u.lab,'abbreviate')          ==0;   u.lab.abbreviate=0             ; end
-if isfield(u.lab,'abbreviationLength')  ==0;   u.lab.abbreviationLength=3     ; end
-
-if isfield(u.lab,'useNumbers')  ==0;            u.lab.useNumbers=1     ; end
 
 
-set(hf,'userdata',u);
+
+function stingprop(e,e2)
+sub_stingprop();
+
+
+% % frame
+% hb=uicontrol('style','frame','units','norm','string','sting prop');
+% set(hb,'position',[[0.263 0.90071 0.11 0.1]],'backgroundcolor','w');
+% % uistack(hb,'bottom');
+% set(hb,'position',[[0.263 0.2 0.3 0.6]]);
+
+
+
+
+
+
 
 function labelprop(e,e2)
 hf=findobj(0,'tag','plotconnections');
@@ -1182,6 +1251,18 @@ elseif strcmp(par,'linktra')
     answer = inputdlg({'Enter link transparency'});
     val= (char(answer));
     dx(:,[20])={ (val)};
+elseif strcmp(par,'nodelabel')
+    val=get(findobj(hf,'tag','nodelabel'),'value');
+    if val==0
+        set( findobj(hf,'tag','stingview'),'visible','off');
+        set( findobj(hf,'tag','stingprop'),'visible','off');
+        
+        
+    else
+        set( findobj(hf,'tag','stingview'),'visible','on');
+        set( findobj(hf,'tag','stingprop'),'visible','on');
+    end
+    
 end
 
 set(u.t,'data',dx);
@@ -1228,7 +1309,7 @@ colorlimits=str2num(get(hc,'string'));
 if length(colorlimits)~=2
     colorlimits=[];
 else
- colorlimits=sort(colorlimits);   
+    colorlimits=sort(colorlimits);
 end
 hc=findobj(ht,'tag','linkcolormap');
 va=get(hc,'value');  li=get(hc,'string');
@@ -1238,7 +1319,7 @@ cmap=regexprep(cmapStr,{'.*&nbsp;' '\s*'},'');
 cmap=sub_intensimg('getcolor',cmap);
 if get(findobj(ht,'tag','linkintensity'),'value')==1 % LINK inteinsity
     intens=str2num(char(d(:,regexpi2(cname,'cs'))));
- 
+    
     
     intens2=intens;
     if ~isempty(colorlimits)
@@ -1251,7 +1332,7 @@ if get(findobj(ht,'tag','linkintensity'),'value')==1 % LINK inteinsity
     minval=min(intens2(find(cell2mat(d(:,icolCheck))==1)));
     if isempty(minval); minval=0;end
     intens2(find(cell2mat(d(:,icolCheck))==0))=minval;
-   
+    
     
     
     intens4colorbar=intens2;
@@ -1300,52 +1381,20 @@ labelhorzal={'left','center','right'};
 useLabelNumbers=u.lab.useNumbers;
 
 if useLabelNumbers==1
-   labelcount=1; 
-   labellist={};
+    labelcount=1;
+    labellist={};
 end
 
 % ==============================================
 %%   list
 % ===============================================
 
-labelall  =unique([d(:,2); d(:,4)]);
+labelall =unique([d(:,2); d(:,4)]);
+selected =[d(:,1:2); d(:,3:4)];
 
 
-selected=[d(:,1:2); d(:,3:4)];
-
-if 0
-    labellist0=labelall;
-    if u.lab.abbreviate==1
-        for i=1:size(labellist0,1);
-            v=labelall{i};
-            v=cellfun(@(a){[ a repmat(' ',[1 30])]} ,strsplit(regexprep(v,{'_'},{' '}),' '));
-            v= regexprep(cellfun(@(a){[ a(1:u.lab.abbreviationLength) ]} ,v),' ','');
-            v=strjoin(v,' ');
-            labellist0{i,1}=v;
-        end
-    end
-    labelall=labellist0;
-    
-    labellist3=cellfun(@(a,b){[ sprintf('%2d',a) ') ' b ]} ,...
-        num2cell([1:length(labelall)]'),labellist0);
-    
-    
-    
-    selected=[d(:,1:2); d(:,3:4)];
-    selected=selected(find(cell2mat(selected(:,1))),:);
-    iselect=find(ismember(labelall,selected(:,2)));
-    noselect=setdiff(1:length(labelall), iselect);
-    %find selection
-    
-    % labellist3(noselect)=cellfun(@(a){['  '  a ]} ,labellist3(noselect));
-    % labellist3(iselect )=cellfun(@(a){['* '  a ]} ,labellist3(iselect));
-    
-    labellist4=labellist3;
-    labellist4(iselect )=cellfun(@(a){['<html><b>'  a ]} ,labellist4(iselect)); %long
-    labellist3=labellist3(iselect );%short
-end
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -1380,6 +1429,7 @@ for i=indices;%1:size(d,1)
         hs=scatter3sph2(c1(:,1),c1(:,2),c1(:,3),'size',rad,'color',col,'trans',trans);
         set(hs,'FaceLighting','gouraud','tag','node');
         set(hs,'userdata',['node' num2str(i) 'a']);
+        setappdata(hs,'label', d{i,2});
         if plotlabel==1% LABEL
             df=c1-ce;
             dfn=df./(sqrt(sum(df.^2)));
@@ -1395,12 +1445,12 @@ for i=indices;%1:size(d,1)
             end
             thisLabel=v;
             %-----use LABELNUMBERS------------------------------
-%             if useLabelNumbers==1
-%                 labellist(labelcount,:)={labelcount  v};
-%                 v =num2str(labelcount);
-%                 labelcount=labelcount+1;
-%                 %disp(labellist);
-%             end
+            %             if useLabelNumbers==1
+            %                 labellist(labelcount,:)={labelcount  v};
+            %                 v =num2str(labelcount);
+            %                 labelcount=labelcount+1;
+            %                 %disp(labellist);
+            %             end
             if isempty(find(strcmp(labeluniqueList,thisLabel)))
                 %disp(thisLabel);
                 te=text(cn(:,1),cn(:,2),cn(:,3), v,'fontsize',u.lab.fs,'Color',u.lab.fcol);
@@ -1413,7 +1463,7 @@ for i=indices;%1:size(d,1)
             %--------nEEDLE
             if u.lab.needlevisible==1
                 hp=plot3([c1(1) ct(1)],[c1(2) ct(2)],[c1(3) ct(3)],'k','color',u.lab.needlecol);
-                set(hp,'userdata',['needletxt' num2str(i) 'a']);
+                set(hp,'userdata',['needletxt' num2str(i) 'a'],'tag','needle1');
             end
         end
     end
@@ -1427,14 +1477,17 @@ for i=indices;%1:size(d,1)
         hs=scatter3sph2(c2(:,1),c2(:,2),c2(:,3),'size',rad,'color',col,'trans',trans);
         set(hs,'FaceLighting','gouraud','tag','node');
         set(hs,'userdata',['node' num2str(i) 'b']);
+        setappdata(hs,'label', d{i,4});
+        %setappdata(hs,'ra', 'mi');
+        
         if plotlabel==1% LABEL
             df=c2-ce;
             dfn=df./(sqrt(sum(df.^2)));
             ct=c2+dfn*(u.lab.needlelength)    ;%
             cn=c2+dfn*(u.lab.needlelength+2)  ;%
             %-------abbreviat label-------------
-             v=d{i,regexpi2(cname,'label2')};
-             %ID=find(strcmp(labelall,v));
+            v=d{i,regexpi2(cname,'label2')};
+            %ID=find(strcmp(labelall,v));
             if u.lab.abbreviate==1
                 v=cellfun(@(a){[ a repmat(' ',[1 30])]} ,strsplit(regexprep(v,{'_'},{' '}),' '));
                 v= regexprep(cellfun(@(a){[ a(1:u.lab.abbreviationLength) ]} ,v),' ','');
@@ -1442,12 +1495,12 @@ for i=indices;%1:size(d,1)
             end
             thisLabel=v;
             %-----use LABELNUMBERS------------------------------
-%             if useLabelNumbers==1
-%                 labellist(labelcount,:)={labelcount  v};
-%                 v =num2str(labelcount);
-%                 labelcount=labelcount+1;
-%                 %disp(labellist);
-%             end
+            %             if useLabelNumbers==1
+            %                 labellist(labelcount,:)={labelcount  v};
+            %                 v =num2str(labelcount);
+            %                 labelcount=labelcount+1;
+            %                 %disp(labellist);
+            %             end
             %-----------------------------------
             if isempty(find(strcmp(labeluniqueList,thisLabel)))
                 %disp(thisLabel);
@@ -1461,7 +1514,7 @@ for i=indices;%1:size(d,1)
             %-------------NEEDLE
             if u.lab.needlevisible==1
                 hp=plot3([c2(1) ct(1)],[c2(2) ct(2)],[c2(3) ct(3)],'k','color',u.lab.needlecol);
-                set(hp,'userdata',['needletxt' num2str(i) 'b']); 
+                set(hp,'userdata',['needletxt' num2str(i) 'b'],'tag','needle1');
             end
         end
     end
@@ -1474,11 +1527,11 @@ for i=indices;%1:size(d,1)
         end
         rad   =str2num(d{i,regexpi2(cname,'LR'  )});
         trans =str2num(d{i,regexpi2(cname,'LT'  )});
-       
+        
         if get(findobj(ht,'tag','CS2RAD'),'value')==1 % CONECTION-THICKNESS
-             %disp('------------------');
-             %disp(conThickness);
-             [X, Y, Z] = cylinder2P( conThickness(i) , 50,c1,c2);
+            %disp('------------------');
+            %disp(conThickness);
+            [X, Y, Z] = cylinder2P( conThickness(i) , 50,c1,c2);
         else
             [X, Y, Z] = cylinder2P(           rad , 50,c1,c2);
         end
@@ -1486,6 +1539,7 @@ for i=indices;%1:size(d,1)
         hl=surf(X, Y, Z);
         set(hl,'FaceColor',col,'edgecolor','none','FaceAlpha',trans,'tag','link');
         set(hl,'userdata',['link' num2str(i) ]);
+        setappdata(hl,'info', d(i,:));
     end
     
 end
@@ -1500,7 +1554,14 @@ end
 % ==============================================
 %%   % reassign labels
 % ===============================================
-labelall  =unique([d(:,2); d(:,4)]);
+labelall  =unique([d(:,2); d(:,4)]);  % check old-sorting
+
+if 1
+    labtransp=[d(:,2) d(:,4)]';
+    labelall =labtransp(:);
+    labelall=unique(labelall,'stable');
+end
+
 labellist0=labelall;
 if u.lab.abbreviate==1
     for i=1:size(labellist0,1);
@@ -1513,10 +1574,11 @@ if u.lab.abbreviate==1
 end
 labelall=labellist0;
 
- 
+
 for i=1:length(labellisthandle)
     if useLabelNumbers==1
-        ID=find(strcmp(labelall,labeluniqueList{i}));
+        %ID=find(strcmp(labelall,labeluniqueList{i}));   %##check
+        ID=find(strcmp(labeluniqueList, labelall{i}));
         set(labellisthandle(i),'string', num2str(ID)  );
         %labellist3{ID,1}= ['*' labellist3{ID,1}];
     else
@@ -1531,7 +1593,7 @@ labelall2  =unique([d(:,2); d(:,4)]);
 origlist=[d(:,1:2); d(:,3:4)];
 selectstatus=zeros(size(labelall2));
 for i=1:size(labelall2,1)
-   selectstatus(i)= max(cell2mat(origlist(find(strcmp(origlist(:,2),labelall2{i})),1)));
+    selectstatus(i)= max(cell2mat(origlist(find(strcmp(origlist(:,2),labelall2{i})),1)));
 end
 iselect=find(selectstatus);
 
@@ -1572,6 +1634,9 @@ if useLabelNumbers==1 && ~isempty(listlong) && plotlabel==1
         item1= uimenu(cmenu, 'Label','[ ] short-list type','Callback', {@listMenu, 'changeList'},'tag','changeList');
         item1= uimenu(cmenu, 'Label','show list in extra window','Callback', {@listMenu, 'exportList'},'tag','exportList');
         
+        item1= uimenu(cmenu, 'Label','[ ] check locations (more detailed)','Callback', {@listMenu, 'checklocations'},'tag','checklocations');
+        
+        
         item1= uimenu(cmenu, 'Label',['<html><h1>INFO<pre><h2><font color="green"> **** SHORTCUTS ***'...
             ' <br> [-/+]  ... change font size  '...
             ' <br> [c]    ... change font color  '...
@@ -1581,75 +1646,75 @@ if useLabelNumbers==1 && ~isempty(listlong) && plotlabel==1
         % ==============================================
         %%
         % ===============================================
-
+        
         set(hb,'callback',@listcallback);
     end
-  
+    
     u.listlong =listlong;
     u.listshort=listshort;
     set(hb,'userdata',u,'backgroundcolor',[get(hf,'color')]);%,'string',labellist4);
     curList=get(findobj(gcf,'tag','changeList'),'Label');
     if strcmp(curList(2),' ')
-       set(hb,'value',1,'string',u.listlong); 
+        set(hb,'value',1,'string',u.listlong);
     else
-       set(hb,'value',1,'string',u.listshort ); 
+        set(hb,'value',1,'string',u.listshort );
     end
     
     if recreate==1;
         figure(hf);
-    % RESIZE LIST
-     hv=uicontrol('parent',hf, 'style','push','units','norm','string','<>');
-     set(hv,'position',poslb,'fontsize',6,'tag','listresize',...
-         'TooltipString','resize list');
-     set(hv,'units','pixels');
-     posx=get(hv,'position');
-     set(hv,'position',[posx(1) posx(2)-12 12 12]);
-     set(hv,'units','norm');
-     hmove = findjobj(hv);
-     
-     %MOVE LIST
-     hv=uicontrol('parent',hf,'style','push','units','norm','string','<html>&#9769;');
-     set(hv,'position',poslb,'fontsize',6,'tag','listmove',...
-         'TooltipString','move list');
-     set(hv,'units','pixels');
-     pos=get(hv,'position');
-     %set(hv,'position',[pos(1:2) 12 12]);
-     posx=get(hv,'position');
-     set(hv,'position',[posx(1)+12 posx(2)-12 12 12]);
-     set(hv,'units','norm');
-     hdrag = findjobj(hv);
-     
-     
-     
-     %CLOSE LIST
-    hv=uicontrol('parent',hf,'style','push','units','norm','string','x');
-     set(hv,'position',[poslb(1) poslb(2)+poslb(4) poslb(3:4)],'fontsize',6,'tag','listclose',...
-         'TooltipString','close list');
-     set(hv,'units','pixels');
-     %posx=get(hv,'position');
-     %set(hv,'position',[posx(1) posx(2) 12 12]);
-     set(hv,'position',[posx(1)+12*4 posx(2)-12 12 12]);
-     set(hv,'units','norm','callback',@listClose);
-     
-%      hv=uicontrol('style','push','units','norm','string','F+');
-%      set(hv,'position',[.75 .1 .05 .05],'fontsize',6,'tag','listFontsizeIncrease',...
-%          'TooltipString','decrease list fonssize');
-%      set(hv,'units','pixels');
-%      posx=get(hv,'position');
-%      set(hv,'position',[posx(1)+36 posx(2)-12 12 12]);
-%      set(hv,'units','norm');
-     
-     
-     downTags={'listresize' 'listmove' 'listclose' };%'listFontsizeIncrease'
-     %upTags={'listmove'};
-     %upTags={'listclose'};
-     upTags={};
-     set(hmove,'MouseDraggedCallback',{@resize_object,'listresize',{'labellistbox'},downTags,upTags }   );
-     
-     set(hdrag,'MouseDraggedCallback',{@drag_object,'listmove',{'labellistbox','listresize',...
-          'listclose' } }); %'listFontsizeIncrease'
+        % RESIZE LIST
+        hv=uicontrol('parent',hf, 'style','push','units','norm','string','<>');
+        set(hv,'position',poslb,'fontsize',6,'tag','listresize',...
+            'TooltipString','resize list');
+        set(hv,'units','pixels');
+        posx=get(hv,'position');
+        set(hv,'position',[posx(1) posx(2)-12 12 12]);
+        set(hv,'units','norm');
+        hmove = findjobj(hv);
+        
+        %MOVE LIST
+        hv=uicontrol('parent',hf,'style','push','units','norm','string','<html>&#9769;');
+        set(hv,'position',poslb,'fontsize',6,'tag','listmove',...
+            'TooltipString','move list');
+        set(hv,'units','pixels');
+        pos=get(hv,'position');
+        %set(hv,'position',[pos(1:2) 12 12]);
+        posx=get(hv,'position');
+        set(hv,'position',[posx(1)+12 posx(2)-12 12 12]);
+        set(hv,'units','norm');
+        hdrag = findjobj(hv);
+        
+        
+        
+        %CLOSE LIST
+        hv=uicontrol('parent',hf,'style','push','units','norm','string','x');
+        set(hv,'position',[poslb(1) poslb(2)+poslb(4) poslb(3:4)],'fontsize',6,'tag','listclose',...
+            'TooltipString','close list');
+        set(hv,'units','pixels');
+        %posx=get(hv,'position');
+        %set(hv,'position',[posx(1) posx(2) 12 12]);
+        set(hv,'position',[posx(1)+12*4 posx(2)-12 12 12]);
+        set(hv,'units','norm','callback',@listClose);
+        
+        %      hv=uicontrol('style','push','units','norm','string','F+');
+        %      set(hv,'position',[.75 .1 .05 .05],'fontsize',6,'tag','listFontsizeIncrease',...
+        %          'TooltipString','decrease list fonssize');
+        %      set(hv,'units','pixels');
+        %      posx=get(hv,'position');
+        %      set(hv,'position',[posx(1)+36 posx(2)-12 12 12]);
+        %      set(hv,'units','norm');
+        
+        
+        downTags={'listresize' 'listmove' 'listclose' };%'listFontsizeIncrease'
+        %upTags={'listmove'};
+        %upTags={'listclose'};
+        upTags={};
+        set(hmove,'MouseDraggedCallback',{@resize_object,'listresize',{'labellistbox'},downTags,upTags }   );
+        
+        set(hdrag,'MouseDraggedCallback',{@drag_object,'listmove',{'labellistbox','listresize',...
+            'listclose' } }); %'listFontsizeIncrease'
     end
-
+    
 end
 % ----------------------------------------
 
@@ -1657,7 +1722,7 @@ end
 hcbar=findobj(hf,'tag','cbarintens');
 cbarpos=[];
 if isempty(hcbar)==0
-  cbarpos=get(hcbar,'position') ; 
+    cbarpos=get(hcbar,'position') ;
 end
 delete(hcbar);
 delete(findobj(hf,'tag','axintens'));
@@ -1673,20 +1738,20 @@ if get(findobj(ht,'tag','linkintensity'),'value')==1 % LINK inteinsity
         set(hc,'ticks',colorlimits,'TickLabels',cellstr(num2str(colorlimits')))
     end
     
-   % hg=uicontrol('style','pushbutton','units','norm','backgroundcolor','r');
-%     set(hg,'position',[.9-.01 .85-.01 .01+.02 .1+.02],'tag','cbarmoveBtn');
+    % hg=uicontrol('style','pushbutton','units','norm','backgroundcolor','r');
+    %     set(hg,'position',[.9-.01 .85-.01 .01+.02 .1+.02],'tag','cbarmoveBtn');
     
     set(hc,'position',[.9 .85 .01 .1],'YAxisLocation','right','fontsize',7,'tag','cbarintens');
     if ~isempty(cbarpos)
-       set(hc,'position',[cbarpos]) ;
+        set(hc,'position',[cbarpos]) ;
     end
     set(ha,'position',[1 1 .0001 .0001],'tag','axintens');
     %set(ha,'position',[.9 .85 .01 .1],'tag','axintens');
     
-% ----------callback
-     hcbar=findobj(hf,'tag','cbarintens');
-     set(hcbar,'ButtonDownFcn',@cbarintens_cb);
-
+    % ----------callback
+    hcbar=findobj(hf,'tag','cbarintens');
+    set(hcbar,'ButtonDownFcn',@cbarintens_cb);
+    
     
     axes(findobj(hf,'tag','ax0'));
     
@@ -1694,11 +1759,15 @@ if get(findobj(ht,'tag','linkintensity'),'value')==1 % LINK inteinsity
 end
 
 
+
+sub_sting();
+
+
 function cbarintens_cb(e,e2)
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
 hf=findobj(0,'tag','xvol3d');
 % get(hf,'SelectionType')
@@ -1743,14 +1812,16 @@ end
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
 function listcallback(e,e2)
 
-li=get(e,'string');
-va=get(e,'value');
+hf=findobj(0,'tag','xvol3d');
+hl=findobj(hf,'tag','labellistbox');
+li=get(hl,'string');
+va=get(hl,'value');
 s=li{va};
 idstr=num2str(str2num(regexprep(strtok(s,')'),'\D','')));
 
@@ -1758,24 +1829,29 @@ hf=findobj(0,'tag','xvol3d');
 hc=findobj(hf,'tag','connectionlabel');
 hc=hc(find(strcmp(get(hc,'string'),idstr)));
 % ==============================================
-%%   
+%%
 % ===============================================
-
+statevisible=get(hc,'visible');
+set(hc,'visible','on');
 set(hc,'backgroundcolor',[1 1 0]);
-pause(.1)
+pause(.1);
 set(hc,'backgroundcolor','none');
+set(hc,'visible',statevisible);
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
 function listMenu(e,e2,task)
+
+hb=findobj(gcf,'tag','labellistbox');
+u=get(hb,'userdata');
+hf=findobj(0,'tag','xvol3d');
+
 if strcmp(task,'changeList')
     hc=findobj(gcf,'tag','changeList');
-    hb=findobj(gcf,'tag','labellistbox');
-    u=get(hb,'userdata');
     hc=hc(1);
-    if strcmp(hc.Label(2),' ')
+    if strcmp(hc.Label(2),' ') %search if 2nd-character is space
         hc.Label(2)='x';
         set(hb,'value',1,'string',u.listshort);
     else
@@ -1783,60 +1859,81 @@ if strcmp(task,'changeList')
         set(hb,'value',1,'string',u.listlong);
     end
 elseif strcmp(task,'exportList')
-     hb=findobj(gcf,'tag','labellistbox');
-     uhelp(regexprep(get(hb,'string'),'<html>','<html><pre>'),1,'name','labels');
+    hb=findobj(gcf,'tag','labellistbox');
+    uhelp(regexprep(get(hb,'string'),'<html>','<html><pre>'),1,'name','labels');
+elseif strcmp(task,'checklocations')
+    hc=findobj(gcf,'tag','checklocations');
+    hc=hc(1);
+    if strcmp(hc.Label(2),' ') %search if 2nd-character is space
+        hc.Label(2)='x';
+        
+        % hf=findobj(0,'tag','xvol3d');
+        hl=findobj(hf,'tag','labellistbox');
+        set(hl,'callback', @checkDotLocation2);
+        hgfeval(get(hl,'callback'),hl);
+        
+    else
+        hc.Label(2)=' ';
+        
+        % hf=findobj(0,'tag','xvol3d');
+        hl=findobj(hf,'tag','labellistbox');
+        set(hl,'callback', @listcallback);
+        hgfeval(get(hl,'callback'),hl);
+        
+    end
+    %
 end
 
 function key_labellist(e,e2)
 %  e2
- 
-if isempty(e2.Modifier)
-     if strcmp(e2.Character, '+')
-         set(e,'fontsize',  get(e,'fontsize')+1);
-     elseif strcmp(e2.Character, '-')
-         try; set(e,'fontsize',  get(e,'fontsize')-1); end
-     elseif strcmp(e2.Character, 'c')
-         col=uisetcolor(get(e,'foregroundcolor'),'select LIST font color');
-         try; set(e,'foregroundcolor',col); end
-     end
- elseif  strcmp(e2.Modifier, 'shift')
-     if strcmp(e2.Key, 'leftarrow')
-         ax=findobj(gcf,'tag','ax0');
-         pos=get(ax,'position');
-         set(ax,'position',[pos(1)-0.05 pos(2:4)]);
-     elseif strcmp(e2.Key, 'rightarrow')
-         ax=findobj(gcf,'tag','ax0');
-         pos=get(ax,'position');
-         set(ax,'position',[pos(1)+0.05 pos(2:4)]);
-         
-     elseif strcmp(e2.Key, 'uparrow')
-         ax=findobj(gcf,'tag','ax0');
-         pos=get(ax,'position');
-         set(ax,'position',[pos(1) pos(2)+0.05 pos(3:4)]);
-     elseif strcmp(e2.Key, 'downarrow')
-         ax=findobj(gcf,'tag','ax0');
-         pos=get(ax,'position');
-         set(ax,'position',[pos(1) pos(2)-0.05 pos(3:4)]);
-     end
-   elseif  strcmp(e2.Modifier, 'control') 
-       hf=findobj(0,'tag','xvol3d');
-       ht=findobj(0,'tag','plotconnections');
-       hc=findobj(hf,'tag','connectionlabel');
-       u=get(ht,'userdata');
-       if strcmp(e2.Character, '+')
-         
-           u.lab.fs=u.lab.fs+1;
-           set(hc,'fontsize',  u.lab.fs);
-           set(ht,'userdata',u);
-       elseif strcmp(e2.Character, '-')
-           u.lab.fs=u.lab.fs-1;
-           try
-               set(hc,'fontsize',  u.lab.fs);
-               set(ht,'userdata',u);
-           end
 
-      end
- end
+if isempty(e2.Modifier)
+    if strcmp(e2.Character, '+')
+        set(e,'fontsize',  get(e,'fontsize')+1);
+    elseif strcmp(e2.Character, '-')
+        try; set(e,'fontsize',  get(e,'fontsize')-1); end
+    elseif strcmp(e2.Character, 'c')
+        col=uisetcolor(get(e,'foregroundcolor'),'select LIST font color');
+        try; set(e,'foregroundcolor',col); end
+    end
+elseif  strcmp(e2.Modifier, 'shift')
+    if strcmp(e2.Key, 'leftarrow')
+        ax=findobj(gcf,'tag','ax0');
+        pos=get(ax,'position');
+        set(ax,'position',[pos(1)-0.05 pos(2:4)]);
+    elseif strcmp(e2.Key, 'rightarrow')
+        ax=findobj(gcf,'tag','ax0');
+        pos=get(ax,'position');
+        set(ax,'position',[pos(1)+0.05 pos(2:4)]);
+        
+    elseif strcmp(e2.Key, 'uparrow')
+        ax=findobj(gcf,'tag','ax0');
+        pos=get(ax,'position');
+        set(ax,'position',[pos(1) pos(2)+0.05 pos(3:4)]);
+    elseif strcmp(e2.Key, 'downarrow')
+        ax=findobj(gcf,'tag','ax0');
+        pos=get(ax,'position');
+        set(ax,'position',[pos(1) pos(2)-0.05 pos(3:4)]);
+    end
+elseif  strcmp(e2.Modifier, 'control')
+    hf=findobj(0,'tag','xvol3d');
+    ht=findobj(0,'tag','plotconnections');
+    hc=findobj(hf,'tag','connectionlabel');
+    u=get(ht,'userdata');
+    if strcmp(e2.Character, '+')
+        
+        u.lab.fs=u.lab.fs+1;
+        set(hc,'fontsize',  u.lab.fs);
+        set(ht,'userdata',u);
+    elseif strcmp(e2.Character, '-')
+        u.lab.fs=u.lab.fs-1;
+        try
+            set(hc,'fontsize',  u.lab.fs);
+            set(ht,'userdata',u);
+        end
+        
+    end
+end
 
 function listClose(e,e2)
 hf=findobj(0,'tag','xvol3d');
@@ -1939,21 +2036,21 @@ if exist('othertags')==1
     othertags=cellstr(othertags);
     for i=1:length(othertags)
         hv=findobj(gcf,'tag',othertags{i});
-%         try; hv=hv(1); end
+        %         try; hv=hv(1); end
         units_hv =get(hv ,'units');
         set(hv  ,'units','pixels');
         
         pos =get(hv,'position');
         pos2=[ pos(1)-df(1) pos(2)-df(2) pos(3:4)];
-      set(hv,'position',pos2);
+        set(hv,'position',pos2);
         set(hv ,'units'  ,units_hv);
-    end 
+    end
 end
 
 
 
 % set(hf,'WindowButtonMotionFcn',@motion)
-% 
+%
 % function motion(e,e2)
 % % 'ri'
 % hd=hittest();
@@ -1970,7 +2067,7 @@ function selectAll(e,e2)
 ht=findobj(0,'tag','plotconnections');
 is_selectAll=get(findobj(ht,'tag','selectAll'),'value');
 u=get(ht,'userdata');
-d    =u.t.Data; 
+d    =u.t.Data;
 head=u.t.ColumnName;
 icolCheck=find(strcmp(head,'x'));
 d(:,icolCheck)={logical(is_selectAll)};
@@ -2006,6 +2103,11 @@ for i=1:length(indices)
     delete(findobj(hf,'userdata',['nodetxt' num2str(i) 'b']));
     delete(findobj(hf,'userdata',['needletxt' num2str(i) 'b']));
 end
+
+%---del sting
+delete(findobj(hf,'tag','nodelabels2'));
+delete(findobj(hf,'tag','circlelabel'));
+delete(findobj(hf,'tag','needle2'));
 
 
 % function plotthis
@@ -2146,6 +2248,325 @@ xvol3d('arrows','off')
 xvol3d('light','off');
 xvol3d('light','on');
 
+
+
+
+
+
+
+% ==============================================
+%%
+% ===============================================
+function checkDotLocation2(e,e2)
+
+check_readfiles();
+check_flicker();
+
+
+function check_readfiles()
+
+% ==============================================
+%%   read files
+% ===============================================
+
+
+
+global atlas
+
+readfiles=1;
+if isstruct(atlas)
+    if isfield(atlas,'ha') && isfield(atlas,'hb')  && isfield(atlas,'at')
+        readfiles=0;
+    end
+end
+
+if readfiles==1;
+    [ fi pa]  =uigetfile(fullfile(pwd,'*.nii'),'STEP-1: select ATLAS/DTIatlas [NIFTI]-file');
+    atlas.fano=fullfile(pa,fi);
+    
+    [ fi pa]  =uigetfile(fullfile(pa,'*.nii'),'STEP-2: select Hemispheric mask "AVGThemi.nii" [NIFTI]-file');
+    atlas.fhemi=fullfile(pa,fi);
+    
+    fprintf('reading atlas');
+    [ha a mm ix]=rgetnii(atlas.fano);
+    [hb b]      =rgetnii(atlas.fhemi);
+    
+    [~,~,at0]   =xlsread(strrep(atlas.fano,'.nii','.xlsx'));
+    at0(strcmp(cellfun(@(a) {[num2str(a)]}, at0(:,1)),'NaN'),:)=[];
+    at  =at0(2:end,:);
+    hat =at0(1,:);
+    
+    
+    atlas.inf1='---ANO';
+    atlas.ha =ha;
+    atlas.a  = a;
+    atlas.mm =mm;
+    atlas.ix =ix;
+    atlas.inf2='---HEMI';
+    atlas.hb =hb;
+    atlas.b  = b;
+    atlas.inf3='---Atlas(xlsx)';
+    atlas.hat=hat;
+    atlas.at =at;
+    
+    %     atlas
+    
+    fprintf('done\n');
+    
+end
+
+
+function check_flicker()
+
+% ==============================================
+%%   NEW###
+% ===============================================
+
+
+% ==============================================
+%%
+% ===============================================
+
+
+% ==============================================
+%%   handles
+% ===============================================
+hf=findobj(0,'tag','xvol3d');
+hlab=findobj(hf,'tag','connectionlabel');
+
+% ==============================================
+%%   get spheres from Image ["no"-struct]
+% ===============================================
+
+hn=findobj(hf,'tag','node');
+labs={};
+co=[];
+for i=1:length(hn)
+    labs{i,1}=getappdata(hn(i),'label');
+    cx=[mean(hn(i).XData(:)) mean(hn(i).YData(:))  mean(hn(i).ZData(:))  ];
+    co(i,:)=round(cx);
+end
+no.hn  =hn;
+no.labs=labs;
+no.ce  =co;
+no.info='nodes sorted by findobj-->thus unsorted';
+% ==============================================
+%%   reading atlas
+% ===============================================
+% fprintf('reading atlas');
+% [ha a mm ix]=rgetnii('F:\data3\jeehye_DTI_ZfP\templates\DTI_harms31mar20.nii');
+% [hb b]      =rgetnii('F:\data3\jeehye_DTI_ZfP\templates\AVGThemi.nii');
+% [~,~,at0]   =xlsread('F:\data3\jeehye_DTI_ZfP\templates\DTI_harms31mar20.xlsx');
+% at0(strcmp(cellfun(@(a) {[num2str(a)]}, at0(:,1)),'NaN'),:)=[];
+% at=at0;
+% at(1,:)=[];
+global atlas
+% ----------------read out
+ha =atlas.ha;
+a  =atlas.a;
+mm =atlas.mm;
+ix =atlas.ix;
+
+hb =atlas.b;
+b =atlas.b;
+
+at=atlas.at;
+
+
+% ----------------
+m2=mm';
+ix2=ix';
+idvec=cell2mat(at(:,4));
+a2=a(:);
+b2=b(:);
+al=a2.*(b2==1);%left  ATL
+ar=a2.*(b2==2);%right ATL
+
+% fprintf('done\n');
+% ==============================================
+%%
+% ===============================================
+% hf=findobj(0,'tag','xvol3d');
+% hc=findobj(hf,'tag','labellistbox')
+% hgfeval(get(hc,'callback'),hc);
+lb=findobj(hf,'tag','labellistbox');
+
+
+% return
+
+% ==============================================
+%%  loop
+% ===============================================
+% count=1;
+% % nmax=10;
+% nmax=length(get(lb,'string'))+1
+% while count<nmax
+%
+% ===============================================
+
+%     figure(hf);
+
+count=  get(lb,'value');
+nmax=length(get(lb,'string'));
+
+% ==============================================
+%  [1] get listbox-regionLabel+show regionLabel in Image magnified
+% ===============================================
+%  visual manifestation
+li=get(lb,'string');
+va=get(lb,'value');
+s=li{va};
+idstr=num2str(str2num(regexprep(strtok(s,')'),'\D','')));
+hl=hlab(find(strcmp(get(hlab,'string'),idstr)));
+
+% name_in_list=regexprep('haus) mous)' ,'^.*).','')
+name_in_list=regexprep(s ,'^.*).','');
+
+% ==============================================
+%  [1] find label
+% ===============================================
+% -------PLOT---
+if 0
+    statevisible=get(hl,'visible');
+    fs=get(hl,'fontsize');
+    
+    set(hl,'visible','on');
+    set(hl,'backgroundcolor',[1 1 0]);
+    set(hl,'fontsize',20);
+    
+    
+    pause(.1);
+    set(hl,'backgroundcolor','none');
+    set(hl,'fontsize',fs);
+    
+    set(hl,'visible',statevisible);
+end
+
+% ==============================================
+%   [2] find associated sphere
+% ===============================================
+
+isph=find(strcmp(no.labs,name_in_list));
+isph=isph(1);%could be several because of idential nodes for different connections
+hsp=no.hn(isph);
+facecol=get(hsp,'facecolor');
+
+ce_sph=no.ce(isph,:);
+pl=plot3(ce_sph(1),ce_sph(2),ce_sph(3),'og','markerfacecolor','g','markersize',20,'tag','test_sph');
+drawnow;
+% dx=hsp.XData; dy=hsp.XData; dz=hsp.XData;
+% fac=2;
+% dx2=dx*fac;   dy2=dy*fac;  dz2=dz*fac;
+%
+% set(hsp,'XData',dx  ,'YData',dy   ,'ZData',dz)
+% -------PLOT---
+set(hsp,'facecolor','g');
+pause(.15);
+set(hsp,'facecolor',facecol);
+% delete(pl)
+delete(findobj(hf,'tag','test_sph'));
+
+% ==============================================
+%   [3]  find center Region in NIfti
+% ===============================================
+
+lab_xls = name_in_list;
+lab_xls =regexprep(lab_xls,{' '},{'_'});
+idx_xls=find(strcmp(at(:,1),lab_xls));
+ID_xls =at{idx_xls,4};
+isleft=~isempty(regexp(lab_xls,'^L_'));
+if isleft==1;
+    ix_ni=find(al==ID_xls);
+else
+    ix_ni=find(ar==ID_xls);
+end
+ce_reg_ni=round(mean(ix2(ix_ni,:))); %center of region in nifti
+ce_reg_ni=[ce_reg_ni(2) ce_reg_ni(1)  ce_reg_ni(3)]; % IMPORTANT: dims FROM nifti MUST BE REORDERD DIM: [b,A,C]
+
+ce_reg_ni_mm=(mean(m2(ix_ni,:))); % center reg in mm-units
+
+% -------PLOT---
+pl=plot3(ce_reg_ni(1),ce_reg_ni(2),ce_reg_ni(3),'om','markerfacecolor','m','markersize',20,'tag','test_nii');
+drawnow;
+pause(.15);
+% delete(pl);
+delete(findobj(hf,'tag','test_nii'));
+
+
+% ==============================================
+%  [1] find label
+% ===============================================
+% -------PLOT---
+if 1
+    statevisible=get(hl,'visible');
+    fs=get(hl,'fontsize');
+    
+    set(hl,'visible','on');
+    set(hl,'backgroundcolor',[1 1 0]);
+    set(hl,'fontsize',20);
+    
+    drawnow
+    pause(.1);
+    set(hl,'backgroundcolor','none');
+    set(hl,'fontsize',fs);
+    
+    set(hl,'visible',statevisible);
+end
+
+% ==============================================
+%%  links
+% ===============================================
+hl=findobj(hf,'tag','link');
+tb={};
+for i=1:length(hl)
+  try
+      tb=[tb;getappdata(hl(i),'info')];
+  end
+end
+
+ia=find(strcmp(tb(:,2),name_in_list));
+ib=find(strcmp(tb(:,4),name_in_list));
+ic=[ia; ib];
+
+list_withNumbers=cellfun(@(a){[ char(a) ]},   regexp(li,'\d.*','match')  );
+list_nonumber   =regexprep(list_withNumbers,'^\d+)\s+','');
+
+thiscons=tb(ic,[2 4]);
+thiscons2={};
+for i=1:size(thiscons,1)
+    for j=1:size(thiscons,2)
+       il= find(strcmp(list_nonumber,thiscons{i,j}));
+        thiscons2{i,j}=list_withNumbers{il};
+    end
+end
+%===================================================================================================
+
+cons=cellfun(@(a,b){[a  '  --  ' b]}, thiscons2(:,1),  thiscons2(:,2)  );
+
+% ==============================================
+%%   show info
+% ===============================================
+
+l={...
+    ['check locations in plot (location of region-label, label-assocated sphere ']
+    ['center of the same region as located in the from NIFTI file']
+    [' #k ' 'NUM: ' num2str(count) '/' num2str(nmax-1)]
+    [' #k ' 'Listbox : #r ' name_in_list ]
+    [' #k ' 'NIFTI   : #r ' strrep(lab_xls,'_',' ') ]
+    ['center-region [mm]: ' '[' sprintf('%2.3f ',ce_reg_ni_mm) ']']
+    ['center-region [idx]: ' '[' sprintf('%2.3f ',ce_reg_ni) ']']
+    %     [' \fontsize{8}']
+    [' #b The location is shown using a cascade of flickers: ']
+    [' #o orange box'      ' #k ' ': location of the region-labels ']
+    [' #g green circle'    ' #k ' ': center location of region-sphere']
+    [' #m magenta circle'  ' #k ' ':  center location of associated region from ATLAS (nifti-file)']
+    };
+
+l2={''
+    [' #wb *** CONNECTIONS   *** ']
+    };
+
+uhelp([l;l2; cons ]);
 
 
 
