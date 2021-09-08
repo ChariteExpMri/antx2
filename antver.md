@@ -1,17 +1,13 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   % 08 Sep 2021 (10:42:24)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   08 Sep 2021 (10:42:24)  
     
 ------------------  
-  % ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**08 Sep 2021 (10:42:24)**</ins>  
-   __[sub_sting.m]__: creates node-related needles with numeric annotations (labels) onto 3D-brain (for DTI-data)  
-  - annotations are view-dependent and will be adjusted accordingly.   
-  - labels appear at positions along a circle circumventing the brain.  
-  - labels can be manually repositioned  
-  - function is part of xvol3d.m/sub_plotconnections to display DTI-connection onto a 3D brain  
-    
-    
- ----- EOF  
-  make antvermd for GIT: antver('makeantver')  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**08 Sep 2021 (10:42:24)**</ins>  
+   __[sub_sting.m]__ creates node-related needles with numeric annotations (labels) onto 3D-brain (for DTI-data)  
+  -annotations are view-dependent and will be adjusted accordingly.   
+  -labels appear at positions along a circle circumventing the brain.  
+  -labels can be manually repositioned  
+  -function is part of xvol3d.m/sub_plotconnections to display DTI-connection onto a 3D brain  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Aug 2021 (14:12:17)**</ins>  
    __[xcalcSNRimage.m]__ convert image to SNR-image   
