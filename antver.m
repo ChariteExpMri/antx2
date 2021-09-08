@@ -292,8 +292,8 @@
 % #gw -->  access via ANT-menu: SNIPS/convert image to SNR-image
 % #ba 08 Sep 2021 (10:42:24)
 % #k [sub_sting.m] #n creates node-related needles with numeric annotations (labels) onto 3D-brain (for DTI-data)
-% -annotations are view-dependent and will be adjusted accordingly. 
-% -labels appear at positions along a circle circumventing the brain.
+% -annotations are view-dependent and will be adjusted accordingly 
+% -labels appear at positions along a circle circumventing the brain
 % -labels can be manually repositioned
 % -function is part of xvol3d.m/sub_plotconnections to display DTI-connection onto a 3D brain
 % 
