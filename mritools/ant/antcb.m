@@ -314,6 +314,7 @@ end
 
 if strcmp(do, 'settings');
     global an
+    if isempty(an); msgbox('load a project-file first'); return; end
     configfile = an.configfile;
     m= antconfig;
     drawnow;
@@ -471,6 +472,11 @@ if strcmp(do, 'run2') || strcmp(do, 'run');
     
     tasks= funlist(id2exe,2) ; %tasks to perform
     paths=antcb('getsubjects');%MousePaths
+    if isempty(paths);
+        disp('no project loaded');
+        antcb('status',0);
+        return
+    end
     if ischar(paths)
         paths=cellstr(paths);
     end
@@ -934,9 +940,24 @@ if strcmp(do, 'update')
             if exist(statusfile)==2
                 load(statusfile);
                 '###WAT IS THAT-line905'
-                dropoutvec(i)= 0;%status.isdropout;
+                dropoutvec(i)= 1;%status.isdropout;
             end
         end
+        
+        %% check USERDEFINED INFO ('msg.mat' on animal-path)
+        msg2=repmat({''},[size(dirx,1),2] );
+        for i=1:length(dirx)
+            msgfile=fullfile(dirx{i},'msg.mat');
+            if exist(msgfile)==2
+                msg2temp=load(msgfile);
+                msg2(i,:)= {msg2temp.msg.m1 msg2temp.msg.m2};
+            end
+        end
+        
+
+        
+        
+        
         
         
         
@@ -981,19 +1002,22 @@ if strcmp(do, 'update')
         %     symbol='&#9787'; %SMILEY
         symbol='&#9632';%square
         for i=1:size(dirsid,1)
-            %     sw=sprintf(['<html>'     '%s'   '<font color =%s>&#9733'  '</html>'  ] ,dirsid{i}, cb{i,1} )
-            %     sw=sprintf(['<html>'     '%s'   repmat('<font color =%s>&#9733',1, size(cols,1))  '</html>'  ] ,dirsid{i}, cb{i,1} )
-            %           symbol=cols{i,3};
+           
+            
+            %% listbox-animal identifier --------------------------------
             dum=[ dirsidHTML{i} cb(i,:)];
             %             sw=sprintf(['<html>'     '%s'   repmat(['<font color =%s>'  symbol ] ,1, size(cols,1)) char(183) '</html>'  ] ,dum{:} );
             
             ing=[dum(1) reshape([dum(2:end)' cols(:,3)]',[1 size(cols,1)*2 ])];
-            sw=sprintf(['<html>'     '%s'   repmat(['<font color =%s>'  '%s' ] ,1, size(cols,1))  '</html>'  ] ,ing{:});
+            sw=sprintf(['<html>'     '%s' ...
+                repmat(['<font color =%s>'  '%s' ] ,1, size(cols,1))  ...
+                ['<font color=black>' '<b>' msg2{i,1} '</b>' ] ...  %USERDEFINED-INFO
+                '</html>'  ] ,ing{:});
             
             
             dirsid2{i,1}=sw;
             
-            %% TOOLTIP
+            %% TOOLTIP --------------------------------
             %             tooltdum=cellfun(@(a) [ '<font color=' (a) '>' symbol  '<font color=black'  '>'],cb(i,:)','UniformOutput',false);
             tooltdum=cellfun(@(a,b) [ '<font color=' (a) '>' b  '<font color=black'  '>'],cols(:,2) ,cols(:,3),'UniformOutput',false);
             
@@ -1002,6 +1026,11 @@ if strcmp(do, 'update')
             if dropoutvec(i)==1
                 tt=  [ ['<font color=red>' ' *** REMOVED FROM ANALYSIS '] ; tt];
             end
+            %USERDEFINED INFO
+            if ~isempty(msg2{i,1})
+                tt(end+1,:)={['<b>' 'MSG: ' '</b>['  msg2{i,1} '] ' msg2{i,2} ]};
+            end
+            
             
             head=['<b><font color="blue"> ' dirx{i} ' </b><br> '];
             tt2=[ '<html>' head   strjoin('<br>',tt)  '</html>' ];
@@ -1263,6 +1292,11 @@ end
 
 function paths=getsubjects
 global an
+if isempty(an);
+    paths=[];
+    disp('no project loaded');
+    return;
+end
 lb3=findobj(findobj(0,'tag','ant'),'tag','lb3');
 %li=get(lb3,'string');
 va=get(lb3,'value');

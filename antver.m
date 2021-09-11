@@ -297,6 +297,14 @@
 % -labels can be manually repositioned
 % -function is part of xvol3d.m/sub_plotconnections to display DTI-connection onto a 3D brain
 % 
+% #ba 13 Sep 2021 (15:05:32)
+% [setanimalstatus.m] -   allow to set a processing status tag for selected animal(s)
+% The status tag appears in the left listbox (animals) and tooltip when hovering over the animal.
+% #gw --> access via animal-listbox &#8658; context-menu/set status
+% 
+% 
+% 
+% 
 
 
 %----- EOF

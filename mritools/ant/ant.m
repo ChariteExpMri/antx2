@@ -460,7 +460,16 @@ uimenu('Parent',ContextMenu, 'Label','   clipboard selected folders as MATLAB-CE
 % uimenu('Parent',ContextMenu, 'Label','exclude case (include prev. excluded case)', 'callback', {@cmenuCasesCB,'dropout' } ,'ForegroundColor',[1 0 0], 'Separator','on');
 uimenu('Parent',ContextMenu, 'Label','general info',  'callback', {@cmenuCasesCB,'generalinfo' } ,'ForegroundColor',[0 .5 0], 'Separator','on');
 uimenu('Parent',ContextMenu, 'Label','export folder', 'callback', {@cmenuCasesCB,'copyfolders' } ,'ForegroundColor',[1 .0 0], 'Separator','on');
+
 uimenu('Parent',ContextMenu, 'Label','watch files', 'callback', {@cmenuCasesCB,'watchfile' } ,'ForegroundColor',[0 .0 0], 'Separator','on');
+
+% USERDEFINED STATUS
+hu2=uimenu('Parent',ContextMenu, 'Label','set status (tag animals)','callback', {@cmenuCasesCB,'setAnimalStatus' ,1} ,'ForegroundColor',[0 .0 0], 'Separator','on');
+% uimenu('Parent',hu2, 'Label','set status "good"', 'callback',                {@cmenuCasesCB,'setAnimalStatus' ,1 } ,'ForegroundColor',[0 .0 0], 'Separator','on');
+% uimenu('Parent',hu2, 'Label','set status "bad"',  'callback',                {@cmenuCasesCB,'setAnimalStatus' ,2 } ,'ForegroundColor',[0 .0 0], 'Separator','on');
+% uimenu('Parent',hu2, 'Label','set status <userdefined>',  'callback',        {@cmenuCasesCB,'setAnimalStatus' ,3 } ,'ForegroundColor',[0 .0 0], 'Separator','on');
+% uimenu('Parent',hu2, 'Label','remove status', 'callback', {@cmenuCasesCB,'setAnimalStatus' ,4 } ,'ForegroundColor',[0 .0 0], 'Separator','on');
+
 
 
 % Menu1=uimenu('Parent',ContextMenu,...
@@ -505,8 +514,12 @@ end
 
 
 %% callback
-function cmenuCasesCB(h, e, cmenutask)
+function cmenuCasesCB(h, e, cmenutask,par1)
 global an
+if isempty(an)
+  disp('no project loaded');
+  return
+end
 lb3=findobj(findobj(0,'tag','ant'),'tag','lb3');
 
 switch cmenutask
@@ -758,6 +771,35 @@ switch cmenutask
     case('watchfile')
         antcb('watchfile');
         
+        
+    case 'setAnimalStatus'
+        
+        px=antcb('getsubjects');
+        msg0=setanimalstatus(px);
+        
+        if isempty(msg0)
+            for i=1:length(px)
+                f1=fullfile(px{i},'msg.mat');
+                delete(f1);
+            end
+            antcb('update');
+        elseif iscell(msg0)
+            
+            msg=struct();
+            msg.m1=regexprep([msg0{2} msg0{3}],{' <html>' '</html>'},{''});
+            msg.m2=msg0{4};
+            for i=1:length(px)
+                f1=fullfile(px{i},'msg.mat');
+                save(f1,'msg');
+            end
+            antcb('update');
+        else
+            %                if isnumeric(msg0)
+            return;
+            
+        end
+
+
         
         
     case 'dropout'

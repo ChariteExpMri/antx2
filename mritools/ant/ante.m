@@ -337,9 +337,11 @@ if isempty(e.Modifier)
             fontstep=-1;
         end
         ht=findobj(gcf,'type','text');
+        ax1=findobj(gcf,'tag','ax1');
         nFS=get(ht(1),'fontsize')+fontstep;
         if nFS>0
             set(ht,'fontsize',nFS);
+            set(ax1,'fontsize',nFS);
         end
     end
 elseif ~isempty(strfind(e.Modifier,'control'))
@@ -349,9 +351,16 @@ elseif ~isempty(strfind(e.Modifier,'control'))
             rotstep=-1;
         end
         ht=findobj(gcf,'type','text','-and','UserData','xtick');
-        nROT=get(ht(1),'Rotation')+rotstep;
-       % if nFS>0
+        if ~isempty(ht)
+            nROT=get(ht(1),'Rotation')+rotstep;
             set(ht,'Rotation',nROT);
+        else
+            ax1=findobj(gcf,'tag','ax1');
+            nROT=get(ax1,'XTickLabelRotation')+rotstep;
+            set(ax1,'XTickLabelRotation',nROT);
+        end
+       % if nFS>0
+            
         %end
     end
     
