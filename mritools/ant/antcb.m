@@ -402,7 +402,7 @@ if strcmp(do,'close') || strcmp(do,'quit') ;
     set(hr,'closereq','closereq');
     close(hr);
 end
-
+%% ===============================================
 if strcmp(do,'reload')
     global an;
     lb=findobj(gcf,'tag','lb3');
@@ -422,6 +422,7 @@ if strcmp(do,'reload')
         set(lb,'value',val)
     end
 end
+%% ===============================================
 
 
 
