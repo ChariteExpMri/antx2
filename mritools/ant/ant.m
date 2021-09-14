@@ -116,6 +116,9 @@ h = uicontrol('style','text','units','normalized','position',[.3 .5 .2 .025],'ta
 % h = uicontrol('style','checkbox','units','normalized','position',[.2 .5 .1 .05],'tag','rb1',...
 %     'string','takeCases','fontsize',10,'value',0);
 
+% ==============================================
+%%   
+% ===============================================
 
 %% PBload
 h = uicontrol('style','pushbutton','units','normalized','position',[.0 .6 .1 .08],'tag','pbload',...
@@ -126,8 +129,29 @@ h = uicontrol('style','pushbutton','units','normalized','position',[.0 .6 .1 .08
 
 
 
+
+
+% ==============================================
+%%   history
+% ===============================================
+%% SETTINGS
+h = uicontrol('style','pushbutton','units','normalized','position',[.15 .6 .05 .08],...
+    'tag','ant_study_history',...
+    'string','','fontsize',13,   'callback',@openStudyHistory,'tooltip', 'open STUDY-HISTORY',...
+    'backgroundcolor','w');
+% icon=which('profiler.gif');
+icon=fullfile(matlabroot,'toolbox','matlab', 'icons','book_link.gif');
+[e map]=imread(icon)  ;
+e=ind2rgb(e,map);
+% e(e<=0.01)=nan;
+set(h,'cdata',e);
+% ==============================================
+%%   %% SETTINGS
+% ===============================================
+
 h = uicontrol('style','pushbutton','units','normalized','position',[.1 .6 .05 .08],'tag','pbconfig',...
-    'string','','fontsize',13,                                        'callback',{@antcb,'settings'},'tooltip','settings',...
+    'string','','fontsize',13,     'callback',{@antcb,'settings'},...
+    'tooltip','open settings of the currently loaded project-file',...
     'backgroundcolor','w');
 % icon=which('profiler.gif');
 icon=strrep(which('ant.m'),'ant.m','settings.png');
@@ -135,6 +159,10 @@ icon=strrep(which('ant.m'),'ant.m','settings.png');
 e=ind2rgb(e,map);
 % e(e<=0.01)=nan;
 set(h,'cdata',e);
+
+% ==============================================
+%%   
+% ===============================================
 
 
 
@@ -2423,4 +2451,8 @@ try
     end
 end
 
+
+function openStudyHistory(e,e2)
+
+anthistory('select');
 
