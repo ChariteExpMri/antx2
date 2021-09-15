@@ -1,11 +1,16 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   13 Sep 2021 (15:05:32)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   15 Sep 2021 (17:30:22)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**15 Sep 2021 (17:30:22)**</ins>  
+   __[anthistory.m]__: load a project from history, i.a. from a list of previous ANTx calls/studies  
+  &#8618; access via ANT main GUI: &#8658; __[green book]__-button. Hit button to open the history.  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**13 Sep 2021 (15:05:32)**</ins>  
    __[setanimalstatus.m]__: set a processing status tag for selected animal(s)  
   The status tag appears in the left listbox (animals) and tooltip when hovering over the animal.  
   &#8618; access via animal-listbox &#8658; context-menu/set status  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**08 Sep 2021 (10:42:24)**</ins>  
    __[sub_sting.m]__ creates node-related needles with numeric annotations (labels) onto 3D-brain (for DTI-data)  

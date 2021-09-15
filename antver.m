@@ -302,7 +302,9 @@
 % The status tag appears in the left listbox (animals) and tooltip when hovering over the animal.
 % #gw --> access via animal-listbox &#8658; context-menu/set status
 % 
-% 
+% #ba 15 Sep 2021 (17:30:22)
+% #k [anthistory.m]: #n load a project from history, i.a. from a list of previous ANTx calls/studies
+% #gw --> access via ANT main GUI: &#8658; [green book]-button. Hit button to open the history.
 % 
 
 

@@ -36,17 +36,17 @@ end
 %% CHECK TYPE
 [pa fi ext]=fileparts(im1);
 if strcmp(ext,'.nii')==0 ;%~isempty(regexp(im1,'.xls|.xlsx'))
-    
+    if exist('msg2')~=1; msg2='';end
       name=[fi ext];
       if ispc
           disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
-              ' or <a href="matlab: system(''start ' im1 ''');">' 'open' '</a>'   ]);
+              ' or <a href="matlab: system(''start ' im1 ''');">' 'open' '</a>' ' '  msg2 ]);
       elseif ismac
           disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
-              ' or <a href="matlab: system(''open ' im1 ''');">' 'open' '</a>'   ]);
+              ' or <a href="matlab: system(''open ' im1 ''');">' 'open' '</a>' ' '  msg2  ]);
      elseif isunix
           disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
-              ' or <a href="matlab: system(''xdg-open ' im1 ''');">' 'open' '</a>'   ]);     
+              ' or <a href="matlab: system(''xdg-open ' im1 ''');">' 'open' '</a>'  ' '  msg2 ]);     
           
           
       end
