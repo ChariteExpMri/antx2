@@ -23,9 +23,11 @@
 %       the project
 % ____________________________________________________________
 %%   [ other GUI controls]
-% #b [openDir]    #n : open directory of selected study in explorer 
-% #b [shring GUI] #n : shrinks the window's horizontal size by 50% 
-% #b [stay open]  #n : forces the GUI to stay open when [load]-button is pressed
+% #b [openDir]        #n : open directory of selected study in explorer 
+% #b [shring GUI]     #n : shrinks the window's horizontal size by 50% 
+% #b [stay open]      #n : forces the GUI to stay open when [load]-button is pressed
+% #m [unique Studies] #n : [x] show single studies only, [ ] show entire history
+% 
 % #b [load]       #n : load a selected project
 %                -The project must be selected from the table and must appear
 %                 in the lower gray text box
@@ -34,6 +36,14 @@
 % #r [delete]     #n : Delete entiry history. 
 %                #r Important: This will delete the history without any "undo"-option
 %                -in this step "fullfile(userpath,'antx2_userdef', 'userdef.mat')" is deleted
+%  
+%  #g USE TABLE's CONTEXT MENU to: 
+%   -delete current session from history
+%   -delete study (all entrances of the study) from history
+%   -keep chronologically last 3 entrances from a study and delete the rest from history
+%   -open study directory
+%   -show config file of the stury in editor
+% 
 % 
 % ==============================================
 % #ko *** [2] COMMANDLINE OPTIONS  ***
