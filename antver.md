@@ -8,7 +8,7 @@
   this DTIprep-step (a suitable DTI-atlas must be provided).  
   shellscripts must be downloaded from https://github.com/ChariteExpMri/rodentDtiConnectomics  
   and saved in the "shellscripts" folder (same level as the dat-folder)  
-  - current status:   
+   #current status:   
     DTIprep for "single-shell" (single b-value diffusion acquisitions) analysis: finished & tested  
     DTIprep for "mutli-shell" analysis: has to be adjusted & tested !!!  
   &#8618; access via ANT-menu: &#8658; Statistic/DTIprep for mrtrix.  
