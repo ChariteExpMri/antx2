@@ -306,7 +306,20 @@
 % #k [anthistory.m]: #n load a project from history, i.a. from a list of previous ANTx calls/studies
 % #gw --> access via ANT main GUI: &#8658; [green book]-button. Hit button to open the history.
 % 
-
+% #ba 21 Sep 2021 (01:01:34)
+% #k [DTIprep.m]: #n prepare data for DTI-processing via Mrtrix. Ideally DTI-processing could start
+% after conventional registration of the "t2.nii" image to the normal space und running 
+% this DTIprep-step (a propriate DTI-atlas must be provided).
+% shellscripts must be downloaded from https://github.com/ChariteExpMri/rodentDtiConnectomics
+% and saved in the "shellscripts" folder (same level as the dat-folder)
+% - current status: 
+%   DTIprep for "single-shell" (single b-value diffusion acquisitions) analysis: finished & tested
+%   DTIprep for "mutli-shell" analysis: has to be adjusted & tested !!!
+% #gw --> access via ANT-menu: &#8658; STATISTIC/DTIprep for mrtrix.
+% 
+% 
+% 
+% 
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

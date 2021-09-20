@@ -967,7 +967,9 @@ mh2 = uimenu(mh,'Label',' label-based two-sample ttest (independent groups)',   
 mh2 = uimenu(mh,'Label',' label-based statistic',                                                  'Callback',{@menubarCB, 'xstatlabels0'});
 
 mh2 = uimenu(mh,'Label',' SPM-statistic',                                                          'Callback',{@menubarCB, 'spm_statistic'});
-mh2 = uimenu(mh,'Label',' DTI-statistic',                                                          'Callback',{@menubarCB, 'dti_statistic'});
+
+mh2 = uimenu(mh,'Label',' DTI-prep for mrtrix',                    'Callback',{@menubarCB, 'dti_prep_mrtrix'},'separator','on');
+mh2 = uimenu(mh,'Label',' DTI-statistic',                          'Callback',{@menubarCB, 'dti_statistic'},'separator','off');
 
 % ---------------------
 
@@ -2006,7 +2008,13 @@ elseif strcmp(task,'dti_statistic')
     
     dtistat;
     
+ elseif strcmp(task,'dti_prep_mrtrix')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='DTIprep';
+        return ;
+    end
     
+    DTIprep;   
     %________________________________________________
 elseif strcmp(task,'flattenBrukerdatapath')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
