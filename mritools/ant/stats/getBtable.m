@@ -146,20 +146,20 @@ for n=1:length(files)
         %             f2=fullfile(pwd,nameref);
         %             e=preadfile(f2);
         %             e=str2num(char(e.all));
-        %             
+        %
         %             COLSP=repmat({'|'},[size(e,1) 1]);
         %             % uhelp(plog([],[ num2cell(e) COLSP num2cell(tb) COLSP num2cell(e-tb)   ],0,['ww'],'d=10'),1);
-        %             
+        %
         %             x=[ num2cell(e) COLSP num2cell(tb3) COLSP num2cell(e-tb3)   ];
         %             hx=[...]
         %                 {'DSIc1' 'DSIc2' 'DSIc3' 'DSIc4' '-'} ...
         %                 {'BRc1' 'BRc2' 'BRc3' 'BRc4' '-'} ...
         %                 {'DSIc1-BRc1' 'DSIc2-BRc2' 'DSIc3-BRc3' 'DSIc4-BRc4'} ...
         %                 ];
-        %             
+        %
         %             tit=['comparison "' nameref '" via DSIstudio&Excel  AND direct BRUKER-readout of B-table '];
         %             uhelp(plog([],[ hx;x ],0,tit,'d=10'),1);
-        %             
+        %
         %             if 1
         %                 f3=fullfile(pwd,'test_GetBtable.xlsx');
         %                 pwrite2excel(f3,[  nameref '_vs_BRUKERdirect'], hx,[],x);
@@ -176,9 +176,24 @@ end
 if size(b,1)>0
     global an
     if isempty(an)
-        paout=uigetdir(pwd,'select the studie''s "template"-folder..however B-table will be stored in the new "DTI"-dir');
-        if isnumeric(paout); return, end
-        paout= fullfile(fileparts(paout),'DTI');
+        err=0;
+        hf=findobj(0,'tag','DTIprep');
+        if ~isempty(hf)
+            u=get(hf,'userdata');
+            if isfield(u,'studypath') &&  exist(u.studypath)==7
+                paout=fullfile(u.studypath,'DTI');
+            else
+                err=1;
+            end
+        else
+            err=1;
+        end
+        
+        if err==1
+            paout=uigetdir(pwd,'select the studie''s "template"-folder..however B-table will be stored in the new "DTI"-dir');
+            if isnumeric(paout); return, end
+            paout= fullfile(fileparts(paout),'DTI');
+        end
         
     else
         paout= fullfile(fileparts(an.datpath),'DTI');
@@ -186,8 +201,52 @@ if size(b,1)>0
     mkdir(paout);
     
     % ==============================================
+    %% check same Name
+    % ===============================================
+    if length(unique(b(:,1)))~=size(b,1)
+        
+        names  =  b(:,1);
+        scannum=cellfun(@(a){[ num2str(a.scanNo) ]},  b(:,3));
+        aquangle=cellfun(@(a){[ num2str(size(a,1)) ]},  b(:,2));
+        
+        %get counts
+        asciinum=cell2mat(cellfun(@(a){[ str2num(regexprep(num2str(double(a)),'\s+','')) ]},  b(:,1)));
+        uninum=unique(asciinum);
+        uninames=unique(names);
+        cnt=histc(asciinum,uninum);
+        namedouplets=uninames(find(cnt>1));
+        
+        t  =   [ names scannum aquangle ];
+        ht =   {'b-table NAME'  'scan-number' 'Num of aquis.angles' };
+        
+        
+        ms={'<html><font color=black> <br> '
+            'At least one b-table(s) was found more than once!'
+            'Presumably, one of the first scans (see scan-number) was used as wharm up!'
+            '<HTML> Please select this scan, i.e. select the scan(s) you do <b><u>NOT </b></u> want to use!'
+            '<HTML>The here <b><u>selected </b></u> b-table(s) will <b><u>NOT </b></u> used for further DTI-analysis'
+            ''
+            '<HTML><font color=green><b> &#9654; SELECT THE SCAN WHICH SHOULD <font color=red><u>NOT</u><font color=green> BE USED !! '
+            ''
+            '---The following b-tables appear more than once: '
+            };
+        ms=[ms; [ cellfun(@(a){[ '   "' a '"' ]},  namedouplets) ]];
+        id=selector2(t,ht,'title','delete files (selected files will be deleted)','note',ms);
+
+        
+     b(id,:)=[];
+%         
+%         % ==============================================
+%         %%
+%         % ===============================================
+  
+        
+        
+    end
+    % ==============================================
     %%
     % ===============================================
+    
     
     for i=1:size(b,1)
         name=b{i,1};
@@ -197,7 +256,7 @@ if size(b,1)>0
         if size(b,1)==1  %SINGLE-SHELL
             f2=fullfile(paout,['grad'       '.txt']);
         else
-            f2=fullfile(paout,['grad_' name '.txt']);
+            f2=fullfile(paout,['grad_b' name '.txt']);
         end
         p.fileout=f2;          b{i,3}=p;
         

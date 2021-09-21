@@ -1,9 +1,110 @@
 % #k prepare data for DTI-processing via Mrtrix. #n Ideally DTI-processing could start
-% after conventional registration of "t2.nii" to the normal space und running 
-% this DTIprep-step (a propriate DTI-atlas must be provided).
+% after (a) conventional registration of "t2.nii" to normal space, and (b) running 
+% this DTIprep-step. For this a propriate DTI-atlas must be provided (see below).
 % shellscripts must be downloaded from https://github.com/ChariteExpMri/rodentDtiConnectomics
 % and saved in the "shellscripts" folder (same level as the dat-folder)
-%--> detailed info is provided soon..
+% 
+% #b DTIprep can be closed and reloaded anytime. The parameter are stored in the 
+% #b "DTI"-folder (checks.mat)
+% __________________________
+% #r Atlas-registration has to be made for all animals before running DTIprep (this function)
+% #r it is assumed tha that the image "t2.nii" is succesfully registered to the template,i.e.
+% #r "x_t2.nii" exists for each animal. 
+% ____________________________
+% #ok OPEN DTIprep GUI 
+% open ANT gui and load the specific project
+% from main ANT gui select MENU: Statistic/"DTI-prep for mrtrix"
+% Alternatively you can type "DTIprep" in the comand window and click  [studypath], and
+% select the study-path, i.e. the path containing the dat-folder.
+% 
+% ____________________________
+% #ok USER-INPUT
+% You have to define three inputs:
+% - The number of b-tables and DWI-files varies. For single-shell #k [SS] #n you have one b-table and one
+%   DWI-file. For multi-shell #k [MS] #n you have several b-tables and accordingly, the same number of
+%   DWI-files.
+% #ky (a) extract the b-table(s) #k from #r <u>one</u> #k Bruker raw-data set
+%    - The b-table(s) will be extracted from one Bruker raw data set and stored in the new
+%      folder #r "DTI" #n as grad.txt #k [SS] #n or "grad_b+number.txt" for #k [MS] #n.
+%    - You have to do this only once, because the same b-table(s) will be used for all animals
+% #ky (b) get the DWI/DTI-file(s) names #k from #r <u>one</u> #k animal (from the 'dat'-folder)
+%      - You have to do this only once, because we need only the names of the DWI-files. It is
+%        assumed the names of the files are similar across animal folders
+%      #m - IMPORTANT:  For [MS]: Select the DWI-files in the same order as the b-tables (see
+%      #m   order of the b-table in the right listbox; field: "btable")            
+% #ky (c) get the DTI-template #k (i.e. a specific DTI-atlas). 
+%   -The atlas has to be constructed in advance. For atlas-construction you can use
+%     [xexcel2atlas.m] available via ANT menu: Tools/"make mask from excelfile".
+% #r &#9654; Preserve ORDER! First do (a),than (b), than (c)
+% #n &#9654; You can close the DTI-prep gui anytime! The userinput and progress is stored in a
+%    mat-file ("check.mat") in the folder #r "DTI".
+% ____________________________
+% #ok PREPROCESSING STEPS
+% #r &#9654; Preserve ORDER! of the processing steps: 
+%   1. distribute files -> copy DTI-atlas/lutfile & b-tables to animal-dirs
+%   2. deform files     -> transform DTIatlas, brainmask etc to native space    
+%   3. register files   -> register "t2.nii" to DWI-file, than apply trafo to native space files
+%                          ("ix_"+DTIatlas, "ix"+brainmask etc)
+%   4. rename files     -> rename files (names are fixed and expected from shellscripts)
+%   5  export files     -> export files to #r DTI_export4mrtrix (OPTIONAL STEP!)
+% 
+% #b [all animals] #n : The radio allows to process all animals [x], or a selection of animals via
+%  the animal listbox in the ANT gui. 
+% #b [select all] #n : The radio selects all processing steps. Use #by [run all steps] #n button
+%  to execute the selected processing steps. If you select several steps, provide a consecutive
+%  succession of steps (The steps [1,2,3,4,5] or [1 2] or [3,4,5] make sense. The steps [1,3,4] or
+%  [3,5]) makes no sense). 
+% #r &#9654; Be aware that all steps (except the "export files"-step) have to be done. I.e. the steps
+% #r [3,4,5] can be executed only if the steps [1,2] have been already made!
+% #k &#9654; Use the buttons of each processing step or use [run all steps]-button.
+% 
+% 
+% ____________________________
+% #ok CONTEXT MENU
+% #b open study directory   : #n open the STUDY-folder  (i.e. the folder containing the "dat"-folder)
+% #b open DTI-directory     : #n open DTI-folder  ("DTI" is a folder within the STUDY-folder)
+% #b which animal dirs are selected?' : #n shows the selected animal-folders
+% #b delete files           : #n delete files which where created using DTIprep (file selection via GUI)
+% #b check assignment of b-table & DTI/DWI-file: #n shows the assignment of b-tables and DWI-files
+% #b show voxel size of 1st DTI/DWI-file: #n shows the vox-resolution of 1st DWI-file in 1st animal folder
+% #b show comands for mrtrix: #n shows the mrtrix-comand to start the DTI-pipeline
+% 
+% ____________________________
+% #ok OUPUT-FILES
+% The below list shows the files which will be created. The export-step allows to copy these files
+% to the folder "DTI_export4mrtrix".
+% Note that the name of the resulting files are fixed and expected to be found using mrtrix/shellscripts
+% #kc ___SINGLE-SHELL___
+%  'ANO_DTI.nii'         % % DTI-atlas, back-transformed to native space and transformed to DWI-space+renamed
+%  'ANO_DTI.txt'         % % DTI-labels lookup table,renamed
+%  'atlas_lut.txt'       % % DTI-labels lookup table (copy of 'ANO_DTI.txt'),renamed
+%  'c_t2.nii'            % % t2.nii registered to DWI-file space
+%  'rc_ix_AVGTmask.nii'  % % brain mask, back-transformed to native space and transformed+resliced to DWI-space
+%  'rc_mt2.nii'          % % bias-corected t2.nii,transformed+resliced to DWI-space
+%  'rc_t2.nii'           % % t2.nii,transformed+resliced to DWI-space
+%  'dwi.nii'             % % original DWI-file, copied & renamed
+%  'grad.txt'            % % b-table
+% 
+% 
+% #kc ___MULTI-SHELL___
+%  'ANO_DTI.nii'         % % DTI-atlas, back-transformed to native space and transformed to DWI-space,renamed
+%  'ANO_DTI.txt'         % % DTI-labels lookup table,renamed
+%  'atlas_lut.txt'       % % DTI-labels lookup table (copy of 'ANO_DTI.txt'),renamed
+%  'c_t2.nii'            % % t2.nii registered to DWI-file space
+%  'rc_ix_AVGTmask.nii'  % % brain mask, back-transformed to native space and transformed+resliced to DWI-space
+%  'rc_mt2.nii'          % % bias-corected t2.nii,transformed+resliced to DWI-space
+%  'rc_t2.nii'           % % t2.nii,transformed+resliced to DWI-space
+%  'dwi_b100.nii'        % % original DWI-file, copied & renamed
+%  'dwi_b1600.nii'       % %  ||
+%  'dwi_b3400.nii'       % %  ||
+%  'dwi_b6000.nii'       % %  ||
+%  'grad_b100.txt'       % % b-table
+%  'grad_b1600.txt'      % %  ||
+%  'grad_b3400.txt'      % %  ||
+%  'grad_b6000.txt'      % %  ||
+% 
+% 
+
 function DTIprep();
 
 % ==============================================
@@ -21,7 +122,7 @@ set(gcf,'position',[0.3146    0.3922    0.3889    0.2433]);
 % hb=uicontrol('style','pushbutton','units','norm','string','check','tag','check');
 % set(hb,'position',[0.43923 0.90204 0.06 0.1]);
 %% studyPath
-hb=uicontrol('style','pushbutton','units','norm','string','pb_studypath','tag','studypath');
+hb=uicontrol('style','pushbutton','units','norm','string','study path','tag','studypath');
 set(hb,'callback',{@process, 'pb_studypath'} );
 set(hb,'position',[0.34816 0.90204 0.15 0.1]);
 
@@ -44,23 +145,29 @@ hb = uipanel('Title','user input','FontSize',8,'tag','uip1',...
 set(hb,'position',[[0.001 .64 .16 .38]]);
 
 %% getbtable
-hb=uicontrol('style','pushbutton','units','norm','string','get b-table','tag','getbtable');
+hb=uicontrol('style','pushbutton','units','norm','string','get b-table(s)','tag','getbtable');
 set(hb,'position',[0.0053571 0.8516 0.15 0.1]);
 set(hb,'backgroundcolor',[ 0.9373    0.8667    0.8667]);
 set(hb,'tooltipstring',[...
     '<html><b>get b-table from one of the Bruker raw-data sets</b><br>' ...
-    'select one (!) raw data set to obtain the b-table']);
+    'select one (!) raw data set to obtain the b-table(s) <br>'...
+    ' - if a <B> single b-table </B> is found --> this is a <B>single-shell </B>approach <br>'...
+    ' - if <B> several b-tables </B> are found --> this is a <B>multi-shell </B>approach <br>'...
+    ]);
 
 
 %% getDTIfile
 set(hb,'callback',{@process, 'getbtable'} );
-hb=uicontrol('style','pushbutton','units','norm','string','get DTIfile','tag','getDTIfile');
+hb=uicontrol('style','pushbutton','units','norm','string','get DTIfile(s)','tag','getDTIfile');
 set(hb,'position',[0.0053571 0.75571 0.15 0.1]);
 set(hb,'callback',{@process, 'getDTIfile'} );
 set(hb,'backgroundcolor',[ 0.9373    0.8667    0.8667]);
 set(hb,'tooltipstring',[...
-    '<html><b>get DTIfile</b><br>' ...
-    'select the 4D DTIfile from <b>one</b> of the animals (within the dat-folder) ']);
+    '<html><b>get DWI/DTIfile(s)</b><br>'...
+    'select the 4D DTIfile(s) from <b>one</b> of the animals (within the dat-folder) <br>'...
+    '<B>single-shell</B>: select <B>one</B> DWI file <br>'...
+    '<B>multi-shell </B>: select <B>several</B> DWI files (as many as b-tables) <br>'...
+    ]);
 
 %% getDTItemplate
 hb=uicontrol('style','pushbutton','units','norm','string','getDTItemplate','tag','getDTItemplate');
@@ -156,6 +263,8 @@ set(hb,'tooltipstring',[ '<html><b>OPTIONAL STEP: export files for mrtrix-proces
     [ ' -this step is optional '  '<br>'] ...
     [ '- use this step if mrtrix processing is done one another computer'  '<br>'] ...
     [ ' -the exported files will be stored in ..mySTUDY/DTI_export4mrtrix'  '<br>'] ...
+    [ '<b> The export-folder is <font color=red>"DTI_export4mrtrix" <font color=black> within '...
+    'the study-folder'  '<br>'] ...
     ]);
 % ----chk
 hb=uicontrol('style','checkbox','units','norm','string','','tag',          'ch_exportfiles');
@@ -191,6 +300,17 @@ set(hb,'callback',{@process, 'runallpreprocsteps'} );
 set(hb,'backgroundcolor',[   0.8039    0.8784    0.9686]);
 set(hb,'tooltipstring',[ '<html><b>run all steps gray processing steps from above</b><br>']);
 
+
+% ==============================================
+%%   
+% ===============================================
+%% help
+hb=uicontrol('style','pushbutton','units','norm','string','help','tag','xhelp');
+set(hb,'position',[0.22317 0.91118 0.05 0.08],'fontsize',8);
+set(hb,'callback',{@xhelp} );
+set(hb,'backgroundcolor',[   1 1 1]);
+set(hb,'tooltipstring',[ 'get some help']);
+
 % ==============================================
 %%   contextmenu.
 % ===============================================
@@ -210,8 +330,14 @@ m= uimenu(c,'Label','which animal dirs are selected?','Callback',{@context,'chec
 % m= uimenu(c,'Label',' show configfile','Callback',{@context,'showConfigfile'});
 m= uimenu(c,'Label','<html><font color =red> delete files','Callback',{@context,'deletefiles'},'separator','on');
 
+
+m= uimenu(c,'Label','<html><font color =green>check assignment of b-table & DTI/DWI-file',  'Callback',{@context,'checkassignment'},'separator','on');
+m= uimenu(c,'Label','<html><font color =green>sow voxel size of 1st DTI/DWI-file ',  'Callback',{@context,'getvoxSize'},'separator','on');
+
+
 m= uimenu(c,'Label','<html><font color =green>show comands for mrtrix',  'Callback',{@context,'comands_for_mrtrix'},'separator','on');
 
+ 
 
 set(hf     ,'UIContextMenu',c);
 set(hframe2,'UIContextMenu',c);
@@ -267,13 +393,16 @@ f1=fullfile(dtipath,'check.mat');
 %%   STUDY-PATH
 % ===============================================
 if strcmp(task,'pb_studypath')
-    [pas,sts] = spm_select(1,'dir','select the firectory of the STUDY','',pwd)
+    [pas,sts] = spm_select(1,'dir','select the STUDY-folder (this folder contains the dat-folder)','',pwd);
     if sts==0; return; end
     u.studypath=pas;
     set(hf,'userdata',u);
     
     set(findobj(hf,'Type','uicontrol'),'enable','on');
     updateLB();
+    %disp([' "DTI"-folder created'  ]);
+    paDTI=fullfile(u.studypath,'DTI');
+    showinfo2('..The "DTI"-dir contains the Info. ' ,paDTI,[],[], [ '>> '  paDTI  ]);
     cprintf([0 0 1], ['   DONE!\n']);
     return
 end
@@ -598,11 +727,47 @@ if strcmp(task,'renamefiles')
         [DTItemplateLUT0 '.txt'             ]    'ANO_DTI.txt'  %'atlas_lut.txt'
         };
     
-    if size(d.btable,1)==1
+    if size(d.btable,1)==1%singleshell
        files(end+1,:)={d.DTIfileName{1}      'dwi.nii'  }; 
-    else
-        keyboard
+    else %multishell
+        [~,btable_name0,ext ]=fileparts2(d.btable);
+        btable_name_ext=cellfun(@(a,b){[ a b ]},  btable_name0, ext);
+        btable_name  =strrep(btable_name0,'grad_','');
+        
+        %check
+        n_btables=size(btable_name,1);
+        n_dwis  =size(d.DTIfileName,1);
+        
+        %% =========check same-size of b-table and DWI-files ======================================
+        
+        if n_btables~=n_dwis
+            %%
+            chktab=repmat({' '}, [  max([n_btables n_dwis]) 2]);
+            chktab(1:n_btables,1) =btable_name_ext;
+            chktab(1:n_dwis,2)    =d.DTIfileName;
+            chktab=[{['\bf' '___b-table___'] ['       ___DWI-file___' '\rm']} ;chktab];
+            
+            chklist=cellfun(@(a,b){[ a repmat(' ',[1 size(char(chktab(:,1)),2)+10-length(a)]) b ]},  chktab(:,1),chktab(:,2));
+            ms={
+                '\bf\color{magenta}conflict "renaming files"! ... Process aborted!\rm\color{black}'
+                ['number of b-tables does not match the number of DTI/DWI-files!'  ]
+                [' No of b-tables :' num2str(n_btables)]
+                [' No of DWI-files:' num2str(n_dwis)]
+                '\bf #PLEASE CHECK ASSIGNMENT:\rm'
+                };
+            ms=[ms;chklist];
+            ms=strrep(ms,'_','\_');   
+            errordlg(ms,'',struct('Interpreter','tex','WindowStyle','modal'));
+            %%
+            return
+        end
+        
+        % keyboard
+        for i=1:size(d.DTIfileName,1)
+         files(end+1,:)=  {d.DTIfileName{i}     [ 'dwi_' btable_name{i} '.nii' ] };   
+        end
     end
+    %% ===================================================================================================
     
     for k=1:length(mdirs)
         thisdir=mdirs{k};
@@ -664,23 +829,32 @@ if strcmp(task,'exportfiles')
     %mdirs
     %return
     
-    %------files
+    %% ------files
     d=load(f1); d=d.d;
     [~,dum]=fileparts2(d.btable);
     btablefiles=stradd(dum,[  '.txt' ] ,2);
+    
+    
+    if size(btablefiles,1)==1 %single shell
+        DWIfiles={'dwi.nii'};
+    else%multishell
+        DWIfiles=cellfun(@(a){[ a '.nii' ]},  strrep(dum,'grad','dwi'));
+    end
+    
     files={...
         'rc_ix_AVGTmask.nii'
         'rc_mt2.nii'
         'rc_t2.nii'
         'c_t2.nii'
-        'dwi.nii'
         ...
         'atlas_lut.txt'
         'ANO_DTI.txt'  %'atlas_lut.txt'
         'ANO_DTI.nii'
         };
-    files=[files; btablefiles];
-    %------for each animal
+    files=[files; btablefiles; DWIfiles];
+    
+    
+    %% ------for each animal
     for i=1:length(mdirs)
         thispa=mdirs{i};
         [~,mname]=fileparts(thispa);
@@ -700,8 +874,10 @@ if strcmp(task,'exportfiles')
                 else
                     ms=[ ' ..exporting file does not exist: '  fi1  ];
                 end
-                ms2=[' export failed for [' mname ']' ', file: [' files{j} '] ' ms  ]
-                cprintf([1 0 1], [strrep(ms2,filesep,[filesep filesep]) '\n']);
+                ms2=[' export failed for [' mname ']' ', file: [' files{j} '] ' ms  ];
+                [msgstr, msgid]=lasterr;
+                cprintf([1 0 1], [strrep(ms2,filesep,[filesep filesep]) msgid  ]);
+                cprintf([0.9294    0.6941    0.1255], ['  ' msgid  '\n' ]);
             end 
         end
     end
@@ -914,6 +1090,37 @@ if strcmp(task,'deletefiles')
    deleteFiles();
     return
 end
+
+if strcmp(task,'getvoxSize')
+   hf=findobj(0,'tag','DTIprep');
+        u=get(hf,'userdata');
+        f1=fullfile(u.studypath,'DTI','check.mat');
+        d=load(f1); d=d.d;
+        
+        
+        mdirs=get_mdir(padat);
+        thispa=mdirs{1}
+        fx=fullfile(thispa,d.DTIfileName{1});
+        if exist(fx)==2
+            ha=spm_vol(fx); 
+            ha=ha(1);
+            %%---
+            vec=spm_imatrix(ha.mat);
+            vox=vec(7:9);
+            cprintf(-[0    0.4980         0], ['____VOXELSIZE______'  '\n' ]);
+            cprintf([0    0.4980         0], [strrep(['..using ' fx],filesep,[filesep filesep])  '\n' ]);
+            disp(sprintf('[voxSize]:\t\t\t\t %2.10f,%2.10f,%2.10f',vox));
+            disp(sprintf('[voxSize x factor 10]:\t %2.10f,%2.10f,%2.10f  --> for mrtrix option',vox*10));
+            %%---
+        else
+           disp('..file not found..'); 
+        end
+            
+    
+    return
+end
+
+
 if strcmp(task,'comands_for_mrtrix')
     %% 
     ms={
@@ -925,8 +1132,15 @@ if strcmp(task,'comands_for_mrtrix')
         ''
         ' #b 2) run mrtrix-processing (pwd must be the dat-folder!)'
         ' #b --------------------------------------------------------'
-        'cd ../dat        ; # go to dat-folder'
-        './../shellscripts/mouse_dti_complete_7texpmri.sh   #start processing'
+        'cd ../dat        ; # go to the "dat"-folder'
+        ''
+        ' #r for MOUSE use this cmd to start processing'
+        './../shellscripts/mouse_dti_complete_7texpmri.sh'
+        '' 
+         ' #r for RAT use this cmd to start processing'
+        './../shellscripts/rat_exvivo_complete_7expmri.sh'
+   
+        
         ''
         
         };
@@ -936,6 +1150,80 @@ if strcmp(task,'comands_for_mrtrix')
     
 return
 end
+
+
+% ==============================================
+%%
+% ===============================================
+if strcmp(task,'checkassignment')
+    
+    
+    ms_error={'check assignment of b-table & DTI/DWI-file NOT POSSIBLE'   
+        'FIRST, define USER INPUT (b-table, DTI-files)'
+            };
+    %% 
+    err=0;
+    try
+        hf=findobj(0,'tag','DTIprep');
+        u=get(hf,'userdata');
+        f1=fullfile(u.studypath,'DTI','check.mat');
+        d=load(f1); d=d.d;
+    catch
+        err=1 ;
+    end
+    if err==1; 
+        msgbox(ms_error,'warning');
+        return
+    end
+    % --
+    try
+      [~,btable_name0,ext ]=fileparts2(d.btable);
+        btables=cellfun(@(a,b){[ a b ]},  btable_name0, ext);
+        dwis   =d.DTIfileName;
+        
+        n_btables=size(btables,1);
+        n_dwis  =size(dwis,1);
+        
+        chktab=repmat({' '}, [  max([n_btables n_dwis]) 3]);
+        chktab(1:n_btables,1) =btables;
+        chktab(1:n_dwis,2)    =dwis;
+        if n_btables==1
+            chktab{1,3}='dwi.nii';
+        else
+            finaldwiname=regexprep(chktab(1:n_btables,1),{'grad_b' '.txt'},{'dwi_b' '.nii'});
+             chktab(1:size(finaldwiname,1),3) =finaldwiname;
+        end
+        
+        hd={' #ra ___b-table___' '#ka ___INPUT-DWI___'  '#ba ___OUTPUT-DWI___'};
+        [~, ms]=plog([],[hd ;chktab ],0,'','s=10;plotlines=0;al=1');
+        
+        ms{end+1,1}=['  '];
+        ms{end+1,1}=[' #dw ' repmat('_',[1 80])];
+        ms{end+1,1}=[' #dw -The table does not state that these files exist!  '];
+        uhelp(ms,0,'name','assignment');
+        
+%         chktab=[{['\bf' '___b-table___'] ['       ___DWI-file___' '\rm']} ;chktab];
+%         chklist=cellfun(@(a,b){[ a repmat(' ',[1 size(char(chktab(:,1)),2)+2-length(a)]) b ]},  chktab(:,1),chktab(:,2));
+%         ms={
+%             '\bf\color{magenta}conflict "renaming files"! ... Process aborted!\rm\color{black}'
+%             ['number of b-tables does not match the number of DTI/DWI-files!'  ]
+%             [' No of b-tables :' num2str(n_btables)]
+%             [' No of DWI-files:' num2str(n_dwis)]
+%             '\bf #PLEASE CHECK ASSIGNMENT:\rm'
+%             };
+%         ms=[ms;chklist];
+%         ms=strrep(ms,'_','\_');
+%         errordlg(ms,'',struct('Interpreter','tex','WindowStyle','modal'))
+    catch
+        msgbox(ms_error,'warning');
+    end
+            
+    % ==============================================
+    %%
+    % ===============================================
+
+end 
+
 
 %%
 
@@ -1211,7 +1499,7 @@ for i=1:length(fn)
     
     %% ===================================================================================================
     
-    for j=size(str0,1)
+    for j=1:size(str0,1)
         if iscell(str0)
             str=str0{j};
         else
@@ -1237,7 +1525,8 @@ for i=1:length(fn)
         %         ['<b>[' field ']:</b>'  str msg ] ...
         %         ...
         %         ]
-        
+       %disp(['w---']);
+       %disp(w);
         w2=[w2; w];
     end
 end
@@ -1247,7 +1536,9 @@ set(hb,'string',w2,'value',1)
 
 
 
+function xhelp(e,e2)
 
+uhelp([mfilename '.m']);
 
 
 

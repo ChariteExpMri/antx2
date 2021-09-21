@@ -316,7 +316,10 @@
 %  #n &#9745; DTIprep for "single-shell" (single b-value diffusion acquisitions) analysis: finished + tested
 %  #n &#9832; DTIprep for "mutli-shell" analysis: has to be adjusted & tested! 
 % #gw --> access via ANT-menu: &#8658; Statistic/DTIprep for mrtrix.
-% 
+% #ba 21 Sep 2021 (22:50:00)
+% #k [DTIprep.m]: updated
+% #n &#9745; DTIprep for "multi-shell" (multi b-value diffusion acquisitions) analysis: finished
+% - wrote some info (help) how to work with DTIprep.   
 % 
 % 
 % 

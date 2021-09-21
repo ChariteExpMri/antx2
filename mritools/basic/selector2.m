@@ -13,6 +13,7 @@
 % 'position'    :[x y w h]   :position of fig
 % 'finder'      :0/1  : shows an additonal finder WINDOW, default 0
 % title         : title string in window-header
+% note          : add a note on top of the window, info in note must be of type cell
 %% IN
 % tb is a multiCell of strings
  % colinfo <optional>:char with infos, e.g. columnames 
@@ -494,6 +495,12 @@ us.jlb1.AdjustmentValueChangedCallback=@sliderSinc;
 us.ok=1;
 set(findobj(gcf,'tag','txtbusy'),'visible','off');
 %% ________________________________________________________________________________________________
+
+
+if isfield(params,'note')==1 %make a NOTE
+    make_note(params);
+end
+
 
 
 
@@ -1336,8 +1343,42 @@ set(findobj(findobj(0,'tag','selector'),'tag','txtbusy'),'visible','off');
 % ===============================================
 
 
+function make_note(params);
+if iscell(params.note)==0; return; end
+% ==============================================
+%%
+% ===============================================
+delete(findobj(gcf,'tag','pb_closenote1'));
+delete(findobj(gcf,'tag','tx_note1'));
+delete(findobj(gcf,'tag','note1'));
+%--------note:listbox
+hb=uicontrol('style' ,'listbox', 'units','norm','tag','note1');
+set(hb,'position',[.2 .5 .7 .2]);
+set(hb,'string',params.note,'min',0,'max',2000);
+set(hb,'HorizontalAlignment','left','backgroundcolor', [ 0.8706    0.9216    0.9804 ]);
+%------ note--info----
+hb=uicontrol('style' ,'pushbutton', 'units','norm','tag','tx_note1');
+set(hb,'position',[.2 .7 .3 .02]);
+set(hb,'backgroundcolor', [0.7294    0.8314    0.9569]);
+set(hb,'string','IMPORTANT','fontweight','bold');
+%------not: close
+hb=uicontrol('style' ,'pushbutton', 'units','norm','tag','pb_closenote1');
+set(hb,'string','<html>&#9746;','fontweight','bold','fontsize',12);
+set(hb,'position',[.2 .7 .02 .018]);
+set(hb,'units','pixel');
+pos=get(hb,'position');
+set(hb,'position',[pos(1) pos(2) 15 15]);
+set(hb,'units','norm');
+set(hb,'tooltipstring','close this note');
+set(hb,'callback',@close_note);
 
-
+% ==============================================
+%%
+% ===============================================
+function close_note(e,e2);
+delete(findobj(gcf,'tag','pb_closenote1'));
+delete(findobj(gcf,'tag','tx_note1'));
+delete(findobj(gcf,'tag','note1'));
 
 
 

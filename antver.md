@@ -1,7 +1,12 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   21 Sep 2021 (01:01:34)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   21 Sep 2021 (22:50:00)  
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**21 Sep 2021 (22:50:00)**</ins>  
+   __[DTIprep.m]__: updated  
+  &#9745; DTIprep for "multi-shell" (multi b-value diffusion acquisitions) analysis: finished  
+  - wrote some info (help) how to work with DTIprep.     
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**21 Sep 2021 (01:01:34)**</ins>  
    __[DTIprep.m]__: prepare data for DTI-processing via Mrtrix. Ideally DTI-processing could start  
   after conventional registration of the "t2.nii" image to the normal space und running   
