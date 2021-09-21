@@ -314,7 +314,7 @@
 % and saved in the "shellscripts" folder (same level as the dat-folder)
 %  __current status__
 %  #n &#9745; DTIprep for "single-shell" (single b-value diffusion acquisitions) analysis: finished + tested
-%  #n &#9832; DTIprep for "mutli-shell" analysis: has to be adjusted & tested! 
+%  #n &#9832; DTIprep for "multi-shell" analysis: has to be adjusted & tested! 
 % #gw --> access via ANT-menu: &#8658; Statistic/DTIprep for mrtrix.
 % #ba 21 Sep 2021 (22:50:00)
 % #k [DTIprep.m]: updated
