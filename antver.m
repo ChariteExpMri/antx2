@@ -319,8 +319,8 @@
 % #ba 21 Sep 2021 (22:50:00)
 % #k [DTIprep.m]: updated
 % #n &#9745; DTIprep for "multi-shell" (multi b-value diffusion acquisitions) analysis: finished
-% - wrote some info (help) how to work with DTIprep.   
-% 
+% -wrote some info/help to work with DTIprep.   
+% -added context menu (check b-table/DWI-files; delete files etc.)
 % 
 % 
 
