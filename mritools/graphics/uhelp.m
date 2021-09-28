@@ -4,11 +4,13 @@
 % #wo _SHORTCUTS_   #k    available in READMODE (RM) AND EDITMODE (EM)
 % #g [ctrl+"+"/"-"] #n increase/decrease fontsize
 % #g [ctrl+c]       #n copy selection
+% #g [ctrl+e]       #n toggle editor-mode/listbox-mode (default listbox-mode)
 % #g [ctrl+f]       #n finder panel: find specific word/text
 %                      use [ESC] or [x]-button to close finder panel
 % #g [ctrl+j]       #n jumper panel: jump to specific line
 %                      (use [ESC] or [x]-button to close jumper panel)
 % #g [ctrl+up/down] #n scroll to begin/end
+% #g [ctrl+r]       #n reload last input
 % ------- #b Window Position #n --------------------
 % #g [ctrl+alt+left]   #n position help window to left side with 50% screensize
 % #g [ctrl+alt+right]  #n position help window to right side with 50% screensize
@@ -146,11 +148,32 @@
 
 function varargout=uhelp(fun,varargin)
 
+alternativeOutput={
+    ''
+    ' #g Hallo'
+    'type "help uhelp" for more information'
+    }; 
 
+if exist('fun')~=1
+    fun=alternativeOutput;
+end
+% if exist('varargin')~=1
+%    varargin={};
+% end
+
+
+% ==============================================
+%%   PARAMETER
+% ===============================================
+x.aot=0;
+x.evntModifier=0;
+
+x.lastinput={fun,varargin};
+
+% ==============================================
+%%   
+% ===============================================
 warning off;
-
-
-
 if isa(fun, 'function_handle')==1 %anonym function
     fun=fun();
 end
@@ -188,10 +211,10 @@ end
 
 
 posfig=[];
-if nargin==0
-    uhelp({'..use contextmenu to open Figuretable existing '},1)  ;
-    return;
-end
+% if nargin==0
+%     uhelp({'..use contextmenu to open Figuretable existing '},1)  ;
+%     return;
+% end
 
 % if length(varargin)==0 %dirty: 2 inputs means 'multiple windows mode'
 %     try; posfig=get(335,'position'); end
@@ -222,10 +245,12 @@ else %CELL as input
     e2=fun;
 end
 
-%%%••••••••••••••••••••••••••••••••••••••••••••••
-x.aot=0;
-x.evntModifier=0;
-%%%••••••••••••••••••••••••••••••••••••••••••••••
+
+
+% ==============================================
+%%   
+% ===============================================
+
 
 
 e0=e2;%backup
@@ -422,6 +447,7 @@ if figexist==0
     
     finder_ini();
     jumper_ini();
+    reload_lastinput_ini()
 end
 
 if figexist==0
@@ -467,6 +493,7 @@ if figexist==0
     %====================================
     
     item5 = uimenu(cmenu, 'Label','<html><font color=red>evaluate selection', 'Callback', {@gcontext, 5},'Separator','on');% evaluate
+    item51 = uimenu(cmenu, 'Label','<html><font color=blue>go to webside', 'Callback', {@gcontext, 51},'Separator','on');% evaluate
     item6 = uimenu(cmenu, 'Label','help',   'Callback', {@gcontext, 6});%help
     item7 = uimenu(cmenu, 'Label','<html><font color=green>see in Matlabs DOC browser',   'Callback', {@gcontext,7},'Separator','on');%help
     item7 = uimenu(cmenu, 'Label','<html><font color=green>see in Matlabs WEB browser',   'Callback', {@gcontext,77});%help
@@ -901,26 +928,6 @@ if strcmp(e.Key,'escape')
     try; jump([],[],'close');end
 end
 
-if strcmp(e.Modifier,'alt') %copy selection
-    % positioning
-    if strcmp(e.Key      ,'uparrow')
-        fontlist = listfonts;
-        tx = findobj(Huhelp,'tag','txt');
-        inum=find(   strcmp(fontlist, get(tx,'FontName')   ) );
-        if inum>=2
-            disp(['FONT(' num2str(inum-1) '/' num2str(length(fontlist))  '): ' fontlist{inum-1}]);
-            set(tx,'FontName',fontlist{inum-1});
-        end
-    elseif strcmp(e.Key      ,'downarrow')
-        fontlist = listfonts;
-        tx = findobj(Huhelp,'tag','txt');
-        inum=find(   strcmp(fontlist, get(tx,'FontName')   ) );
-        if inum<=length(fontlist)-1
-            disp(['FONT(' num2str(inum+1) '/' num2str(length(fontlist))  '): ' fontlist{inum+1}]);
-            set(tx,'FontName',fontlist{inum+1});
-        end
-    end
-end
 
 
 
@@ -984,7 +991,11 @@ if strcmp(e.Modifier,'control') %copy selection
             set(hf,'position',posall(us.fgposNumber,:));
         end
         set(hf,'userdata',us);
-        
+    elseif strcmp(e.Key,'r')  %reload last input
+        reload_lastinput([],[]);
+    elseif strcmp(e.Key,'e')  %editor mode
+        hb=findobj(gcf,'tag','EM');
+        hgfeval(get(hb,'callback'),hb);
         
     elseif strcmp(e.Key,'j')  %jump
         jumper_openpanel()
@@ -1118,6 +1129,27 @@ if sum(ismember(e.Modifier,{'control','alt'}))==2
 end
 
 
+if sum(ismember(e.Modifier,{'control','shift'}))==2
+    % positioning
+%     e
+    if strcmp(e.Key      ,'leftarrow')
+        fontlist = listfonts;
+        tx = findobj(Huhelp,'tag','txt');
+        inum=find(   strcmp(fontlist, get(tx,'FontName')   ) );
+        if inum>=2
+            disp(['FONT(' num2str(inum-1) '/' num2str(length(fontlist))  '): ' fontlist{inum-1}]);
+            set(tx,'FontName',fontlist{inum-1});
+        end
+    elseif strcmp(e.Key      ,'rightarrow')
+        fontlist = listfonts;
+        tx = findobj(Huhelp,'tag','txt');
+        inum=find(   strcmp(fontlist, get(tx,'FontName')   ) );
+        if inum<=length(fontlist)-1
+            disp(['FONT(' num2str(inum+1) '/' num2str(length(fontlist))  '): ' fontlist{inum+1}]);
+            set(tx,'FontName',fontlist{inum+1});
+        end
+    end
+end
 
 
 %----------------------------------
@@ -1171,9 +1203,48 @@ catch
     
 end
 
+% function LB_doubleclick(e,e2)
+% 'qq'
+% if strcmp(get(e,'tag'),'txt') &&   strcmp(get(e,'style'),'listbox')
+%     
+%     
+%     hListbox=e;
+%    % Get the listbox's underlying Java control
+% jScrollPane = findjobj(hListbox);
+% % We got the scrollpane container - get its actual contained listbox control
+% jListbox = jScrollPane.getViewport.getComponent(0);
+% % Convert to a callback-able reference handle
+% jListbox = handle(jListbox, 'CallbackProperties');
+%     
+%     set(jListbox, 'MouseMovedCallback', {@testmoved,hListbox});
+%     
+% %     java.awt.Point(hv.getX, hv.getY)
+% %     java.awt.Point(hx.getX, hx.getY)
+% end
+% 
+% jListbox=findjobj(e);
+% set(jListbox, 'MousePressedCallback',{@myCallbackFcn,jListbox});
+% 
+% 
+% function testmoved(jListbox, jEventData, hListbox)
+% % Get the currently-hovered list-item
+% mousePos = java.awt.Point(jEventData.getX, jEventData.getY)
+% hoverIndex = jListbox.locationToIndex(mousePos) + 1
 
+
+
+% ==============================================
+%%   
+% ===============================================
 function txtline(e,e2)
-% % 's'
+% get(gcf,'selectiontype')
+% if strcmp(get(gcf,'selectiontype'),'normal')  
+%   LB_doubleclick(e,e2);
+%   return
+% end
+
+
+
 try
     tx= findobj(Huhelp,'tag','txt');
     if strcmp(get(tx,'style'),'listbox')
@@ -1543,10 +1614,10 @@ elseif mode==3
         dumh=char(  (filnew(i,:)) );
         fprintf(fid,'%s\n',dumh);
     end
-elseif mode==4 || mode==5%[4] copy selection or [5]evaluate selection
+elseif mode==4 || mode==5 || mode==51 %[4] copy selection or [5]evaluate selection [51]go to weblink
     
     tx= findobj(Huhelp,'tag','txt');
-    if strcmp(get(tx,'style'),'edit')
+    if strcmp(get(tx,'style'),'edit') %EDIT ----------------------------------------
         
         jhEdit = findjobj(tx);
         r = jhEdit.getComponent(0).getComponent(0);
@@ -1556,7 +1627,7 @@ elseif mode==4 || mode==5%[4] copy selection or [5]evaluate selection
         if mode==4
             clipboard('copy',txt2copy);
             return
-        else
+        elseif mode==5
             try
                 try
                     cprintf([0 .5 0],[ 'RUN:\n' ]);
@@ -1566,6 +1637,7 @@ elseif mode==4 || mode==5%[4] copy selection or [5]evaluate selection
                 disp(txt2copy);
                 
                 evalin('base',txt2copy);
+                cprintf([0    0.4980         0], [ '..evaluated..\n' ]);
             catch e %e is an MException struct
                 try
                     cprintf([0 .5 0],[ sprintf('ERROR  : %s',e.identifier) '\n' ]);
@@ -1577,30 +1649,70 @@ elseif mode==4 || mode==5%[4] copy selection or [5]evaluate selection
             end
             
             return
+         elseif mode==51
+             txline=txt2copy;
         end
-    end
-    
-    
-    x=get(Huhelp,'userdata');%get(tx,'string');
-    li=x.e0;
-    va=get(tx,'value');
-    
-    e0='';
-    for i=1:length(va)
-        %e0=[e0 li{va(i)}];
-        e0=[e0 sprintf('%s\n' ,li{va(i)})];
-    end
-    
-    if mode==4
-        warning off;
-        clipboard('copy',e0)
-        warning on;
-    elseif mode==5
-        try;
-            %             eval(e0);
-            evalin('base',e0);
+    else %LISTBOX ----------------------------------------
+        
+        x=get(Huhelp,'userdata');%get(tx,'string');
+        li=x.e0;
+        va=get(tx,'value');
+        
+        e0='';
+        for i=1:length(va)
+            %e0=[e0 li{va(i)}];
+            e0=[e0 sprintf('%s\n' ,li{va(i)})];
         end
-    end
+        
+        if mode==4
+            warning off;
+            clipboard('copy',e0)
+            warning on;
+        elseif mode==5
+            try;
+                %             eval(e0);
+                
+                evalin('base',e0);
+                cprintf([0 0.4980  0], [ '..evaluated..\n' ]);
+            end
+        elseif mode==51
+            txline=e0;
+        end
+ end       
+        
+        
+    if mode==51 %webside
+        txline=regexprep(txline,'.*href','');
+        if isempty(txline) && strcmp(get(tx,'style'),'edit')
+            cp=r.getCaretPosition;
+            CR=regexp(txt,char(10));
+            icr=[max(find(CR<cp)) min(find(CR>cp))];
+            txline=txt([CR(icr(1)):CR(icr(2))]);
+        end
+            nQM=strfind(txline,'"');
+            if length(nQM)>1
+                url=txline(nQM(1)+1:nQM(2)-1);
+               
+            else
+                txline=regexprep(txline,{'#' ,'\s+' char(13)},'');
+                if isempty(txline); return; end
+                url=txline;
+            end
+            
+        cprintf([0    0.4980         0], [ '..open URL: ' url  '\n' ]);
+        if ispc
+            system(['start ' char(url) ' > NUL 2 > NUL'])  ;
+        else
+            system(['open ' char(url) ])  ;
+        end
+        
+    end       
+    
+    
+    
+  
+    
+ 
     
 elseif mode==6
     %% HELP OF HELP
@@ -2254,7 +2366,6 @@ set(hb,'tooltipstring','finder panel  --> [ctrl+f]');
 set(hb,'units','pixel');
 
 function jumper_ini()
-
 ic(:,:,1)=[255 255 255 255 255 255 255 255 255 255 225 48 48 225 255 255;255 255 255 255 255 255 255 255 255 255 143 0 0 143 255 255;255 255 255 255 255 244 118 104 160 217 217 29 29 217 255 255;255 255 255 255 193 35 1 8 0 0 92 238 255 255 255 255;255 255 255 200 2 27 182 250 63 0 0 88 255 255 255 255;255 255 255 242 144 239 255 171 0 0 0 4 225 255 255 255;255 255 255 255 255 255 234 22 0 0 140 2 61 129 162 247;255 255 255 255 255 255 99 0 0 84 255 105 15 0 0 176;255 255 255 255 255 255 57 0 0 193 255 255 255 239 215 254;255 255 255 255 255 162 208 53 0 12 151 255 255 255 255 255;243 130 120 120 108 1 91 253 134 7 0 120 255 255 255 255;186 0 0 0 0 1 182 255 255 111 0 125 255 255 255 255;255 192 184 184 184 204 255 255 246 20 7 231 255 255 255 255;255 255 255 255 255 255 255 255 151 0 96 255 255 255 255 255;255 255 255 255 255 255 255 255 41 1 209 255 255 255 255 255;255 255 255 255 255 255 255 255 70 95 255 255 255 255 255 255];
 ic(:,:,2)=[255 255 255 255 255 255 255 255 255 255 225 48 48 225 255 255;255 255 255 255 255 255 255 255 255 255 143 0 0 143 255 255;255 255 255 255 255 244 118 104 160 217 217 29 29 217 255 255;255 255 255 255 193 35 1 8 0 0 92 238 255 255 255 255;255 255 255 200 2 27 182 250 63 0 0 88 255 255 255 255;255 255 255 242 144 239 255 171 0 0 0 4 225 255 255 255;255 255 255 255 255 255 234 22 0 0 140 2 61 129 162 247;255 255 255 255 255 255 99 0 0 84 255 105 15 0 0 176;255 255 255 255 255 255 57 0 0 193 255 255 255 239 215 254;255 255 255 255 255 162 208 53 0 12 151 255 255 255 255 255;243 130 120 120 108 1 91 253 134 7 0 120 255 255 255 255;186 0 0 0 0 1 182 255 255 111 0 125 255 255 255 255;255 192 184 184 184 204 255 255 246 20 7 231 255 255 255 255;255 255 255 255 255 255 255 255 151 0 96 255 255 255 255 255;255 255 255 255 255 255 255 255 41 1 209 255 255 255 255 255;255 255 255 255 255 255 255 255 70 95 255 255 255 255 255 255];
 ic(:,:,3)=[255 255 255 255 255 255 255 255 255 255 225 48 48 225 255 255;255 255 255 255 255 255 255 255 255 255 143 0 0 143 255 255;255 255 255 255 255 244 118 104 160 217 217 29 29 217 255 255;255 255 255 255 193 35 1 8 0 0 92 238 255 255 255 255;255 255 255 200 2 27 182 250 63 0 0 88 255 255 255 255;255 255 255 242 144 239 255 171 0 0 0 4 225 255 255 255;255 255 255 255 255 255 234 22 0 0 140 2 61 129 162 247;255 255 255 255 255 255 99 0 0 84 255 105 15 0 0 176;255 255 255 255 255 255 57 0 0 193 255 255 255 239 215 254;255 255 255 255 255 162 208 53 0 12 151 255 255 255 255 255;243 130 120 120 108 1 91 253 134 7 0 120 255 255 255 255;186 0 0 0 0 1 182 255 255 111 0 125 255 255 255 255;255 192 184 184 184 204 255 255 246 20 7 231 255 255 255 255;255 255 255 255 255 255 255 255 151 0 96 255 255 255 255 255;255 255 255 255 255 255 255 255 41 1 209 255 255 255 255 255;255 255 255 255 255 255 255 255 70 95 255 255 255 255 255 255];
@@ -2268,6 +2379,57 @@ set(hb,'position',[.433 0 .027 .03]);
 set(hb,'callback',{@jumper_openpanel});
 set(hb,'tooltipstring','jumper panel  --> [ctrl+j]','tag','jumper_pb');
 set(hb,'units','pixel');
+
+
+
+function reload_lastinput_ini()
+
+% ic(:,:,1)=[255 255 255 255 255 255 255 255 255 255 225 48 48 225 255 255;255 255 255 255 255 255 255 255 255 255 143 0 0 143 255 255;255 255 255 255 255 244 118 104 160 217 217 29 29 217 255 255;255 255 255 255 193 35 1 8 0 0 92 238 255 255 255 255;255 255 255 200 2 27 182 250 63 0 0 88 255 255 255 255;255 255 255 242 144 239 255 171 0 0 0 4 225 255 255 255;255 255 255 255 255 255 234 22 0 0 140 2 61 129 162 247;255 255 255 255 255 255 99 0 0 84 255 105 15 0 0 176;255 255 255 255 255 255 57 0 0 193 255 255 255 239 215 254;255 255 255 255 255 162 208 53 0 12 151 255 255 255 255 255;243 130 120 120 108 1 91 253 134 7 0 120 255 255 255 255;186 0 0 0 0 1 182 255 255 111 0 125 255 255 255 255;255 192 184 184 184 204 255 255 246 20 7 231 255 255 255 255;255 255 255 255 255 255 255 255 151 0 96 255 255 255 255 255;255 255 255 255 255 255 255 255 41 1 209 255 255 255 255 255;255 255 255 255 255 255 255 255 70 95 255 255 255 255 255 255];
+% ic(:,:,2)=[255 255 255 255 255 255 255 255 255 255 225 48 48 225 255 255;255 255 255 255 255 255 255 255 255 255 143 0 0 143 255 255;255 255 255 255 255 244 118 104 160 217 217 29 29 217 255 255;255 255 255 255 193 35 1 8 0 0 92 238 255 255 255 255;255 255 255 200 2 27 182 250 63 0 0 88 255 255 255 255;255 255 255 242 144 239 255 171 0 0 0 4 225 255 255 255;255 255 255 255 255 255 234 22 0 0 140 2 61 129 162 247;255 255 255 255 255 255 99 0 0 84 255 105 15 0 0 176;255 255 255 255 255 255 57 0 0 193 255 255 255 239 215 254;255 255 255 255 255 162 208 53 0 12 151 255 255 255 255 255;243 130 120 120 108 1 91 253 134 7 0 120 255 255 255 255;186 0 0 0 0 1 182 255 255 111 0 125 255 255 255 255;255 192 184 184 184 204 255 255 246 20 7 231 255 255 255 255;255 255 255 255 255 255 255 255 151 0 96 255 255 255 255 255;255 255 255 255 255 255 255 255 41 1 209 255 255 255 255 255;255 255 255 255 255 255 255 255 70 95 255 255 255 255 255 255];
+% ic(:,:,3)=[255 255 255 255 255 255 255 255 255 255 225 48 48 225 255 255;255 255 255 255 255 255 255 255 255 255 143 0 0 143 255 255;255 255 255 255 255 244 118 104 160 217 217 29 29 217 255 255;255 255 255 255 193 35 1 8 0 0 92 238 255 255 255 255;255 255 255 200 2 27 182 250 63 0 0 88 255 255 255 255;255 255 255 242 144 239 255 171 0 0 0 4 225 255 255 255;255 255 255 255 255 255 234 22 0 0 140 2 61 129 162 247;255 255 255 255 255 255 99 0 0 84 255 105 15 0 0 176;255 255 255 255 255 255 57 0 0 193 255 255 255 239 215 254;255 255 255 255 255 162 208 53 0 12 151 255 255 255 255 255;243 130 120 120 108 1 91 253 134 7 0 120 255 255 255 255;186 0 0 0 0 1 182 255 255 111 0 125 255 255 255 255;255 192 184 184 184 204 255 255 246 20 7 231 255 255 255 255;255 255 255 255 255 255 255 255 151 0 96 255 255 255 255 255;255 255 255 255 255 255 255 255 41 1 209 255 255 255 255 255;255 255 255 255 255 255 255 255 70 95 255 255 255 255 255 255];
+% ic=imresize(ic,[12 12],'bilinear');
+% w=uint8(ic);
+hb=uicontrol('Style','pushbutton', 'Position',[100 100 16, 16], ...
+      'BackgroundColor','w');%'CData',w,  
+set(hb,'units','norm');
+set(hb,'position',[.46 0 .027 .03]);
+set(hb,'callback',{@reload_lastinput});
+set(hb,'tooltipstring','reload input','tag','reload_lastinput');
+set(hb,'units','pixel');
+set(hb,'string','<html>&#8635;');
+% set(hb,'fontsize',8);
+
+function reload_lastinput(e,e2)
+try
+    u=get(gcf,'userdata');
+    hb=findobj(gcf,'tag','txt');
+    %     if strcmp(get(hb,'style'),'edit')
+    jhEdit = findjobj(hb);
+    %  jEdit = jhEdit.getComponent(0).getComponent(0);
+    % jVScroll.setValue(jVScroll.getMaximum);    % jhEdit.repaint;
+    jVScroll = jhEdit.getVerticalScrollBar;
+    linnum=jVScroll.getValue;
+    %     else
+    %         linnum= get(hb,'value');
+    %     end
+    % ---------------
+    if isempty(u.lastinput{2})
+        uhelp(u.lastinput{1});
+    else
+        uhelp(u.lastinput{1},u.lastinput{2});
+    end
+    % ---------------
+    hb=findobj(gcf,'tag','txt');
+    %     if strcmp(get(hb,'style'),'edit')
+    jhEdit = findjobj(hb);
+    jVScroll.setValue(linnum);
+    %jhEdit.repaint;
+    %     else
+    %         set(hb,'value',linnum);
+    %     end
+end
+
+
 
 
 

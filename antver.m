@@ -3,6 +3,10 @@
 % 
 % #yk ANTx2
 % 
+% #b Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a> 
+% #b Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a> 
+% 
+% 
 %======= CHANGES ================================
 % #ra 07 May 2019 (14:16:48)
 % #ok new version "ANTx2"
@@ -322,7 +326,13 @@
 % -wrote some info/help to work with DTIprep.   
 % -added context menu (check b-table/DWI-files; delete files etc.)
 % 
+% #ba 28 Sep 2021 (13:33:22)
+% small changes in 
+%  #k [uhelp] #n added: hyperlink selection via context menu 
+%  #k [cfg_getfile2] #n added: 4D-Nifti filter
 % 
+% 
+
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

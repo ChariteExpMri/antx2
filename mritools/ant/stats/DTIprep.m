@@ -35,7 +35,7 @@
 % #ky (c) get the DTI-template #k (i.e. a specific DTI-atlas). 
 %   -The atlas has to be constructed in advance. For atlas-construction you can use
 %     [xexcel2atlas.m] available via ANT menu: Tools/"make mask from excelfile".
-% #r &#9654; Preserve ORDER! First do (a),than (b), than (c)
+% #r &#9654; Preserve ORDER! First do (a),than (b), than (c)!
 % #n &#9654; You can close the DTI-prep gui anytime! The userinput and progress is stored in a
 %    mat-file ("check.mat") in the folder #r "DTI".
 % ____________________________

@@ -55,6 +55,10 @@
 % 
 % 
 % 
+% ==============================================
+% #ko *** [3] SHORTCUTS  ***
+% ===============================================
+% #b [space]  #n :  enlarge/shrink window (toggle)
 % 
 % 
 
@@ -203,6 +207,7 @@ hf=figure('units','norm','menubar','none','color','w','tag','anthistory',...
     'name','anthistory','numbertitle','off');
 % set(hf,'position',[0.3937    0.4011    0.3542    0.1544])
 set(hf,'position',figpos);
+set(gcf,'WindowKeyPressFcn',@keys);
 
 % Column names and column format
 % Define the data
@@ -828,4 +833,48 @@ end
 
 
 
+% ==============================================
+%% main fig key
+% ===============================================
+function keys(e,e2)
+hf=findobj(0,'tag','anthistory');
+
+
+if strcmp(e2.Key,'space')
+    hb=findobj(gcf,'tag','shrinkGUI');
+   val= get(hb,'value');
+   set(hb,'value',~val);
+   hgfeval(get( hb ,'callback'),[]);
+end
+
+
+
+% % ==============================================
+% %%   fig-shortcuts: shift
+% % ===============================================
+% 
+% if strcmp(e2.Modifier,'shift')
+%     hp3 =findobj(gcf,'tag','panel3'); %panel3
+%     %disp('shift-not defined');
+%     if  strcmp(e2.Key,'leftarrow')                        %slider contour -L
+%         
+%         hvis=findobj(hp3,'tag','thresh_visible'); %visible
+%         if get(hvis,'value')==1
+%             slid_thresh_set(-.01);
+%         end
+%     elseif strcmp(e2.Key,'rightarrow')                     %slider contour -R
+%         
+%         hvis=findobj(hp3,'tag','thresh_visible'); 
+%         if get(hvis,'value')==1
+%             slid_thresh_set(+.01);
+%         end
+%     elseif strcmp(e2.Key,'c')                                 % visible contour
+%         hc=findobj(hp3,'tag','thresh_visible');
+%         set(hc,'value', ~get(hc,'value'));
+%        slid_thresh();
+%     end
+%     
+%     
+%     return
+% end
 

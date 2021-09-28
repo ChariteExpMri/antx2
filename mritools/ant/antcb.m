@@ -1079,6 +1079,9 @@ if strcmp(do, 'update')
         lb=findobj(gcf,'tag','lb3');
         set(lb,'string', dirsid);%,'userdata',dirx);
         %         set(lb,'fontsize',12);
+        if max(get(lb,'value'))>size(dirsid,1)       %prevent invisble LBstate
+           set(lb,'value',size(dirsid,1)) 
+        end
         set(lb,'fontname','courier');
         an.mdirs=dirx;
     end

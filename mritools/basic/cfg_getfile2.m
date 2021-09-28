@@ -641,6 +641,12 @@ ContextMenu=uicontextmenu;
 uimenu('Parent',ContextMenu, 'Label','show help in external figure', 'callback', {@cmenuInfo,'showInfo',cellstr(mesg) } ,'ForegroundColor',[0 .5 0]);
 set(findobj(gcf,'tag','pmsgbox'),'UIContextMenu',ContextMenu);
 
+% --------
+hp=uicontrol('style','radio','units','normalized',...
+    'position',[0.001 .69 .5 .09 ],'backgroundcolor',[ 0.9400    0.9400    0.9400],'foregroundcolor',[0 .6 0],...
+    'string','4D only','fontsize',7,'fontweight','bold','tag','show4Donly','horizontalalignment','left'    );
+set(hp,'position',[0.9262 0.28864 0.07 0.025],'tooltipstring','show 4D NIFTI files only');
+set(hp,'callback',@update);
 
 % pulldown-memory
 persistent lastfiltertoken
@@ -999,6 +1005,32 @@ else
 end;
 % dr(strfind(dr,[filesep filesep])) = [];
 [f,d] = listfiles(dr,getfilt(lb));
+
+%% ===============================================
+
+% --------4D only
+if get(findobj(gcf,'tag','show4Donly'),'value')==1
+    %clc;
+    is4d=[];
+    for i=1:size(f,1)
+        try
+            fi=fullfile(dr,f{i});
+            fi=regexprep(fi,'.nii,1','.nii');
+            hv=spm_vol(fi);
+            if length(hv)>1
+                is4d=[is4d i];
+            end
+        end
+        %disp(length(hv))
+    end
+    if ~isempty(is4d)
+       f=f(is4d); 
+    end
+    
+end
+%% ===============================================
+
+% -------
 if isempty(d),
     dr    = get(lb,'UserData');
     [f,d] = listfiles(dr,getfilt(lb));
