@@ -3,8 +3,8 @@
 % 
 % #yk ANTx2
 % 
-% #gw &#8658;  Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a> 
-% #gw &#8658;  Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a> 
+% #b &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a> 
+% #b &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a> 
 % 
 % 
 %======= CHANGES ================================
@@ -451,6 +451,7 @@ w=[head0; head1; s2];
 % ```'
 
 % w=[ '<font size="+5">' ;w; '</font>'];
+w=regexprep(w,' #b ','');
 
 fileout=fullfile(fileparts(which('antver.m')),'antver.md');
 pwrite2file(fileout,w);
