@@ -9,7 +9,7 @@
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**29 Sep 2021 (17:11:33)**</ins>  
   Created a web-side with tutorials   
   Depending on the time, further tutorials will be uploaded soon  
-  &#8618;  access via link : "https://chariteexpmri.github.io/antxdoc"  
+  &#8618;  access via link : <u>"https://chariteexpmri.github.io/antxdoc"  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Sep 2021 (13:33:22)**</ins>  
   small changes in   
