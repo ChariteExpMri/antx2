@@ -331,6 +331,11 @@
 %  #k [uhelp] #n added: hyperlink selection via context menu 
 %  #k [cfg_getfile2] #n added: 4D-Nifti filter
 % 
+% #ba 29 Sep 2021 (17:11:33)
+% Created a web-side with tutorials 
+% Depending on the time, further tutorials will be uploaded soon
+% #gw -->  access via link : "https://chariteexpmri.github.io/antxdoc"
+% 
 % 
 
 

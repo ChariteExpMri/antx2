@@ -1,15 +1,21 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   28 Sep 2021 (13:33:22)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   29 Sep 2021 (17:11:33)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**29 Sep 2021 (17:11:33)**</ins>  
+  Created a web-side with tutorials   
+  Depending on the time, further tutorials will be uploaded soon  
+  &#8618;  access via link : "https://chariteexpmri.github.io/antxdoc"  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Sep 2021 (13:33:22)**</ins>  
   small changes in   
     __[uhelp]__ added: hyperlink selection via context menu   
     __[cfg_getfile2]__ added: 4D-Nifti filter  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**21 Sep 2021 (22:50:00)**</ins>  
    __[DTIprep.m]__: updated  
