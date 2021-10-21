@@ -31,7 +31,7 @@
 % #b [load]       #n : load a selected project
 %                -The project must be selected from the table and must appear
 %                 in the lower gray text box
-% #b [cancel]     #n : cancel process & close the GUI
+% #b [close]      #n : close the GUI
 % #b [help]       #n : get this help
 % #r [delete]     #n : Delete entiry history. 
 %                #r Important: This will delete the history without any "undo"-option
@@ -412,9 +412,9 @@ if setpixunits==1
 end
 
 
-hb=uicontrol('style','pushbutton','units','norm','tag','cancel','string','cancel');
+hb=uicontrol('style','pushbutton','units','norm','tag','cancel','string','Close');
 set(hb,'position',[0.1031 0.0010506 0.1 0.05],'callback',{@proc,3});
-set(hb,'tooltipstring',['cancel process & close GUI']);
+set(hb,'tooltipstring',['close GUI']);
 if setpixunits==1
     set(hb,'units','pixel');
 end
@@ -473,11 +473,24 @@ if 1
     cellMaxLen = num2cell(maxLen*f);
     set(t, 'ColumnWidth', cellMaxLen);
     set(t,'units',unit_t);
+    
+    %----adjust table size
+    if 1
+        unit_f=get(gcf,'units');
+        set(gcf,'units','pixels');
+        pos=round(get(gcf,'position'));
+        set(gcf,'position',[pos(1:2) sum(maxLen)*7  pos(4) ]);
+        set(gcf,'units',unit_f);
+        
+    end
+    
 end
 %% ==============TABLE VISIBLE=================================
 
 set(hf,'visible','on');
 %% ===============================================
+
+% 'a'
 
 % ==============================================
 %%   
@@ -841,7 +854,7 @@ warndlg(msg,titl,opts);
 function [d d0  coltab]=table2html(h)
     
 [~, pfiles ext ]=fileparts2(h.history(:,3)); 
-h.history(:,3)=[cellfun(@(a,b){[ a b ]}, pfiles, ext) ]
+h.history(:,3)=[cellfun(@(a,b){[ a b ]}, pfiles, ext) ];
     
 d0=h.history;
  d=h.history;
