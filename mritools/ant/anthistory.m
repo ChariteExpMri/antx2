@@ -479,7 +479,7 @@ if 1
         unit_f=get(gcf,'units');
         set(gcf,'units','pixels');
         pos=round(get(gcf,'position'));
-        set(gcf,'position',[pos(1:2) sum(maxLen)*7  pos(4) ]);
+        set(gcf,'position',[pos(1:2) sum(maxLen)*6  pos(4) ]);
         set(gcf,'units',unit_f);
         
     end
