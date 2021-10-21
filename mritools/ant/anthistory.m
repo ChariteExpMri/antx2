@@ -610,7 +610,7 @@ try
     ms2=strrep(ms2, ' ', '&nbsp;' );
     ms2{2}=[ '<font color=blue><b>' ms2{2} '</b></font> ' ];
     
-    ms3=['<html><p style="font-family:''Monospace'';font-size:16px">' strjoin(ms2,char(10))];
+    ms3=['<html><p style="font-family:''Monospace''">' strjoin(ms2,char(10))];
     e.setToolTipText(ms3);
 end
 
