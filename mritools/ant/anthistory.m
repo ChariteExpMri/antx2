@@ -194,7 +194,7 @@ load(p.fhist);
 %%   defaults
 % ===============================================
 setpixunits=1;
-doshrinkGui=1;
+doshrinkGui=0;
 showuniquestudies=1;
 % ==============================================
 %%   
