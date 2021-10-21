@@ -144,7 +144,13 @@ timx      =datestr(now);
 if isempty(extc); extc='.m'; end
 configfile=fullfile(pac,[namec extc]);
 
-user=char(java.lang.System.getProperty('user.name'));
+uname  =char(java.lang.System.getProperty('user.name'));
+client=getenv('CLIENTNAME');
+if ~isempty(client)
+    client=[client '/'];
+end
+user=[client  uname ];
+% [a1 a2]=system('echo %CLIENTNAME%')
 
 
 % delete(fhist)
