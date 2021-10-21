@@ -546,15 +546,16 @@ elseif arg==1;
     end
     try
         s=u.clicked;
-        if exist(s{2})==7 && exist(s{3})==2
+        pfile=fullfile(s{2}, s{3});
+        if exist(pfile)==2
             
             cd(s{2});
             antcb('close');
-            eval('base',['antcb(''load'', ''' s{3} ''' );']);
+            eval('base',['antcb(''load'', ''' pfile ''' );']);
             %         w=['antcb(''load'', ''' s{3} ''' );'];
             %         disp(w)
         else
-            msg_missingCHECK(s{2}, s{3}) ;
+            msg_missingCHECK(s{2}, pfile) ;
             
             return
             
@@ -771,11 +772,12 @@ elseif strcmp(task,'openStudyDir')
     end
 elseif strcmp(task,'showConfigfile')
     for i=1:length(isel)
-        if exist(u.d{isel(i),3})~=2
-            msg_missingConfigfile(u.d{isel(i),3});
+        pfile=fullfile(u.d{isel(i),2}, u.d{isel(i),3});
+        if exist(pfile)~=2
+            msg_missingConfigfile(pfile);
             return
         end
-        edit(u.d{isel(i),3});
+        edit(pfile);
     end
     
 end
@@ -837,6 +839,10 @@ warndlg(msg,titl,opts);
 %% ===============================================
 
 function [d d0  coltab]=table2html(h)
+    
+[~, pfiles ext ]=fileparts2(h.history(:,3)); 
+h.history(:,3)=[cellfun(@(a,b){[ a b ]}, pfiles, ext) ]
+    
 d0=h.history;
  d=h.history;
 coltab=zeros(size(d,1),3);
