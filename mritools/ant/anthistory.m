@@ -195,7 +195,7 @@ load(p.fhist);
 % ===============================================
 setpixunits=1;
 doshrinkGui=1;
-
+showuniquestudies=1;
 % ==============================================
 %%   
 % ===============================================
@@ -203,7 +203,7 @@ doshrinkGui=1;
 figpos=[ 0.1139    0.2044    0.8014    0.5711];
 
 delete(findobj(0,'tag','anthistory'));
-hf=figure('units','norm','menubar','none','color','w','tag','anthistory',...
+hf=figure('visible','off','units','norm','menubar','none','color','w','tag','anthistory',...
     'name','anthistory','numbertitle','off');
 % set(hf,'position',[0.3937    0.4011    0.3542    0.1544])
 set(hf,'position',figpos);
@@ -306,6 +306,9 @@ end
 set(t,'units','norm','position',[0 .2 1 .8]);
 
 
+% jscroll = findjobj(hTable);
+% jTable = jscroll.getViewport.getView;
+% jTable.setAutoResizeMode(jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS)
 
 % ==============================================
 %%   PARAMS
@@ -436,12 +439,39 @@ if doshrinkGui==1
     set(findobj(hf,'tag','shrinkGUI'),'value',1);
     shrinkGUI();
 end
-
+if showuniquestudies==1
+   set(findobj(hf,'tag','uniqueStudies'),'value',1);
+   uniquestudies();
+end
 % set(gcf,'CloseRequestFcn',[]); %forced to be closed ..>> "closereq"
 
+%% adjust figure-size
+hb=findobj(gcf,'tag','table');
+if size(hb.Data,1)<10
+    posf=get(hf,'position');
+    set(hf,'position',[posf(1:3) .33]);
+end
+%     0.1139    0.2044    0.4007    0.2600
 
 
+%% ===============================================
+%% ADJUST TABLE-COLUMN-width
+%https://de.mathworks.com/matlabcentral/answers/98616-is-there-an-option-for-the-uitable-object-which-allows-the-width-of-the-columns-to-adjust-according
+if 1
+    unit_t=get(t,'units');
+    set(t,'units','pixel');
+    tablew = t.Position(3); %get with of the uitable
+     maxLen = max(cellfun(@length,d0),[],1); % Calculate the with of the data in cell C.
+     
+     f =1.2+( tablew/sum(maxLen)); % Normalize it to the with of the table
+    cellMaxLen = num2cell(maxLen*f);
+    set(t, 'ColumnWidth', cellMaxLen);
+    set(t,'units',unit_t);
+end
+%% ==============TABLE VISIBLE=================================
 
+set(hf,'visible','on');
+%% ===============================================
 
 % ==============================================
 %%   
