@@ -103,7 +103,16 @@
 %  'grad_b3400.txt'      % %  ||
 %  'grad_b6000.txt'      % %  ||
 % 
-% 
+% updates
+% 01-Nov-2021 15:56:06
+% -"descrip" & "private" fields are removed from NIFTI-files during the "renaming" proc step.
+%  REASON: non-UTF8 characters (umlauts) produce crash during MRTRIX (DWIFSLPREPROC) analysis
+%  errorMSG was --> UnicodeDecodeError: 'utf8' codec can't decode byte 0xfc in position 4: invalid start byte 
+% -the datatype of the ATLAS ("ANO_DTI.nii") is changed to dt=[8 0] (32bit integer) during the "renaming" proc step.
+%  REASON: crash during MRTRIX (in *_connectome_7texpmri.sh) analysis
+%  errorMSG was -->labelconvert: [ERROR] Floating-point number detected in image "d6/mrtrix/ANO_DTI_up.mif"; label images should contain integers only
+% -check and if missing adds a newline character at the end of (each) btable-txt files (grad.txt/grad*.txt)
+%  REASON: potential concatenation of grad-files in the multishell approach failed 
 
 function DTIprep();
 
@@ -140,13 +149,13 @@ set(hl,'position',[0.5 0 .5 1]);
 set(hl,'string','<>');
 
 %% frame-1
-hb = uipanel('Title','user input','FontSize',8,'tag','uip1',...
+hb = uipanel('Title','USER INPUT','FontSize',8,'tag','uip1',...
              'BackgroundColor','white');
-set(hb,'position',[[0.001 .64 .16 .38]]);
+set(hb,'position',[[0.001 .635 .16 .365]]);
 
 %% getbtable
 hb=uicontrol('style','pushbutton','units','norm','string','get b-table(s)','tag','getbtable');
-set(hb,'position',[0.0053571 0.8516 0.15 0.1]);
+set(hb,'position',[0.0053571 0.8381 0.15 0.1]);
 set(hb,'backgroundcolor',[ 0.9373    0.8667    0.8667]);
 set(hb,'tooltipstring',[...
     '<html><b>get b-table from one of the Bruker raw-data sets</b><br>' ...
@@ -159,7 +168,7 @@ set(hb,'tooltipstring',[...
 %% getDTIfile
 set(hb,'callback',{@process, 'getbtable'} );
 hb=uicontrol('style','pushbutton','units','norm','string','get DTIfile(s)','tag','getDTIfile');
-set(hb,'position',[0.0053571 0.75571 0.15 0.1]);
+set(hb,'position',[0.0053571 0.7422 0.15 0.1]);
 set(hb,'callback',{@process, 'getDTIfile'} );
 set(hb,'backgroundcolor',[ 0.9373    0.8667    0.8667]);
 set(hb,'tooltipstring',[...
@@ -171,7 +180,7 @@ set(hb,'tooltipstring',[...
 
 %% getDTItemplate
 hb=uicontrol('style','pushbutton','units','norm','string','getDTItemplate','tag','getDTItemplate');
-set(hb,'position',[0.0053571 0.65982 0.15 0.1]);
+set(hb,'position',[0.0053571 0.6463 0.15 0.1]);
 set(hb,'callback',{@process, 'getDTItemplate'} );
 set(hb,'backgroundcolor',[ 0.9373    0.8667    0.8667]);
 
@@ -196,7 +205,7 @@ set(hb,'tooltipstring',[...
 %%   procs
 % ===============================================
 %% frame-2
-hframe2 = uipanel('Title','preproc steps','FontSize',8,'tag','uip2',...
+hframe2 = uipanel('Title','PROCESSING STEPS','FontSize',8,'tag','uip2',...
              'BackgroundColor','white');
 set(hframe2,'position',[[0.001 0 .34 .64]]);         
          
@@ -339,6 +348,18 @@ m= uimenu(c,'Label','<html><font color =green>show comands for mrtrix',  'Callba
 
  
 
+% ==============================================
+%%   
+% ===============================================
+
+f = uimenu('Label','                                                                                                       ');
+f = uimenu('Label','MRTRIX-ISSUES/BUGs');
+    uimenu(f,'Label','Solution: ERROR ""inconsistent b-values detected" ','Callback',{@MRTRIXissue, 'inconsistent-b-values'});
+
+
+       
+       
+
 set(hf     ,'UIContextMenu',c);
 set(hframe2,'UIContextMenu',c);
 
@@ -374,10 +395,82 @@ if ~isempty(u.studypath)
     updateLB();
 end
 
-
-
 % ==============================================
-%%
+%%  MRTRIXissue
+% ===============================================
+function MRTRIXissue(e,e2,task)
+hf=findobj(0,'tag','DTIprep');
+u=get(hf,'userdata');
+dtipath=fullfile(u.studypath,'DTI');
+f1=fullfile(dtipath,'check.mat');
+
+if strcmp( task,  'inconsistent-b-values')
+    load(f1);
+    
+    %% ---
+    cprintf('*[0  0 1]', [ '___ MRTRIX-BUG: "inconsistent-b-values" ___ \n' ]);
+    cprintf([0  0 1], [ 'Which of the following B-tables produces the error "inconsistent b-values detected" error" : \n' ]);
+   cprintf([0  0 1], [ '...type enter without input to cancel : \n' ]);
+
+    [~, gradnames ext]=fileparts2(d.btable);
+    
+    disp(char(cellfun(@(a,b,c){[ num2str(a) ') ' b c ]}, num2cell([1:size(d.btable,1)]'), gradnames,ext )));
+    cprintf([0  0 1], [ 'enter a number":' ]);
+    q1=input('','s');
+    
+    if isnumeric(str2num(q1)) && ~isempty(str2num(q1))
+        f1=d.btable{str2num(q1)};
+        if exist(f1)~=2; 
+            msgbox([  'file not found: "' f1 '"']);
+        end
+        q2=input('enter noise reducing factor (default: 1.5): ','s');
+        fac=str2num(q2);
+        if isempty(fac);
+            fac=1.5;
+        end
+        %%   ==============================================
+        a=textread(f1);
+        ix=find(a(:,4)~=0);
+        c=a(ix,4);
+        cm=mean(c);sd=std(c);
+        d=c-cm;
+        d=(d/fac)+cm; %d=(d/1.5)+cm;
+        e=[a(:,1:3) zeros(size(a,1),1)];
+        e(ix,4)=d;
+        disp(['..reducing variation in B-table..'])
+        disp(sprintf('ORIGINAL TABLE: ME=%2.2f (SD=%2.2f)', mean(c),std(c) ));
+        disp(sprintf('MODIFIED TABLE: ME=%2.2f (SD=%2.2f)', mean(d),std(d) ));
+        
+        [pas name ext]=fileparts(f1);
+        nameoriginal=[name '_original'      ext ];
+        nameadjusted=[name '_adjusted'      ext ];
+        f2=fullfile(pas,nameoriginal);
+        f3=fullfile(pas,nameadjusted);
+        disp(['saved original Btable: "' nameoriginal '"' '   (FULLNAME: ' f2 ' )' ]);
+        disp(['saved adjusted Btable: "' nameadjusted '"' '   (FULLNAME: ' f3 ' )' ]);
+      
+        pwrite2file(f2,a);
+        pwrite2file(f3,e);
+        %% ----------
+        cprintf('*[1  0   1]', [ '..what next..\n' ]);
+        disp(['1) DIRTY SOLUTION: ']);
+        disp(['copy "' nameadjusted '" from "DTI"-DIR into  the respective animal folder  ']);
+        disp(['..and rename the file to "'  [ name ext] '"']);
+        disp(['2) BETTER SOLUTION: ']);
+        disp(['..available soon...sorry... "']);
+        
+        
+        %disp('in case this error occurs for an animal do the following:')
+
+        
+        %%
+        %%   ==============================================
+    end
+    %% ----
+end
+    
+% ==============================================
+%%  PROC STEPS
 % ===============================================
 
 function process(e,e2,task)
@@ -777,13 +870,52 @@ if strcmp(task,'renamefiles')
                fx1=fullfile(thisdir, files{j,1});
                fx2=fullfile(thisdir, files{j,2});
                %disp(char([fx1  '#' fx2]));
-               copyfile(fx1,fx2,'f');
+               
+               %% MRTRIX potential error DATAYPE: float-DT instead of Integer 
+               if strcmp(files{j,2},'ANO_DTI.nii')
+                   %keyboard
+                   [ha a]=rgetnii(fx1);
+                   hb=ha;
+                   hb.dt=[8 0];
+                   rsavenii(fx2,  hb,a);
+                   
+                    %[hc c]=rgetnii(fx2);
+                    %find(abs(unique(c(:))==unique(a(:))==0))
+               else
+                 copyfile(fx1,fx2,'f');  
+               end
+               %%  ----remove 'descrip' & private  frpm HDR----------
+              [paw namew extw]= fileparts(fx2);
+              if strcmp(extw,'.nii')==1
+                  hb=spm_vol(fx2);
+                  hb=rmfield(hb,'private');
+                  hb=rmfield(hb,'descrip');
+                  spm_create_vol(hb);
+                  %hv=spm_vol(fx2);
+                  %disp(hv(1));
+              end
+            
+               %---------
                showinfo2([ num2str(k) '-' num2str(nf) ' RENAMED' ] ,fx2,[],[], [ '>> ' fx2 ]);
                nf=nf+1;
             end
+        end %files
+        %---check GRADFILES: add newline ad the end of file if not exists-----------
+        if 1
+            for j=1:size(d.btable,1)
+                 [paw namew ext]=fileparts(d.btable{j});
+                grfile=fullfile(thisdir, [namew ext]);
+                a=fileread(grfile);
+                
+                if double(a(end))~=10
+                    a2=str2num(a);
+                    %a= preadfile(grfile)
+                    pwrite2file(grfile,a2);
+                end
+            end
         end
         
-    end
+    end%Mdirs
     
     
         

@@ -337,6 +337,9 @@
 % #gw -->  access via link : <u>"https://chariteexpmri.github.io/antxdoc"
 % 
 % 
+% #ba 01 Nov 2021 (17:29:22)
+%  #k [DTIprep] #n minor changes ..added some solutions to avoid some MRtrix-BUGs:
+% --> see help of DTIprep.m
 
 
 %----- EOF
