@@ -1,11 +1,14 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   27 Nov 2021 (23:15:21)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   28 Nov 2021 (00:33:52)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Nov 2021 (00:33:52)**</ins>  
+    __[xstatlabels.m ]__ added tail-option of hypothesis-testing   
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**27 Nov 2021 (23:15:21)**</ins>  
     __[xgetparameter.m ]__ obtain mask-based parameter from images (multimasks & masks can be mulinary)  
   mask-based paramters are:  'frequency'   'vol'     'mean'    'std'    'median'  'integrDens'  'min' 'max'      
@@ -14,6 +17,7 @@
   The output is one EXCELFILE containing sheets for each paramter. Each column contains the data of   
   one of the selected animals. The output (excelfile) can be analyzed using MENU/STATISTIC/"label based statistic"  
   .. CURRENTLY ONY PROVIDED FOR IMAGES/MASKS IN STANDARD-SPACE  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**01 Nov 2021 (17:29:22)**</ins>  
     __[DTIprep]__ minor changes ..added some solutions to avoid some MRtrix-BUGs:  

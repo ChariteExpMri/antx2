@@ -350,7 +350,8 @@
 % one of the selected animals. The output (excelfile) can be analyzed using MENU/STATISTIC/"label based statistic"
 % .. CURRENTLY ONY PROVIDED FOR IMAGES/MASKS IN STANDARD-SPACE
 % 
-% 
+% #ba 28 Nov 2021 (00:33:52)
+%  #k [xstatlabels.m ] #n added tail-option of hypothesis-testing 
 % 
 
 %----- EOF
