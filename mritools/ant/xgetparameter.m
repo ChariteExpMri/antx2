@@ -1,9 +1,62 @@
 
 
-%% obtain mask-based paramter from images (multimasks & masks can be mulinary)
-
-
-
+%% #ko [xgetparameter.m] obtain mask-based parameter from images (multimasks & masks can be mulinary)
+% mask-based paramters are: 
+%   'frequency'   'vol'     'mean'    'std'    'median'  'integrDens'  'min' 'max'    
+%   where 'frequency' and 'vol' is are the voxel-counts and volume of a specific mask
+%   'mean','std','median', 'min' 'max' the paramters within the mask
+%  'integrDens' is the integrated density within a mask (integrDens=mean *volume)
+% #b MASK: #n you can use several masks/images, each with several sub-masks/(IDs), IDS across masks
+% can be similar because either (a) a *.txt-label file is provided or if not (b) the label in the new 
+% excelFile is contructed by the maskName+ID within the respective mask 
+% #b ANIMAL_SELECTION: #n select animals from left ANTx-listbox before calling this function 
+% #b OUTPUT: #n The output is one EXCELFILE containing sheets for each paramter. 
+%            each column contains the data for one of the selected animals
+% #m The output (excelfile) can be analyzed with MENU/STATISTIC/"label based statistic"
+% 
+% #r -----------------------------------------------------------
+% #r CURRENTLY ONY PROVIDED FOR IMAGES/MASKS IN STANDARD-SPACE
+% #r -----------------------------------------------------------
+% 
+% #lk  ___PARAMETER___
+% file: the image in standard-space from which the paramters are extracted
+% mask: one/several binary/multinary masks (NIFTI) which are applied on the "file"-image
+%    - images and mask(s) must match in voxsize/FoW
+%    - optional: If aside "mymask.nii"-image a textfile "mymask.txt" in the same folder exists, this
+%      file will be read and those mask-labels will be used. If not found the labels are the ID's 
+%      found in the mask-file
+%           ..example "msk_sab_parcellate.txt" (aside "msk_sab_parcellate.nii") contains the following text:
+%                          1 L SAB_sup_post
+%                          2 L SAB_sup_mid
+%                          3 L SAB_sup_ant
+%                          4 R SAB_sup_post
+%                          5 R SAB_sup_mid
+%                          6 R SAB_sup_ant
+%                          7 L SAB_inf_post
+%                          8 L SAB_inf_mid
+%                          9 L SAB_inf_ant
+%                         10 R SAB_inf_post
+%                         11 R SAB_inf_post
+%                         12 R SAB_inf_ant
+%          ..these are the IDs & labels corresponfing to the mask "msk_sab_parcellate.nii"
+% 
+% 
+% #lk  ___BATCH___
+% obtain parameter from mage 'x_flour19f_TR3.nii' for the three selected masks for all selected animals
+% save in "result"-folder adding the prefix 'test' to the created excel-file-name containing the 
+% paramters (frequency/number of voxels, volumem, mean, SD, median, integrated density (vol*mean),
+% min, max) for the selected animals
+% % =====================================================                                                                                
+% z=[];                                                                                                                                    
+% z.file           = { 'x_flour19f_TR3.nii' };                                % % images used to extract paramters                         
+% z.masks          = { 'F:\data4\flour_felix_roi\msk_hypothalamus.nii'        % % select one/several masks to apply on the image           
+%                      'F:\data4\flour_felix_roi\msk_sab_parcellate.nii'                                                                   
+%                      'F:\data4\flour_felix_roi\msk_wurm.nii' };                                                                          
+% z.outputfolder   = 'F:\data4\flour_felix_roi\results';                      % % output folder for resulting EXCEL-file                   
+% z.filenamePrefix = 'test';                                                  % % <optional> enter filename prefix for resulting EXCEL-file
+% z.addDate        = [0];                                                     % % <optional> at date to filename (suffix)                  
+% z.addTime        = [0];                                                     % % <optional> at time to filename (suffix)                  
+% xgetparameter(1,z);  
 
 function [z varargout] = xgetparameter(showgui,x)
 warning off;
@@ -26,8 +79,8 @@ outdir=fullfile(fileparts(an.datpath),'results');
 
 p={...
 
-    'files'      ''        'images used to extract paramters' ,  {@selectfile,v,'single'} ;%'mf'
-    'masks'      {}        'select one/several masks to', {@selectfileMask,v,'multi'} % ,'mf' ...
+    'file'      ''        'images used to extract paramters' ,  {@selectfile,v,'single'} ;%'mf'
+    'masks'      {}       'select one/several masks to apply on the image', {@selectfileMask,v,'multi'} % ,'mf' ...
     
    
     'outputfolder'        outdir 'output folder for resulting EXCEL-file '    'd'   
@@ -130,9 +183,19 @@ mdir=antcb('getsubjects');
 [~,animals]=fileparts2(mdir);
 
 t={};
+err={};
+errIDX=[];
 for m=1:length(mdir)
-    f1=fullfile(mdir{m},x.files{1} );
+    try
+    f1=fullfile(mdir{m},x.file{1} );
     [~,animal]=fileparts(mdir{m});
+   
+    %--------
+    str=([' .. reading file from: ' num2str(m) '] ' animal ]);
+    fprintf(str);
+    pause(0.2);
+    fprintf(repmat('\b',1,numel(str)));
+    %------------
     
     [ha a]=rgetnii(f1);
     a2=a(:);
@@ -148,19 +211,33 @@ for m=1:length(mdir)
        v=a2(mc2{i,4});
        % % ---
        freq   =length(v);
-       vol =abs(det(ha.mat(1:3,1:3)) *(freq));
-       me  =mean(v);
-       sd  =std(v);
-       med =median(v);
-       mi =min(v);
-       ma =max(v);
+       vol  =abs(det(ha.mat(1:3,1:3)) *(freq));
+       me   =mean(v);
+       sd   =std(v);
+       med  =median(v);
+       inde = vol.*me ; %integrated density
        
-       td= [ mc2{i,3} mc2{i,2}     num2cell([freq vol me sd med mi ma  ]) ];
+       mi   =min(v);
+       ma  =max(v);
+       
+       td= [ mc2{i,3} mc2{i,2}     num2cell([freq vol me sd med inde    mi ma  ]) ];
        t(m,i,:)=td;
        % % ---
         
     end
+    catch
+        errIDX=[m]; %errorIndex
+        errx=lasterr;
+        errx=strjoin(strsplit2(errx,char(10)),'.. ')  
+        cprintf([1 0 1] ,[  strrep(errx,filesep,[filesep filesep]) '\n']);
+    err=[err; {lasterr}];
+    end
+end
 
+validanimals=animals;
+if ~isempty(errIDX)
+    t(errIDX,:,:)=[]; %remove errornuous animal
+    validanimals(errIDX)=[];
 end
 %% =============RESHAPE CELL_CUBE ==================================
 
@@ -169,7 +246,7 @@ rois=[t2(:,1,1) t2(:,1,2)];
 rois=cellfun(@(a,b){[ a '__ID_' num2str(b)]},  rois(:,1),rois(:,2));
 t3=t2(:,:,3:end);
 l3=(repmat([rois  ],[1 1 size(t3,3) ]));
-sheet={ 'frequency'   'vol'     'mean'    'std'    'median'    'min' 'max'    };
+sheet={ 'frequency'   'vol'     'mean'    'std'    'median'  'integrDens'  'min' 'max'    };
 t4=[l3 t3];
 
 
@@ -197,18 +274,36 @@ if z.addDate==1
   stime=['_Time_' datestr(now,'HH_MM_SS')];
 end
 
-
 Fout=fullfile(outdir,['res_' prefix  'maskParameter' sdate stime '.xlsx']);
+disp(['..writing Excelfile: '  Fout ]);
 
-for i=1:size(t4,3)
-    
-    hs = ['Region' animals(:)' ];
-    s  = t4(:,:,i);
-    pwrite2excel(Fout,{i sheet{i}}, hs,[],s);
+
+%% __write info__
+g={['# date: ' datestr(now)  ]};
+g{end+1,1}=['# FILE   :' z.file{1}];
+g{end+1,1}=['# MASK(S):' ];
+g=[g; z.masks(:) ];
+
+g{end+1,1}='# ANIMALS:';
+g=[g; validanimals(:) ];
+    g{end+1,1}='# Missing ANIMALS:';
+if ~isempty(err)
+    g=[g; animals(errIDX(:))];
+    g{end+1,1}='# ERROR MESSAGE:';
+    g=[g; errx];
+else
+     g=[g;'-none-'];
 end
 
+ pwrite2excel(Fout,{1 'info'}, {'INFO'},[],g);
 
-showinfo2('new Excel-file' ,Fout,[],[], [ '>> '  ]);
+%% __write other sheets__
+for i=1:size(t4,3)
+    hs = ['Region' validanimals(:)' ];
+    s  = t4(:,:,i);
+    pwrite2excel(Fout,{i+1 sheet{i}}, hs,[],s);
+end
+showinfo2('Excel-file' ,Fout,[],[], [ '>> ' Fout ]);
 
 
 
@@ -218,10 +313,6 @@ showinfo2('new Excel-file' ,Fout,[],[], [ '>> '  ]);
 %     'volPercBrain'    'mean'    'std'    'median'    'min'
 %   Columns 11 through 12
 %     'max'    'atlas'
-
-
-
-
 
 
 

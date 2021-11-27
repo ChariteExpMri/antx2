@@ -964,9 +964,11 @@ mh2 = uimenu(mh,'Label',' preselect mouse-folder',                              
 mh = uimenu(f,'Label','Statistic');
 mh2 = uimenu(mh,'Label',' volume-based two-sample ttest (independent groups)',                      'Callback',{@menubarCB, 'stat_2sampleTtest'});
 mh2 = uimenu(mh,'Label',' label-based two-sample ttest (independent groups)',                      'Callback',{@menubarCB, 'stat_anatomlabels'});
-mh2 = uimenu(mh,'Label',' label-based statistic',                                                  'Callback',{@menubarCB, 'xstatlabels0'});
 
-mh2 = uimenu(mh,'Label',' SPM-statistic',                                                          'Callback',{@menubarCB, 'spm_statistic'});
+mh2 = uimenu(mh,'Label',' obtain parameter from masks',                                             'Callback',{@menubarCB, 'getparamterByMask'},'separator','on');
+mh2 = uimenu(mh,'Label',' label-based statistic',                                                  'Callback',{@menubarCB, 'xstatlabels0'},'separator','off');
+
+mh2 = uimenu(mh,'Label',' SPM-statistic',                                                          'Callback',{@menubarCB, 'spm_statistic'},'separator','on');
 
 mh2 = uimenu(mh,'Label',' DTI-prep for mrtrix',                    'Callback',{@menubarCB, 'dti_prep_mrtrix'},'separator','on');
 mh2 = uimenu(mh,'Label',' DTI-statistic',                          'Callback',{@menubarCB, 'dti_statistic'},'separator','off');
@@ -1990,7 +1992,16 @@ elseif strcmp(task,'xstatlabels0')
     end
     
     xstatlabels;
-    %________________________________________________
+    
+elseif strcmp(task,'getparamterByMask')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xgetparameter';
+        return ;
+    end
+    
+    xgetparameter();
+    
+    
     
 elseif strcmp(task,'spm_statistic')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here

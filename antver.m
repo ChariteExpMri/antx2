@@ -340,7 +340,18 @@
 % #ba 01 Nov 2021 (17:29:22)
 %  #k [DTIprep] #n minor changes ..added some solutions to avoid some MRtrix-BUGs:
 % --> see help of DTIprep.m
-
+% 
+% #ba 27 Nov 2021 (23:15:21)
+%  #k [xgetparameter.m ] #n obtain mask-based parameter from images (multimasks & masks can be mulinary)
+% mask-based paramters are:  'frequency'   'vol'     'mean'    'std'    'median'  'integrDens'  'min' 'max'    
+% MASK: you can use several masks/images, each with several sub-masks/(IDs), IDS across masks
+% can be similar 
+% The output is one EXCELFILE containing sheets for each paramter. Each column contains the data of 
+% one of the selected animals. The output (excelfile) can be analyzed using MENU/STATISTIC/"label based statistic"
+% .. CURRENTLY ONY PROVIDED FOR IMAGES/MASKS IN STANDARD-SPACE
+% 
+% 
+% 
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
