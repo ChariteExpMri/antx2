@@ -351,7 +351,7 @@
 % .. CURRENTLY ONY PROVIDED FOR IMAGES/MASKS IN STANDARD-SPACE
 % 
 % #ba 28 Nov 2021 (00:33:52)
-%  #k [xstatlabels.m ] #n added tail-option of hypothesis-testing 
+%  #k [xstatlabels.m ] #n added tail-option for hypothesis-testing 
 % 
 
 %----- EOF

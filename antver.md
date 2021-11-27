@@ -7,7 +7,7 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Nov 2021 (00:33:52)**</ins>  
-    __[xstatlabels.m ]__ added tail-option of hypothesis-testing   
+    __[xstatlabels.m ]__ added tail-option for hypothesis-testing   
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**27 Nov 2021 (23:15:21)**</ins>  
     __[xgetparameter.m ]__ obtain mask-based parameter from images (multimasks & masks can be mulinary)  
