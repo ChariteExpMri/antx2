@@ -13,6 +13,7 @@
 % [within]       : check if data bases on within design (repated measure)
 % [test]         : select the test
 %                  for between-design: ttest2, ranksum, permutation, permutation2
+% [tail]         : tail of hypothesis-testing {both|left|right}
 % [useFDR]       : to correct for MCP
 % [show SIGS only]: shows only the significant results
 % [sort results  ]: sort results according the p-value
@@ -252,6 +253,25 @@ h=uicontrol('style','checkbox','units','norm','position',[.45 .7 .2 .05],'string
     'tag','issort','backgroundcolor','w','value',1,...
     'tooltipstring','sort Results according p-value');%,'callback',@call_f2design);
 set(h,'position',[.32 .55 .2 .05],'fontsize',7,'callback',@issort);
+
+%% sided of hypothesis-Testing
+%text
+h=uicontrol('style','text','units','norm','string','tail','backgroundcolor','w');
+set(h,'position',[.45 .54 .09 .05],'fontsize',7);%,'callback',@issort);
+% popmenu
+tail={'both','left','right'};
+h=uicontrol('style','popupmenu','units','norm','position',[.45 .7 .2 .05],'string',tail,...
+    'tag','tail','backgroundcolor','w','value',1,...
+    'tooltipstring','Type of alternative hypothesis: both(default)|right|left ');%,'callback',@call_f2design);
+set(h,'position',[.51 .545 .09 .05],'fontsize',7);%,'callback',@issort);
+
+% 'Tail' — Type of alternative hypothesis
+% 'both' (default) | 'right' | 'left'
+% Type of alternative hypothesis to evaluate, specified as the comma-separated pair consisting of 'Tail' and one of the following.
+% 
+% 'both'	Test the alternative hypothesis that the population mean is not m.
+% 'right'	Test the alternative hypothesis that the population mean is greater than m.
+% 'left'	Test the alternative hypothesis that the population mean is less than m.
 
 
 %% qvalue
@@ -759,6 +779,15 @@ if isfield(in,ss{1});
     hgfeval( get(hh,'callback')  ,hh);
 end
 
+ss={'tail' 'tail'};
+if isfield(in,ss{1});
+    hh=findobj(hfig,'tag',ss{2});
+    set(hh,'value',  regexpi2(get(hh,'string'),['^' getfield(in,ss{1}) '$'  ]) );
+    % hgfeval( get(hh,'callback')  ,hh);
+end
+
+
+
 
 ss={'isfdr' 'isfdr'};
 if isfield(in,ss{1});
@@ -924,7 +953,7 @@ us.cf2=regexpi2(he,['^' char( us.f2) '$']);
 
 
 us.idf1=aaa(2:end,[us.cid us.cf1 us.cf2]);
-
+us.idf1=strtrim(us.idf1);
 
 %———————————————————————————————————————————————
 %%   read data
@@ -1199,6 +1228,8 @@ set(gcf,'userdata',us);
 %———————————————————————————————————————————————
 %%   pairwise tests
 %———————————————————————————————————————————————
+htail=findobj(gcf,'tag','tail');
+tail=htail.String{htail.Value}; %get Tail
 
 % us.typeoftest1=1;  %[1]ttest2,[2]WRS
 vartype=1;
@@ -1251,7 +1282,7 @@ if us.f1design==0 %between
         
         if us.typeoftest1==1
             us.pw(i).type='ttest2';
-            [h p ci st]=ttest2(x',y');
+            [h p ci st]=ttest2(x',y','tail',tail);
             [out outh]=getMESD(x,y,vartype);
             res=[h' p' st.tstat'  out  st.df'    ] ;
             reshead=['hyp' 'p' 'T' outh 'df'];
@@ -1263,7 +1294,7 @@ if us.f1design==0 %between
             [out outh]=getMESD(x,y,vartype);
             for j=1:size(x,1)
                 try
-                    [p h st]=ranksum(x(j,:),y(j,:));
+                    [p h st]=ranksum(x(j,:),y(j,:),'tail',tail);
                     res(j,:)=[h p st.ranksum];
                 end
             end
@@ -1274,7 +1305,7 @@ if us.f1design==0 %between
         elseif us.typeoftest1==3
             us.pw(i).type='perm';
             px= permtestmat(x',y',1000,'approximate');
-            
+            cprintf([1 0 1] ,[  'tail: only two-sided (both) hyothesis-testing supported' '\n']);
             
             [out outh]=getMESD(x,y,vartype);
             h=px<0.05;
@@ -1286,7 +1317,16 @@ if us.f1design==0 %between
         elseif us.typeoftest1==4
             us.pw(i).type='perm2';
             %tic;[pv,to,cr,al]=mult_comp_perm_t2_nan(x',y',5000,0,.05); toc
-            [p,T,cr,al]=mult_comp_perm_t2_nan(x',y',5000,0,.05);
+            
+            if strcmp(tail,'both')
+                tailnum=0;
+            elseif strcmp(tail,'left')
+                tailnum=-1;
+            elseif strcmp(tail,'right')
+                tailnum=+1;
+            end
+            
+            [p,T,cr,al]=mult_comp_perm_t2_nan(x',y',5000, tailnum  ,.05);
             h=p<0.05;
             
             [out outh]=getMESD(x,y,vartype);
@@ -1373,6 +1413,8 @@ for i=1:size(tab,1)
     grp= [grp  [' "' tab{i,1} '"' '(n=' num2str(tab{i,2})  ')'] ];
 end
 
+htail=findobj(hfig,'tag','tail');
+tail=htail.String{htail.Value}; %get Tail
 
 %% SHOW RESULTS
 % sz={'__________________________________________________________________________________________'};
@@ -1387,7 +1429,7 @@ sz{end+1,1}=['Parameter     : '      us.dataSheet];
 sz{end+1,1}=['groups (size) : '      grp];
 
 sz{end+1,1}=['PAIRWISE TEST : '      us.pw(1).type];
-
+sz{end+1,1}=['TAIL          : '      tail         ];
 
 
 sz{end+1,1}=['FDR-correction: '      regexprep(num2str(us.isfdr),{'1' '0'},{'yes','no'})];
@@ -1398,7 +1440,7 @@ end
 
 % number of tests 
  for i=1:length(us.pw)
-   sz{end+1,1}=  ['No of tests   : '      num2str(length(us.pw(i).ikeep))   ' for "' us.pw(i).str '"' ]
+   sz{end+1,1}=  ['No of tests   : '      num2str(length(us.pw(i).ikeep))   ' for "' us.pw(i).str '"' ];
  end
 
 sz{end+1,1}=['sorting       : '      regexprep(num2str(us.issort),{'1' '0'},{'yes','no'})];
@@ -2478,6 +2520,8 @@ v.f1design= get(findobj(h,'tag','F1design'),'value');
 d=findobj(h,'tag','typeoftest1'); li=get(d,'string'); va= get(d,'value');
 v.typeoftest1 = li{va}      ;
 
+d=findobj(h,'tag','tail'); li=get(d,'string'); va= get(d,'value');
+v.tail = li{va}      ;
 
 try
 v.regionsfile=char(u.regionsfile);
@@ -2511,19 +2555,25 @@ helps={...
     'f1'          '% % name of the column containing the group-assignment in the auxSheet'
     'f1design'    '% % type of test: [0]between, [1]within'
     'typeoftest1' '% % applied  statistical test (such as "ranksum" or "ttest2")'
+     'tail'        '% %  Type of alternative hypothesis: both|left|right '
     'regionsfile' '% % <optional> excelfile containing regions, only this regions will be tested'
     'qFDR'        '% % q-threshold of FDR-correction (default: 0.05)'
     'isfdr'       '% % use FDR correction: [0]no, [1]yes'
     'showsigsonly' '% % show significant results only:  [0]no, show all, [1]yes, show signif. results only' 
     'issort'      '% % sort results according the p-value: [0]no, [1]yes,sort '
     'process'     '% % calculate statistic [0]no, [1]yes, (simulates pressing the [process]-button) '
+    
+   
     };
 
 v3=v2;
 for i=1:size(v2,1)
     ipo=regexpi(v2{i},'=','once');
    v3{i}= regexprep(v2{i},'=',[repmat(' ',1,(imax+1)-ip(i)) '=  '],'once' );
-   v3{i}=[v3{i}   repmat(' ',[1 10]) helps{i,2}];
+end
+nwid=size(char(v3),2);
+for i=1:size(v2,1)
+   v3{i}=[v3{i}   repmat(' ',[1 nwid-length(v3{i})+1]) helps{i,2}];
 end
 
 v4=['% #by [xstatlabels.m] '; 'v = [];' ; v3;  'xstatlabels(v);     % % RUN statistic';];
