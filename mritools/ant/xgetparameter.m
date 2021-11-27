@@ -1,6 +1,6 @@
 
 
-%% #ko [xgetparameter.m] obtain mask-based parameter from images (multimasks & masks can be mulinary)
+%% #ko [xgetparameter.m] obtain mask-based parameter from images (multi-masks & masks can be mulinary)
 % mask-based paramters are: 
 %   'frequency'   'vol'     'mean'    'std'    'median'  'integrDens'  'min' 'max'    
 %   where 'frequency' and 'vol' is are the voxel-counts and volume of a specific mask
@@ -39,7 +39,7 @@
 %                         11 R SAB_inf_post
 %                         12 R SAB_inf_ant
 %          ..these are the IDs & labels corresponfing to the mask "msk_sab_parcellate.nii"
-% 
+% z.outputfolder: output-folder to write the excel-file
 % 
 % #lk  ___BATCH___
 % obtain parameter from mage 'x_flour19f_TR3.nii' for the three selected masks for all selected animals
