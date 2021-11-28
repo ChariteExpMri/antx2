@@ -1,13 +1,20 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   28 Nov 2021 (00:33:52)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   28 Nov 2021 (23:58:44)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Nov 2021 (23:58:44)**</ins>  
+   __[xcreateMaps.m]__ create MAPS across animals (heatmaps/IncidenceMaps/MeanImage Maps etc)  
+  xcreateMaps.m: (former version "xincidencemap.m")  
+  choose a math. operation across images: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*}  
+  &#8618; access via ANT-menu: &#8658; SNIPS/create Maps (incidenceMaps/MeanImage etc)  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Nov 2021 (00:33:52)**</ins>  
-    __[xstatlabels.m ]__ added tail-option for hypothesis-testing   
+   __[xstatlabels.m]__ added tail-option for hypothesis-testing   
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**27 Nov 2021 (23:15:21)**</ins>  
     __[xgetparameter.m ]__ obtain mask-based parameter from images (multimasks & masks can be mulinary)  

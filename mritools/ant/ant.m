@@ -979,8 +979,8 @@ mh2 = uimenu(mh,'Label',' DTI-statistic',                          'Callback',{@
 mh = uimenu(f,'Label','Snips');
 % mh2 = uimenu(mh,'Label',' flatten bruker Data path for dataImport',                      'Callback',{@menubarCB, 'flattenBrukerdatapath'});
 % mh2 = uimenu(mh,'Label',' generate Jacobian Determinant',                                'Callback',{@menubarCB, 'generateJacobian'});
-mh2 = uimenu(mh,'Label',' get corrected lesion volume',                                  'Callback',{@menubarCB, 'getlesionvolume'});
-mh2 = uimenu(mh,'Label',' make IncidenceMaps',                                           'Callback',{@menubarCB, 'makeIncidenceMaps'});
+mh2 = uimenu(mh,'Label','get corrected lesion volume',                                  'Callback',{@menubarCB, 'getlesionvolume'});
+mh2 = uimenu(mh,'Label','create Maps (incidenceMaps/MeanImage etc)',                                           'Callback',{@menubarCB, 'makeMaps'});
 
 mh2 = uimenu(mh,'Label','convert image to SNR-image',                                           'Callback',{@menubarCB, 'convert2SNRimage'});
 
@@ -2057,14 +2057,14 @@ elseif strcmp(task,'getlesionvolume')
     xgetlesionvolume;
     statusMsg(0);
     %________________________________________________
-elseif strcmp(task,'makeIncidenceMaps')
+elseif strcmp(task,'makeMaps')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
-        hlpfun='xincidencemap';
+        hlpfun='xcreateMaps';
         return ;
     end
     
-    statusMsg(1,' make INcidenceMap');
-    xincidencemap;
+    statusMsg(1,' create Maps');
+    xcreateMaps;
     statusMsg(0);
         %________________________________________________
 elseif strcmp(task,'convert2SNRimage')

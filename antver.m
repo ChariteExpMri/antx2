@@ -351,8 +351,22 @@
 % .. CURRENTLY ONY PROVIDED FOR IMAGES/MASKS IN STANDARD-SPACE
 % 
 % #ba 28 Nov 2021 (00:33:52)
-%  #k [xstatlabels.m ] #n added tail-option for hypothesis-testing 
+% #k [xstatlabels.m] #n added tail-option for hypothesis-testing 
 % 
+% #ba 28 Nov 2021 (23:58:44)
+% #k [xcreateMaps.m] #n create MAPS across animals (heatmaps/IncidenceMaps/MeanImage Maps etc)
+% xcreateMaps.m: (former version "xincidencemap.m")
+% choose a math. operation across images: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*}
+% #gw --> access via ANT-menu: &#8658; SNIPS/create Maps (incidenceMaps/MeanImage etc)
+% 
+% 
+% 
+
+
+
+
+
+
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

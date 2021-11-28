@@ -45,7 +45,7 @@
 % z.type             = 'mean';                                % % choose math. operation across images: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*} )
 % z.outdir           = 'F:\data4\flour_felix_roi\results';    % % output-folder where resulting NIFTI is stored                                                   
 % z.outputnameSuffix = '';                                    % % <optional> suffix-string appended to output fileName (NIFTI-file)                               
-% xincidencemap(1,z); 
+% xcreateMaps(1,z); 
 
 % % ===========================================================================                                                                                                        
 % % #g CREATE INCIDENCEMAP of 'x_masklesion.nii' ACROSS animals (percent-unit) 
@@ -56,7 +56,7 @@
 % z.type             = 'percent';                            % % choose math. operation across images: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*} )
 % z.outdir           = 'F:\data4\flour_felix_roi\results';   % % output-folder where resulting NIFTI is stored                                                   
 % z.outputnameSuffix = '';                                   % % <optional> suffix-string appended to output fileName (NIFTI-file)                               
-% xincidencemap(1,z); 
+% xcreateMaps(1,z); 
 
 
 
@@ -66,7 +66,7 @@
 
 
 
-function xincidencemap(showgui,x,pa)
+function xcreateMaps(showgui,x,pa)
 
 
 %———————————————————————————————————————————————
@@ -122,11 +122,11 @@ respath=fullfile(fileparts(an.datpath),'results');
 if exist('x')~=1;        x=[]; end
 hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
 p={...
-    'file'            ''         'Select image (example select "x_masklesion.nii")'  {@uniquefiles,li,lih,fi2}
-    'type'             'abs'     'choose math. operation across images: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*} )'  {'percent' 'abs' 'sum' 'mean','median','max'}
+    'file'            ''          'Select image (example select "x_masklesion.nii")'  {@uniquefiles,li,lih,fi2}
+    'type'            'percent'   'choose math. operation across images: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*} )'  {'percent' 'abs' 'sum' 'mean','median','max'}
     
-    'outdir'            respath  'output-folder where resulting NIFTI is stored' 'd' 
-    'outputnameSuffix'   ''      '<optional> suffix-string appended to output fileName (NIFTI-file)'  {'imap' 'lesion','mcao'}
+    'outdir'            respath   'output-folder where resulting NIFTI is stored' 'd' 
+    'outputnameSuffix'   ''       '<optional> suffix-string appended to output fileName (NIFTI-file)'  {'imap' 'lesion','mcao'}
     };
 
 
@@ -239,7 +239,7 @@ else                         %arbitrary
     typestr='specific';
 end
 
-a3=reshape(a3,ha.dim);
+a4=reshape(a3,ha.dim);
 
 % ==============================================
 %%   [4] save data
@@ -255,13 +255,14 @@ NameOut=  ['MAP' typestr '_' imageName  suffix '.nii' ];
 Fout=fullfile(z.outdir, NameOut);
 
 if 1
-  rsavenii(Fout,ha,a3,[ 16 0]);  
+  rsavenii(Fout,ha,a4,[ 16 0]);  
 end
 showinfo2('MAP' ,Fout,[],[], [ '>> ' Fout ]);
 
 % ==============================================
 %%   [5] log results
 % ===============================================
+
 lg={};
 lg{end+1,1}=['MAP: ' NameOut ];
 lg{end+1,1}=['FILE: ' z.file ];
@@ -269,17 +270,33 @@ lg{end+1,1}=['TYPE: ' z.type ];
 lg{end+1,1}=['N-included: ' num2str(length(iexist))  ];
 lg{end+1,1}=['N-excluded: ' num2str(length(inoexist))  ];
 lg{end+1,1}=['    '  ];
-lg{end+1,1}=['___included files: ___'  ];
+lg{end+1,1}=['___[included files]___'  ];
 lg=[lg; fis2];
 lg{end+1,1}=['    '  ];
-lg{end+1,1}=['___missing files : ___'  ];
+lg{end+1,1}=['___[missing files]___'  ];
 if isempty(inoexist)
     lg=[lg; 'none'];
 else
     lg=[lg; missFiles];
 end
+lg{end+1,1}=['    '  ];
+lg{end+1,1}=['___[output image parameter]___'  ];
+lg{end+1,1}=['ME:  ' num2str(mean(a3))];
+lg{end+1,1}=['SD:  ' num2str(std(a3))];
+lg{end+1,1}=['MED: ' num2str(median(a3))];
+lg{end+1,1}=['MIN: ' num2str(min(a3))];
+lg{end+1,1}=['MAX: ' num2str(max(a3))];
+lg{end+1,1}=['Nvox_Zero : ' num2str(    length(find(a3==0))  )];
+lg{end+1,1}=['Nvox_>Zero: ' num2str(    length(find(a3>0))  )];
+lg{end+1,1}=['Nvox_<Zero: ' num2str(    length(find(a3<0))  )];
+
+% abs(det(ha.mat(1:3,1:3)) *(nvox))
+% char(lg)
+
 Fout2=regexprep(Fout,'.nii$','.txt');
 pwrite2file(Fout2,lg);
+
+
 
 return
 
