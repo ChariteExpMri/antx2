@@ -11,6 +11,8 @@
   xcreateMaps.m: (former version "xincidencemap.m")  
   choose a math. operation across images: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*}  
   &#8618; access via ANT-menu: &#8658; SNIPS/create Maps (incidenceMaps/MeanImage etc)  
+    
+  __[xrealign_elastix.m]__ --> replace NANs by Zeros in 4D-volume after realignment  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Nov 2021 (00:33:52)**</ins>  
    __[xstatlabels.m]__ added tail-option for hypothesis-testing   

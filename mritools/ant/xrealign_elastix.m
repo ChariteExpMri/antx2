@@ -350,6 +350,7 @@ fprintf('..realign Data..');
 for i=1:length(fis)
     mov=fis{i};
     [arg,oim,os] = evalc('run_elastix(fix,mov,outfold,paramfile,[],[],[],[],[])');
+    oim(isnan(oim))=0; %REMOVE NANs
     fis2{i,1}=oim;
 end
 fprintf(['done (dT=%2.2fmin)\n'],toc(timx)/60);

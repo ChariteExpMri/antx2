@@ -359,6 +359,8 @@
 % choose a math. operation across images: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*}
 % #gw --> access via ANT-menu: &#8658; SNIPS/create Maps (incidenceMaps/MeanImage etc)
 % 
+% [xrealign_elastix.m] --> replace NANs by Zeros in 4D-volume after realignment
+% 
 % 
 % 
 
