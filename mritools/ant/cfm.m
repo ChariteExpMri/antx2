@@ -1379,7 +1379,11 @@ end
 
 function setcontextmenu()
 u=get(gcf,'userdata');
-ha=[findobj(gcf,'tag','line'); findobj(gcf,'type','image'); gcf;gca; findobj(gcf,'tag','sel')];
+% ha=[findobj(gcf,'tag','line'); findobj(gcf,'type','image'); gcf;gca; findobj(gcf,'tag','sel')];
+
+ha=[ findobj(gcf,'type','image'); gcf;gca; ];
+hb=findobj(gcf,'tag','sel');
+hc=findobj(gcf,'tag','line');
 
 cmenu = uicontextmenu;
 uimenu(cmenu, 'Label', '<html><b><font color =green> open DIRECTORY', 'Callback'            , {@context, 'opdenDIR'});
@@ -1407,8 +1411,9 @@ uimenu(cmenu, 'Label', '<html><b><font color =blue>export seleted files', 'Callb
 
 uimenu(cmenu, 'Label', '<html><b><font color =red>delete files', 'Callback', {@context, 'deleteFiles'},'separator','on');
 
-
-set(ha,'ContextMenu',cmenu);
+try; set(ha,'ContextMenu',cmenu); catch; set(ha,'uicontextMenu',cmenu); end
+try; set(hb,'ContextMenu',cmenu); catch; set(hb,'uicontextMenu',cmenu); end
+try; set(hc,'ContextMenu',cmenu); catch; set(hc,'uicontextMenu',cmenu); end
 
 
 % ==============================================
