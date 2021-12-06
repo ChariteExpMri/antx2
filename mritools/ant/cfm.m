@@ -1020,6 +1020,14 @@ if isnewfig==1
     set(hb,'fontsize',q.fontsize,'FontName',q.FontName,'HorizontalAlignment',q.HorizontalAlignment );
     set(hb,'visible','off');
     
+     %% help
+    hb=uicontrol('style','pushbutton','units','norm','tag','pb_help','string','?');
+    set(hb,'backgroundcolor',[1 1 1],'fontsize',6);
+    set(hb,'position',[0.95893 0.87262 0.03 0.03]);
+    set(hb,'callback',@pb_help);
+    set(hb,'tooltipstring',['get help']);
+    
+    
     %% update
     hb=uicontrol('style','pushbutton','units','norm','tag','pb_update','string','update');
     set(hb,'backgroundcolor',[1.0000    0.7333    0.1608],'fontsize',6);
@@ -2543,5 +2551,6 @@ end
 cprintf([0 .7 0],'..Done!\n');
 pb_update([],[]);
 %% ===============================================
-
+function pb_help(e,e2)
+uhelp([mfilename '.m']);
 
