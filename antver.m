@@ -359,10 +359,13 @@
 % choose a math. operation across images: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*}
 % #gw --> access via ANT-menu: &#8658; SNIPS/create Maps (incidenceMaps/MeanImage etc)
 % 
-% [xrealign_elastix.m] --> replace NANs by Zeros in 4D-volume after realignment
+% #k [xrealign_elastix.m] --> replace NANs by Zeros in 4D-volume after realignment
 % 
 % 
-% 
+% % #ba 06 Dec 2021 (17:03:18)
+% #k [cfm.m] --> case-file-matrix: visualize data (files x dirs), basic file-manipulation
+% #gw --> access via ANT-GUI: Two new icons next to study-history-icon: CFM of all animals from 
+% the current study or CFM for selected animals (selected via left listbox)
 
 
 
