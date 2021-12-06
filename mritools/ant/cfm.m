@@ -1523,6 +1523,7 @@ elseif strcmp(task, 'getInfo')
     set(hf,'WindowButtonMotionFcn',@motion);
     set(hf,'WindowButtonDownFcn',@mouseclick);
 elseif strcmp(task, 'getNiftiInfo')
+    cprintf([1 0 1],'..read NIFTI-header..(wait!!!)...');
      set(hf,'WindowButtonMotionFcn',[]);
     set(hf,'WindowButtonDownFcn',[]);
     
@@ -1566,10 +1567,10 @@ elseif strcmp(task, 'getNiftiInfo')
         E 'dT' E 'pinfo' E 'descrip'   E 'path'}  ;
     
    h3=plog([],[ht2;g],0, '#lk NIFTI-HEADER-INFO #n','s=1;al=1;');
-   h3(regexpi2(h3,'°'))= {repmat('¯',[size(h3{1})])};
+   h3(regexpi2(h3,'°'))= {repmat('-',[size(h3{1})])};
    h3(end,1)={''};
    uhelp(h3,0,'name','NIFTI-HDR');
-
+   cprintf([0 .7 0],'..Done!\n');
    %% ---
     
    
