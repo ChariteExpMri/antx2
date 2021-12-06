@@ -1562,12 +1562,12 @@ elseif strcmp(task, 'getNiftiInfo')
        
        g=[g; dx; sepline];
    end
-      E='|';
-    ht2={' #ka ' 'name' '#ka' E 'dir' E 'sub' E '#ka' ' dim' E  'mat' '' '' '' ...
-        E 'dT' E 'pinfo' E 'descrip'   E 'path'}  ;
-    
+   E='|';
+   ht2={' #ka ' 'name' '#ka' E 'dir' E 'sub' E '#ka' ' dim' E  'mat' '' '' '' ...
+       E 'dT' E 'pinfo' E 'descrip'   E 'path'}  ;
+   
    h3=plog([],[ht2;g],0, '#lk NIFTI-HEADER-INFO #n','s=1;al=1;');
-   h3(regexpi2(h3,'°'))= {repmat('-',[size(h3{1})])};
+   h3(regexpi2(h3,'°'))= {repmat('_',[size(h3{1})])};
    h3(end,1)={''};
    uhelp(h3,0,'name','NIFTI-HDR');
    cprintf([0 .7 0],'..Done!\n');
