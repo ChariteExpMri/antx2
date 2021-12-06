@@ -92,9 +92,7 @@ elseif umode==2
     if exist('maindir')~=1  
         return
     else
-        if isdir(maindir) 
-            u.pathmain=maindir;
-        elseif strcmp(maindir,'ant')
+        if strcmp(maindir,'ant')
             global an
             if ~isempty(an) && isfield(an,'datpath')
             u.useANT  =1;
@@ -106,8 +104,8 @@ elseif umode==2
                 disp('no ANT-project loaded');
                 return
             end
-            
-            
+        elseif isdir(maindir)   
+            u.pathmain=maindir;
         else
             return
         end
