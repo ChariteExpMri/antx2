@@ -156,6 +156,8 @@ h = uicontrol('style','pushbutton','units','normalized','position',[.25 .6 .04 .
 % icon=which('profiler.gif');
 icon=fullfile(matlabroot,'toolbox','matlab', 'icons','HDF_grid.gif');
 [e map]=imread(icon)  ;
+inoLila=find(map(:,1)==1 & map(:,2)==0 & map(:,3)==1 );
+map(inoLila,:)=repmat([0 .5 0],[length(inoLila) 1]);
 e=ind2rgb(e,map);
 % e(e<=0.01)=nan;
 set(h,'cdata',e);
@@ -168,14 +170,14 @@ h = uicontrol('style','pushbutton','units','normalized','position',[.29 .6 .04 .
     'string','','fontsize',13,   'callback',{@openCFM,'sel'},'tooltip', 'open Case-FileMatrix (selected animals)',...
     'backgroundcolor','w');
 % icon=which('profiler.gif');
-icon=fullfile(matlabroot,'toolbox','matlab', 'icons','HDF_grid.gif');
-[e map]=imread(icon)  ;
-e=e(:,[3:8 end-1:end]);
+% icon=fullfile(matlabroot,'toolbox','matlab', 'icons','HDF_grid.gif');
+% [e map]=imread(icon)  ;
+e2=e(:,[3:8 end-1:end],:);
 % e(:,[ end-7:end])=1;
 
-e=ind2rgb(e,map);
+% e=ind2rgb(e,map);
 % e(e<=0.01)=nan;
-set(h,'cdata',e);
+set(h,'cdata',e2);
 
 % ==============================================
 %%   %% SETTINGS

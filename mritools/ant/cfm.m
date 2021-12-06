@@ -2,6 +2,8 @@
 
 % cfm: case-file-matrix: visualize data (files x dirs), basic file-manipulation
 % #lk ___GUI-CONTROLS___
+% [?]          -button: get HELP
+% [S]          -button: get shortcut-list
 % [update]     -button: updates the display, if files in input-folders were removed/addded/changed
 % [rd_axEqual] -radio: set axes ti image/square
 % [METRIC]     -pulldown: displaying metric, displays files by date/extension/size 
@@ -1026,6 +1028,12 @@ if isnewfig==1
     set(hb,'position',[0.95893 0.87262 0.03 0.03]);
     set(hb,'callback',@pb_help);
     set(hb,'tooltipstring',['get help']);
+     %% shortcut
+    hb=uicontrol('style','pushbutton','units','norm','tag','pb_help','string','S');
+    set(hb,'backgroundcolor',[1 1 1],'fontsize',6);
+    set(hb,'position',[0.93214 0.87262 0.03 0.03]);
+    set(hb,'callback',@keylist_show);
+    set(hb,'tooltipstring',['get shortcut-list']);
     
     
     %% update
@@ -1159,7 +1167,7 @@ set(gcf,'userdata',u);
 setDirSlider(); % ###set values of DIRslider
 %% ===============================================
 
-
+u.figpos=get(gcf,'position');
     
 end
 
@@ -1173,6 +1181,7 @@ setcontextmenu();
 %%   struct
 % ===============================================
 u.mdirslice2=mdirslice2;
+
 u.axpos=get(gca,'position');
 set(gcf,'userdata',u);
 
@@ -1397,6 +1406,7 @@ cmenu = uicontextmenu;
 uimenu(cmenu, 'Label', '<html><b><font color =green> open DIRECTORY', 'Callback'            , {@context, 'opdenDIR'});
 uimenu(cmenu, 'Label', '<html><b><font color =green> view/open selected files', 'Callback', {@context, 'viewfiles'});
 uimenu(cmenu, 'Label', '<html><b><font color =gray> get file information', 'Callback'       , {@context, 'getInfo'});
+uimenu(cmenu, 'Label', '<html><b><font color =gray> get NIFTI-header information', 'Callback'       , {@context, 'getNiftiInfo'});
 
 if u.foldertype==1
     uimenu(cmenu, 'Label', '<html><b><font color =orange> pre-select slices in BART', 'Callback'     , {@context, 'selectBart'},'separator','on');
@@ -1414,8 +1424,9 @@ uimenu(cmenu, 'Label', '<html><b><font color =purple> copy and rename files', 'C
 uimenu(cmenu, 'Label', '<html><b><font color =fuchsia> rename files ',          'Callback'           , {@context, 'renameFiles'},'separator','off');
 
 uimenu(cmenu, 'Label', '<html><b><font color =blue>import Dir2DIR', 'Callback',         {@context, 'importDir2DIR'},'separator','on');
-uimenu(cmenu, 'Label', '<html><b><font color =blue>export entire folder', 'Callback',         {@context, 'exportDirs'},'separator','on');
-uimenu(cmenu, 'Label', '<html><b><font color =blue>export seleted files', 'Callback',         {@context, 'exportFiles'});
+uimenu(cmenu, 'Label', '<html><b><font color =blue>export entire folder', 'Callback',   {@context, 'exportDirs'},'separator','on');
+uimenu(cmenu, 'Label', '<html><b><font color =blue>export empty folder', 'Callback',    {@context, 'exportDirsEmpty'});
+uimenu(cmenu, 'Label', '<html><b><font color =blue>export seleted files', 'Callback',   {@context, 'exportFiles'});
 
 uimenu(cmenu, 'Label', '<html><b><font color =red>delete files', 'Callback', {@context, 'deleteFiles'},'separator','on');
 
@@ -1504,17 +1515,69 @@ elseif strcmp(task, 'getInfo')
     end
     set(hf,'WindowButtonMotionFcn',[]);
     set(hf,'WindowButtonDownFcn',[]);
-    
-    
-    
-    uhelp(plog([],[u.ht3;t],0, '#lk FILE-FOLDER-INFO #n','s=4;al=1;'),1,'name','CFMinfo');
+    iord=[3 2  6  7 8 1] ;
+    t2=t(:,[ iord ]);
+    ht2=u.ht3(iord); ht2{1}='slice/image';
+    uhelp(plog([],[ht2;t2],0, '#lk FILE-FOLDER-INFO #n','s=4;al=1;'),1,'name','CFMinfo');
     drawnow
+    set(hf,'WindowButtonMotionFcn',@motion);
+    set(hf,'WindowButtonDownFcn',@mouseclick);
+elseif strcmp(task, 'getNiftiInfo')
+     set(hf,'WindowButtonMotionFcn',[]);
+    set(hf,'WindowButtonDownFcn',[]);
+    
+    t={};
+    for i=1:size(co,1)
+        dx=u.vinfo{co(i,2),co(i,1)};
+        if ~isempty(dx)
+            t(end+1,:)=dx;
+        end
+    end
+    t=t(regexpi2(t(:,3),'.nii$'),:);
+    if isempty(t); return; end
+   %% ---
+   g={};
+   sp=repmat({''},[3 1]);%empty space
+   se=repmat({'|'},[4 1]);%separator
+   c1={'--> #b '  ' #n ' ' #n ' ' #n ' }';
+   c2={' #g '  ' #n ' ' #n ' ' #n ' }';
+   c3={'  #k '  ' #k ' ' #k ' ' #k ' }';
+   for i=1:size(t,1)
+       f1=fullfile(t{i,1}, t{i,6}, t{i,5});
+       h=spm_vol(f1);
+       nvol=length(h);
+       h=h(1);
+       %g{end+1,:}=[' # File:  ']
+       
+       mdir   =[t{i,2} ];
+       name   =t(i,5);
+       subdir =t(i,6);
+       mat    =num2cell(h.mat);
+       
+        dx=[ c1 [name;sp] c2 se [mdir;sp] se [subdir;sp]  [se c3] num2cell([h.dim nvol]') se mat ...
+       se [num2cell(h.dt'); [{'';''}]] se [num2cell(h.pinfo); [{''}]] ...
+           se [{h.descrip};{'';'';''}] se  [t{i,1};sp] ];
+       sepline=cellfun(@(a){ repmat('°',[1 length(num2str(a))]) },dx(1,:));
+       
+       g=[g; dx; sepline];
+   end
+      E='|';
+    ht2={' #ka ' 'name' '#ka' E 'dir' E 'sub' E '#ka' ' dim' E  'mat' '' '' '' ...
+        E 'dT' E 'pinfo' E 'descrip'   E 'path'}  ;
+    
+   h3=plog([],[ht2;g],0, '#lk NIFTI-HEADER-INFO #n','s=1;al=1;');
+   h3(regexpi2(h3,'°'))= {repmat('¯',[size(h3{1})])};
+   h3(end,1)={''};
+   uhelp(h3,0,'name','NIFTI-HDR');
+
+   %% ---
+    
+   
     
     set(hf,'WindowButtonMotionFcn',@motion);
     set(hf,'WindowButtonDownFcn',@mouseclick);
-
     
-elseif strcmp(task, 'exportDirs') || strcmp(task, 'exportFiles')
+elseif strcmp(task, 'exportDirs') || strcmp(task, 'exportFiles') || strcmp(task, 'exportDirsEmpty')
     warning off;
     t={};
     for i=1:size(co,1)
@@ -1531,12 +1594,26 @@ elseif strcmp(task, 'exportDirs') || strcmp(task, 'exportFiles')
         mdirs=unique(t(:,1));
         if isempty(mdirs); return; end
         [~, animal]=fileparts2(mdirs);
-        fprintf('..exporting..');
+        fprintf('..exporting dirs (with content)..');
         for i=1:length(mdirs)
             d1=fullfile(pamainout,animal{i});
             fprintf( [ '|' animal{i} '..' ]);
             mkdir(d1);
             copyfile(mdirs{i},d1,'f');
+        end
+        fprintf('\n');
+        fprintf('..Done!\n');
+        showinfo2('Export: ',pamainout);
+    elseif strcmp(task, 'exportDirsEmpty')
+        mdirs=unique(t(:,1));
+        if isempty(mdirs); return; end
+        [~, animal]=fileparts2(mdirs);
+        fprintf('..exporting dirs (without content)..');
+        for i=1:length(mdirs)
+            d1=fullfile(pamainout,animal{i});
+            fprintf( [ '|' animal{i} '..' ]);
+            mkdir(d1);
+            %copyfile(mdirs{i},d1,'f');
         end
         fprintf('\n');
         fprintf('..Done!\n');
@@ -1638,14 +1715,66 @@ set(u.hb_sliderDirs,'visible',statec);
 set(findobj(gcf,'tag','rd_visAllFiles'),'visible',statec);
 set(findobj(gcf,'tag','rd_visAllDirs'),'visible',statec);
 
+
+
+function keylist_show(e,e2)
+
+a=preadfile(which('cfm.m'));
+a=a.all;
+ilist=[find(strcmp(a,'% __anker_keylist_on'))+1 find(strcmp(a,'% __anker_keylist_off'))-1];
+uhelp(regexprep(a(ilist(1):ilist(2)), '^%','' ));
+
+function keylist
+% __anker_keylist_on
+% #lk __SHORTCUTS___
+% [1] cfm-window: left position + large size
+% [2] cfm-window: center position + default window size
+% [3] cfm-window: posisioned on left side next to ANT- or BART-window
+% [4] cfm-window: full screen
+% [5] cfm-window: minimize window
+% __________________
+% [+/-] in/decrease fontsize of axes labels
+% [r]   de/select files/folders by range (rectangle ui-tool)
+% [m]   toggle single-/multi-select files 
+% [d]   delete file selection (remove i.e. "x"-tags)
+% [s]   toggle: show/hide fileSlider & dirSlider
+% __________________
+% [ctrl or alt] & [left/right arrow] rotate x-labels
+% [ctrl or alt] & [+/-] in/decrease fontsize of file information (tooltip/corner info)
+
+
+% __anker_keylist_off
+
+
 function keys(e,e2)
-%  e2
+% e2
 
 
 hf=findobj(0,'tag','cfmatrix');
 u=get(gcf,'userdata');
 if isempty(e2.Modifier)
-    if strcmp(e2.Character,'+')
+    if strcmp(e2.Character,'1')
+        set(gcf,'position',[0.0007    0.0728    0.6688    0.8939]); %large left
+    elseif strcmp(e2.Character,'2')
+        set(gcf,'position',[ 0.3056    0.4200    0.3889    0.4667]); %default
+     elseif  strcmp(e2.Character,'3')    %left to ANT
+         try
+          h1=findobj(0,'tag','ant');
+          pos1=get(h1,'position');
+          pos2=[pos1(1)-pos1(3) pos1(2:end)];
+          set(hf,'position',pos2);
+         catch
+           h1=findobj(0,'tag','bart');
+          pos1=get(h1,'position');
+          pos2=[pos1(1)-pos1(3) pos1(2:end)];
+          set(hf,'position',pos2);  
+         end
+    elseif  strcmp(e2.Character,'4')
+         set(gcf,'position',[ 0    0.0678    1.0000    0.9072]); %full screen
+    elseif  strcmp(e2.Character,'5')
+        set(gcf,'WindowState', 'minimized');    
+           
+    elseif strcmp(e2.Character,'+')
         hl=gca;
         %fs=get(hl,'fontsize');
         u.fs_label=u.fs_label+1;
@@ -1676,7 +1805,7 @@ if isempty(e2.Modifier)
     end
     
     
-    %
+
 
 elseif strcmp(e2.Modifier,'control')|| strcmp(e2.Modifier,'alt')
     if strcmp(e2.Key,'rightarrow')
