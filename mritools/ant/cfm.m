@@ -1945,29 +1945,27 @@ end
 
 
 
+
+
 %% ===============================================
-% function selectRange_call(e,e2)
-% selectRange();
-
-
 function selectRange()
-
 %% ===============================================
-
 set(gcf,'WindowButtonMotionFcn',[]);
 set(gcf,'WindowButtonDownFcn',[]);
 
-roi = drawrectangle(gca,'StripeColor','r','tag','selectRange');
-% disp('ok')
-pos=get(roi,'position');
-drawnow
-
-pos=get(roi,'position');
+if exist('drawrectangle.m')==2
+    roi = drawrectangle(gca,'StripeColor','r','tag','selectRange');
+    pos=get(roi,'position');
+    delete(findobj(gcf,'tag','selectRange'));
+else
+    roi=imrect;
+    pos=   roi.getPosition;
+    roi.delete;
+end
+drawnow;
 ri=ceil([pos(1) pos(1)+pos(3) ]-.5);
 do=ceil([pos(2) pos(2)+pos(4) ]-.5);
-
 u=get(gcf,'userdata');
-delete(findobj(gcf,'tag','selectRange'));
 %% ===============================================
 % zo=zeros(size(u.v1));
 % zo(do(1):do(2),ri(1):ri(2)   )=1;
