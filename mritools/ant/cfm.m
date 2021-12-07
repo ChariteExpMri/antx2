@@ -1558,7 +1558,8 @@ elseif strcmp(task, 'getNiftiInfo')
         dx=[ c1 [name;sp] c2 se [mdir;sp] se [subdir;sp]  [se c3] num2cell([h.dim nvol]') se mat ...
        se [num2cell(h.dt'); [{'';''}]] se [num2cell(h.pinfo); [{''}]] ...
            se [{h.descrip};{'';'';''}] se  [t{i,1};sp] ];
-       sepline=cellfun(@(a){ repmat('$',[1 length(num2str(a))]) },dx(1,:));
+       sepline=cellfun(@(a){ repmat('',[1 length(num2str(a))]) },dx(1,:));
+       sepline{1}='B1C2D3uvw';
        
        g=[g; dx; sepline];
    end
@@ -1567,7 +1568,7 @@ elseif strcmp(task, 'getNiftiInfo')
        E 'dT' E 'pinfo' E 'descrip'   E 'path'}  ;
    
    h3=plog([],[ht2;g],0, '#lk NIFTI-HEADER-INFO #n','s=1;al=1;');
-   h3(regexpi2(h3,'§'))= {repmat('_',[size(h3{1})])};
+   h3(regexpi2(h3,'B1C2D3uvw'))= {repmat('_',[size(h3{1})])};
    h3(end,1)={''};
    uhelp(h3,0,'name','NIFTI-HDR');
    cprintf([0 .7 0],'..Done!\n');
