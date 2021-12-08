@@ -1,18 +1,19 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:     % 08 Dec 2021 (01:22:39)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   08 Dec 2021 (01:22:39)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
-    % ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**08 Dec 2021 (01:22:39)**</ins>  
-   __[xvol3d.m]__ save image as (tif/jpg/png) via context-menu (disable rotation-mode to see context menu)  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**08 Dec 2021 (01:22:39)**</ins>  
+   __[xvol3d.m]__ save image as (tif/jpg/png) via context-menu (disable rotation-mode  before access the context menu)  
 <!---->
-  % ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Dec 2021 (17:03:18)**</ins>  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Dec 2021 (17:03:18)**</ins>  
    __[cfm.m]__ --> case-file-matrix: visualize data (files x dirs), basic file-manipulation  
   &#8618; access via ANT-GUI: Two new icons next to study-history-icon: CFM of all animals from   
   the current study or CFM for selected animals (selected via left listbox)  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Nov 2021 (23:58:44)**</ins>  
    __[xcreateMaps.m]__ create MAPS across animals (heatmaps/IncidenceMaps/MeanImage Maps etc)  
@@ -21,7 +22,6 @@
   &#8618; access via ANT-menu: &#8658; SNIPS/create Maps (incidenceMaps/MeanImage etc)  
     
    __[xrealign_elastix.m]__  --> replace NANs by Zeros in 4D-volume after realignment  
-    
     
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Nov 2021 (00:33:52)**</ins>  
