@@ -1860,7 +1860,10 @@ if strcmp(task,'changeList')
     end
 elseif strcmp(task,'exportList')
     hb=findobj(gcf,'tag','labellistbox');
-    uhelp(regexprep(get(hb,'string'),'<html>','<html><pre>'),1,'name','labels');
+    %uhelp(regexprep(get(hb,'string'),'<html>','<html><pre>'),1,'name','labels');
+    uhelp(regexprep(get(hb,'string'),'<html>.*>',''),1,'name','labels');
+    
+    
 elseif strcmp(task,'checklocations')
     hc=findobj(gcf,'tag','checklocations');
     hc=hc(1);

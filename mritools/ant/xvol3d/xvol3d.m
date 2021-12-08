@@ -138,7 +138,8 @@
 % xvol3d('view',7)       %--> set view to "view back-top" similar as via context menu
 % xvol3d('view',[90 0])  %--> set view via azimuth and elevtion to example: 90,0
 % 
-% 
+% #k SAVE IMAGE (TIFF/JPG/PNG)
+% select from contextMenu: save image  (rotation must be disabled to see the contextMenu)
 %----------------------------------------------------------------------------------------------------
 % #b Example: plot two intensity images
 % cf
@@ -2110,17 +2111,266 @@ hs = uimenu(hs2,'label','view front-left-top;  view([130 40]) ',           'Call
 
 
 
- hs2 = uimenu(cm,'label','change arrow position',       'Callback',{@hcontext, 'changearrow'},   'separator','on');
+hs2 = uimenu(cm,'label','change arrow position',   'Callback',{@hcontext, 'changearrow'},   'separator','on');
+hs2 = uimenu(cm,'label','save image',   'Callback',{@hcontext, 'saveImg','1'},   'separator','on');
+% hs2 = uimenu(cm,'label','save image from all views (15 images)',  'Callback',{@hcontext, 'saveImg','2'},   'separator','on');
+
+
 
 set(ht,'UIContextMenu',cm);
 
+
+
+%===================================================================================================
+% ==============================================
+%%   save image
+% ===============================================
+
+function saveimg_pb_path(e,e2)
+
+function saveImg(arg)
+%% ===============================================
+global xvol3d_glob
+if isempty(xvol3d_glob)
+    xvol3d_glob.paImg=pwd;
+end
+
+hf=findobj(0,'tag','xvol3d');
+
+delete(findobj(hf,'tag' ,'saveimg_pan'));
+hp=uipanel(hf,'units','norm','tag','saveimg_pan');
+set(hp,'position',[.1 .05 .8 .2],'title','save image');
+
+hb=uicontrol(hp,'style','edit','units','norm','tag','saveimg_edPath');
+set(hb,'position',[0.0428    0.7   0.95    0.3]);
+set(hb,'fontsize',7);
+set(hb,'string',xvol3d_glob.paImg);
+set(hb,'TooltipString','outdirPath where image is saved image ');
+
+hb=uicontrol(hp,'style','pushbutton','units','norm','tag','saveimg_pbPath');
+set(hb,'position',[0.    0.7   0.05    0.3]);
+set(hb,'string','..');
+set(hb,'TooltipString','select outdirPath to save image ');
+set(hb,'callback',{@saveimg_saveimage_run,'getPath'});
+
+hb=uicontrol(hp,'style','radio','units','norm','tag','saveimg_rdCrop','value',1);
+set(hb,'position',[0.3    0.4   0.18    0.3]);
+set(hb,'string','cropImage');
+set(hb,'TooltipString','crop image (remove borders) ');
+
+hb=uicontrol(hp,'style','radio','units','norm','tag','saveimg_rdHideCbar','value',1);
+set(hb,'position',[0.6    0.4   0.14    0.3]);
+set(hb,'string','hide Cbar');
+set(hb,'TooltipString','show/hide Colorbar');
+% set(hb,'callback',@saveimg_pb_path);
+
+hb=uicontrol(hp,'style','edit','units','norm','tag','saveimg_edCropTol','string',20);
+set(hb,'position',[0.47    0.4   0.05    0.3]);
+set(hb,'TooltipString','crop image: border tolerance in pixels to (larger value might be better to crop the image) ');
+
+imgtype={'current view' 'all views'};
+hb=uicontrol(hp,'style','popupmenu','units','norm','tag','saveimg_popViewType');
+set(hb,'position',[0.    0.4   0.25    0.3]);
+set(hb,'string',imgtype);
+set(hb,'TooltipString','save current views or all views ( these are 15 images)');
+
+imgformat={'tif', 'jpg' 'png'};
+hb=uicontrol(hp,'style','popupmenu','units','norm','tag','saveimg_popFormat');
+set(hb,'position',[0.    0.15   0.1    0.3]);
+set(hb,'string',imgformat);
+set(hb,'TooltipString','image format');
+
+imgresolution={300 96 180 500 1000 2000 };
+hb=uicontrol(hp,'style','popupmenu','units','norm','tag','saveimg_popResol');
+set(hb,'position',[0.11    0.15   0.1    0.3]);
+set(hb,'string',imgresolution);
+set(hb,'TooltipString','image resolution');
+% ---------------
+hb=uicontrol(hp,'style','edit','units','norm','tag','saveimg_edPrefix');
+set(hb,'position',[0.22    0.18   0.05    0.25]);
+set(hb,'fontsize',7,'string','v');
+set(hb,'TooltipString','the image filename contains this prefix in ');
+% ---------------
+hb=uicontrol(hp,'style','radio','units','norm','tag','saveimg_rdTimeStamp','value',1);
+set(hb,'position',[0.3    0.16   0.15    0.3]);
+set(hb,'string','timestamp');
+set(hb,'TooltipString','add date+time to image file-name ');
+
+% ---------------
+hb=uicontrol(hp,'style','pushbutton','units','norm','tag','saveimg_pbSaveImg_GuiOpen');
+set(hb,'position',[0.45    0.01   0.2    0.25]);
+set(hb,'string','save+keep GUI','fontsize',7,'backgroundcolor',[ 0.9922    0.9176    0.7961]);
+set(hb,'TooltipString','save image(s) + keep this GUI open ');
+set(hb,'callback',{@saveimg_saveimage_run,'save_open'});
+% ---------------
+hb=uicontrol(hp,'style','pushbutton','units','norm','tag','saveimg_pbSaveImg_GuiClose');
+set(hb,'position',[0.64    0.01   0.2    0.25]);
+set(hb,'string','save+close GUI','fontsize',7,'backgroundcolor',[ 0.9922    0.9176    0.7961]);
+set(hb,'TooltipString','save image(s) + close GUI  ');
+set(hb,'callback',{@saveimg_saveimage_run,'save_close'});
+% ---------------
+hb=uicontrol(hp,'style','pushbutton','units','norm','tag','saveimg_pbGuiClose');
+set(hb,'position',[0.85    0.01   0.15    0.25]);
+set(hb,'string','close GUI','fontsize',7)
+set(hb,'TooltipString','close GUI ...do nothing  ');
+set(hb,'callback',{@saveimg_saveimage_run,'close'});
+
+%% ===============================================
+function saveimg_saveimage_run(e,e2,task)
+%  c=flipud(get(findobj(gcf,'tag' ,'saveimg_pan'),'children'))
+hf=findobj(0,'tag','xvol3d');
+hp=findobj(hf,'tag' ,'saveimg_pan');
+if strcmp(task,'close')
+    delete(findobj(hf,'tag' ,'saveimg_pan'));
+elseif strcmp(task,'getPath')
+    global xvol3d_glob
+    if isempty(xvol3d_glob)
+        xvol3d_glob.paImg=pwd;
+    end
+    pa=uigetdir(xvol3d_glob.paImg,'select path to save the image(s)');
+    if isnumeric(pa); return; end
+    xvol3d_glob.paImg=pa;
+    set(findobj(hf,'tag' ,'saveimg_edPath'),'string',xvol3d_glob.paImg);
+elseif strcmp(task,'save_open') || strcmp(task,'save_close')
+   %% ===============================================
+   
+    % get parameter
+    s.pa         =get(findobj(hp,'tag','saveimg_edPath'),'string');
+    s.iscrop     =get(findobj(hp,'tag','saveimg_rdCrop'),'value');
+    s.cropTol    =str2num(get(findobj(hp,'tag','saveimg_edCropTol'),'string'));
+    
+    s.ishideCbar =get(findobj(hp,'tag','saveimg_rdHideCbar'),'value');
+    s.prefix     =get(findobj(hp,'tag','saveimg_edPrefix'),'string');
+    s.istimestamp=get(findobj(hp,'tag','saveimg_rdTimeStamp'),'value');
+    
+    w=get(findobj(hp,'tag','saveimg_popViewType'),{'String' 'Value'});
+    s.imgTask    =w{1}{w{2}};
+    
+    w=get(findobj(hp,'tag','saveimg_popFormat'),{'String' 'Value'});
+    s.fmt    =w{1}{w{2}};
+    
+    w=get(findobj(hp,'tag','saveimg_popResol'),{'String' 'Value'});
+    s.res    = (w{1}{w{2}});
+   %% ==========[resolve states]=====================================
+   s.timestamp='';
+   if s.istimestamp==1
+       s.timestamp = ['__' datestr(now,'dd-mm-yy,HH-MM-SS') ];
+   end
+    
+   % _______ IMAGE-VIEW _______
+   if strcmp(s.imgTask,'current view');
+       n=1;
+       dorotate=0;
+   else
+       c=findobj(hf,'userdata','changeview');
+       c1=get(c,'children');
+
+       n=length(c1);
+       dorotate=1;
+   end
+   % _______ COLORBAR _______
+   if s.ishideCbar==1  
+       set(findobj(hf,'type','colorbar'),'visible','off');
+   else
+        set(findobj(hf,'type','colorbar'),'visible','on');
+   end
+      
+   
+    % _______ set panel visible off _______
+    set(hp,'visible','off');
+   
+   
+   for i=1:n %over views
+       
+       if dorotate==1 %all views
+           l=c1(i).Label;
+           hgfeval( get(c1(i),'callback'),'changeview',c1(i));
+           ix=[regexpi(l,'[') regexpi(l,']')];
+          nametok=[s.prefix  pnum(i,3)  '_[' regexprep(l(ix(1)+1:ix(2)-1),'\s+',',') ']' s.timestamp];
+       else %THIS VIEW
+           [al el]=view;;
+           nametok=[s.prefix '_arb_[' [ num2str(al) ',' num2str(el) ']'] s.timestamp];
+       end
+       
+       drawnow;
+       F1=fullfile(s.pa,[ nametok '.' s.fmt ]) ;
+       print(F1, '-dtiff','-noui',['-r' s.res]);
+       %print(F1, '-dtiff','-noui','-r600');
+       % _______ CROP IMAGE _______
+       if s.iscrop==1
+           [a map]=imread(F1);
+           si=size(a);
+           a2=reshape(a,[prod(si(1:2)) si(3)  ]);
+           ar=repmat(squeeze(a(1,1,:))',[size(a2,1) 1 ]);
+           d2=(sum(a2==ar,2)==3);
+           d=reshape(d2,[si(1:2) ]);
+           bo=s.cropTol;
+           d(:,[1:bo end-bo:end])=1;
+           d([1:bo end-bo:end],:)=1;
+           
+           ho=any(d==0,1);
+           xl=[min(find(ho==1)) max(find(ho==1))];
+           ve=any(d==0,2);
+           yl=[min(find(ve==1)) max(find(ve==1))];
+           
+           ac=a(yl(1):yl(2),xl(1):xl(2) ,:);
+           if strcmp(s.fmt,'tif')
+           imwrite(ac, F1, 'Resolution', str2num(s.res));
+           elseif strcmp(s.fmt,'jpg')
+              imwrite(ac, F1,'Quality',100,'Mode','lossy');  
+           else
+              imwrite(ac, F1); 
+           end
+           %imwrite(ac, F1);
+       end
+       showinfo2('saved Image',F1,'','',F1);
+   end
+   
+   
+   set(hp,'visible','on');
+     % _______ COLORBAR _______
+   if s.ishideCbar==1  
+       set(findobj(hf,'type','colorbar'),'visible','on');
+   end
+   
+   
+   %% ========[CLOSE GUI]=======================================
+   if strcmp(task,'save_close')==1;    %
+       delete(hp);
+   end
+   
+end
+%   UIControl    (saveimg_edPath)
+%   UIControl    (saveimg_pbPath)
+%   UIControl    (saveimg_rdCrop)
+%   UIControl    (saveimg_rdHideCbar)
+%   UIControl    (saveimg_edCropTol)
+%   UIControl    (saveimg_popViewType)
+%   UIControl    (saveimg_popFormat)
+%   UIControl    (saveimg_popResol)
+%   UIControl    (saveimg_edPrefix)
+%   UIControl    (saveimg_rdTimeStamp)
+%   UIControl    (saveimg_pbSaveImg_GuiOpen)
+%   UIControl    (saveimg_pbSaveImg_GuiClose)
+%   UIControl    (saveimg_pbGuiClose)
+
+
+% print(gcf,'foo.png','-dpng','-r300'); 
 % ==============================================
 %%   contextMenu
 % ===============================================
-function hcontext(e,e2,task)
+function hcontext(e,e2,task,arg)
 
-if strcmp(task, 'changeview')
+
+if strcmp(task, 'saveImg')
+    saveImg(arg);
+
+elseif strcmp(task, 'changeview')
+    try
     [~, cod]=strtok(e2.Source.Label,';');
+    catch
+      [~, cod]=strtok(e2.Label,';');  
+    end
     if ~isempty(strfind(cod,'view'))
         figure(findobj(0,'tag','xvol3d'));
     eval([cod ';']);

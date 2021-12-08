@@ -1774,7 +1774,7 @@ if isempty(e2.Modifier)
     elseif  strcmp(e2.Character,'4')
          set(gcf,'position',[ 0    0.0678    1.0000    0.9072]); %full screen
     elseif  strcmp(e2.Character,'5')
-        set(gcf,'WindowState', 'minimized');    
+       try;  set(gcf,'WindowState', 'minimized');    end % works on R2021
            
     elseif strcmp(e2.Character,'+')
         hl=gca;
