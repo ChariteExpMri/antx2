@@ -63,9 +63,10 @@
 % cfm(2,'ant');       % open CFM of current ANT-project, show all animal-folders
 % cfm(2,'ant','all'); % same as cfm(2,'ant');
 % cfm(2,'ant','sel'); % open CFM of current ANT-project, show selected animal-folders only
-% 
-% 
-% 
+% ---BART examples-----------
+% cfm(1); % Bart-project is loaded: open CFM using all animals (folders)
+% cfm(1,[],'all'); %same
+% cfm(1,[],'sel');% Bart-project is loaded: open CFM using SELECTED animals (folders)
 % #ba modified:  06 Dec 2021 (17:28:20)
 % 
 % .
@@ -78,6 +79,15 @@ function cfm(umode,maindir,dirmode)
 %% =============[input]==================================
 u.dirmode='';
 u.useANT =0;
+%% =============[parameter]==================================
+% u.foldertype=2;  %[1]BART, [2] any-dir
+% u.pathmain='F:\data4\ernst_10aug21_2\dat';
+u.params='----------';
+u.fs_label = 5;
+u.metric= 1;
+u.isreduceTable=1;
+u.allcasesSelected=1;
+
 
 if exist('umode')~=1
     return
@@ -88,8 +98,25 @@ else
         return
     end
 end
+%% =============[ BART ]==================================
+
 if umode==1
     
+    if exist('dirmode')==1
+        if strcmp(dirmode,'all')
+            u.allcasesSelected=1;
+        elseif strcmp(dirmode,'sel')
+            u.allcasesSelected=0;
+        else
+            u.allcasesSelected=1;
+        end
+            
+    end
+  
+    
+    
+%% ===============================================
+
 elseif umode==2
     if exist('maindir')~=1  
         return
@@ -116,14 +143,14 @@ end
 
 
 
-%% =============[parameter]==================================
-% u.foldertype=2;  %[1]BART, [2] any-dir
-% u.pathmain='F:\data4\ernst_10aug21_2\dat';
-u.params='----------';
-u.fs_label = 5;
-u.metric= 1;
-u.isreduceTable=1;
-u.allcasesSelected=1;
+% %% =============[parameter]==================================
+% % u.foldertype=2;  %[1]BART, [2] any-dir
+% % u.pathmain='F:\data4\ernst_10aug21_2\dat';
+% u.params='----------';
+% u.fs_label = 5;
+% u.metric= 1;
+% u.isreduceTable=1;
+% u.allcasesSelected=1;
 
 
 

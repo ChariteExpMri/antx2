@@ -12,8 +12,8 @@
 % 'help'        : strcell   : adds a helpbutton,    ...'help',{'HELP';'dothisNthat'},...
 % 'position'    :[x y w h]   :position of fig
 % 'finder'      :0/1  : shows an additonal finder WINDOW, default 0
-% title         : title string in window-header
-% note          : add a note on top of the window, info in note must be of type cell
+% 'title'       : title string in window-header
+% 'note'        : add a note on top of the window, info in note must be of type cell
 %% IN
 % tb is a multiCell of strings
  % colinfo <optional>:char with infos, e.g. columnames 

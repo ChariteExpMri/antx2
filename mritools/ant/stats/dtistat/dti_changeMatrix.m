@@ -32,17 +32,85 @@
 
 
 
-function dti_changeMatrix
+function dti_changeMatrix(w)
+
+if 0
+    %% ===============================================
+    
+   w=[] 
+   w.lutfile={'F:\data4\sarahDTI_stat\_testMerge_HC\atlas_lut.txt'} 
+   w.dtifile={'F:\data4\sarahDTI_stat\_testMerge_HC\connectome_di_sy__Level2.csv'}
+   w.source =1; %mrtrix
+   w.type   ='select&merge';
+   dti_changeMatrix(w)
+    
+    %% ===============================================
+    
+end
+
+% ==============================================
+%%   input
+% =============================================== 
+u.argin=0;%inputargs
+makefig(u);
+
+if exist('w')==1
+    if isfield(w,'source') && ~isempty(intersect([1 2],w.source)) 
+       
+        
+        if isfield(w,'source');
+            set(findobj(gcf,'tag','inputsource'),'value',w.source);
+        end
+        if isfield(w,'dtifile');
+            u.files=cellstr(w.dtifile);
+        end
+        if isfield(w,'lutfile')
+            u.labelfile=char(w.lutfile);
+        end
+        
+        if isfield(w,'dtifile') || isfield(w,'lutfile')
+           
+            u.argin=1;
+             v=get(gcf,'userdata');
+            u=catstruct(v,u);
+            set(gcf,'userdata',u);
+            getData([],[]);
+        end
+        
+        if isfield(w,'keeplabels')
+          u=get(gcf,'userdata');
+          u.keeplabels=w.keeplabels;
+          set(gcf,'userdata',u);
+        end
+        
+        
+    else
+        msgbox('"source"-field in input-struct must be (1)MRtrix or (2)DSIstudio');
+    end
+    
+    if isfield(w,'type')
+        hs=findobj(gcf,'tag','modifType');
+        isel=find(strcmp(hs.String,'select&merge' ));
+        if ~isempty(isel);
+            set(hs,'Value',isel);
+            hgfeval( get(hs,'callback'),hs);
+        end
+        
+    end
+        
+end
+
+
 
 % ==============================================
 %%
 % ===============================================
-
+function makefig(u);
 delete(findobj(0,'tag','modmattrix'))
 fg;
 set(gcf,'units','norm','menubar','none',  'numbertitle','off',...
     'tag','modmattrix');
-set(gcf,'name',[ 'changeMatrix' ])
+set(gcf,'name',[ 'changeMatrix [' mfilename '.m]' ]);
 set(gcf,'position',[ 0.4014    0.5289    0.16    0.3122]);
 
 
@@ -123,7 +191,7 @@ set(hb,'position', [0.1999 0.45729 0.27269 0.071179]);
 
 %% COIfileType
 hb=uicontrol('style','popupmenu','units','norm', ...
-    'string',{'[1] connection-wise' '[2] region-wise'},...
+    'string',{'[1] connection-wise' '[2] region-wise' '[3] mergeRegions'},...
     'backgroundcolor','w','tag','COItype',...
     'fontsize',7);
 set(hb,'position', [0.49076 0.47865 0.4 0.05]);
@@ -131,6 +199,7 @@ set(hb,'position', [0.49076 0.47865 0.4 0.05]);
 set(hb,'tooltipstring', ['The type  of COI-file for editing ' char(10) ...
     '1) connections: Excel-file with all possible connections ' char(10) ...
     '2) region-wise: Excelfile with regions only ' char(10) ......
+    '3) mergeRegions: Excel-file with regions, regions to be merged can be edited ' char(10) ......
     ]);
 
 
@@ -154,7 +223,7 @@ set(hb,'tooltipstring', tx);
 
 %% modifType-pop
 hb=uicontrol('style','popupmenu','units','norm', ...
-    'string',{'Left' 'Right' ,'select','excelfile'},...
+    'string',{'Left' 'Right' ,'select', 'select&merge'  'excelfile'},...
     'backgroundcolor','w','tag','modifType',...
     'fontsize',7);
 set(hb,'position', [0.28625 0.21172 0.4 0.05]);
@@ -250,6 +319,7 @@ set(hb,'position', [0.78163 0.01598 0.2 0.07]);
 
 set(findobj(gcf,'tag','ed_outdir'),'visible','off');
 set(findobj(gcf,'tag','pb_outdir'),'visible','off');
+set(gcf,'userdata',u);
 
 
 % ==============================================
@@ -263,7 +333,10 @@ function modifType(e,e2)
 
 ht=findobj(gcf,'tag','modifType');
 hb=findobj(gcf,'tag','select');
-if strcmp(ht.String(ht.Value), 'select') || strcmp(ht.String(ht.Value), 'excelfile')
+if strcmp(ht.String(ht.Value), 'select') || ...
+        strcmp(ht.String(ht.Value), 'select&merge') ||...
+       strcmp(ht.String(ht.Value), 'excelfile')
+   
     set(hb,'visible','on');
     if strcmp(ht.String(ht.Value), 'select')
         set(hb,'tooltipstring','select connections' );
@@ -311,60 +384,67 @@ end
 % ==============================================
 %%  CONFILES
 % ===============================================
-if exist('files')==0
-    cprintf([1 0 1],['Select DTI data..wait..' ]);
-    if  source==1; %DSI
-        msg1={...
-            'Select connectivity data processded by DSI-studio (MAT-files).'
-            '  This data should be mat-files (filter: "*.mat").'
-            };
-        dtype='mat';
-        flt  ='.*rk4_end.mat|.*_connectivities.mat';
-    elseif source==2 %mrtrix
-        msg1={...
-            'Select connectivity data processded by MRtrix (CSV-files)'
-            ' This data should be csv-files (filter: "*.csv").'
-            };
-        dtype='any';
-        flt  ='.*csv|connectome.*.csv';
-    end
-    
-    msg2={ '        '
-        ' Select the files (A) manually or do it (B) recursively:'
-        '  _____ (B) RECURSIVELY find files _____  '
-        '(1): Select the main folder containing all connectivity data.'
-        '(2): Check/adjust the filter string in the filter edit field.'
-        '(3a): Click [Rec] button to recursively find all files with matching filter '
-        '     The found files will be listed in the lower listbox...examine the list carefully.. '
-        '     ..If needed prune the list (click onto file to remove it from selection). '
-        '____ If it''s more complicated follow steps below____'
-        '(3b): Click [RecList] button to obtain a list of all matching files recursively found in the main folder.'
-        '(4): In this SELECTOR window select the requested files from the list...hit [OK].'
-        '(5): Hit [Rec] button to recursively find all matching files.'
-        '(6): Check lower listbox. If needed prune the list (click onto file to remove it from selection).'
-        '(7): If needed, add other files using steps from (A) or (C).'
-        ''};
-    msg=[msg1; msg2];
-    
-    % [fi,sts] = cfg_getfile2(inf,'mat',msg,[],pwd,'.*rk4_end.mat|.*_connectivities.mat');
-    [fi,sts] = cfg_getfile2(inf,dtype,msg,[],pwd, flt);
-    
+if us.argin==1 && isfield(us,'files')
+    fi=us.files;
 else
-    fi=files;
+    if exist('files')==0
+        cprintf([1 0 1],['Select DTI data..wait..' ]);
+        if  source==1; %DSI
+            msg1={...
+                'Select connectivity data processded by DSI-studio (MAT-files).'
+                '  This data should be mat-files (filter: "*.mat").'
+                };
+            dtype='mat';
+            flt  ='.*rk4_end.mat|.*_connectivities.mat';
+        elseif source==2 %mrtrix
+            msg1={...
+                'Select connectivity data processded by MRtrix (CSV-files)'
+                ' This data should be csv-files (filter: "*.csv").'
+                };
+            dtype='any';
+            flt  ='.*csv|connectome.*.csv';
+        end
+        
+        msg2={ '        '
+            ' Select the files (A) manually or do it (B) recursively:'
+            '  _____ (B) RECURSIVELY find files _____  '
+            '(1): Select the main folder containing all connectivity data.'
+            '(2): Check/adjust the filter string in the filter edit field.'
+            '(3a): Click [Rec] button to recursively find all files with matching filter '
+            '     The found files will be listed in the lower listbox...examine the list carefully.. '
+            '     ..If needed prune the list (click onto file to remove it from selection). '
+            '____ If it''s more complicated follow steps below____'
+            '(3b): Click [RecList] button to obtain a list of all matching files recursively found in the main folder.'
+            '(4): In this SELECTOR window select the requested files from the list...hit [OK].'
+            '(5): Hit [Rec] button to recursively find all matching files.'
+            '(6): Check lower listbox. If needed prune the list (click onto file to remove it from selection).'
+            '(7): If needed, add other files using steps from (A) or (C).'
+            ''};
+        msg=[msg1; msg2];
+        
+        % [fi,sts] = cfg_getfile2(inf,'mat',msg,[],pwd,'.*rk4_end.mat|.*_connectivities.mat');
+        [fi,sts] = cfg_getfile2(inf,dtype,msg,[],pwd, flt);
+        
+    else
+        fi=files;
+    end
 end
-
 % ==============================================
 %%   LABEL-FILE
 % ===============================================
-if source==2 %mrtrix
-    if exist('labelfile')  ~=1
-        msg={'select one(!) label-file (*.txt) for MRtrix'};
-        pa_label=fileparts(fi{1});
-        [fi2,sts] = cfg_getfile2(1,'any',msg,[],pa_label, '.*.txt');
-        labelfile=char(fi2);
-        if isempty(char(fi))
-            cprintf([1 0 1],['process aborted\n' ]);
-            return
+if us.argin==1 && isfield(us,'labelfile')
+    labelfile=us.labelfile;
+else
+    if source==2 %mrtrix
+        if exist('labelfile')  ~=1
+            msg={'select one(!) label-file (*.txt) for MRtrix'};
+            pa_label=fileparts(fi{1});
+            [fi2,sts] = cfg_getfile2(1,'any',msg,[],pa_label, '.*.txt');
+            labelfile=char(fi2);
+            if isempty(char(fi))
+                cprintf([1 0 1],['process aborted\n' ]);
+                return
+            end
         end
     end
 end
@@ -391,15 +471,35 @@ if source==2
         namesMRtrix=regexprep(endtag,'.csv','');  %remove FMT
     else
         namesMRtrix={};
+        splitmat={};
         for i=1:size(fi)
             r=strsplit(fi{i},filesep);
             try
                 namesMRtrix{i,1}=r{find(strcmp(r,'dat'))+1};
             catch
-                error('files must have different names or must be located in the studie''s animal-folders (dat/animalfolder_xyz)') ;
+                try
+                    splitmat(i,:)=r;
+                catch
+                    error('files must have different names or must be located in the studie''s animal-folders (dat/animalfolder_xyz) or dti-data must be located on the same  hierarchical level in different folders') ;
+                end
             end
         end
+        if ~isempty(splitmat)
+            ndiffvec=[];
+            for i=size(splitmat,2):-1:1
+                ndiffvec(1,i)=length(unique(splitmat(:,i)));
+            end
+            ianimaltag  =max(find(ndiffvec>1));
+            if isempty(ianimaltag) % single animal
+                
+            end
+            namesMRtrix=splitmat(:,ianimaltag);
+        end
+        
     end
+    
+    
+    
 end
 cprintf([1 0 1],['selection of DTI data done.\n' ]);
 
@@ -410,6 +510,7 @@ cprintf([1 0 1],['selection of DTI data done.\n' ]);
 c={};
 con=[];
 names={};
+labelID={};
 for i=1:size(fi,1)
     cprintf([0 0 1],['[reading]: '   strrep(fi{i},[filesep],[filesep filesep])  '\n']);
     
@@ -423,7 +524,8 @@ for i=1:size(fi,1)
     elseif source==2
         ac   =csvread(fi{i});
         namex=namesMRtrix{i};
-        label=t(:,2);
+        label  =t(:,2);
+        labelID=t(:,1);
     end
     
     %% check
@@ -446,6 +548,7 @@ for i=1:size(fi,1)
     names{i} =namex;
     files{i,1}=fi{i};
     
+    
     if i==1  % CONECTIVITY labls
         la=repmat({''},si);
         for j=1:size(la,1)
@@ -460,6 +563,7 @@ for i=1:size(fi,1)
     c.info_mat_ind={'mat: matrices' 'ind:index for condata "condatat=mat(ind) "'};
     c.mat(:,:,i)=ac;
     c.ind       =ind;
+    
     
     
     %% check
@@ -477,7 +581,7 @@ c.index    =ind;
 c.labelmatrix=la;
 c.labelfile=char(labelfile);
 c.label      =label;
-
+c.labelID    =labelID;
 
 
 % merge struct
@@ -515,16 +619,128 @@ if strcmp(ht.String(ht.Value),'excelfile')
 else
     tb=us.label;
     
-    id=selector2(tb,{'Regions' },'iswait',1,...
-        'position',[0.0778  0.0772  0.3510  0.8644],...
-        'finder',1,'help',{'select regions here';'the combination of selected regions is kept'},...
-        'title','select regions');
+    hs=findobj(gcf,'tag','modifType');
+    
+    if strcmp(hs.String(hs.Value),'select&merge')==1
+        %% ===============================================
+        %%  SELECT AND MERGE
+        %% ===============================================
+
+        %% ===============================================
+        % load merging-table
+        choi={'[YES] load DTI-mergingTable (Excelfile)' '[NO] select Clusters via GUI' }
+        q=questdlg({'Do you want to load an existing DTI-mergingTable? (Excelfile)' 
+            '[YES] load existing DTI-mergingTable'
+            '[NO] let me select the Clusters via GUI'}, ...
+            'load  DTI-mergingTable', ...
+            choi{1},choi{2},choi{2});
+%         
+%         
+       if strcmp(q,choi{1})
+            [fi pa] =uigetfile(fullfile(pwd,'merginTable_.xlsx') , 'select mergingTable (EXCELFILE)...');
+            if isnumeric(fi)
+                tb2=[];
+            else
+                [~,~,r]=xlsread(fullfile(pa,fi));
+                tb2=r(2:end,:);
+                col1=cellfun(@(a){[  num2str(a)]} ,tb2(:,1));
+                idel=regexpi2(col1,'NaN|^$','emptymatch');
+                tb2(idel,:)=[];
+                
+               clustcol=cellfun(@(a){[  num2str(a)]} ,tb2(:,3));
+               clustcol=regexprep(clustcol,'NaN','');
+               tb2(:,3)=clustcol;
+               
+%                 idel=find(strcmp(cellfun(@(a){[  num2str(a)]} ,tb2(:,1)),'NaN'));
+%                 tb2(idel,:)=[];
+%                 idel=find(strcmp(cellfun(@(a){[  num2str(a)]} ,tb2(:,1)),''));
+%                 tb2(idel,:)=[];
+            end
+        
+       else
+        %% ===============================================
+        %%  SELECT AND MERGE:  [ PART-1]    select all regions
+        %% ===============================================
+        msg={' #lk select&merge [PART-1] SELECT ALL REGIONS'
+            'Select #r all #r the regions you want to keep, i.e.'
+            'select all regions which should be merged and also'
+            'the regions that should not not be merged but are kept'
+            'In the upcoming GUI you can assign regions that should be merged'
+            'and assign a new label for the merged region(s)'
+            };
+       
+         N=length(us.label);
+        tbh={    'Region-ID' 'anatomical Regions' 'included-IDs'  };
+        tb=[us.labelID           us.label          repmat({false},[ N 1 ])  ];
+        
+        tb1=uitable_checklist(tb,tbh,'editable',[ 3 ],'title','PART1: included Regions',...'tooltip' ,['xx' char(10) 'yy'],...
+            'pos', [.2 .2 .5 .6],'iswait',1,'help',msg,'autoresize',1,...
+            'rowcolorcol',3,'issortable',1);%,'postab', [0 0  1 1]);
+        if isempty(tb1); return, end
+        drawnow;
+   
+        
+        
+        %% ===============================================
+        %%  SELECT AND MERGE:  [ PART-2]    select regions to be merged
+        %% ===============================================
+        msg={...
+            ' #lk select&merge [PART-2] SELECT the REGIONS that should be merged'
+            ' #b __"Merging-IDs"__ '
+            'If regions should be merged: enter a number in "Merging-IDs" column for those regions'
+            'regions with an identical number in "Merging-IDs" will be merged'
+            '--> see context menu to set several regions at the same time'
+            ''
+            ' #b __"Donor of Merging label"__ '
+            '"Donor of Merging label" [CHECKBOX] select here the region how is the label donor'
+            ' #r PLease set only ONE region as label Donor per merging cluster'
+            'of the merged regions...the merged region needs a name  '
+            '--> see context menu to set several regions at the same time'
+            ''
+            ''
+            '.. merging cluster: several regions can be merged ...to one merging cluster'
+            '..several merging clusters can be created here'
+            '..each region can only be part of one region-cluster (not several)!'
+            };
+        
+        
+        isel=find(cell2mat(tb1(:,3))==1);
+        N=length(isel);
+        tbh={    'Region-ID' 'anatomical Regions'     'Merging-IDs'          'Donor of Merging label'  };
+        tb=[us.labelID(isel)           us.label(isel)  repmat({''},[ N 1 ])    repmat({false},[ N 1 ])       ];
+        
+        tb2=uitable_checklist(tb,tbh,'editable',[ 3 4],'title','PART2:merging regions',...'tooltip' ,['xx' char(10) 'yy'],...
+            'pos', [.2 .15 .5 .6],'iswait',1,'help',msg,'autoresize',1,...
+            'rowcolorcol',3,'issortable',1);%,'postab', [0 0  1 1]);
+  
+       end
+        
+       %% ====obtaining index ===========================================
+        if isempty(tb2); 
+            msgbox('no merging obtained...');
+            return;
+        end
+        id=tb2; %just write inside...care later
+        
+     
+        
+        %% ===============================================
+        
+    else
+        id=selector2(tb,{'Regions' },'iswait',1,...
+            'position',[0.0778  0.0772  0.3510  0.8644],...
+            'finder',1,'help',{' #lk select' 'select regions here'},...
+            'title','select: select regions to keep');
+    end
     if length(id)==1 && id==-1
         id=[];
     end
     
-    if ~isempty(id)
+    if isnumeric(id) && ~isempty(id)
         us.keeplabels=tb(id);
+        set(gcf,'userdata',us);
+    elseif iscell(id)  %SELECT & merge
+        us.keeplabels=id;
         set(gcf,'userdata',us);
     end
 end
@@ -543,8 +759,16 @@ if ~isempty(strfind(ht.String{ht.Value},'Left'))
 elseif ~isempty(strfind(ht.String{ht.Value},'Right'))
     s.type='R';
     s.keeplabels=us.label(regexpi2(us.label,'^R_'));
-elseif ~isempty(strfind(ht.String{ht.Value},'select'))
+elseif strcmp(ht.String{ht.Value},'select')==1           %SELECT
     s.type='select';
+    if isfield(us,'keeplabels')==1
+        s.keeplabels=us.keeplabels ;
+    else
+        errordlg(['Select regions first!'  char(10) ' regions can be selected via [Select]-Btn.'],'');
+        return
+    end
+elseif strcmp(ht.String{ht.Value},'select&merge')==1       %SELECT&merge 
+     s.type='select&merge';
     if isfield(us,'keeplabels')==1
         s.keeplabels=us.keeplabels ;
     else
@@ -640,11 +864,61 @@ if strcmp(s.type,'excelfile')
     v.mat  =s.mat(idx ,idx,:);
     v.label=s.label(idx);
     v.mat=v.mat.*repmat(v.msk,[1 1 size(v.mat,3)]); %set other Connections to ZERO
+% % elseif strcmp(s.type,'select')
+   
+elseif strcmp(s.type,'select&merge')  
+    
+    %keyboard
+    %% ===============================================
+    d0=s.mat;
+    tb=s.keeplabels;
+    ikeep=cell2mat(tb(:,1));
+    %l=s.label
+    
+    
+    d1=d0(ikeep,ikeep,:); %reduze matrix to used regions
+
+    for i=1:size(d1,3) %LOOP OVER 3rddim (animals)
+        [dx tb2 in]=mergeDTImatrix(d1(:,:,i),tb, 0);
+        if i==1
+            d2=zeros( [size(dx)  size(d1,3)] ); %PREALLOC
+        end
+        d2(:,:,i)=dx;
+    end
+    
+    
+    v.mat  = d2;
+    v.label= tb2(:,2);
+    
+
+     %% =============================================== 
+     % save merging-table
+     q=questdlg({'OPTIONAL: Save selected DTI-mergingTable?' ...
+         '--can be used for sanityChecks or modifed and used as merging input'}, ...
+         'save merging table', ...
+         'YES','NO','YES');
+     if strcmp(q,'YES')
+        [fi pa] =uiputfile(fullfile(pwd,'merginTable_.xlsx') , 'save mergingTable as...');
+         if ~isnumeric(fi)
+             F_mergTable=fullfile(pa,fi);
+             
+             htb={'ID' 'Region', 'MergingCluster' 'ClusterName'};
+             pwrite2excel(F_mergTable,{  1 'mergingTableDTI'}, htb,[],tb);
+             showinfo2(['mergingTableDTI: '],F_mergTable) ;
+         end
+         
+     end
+     
+    
+    %% ===============================================
+    
+    
+    
 else
     idx=find(ismember(s.label,s.keeplabels));
-    
     v.mat  =s.mat(idx ,idx,:);
     v.label=s.label(idx);
+    
 end
 
 disp(v);
@@ -655,10 +929,14 @@ disp(v);
 [q1 q2 q3 q4 q5 q6]=textread(s.labelfile,'%s\t%s\t%s\t%s\t%s\t%s');
 w=[q1 q2 q3 q4 q5 q6];
 
+s.preserveIDs=1; 
+
 lut=[];
 for i=1:length(v.label)
     tp=w(find(strcmp(w(:,2),v.label{i})),:);
-    tp{1}=num2str(i);
+    if s.preserveIDs==0
+        tp{1}=num2str(i);
+    end
     lut=[lut;    tp ];
 end
 lut2=plog([],[ w(1,:); lut],0,'','plotlines=0');
@@ -698,10 +976,12 @@ us=get(gcf,'userdata');
 
 %% coi-type
 ht=findobj(gcf,'tag','COItype');
-if ~isempty(strfind(ht.String{ht.Value},'connection'))
+if ~isempty(strfind(ht.String{ht.Value},'connection-wise'))
     COItype=1;
-else
+elseif ~isempty(strfind(ht.String{ht.Value},'region-wise'))
     COItype=2;
+elseif ~isempty(strfind(ht.String{ht.Value},'mergeRegions'))
+    COItype=3;
 end
 cprintf([0 0 1],['..COI-Type: ' ht.String{ht.Value} '\n']);
 
@@ -818,6 +1098,54 @@ elseif  COItype==2
         0.8941    0.9412    0.9020
         0.9922    0.9176    0.7961];
     xlscolorizeCells(filename,'COI', [1 1; 1 2; 1 3; 1 4], col);
+elseif  COItype==3
+    %% ===============================================
+    
+    cprintf([0 0 1],['..prepare data....\n']);
+    
+    
+    htb={'ID' 'Region' 'included' 'sameClusterID'   'DonorCLUSTERLabel'};
+    col_strEmpty=repmat({''},[ length(us.label) 1]);
+    col_empty   =repmat({[]},[ length(us.label) 1]);
+    tb=[us.labelID us.label col_empty col_strEmpty  col_empty];
+    
+    pwrite2excel(filename,{  1 'mergingRegions'}, htb,[],tb);
+    xlsremovdefaultsheets(filename)
+    showinfo2(['mergingRegions_BLANKO: '],filename) ;
+    
+    
+    %% ===============================================
+    
+    msg={['INFO-columns:']
+        ['ID: id of the region.........PLEASE do not change this !' ] 
+        ['Region: name of the region...PLEASE do not change this!' ]
+        ''
+        ['included: should this region be included in analysis?:' ]
+        ['  -enter: numeric value 1 if the region should be included in analysis ' ]
+        ['  -leave empty if this region never occurs in the analysis ' ]
+        ['  -Regions that should be merged (combined) must obtain the value 1 here !!! ' ]
+        ''
+        ['sameClusterID:  enter the same(!) numeric value for regions that should be merged ' ]
+        '   -regions with the same value will be merged! (but must be also set in the "included"-column )'
+        '   -leave empty for those regions that should not be merged'
+        '   -IMPORTANT: clusters for left and right hemispheric regions must obtain different values here '
+        '    otherwise left and right clusters will be merged'
+        '      Example: say you want to obtain two merged clusters: "left vis. cortex" & "right vis. cortex" '
+        '       -for this you have to give all visual regions for the left cortex a clusterID of "1" while '
+        '        all visual regions of the right cortex obtain a clusterID of "2" (or any other string but not "1")'
+        ''
+        ' DonorCLUSTERLabel: For each Cluster specify one (!) labelDonator.       '
+        '       -In the above example the left and right V1-areas could be the labelDonator for the respective Clusters  ' 
+        '       -just enter a numeric value "1" here for the region which is the label-donator for a respective cluster'
+        '       -do not enter several regions as labelDonators for the SAME cluster'        
+        '       -leave empty for regions which belong to no cluster (not specified in "sameClusterID" )'
+        '       -Reason for "DonorCLUSTERLabel": (1) give the cluster a label (2) preserve label and with this'
+        '          preserve atlas coordinates of this label...might be useful for displaying the result'
+        };
+    msg
+      xlsinsertComment(filename,msg, 1, 1, 6);
+    
+    %% ===============================================
     
 end
 

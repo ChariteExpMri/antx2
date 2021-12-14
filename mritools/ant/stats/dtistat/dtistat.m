@@ -217,6 +217,7 @@
 % dtistat('set','exportType',1);                   % set export type to '1': EXCEL file, sheet-wise results 
 % dtistat('export','test1.xlsx','exportType',1)    % #g save as EXCEL file, sheet-wise results 
 % dtistat('export','test2.xlsx','exportType',2)    % #g save as EXCEL file, results in single sheet
+% dtistat('export','test2.txt' ,'exportType',3)    % #g save as TXT-file, all results in single file
 % dtistat('export4xvol3d');                        % #g export connection for xvol3d-visualization; with GUI. #g For silent mode
 %                                                  % #g  see example below,
 % %r COI-FILES
@@ -1693,13 +1694,70 @@ if source==2
     end
 end
 
-cprintf([1 0 1],['selection of DTI data done.\n' ]);
+cprintf([0 .5 0],['selection of DTI data done.\n' ]);
 
+
+% ==============================================
+%%    loading groupassignment
+% ===============================================
+if isfield(us, 'groupfile') && exist(us.groupfile)==2
+    [~,~,a]=xlsread(us.groupfile);
+    a(1,:)=[];
+    a=cellfun(@(a){[ num2str(a)]},a);
+    a=a(:,1:2);
+    idel=find(strcmp(cellfun(@(a){[ num2str(a)]} , a(:,1)),'NaN')); %remove NAN
+    a(idel,:)=[];
+    
+    if length(unique(a(:,1)))~=size(a,1)       % __SEARCH for douplicates
+        [uniqueA i j] = unique(a(:,1),'first');
+        indexToDupes = find(not(ismember(1:numel(a(:,1)),i)));
+        mboxp.Interpreter = 'tex';
+        mboxp.WindowStyle = 'non-modal';
+        msgbox({['\bf Excelfile contains identical animal-names:\rm'];
+            ['\color[rgb]{0,0,1} -DOUPLICATES found for: \color[rgb]{0,0,0} ']
+            strjoin( strrep(a(indexToDupes,1),'_','\_'), char(10))
+            },'ERROR',mboxp);
+        return
+    end
+    
+    if exist('namesMRtrix')% keep only animals in "fi" and "namesMRtrix" which are in the ExcelFile
+        [isfound ixfound]=ismember(a(:,1), namesMRtrix);
+        if length(find(isfound==0))>0
+            cprintf('*[1 0 1]',['Excel-file contains the following animals\n...' ...
+                'but no corresponding DTI-data found for the following animals: '  '\n']);
+            disp(a(find(isfound==0),:));
+           cprintf([.6 .6 .6],['..check if this needs to be resolved (these animals are skipped from the process)  ' '\n']);
+            
+        end
+        % sort "fi" and "namesMRtrix" according to excelfile
+        fi        =fi(ixfound);
+        namesMRtrix=namesMRtrix(ixfound);
+        
+        
+    end
+    
+    
+    
+end
+% ==============================================
+%%    loading groupassignment
+% ===============================================
+
+
+
+cprintf('*[0 0 1]',[' .. [reading DTIdata]..'  '\n']);
 c={};
 con=[];
 names={};
 for i=1:size(fi,1)
-    cprintf([0 0 1],['[reading]: '   strrep(fi{i},[filesep],[filesep filesep])  '\n']);
+    
+    if exist('namesMRtrix')==1
+      cprintf([.6 .6 .6],['[reading DTIdata]: '   strrep(fi{i},[filesep],[filesep filesep])  ]); 
+      cprintf([0 .5 0],[' [Excel]: '   a{i,1}  ' (' a{i,2}  ') '  ]); 
+      cprintf([.8 .8 .8],['..please check assignment ' '\n']);
+    else
+        cprintf([.6 .6 .6],['[reading DTIdata]: '   strrep(fi{i},[filesep],[filesep filesep])  '\n']);
+    end
     
     if source==1
         a=load(fi{i});
@@ -1719,7 +1777,7 @@ for i=1:size(fi,1)
         label=t(:,2);
     end
     
-    %% check
+    % check
     %     ac=[0  1  2  3  4
     %         0  0  5  6  7
     %         0  0  0  8  9
@@ -1755,10 +1813,10 @@ for i=1:size(fi,1)
     c.ind       =ind;
     
     
-    %% check
+    % check
     % s=zeros(prod(si),1);s(ind)=val; s=reshape(s,[si]); s= s+s'
 end
-cprintf([0 0 1],['Done.\n']);
+cprintf([0 0 1],['Done (N=' num2str(length(names)) ' animals).\n']);
 
 % c={};
 c.mousename=names;
@@ -1776,6 +1834,9 @@ us.con=c;
 set(hf,'userdata',us);
 
 
+% ==============================================
+%%   
+% ===============================================
 
 
 
@@ -2031,13 +2092,17 @@ if ~isempty(idel)
 end
 
 
+%% ===============================================
 
 disp('__________________________________________________')
-disp(' ASSIGNMENT (assignment-ID, DTI-idx, DTI-id)');
+cprintf([1 0 1],[' ASSIGNMENT:  EXCEL-DTIdata-matching'  '\n']);
+% disp(' ASSIGNMENT columns: [EXCEL-animal | EXCEL-group | DTI-animal]');
 disp(' ** check for NANS --> these data will be excluded and might be caused by')
 disp('   inconsistent IDS/names  ');
 disp('__________________________________________________')
+cprintf('*[0 0 1]',[ '       [EXCEL-animal | EXCEL-group | DTI-animal]'  '\n']);
 disp(a2);
+%% ===============================================
 
 tb=[a a2(:,2)];
 
@@ -3680,8 +3745,7 @@ end
 
 us=get(hf,'userdata');
 
-% fprintf(' ... exporting results.. ');
-cprintf([1 0 1],['exporting results (excelfile) ..wait..' ]);
+
 
 %========== excel filename ===============================================================
 if exist('filename')~=1
@@ -3701,6 +3765,11 @@ filename=fullfile(pax,[name '.xlsx']);
 % ===============================================
 exportType=get(findobj(hf,'tag','exportType'),'value');
 
+if exportType~=3
+    cprintf([1 0 1],['exporting results (excelfile) ..wait..' ]);
+else
+    cprintf([1 0 1],['exporting results (TXTfile) ..wait..' ]);
+end
 
 % ==============================================
 %%   EXPORT
@@ -3871,14 +3940,17 @@ if exportType==1 %sheetwise EXCEL
         showinfo2('Excelfile',filename);
     end % pws
     
-elseif exportType==2 %SINLGE EXCELsheet
+elseif exportType==2 || exportType==3 %[2] SINLGE EXCELsheet %[3] SINLGE TXT-file
     
+    if exportType==3 %as TXT-file
+       filename= fullfile(pax,[name,'.txt']);
+    end
     
     %=========================================================================
     try
         delete(filename);
     end
-    if exist(filename)==2
+    if exist(filename)==2 && exportType==2
         error('process canceled...excel document is still open');
     end
     %=========================================================================
@@ -3917,20 +3989,27 @@ elseif exportType==2 %SINLGE EXCELsheet
         
     end
     
-    if ispc==1
-        xlswrite(filename,infox, 'info' );
-        xlsAutoFitCol(filename,'info','A:F');
-        xlscolorizeCells(filename,'info' , [1,1], [1 0 0  ]);
-    else
-        d2=infox(2:end,:);
-        h2=infox(1,:);
+    if exportType==2
+        if ispc==1
+            xlswrite(filename,infox, 'info' );
+            xlsAutoFitCol(filename,'info','A:F');
+            xlscolorizeCells(filename,'info' , [1,1], [1 0 0  ]);
+        else
+            d2=infox(2:end,:);
+            h2=infox(1,:);
+            
+            h2new=regexprep(h2,{'(' ,  ')' , ' ' '-' ,'#',':'},{ '_' ,'','','_','','_'});
+            T=cell2table(d2,'VariableNames',h2new);
+            writetable(T,filename,'Sheet','info' );
+        end
+    elseif exportType==3 %TXT
+        % infox
         
-        h2new=regexprep(h2,{'(' ,  ')' , ' ' '-' ,'#',':'},{ '_' ,'','','_','','_'});
-        T=cell2table(d2,'VariableNames',h2new);
-        writetable(T,filename,'Sheet','info' );
     end
     
+    
     %% for each PW   ============================================
+    txcell={}; %TXT-cell for exportType=3 (TXT-file)
     
     for s=1:pws
         dat      = us.pw(s).tbexport;
@@ -3976,6 +4055,7 @@ elseif exportType==2 %SINLGE EXCELsheet
             npara=npara+1;
         end
         
+       if exportType==2
         if ispc==1
             %% write data
             xlswrite(filename,d2, sheetname );
@@ -3994,22 +4074,57 @@ elseif exportType==2 %SINLGE EXCELsheet
             writetable(T,filename,'Sheet',sheetname );
             
         end
+       elseif exportType==3 %TXT-file
+          hed=repmat({'',},[1 size(d2,2) ]); %header 
+          hed{1}=sheetname;
+          txcell{s,1}=infox;
+          txcell{s,2}=hed;
+          txcell{s,3}=d2;
+       end
         
         
     end
-    cprintf([1 0 1],['done.\n' ]);
-    % fprintf(' [Done]\n ');
-    %disp([' open xlsfile: <a href="matlab: system(''' filename ''')">' filename '</a>']);
-    showinfo2('Excelfile',filename);
+    
+    if exportType~=3
+        cprintf([0 .5 0],['Done.\n' ]);
+        % fprintf(' [Done]\n ');
+        %disp([' open xlsfile: <a href="matlab: system(''' filename ''')">' filename '</a>']);
+        showinfo2('Excelfile',filename);
+    end
 end %EXPORTTYPE
 
+%% ====== TXTfile =========================================
+
+if exportType==3
+    cprintf([0 .5 0],['...'  '\n' ]);
+    for j=1:pws
+        tx={};
+        tx= plog(tx,[txcell{j,1}],0,['comparsison: ' txcell{j,2}{1}],'d=1;al=1','');
+        tx=[tx; {repmat('_',[1 size(tx{1},2)]) }];
+        tx=[tx; cellstr(repmat(' ',[2 size(tx{1},2)]))];
+        %uhelp(tx,1)
+        
+        tx2= plog([],[txcell{j,3}],0,[],'d=6;s=0;al=1','');
+        tx=[tx;tx2];
+        
+        suffix=[ '_'  regexprep(txcell{j,2}{1},{'\s+'},{''}) ];
+        filename2=stradd(filename, suffix ,2);
+        
+        pwrite2file(filename2,tx );
+        showinfo2('TXTfile',filename2);
+        cprintf([0 .5 0],['Done.\n' ]);
+    end
+    
+    
+%         uhelp(plog([],[txcell{1,1}],0,'SELECTION TABLE','d=1;al=1',''),1);
+        
+        
 
 
+end
 
 
-
-
-
+%% ===============================================
 
 
 
