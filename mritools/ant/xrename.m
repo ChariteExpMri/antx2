@@ -572,7 +572,11 @@ for i=1:size(pa,1)      %PATH
                     eval(code);
 
                     a2=reshape(a2, dims);
-                    rsavenii(s2 ,ha,a2);
+%                     if ha.dt(1)==2
+                       rsavenii(s2 ,ha,a2,[64 0]); 
+%                     else
+%                         rsavenii(s2 ,ha,a2);
+%                     end
                     showinfo2(['threshold image: ' s2 ' '],s2);
                   catch
                       disp([' ..threshold image...something went wrong  (internal code: "' code '")']);

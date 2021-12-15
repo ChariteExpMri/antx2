@@ -95,7 +95,7 @@
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Aug 2021 (14:12:17)**</ins>  
    __[xcalcSNRimage.m]__ convert image to SNR-image   
-  according to Gudbjartsson H, Patz S. 1995: The Rician distribution of noisy MRI data. Magn Reson Med.; 34(6): 910â€“914.)  
+  according to Gudbjartsson H, Patz S. 1995: The Rician distribution of noisy MRI data. Magn Reson Med.; 34(6): 910–914.)  
   -can be used for Fluorine-19 (19F)-contrast images   
   &#8618;  access via ANT-menu: SNIPS/convert image to SNR-image  
 <!---->
@@ -179,12 +179,12 @@
                 3. Define a project  
                 4. Import Bruker data  
                 5. Import templates for this study  
-                6. Create a â€˜t2.niiâ€™ image  
+                6. Create a ‘t2.nii’ image  
                 7. Examine Orientation  
-                8. Register â€˜t2.niiâ€™ to the template  
+                8. Register ‘t2.nii’ to the template  
                 9. Back-transform template brain mask to native space  
               10. Extract 1st image of the 4D BOLD series  
-              11. Coregister â€˜t2.niiâ€™ onto BOLD (RS-) Data  
+              11. Coregister ‘t2.nii’ onto BOLD (RS-) Data  
               12. Mask first EPI-image with brain mask  
               13. Scale up 4D data for FSL  
              &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
@@ -215,7 +215,7 @@
     -TODO: test MAC & LINUX   : DONE!  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**30 Oct 2020 (14:50:30)**</ins>  
-  __[SIGMA RAT template]__ (BarriÃ¨re et al., 2019) added to gdrive  
+  __[SIGMA RAT template]__ (Barrière et al., 2019) added to gdrive  
     - Paper           : https://rdcu.be/b9tKX  or https://doi.org/10.1038/s41467-019-13575-7  
     - &#8618;  access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9  
       or ANT menu: EXTRAS/download templates  
