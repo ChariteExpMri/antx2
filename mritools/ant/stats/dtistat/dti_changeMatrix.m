@@ -636,20 +636,36 @@ else
             choi{1},choi{2},choi{2});
 %         
 %         
-       if strcmp(q,choi{1})
+       if strcmp(q,choi{1}) %EXCEL_FILE_______________
             [fi pa] =uigetfile(fullfile(pwd,'merginTable_.xlsx') , 'select mergingTable (EXCELFILE)...');
             if isnumeric(fi)
                 tb2=[];
             else
+                %HEADER:
+                %'ID'    'Region'    'included'    'sameClusterID'    'DonorCLUSTERLabel'
+                %--------------------
                 [~,~,r]=xlsread(fullfile(pa,fi));
-                tb2=r(2:end,:);
-                col1=cellfun(@(a){[  num2str(a)]} ,tb2(:,1));
+                htb1=r(1,1:5);
+                tb1=r(2:end,1:5);
+                col1=cellfun(@(a){[  num2str(a)]} ,tb1(:,1));
                 idel=regexpi2(col1,'NaN|^$','emptymatch');
-                tb2(idel,:)=[];
+                tb1(idel,:)=[];
                 
-               clustcol=cellfun(@(a){[  num2str(a)]} ,tb2(:,3));
-               clustcol=regexprep(clustcol,'NaN','');
-               tb2(:,3)=clustcol;
+               dum=cellfun(@(a){[  num2str(a)]} ,tb1(:,3:end));
+               dum=regexprep(dum,'NaN','');
+               tb1(:,3:end)=dum;
+               
+               
+               % labelDOnator
+               vlabdon=zeros(size(tb1,1),1);
+               vlabdon(find(~cellfun(@isempty, tb1(:,5))))=1;
+               tb1(:,5)=num2cell(vlabdon);
+               
+               % filter only "included" regions
+              i_included =find(~cellfun(@isempty, tb1(:,3)));
+               tb2=tb1(i_included,:);
+               tb2=tb2(:,[1 2   4 5]); %remove included column
+               
                
 %                 idel=find(strcmp(cellfun(@(a){[  num2str(a)]} ,tb2(:,1)),'NaN'));
 %                 tb2(idel,:)=[];
@@ -806,7 +822,7 @@ end
 
 
 
-if 1
+if 0
     disp('us--------');
     disp(us);
     disp('s--------');
@@ -901,10 +917,32 @@ elseif strcmp(s.type,'select&merge')
         [fi pa] =uiputfile(fullfile(pwd,'merginTable_.xlsx') , 'save mergingTable as...');
          if ~isnumeric(fi)
              F_mergTable=fullfile(pa,fi);
+             %% ----
+             htt={'ID'    'Region'    'included'    'sameClusterID'    'DonorCLUSTERLabel'};
+             u=get(gcf,'userdata');
              
-             htb={'ID' 'Region', 'MergingCluster' 'ClusterName'};
-             pwrite2excel(F_mergTable,{  1 'mergingTableDTI'}, htb,[],tb);
+             tt=[u.labelID u.label ...  %make full-table
+                 repmat({''},[length(u.label) 1]) ...
+                 repmat({''},[length(u.label) 1]) ...
+                 repmat({''},[length(u.label) 1]) ...
+                 ];
+             tin=[tb(:,1:2)   repmat({'1'},[size(tb,1) 1])   tb(:,3) ]; %add: included colum
+             
+             %donator-label
+             tin(:,5)=repmat({''},[size(tb,1) 1]) ;
+             tin(find(cell2mat(tb(:,4))),5)={'1'} ;
+             
+             tt(ikeep,:)=tin;%insert table in the included column
+             
+             
+             %% ----
+             htt={'ID' 'Region', 'MergingCluster' 'ClusterName'};
+             pwrite2excel(F_mergTable,{  1 'mergingTableDTI'}, htt,[],tt);
              showinfo2(['mergingTableDTI: '],F_mergTable) ;
+             
+             
+    
+             
          end
          
      end
@@ -959,6 +997,36 @@ if strcmp(s.outdir,'same')
         cprintf([1 0 1],['[NEW MATRIX]: '   strrep(nameout,[filesep],[filesep filesep])  '\n']);
         showinfo2(['  Matrix-->'],nameout) ;
         showinfo2(['     LUT-->'],nameout_Lut) ;
+        
+        %---write checkFile
+        if strcmp(s.type,'select&merge')
+            nameout=fullfile(pa, ['CHK_' name  '_' s.suffix  '.dat'] );
+            
+            hTT={'ID' 'Region', 'MergingCluster' 'ClusterName'};
+            % ____WRITE CSF_________
+            %TT=cell2table(tb,'VariableNames',hTT);
+            %writetable(TT,nameout,'filetype','text');
+            
+            % ____WRITE PLAIN-TXT_________
+            tx=cellfun(@(a){[  num2str(a)]} ,tb);
+            tx(:,3)=regexprep(tx(:,3),'^$','0','emptymatch'); %rempve empty cells
+            TT=plog([], [hTT;tx],0,'','s=1;plotlines=0');
+            pwrite2file(nameout ,TT );
+            
+            showinfo2(['     CHECK-->'],nameout) ;
+            
+            %-----CHECK READ FILE AGAIN
+            if 0
+                q=preadfile(nameout); q=q.all;
+                %q=importdata(nameout)
+                q2 = cellfun(@(a) strsplit(a,' ')',q,'UniformOutput',false);
+                q2 = [q2{:}]';
+                q2(:,1)=[];
+            end
+            %-----
+            
+        end
+        
     end
     
 end
@@ -1142,9 +1210,9 @@ elseif  COItype==3
         '       -Reason for "DonorCLUSTERLabel": (1) give the cluster a label (2) preserve label and with this'
         '          preserve atlas coordinates of this label...might be useful for displaying the result'
         };
-    msg
+    try
       xlsinsertComment(filename,msg, 1, 1, 6);
-    
+    end
     %% ===============================================
     
 end

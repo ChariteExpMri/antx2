@@ -953,7 +953,11 @@ us.cf2=regexpi2(he,['^' char( us.f2) '$']);
 
 
 us.idf1=aaa(2:end,[us.cid us.cf1 us.cf2]);
-us.idf1=strtrim(us.idf1);
+try;
+    us.idf1=strtrim(us.idf1);
+catch
+    us.idf1=cellfun(@(a){[  num2str(a)]} ,us.idf1);
+end
 
 %———————————————————————————————————————————————
 %%   read data

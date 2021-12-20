@@ -17,8 +17,16 @@ function [dat]=preadfile(fil,varargin)
 % expl:
 % 	fil='C:\NP3\visionanalyzer\marker_files\108_1_eeg.vmrk';
 %  	[mark,infmrk]=pEEGreadVMRK(fil);
+% ==============================================
+%%   split into columns afterwards
+% ===============================================
+% q2 = cellfun(@(a) strsplit(a,' ')',q,'UniformOutput',false);
+% q2 = [q2{:}]';
+% q2(:,1)=[];
+% 
+% 
 % _________________________________________________________________________
-% see also preadfile pwrite2file
+% see also pwrite2file
 %___________________________________________________________________________
 %     paul,BNIC, mar.2007
 %___________________________________________________________________________

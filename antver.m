@@ -369,6 +369,10 @@
 % #ba 08 Dec 2021 (01:22:39)
 % #k [xvol3d.m] #n save image as (tif/jpg/png) via context-menu (disable rotation-mode  before access the context menu)
 % 
+% #ba 20 Dec 2021 (14:42:46)
+% #k [xstatlabels.m] #n The group-column in the "group-assignment"-Excel-file can be numeric now
+% 
+% 
 % 
 % 
 

@@ -6,10 +6,10 @@
 % tb: cell-table with following arrangement:
 %
 % columns: 
-%  1: ID; 
-%  2: label; 
-%  3: merging regions   
-%  4:label donator: (logical) if "1" this region is the label-donator for the respective merging cluster
+%  1: ID;     [numeric]
+%  2: label;   (string)
+%  3: merging regions   (string)
+%  4:label donator: (numeric/double) if "1" this region is the label-donator for the respective merging cluster
 %                   use only one label donator per merging cluster
 % example: Here we have to merging clusters '1' and '2' all, regions with an identical string in 
 %         column-3 (merging regions) will be merged: example: 'L_Somatosensory_areas_MODIF' and
@@ -84,6 +84,13 @@ end
 
 %% ==== unpack table ===========================================
 % 'a'
+tb(:,3)=cellfun(@(a){[  num2str(a)]} ,tb(:,[3])); %as string
+tb(:,3)=regexprep(tb(:,3),'^0$',''); % code empty labels if Zero where there
+
+tb(:,4)=cellfun(@(a){[  str2num(num2str(a))]} ,tb(:,[4])); %as double
+
+
+
 v0=tb(:,3);
 clnames=unique(v0); clnames(strcmp(clnames,''))=[];
 [~,ia]=ismember(v0,clnames);
