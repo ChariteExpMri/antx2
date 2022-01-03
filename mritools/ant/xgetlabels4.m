@@ -37,17 +37,37 @@
 % ________________________________________________________________
 % 
 % PARAMETER
-% 'atlas'       select atlas here (default: ANO.nii), atlas has to be the standard space  
+% 'atlas'   select the atlas here (default: "ANO.nii"). The atlas must be in standard space  
+%           #r NOTE: The 'atlas'-parameter refers to the used atlas in standard space. 
+%           #k If you us the "ANO.nii" as atlas use "ANO.nii", for both, paramter extraction for images 
+%           #k in native and standard space. 
+%           #r If you have another atlas, for example "myATLAS.nii" and you want to extract 
+%           #r parameter based on this atlas, than specify "myATLAS.nii" here . It is assumed that
+%           #r "myATLAS.nii" is in standard-space
+% 
 % 'space'       calculation from images in "standard space", "native space" or "other space": 'standard','native','other'
-%                 'standard':  read out from images in templates space
-%                 'native'  :  read out from images space of the "t2.nii"
+%                 'standard':  read from images in templates space ("x_t2.nii"-space)
+%                 'native'  :  read from images in native space ("t2.nii"-space)
 %                 'other'   :  see above
 % 'hemisphere'  hemisphere to use:  {'left','right','both'}
-%                 'left' : read out of left hemisphere only
-%                 'right': read out of right hemisphere only
-%                 'both' : read out of both hemisphere (united)
+%                 'left' : read data from left hemisphere only
+%                 'right': read data from right hemisphere only
+%                 'both' : read data from both hemispheres (united)
+% 
 % 'threshold'   - lower intensity threshold value (values >=threshold will be excluded); 
 %               - #r leave this field empty when using a mask ('masks'-parameter)
+% 
+% 'fileNameOut' -optional: specifiy fileName of the stored excel-file
+%                    options:
+%                   (a) <empty> if field is empty, the resulting filename is a combination of
+%                       parameter+timeStamp..stored in the "results"-folder (using xlsx"-format)
+%                       <default>
+%                   (b) enter a string here: the resulting file is "string"
+%                       ..stored in the "results"-folder (using xlsx"-format)
+%                   (c) select file or enter fullpath-filename : the file is stored using the
+%                       specific path and fileName (using xlsx"-format)
+%                      
+% 
 %% #ko RUN
 % select animal(s) from gui before
 % xgetlabels4: open gui, parmaeter will be defined via gui
@@ -126,6 +146,8 @@ p={...
     
     'threshold'    ''     'lower intensity threshold value (values >=threshold will be excluded); leave field empty when using a mask' {'' 0}
     
+    
+    'fileNameOut'  ''   '<optional> specific name of the output-file. EMPTY FIELD: use timestamp+paramter for file name ' {@saveas,v}
     
     'inf44'        '________________________________________________________________________________'    '' ''
     'inf4'        '% READ-OUT PARAMETERS'      ' THESE PARAMETERS WILL BE GENERATED FROM EACH REGION '   ''
@@ -219,10 +241,20 @@ return
 
 
 %% ##############################################################
-%% % ############################### NEW SUBS  ###############################
+%% % ###############################  SUBS  ###############################
 %% ##############################################################
 
 
+
+function saveas(e,e2,v)
+
+[ofi opa]=uiputfile(fullfile(pwd,'.xlsx'),'this');
+if isnumeric(ofi); return; end
+[~,fi,ext]=fileparts(ofi);
+if isempty(fi); fi='dummy';end
+ext='.xlsx';
+fiout=fullfile(opa,[fi ext]);
+paramgui('setdata','x.fileNameOut',fiout);
 
 
 

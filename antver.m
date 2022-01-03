@@ -372,6 +372,9 @@
 % #ba 20 Dec 2021 (14:42:46)
 % #k [xstatlabels.m] #n The group-column in the "group-assignment"-Excel-file can be numeric now
 % 
+% #ba 03 Jan 2022 (14:08:14)
+% #k [xgetlabels4.m] #n A specifc fileName for resulting excel-file can be entered.
+% 
 % 
 % 
 % 

@@ -1,13 +1,17 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   20 Dec 2021 (14:42:46)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   03 Jan 2022 (14:08:14)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**03 Jan 2022 (14:08:14)**</ins>  
+   __[xgetlabels4.m]__ A specifc fileName for resulting excel-file can be entered.  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**20 Dec 2021 (14:42:46)**</ins>  
    __[xstatlabels.m]__ The group-column in the "group-assignment"-Excel-file can be numeric now  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**08 Dec 2021 (01:22:39)**</ins>  
    __[xvol3d.m]__ save image as (tif/jpg/png) via context-menu (disable rotation-mode  before access the context menu)  

@@ -11,17 +11,35 @@
 function fileout=sub_atlaslabel2xls(pp,z)
 
 
-fileout='';
+% ==============================================
+%%   fixed fileName
+% ===============================================
+
+if isempty(char(z.fileNameOut))==0
+    fileout=char(z.fileNameOut);
+    [pa fi ext]=fileparts(fileout);
+    if isempty(pa)
+        resultsfolder=fullfile(fileparts(fileparts(fileparts(z.files{1}))),'results');
+    else
+        resultsfolder=pa;
+    end
+    filename=[fi '.xlsx'];
+    fileout      =fullfile(resultsfolder, filename);
+    if exist(fileout)==2
+       try; delete(fileout); end 
+    end
+else
+    fileout='';
+    resultsfolder=fullfile(fileparts(fileparts(fileparts(z.files{1}))),'results');
+    filename   = [  'labels_'  z.space  '_'  z.hemisphere  '_'  timestr(1) '.xlsx'];
+    fileout      =fullfile(resultsfolder, filename);
+end
+warning off;
+mkdir(resultsfolder);
 
 %====================================================================================================
 %% SAVE EXCELSHEET
 %====================================================================================================
-
-resultsfolder=fullfile(fileparts(fileparts(fileparts(z.files{1}))),'results');
-filename   = [  'labels_'  z.space  '_'  z.hemisphere  '_'  timestr(1) '.xlsx'];
-fileout      =fullfile(resultsfolder, filename);
-warning off;
-mkdir(resultsfolder);
 
 %fileout=fullfile(pwd,'test2.xls')
 % disp(['GENERATING EXCELFILE ...']);
