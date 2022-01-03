@@ -1,8 +1,17 @@
 
 
-%% mergexlsfiles: merge excelfiles (result files) of anatomical regions
-% user is guided to select the xls-files and type the name of the merged excel file
-% (no input)
+%% mergexlsfiles: merge output files (excel-files) of GET-ANATOMICAL-labels (xgetlabels4)
+% mergeXLSfilesGAL(fis, fiout)
+% no input:--> user selection via GUI
+% otherwise:
+%   fis:  cell, list of excel-files
+%   fiout: string, output-file
+%% example: merge two result-files from 'GAL' save as test6.xlsx
+% fis={    'H:\Daten-2\Imaging\AG_Mueller_Mainz\stat_regionwise\all_regs_round1.xlsx'
+%         'H:\Daten-2\Imaging\AG_Mueller_Mainz\stat_regionwise\all_regs_round2.xlsx'}
+% fiout='H:\Daten-2\Imaging\AG_Mueller_Mainz\stat_regionwise\test6.xlsx'
+% mergeXLSfilesGAL(fis, fiout)
+    
 
 
 
