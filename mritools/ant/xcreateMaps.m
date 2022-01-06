@@ -2,10 +2,12 @@
 
 
 %% #b create MAPS across animals (heatmaps/IncidenceMaps/MeanImage Maps etc)
-% Choose one of the following Map-type: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*}
+% Please select the animals of interest from  the left ANT-listbox before running this function.
+% Choose one of the following Map-type: {percent|sum|abs|mean|median|min|max|sd|mode|rms|*specific*}
 % #m EXAMPLE USAGE
 %  "percent": to create incidenceMaps from binary images such as lesionsMasks across animals
 %             --> output-unit: percent
+%  "sum"  or "abs" : voxelwise sumation across animals ("abs" produce the same result as "sum") 
 %  "mean"   : create mean-image across animals 
 % The resulting NIFTI-file is stored in the studie's results folder (if the output-directory is not changed).
 % Additionally a "txt"-file with information (includers/missing files) is stored.
@@ -18,7 +20,8 @@
 %                    -examlpe "x_masklesion.nii" (binary image) or any other image
 % 'type'            the voxelwise math. operation to perform across images: 
 %        percent
-%        sum       : sum across images (animals) 
+%        sum       : sum across images (animals)
+%        abs       : save as "sum" #r ("abs" was used in the older version)
 %        mean      : mean across images (animals)  
 %        median    : median across images (animals)
 %        min       : minimum across images (animals)
@@ -74,7 +77,7 @@ function xcreateMaps(showgui,x,pa)
 %———————————————————————————————————————————————
 if exist('showgui')==0 || isempty(showgui) ;    showgui=1                ;end
 if exist('x')==0                          ;    x=[]                     ;end
-if exist('pa')==0      || isempty(pa)      ;    pa=antcb('getallsubjects')  ;end
+if exist('pa')==0      || isempty(pa)      ;    pa=antcb('getsubjects')  ;end
 
 if ischar(pa);                      pa=cellstr(pa);   end
 if isempty(x) || ~isstruct(x)  ;  %if no params spezified open gui anyway
@@ -216,7 +219,7 @@ end
 typestr=z.type;
 if strcmp(z.type,'percent')
     a3=sum(a2,2)/N*100;
-elseif strcmp(z.type,'sum')
+elseif strcmp(z.type,'sum') || strcmp(z.type,'abs')
     a3=sum(a2,2);
 elseif strcmp(z.type,'mean')
     a3=mean(a2,2);

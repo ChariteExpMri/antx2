@@ -376,9 +376,15 @@
 % #k [xgetlabels4.m] #n A specifc fileName for resulting excel-file can be entered.
 % 
 % 
+% #ba 06 Jan 2022 (13:37:22)
+% #k [xcreateMaps.m] #n solved bugs:
+% - selection of animals via left ANT-listbox before running this function enabled
+% - previous image-operation  "abs" ...sumation over images debugged. Note that this option produces the same
+%   result as the "sum"-operation.
+% #gw --> access via ANT-menu: &#8658; SNIPS/Create MAPS
 % 
 % 
-
+% 
 
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
