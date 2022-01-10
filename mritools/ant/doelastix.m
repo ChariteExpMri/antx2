@@ -533,7 +533,18 @@ for i=1:length(z.files)
     %===========================================================================================
     
     [pas fis ext]=fileparts(filename); %RENAME FILE
-    fileout=fullfile(z.path, [z.prefix fis ext]);
+    
+    % add SUFFIX to FILENAME
+    if isfield(z.params,'fileNameSuffix') && ~isempty(z.params.fileNameSuffix);
+        uscore='_';
+        if strcmp(z.params.fileNameSuffix(1),'_')==1
+            uscore='';
+        end
+        fileout=fullfile(z.path, [z.prefix fis uscore z.params.fileNameSuffix ext]);
+    else
+        fileout=fullfile(z.path, [z.prefix fis ext]);
+    end
+    
     for jvol=1:length(v0) %4D-data
         warpedfile=fullfile(z.path,[z.folder],[ 'trans_' pnum(jvol,4)], 'elx___tobewarped.nii');
         [hd4 d4dum]=rgetnii(warpedfile);
@@ -673,9 +684,26 @@ if isfield(z.params,'resolution')
     end
 end
 
+%% ====================[imgSize]===========================
+if isfield(z.params,'imgSize') && length(z.params.imgSize)==3
+    res.imgSize=get_ix(trafofile,'Size');
+    val           =res.imgSize;
+    ixreplace     =find(~isnan(z.params.imgSize));
+    val(ixreplace)=z.params.imgSize(ixreplace);
+    set_ix(trafofile,'Size'   , val );
+    res.imgSizeNew=val;
+end
+%% ====================[imgOrigin]===========================
+if isfield(z.params,'imgOrigin') && length(z.params.imgOrigin)==3
+    res.imgOrigin =get_ix(trafofile,'Origin');
+    val           =res.imgOrigin;
+    ixreplace     =find(~isnan(z.params.imgOrigin));
+    val(ixreplace)=z.params.imgOrigin(ixreplace);
+    set_ix(trafofile,'Origin'   , val );
+    res.imgOriginNew=val;
+end
 
-
-
+%% ===============================================
 
 if z.direction==1 && ~isempty(z.M)  %apply TRAFO in FORWARD-DIR
     v=  spm_vol(tempfile0);

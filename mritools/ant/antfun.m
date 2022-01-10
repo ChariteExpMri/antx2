@@ -128,14 +128,28 @@ if strcmp(task,  'deformELASTIX' )
     end
     
     s= xdeformpop(   paths  ,[1],[nan],[4],[],struct('showgui',1));
-    
+    %--------
     pars=[]; %addititional parameter
-    if ~any(isnan([s.resolution]))
+    if any(find(isnan([s.resolution])==0))
         pars.resolution=s.resolution;
     end
-    if ~any(isnan([s.source]))
-        pars.source     =s.source;
+   
+    
+    pars.source     =s.source;
+  
+    
+    if any(find(isnan([s.imgSize])==0))
+        pars.imgSize=s.imgSize;
     end
+    
+    if any(find(isnan([s.imgOrigin])==0))
+        pars.imgOrigin=s.imgOrigin;
+    end
+    
+     if ~isempty(s.fileNameSuffix)
+        pars.fileNameSuffix=s.fileNameSuffix;
+    end
+    %--------
     
     if ~isempty(s) && ~isempty(s.files)
         %  xdeform2(   s.files  ,s.direction,  s.resolution, s.interpx)
