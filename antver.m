@@ -384,6 +384,12 @@
 % #gw --> access via ANT-menu: &#8658; SNIPS/Create MAPS
 % 
 % 
+% #ba 12 Jan 2022 (17:12:52)
+% #k [xstatlabels.m]: #n 'export' as excel-file now also contains the single animal data
+% #k [xgetparameter.m]: #n added parameter "integrated density"
+% 
+% 
+% 
 % 
 
 %----- EOF

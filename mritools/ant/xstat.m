@@ -1121,14 +1121,18 @@ end
 s.workpath=pwd;
 outdir={};
 if ~isempty(char(x.output_dir))
-    if isempty(fileparts(x.output_dir))
+    if isempty(fileparts(x.output_dir)) %local path
         outdir=  fullfile(fileparts(x.excelfile), x.output_dir);
         mkdir(outdir);
         s.output_dir=outdir;
-        
+    else %fullPath
+        outdir=char(x.output_dir);
+        mkdir(outdir);
+        s.output_dir=outdir;
     end
 end
 set(gcf,'userdata',s);
+
 
 xvv.x=x;
 xvv.s=s;

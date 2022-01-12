@@ -81,8 +81,14 @@ p={...
 
     'file'      ''        'images used to extract paramters' ,  {@selectfile,v,'single'} ;%'mf'
     'masks'      {}       'select one/several masks to apply on the image', {@selectfileMask,v,'multi'} % ,'mf' ...
+    'minTreshold'        []   'minimum threshold image value' {0:5}
+    'minTresholdReplace' nan  'values below "minTreshold" will be replaced by this value or removed if field is empty' {nan 0 []}
+    'maxTreshold'        []   'maximum threshold image value' {5:15}
+    'maxTresholdReplace' []   'values above "maxTreshold" will be replaced by this value or removed if field is empty' {5 10 []}
     
-   
+    
+    'inf2' '' '' ''
+    'inf3' '___ OUTPUT ___' '' ''
     'outputfolder'        outdir 'output folder for resulting EXCEL-file '    'd'   
     'filenamePrefix'      ''        '<optional> enter filename prefix for resulting EXCEL-file' ''
     'addDate'              0   '<optional> at date to filename (suffix)' 'b'
@@ -110,7 +116,7 @@ p=paramadd(p,x);%add/replace parameter
 %% show GUI
 if showgui==1
     hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
-    [m z]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .6 .25 ],...
+    [m z]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .6 .3 ],...
         'title',mfilename,'info',hlp);
     if isempty(m); return; end
     fn=fieldnames(z);
@@ -209,26 +215,64 @@ for m=1:length(mdir)
     
     for i=1:size(mc2,1)
        v=a2(mc2{i,4});
-       % % ---
-       freq   =length(v);
-       vol  =abs(det(ha.mat(1:3,1:3)) *(freq));
+       v0=v;
+       
+       % ___minTreshold
+       if ~isempty(z.minTreshold)
+           if ~isempty(z.minTresholdReplace)
+              v(find(v<z.minTreshold))=z.minTresholdReplace; 
+           else
+               v(find(v<z.minTreshold))=[];
+               
+           end
+           if isempty(v); v=nan; end
+       end
+       v(isnan(v))=[];
+       % ___maxTreshold
+       if ~isempty(z.maxTreshold)
+           if ~isempty(z.maxTresholdReplace)
+              v(find(v>z.maxTreshold))=z.maxTresholdReplace; 
+           else
+               v(find(v>z.maxTreshold))=[];
+               
+           end
+           if isempty(v); v=nan; end
+       end
+       v(isnan(v))=[];
+       
+       if isempty(v) || (length(v)==1 && isnan(v)==1)
+           v=0;
+           freq=0;
+           vol =0;
+       else
+           freq =sum(~isnan(v)) ;% length(v);
+           vol  =abs(det(ha.mat(1:3,1:3)) *(freq));
+       end
+       
+       % % ---MASK:frequency & volume ...should be similar when not thresholded
+       freqMsk =sum(~isnan(v0)) ;% length(v);
+       volMsk  =abs(det(ha.mat(1:3,1:3)) *(freqMsk));
+       
+       % % ---PARAMETER
        me   =mean(v);
        sd   =std(v);
        med  =median(v);
-       inde = vol.*me ; %integrated density
+       %inde = vol.*me ; %integrated density
+       inde = sum(v); % integrated density --new 
        
-       mi   =min(v);
-       ma  =max(v);
+       mi   =min(v);  if isempty(mi); mi=0; end
+       ma   =max(v);  if isempty(ma); ma=0; end
        
-       td= [ mc2{i,3} mc2{i,2}     num2cell([freq vol me sd med inde    mi ma  ]) ];
-       t(m,i,:)=td;
+       td= [ mc2{i,3} mc2{i,2}   ...
+           num2cell([freqMsk volMsk  freq vol me sd med inde    mi ma  ]) ];
+       t(m,i,:)=td; %animal x mask x parameter
        % % ---
         
     end
     catch
         errIDX=[m]; %errorIndex
         errx=lasterr;
-        errx=strjoin(strsplit2(errx,char(10)),'.. ')  
+        errx=strjoin(strsplit2(errx,char(10)),'.. ');  
         cprintf([1 0 1] ,[  strrep(errx,filesep,[filesep filesep]) '\n']);
     err=[err; {lasterr}];
     end
@@ -246,7 +290,7 @@ rois=[t2(:,1,1) t2(:,1,2)];
 rois=cellfun(@(a,b){[ a '__ID_' num2str(b)]},  rois(:,1),rois(:,2));
 t3=t2(:,:,3:end);
 l3=(repmat([rois  ],[1 1 size(t3,3) ]));
-sheet={ 'frequency'   'vol'     'mean'    'std'    'median'  'integrDens'  'min' 'max'    };
+sheet={'frequencyMsk'   'volMsk'  'frequency'   'vol'     'mean'    'std'    'median'  'integrDens'  'min' 'max'    };
 t4=[l3 t3];
 
 
@@ -304,7 +348,7 @@ for i=1:size(t4,3)
     pwrite2excel(Fout,{i+1 sheet{i}}, hs,[],s);
 end
 showinfo2('Excel-file' ,Fout,[],[], [ '>> ' Fout ]);
-
+disp('Done!');
 
 
 %   Columns 1 through 5

@@ -1248,10 +1248,21 @@ if us.f1design==0 %between
         % disp(sprintf(['groupsize ' ': %d vs %d'],[length(i1) length(i2)]));
         
         labsgrouped=repmat({''},[length(ilab) 1]) ; 
+
         
         if isnumeric(ilab)
             x=cell2mat(aaa(ilab,cell2mat(tb(i1,end)))) ;
             y=cell2mat(aaa(ilab,cell2mat(tb(i2,end))));
+            
+            %__singleData2export_____
+            sid={};
+            sid.info  ='single animal Data for DataExport';
+            sid.dat   =num2cell([x y]);
+            sid.reg   =aaa(ilab,1);
+            sid.animal=[he(cell2mat(tb(i1,end))) he(cell2mat(tb(i2,end)))];
+            sid.grp=[repmat(comb(i,1),[ 1 length(i1)]) repmat(comb(i,2),[ 1 length(i2)])];
+            sid.tb =[ sid.grp' sid.animal' sid.dat'];
+            sid.htb=['group' 'animal' sid.reg'] ;
         else
             x=zeros(size(ilab,1), length(i1));
             y=zeros(size(ilab,1), length(i2));
@@ -1372,6 +1383,9 @@ if us.f1design==0 %between
         us.pw(i).tbhead    =reshead;
         us.pw(i).lab =lab(ikeep);
         us.pw(i).labsgrouped =labsgrouped(ikeep);
+        if exist('sid')==1
+        us.pw(i).sid=sid;
+        end
         
     end
     set(gcf,'userdata',us);
@@ -1522,9 +1536,29 @@ for i=1:size(us.pw,2)
     
     if doexport==1
         
-       
+        % [2] write statistic
         xlswrite( file, sx, us.pw(i).str);
         xlsAutoFitCol(file,us.pw(i).str,'A:Z');
+         % [4] remove default-sheets
+        try
+          %  xlsremovdefaultsheets(file);
+        end
+        
+        % [3] write single Data
+        if isfield(us.pw(i),'sid')
+            try
+                drawnow
+                HT1=us.pw(i).sid.htb;
+                T1 =us.pw(i).sid.tb;
+                %pwrite2excel(file,{5 'singleData'}, HT1,[],T1);
+                
+               xlswrite( file,  [HT1; T1], 'singleData');
+               xlsAutoFitCol(file,'singleData','A:Z');
+               drawnow;
+            end
+        end
+       
+        
     else
         
         sy=plog({},{repmat('_',[ 1 50]) ; [us.pw(i).str];repmat('_',[ 1 50]) ;},'s=0','plotlines=0');

@@ -1,17 +1,23 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   06 Jan 2022 (13:37:22)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   12 Jan 2022 (17:12:52)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**12 Jan 2022 (17:12:52)**</ins>  
+   __[xstatlabels.m]__: 'export' as excel-file now also contains the single animal data  
+   __[xgetparameter.m]__: added parameter "integrated density"  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Jan 2022 (13:37:22)**</ins>  
    __[xcreateMaps.m]__ solved bugs:  
   - selection of animals via left ANT-listbox before running this function enabled  
   - previous image-operation  "abs" ...sumation over images debugged. Note that this option produces the same  
     result as the "sum"-operation.  
   &#8618; access via ANT-menu: &#8658; SNIPS/Create MAPS  
+    
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**03 Jan 2022 (14:08:14)**</ins>  
    __[xgetlabels4.m]__ A specifc fileName for resulting excel-file can be entered.  
