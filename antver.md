@@ -1,14 +1,21 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   12 Jan 2022 (17:12:52)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   14 Jan 2022 (12:03:50)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**14 Jan 2022 (12:03:50)**</ins>  
+   __[xdeformpop]__: GUI was replaced by extended version (part of 'deform Volume Elastix'-operation)  
+   __[xsatat]__: function was updated  
+    - The Powerpoint-report of the voxelwise statistic was extended  
+    - programmatically change viewing parameters / generate Powerpoint-report  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**12 Jan 2022 (17:12:52)**</ins>  
    __[xstatlabels.m]__: 'export' as excel-file now also contains the single animal data  
    __[xgetparameter.m]__: added parameter "integrated density"  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Jan 2022 (13:37:22)**</ins>  
    __[xcreateMaps.m]__ solved bugs:  

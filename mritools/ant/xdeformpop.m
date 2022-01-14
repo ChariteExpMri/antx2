@@ -236,7 +236,7 @@ x=struct();
 
 
 sel.dir        =cellfun(@(a){[   (a)]} ,num2cell([p0.direction   setdiff([-1 1],  p0.direction)]'));
-sel.interp     =cellfun(@(a){[   (a)]} ,num2cell([p0.interp      setdiff([1:4],   p0.interp)]'));
+sel.interp     =cellfun(@(a){[   (a)]} ,num2cell([p0.interp      setdiff([0:4],   p0.interp)]'));
 sel.source     =cellfun(@(a){[   (a)]} ,num2cell([p0.source      setdiff([1 2],   p0.source)]'));
 
 

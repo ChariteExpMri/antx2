@@ -388,6 +388,14 @@
 % #k [xstatlabels.m]: #n 'export' as excel-file now also contains the single animal data
 % #k [xgetparameter.m]: #n added parameter "integrated density"
 % 
+% #ba 14 Jan 2022 (12:03:50)
+% #k [xdeformpop]: #n GUI was replaced by extended version (part of 'deform Volume Elastix'-operation)
+% #k [xsatat]: #n function was updated
+%   - The Powerpoint-report of the voxelwise statistic was extended
+%   - programmatically change viewing parameters / generate Powerpoint-report
+% 
+% 
+% 
 % 
 % 
 % 

@@ -141,13 +141,30 @@
 % ______________________________________________________________________________________________
 %% #ky batch:
 % #g RE-USE BATCH: see 'anth' [..anthistory] variable in workspace
-
+%
+% #ok example to programatically change paramteres and save PPT
+% con=1  % or 2  %contrast-to display/to save as PPT
+% PPTFILE:  fullpath-file for PPT to save the result
+% DOC:  'new'or 'add'  (new PPTdoc...overwrite old one or append to existing PPT)
+% bgcol: PPT-slide backgroundcolor (default is [1 1 1]; i.e. white)
+% % [1]uncorrected  -------
+% xstat('set',struct('MCP','none','thresh',0.001,'clk',1,'con',con,'show',0));
+% xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  ));
+% 
+% % [2]uncorrected with clusterSize-estimation -------
+% clustersize = cp_cluster_Pthresh(xSPM, 0.001)
+% xstat('set',struct('MCP','none','thresh',0.001,'clk',clustersize,'con',con,'show',0));
+% xstat('report',PPTFILE,struct('doc','add','con',con,'bgcol',bgcol    ));
+% 
+% % [3]FDR_CORRECTION-------
+% xstat('set',struct('MCP','FDR','thresh',0.05,'clk',1,'con',con,'show',0));
+% xstat('report',PPTFILE,struct('doc','add','con',con,'bgcol',bgcol    ));
 
 % modifications in spm
 % spm_figure('close',allchild(0));   % line 347
 
 %voxelvise statistic
-function xstat(showgui,x )
+function xstat(showgui,x,s )
 
 if nargin>0
     
@@ -157,11 +174,14 @@ if nargin>0
     if ~isnumeric(showgui)
         if strcmp(showgui, 'report');
             if nargin==1; x=[];end
-            report(x) ;
+            report(x,s) ;
         end
         if strcmp(showgui, 'loadspm');
             if nargin==1; x=[];end
             loadspm(x) ;
+        end
+        if strcmp(showgui, 'set');
+            setparam(x);
         end
         return
     end
@@ -544,7 +564,7 @@ set(h2,'tooltipstring','show the other contrasts');
 
 %% ———————— show VOLUME(section)———————————————————————————————————
 h2=uicontrol('style','pushbutton','units','norm') ;      %show sections
-set(h2, 'string','show volume','callback',@showSections);
+set(h2, 'string','show volume','callback',@showSections,'tag','showvolume');
 set(h2, 'position',[.0 .4 .28 .05],'fontsize',7);
 set(h2,'tooltipstring','show 3 panel (sections) view');
 
@@ -556,7 +576,7 @@ set(h2, 'position',[.3 .405 .25 .05],'backgroundcolor','w',...
 
 %% ———————— show table———————————————————————————————————————
 h2=uicontrol('style','pushbutton','units','norm') ;      %show table
-set(h2, 'string','show table','callback',@showTable);
+set(h2, 'string','show table','callback',@showTable,'tag','showTable');
 set(h2, 'position',[0    .35 .28 .05]);
 set(h2,'tooltipstring',' show statistical table');
 
@@ -1166,7 +1186,7 @@ pref.mcp          = 'FWE' ;
 
 
 
-function spmsetup
+function spmsetup(spmfile)
 
 if sum([~isempty(findobj(0,'tag','Graphics'))
         ~isempty(findobj(0,'tag','Interactive'))
@@ -1206,7 +1226,13 @@ pref=getprefs;
 global xvv
 if ~isempty(xvv)
     if isfield(xvv,'s')==0
-        outdir=uigetdir(pwd,'select outdir-directory (location of "SPM.mat")');
+        if exist('spmfile') && exist(spmfile)==2 %SPM.mat-file
+            outdir=fileparts(spmfile);
+        elseif exist('spmfile') && exist(spmfile)==7 %its a path
+            outdir=spmfile;
+        else
+            outdir=uigetdir(pwd,'select outdir-directory (location of "SPM.mat")');
+        end
         if isnumeric(outdir)==1; disp('user cancelation'); return; end
         xvv.s.output_dir=outdir;
         par=load(fullfile(outdir,'xstatParameter.mat')); par=par.par;
@@ -1345,7 +1371,7 @@ function loadSPMmatnoInput(e,e2,spmfile)
 global lab; %remove previous cluster
 try; lab=rmfield(lab,'clusterregions'); end
 
-spmsetup
+spmsetup(spmfile);
 
 if exist('spmfile')==0
     [files,dirs] = spm_select(1,'mat','select [SPM.mat]',[],pwd,'SPM.mat');
@@ -3051,6 +3077,13 @@ if ishandle(e)
     
    prefs.mcp        = get(findobj(gcf,'tag','mcp'           ),'string') ;
    prefs.thresh     = get(findobj(gcf,'tag','thresh'        ),'string') ;
+   
+   % get cluster-Size
+   if strcmp(get(findobj(gcf,'tag','clustersize'   ),'string'),'auto')
+      clustersize=cp_cluster_Pthresh(xSPM, str2num(prefs.thresh)  )
+      set(findobj(gcf,'tag','clustersize'),'string', num2str(clustersize));
+   end
+   
    prefs.clustersize= get(findobj(gcf,'tag','clustersize'   ),'string') ;
 
   try; prefs.thresh       =str2num(prefs.thresh      ); end
@@ -3111,51 +3144,144 @@ file=strrep(file,[filesep 'SPM.mat'],'');
 file=fullfile(file,'SPM.mat');
 loadSPMmatnoInput([],[],file);
 
+function setparam(s)
 
-function report(pptfile)
+if isfield(s,'show')==0
+    s.show=0;
+end
 
+hf=findobj(0,'tag','vvstat');
+figure(hf);
+
+if isfield(s,'MCP')
+ set(findobj(hf,'tag','mcp'),'string', s.MCP );
+end
+if isfield(s,'thresh')
+    set(findobj(hf,'tag','thresh'),'string', s.thresh );
+end
+if isfield(s,'clk')
+    set(findobj(hf,'tag','clustersize'),'string', s.clk );
+end
+
+if isfield(s,'con')
+    lb=findobj(hf,'tag','loadothercontrast');
+    if isnumeric(s.con) && s.con>0 && s.con<=length(lb.String);
+    lb.Value=s.con;
+    end
+end
+
+if  s.show==1;
+    hgfeval(get(lb,'callback'),lb);
+end
+
+%         ['TR: ' get(findobj(hg,'tag','thresh'),'string')]
+%         ['CLustersize: ' get(findobj(hg,'tag','clustersize'),'string')]
+
+
+function report(pptfile0,s)
+figure(findobj(0,'tag','vvstat'));
+if exist('s')~=1
+   s.doc='new'; %new pptfile, atherwise 'add' to add to existing pptfile
+end
+if isfield(s,'table')==0;    s.show='table'; end % show table
+if isfield(s,'doc')==0;      s.doc ='new'; end % new doc
+if isfield(s,'bgcol')==0;    s.bgcol =[1 1 1]; end % new doc
+
+
+
+paSPM=pwd;
+currDir=pwd;
+[paPPT pptfile ]=fileparts(pptfile0);
+% if exist(pa)==7
+%     cd(pa);
+% end
+[~,foldername]=fileparts(paSPM);
 
 hg=findobj(0,'tag','vvstat');
 lb=findobj(hg,'tag','loadothercontrast');
 
+cd(paPPT);
 %% Start new presentation
 isOpen  = exportToPPTX();
 if ~isempty(isOpen),
     % If PowerPoint already started, then close first and then open a new one
     exportToPPTX('close');
 end
-exportToPPTX('new','Dimensions',[12 6], ...
-    'Title','Example Presentation', ...
-    'Author','MatLab', ...
-    'Subject','Automatically generated PPTX file', ...
-    'Comments','This file has been automatically generated by exportToPPTX');
+try
+    evalc('system(''taskkill /f /im powerpnt.exe'')');
+end
+%% =======new PPT/add to ppt ========================================
+
+if strcmp(s.doc,'add') && exist([pptfile,'.pptx'])
+    exportToPPTX('open',[pptfile,'.pptx'])
+else
+    exportToPPTX('new','Dimensions',[12 6], ...
+        'Title','Example Presentation', ...
+        'Author','MatLab', ...
+        'Subject','Automatically generated PPTX file', ...
+        'Comments','This file has been automatically generated by exportToPPTX');
+end
+%% ===============================================
+
 % Additionally background color for all slides can be set as follows:
 % exportToPPTX('new','BackgroundColor',[0.5 0.5 0.5]);
 %% Add some slides
 % figH = figure('Renderer','zbuffer'); mesh(peaks); view(0,0);
 hfig= findobj(0,'tag','Graphics');
 figH=hfig.Number;
-for islide=1:size(get(lb,'string'),1)   %1:1,
+
+if isfield(s,'con')==0;  s.con =[1:size(get(lb,'string'),1)]; end % number of contrast to plot
+
+cons=s.con;
+
+for jj=1:length(cons)   %:   size(get(lb,'string'),1)   %1:1,
+    islide=cons(jj);
+    cd(paSPM);
     
-    
+    %--update contrast --------------------------
+    figure(hg)
     set(lb,'value',islide);
     hgfeval(get(lb,'callback'),lb);
     drawnow;
-    %----------------------------
+    if strcmp(s.show,'table')
+        %--show table --------------------------
+        lt=findobj(hg,'tag','showTable');
+        hgfeval(get(lt,'callback'),lt);
+        %----------------------------
+        drawnow;
+    end
+    %% ----get info ------------------------
+    info=...
+    {
+        %['Contrast: ' lb.String{lb.Value} ]
+        ['MCP: ' get(findobj(hg,'tag','mcp'),'string')]
+        ['TR: ' get(findobj(hg,'tag','thresh'),'string')]
+        ['CLustersize: ' get(findobj(hg,'tag','clustersize'),'string')]
+        ['DIR: '         foldername]
+        };
     
-    slideNum = exportToPPTX('addslide');
+    
+    %% ----------------------------
+    
+    cd(paPPT);
+    slideNum = exportToPPTX('addslide','BackgroundColor',s.bgcol);
     fprintf('Added slide %d\n',slideNum);
     exportToPPTX('addpicture',figH);
-    exportToPPTX('addtext',sprintf('Slide Number %d',slideNum));
-    exportToPPTX('addnote',sprintf('Notes data: slide number %d',slideNum));
+    exportToPPTX('addtext',lb.String{lb.Value});
+    exportToPPTX('addtext',strjoin(info,char(10)),'FontSize',10,...
+        'Position',[0 1 3 3  ]);
+    
+    %exportToPPTX('addnote',sprintf('Notes data: slide number %d',slideNum));
+    exportToPPTX('addnote',['source: '  pwd ]);
     % Rotate mesh on each slide
-%     view(18*islide,18*islide);
+    %     view(18*islide,18*islide);
 end
 % close(figH)
 %% Check current presentation
+cd(paPPT);
 fileStats   = exportToPPTX('query');
 if ~isempty(fileStats),
-    fprintf('Presentation size: %f x %f\n',fileStats.dimensions);
+    %fprintf('Presentation size: %f x %f\n',fileStats.dimensions);
     fprintf('Number of slides: %d\n',fileStats.numSlides);
 end
 %% Save presentation and close presentation -- overwrite file if it already exists
@@ -3165,11 +3291,20 @@ if exist('pptfile')==0
     pptfile='result';
 end
 
-newFile = exportToPPTX('saveandclose',pptfile);
+% [pa file ext]=fileparts(pptfile);
+% if isempty(pa)
+%    
+% else
+%     thisdir=pwd;
+%     cd(pa)
+%     newFile = exportToPPTX('saveandclose',file);
+%     
+% end
+ newFile = exportToPPTX('saveandclose',pptfile);
 fprintf('New file has been saved: <a href="matlab:open(''%s'')">%s</a>\n',newFile,newFile);
 
 
-
+cd(currDir);
 
 
 function helphere(e,e2)
