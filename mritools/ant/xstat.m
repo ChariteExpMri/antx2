@@ -2684,6 +2684,9 @@ if isfield(s,'grp_comparison') && ~isempty(s.grp_comparison)
     
     g1=getfield(s,['grp_' num2str(groups(1))] );
     g2=getfield(s,['grp_' num2str(groups(2))] );
+    g1(cellfun(@isempty, g1))=[]; %remove dataSets from list that do not exist
+    g2(cellfun(@isempty, g2))=[];
+    
     if isempty(g1{1})==1;        g1={}; end
     if isempty(g2{1})==1;        g2={}; end
     groupLabels=[s.classes(groups(1)) s.classes(groups(2))];
