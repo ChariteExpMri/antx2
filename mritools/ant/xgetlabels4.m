@@ -392,6 +392,10 @@ if  strcmp(s.space,'other')==0
         fistempl=fullfile(s.patemp,[fis ext]);
         if exist(fistempl)==2
             fano=strrep(w.hano,[filesep 'ix_'],[filesep ]);
+            if exist(fano)==0
+                anotemp=fullfile(s.patemp,['ANO.nii']); %ANO does not exist in local dir
+                copyfile(anotemp, fano,'f');
+            end
             rreslice2target(fistempl, fano, source, 0);
         end
     end

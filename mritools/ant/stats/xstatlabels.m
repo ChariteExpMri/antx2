@@ -1748,12 +1748,34 @@ function xlsstyle(filename)
 % % % % [~ , sh]=xlsfinfo(filename);
 % % % % e.delete;
 
+
+% ==============================================
+%%   xls-letter (extended, for singleTable)
+% ===============================================
+% ========OLD version =======================================
+% let=cellstr(char(65:65+25)');
+% lx=[let];
+% for i=1:3
+%     %cellfun(@(a,b){[a b]},let,let)
+%     lx=[lx ; cellfun(@(a){[ let{i} a ]},let)       ];
+% end
+
 let=cellstr(char(65:65+25)');
-lx=[let];
-for i=1:3
+lx1=[let];
+for i=1:length(let)
     %cellfun(@(a,b){[a b]},let,let)
-    lx=[lx ; cellfun(@(a){[ let{i} a ]},let)       ];
+    lx1=[lx1 ; cellfun(@(a){[ let{i} a ]},let)       ];
 end
+twoletter=lx1(length(let)+1:end);
+lx2=[];
+for i=1:3
+    lx2=[lx2 ; cellfun(@(a){[ let{i} a ]},twoletter)     ];
+end
+lx=[lx1; lx2];
+
+% ==============================================
+%%   open sheet
+% ===============================================
 
 
 % sheetName = 'Tabelle'; % EN: Sheet, DE: Tabelle, etc. (Lang. dependent)

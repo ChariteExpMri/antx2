@@ -3,7 +3,7 @@
 function [h d xyz xyzind]=rgetnii(file,imgnum )
 %% get Nifti/analyzeFormat
 % [h d xyz xyzind]=rgetnii(file )
-
+% [h d xyz xyzind]=rgetnii(file,imgnum )
 %% in
 % file: filename ; e.g.  'T2brain.nii';
 %% out
