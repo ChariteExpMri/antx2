@@ -892,29 +892,9 @@ if 0
 end
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%
-%  a2_sub
-%
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-
+% ==============================================
+%%   a2_sub
+% ===============================================
 
 
 function a2_sub(us,varargin)
@@ -1398,6 +1378,7 @@ function exportfun(par)
 showresults('export',par);
 
 function out=showresults(task, par)
+warning off;
 out=[];
 hfig=findobj(0,'tag','stat');
 us=get(hfig,'userdata');
@@ -1413,7 +1394,7 @@ if exist('task') && strcmp(task,'export')
     else
         file=par.exportfile;
     end
-    disp('..exporting ');
+    disp('..exporting.. ');
 else
     doexport=0;
 end
@@ -1544,19 +1525,19 @@ for i=1:size(us.pw,2)
           %  xlsremovdefaultsheets(file);
         end
         
-        % [3] write single Data
-        if isfield(us.pw(i),'sid')
-            try
-                drawnow
-                HT1=us.pw(i).sid.htb;
-                T1 =us.pw(i).sid.tb;
-                %pwrite2excel(file,{5 'singleData'}, HT1,[],T1);
-                
-               xlswrite( file,  [HT1; T1], 'singleData');
-               xlsAutoFitCol(file,'singleData','A:Z');
-               drawnow;
-            end
-        end
+%         % [3] write single Data
+%         if isfield(us.pw(i),'sid')
+%             try
+%                 drawnow
+%                 HT1=us.pw(i).sid.htb;
+%                 T1 =us.pw(i).sid.tb;
+%                 %pwrite2excel(file,{5 'singleData'}, HT1,[],T1);
+%                 
+%                xlswrite( file,  [HT1; T1], 'singleData');
+%                xlsAutoFitCol(file,'singleData','A:Z');
+%                drawnow;
+%             end
+%         end
        
         
     else
@@ -1579,11 +1560,52 @@ for i=1:size(us.pw,2)
         
         %         uhelp(plog({},sx,0,[us.pw(i).str],'s=0'),1);
         %sz=sz(1:end-1,:);
-    end
-    
-    
-    
+    end  
 end
+
+% ==============================================
+%%   write xls-singleData
+% ===============================================
+% [3] write single Data
+warning off;
+%clc
+if doexport==1
+    T2={};
+    for i=1:size(us.pw,2)
+        
+        if isfield(us.pw(i),'sid')
+            
+            try
+                drawnow
+                HT1=us.pw(i).sid.htb;
+                T1 =us.pw(i).sid.tb;
+                %pwrite2excel(file,{5 'singleData'}, HT1,[],T1);
+                %disp('-----');
+                %disp(T1(:,1:2));
+                
+                %xlswrite( file,  [HT1; T1], ['singleData ' us.pw(i).str]);
+                %xlsAutoFitCol(file,'singleData','A:Z');
+                drawnow;
+                T2=[T2;T1 ];
+                %disp(i)
+            end
+        end 
+    end
+    [~,ix]=unique(T2(:,2),'stable');
+    T3=T2(ix,:);
+    xlswrite( file,  [HT1; T3], ['singleData']);
+    xlsAutoFitCol(file,'singleData','A:BBB');
+%     try
+%     [~,sheetnames]=xlsfinfo(file)
+%     catch
+%         sheetnames=''
+%     end
+%     pwrite2excel(file,{length(sheetnames)+1 'singleData'},...
+%         HT1,[],T3);
+end
+% ==============================================
+%%   show table
+% ===============================================
 
 out=sz;
 if doexport~=1

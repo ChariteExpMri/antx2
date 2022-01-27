@@ -1,16 +1,27 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   14 Jan 2022 (12:03:50)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   27 Jan 2022 (11:43:10)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**27 Jan 2022 (11:43:10)**</ins>  
+   __[xstat]__:  voxelwise analysis was extended.  
+    - post-hoc paramter modifications and summary report can executed from comandline  
+    - write summary as powerpoint-files, write statistical table as excel-file,   
+    - save statistically thresholded volume  (Nifti)  
+    - button __[code posthoc]__ display the code snippet for creating a summary (PPT-,Excel-,NIfti-files)   
+   __[xstatlabels]__: regionwise statistic was extended  
+   - The excelsheet now also contains a sheet "singleData" with the group-specifc single data for each region.   
+    The single data be further used for plots/visualization or other purposes  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**14 Jan 2022 (12:03:50)**</ins>  
    __[xdeformpop]__: GUI was replaced by extended version (part of 'deform Volume Elastix'-operation)  
    __[xsatat]__: function was updated  
     - The Powerpoint-report of the voxelwise statistic was extended  
     - programmatically change viewing parameters / generate Powerpoint-report  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**12 Jan 2022 (17:12:52)**</ins>  
    __[xstatlabels.m]__: 'export' as excel-file now also contains the single animal data  

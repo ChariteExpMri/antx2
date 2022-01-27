@@ -1,5 +1,5 @@
 %% xstat: voxelwise statistic [SPM-statistic] for normalized data (nifti volumes)
-% 
+%
 % #yk xstat.m
 %% #b performs voxelwise (univariate) statistic and displays the results onto mouse template
 %% #b The anatmical regions will be displayed and the table with anat. regions is created
@@ -13,32 +13,32 @@
 %   'regression'        :AIM:  voxelwise regression (data from one group) with a vector (* age or performance)
 %   'onewayanova'       :AIM:  comparing two or more independet groups (* control vs. sham vs. disease)
 %                       - onewayanova allows one/more additional covariates (* age, gender..) to add to the model
-%   'fullfactorial'     :AIM:  Anova with several factors (between and or within).  
+%   'fullfactorial'     :AIM:  Anova with several factors (between and or within).
 %   'userdefined'       :define one of the following designs from SPM (see <spm-->[batch]-->>spm/stats/Factorial design specification)
 %       One-sample t-test, Two-sample t-test, Paired t-test, Multiple regression, One-way ANOVA,
 %       One-way ANOVA - within subject, Full factorial, Flexible factorial
-% #g [VIEW RESULTS]  
+% #g [VIEW RESULTS]
 % -if a model has been created/estimated (see [setup]) the [VIEW RESULTS] panel allows to visualize the results
 % [load SPM]: load a SPM.mat -this mat-file contains all data, additonal parameters must be applied
 % [load 1st Contrast]: loads the first contrast with default paramters (no other parameters will be needed)
 % [contrasts]: the pulldown menu allows to switch between contrasts (see also SPM's "Interactive"-window: menu>>Contrasts>change contrast)
 % [show sections]: overlay the results onto a defined template (default: Allen's AVGT.nii)
 % [show table]: displays the table of significant voxels/clusters with anat. regions
-% [cl-dist]: minimum distance between cluster 
-% [#max/cluster]: number of maxima for each cluster 
+% [cl-dist]: minimum distance between cluster
+% [#max/cluster]: number of maxima for each cluster
 %   [#max/cluster] & [cl-dist] strongly change the resulting table !!
 % [export table]: saves the statistical table
-% [save volume]: saves the thresholded (based on FWE/FDR + cluster-size threshold "k") statistical volume as nifti (mostly t-map) 
-% [show MRICRON]: if statistical map is save, this button alllows to show the overlay og the template image and the statistical map using Mricron 
+% [save volume]: saves the thresholded (based on FWE/FDR + cluster-size threshold "k") statistical volume as nifti (mostly t-map)
+% [show MRICRON]: if statistical map is save, this button alllows to show the overlay og the template image and the statistical map using Mricron
 % ______________________________________________________________________________________________
 %% #ky PARAMETERS:
 % -parameters differ slightly between designs, see examples below
 %  xstat(1,z); /xstat(0,z);    : runs this functions with/without opening the gui,  submits the parameterstruct [z]
 % ______________________________________________________________________________________________
 %% #ky EXAMPLES:
-% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%% ===============================================
 % % #g TWO-SAMPLE-T-TEST
-% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%% ===============================================
 % z=[];
 % z.stattype       = 'twosamplettest';                                                  % % STATISTICAL TEST
 % z.excelfile      = 'O:\data\voxelwise_Maritzen4tool\xstat_statistic_example.xlsx';     % % [Excelfile]: this file contains a column with mouseIDs (names) and a column assigning the group
@@ -52,10 +52,10 @@
 % z.output_dir     = 's1_2sampleTtest';                                                          % % path for output/statistic
 % z.showSPMbatch   = [1];                                                               % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
 % xstat(0,z);
-% 
-% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%
+%% ===============================================
 % % #g  PAIRED T-TEST
-% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%% ===============================================
 % z=[];
 % z.stattype      = 'pairedttest';                                                     % % STATISTICAL TEST
 % z.excelfile     = 'O:\data\voxelwise_Maritzen4tool\xstat_statistic_example.xlsx';     % % [Excelfile]: this file contains two columns with mouseIDs (names) for timepoint T1 and T2, respectively
@@ -68,11 +68,11 @@
 % z.output_dir    = 's2_pairedTtest';                                                          % % path for output/statistic
 % z.showSPMbatch  = [1];                                                               % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
 % xstat(0,z);
-% 
-% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%
+%% ===============================================
 % % #g       ONE-WAY-ANOVA
 % % #b info :   2 groups, no additional covariates (same as TWO-SAMPLE-T-TEST)
-% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%% ===============================================
 % z=[];
 % z.stattype     = 'onewayanova';                                                     % % STATISTICAL TEST
 % z.excelfile    = 'O:\data\voxelwise_Maritzen4tool\xstat_statistic_example.xlsx';     % % [Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values
@@ -86,11 +86,11 @@
 % z.output_dir   = 's3_1wANOVA';                                                   % % path for output/statistic
 % z.showSPMbatch = [1];                                                               % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
 % xstat(0,z);
-% 
-% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%
+%% ===============================================
 % % #g       ONE-WAY-ANOVA
 % % #b info :   3 groups, 2 additional covariates
-% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%% ===============================================
 % z=[];
 % z.stattype     = 'onewayanova';                                                     % % STATISTICAL TEST
 % z.excelfile    = 'O:\data\voxelwise_Maritzen4tool\xstat_statistic_example.xlsx';     % % [Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values
@@ -104,10 +104,10 @@
 % z.output_dir   = 's4_1wANOVAregress';                                                          % % path for output/statistic
 % z.showSPMbatch = [1];                                                               % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
 % xstat(0,z);
-% 
-% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%
+%% ===============================================
 % % #g  REGRESSION
-% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%% ===============================================
 % z=[];
 % z.stattype     = 'regression';                                                      % % STATISTICAL TEST
 % z.excelfile    = 'O:\data\voxelwise_Maritzen4tool\xstat_statistic_example.xlsx';     % % [Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values
@@ -120,9 +120,9 @@
 % z.output_dir   = 's5_regress';                                                          % % path for output/statistic
 % z.showSPMbatch = [1];                                                               % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
 % xstat(0,z);
-% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%% ===============================================
 % % #g  FULLFACTTORIAL ANOVA
-% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%% ===============================================
 % z=[];
 % z.stattype=      'fullfactorial';                                                     % % STATISTICAL TEST
 % z.excelfile=      'O:\data2\x03_yildirim\voxstatGroups_2x2.xlsx';	                    % % [Excelfile]: this file contains a column with mouseIDs (names) and columns containing the factors and optional a regression column
@@ -132,34 +132,131 @@
 % z.regress_col=    [];                                                                 % % <optional> this column number addresses regression values,otherwise empty
 % z.data_dir=       'O:\data2\x03_yildirim\dat';                                        % % data directory (upper directory) contains dirs with mice data
 % z.inputimage=     'JD_fake.nii';                                                      % % NIFTI image name, from which the statistic is derived (datapath has to bee defined before using the icon)
-% z.mask=           'local';                                                            % % <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] 
+% z.mask=           'local';                                                            % % <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
 % z.smoothing=      [0];                                                                % % <optional>smooth data
 % z.smoothing_fwhm=[0.28  0.28  0.28];                                                  % % smoothing width (FWHM)
 % z.output_dir=     'fullfac_fakedata_5';                                               % % path for output/statistic
-% z.showSPMbatch=   [0];                                                                % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically 
+% z.showSPMbatch=   [0];                                                                % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
 % xstat(0,z)
 % ______________________________________________________________________________________________
 %% #ky batch:
 % #g RE-USE BATCH: see 'anth' [..anthistory] variable in workspace
 %
-% #ok example to programatically change paramteres and save PPT
+%% #ok *** PROGRAMMABEL POST-HOC CHANGES *** 
+% 
+%% #ko Programmatically load a SPM-stiastic
+% xstat('loadspm',fullfile(pwd,'SPM.mat'));
+% 
+%% #ko Programmatically set parameter and show result
+% the example below sets the following parameter
+% 'MCP','none', : set multiple-comparison to 'none' (..uncorrected)
+%                 options: {'none','MCP','FWE'}
+% 'thresh',0.001: set p-threshold to 0.001
+% 'clk',1       : set clustersize k=1
+% 'con',1       : use 1st contrast here
+%                options: standard: 1 or 2 or another number the corresponding
+%                contrast was previously defined 
+% 'show',1      : show result, i.e. update SPM-Graphics 
+%                 options: [1]update SPM-Graphics, [0] do not update
+% #g example: 
+%  xstat('set',struct('MCP','none','thresh',0.001,'clk',1,'con',1,'show',1)); 
+% 
+%% #ko Programmatically set parameter & save output as powerpoint-file
+% #b example to programatically change paramteres and save PPT
 % con=1  % or 2  %contrast-to display/to save as PPT
 % PPTFILE:  fullpath-file for PPT to save the result
 % DOC:  'new'or 'add'  (new PPTdoc...overwrite old one or append to existing PPT)
 % bgcol: PPT-slide backgroundcolor (default is [1 1 1]; i.e. white)
 % % [1]uncorrected  -------
+%% #m set parameter, but do not update SPM-Graphics
 % xstat('set',struct('MCP','none','thresh',0.001,'clk',1,'con',con,'show',0));
+%% #m display TABLE --> make statistical table in powerpoint
 % xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  ));
-% 
+%% #m display volume --> make orthoview volume-plot in powerpoint
+% xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  ));
+%
 % % [2]uncorrected with clusterSize-estimation -------
 % clustersize = cp_cluster_Pthresh(xSPM, 0.001)
 % xstat('set',struct('MCP','none','thresh',0.001,'clk',clustersize,'con',con,'show',0));
 % xstat('report',PPTFILE,struct('doc','add','con',con,'bgcol',bgcol    ));
-% 
-% % [3]FDR_CORRECTION-------
+%
+% % [3]FDR-CORRECTION-------
 % xstat('set',struct('MCP','FDR','thresh',0.05,'clk',1,'con',con,'show',0));
 % xstat('report',PPTFILE,struct('doc','add','con',con,'bgcol',bgcol    ));
+% 
+% % [4]FWE-CORRECTION-------
+% xstat('set',struct('MCP','FWE','thresh',0.05,'clk',20,'con',con,'show',0));
+% xstat('report',PPTFILE,struct('doc','add','con',con,'bgcol',bgcol    ));
+%
+%% #ko Programmatically write staistical table as TXT-file or Excel-file
+% howto: xstat('export', path/filename, *struct)
+% 'export': command to access the export-routine
+%  path/filename: 
+%      filename: output-filename (fullpath)
+%      path - if output path is specified only the filename is constructed 
+%             using the followong internal paramters:   
+%                  inputFile, contrastName, statMethod(FDR,uncorr..), 
+%                   stat.threshold & k-clusterSize
+%  struct: <optional> with additional parameter
+%     'type'   - save as: {numeric value}, [1] excelfile or [2] textfile
+%     'prefix' - <optional> add prefix string  to fileName
+%
+%% #wb programmatically save as *TXT-file*
+%% save as file 'testZ.txt' as TXT-file (type=2)
+%  xstat('export',fullfile(pwd,'testZ.txt'),struct('type',2));
+%% save as file ('x_c_radial_dif__1ko2ko_GT_1wt2ko__FWE0.txt'), filename
+%% is constructed from internal parameter , as TXT-file (type=2)
+%  xstat('export',pwd,struct('type',2));
+%% save as file ('myPrefix_x_c_radial_dif__1ko2ko_GT_1wt2ko__FWE0.txt'),
+%% filename is constructed from internal parameter , as TXT-file (type=2),
+%% add prefix 'myPrefix_'
+%  xstat('export',pwd,struct('type',2,'prefix','myPrefix_'));
+%% save as file 'myPrefix_testZ2.txt' as TXT-file (type=2), add prefix 'myPrefix_'
+%  xstat('export',fullfile(pwd,'testZ2.txt'),struct('type',2,'prefix','myPrefix_'));
+% 
+%% #wb programmatically save as *EXCEL-file*
+%% save as file 'testZ.xlsx' as Excel-file
+%  xstat('export',fullfile(pwd,'testZ.xlsx'))
+%% same as...
+%  xstat('export',fullfile(pwd,'testZ.xlsx'),struct('type',1));
+%% save as file ('x_c_radial_dif__1ko2ko_GT_1wt2ko__FWE0.xlsx'), filename
+%% is constructed from internal parameter , as Excel-file (type=1)
+%  xstat('export',pwd);
+%% same as..
+%  xstat('export',pwd,struct('type',1));
+%% save as file ('myPrefix_x_c_radial_dif__1ko2ko_GT_1wt2ko__FWE0.xlsx'),
+%% filename is constructed from internal parameter , as Excel-file (type=1),
+%% add prefix 'myPrefix_'
+%  xstat('export',pwd,struct('type',1,'prefix','myPrefix_'));
+%% save as file 'myPrefix_testZ3.txt' as Excel-file (type=1), add prefix 'myPrefix_'
+%  xstat('export',fullfile(pwd,'testZ3.txt'),struct('type',1,'prefix','myPrefix_'));
+% 
+%% #ko Programmatically save thresholded volume
+% howto: xstat('savevolume', path/filename, *struct)
+% 'savevolume': command to access the savevolume-routine
+%  path/filename: 
+%      filename: output-filename (fullpath)
+%      path - if output path is specified only the filename is constructed 
+%             using the followong internal paramters:   
+%                  inputFile, contrastName, statMethod(FDR,uncorr..), 
+%                   stat.threshold & k-clusterSize
+%  struct: <optional> with additional parameter
+%     'prefix' - <optional> add prefix string  to fileName
+% 
+%% save thresholded Volume as "dum2.nii"
+%  xstat('savevolume',fullfile(pwd,'dum2.nii'));
+%% save thresholded volume in current path with filename contructed based on
+%% internal parameter (InputImage,contrast-name,correctionMethoc,threshold,clusterSize)
+%% fileName here is  "x_c_radial_dif__1ko2ko_GT_1wt2ko__none0.nii"
+%  xstat('savevolume',pwd);
+%% .. as previous example but prefix 'myPrefix_' is added to outputfile
+%% Filename is "myPrefix_x_c_radial_dif__1ko2ko_GT_1wt2ko__none0.nii"
+%  xstat('savevolume',pwd,struct('prefix','myPrefix_'));
+%% save thresholded volume as "myPrefix_dum3.nii"
+%  xstat('savevolume',fullfile(pwd,'dum3.nii'),struct('prefix','myPrefix_'))
 
+
+%% ________________________________________________________________________________________________
 % modifications in spm
 % spm_figure('close',allchild(0));   % line 347
 
@@ -169,8 +266,8 @@ function xstat(showgui,x,s )
 if nargin>0
     
     
-% xstat('loadspm','O:\data2\x03_yildirim\fullfac_fakedata_4')
-% xstat('report','results_FDR')
+    % xstat('loadspm','O:\data2\x03_yildirim\fullfac_fakedata_4')
+    % xstat('report','results_FDR')
     if ~isnumeric(showgui)
         if strcmp(showgui, 'report');
             if nargin==1; x=[];end
@@ -182,6 +279,20 @@ if nargin>0
         end
         if strcmp(showgui, 'set');
             setparam(x);
+        end
+        if strcmp(showgui, 'export');
+            if nargin==2;
+                export(x,[]);
+            else
+                export(x,s);
+            end 
+        end
+        if strcmp(showgui, 'savevolume');
+            if nargin==2;
+                savevolume(x,[]);
+            else
+                savevolume(x,s);
+            end 
         end
         return
     end
@@ -280,7 +391,7 @@ if 0
     z.showSPMbatch = [1];                                                               % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
     xstat(1,z);
     
-     
+    
     %   ONE-WAY-ANOVA-TEST2
     % % ••••••••••••••••••••••••••••••••••••••••••••••••••••••
     % % #g FUNCTION:        [xstat.m]
@@ -330,7 +441,7 @@ end
 if 0
     %% EXAMPLE: PAIRED TTEST
     
-
+    
     showgui=1
     
     x={};
@@ -344,7 +455,7 @@ if 0
     x.mask=          'local';	% <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
     x.output_dir=    'test_2';	% path for output/statistic
     xstat(showgui,x)
- 
+    
     
     %% 2sampleTtest
     x={};
@@ -358,7 +469,7 @@ if 0
     x.grp_comparison='1vs2'	;% groups to compare
     x.output_dir=     'res_3';	% path for
     xstat(showgui,x)
-
+    
     
     %%   multiple regression
     x={};
@@ -387,7 +498,7 @@ hfig=findobj(0,'tag','vvstat');
 if ~isempty(hfig)
     set(hfig,'CloseRequestFcn',[]);
     delete(hfig);
-  
+    
     % delete(findobj(0,'tag','vvstat'));
 end
 useotherspm(1);
@@ -605,27 +716,45 @@ h2=uicontrol('style','edit','units','norm') ;      %number of cluster EDIT
 set(h2, 'position',[0.29 .355 .1 .03]);
 set(h2,'tooltipstring','number of maxima per cluster','tag','nmaxclust');
 
-%% ———————— export table ———————————————————————————————————————
+%% ———————— export table txt ———————————————————————————————————————
 h2=uicontrol('style','pushbutton','units','norm') ;      %export table
-set(h2, 'string','export table','callback',@exporttable);
+set(h2, 'string','export txt','callback',@exporttable);
 set(h2, 'position',[0   .3 .28 .05]);
-set(h2,'tooltipstring','save the statistical table','fontsize',7);
+set(h2,'tooltipstring','save statistical table as txt-file','fontsize',7);
 
+%% ———————— export table excel ———————————————————————————————————————
+h2=uicontrol('style','pushbutton','units','norm') ;      %export table
+set(h2, 'string','export xlsx','callback',@exporttableXLS);
+set(h2, 'position',[0   .25 .28 .05]);
+set(h2,'tooltipstring','save statistical table as Excel-file','fontsize',7);
 
 %% ———————— save vol———————————————————————————————————————
 h2=uicontrol('style','pushbutton','units','norm') ;      %save volume table
 set(h2, 'string','save volume','callback',@save_threshvolume);
-set(h2, 'position',[0    .25 .28 .05]);
+set(h2, 'position',[0    .2 .28 .05]);
 set(h2,'tooltipstring','save thresholded volume as nifti-file','fontsize',7);
 
 %% ———————— show mricron ———————————————————————————————————————
 h2=uicontrol('style','pushbutton','units','norm') ;      %show volume MRICRON
 set(h2, 'string','show MRicron','callback',@show_mricron);
-set(h2, 'position',[0.28 .25 .28 .05]);
+set(h2, 'position',[0.28 .2 .28 .05]);
 set(h2,'tooltipstring','show previously saved thresholded volume overlayed in MRICRON','fontsize',7);
 
+%% =======snip batch ========================================
 
-%•••••••••••••••••••••••••••••••••••••••••••••••••••
+h2=uicontrol('style','pushbutton','units','norm') ;      %show volume MRICRON
+set(h2, 'string','code posthoc','callback',@code_posthoc);
+set(h2, 'position',[0 .15 .32 .045],'fontsize',7);
+set(h2,'tooltipstring',[...
+    'code-snippet to create post-hoc summary' char(10) ....
+    ' - create powerpoint-file with table volume view ' char(10)...
+    ' - create statistical results (excel-files) ' char(10)...
+    ' - save thresholded volume (Nifti)'
+    ]);
+set(h2,'BackgroundColor',[0.9608    0.9765    0.9922])
+
+
+%% ===============================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %exit
 set(h2, 'string','close','callback',@xclose);
 set(h2, 'position',[0.66 .0 .33 .05]);
@@ -666,9 +795,9 @@ if isfield(xvv.x,'stattype')
     elseif strcmp(xvv.x.stattype, 'twosamplettest')
         twosampleTest;
         
-     elseif strcmp(xvv.x.stattype, 'onewayanova')
-        onewayanova;    
-    elseif strcmp(xvv.x.stattype, 'fullfactorial') 
+    elseif strcmp(xvv.x.stattype, 'onewayanova')
+        onewayanova;
+    elseif strcmp(xvv.x.stattype, 'fullfactorial')
         fullfactorial;
     end
     
@@ -762,7 +891,7 @@ elseif strcmp(xtype,'pairedttest')
         'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
         'output_dir'   'test_11' 'path for output/statistic' 'd';
         'showSPMbatch'   1      '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
-
+        
         };
     
 elseif strcmp(xtype,'regression')
@@ -783,7 +912,7 @@ elseif strcmp(xtype,'regression')
         'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
         'output_dir'   'test_13' 'path for output/statistic' 'd';
         'showSPMbatch'   1      '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
-
+        
         };
 elseif strcmp(xtype,'onewayanova')
     p={
@@ -804,8 +933,8 @@ elseif strcmp(xtype,'onewayanova')
         'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
         'output_dir'   'test_13' 'path for output/statistic' 'd';
         'showSPMbatch'   1      '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
-        };  
- elseif strcmp(xtype,'fullfactorial')
+        };
+elseif strcmp(xtype,'fullfactorial')
     p={
         'inf1'     '%  fullfactorial ANOVA'  '' ''
         'excelfile'      ''     '[Excelfile]: this file contains a column with mouseIDs (names) and columns containing the factors' 'f'
@@ -815,7 +944,7 @@ elseif strcmp(xtype,'onewayanova')
         'regress_col'    []     '<optional>  column number addressing regression values,otherwise empty' ''
         'data_dir'       ''     'data directory (upper directory) contains dirs with mice data' 'd'
         'inputimage'     ''     'NIFTI image name, from which the statistic is made (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
-         'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
+        'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
         'AVGT' '' 'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
         'ANO'  '' 'select the ATLAS-file (path of "ANO.nii")' 'f'
         'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
@@ -824,10 +953,10 @@ elseif strcmp(xtype,'onewayanova')
         'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
         'output_dir'   'test_13' 'path for output/statistic' 'd';
         'showSPMbatch'   1      '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
-        };   
+        };
     
 end
-  
+
 
 
 global xvv
@@ -838,32 +967,32 @@ if showgui==1
     hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
     
     try
-    [m x a paras]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .6 .35 ],...
-        'info',hlp,'title',[mfilename '.m']); 
-    if isempty(m); 
-       error('__process terminated___________________');
-    end
+        [m x a paras]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .6 .35 ],...
+            'info',hlp,'title',[mfilename '.m']);
+        if isempty(m);
+            error('__process terminated___________________');
+        end
     catch
-       error('process canceled'); 
+        error('process canceled');
     end
     xvv.paramguilist=m;
     fn=fieldnames(x);
     x=rmfield(x,fn(regexpi2(fn,'^inf\d')));
     if isempty(m); return; end
 else
-   x=param2struct(p); 
+    x=param2struct(p);
 end
 
 global vxx
 % vxx.p=p;
 
- 
+
 % %% ed
-% 
+%
 % eval(m);
-% 
+%
 % keyboard;
-% 
+%
 % if 0
 %     p=paramadd(p,x);%add/replace parameter
 %     %     [m z]=paramgui(p,'uiwait',0,'close',0,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .7 .5 ],'title','PARAMETERS: LABELING');
@@ -967,9 +1096,9 @@ end
 [~,~,a]=xlsread(x.excelfile, x.sheetnumber);
 
 if numel(a)==1
-   msgbox(['error: sheet-' num2str(x.sheetnumber) ' has only 1-element' char(10) ...
-       'most likely the sheet-index is not correct']) ;
-   error('abbort: sheet is empty');
+    msgbox(['error: sheet-' num2str(x.sheetnumber) ' has only 1-element' char(10) ...
+        'most likely the sheet-index is not correct']) ;
+    error('abbort: sheet is empty');
 end
 
 
@@ -1002,8 +1131,8 @@ elseif strcmp(xtype,'onewayanova')
     d(:,2)=cellfun(@(a){[num2str(a)]},d(:,2));
     
     if ~isempty(x.regress_col) %add regressvalues
-          d(:, 5:5+length(x.regress_col)-1   ) = a(2:end,[ x.regress_col ]);
-          s.regressname=he(x.regress_col);
+        d(:, 5:5+length(x.regress_col)-1   ) = a(2:end,[ x.regress_col ]);
+        s.regressname=he(x.regress_col);
     else
         s.regressname='';
     end
@@ -1016,7 +1145,7 @@ elseif strcmp(xtype,'fullfactorial')
     for i=1:length(dfactornames)
         d(:,i+1)=cellfun(@(a){[num2str(a)]},d(:,1+i))  ;
     end
-   
+    
     
     
     
@@ -1026,8 +1155,8 @@ elseif strcmp(xtype,'fullfactorial')
     else
         s.regressname='';
     end
-      s.dfactornames=dfactornames;
-      s.d=d;
+    s.dfactornames=dfactornames;
+    s.d=d;
     
 end
 
@@ -1077,9 +1206,9 @@ if   strcmp(xtype,'twosamplettest')
 elseif strcmp(xtype,'pairedttest')
     s.dh={'excelID' 'timepoint'      'existNifti' 'niftiPath'};
 elseif strcmp(xtype,'regression')
-    s.dh={'excelID' 'regressval'     'existNifti' 'niftiPath'}; 
+    s.dh={'excelID' 'regressval'     'existNifti' 'niftiPath'};
 elseif strcmp(xtype,'onewayanova')
-     s.dh=[{'excelID' 'regressval'     'existNifti' 'niftiPath'} he(x.regress_col) ];
+    s.dh=[{'excelID' 'regressval'     'existNifti' 'niftiPath'} he(x.regress_col) ];
 end
 
 
@@ -1094,40 +1223,40 @@ if  strcmp(xtype,'twosamplettest')
         s= setfield(s,['grp_' num2str(i)],nifiles );
     end
 elseif  strcmp(xtype,'pairedttest')
-     s.classes={'T1' 'T2'};
-     is=find(cellfun('isempty',regexpi(s.d(:,2),'^T1'))==0);
-     pairids=str2num(cell2mat(regexprep(s.d(is,2),'T1-','')));
-     
-     ifind=@(a) find(~cellfun('isempty',a));
-   
-     s.grp_1={};
-     s.grp_2={};
-     nok=1;
-     for i=1:length(pairids)
-         t1=ifind(regexpi(s.d(:,2),['^T1-'  num2str(pairids(i)) '$']));
-         t2=ifind(regexpi(s.d(:,2),['^T2-'  num2str(pairids(i)) '$']));
-         
-         if  sum([isempty(t2) isempty(t1)]) ==0  % matching string found
-             if  sum([ s.d{t1,3} s.d{t2,3}])  ==2   % files exist
-                 s.grp_1{nok,1} = s.d{t1,4};
-                 s.grp_2{nok,1} = s.d{t2,4};
-                 nok=nok+1;
-             end
-         end
-     end
-         
-     
+    s.classes={'T1' 'T2'};
+    is=find(cellfun('isempty',regexpi(s.d(:,2),'^T1'))==0);
+    pairids=str2num(cell2mat(regexprep(s.d(is,2),'T1-','')));
+    
+    ifind=@(a) find(~cellfun('isempty',a));
+    
+    s.grp_1={};
+    s.grp_2={};
+    nok=1;
+    for i=1:length(pairids)
+        t1=ifind(regexpi(s.d(:,2),['^T1-'  num2str(pairids(i)) '$']));
+        t2=ifind(regexpi(s.d(:,2),['^T2-'  num2str(pairids(i)) '$']));
+        
+        if  sum([isempty(t2) isempty(t1)]) ==0  % matching string found
+            if  sum([ s.d{t1,3} s.d{t2,3}])  ==2   % files exist
+                s.grp_1{nok,1} = s.d{t1,4};
+                s.grp_2{nok,1} = s.d{t2,4};
+                nok=nok+1;
+            end
+        end
+    end
+    
+    
 elseif  strcmp(xtype,'regression')
     s.dh={'excelID' 'grp' 'regressval' 'niftiPath'};
     s.grp_1=s.d(find(cell2mat(s.d(:,3))==1),4);
     
 elseif  strcmp(xtype,'onewayanova')
-%     s.classes=unique(s.d(:,2))';
-%     for i=1:length(s.classes)
-%         nifiles=s.d(  find(~cellfun('isempty',regexpi(s.d(:,2),s.classes{  i  }))),4);
-%         s= setfield(s,['grp_' num2str(i)],nifiles );
-%     end
-%     
+    %     s.classes=unique(s.d(:,2))';
+    %     for i=1:length(s.classes)
+    %         nifiles=s.d(  find(~cellfun('isempty',regexpi(s.d(:,2),s.classes{  i  }))),4);
+    %         s= setfield(s,['grp_' num2str(i)],nifiles );
+    %     end
+    %
     
 end
 
@@ -1159,7 +1288,7 @@ xvv.s=s;
 xvv.p=p;
 
 % ==============================================
-%%  save parameter 
+%%  save parameter
 % ===============================================
 par=x;
 save(fullfile(outdir,'xstatParameter.mat'),'par');
@@ -1207,11 +1336,11 @@ if sum([~isempty(findobj(0,'tag','Graphics'))
     hf=findobj(0,'tag','vvstat');
     if isempty(hf)
         try
-        xstat;
-        hf=findobj(0,'tag','vvstat');
-        set(hf,'userdata',us);
-        global xvv
-        xvv=xvv_bk;
+            xstat;
+            hf=findobj(0,'tag','vvstat');
+            set(hf,'userdata',us);
+            global xvv
+            xvv=xvv_bk;
         end
     end
     
@@ -1221,7 +1350,7 @@ end
 
 pref=getprefs;
 % ==============================================
-%%   
+%%
 % ===============================================
 global xvv
 if ~isempty(xvv)
@@ -1240,23 +1369,23 @@ if ~isempty(xvv)
         xvv.s.ANO =par.ANO;
         xvv.s.AVGT=par.AVGT;
     end
-        
-        
-        outdir=xvv.s.output_dir;
-        pref.mip = fullfile(outdir, 'xstatMIP.mat');
-        pref.anofile   =xvv.s.ANO  ;%'F:\data3\eranet_VBM_test\templates\ANO.nii' ;%  which('sANO.nii' );
-        pref.template  =xvv.s.AVGT  ;%which('sAVGT.nii');
+    
+    
+    outdir=xvv.s.output_dir;
+    pref.mip = fullfile(outdir, 'xstatMIP.mat');
+    pref.anofile   =xvv.s.ANO  ;%'F:\data3\eranet_VBM_test\templates\ANO.nii' ;%  which('sANO.nii' );
+    pref.template  =xvv.s.AVGT  ;%which('sAVGT.nii');
     
 else
     disp('xvv: empty');
 end
 
-    
+
 
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -1271,7 +1400,7 @@ if 0
 end
 % pref.nmaxclust= 3    ; %    ; - number of maxima per cluster [3]
 % pref.clustdist= 0.5  ; %mm  ; - distance among clusters {mm} [8]
-% 
+%
 % pref.thresh       =  0.05 ;
 % pref.clustersize  =    30 ;
 % pref.mcp          = 'FWE' ;
@@ -1381,15 +1510,15 @@ end
 
 if isempty(files); return; end
 
-   %% get values from editfield___________________________________________
-   hg=findobj(0,'tag','vvstat');
-   prefs.mcp        = get(findobj(hg,'tag','mcp'           ),'string') ;
-   prefs.thresh     = get(findobj(hg,'tag','thresh'        ),'string') ;
-   prefs.clustersize= get(findobj(hg,'tag','clustersize'   ),'string') ;
-   try; prefs.thresh       =str2num(prefs.thresh      ); end
-   try; prefs.clustersize  =str2num(prefs.clustersize ); end
+%% get values from editfield___________________________________________
+hg=findobj(0,'tag','vvstat');
+prefs.mcp        = get(findobj(hg,'tag','mcp'           ),'string') ;
+prefs.thresh     = get(findobj(hg,'tag','thresh'        ),'string') ;
+prefs.clustersize= get(findobj(hg,'tag','clustersize'   ),'string') ;
+try; prefs.thresh       =str2num(prefs.thresh      ); end
+try; prefs.clustersize  =str2num(prefs.clustersize ); end
 
-   
+
 
 
 mb={};
@@ -1411,7 +1540,7 @@ try; assignin('base','SPM', SPM); end
 loadothercontrast('initialize');
 
 drawnow;
-hfig=findobj(0,'tag','vvstat');   
+hfig=findobj(0,'tag','vvstat');
 figure(hfig);
 uicontrol(findobj(hfig,'tag','loadothercontrast'));
 
@@ -1431,7 +1560,7 @@ global lab
 %     lab.at=at;
 %     disp('..loading atlas');
 % end
-% 
+%
 % if isfield(lab,'template')==0
 %     lab.template= 'O:\data\voxelwise_Maritzen4tool\templates\AVGT.nii';
 % end
@@ -1582,7 +1711,7 @@ id      =lab.a(ca(1),ca(2),ca(3));
 % else
 %     atlasname=lab.at(ixatlas).name;
 % end
-% 
+%
 % if isempty(ixfibatlas);
 %     atlasfibname=[' &empty;WM ']; %disp('no region found');
 % else
@@ -1607,9 +1736,9 @@ if 1
     xSPM=evalin('base','xSPM');
     distco=sum((xSPM.XYZmm-repmat(co,[1 size(xSPM.XYZmm,2)])).^2,1);
     ix2=find(distco==min(distco));
-%     disp([ xSPM.XYZmm(:,ix2)']);
-%     disp([co']);
-%     disp([xSPM.Z(ix2)]);
+    %     disp([ xSPM.XYZmm(:,ix2)']);
+    %     disp([co']);
+    %     disp([xSPM.Z(ix2)]);
 end
 
 
@@ -1622,7 +1751,7 @@ set(ht,'style','popupmenu','string',['-'],'backgroundcolor',[1 1 1],'enable','on
 % set(ht,'string',['<html><b><font color="gray"> raum <font color="blue"> ERDE <font color="green">1<2</font>'],'backgroundcolor',[1 1 1],'enable','on')
 
 msg=[ '<html><b>' ...
-    '<font color="red">'           [sprintf('Y=%2.3f ',xSPM.Z(ix2))]               ...      
+    '<font color="red">'           [sprintf('Y=%2.3f ',xSPM.Z(ix2))]               ...
     '<font color="gray">'          [ ' [' sprintf('%2.3f %2.3f %2.3f',co)  '] ']    ...
     '<font color="blue">'          [atlasname ' '  ] ...
     '<font color="green">'         [atlasfibname] ...
@@ -1635,9 +1764,9 @@ if isempty(ht);
     %disp(lab.at(ixatlas).name);
     cprintf([0 .4 0],[tx   '\n']);
 else
-%     set(ht,'string',tx,'fontweight','bold');
+    %     set(ht,'string',tx,'fontweight','bold');
     set(ht,'string',msg)
-
+    
 end
 
 
@@ -1820,36 +1949,331 @@ hMIPax = findobj('tag','hMIPax');
 spm_mip_ui('SetCoords',get(gcbo,'UserData'),hMIPax);
 
 
-function exporttable(e,e2);
+%% ===============================================
+% create post-hoc code snippet
+function code_posthoc(e,e2)
+disp('...wait..');
+t=preadfile(which([mfilename '.m'])); t=t.all;
+il=[
+    max(regexpi2(t,'%_###anchor_code_posthoc_start##'))
+    max(regexpi2(t,'%_###anchor_code_posthoc_stop##'))
+    ];
+t=t(il(1)+1:il(2)-1);
+uhelp(t,1,'name','code snippet post-hoc summary');
+disp('Done');
+
+return
+
+%_###anchor_code_posthoc_start###
+
+%% #ko  generate voxwise analysis output for each folder that contains an SPM-analysis
+% #r COPY ENTIRE CONTENT AND MODIFY ACCODINGLY..
+% 
+% #b OUTPUT:
+% [1] a powerpoint-file for each SPM-analysis-folder (filename based on SPM-dir-name)
+% [2] an output-folder containing:
+%      -the stat.table as excelfile
+%      -the thresholded-volume accord. to the applied statistical specifications
+% * here the following is PPT/excelfiles & volumes are made for
+%   a) uncorrected at p=0.001
+%   b) peak-cluster-threshold at p=0.001 with clusterSize-estimation
+%   c) FWE-coorection at p=0.05
+% ===============================================
+
+warning off;
+clc
+
+ % ==============================================
+ %% #km  mandatory inputs (change these paramters)
+ % ===============================================
+ % [1] pabase is the main-folder containing subfolders with SPM-analiys
+pabase='H:\Daten-2\Imaging\AG_Maritzen\Processing_ANTX\allmice\voxwiseRes_24jan22\SMOnone';
+
+ % [2] get DIRS of SPM-analysis, the folder "pabase" contains one or several subdirs with SPM-analyses
+ % subfolders containing SPM-analyses starting with 'r_x_'  ..thus use '^r_x_.*' as filter
+ % alternatively "spmdirs" (cell) can contain a list of manually set full-path-folders
+ % note that each of the folders must contain a 'SPM.mat'-file
+[spmdirs]=spm_select('FPList',pabase,'dir','^r_x_.*'); spmdirs=cellstr(spmdirs);
+
+ % [3] fileName prefix of the resulting powerPoint file (stored in "pabase"-dir)
+PPTFILEprefix  = 'result_voxw_26jan22';              % PowerPoint - fileNamePrefix
+
+ % [4] output-folder of excel-files and thresholded volumes
+outdir         = fullfile(pabase,'results_26jan22'); % output-folder for Excelfiles & volumes
+
+% ==============================================
+%% #b    some settings
+% ===============================================
+cd(pabase);
+[~,spmdirsShort]=fileparts2(spmdirs); % shortNames of the SPM-dirs..used for PPT-file-names
+mkdir(outdir); % make outdir-folder
+% ==============================================
+%% #b   loop over SPM-dirs
+% ===============================================
+
+for g=1:length(spmdirs) % SPM_folders
+    thisDir=spmdirs{g};
+    PPTFILE=fullfile(pabase,[PPTFILEprefix '_' spmdirsShort{g} '.pptx'   ]);
+    
+    % #b  =====LOAD SPMmat==========================================
+    cd(thisDir);
+    cf; xstat('loadspm',fullfile(pwd,'SPM.mat'));  
+
+    % #b =====loop over directional contrasts (x<y, x>y)=============
+    for con=1:2
+        if mod(con,2)==1 % alterate PPT-backgroundcolor for each contrast
+            bgcol=[1 1 1]; % PPT-bgColor
+            DOC='new';  % for each SPM-DIR, if contrast is 1--> create "new" PPTfile
+        else
+            bgcol=[0.8941    0.9412    0.9020];
+            DOC='add';   % add PPT-slide to existing PPT-file
+        end
+        
+        % #m [1] SUMMARY: uncorrected, at p=0.001, clusterSize k=1 -------
+        xstat('set',struct('MCP','none','thresh',0.001,'clk',1,'con',con,'show',0)); % set PARAMETER
+        xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  )); % save stat. table in PPT
+        xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+        xstat('savevolume',outdir); % save tresholded volume
+        xstat('export',outdir);     % save stat. table as excelfile
+        
+        % #m [2] SUMMARY: Peak-cluster with estimated clusterSize -------
+        clustersize = cp_cluster_Pthresh(xSPM, 0.001); %estimate clusterSize
+        xstat('set',struct('MCP','none','thresh',0.001,'clk',clustersize,'con',con,'show',0)); % set PARAMETER
+        xstat('report',PPTFILE,struct('doc','add','con',con,'bgcol',bgcol    )); % save stat. table in PPT
+        xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  ));% save volume in PPT
+        xstat('savevolume',outdir); % save tresholded volume
+        xstat('export',outdir);     % save stat. table as excelfile
+        
+        % #m [3] SUMMARY: FWE_CORRECTION, at p=0.05,  clusterSize k=1 -------
+        xstat('set',struct('MCP','FWE','thresh',0.05,'clk',1,'con',con,'show',0)); % set PARAMETER
+        xstat('report',PPTFILE,struct('doc','add','con',con,'bgcol',bgcol    )); % save stat. table in PPT
+        xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+        xstat('savevolume',outdir); % save tresholded volume
+        xstat('export',outdir);     % save stat. table as excelfile
+        
+    end
+end
+cd(pabase);
+
+%_###anchor_code_posthoc_stop###
+
+
+
+
+function export(file,s)
+
+%===================================================================================================
+% ==============================================
+%%   examples:
+% ===============================================
+
+%% examples
+%     %% programmatically save as *TXT-file*
+%     % save as file 'testZ.txt' as TXT-file (type=2)
+%     xstat('export',fullfile(pwd,'testZ.txt'),struct('type',2));
+%     % save as file ('x_c_radial_dif__1ko2ko_GT_1wt2ko__FWE0.txt'), filename
+%     % is constructed from internal parameter , as TXT-file (type=2)
+%     xstat('export',pwd,struct('type',2));
+%     % save as file ('myPrefix_x_c_radial_dif__1ko2ko_GT_1wt2ko__FWE0.txt'),
+%     %filename is constructed from internal parameter , as TXT-file (type=2),
+%     %add prefix 'myPrefix_'
+%     xstat('export',pwd,struct('type',2,'prefix','myPrefix_'));
+%     % save as file 'myPrefix_testZ2.txt' as TXT-file (type=2), add prefix 'myPrefix_'
+%     xstat('export',fullfile(pwd,'testZ2.txt'),struct('type',2,'prefix','myPrefix_'));
+%     
+%     %% programmatically save as *EXCEL-file*
+%     % save as file 'testZ.xlsx' as Excel-file
+%     xstat('export',fullfile(pwd,'testZ.xlsx'))
+%     % same as...
+%     xstat('export',fullfile(pwd,'testZ.xlsx'),struct('type',1));
+%     % save as file ('x_c_radial_dif__1ko2ko_GT_1wt2ko__FWE0.xlsx'), filename
+%     % is constructed from internal parameter , as Excel-file (type=1)
+%     xstat('export',pwd);
+%     %same as..
+%     xstat('export',pwd,struct('type',1));
+%     % save as file ('myPrefix_x_c_radial_dif__1ko2ko_GT_1wt2ko__FWE0.xlsx'),
+%     %filename is constructed from internal parameter , as Excel-file (type=1),
+%     %add prefix 'myPrefix_'
+%     xstat('export',pwd,struct('type',1,'prefix','myPrefix_'));
+%     % save as file 'myPrefix_testZ3.txt' as Excel-file (type=1), add prefix 'myPrefix_'
+%     xstat('export',fullfile(pwd,'testZ3.txt'),struct('type',1,'prefix','myPrefix_'));
+%     
+    
+
+% "export"-structParameter -----
+s0.type=1 ; %save as: {numeric value}, [1] excelfile or [2] textfile
+s0.prefix=''; % <optional> add prefix string  to fileName
+
+if isempty(s)==1
+    s=struct();
+end
+s=catstruct(s0,s);
+
+%% =======[get tabl+info]========================================
+[p nametag]=getparameter();% get mainParameter
+[tb tbnumeric add]=maketable; %get TABLES
+% ==============================================
+%%   [1] SAVE as txt-file
+% ===============================================
+
+if s.type==2 %text--file
+    if isdir(file)
+        pa=file;
+        fi=[ nametag];
+    else
+        [pa fi ext]=fileparts(file);
+    end
+    [~,fi,~]=fileparts(fi);
+    fiout=fullfile(pa,[s.prefix fi '.txt']);
+    pwrite2file(fiout,tb);
+    try
+        disp(['saved table <a href="matlab: explorerpreselect(''' fiout ''')">' fiout '</a>']);
+    end
+    return
+end
+% ==============================================
+%%   [2] SAVE as Excel-file
+% ===============================================
+if isdir(file)
+    pa=file;
+    fi=[ nametag];
+else
+    [pa fi ext]=fileparts(file);
+end
+[~,fi,~]=fileparts(fi);
+fiout=fullfile(pa,[s.prefix fi '.xlsx']);
+
+
+
+% disp(fiout);
+% return
+%% =========get table and info ======================================
+xSPM=evalin('base','xSPM');
+SPM=evalin('base','SPM');
+hg=findobj(0,'tag','vvstat');
+%% ===============================================
+% char(SPM.xY.P)
+% xSPM.Ic
+nifiles=SPM.xY.P;
+[pani fini exni]=fileparts2(nifiles);
+[~,  subdir ]  =fileparts2(pani);
+NIIfiles=cellfun(@(a,b){[ a b ]}, fini,exni);
+% ==============IPARAMETER=================================
+lg={};
+lg(end+1,1:2)= {'Image         ' NIIfiles{1}};
+lg(end+1,1:2)= {'contrast      ' xSPM.title};
+lg(end+1,1:2)= {'MCP           ' get(findobj(hg,'tag','mcp'),'string')};
+lg(end+1,1:2)= {'Threshold     ' ['p<' num2str(get(findobj(hg,'tag','thresh'),'string'))]};
+lg(end+1,1:2)= {'CLustersize   ' ['k=' get(findobj(hg,'tag','clustersize'),'string')]};
+lg(end+1,1:2)= {'contrastName  ' SPM.xCon(xSPM.Ic).name};
+lg(end+1,1:2)= {'contrastNo    ' ['No-' num2str(xSPM.Ic)]};
+lg(end+1,1:2)= {'statstic      ' SPM.xCon(xSPM.Ic).STAT };
+if min(size(SPM.xCon(xSPM.Ic).c))==1
+    lg(end+1,1:2)= {'contrastDir  ' [ '[' num2str(SPM.xCon(xSPM.Ic).c(:)') ']']};
+else
+    %lg=[ lg;{'contrastDir: '} ;plog([],num2cell(SPM.xCon(xSPM.Ic).c),0,'','plotlines=0')  ]
+    lg(end+1,1:2)= {'contrastDir ' ''};
+    dx=plog([],num2cell(SPM.xCon(xSPM.Ic).c),0,'','plotlines=0');
+    lg=[lg;[ repmat({''},size(dx,1),1) dx ]]
+end
+lg(end+1,1:2)={'dir           : ' xSPM.swd };
+% ==============INPUT data rable=================================
+lg(end+1,1:2)={['']};
+lg(end+1,1)= {['INPUT-DATA*** ']};
+dx=[ subdir nifiles  num2cell(SPM.xX.X)   ];
+hdx= repmat({''},[1 size(dx,2) ]);
+hdx([ 1 2 ])={'ANIMAL/Dir'  'Path' };
+lg(end+1:end+size(dx,1)+1,1:size(dx,2) )=[hdx; dx];
+lg(end+1,1:2)={['']};
+% ===========ADD INFO====================================
+lg(end+1,1)= {['ADDITIONAL INFO*** ']};
+lg(end+1:end+size(add,1),2 )=[add];
+
+% ======[1]WRITE INFO-sheet=========================================
+pwrite2excel(fiout,{1 'info'},{'Field' ,'value'},[],lg);
+
+% ========[2]WRITE DATA-sheet =======================================
+%% (b)---write data
+% pwrite2excel(fiout,{2 sheetname},tbnumeric(1,:),tbnumeric(2,:),tbnumeric(3:end,:));
+pwrite2excel(fiout,{2 'voxstat'},tbnumeric(1,:),tbnumeric(2,:),tbnumeric(3:end,:));
+
+% ========[3]WRITE NOTE =======================================
+try
+    note={
+        ['img: ' NIIfiles{1}]
+        ['con: '  xSPM.title]
+        ['MCP: ' get(findobj(hg,'tag','mcp'),'string')  ]
+        ['TR: ' num2str(get(findobj(hg,'tag','thresh'),'string')) ]
+        ['k : ' get(findobj(hg,'tag','clustersize'),'string')]
+        };
+    xlsinsertComment(fiout,note, 2, 6, 11);
+end
+%% ===============================================
+showinfo2('voxSTAT-excelfile',fiout);
+
+
+function exporttable(e,e2); %textfile
 tb=maketable;
 if isempty(tb); return; end
 % uhelp(plog({}, [he;d2],0,'','s=0'),1)
 uhelp(tb,1);
-
-[fi pa]=uiputfile('*.txt','save table as textfile');
+%% ======name suggestion+ UI-save as  ================================
+[p nametag]=getparameter();% get mainParameter
+finame=[nametag '.txt'];
+fpfile=fullfile(pwd,finame);
+[fi pa]=uiputfile(fpfile,'save table as textfile');
 if ischar(fi)
     [~,fi,~]=fileparts(fi);
     fiout=fullfile(pa,[fi '.txt']);
     pwrite2file(fiout,tb);
-   try
-     disp(['saved table <a href="matlab: explorerpreselect(''' fiout ''')">' fiout '</a>']);
-   end
+    try
+        disp(['saved table <a href="matlab: explorerpreselect(''' fiout ''')">' fiout '</a>']);
+    end
 end
 
+function exporttableXLS(e,e2)
+
+[p nametag]=getparameter();% get mainParameter
+finame=[nametag '.xlsx'];
+fpfile=fullfile(pwd,finame);
+% [fi pa]=uiputfile(fpfile,'save table as textfile');
+
+[fi pa]=uiputfile(fpfile,'save table as excelfile');
+if isnumeric(fi); return; end
+[~,fi,~]=fileparts(fi);
+fiout=fullfile(pa,[fi '.xlsx']);
+disp('...export table..wait..');
+xstat('export',fiout);
+disp('DONE!');
 
 
-function tb=maketable
+function [tb tbnumeric info]=maketable
 % spm_list('TxtList',r,1)
 
-
+[p nametag]=getparameter();% get mainParameter
 global lab
 
 TabDat=evalin('base','TabDat');
 r=TabDat;
+%----------
+add={};
+add(end+1,1)={r.str};
+for i=1:size(r.ftr,1)
+    add(end+1,1)={  sprintf(r.ftr{i,1},r.ftr{i,2})   };
+end
+% [3]----info
+info=add;
+%---------
+
 if isempty(r.dat)
     disp(['no suprathreshold clusters found - nothing saved']);
-    tb=[];
-   return 
+    %tb=[];
+    tbnumeric=[fieldnames(p) struct2cell(p) ];
+    tbnumeric(end+1,:)={'Result' 'no suprathreshold clusters found'} ;
+    
+    tb=plog([],tbnumeric,0,'','plotlines=0');
+    tb=[tb ; repmat({''},5,1) ;add ];
+    return
 end
 
 dat=[r.dat(:,1:end-1) num2cell([r.dat{:,end}]')];
@@ -1870,16 +2294,22 @@ d2(:,5)  =cellfun(@(a){ sprintf('%6.0i', a)},dat(:,5));
 
 he=r.hdr(1:2,1:end-1);
 he=[he {'x' 'y' 'z'  'Labels'; 'mm' 'mm' 'mm' '-'}];
-
-add={};
-add(end+1,1)={r.str};
-for i=1:size(r.ftr,1)
-    add(end+1,1)={  sprintf(r.ftr{i,1},r.ftr{i,2})   };
-end
+% %----------
+% add={};
+% add(end+1,1)={r.str};
+% for i=1:size(r.ftr,1)
+%     add(end+1,1)={  sprintf(r.ftr{i,1},r.ftr{i,2})   };
+% end
+% % [3]----info
+% info=add;
+% %---------
 
 r2=plog({}, [he;d2],0,'','s=0;plotlines=0');
 lin={repmat('=',1,length(r2{1}))};
 tb=[lin; r2(1:2);lin; r2(3:end);lin; add];
+
+%[2] numeric table for excel-export ------------
+tbnumeric=[he;dat];
 
 
 
@@ -1901,17 +2331,28 @@ v1=['!start ' exefile ' ' f1 ' '];
 v2=['-o ' f2 ' '];
 v3=['-c -28 -l ' num2str(lim(1)) ' -h ' num2str(lim(2)) ' -b 40'];
 % v3=['-c -28 -l ' num2str(lim(1)) ' -h ' num2str(lim(2)) ];
- eval([v1 v2 v3]);
+eval([v1 v2 v3]);
 
 % !start o:\antx\mricron\mricron.exe o:\antx\mritools\ant\templateBerlin_hres\sAVGT.nii -o O:\data\voxelwise_Maritzen4tool\bla2.nii -c -28 -l 6 -h 10 -b -0
 % !start o:\antx\mricron\mricron.exe o:\antx\mritools\ant\templateBerlin_hres\sAVGT.nii -o O:\data\voxelwise_Maritzen4tool\bla2.nii -c -28 -l 6.5488 -h 13.4955 -b -0
 
-function save_threshvolume(e,e2)
+function savevolume(file,s)
+
+% "savevolume"-structParameter -----
+% s0.type=1 ; %save as: {numeric value}, [1] excelfile or [2] textfile
+s0.prefix=''; % <optional> add prefix string  to fileName
+if isempty(s)==1
+    s=struct();
+end
+s=catstruct(s0,s);
+save_threshvolume([],[],file,s);
+
+function save_threshvolume(e,e2,file,s)
 
 xSPM = evalin('base','xSPM;');
 XYZ  = xSPM.XYZ;
 
-action='thresh'
+action='thresh';
 switch lower(action)
     case 'thresh'
         Z = xSPM.Z;
@@ -1940,14 +2381,40 @@ switch lower(action)
     otherwise
         error('Unknown action.');
 end
+%% =========[get parameter]======================================
 
+[p nametag]=getparameter();% get mainParameter
+%% ======check inputs=========================================
+if exist('s')~=1
+    s.prefix='';
+end
 
-[fi pa]=uiputfile('*.nii','save thresholded nifti-volume as..');
-if isnumeric(fi); return; end
+if exist('file')~=1
+    [fi pa]=uiputfile(fullfile(pwd,[ 'thresh_' nametag  '.nii']),'save thresholded nifti-volume as..');
+    if isnumeric(fi); return; end
+    fiout=fullfile(pa, [s.prefix strrep(fi,'.nii','.nii') ]);
+else
+    if isdir(file)
+        pa =file;
+        fi =nametag;
+    else
+        [pa fi ext]=fileparts(file);
+    end
+    [~,fi,~]=fileparts(fi);
+    fiout=fullfile(pa,[s.prefix fi '.nii']);
+end
 
-fileoutname=fullfile(pa, [strrep(fi,'.nii','.nii') ]);
+%  disp(fiout);
+% return
+%% ==========[save volume]=====================================
+global lab
+disp('...saving volume...wait..');
+
 spm_write_filtered(Z, XYZ, xSPM.DIM, xSPM.M,...
-    sprintf('SPM{%c}-filtered: u = %5.3f, k = %d',xSPM.STAT,xSPM.u,xSPM.k),fileoutname);
+    sprintf('SPM{%c}-filtered: u = %5.3f, k = %d',xSPM.STAT,xSPM.u,xSPM.k),fiout);
+% showinfo2('voxSTAT-volume',lab.template,fiout);
+showinfo2('voxSTAT-volume',lab.template,fiout,7);
+disp('Done!');
 
 
 
@@ -1991,7 +2458,7 @@ try ;     cd(s.workpath); end
 % set(  findobj(0,'tag','vvstat') ,'userdata',s)
 
 
-outdir   =  s.output_dir   ;          
+outdir   =  s.output_dir   ;
 rmdir(outdir,'s');
 mkdir(outdir);
 
@@ -2006,7 +2473,7 @@ for i=1:size(g1,1)
     mb{1}.spm.stats.factorial_design.des.pt.pair(i).scans =dv;
     
 end
-    
+
 mb{1}.spm.stats.factorial_design.dir ={outdir}  ;% {'O:\data\voxelwise_Maritzen4tool\test_1'};
 
 
@@ -2119,14 +2586,14 @@ if s.smoothing==1
         %disp([i]);     disp(char(dv));
         mb{1}.spm.stats.factorial_design.des.pt.pair(i).scans =dv;
     end
-
+    
     
     mb=  [ms mb ]  ;% add smoothing job
     %% UPDATE dependency-order
     mb{3}.spm.stats.fmri_est.spmmat(1).src_exbranch   = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
     mb{4}.spm.stats.con.spmmat(1).src_exbranch        = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{5}.spm.stats.results.spmmat(1).src_exbranch    = substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1}); 
-
+    mb{5}.spm.stats.results.spmmat(1).src_exbranch    = substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1});
+    
 end
 
 %..........................................
@@ -2181,9 +2648,9 @@ regresvals=[];
 for i=1:length(grps)
     ix=find(strcmp(s.d(:,2),grps{i}));
     %niftis{i,1}=s.d(ix,4)
-     niftis{i,1}=cellfun(@(a){[ a ',1']},s.d(ix,4));
+    niftis{i,1}=cellfun(@(a){[ a ',1']},s.d(ix,4));
     if ~isempty(x.regress_col)
-            regresvals=[regresvals;  cell2mat(s.d(ix,5:5+length(x.regress_col)-1)) ];
+        regresvals=[regresvals;  cell2mat(s.d(ix,5:5+length(x.regress_col)-1)) ];
     end
 end
 regressnames=s.regressname;
@@ -2191,7 +2658,7 @@ regressnames=s.regressname;
 %———————————————————————————————————————————————
 %   get other parans
 %———————————————————————————————————————————————
-outdir    = s.output_dir; 
+outdir    = s.output_dir;
 rmdir(outdir,'s');
 mkdir(outdir);
 
@@ -2232,7 +2699,7 @@ mb{1}.spm.stats.factorial_design.des.anova.ancova = 0;
 %%
 %% without covariates
 if isempty(x.regress_col)
-   mb{1}.spm.stats.factorial_design.cov = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {}); 
+    mb{1}.spm.stats.factorial_design.cov = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {});
 else
     %% WITH covariates
     for i=1:size(x.regress_col,2)
@@ -2339,7 +2806,7 @@ end
 % % % mb{3}.spm.stats.con.consess{1}.tcon.name = 'a1>a2';
 % % % mb{3}.spm.stats.con.consess{1}.tcon.convec = [1 -1];
 % % % mb{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
-% % % 
+% % %
 % % % mb{3}.spm.stats.con.consess{2}.tcon.name = 'a1<a2';
 % % % mb{3}.spm.stats.con.consess{2}.tcon.convec = [-1 1];
 % % % mb{3}.spm.stats.con.consess{2}.tcon.sessrep = 'none';
@@ -2388,7 +2855,7 @@ if s.smoothing==1
     for i=1:length(grps)
         nifti_all=[nifti_all;  niftis{i} ] ;
     end
-
+    
     
     
     
@@ -2402,9 +2869,9 @@ if s.smoothing==1
     
     %change inputfiles to smoothed images
     for i=1:length(grps)
-        mb{1}.spm.stats.factorial_design.des.anova.icell(i,1).scans = stradd( niftis{i},'s',1);   
+        mb{1}.spm.stats.factorial_design.des.anova.icell(i,1).scans = stradd( niftis{i},'s',1);
     end
-
+    
     
     
     mb=  [ms mb ]  ;% add smoothing job
@@ -2470,7 +2937,7 @@ levels    =cell2mat(cellfun(@(a){[str2num(a)]},levels));
 regressors=[];
 if ~isempty(s.regressname)
     regressors=s.d(:,length(s.dfactornames)+2: length(s.dfactornames)+2 +length(s.regressname)-1);
-   regressors=regressors(:,1) ;
+    regressors=regressors(:,1) ;
 end
 comb=unique(levels,'rows');
 
@@ -2496,7 +2963,7 @@ if ~isempty(covars);     covars=cell2mat(covars);          end
 %———————————————————————————————————————————————
 %   get other parans
 %———————————————————————————————————————————————
-outdir    = s.output_dir; 
+outdir    = s.output_dir;
 try; rmdir(outdir,'s'); end
 try;mkdir(outdir);end
 mask      = s.mask;
@@ -2537,7 +3004,7 @@ if ~isempty(covars)           %COVARIANCE
     mb{1}.spm.stats.factorial_design.cov.iCC    = 1;
 else
     mb{1}.spm.stats.factorial_design.cov = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {});
-
+    
 end
 
 mb{2}.spm.stats.fmri_est.spmmat(1) = cfg_dep;
@@ -2614,7 +3081,7 @@ if s.smoothing==1
     for i=1:size(scans,1)
         nifti_all=[nifti_all;  scans{i} ] ;
     end
-
+    
     ms={};
     ms{1}.spm.spatial.smooth.data = [nifti_all];
     ms{1}.spm.spatial.smooth.fwhm = smoothfwhm ;% [0.28 0.28 0.28];
@@ -2626,12 +3093,12 @@ if s.smoothing==1
     for i=1:size(scans,1)
         mb{1}.spm.stats.factorial_design.des.fd.icell(i).scans =      stradd( scans{i},'s',1);
     end
-  
+    
     mb=  [ms mb ]  ;% add smoothing job
     %% UPDATE dependency-order
     mb{3}.spm.stats.fmri_est.spmmat(1).src_exbranch   = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
     mb{4}.spm.stats.con.spmmat(1).src_exbranch        = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{5}.spm.stats.results.spmmat(1).src_exbranch    = substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1});  
+    mb{5}.spm.stats.results.spmmat(1).src_exbranch    = substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1});
 end
 
 
@@ -2684,9 +3151,8 @@ if isfield(s,'grp_comparison') && ~isempty(s.grp_comparison)
     
     g1=getfield(s,['grp_' num2str(groups(1))] );
     g2=getfield(s,['grp_' num2str(groups(2))] );
-    g1(cellfun(@isempty, g1))=[]; %remove dataSets from list that do not exist
+    g1(cellfun(@isempty, g1))=[]; %remove nonfinding dataSets from list
     g2(cellfun(@isempty, g2))=[];
-    
     if isempty(g1{1})==1;        g1={}; end
     if isempty(g2{1})==1;        g2={}; end
     groupLabels=[s.classes(groups(1)) s.classes(groups(2))];
@@ -2694,7 +3160,7 @@ if isfield(s,'grp_comparison') && ~isempty(s.grp_comparison)
     
 else
     
-    groupLabels=[s.classes(1) s.classes(2)]; 
+    groupLabels=[s.classes(1) s.classes(2)];
     
 end
 
@@ -2704,7 +3170,7 @@ try; delete(fullfile(outdir,'*.nii'));end
 % try; rmdir(outdir,'s'); end
 mkdir(outdir);
 
-% 
+%
 %remove xls-indicated subjects that have no data (path or volume)
 g1=g1(~cellfun('isempty',g1));
 g2=g2(~cellfun('isempty',g2));
@@ -2838,7 +3304,7 @@ if s.smoothing==1
     %% UPDATE dependency-order
     mb{3}.spm.stats.fmri_est.spmmat(1).src_exbranch   = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
     mb{4}.spm.stats.con.spmmat(1).src_exbranch        = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{5}.spm.stats.results.spmmat(1).src_exbranch    = substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1});  
+    mb{5}.spm.stats.results.spmmat(1).src_exbranch    = substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1});
 end
 
 
@@ -2888,7 +3354,7 @@ try ;     cd(s.workpath); end
 
 g1        = s.grp_1;
 
-outdir    = s.output_dir; 
+outdir    = s.output_dir;
 rmdir(outdir,'s');
 mkdir(outdir);
 
@@ -3042,9 +3508,9 @@ if ischar(e) && strcmp(e,'initialize')
     
     %thiscon=find(~cellfun('isempty',strfind(u.cons,xSPM.title)));
     thiscon=find(strcmp(u.cons,xSPM.title));
-     cons=u.cons;
-%     cons{thiscon}=['<html><font color="green"><b>' u.cons{thiscon} '</font>'];
-%     % web('text://<font color="green">This is some text!</font>')
+    cons=u.cons;
+    %     cons{thiscon}=['<html><font color="green"><b>' u.cons{thiscon} '</font>'];
+    %     % web('text://<font color="green">This is some text!</font>')
     set(findobj(0,'tag','loadothercontrast'),'string',[cons],'value',thiscon);
     
     
@@ -3076,43 +3542,43 @@ if ishandle(e)
     w.u= 0.0500;
     w.k= 0;
     
-   %% get values from editfield___________________________________________
+    %% get values from editfield___________________________________________
     
-   prefs.mcp        = get(findobj(gcf,'tag','mcp'           ),'string') ;
-   prefs.thresh     = get(findobj(gcf,'tag','thresh'        ),'string') ;
-   
-   % get cluster-Size
-   if strcmp(get(findobj(gcf,'tag','clustersize'   ),'string'),'auto')
-      clustersize=cp_cluster_Pthresh(xSPM, str2num(prefs.thresh)  )
-      set(findobj(gcf,'tag','clustersize'),'string', num2str(clustersize));
-   end
-   
-   prefs.clustersize= get(findobj(gcf,'tag','clustersize'   ),'string') ;
-
-  try; prefs.thresh       =str2num(prefs.thresh      ); end
-  try; prefs.clustersize  =str2num(prefs.clustersize ); end
-  w.thresDesc = prefs.mcp;
-  w.u         = prefs.thresh;
-  w.k         = prefs.clustersize;
-  
-
-   
-  if 0
-      %% OVERRIDE BASED ON PREVIOUSLY LOADED CONTRAST
-      try
-          %     [num2str(xSPM.k)   xSPM.thresDesc]
-          xSPMold=evalin('base','xSPM');
-          thresh=xSPMold.thresDesc;
-          if ~isempty(strfind(thresh,'unc.'));
-              w.thresDesc= 'none';
-          else
-              w.thresDesc= 'FWE';
-          end
-          w.u=str2num(strrep(strtok(thresh,'('),'p<',''));
-          w.k        = xSPMold.k        ;
-          w.Ex       = xSPMold.Ex;
-      end
-  end
+    prefs.mcp        = get(findobj(gcf,'tag','mcp'           ),'string') ;
+    prefs.thresh     = get(findobj(gcf,'tag','thresh'        ),'string') ;
+    
+    % get cluster-Size
+    if strcmp(get(findobj(gcf,'tag','clustersize'   ),'string'),'auto')
+        clustersize=cp_cluster_Pthresh(xSPM, str2num(prefs.thresh)  )
+        set(findobj(gcf,'tag','clustersize'),'string', num2str(clustersize));
+    end
+    
+    prefs.clustersize= get(findobj(gcf,'tag','clustersize'   ),'string') ;
+    
+    try; prefs.thresh       =str2num(prefs.thresh      ); end
+    try; prefs.clustersize  =str2num(prefs.clustersize ); end
+    w.thresDesc = prefs.mcp;
+    w.u         = prefs.thresh;
+    w.k         = prefs.clustersize;
+    
+    
+    
+    if 0
+        %% OVERRIDE BASED ON PREVIOUSLY LOADED CONTRAST
+        try
+            %     [num2str(xSPM.k)   xSPM.thresDesc]
+            xSPMold=evalin('base','xSPM');
+            thresh=xSPMold.thresDesc;
+            if ~isempty(strfind(thresh,'unc.'));
+                w.thresDesc= 'none';
+            else
+                w.thresDesc= 'FWE';
+            end
+            w.u=str2num(strrep(strtok(thresh,'('),'p<',''));
+            w.k        = xSPMold.k        ;
+            w.Ex       = xSPMold.Ex;
+        end
+    end
     
     
     [hReg,xSPM,SPM] = spm_results_ui('setup',  w);
@@ -3123,18 +3589,18 @@ if ishandle(e)
     loadothercontrast('initialize',[]);
     
     
-    hfig=findobj(0,'tag','vvstat');    %SHOW SECTIONS 
+    hfig=findobj(0,'tag','vvstat');    %SHOW SECTIONS
     showvol=get(findobj(hfig,'tag','showSectionstoggle'),'value') ;
     if showvol==1 ;        showSections([],[]) ;     end
     
     %BACK TO GUI
     drawnow;
     figure(hfig);
-%     thiscon=find(~cellfun('isempty',strfind(u.cons,xSPM.title)));
-%     cons=u.cons;
-%     cons{thiscon}=['<html><font color="green"><b>' u.cons{thiscon} '</font>'];
-%     % web('text://<font color="green">This is some text!</font>')
-%     set(findobj(0,'tag','loadothercontrast'),'string',[cons],'value',thiscon);
+    %     thiscon=find(~cellfun('isempty',strfind(u.cons,xSPM.title)));
+    %     cons=u.cons;
+    %     cons{thiscon}=['<html><font color="green"><b>' u.cons{thiscon} '</font>'];
+    %     % web('text://<font color="green">This is some text!</font>')
+    %     set(findobj(0,'tag','loadothercontrast'),'string',[cons],'value',thiscon);
 end
 
 
@@ -3157,7 +3623,7 @@ hf=findobj(0,'tag','vvstat');
 figure(hf);
 
 if isfield(s,'MCP')
- set(findobj(hf,'tag','mcp'),'string', s.MCP );
+    set(findobj(hf,'tag','mcp'),'string', s.MCP );
 end
 if isfield(s,'thresh')
     set(findobj(hf,'tag','thresh'),'string', s.thresh );
@@ -3169,7 +3635,7 @@ end
 if isfield(s,'con')
     lb=findobj(hf,'tag','loadothercontrast');
     if isnumeric(s.con) && s.con>0 && s.con<=length(lb.String);
-    lb.Value=s.con;
+        lb.Value=s.con;
     end
 end
 
@@ -3179,16 +3645,59 @@ end
 
 %         ['TR: ' get(findobj(hg,'tag','thresh'),'string')]
 %         ['CLustersize: ' get(findobj(hg,'tag','clustersize'),'string')]
+function [p nametag]=getparameter()
+%% create parameter
+%% p     : struct with main critical parameters
+% nametag:
+%% ===========[p: struct with main critical parameters ]=====================
+
+xSPM=evalin('base','xSPM');
+SPM=evalin('base','SPM');
+hg=findobj(0,'tag','vvstat');
+
+nifiles=SPM.xY.P;
+[pani fini exni]=fileparts2(nifiles);
+[~,  subdir ]  =fileparts2(pani);
+NIIfiles=cellfun(@(a,b){[ a b ]}, fini,exni);
+p.img=NIIfiles{1};
+p.con=xSPM.title;
+p.mcp=get(findobj(hg,'tag','mcp'),'string');
+p.TR = num2str(get(findobj(hg,'tag','thresh'),'string')) ;
+p.k  = num2str(get(findobj(hg,'tag','clustersize'),'string'));
+
+% ===========[nametag: file-name suggestion ]====================================
+%
+c={};
+c(end+1,:)={'img' NIIfiles{1}};
+c(end+1,:)={'con' ['__' num2str(p.con) '__']};
+c(end+1,:)={'mcp' num2str(p.mcp)};
+c(end+1,:)={'TR'  num2str(p.TR)};
+c(end+1,:)={'k'   [ 'k' num2str(p.k) ]};
+
+cj=strjoin(reshape(c(:,2),[size(c,1) 1]),'');
+nametag=regexprep(cj,{'\s+','<' '>','.nii'},{'#','_LT_' '_GT_',''});
+
+
+% p
+%  nametag
+%% ===============================================
+
+
+
+
+
+
 
 
 function report(pptfile0,s)
 figure(findobj(0,'tag','vvstat'));
 if exist('s')~=1
-   s.doc='new'; %new pptfile, atherwise 'add' to add to existing pptfile
+    s.doc='new'; %new pptfile, atherwise 'add' to add to existing pptfile
 end
-if isfield(s,'table')==0;    s.show='table'; end % show table
+% if isfield(s,'table')==0;    s.show='table'; end % show table
 if isfield(s,'doc')==0;      s.doc ='new'; end % new doc
 if isfield(s,'bgcol')==0;    s.bgcol =[1 1 1]; end % new doc
+if isfield(s,'show')==0;     s.show='table'; end % show table
 
 
 
@@ -3211,7 +3720,7 @@ if ~isempty(isOpen),
     exportToPPTX('close');
 end
 try
-    evalc('system(''taskkill /f /im powerpnt.exe'')');
+    %evalc('system(''taskkill /f /im powerpnt.exe'')');
 end
 %% =======new PPT/add to ppt ========================================
 
@@ -3252,10 +3761,19 @@ for jj=1:length(cons)   %:   size(get(lb,'string'),1)   %1:1,
         hgfeval(get(lt,'callback'),lt);
         %----------------------------
         drawnow;
+    elseif strcmp(s.show,'volume')
+        lt=findobj(hg,'tag','showvolume');
+        hgfeval(get(lt,'callback'),lt);
+        % go to local maximum
+        try
+        spm_mip_ui('Jump',findobj(findobj(0,'tag','Graphics'),'tag','hMIPax'),'glmax');
+        end
+        %----------------------------
+        drawnow;
     end
     %% ----get info ------------------------
     info=...
-    {
+        {
         %['Contrast: ' lb.String{lb.Value} ]
         ['MCP: ' get(findobj(hg,'tag','mcp'),'string')]
         ['TR: ' get(findobj(hg,'tag','thresh'),'string')]
@@ -3296,14 +3814,14 @@ end
 
 % [pa file ext]=fileparts(pptfile);
 % if isempty(pa)
-%    
+%
 % else
 %     thisdir=pwd;
 %     cd(pa)
 %     newFile = exportToPPTX('saveandclose',file);
-%     
+%
 % end
- newFile = exportToPPTX('saveandclose',pptfile);
+newFile = exportToPPTX('saveandclose',pptfile);
 fprintf('New file has been saved: <a href="matlab:open(''%s'')">%s</a>\n',newFile,newFile);
 
 
@@ -3324,56 +3842,56 @@ uhelp(mfilename,1);
 %%   COPYNPASTE INTO GUI
 %———————————————————————————————————————————————
 if 0
-%% PAIRED TTEST
-x.excelfile=     { 'O:\data\voxelwise_Maritzen4tool\Maritzen_Animal_groups.xlsx' };	% [Excelfile]: this file contains two columns with mouseIDs (names) for timepoint T1 and T2, respectively
-x.sheetnumber=   [1];	% this sheet contains columns with mouseIDs and group assignment
-x.mouseID_colT1= [8];	% column number with the MouseIDs for T1
-x.mouseID_colT2= [9];	% column number with the MouseIDs for T2
-x.data_dir=      'O:\data\voxelwise_Maritzen4tool\dat';	% data directory (upper directory) contains dirs with mice data
-x.inputimage=    'JD.nii';	% image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-x.mask=          'local';	% <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] 
-x.output_dir=    'test1';	% path for output/statistic
-x.showSPMbatch=  [1];	% [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically 
-
-%%   TWO-SAMPLE-TTEST 	 
-x.excelfile=      { 'O:\data\voxelwise_Maritzen4tool\Maritzen_Animal_groups.xlsx' };	% [Excelfile]: this file contains a column with mouseIDs (names) and a column assigning the group
-x.sheetnumber=    [1];	% this sheet contains columns with mouseIDs and group assignment
-x.mouseID_col=    [1];	% column number with the MouseIDs
-x.group_col=      [2];	% column number with group assignment  (used when comparing groups, "regress_col" must be empty)
-x.data_dir=       'O:\data\voxelwise_Maritzen4tool\dat';	% data directory (upper directory) contains dirs with mice data
-x.inputimage=     'JD.nii';	% image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-x.grp_comparison='1vs2';	% groups to compare
-x.mask=           'local';	% <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] 
-x.output_dir=     'test2';	% path for output/statistic
-x.showSPMbatch=   [0];	% [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically 
-
-%% regression
-x.excelfile=    { 'O:\data\voxelwise_Maritzen4tool\Maritzen_Animal_groups.xlsx' };	% [Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values
-x.sheetnumber=  [1];	% this sheet contains columns with mouseIDs and regression values
-x.mouseID_col=  [1];	% column number with the MouseIDs
-x.regress_col=  [4];	% column number with regression values (used for multiple regression,"group_col" must be empty)
-x.data_dir=     'O:\data\voxelwise_Maritzen4tool\dat';	% data directory (upper directory) contains dirs with mice data
-x.inputimage=   'JD.nii';	% image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-x.mask=         'local';	% <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] 
-x.output_dir=   'test3';	% path for output/statistic
-x.showSPMbatch=[0];	% [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically 
-
-   	
-%%  ONE-WAY-ANOVA 	 
-x.excelfile=    'O:\data\voxelwise_Maritzen4tool\Maritzen_Animal_groups.xlsx';	% [Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values
-x.sheetnumber=  [2];	% this sheet contains columns with mouseIDs and regression values
-x.mouseID_col=  [1];	% column number with the MouseIDs
-x.group_col=    [3];	% column number with group assignment  (used when comparing groups)
-x.regress_col=  [4  5];	% <optional> column number(s) with regression values,otherwise empty (examples: age+gender --> regression columns are [4 5])
-x.data_dir=     'O:\data\voxelwise_Maritzen4tool\dat';	% data directory (upper directory) contains dirs with mice data
-x.inputimage=   'JD.nii';	% image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-x.mask=         'O:\data\voxelwise_Maritzen4tool\templates\AVGTmask.nii';	% <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] 
-x.output_dir=   'test4';	% path for output/statistic
-x.showSPMbatch=[0];	% [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically 
-
-
-
-
-
-
+    %% PAIRED TTEST
+    x.excelfile=     { 'O:\data\voxelwise_Maritzen4tool\Maritzen_Animal_groups.xlsx' };	% [Excelfile]: this file contains two columns with mouseIDs (names) for timepoint T1 and T2, respectively
+    x.sheetnumber=   [1];	% this sheet contains columns with mouseIDs and group assignment
+    x.mouseID_colT1= [8];	% column number with the MouseIDs for T1
+    x.mouseID_colT2= [9];	% column number with the MouseIDs for T2
+    x.data_dir=      'O:\data\voxelwise_Maritzen4tool\dat';	% data directory (upper directory) contains dirs with mice data
+    x.inputimage=    'JD.nii';	% image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
+    x.mask=          'local';	% <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
+    x.output_dir=    'test1';	% path for output/statistic
+    x.showSPMbatch=  [1];	% [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
+    
+    %%   TWO-SAMPLE-TTEST
+    x.excelfile=      { 'O:\data\voxelwise_Maritzen4tool\Maritzen_Animal_groups.xlsx' };	% [Excelfile]: this file contains a column with mouseIDs (names) and a column assigning the group
+    x.sheetnumber=    [1];	% this sheet contains columns with mouseIDs and group assignment
+    x.mouseID_col=    [1];	% column number with the MouseIDs
+    x.group_col=      [2];	% column number with group assignment  (used when comparing groups, "regress_col" must be empty)
+    x.data_dir=       'O:\data\voxelwise_Maritzen4tool\dat';	% data directory (upper directory) contains dirs with mice data
+    x.inputimage=     'JD.nii';	% image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
+    x.grp_comparison='1vs2';	% groups to compare
+    x.mask=           'local';	% <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
+    x.output_dir=     'test2';	% path for output/statistic
+    x.showSPMbatch=   [0];	% [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
+    
+    %% regression
+    x.excelfile=    { 'O:\data\voxelwise_Maritzen4tool\Maritzen_Animal_groups.xlsx' };	% [Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values
+    x.sheetnumber=  [1];	% this sheet contains columns with mouseIDs and regression values
+    x.mouseID_col=  [1];	% column number with the MouseIDs
+    x.regress_col=  [4];	% column number with regression values (used for multiple regression,"group_col" must be empty)
+    x.data_dir=     'O:\data\voxelwise_Maritzen4tool\dat';	% data directory (upper directory) contains dirs with mice data
+    x.inputimage=   'JD.nii';	% image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
+    x.mask=         'local';	% <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
+    x.output_dir=   'test3';	% path for output/statistic
+    x.showSPMbatch=[0];	% [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
+    
+    
+    %%  ONE-WAY-ANOVA
+    x.excelfile=    'O:\data\voxelwise_Maritzen4tool\Maritzen_Animal_groups.xlsx';	% [Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values
+    x.sheetnumber=  [2];	% this sheet contains columns with mouseIDs and regression values
+    x.mouseID_col=  [1];	% column number with the MouseIDs
+    x.group_col=    [3];	% column number with group assignment  (used when comparing groups)
+    x.regress_col=  [4  5];	% <optional> column number(s) with regression values,otherwise empty (examples: age+gender --> regression columns are [4 5])
+    x.data_dir=     'O:\data\voxelwise_Maritzen4tool\dat';	% data directory (upper directory) contains dirs with mice data
+    x.inputimage=   'JD.nii';	% image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
+    x.mask=         'O:\data\voxelwise_Maritzen4tool\templates\AVGTmask.nii';	% <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
+    x.output_dir=   'test4';	% path for output/statistic
+    x.showSPMbatch=[0];	% [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
+    
+    
+    
+    
+    
+    
 end

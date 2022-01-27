@@ -394,9 +394,15 @@
 %   - The Powerpoint-report of the voxelwise statistic was extended
 %   - programmatically change viewing parameters / generate Powerpoint-report
 % 
-% 
-% 
-% 
+% #ba 27 Jan 2022 (11:43:10)
+% #k [xstat]: #n  voxelwise analysis was extended.
+%   - post-hoc paramter modifications and summary report can executed from comandline
+%   - write summary as powerpoint-files, write statistical table as excel-file, 
+%   - save statistically thresholded volume  (Nifti)
+%   - button [code posthoc] display the code snippet for creating a summary (PPT-,Excel-,NIfti-files) 
+% #k [xstatlabels]: #n regionwise statistic was extended
+%  - The excelsheet now also contains a sheet "singleData" with the group-specifc single data for each region. 
+%   The single data be further used for plots/visualization or other purposes
 % 
 % 
 
