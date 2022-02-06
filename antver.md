@@ -1,11 +1,21 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   27 Jan 2022 (11:43:10)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   06 Feb 2022 (21:20:48)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  #T  <ins>**06 Feb 2022 (21:20:48)**</ins>  
+  Updated the tutorial webside on Github-Pages. The Webside contains basic tutorials (PDF-files).  
+  &#8618;  access via link : <u>"https://chariteexpmri.github.io/antxdoc"  
+  &#8618; access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages)  
+<!---->
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Feb 2022 (21:18:33)**</ins>  
+  function  __[getNiftiheader]__: obtain NIFTI-header information of one/several NIFTI-files  
+  function  __[reslice_nii2]__: reslice image by applying the header's transformation matrix  
+    
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**27 Jan 2022 (11:43:10)**</ins>  
    __[xstat]__:  voxelwise analysis was extended.  
     - post-hoc paramter modifications and summary report can executed from comandline  
@@ -15,6 +25,7 @@
    __[xstatlabels]__: regionwise statistic was extended  
    - The excelsheet now also contains a sheet "singleData" with the group-specifc single data for each region.   
     The single data be further used for plots/visualization or other purposes  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**14 Jan 2022 (12:03:50)**</ins>  
    __[xdeformpop]__: GUI was replaced by extended version (part of 'deform Volume Elastix'-operation)  

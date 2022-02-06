@@ -404,8 +404,23 @@
 %  - The excelsheet now also contains a sheet "singleData" with the group-specifc single data for each region. 
 %   The single data be further used for plots/visualization or other purposes
 % 
+% #ba 06 Feb 2022 (21:18:33)
+% function #k [getNiftiheader]: #n obtain NIFTI-header information of one/several NIFTI-files
+% function #k [reslice_nii2]: #n reslice image by applying the header's transformation matrix
+% 
+% #T 06 Feb 2022 (21:20:48)
+% Updated the tutorial webside on Github-Pages. The Webside contains basic tutorials (PDF-files).
+% #gw -->  access via link : <u>"https://chariteexpmri.github.io/antxdoc"
+% #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages)
+% 
+% 
+% 
+% 
 % 
 
+
+
+%% ===============================================
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
 

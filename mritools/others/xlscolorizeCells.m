@@ -268,6 +268,12 @@ else
     rgb=col;
 end
 %% convert to xls-color-style
+if iscell(rgb);
+    rgb=  cell2mat(rgb)
+end
+if max(rgb(:))>1
+    error('color value-range must be between 0 and 1 !');
+end
 xcol=[];
 for i=1:size(rgb,1)
     rgb2=round(rgb(i,:).*255);

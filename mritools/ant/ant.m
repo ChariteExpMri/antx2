@@ -1042,12 +1042,13 @@ msub1 = uimenu(mh2,'Label','check path-names (project/datasets/ANTX-TBX)',      
 
 
 
-mh2 = uimenu(mh,'Label','visit ANTx2 repository (Github)',                                  'Callback',{@menubarCB, 'visitGITHUB'},'separator','on');
-mh2 = uimenu(mh,'Label','get templates from googledrive',               'Callback',{@menubarCB, 'openGdrive'},'separator','off');
-mh2 = uimenu(mh,'Label','download templates',                           'Callback',{@menubarCB, 'donwloadTemplates'},'separator','off');
+mh2 = uimenu(mh,'Label','<html><font color="blue">visit ANTx2 repository (Github)',              'Callback',{@menubarCB, 'visitGITHUB'},'separator','on');
+mh2 = uimenu(mh,'Label','<html><font color="blue">visit ANTx2 Tutorials (Github-Pages)',         'Callback',{@menubarCB, 'visitGITHUBpages'},'separator','off');
+mh2 = uimenu(mh,'Label','<html><font color="green">get templates from googledrive',               'Callback',{@menubarCB, 'openGdrive'},'separator','off');
+mh2 = uimenu(mh,'Label','<html><font color="green">download templates',                           'Callback',{@menubarCB, 'donwloadTemplates'},'separator','off');
 
 
-mh2 = uimenu(mh,'Label','check for updates (Github)',                    'Callback',{@menubarCB, 'checkUpdateGithub'},'separator','on');
+mh2 = uimenu(mh,'Label','<html><b><font color="fuchsia">check for updates (Github)',                    'Callback',{@menubarCB, 'checkUpdateGithub'},'separator','on');
 
 
 %========================================================
@@ -2244,13 +2245,27 @@ elseif strcmp(task,'contact')
         cprintf(col,['philipp.boehm-sturm@charite.de\n']);
         cprintf(col,['**********   CONTACT     ******************\n']);
     end
-  elseif strcmp(task,'visitGITHUB')
+  elseif strcmp(task,'visitGITHUB') || strcmp(task,'visitGITHUBpages')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
-        hlpfun={' ..visit ANTx2 Repositiory (GITHUB)'};
+        if strcmp(task,'visitGITHUB')
+            hlpfun={' ..visit ANTx2 Repositiory (GITHUB)'
+                'https://github.com/ChariteExpMri/antx2'
+                ''};
+        else
+            hlpfun={' ..visit ANTx2 Tutorials (GITHUB-pages)'
+                 'https://chariteexpmri.github.io/antxdoc/'
+                 'This webside contains tutorials (PDF-files).'};
+        end
         return ;
     end
-    statusMsg(1,' visiting GITHUB');
-    github='https://github.com/ChariteExpMri/antx2';
+    if strcmp(task,'visitGITHUB')
+        statusMsg(1,' visiting GITHUB');
+        github='https://github.com/ChariteExpMri/antx2';
+    else
+       statusMsg(1,' visiting Tutorials'); 
+       github='https://chariteexpmri.github.io/antxdoc';
+    end
+    
     if ismac
         system(['open ' github]);
     elseif isunix
@@ -2258,12 +2273,10 @@ elseif strcmp(task,'contact')
         
          [r1 r2]= system(['xdg-open ' github]);
         if  ~isempty(strfind(r2,'no method available'))
-            
             [r1 r2]= system(['who']);
             ulist=strsplit(r2,char(10))';
             lastuser=strtok(char(ulist(1)),' ');
-            [r1 r2]=system(['sudo -u ' lastuser ' xdg-open ' github '&']);
-            
+            [r1 r2]=system(['sudo -u ' lastuser ' xdg-open ' github '&']);   
         end
         
     elseif ispc
