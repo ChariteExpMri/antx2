@@ -503,20 +503,28 @@ if isempty(pa);
     return;
 end
 
-%% ===============================================
+%% ==============[get recoursively all files and select files]=================================
 pa=x2.sourcePath;
 fi2={};
 [files,~] = spm_select('FPListRec',pa,['.*.$']);
 if ischar(files); files=cellstr(files);   end;
 [px fix ext]=fileparts2(files);
 fi2=cellfun(@(a,b){[a b ]} ,fix, ext);
-[li a1 a2]=unique(fi2);
-counts=histc(a2,a1);
-%% ===============================================
-tb=[li cellfun(@(a){[num2str(a) ]} ,num2cell(counts))];
+
+%counting:https://de.mathworks.com/matlabcentral/answers/115838-count-occurrences-of-string-in-a-single-cell-array-how-many-times-a-string-appear
+a=unique(fi2,'stable');
+b=cellfun(@(x) sum(ismember(fi2,x)),a,'un',0);
+tb=[a b];
+
+tb(:,2)=cellfun(@(a){[num2str(a) ]},tb(:,2));
+tb=sortrows(tb,1);
 id=selector2(tb,{'file' 'counts'},'out','list','selection','multi');
 o=id(:,1);
+% if o==1;
+%     return
+% end
 %% ===============================================
+
 
 
 
