@@ -1,15 +1,22 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   06 Feb 2022 (21:20:48)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   08 Feb 2022 (12:38:25)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**08 Feb 2022 (12:38:25)**</ins>  
+  function  __[exportfiles]__: added as alternative to export/copy files from any data-hierarchie to  
+  a destination folder (no ANT-project must be loaded for this function)  
+  -function should also work for files of a studie's "dat"-folder  
+  &#8618; access via ANT-menu: &#8658; Main/export files (from any folder)  
+<!---->
   #T  <ins>**06 Feb 2022 (21:20:48)**</ins>  
   Updated the tutorial webside on Github-Pages. The Webside contains basic tutorials (PDF-files).  
   &#8618;  access via link : <u>"https://chariteexpmri.github.io/antxdoc"  
   &#8618; access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages)  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Feb 2022 (21:18:33)**</ins>  
   function  __[getNiftiheader]__: obtain NIFTI-header information of one/several NIFTI-files  

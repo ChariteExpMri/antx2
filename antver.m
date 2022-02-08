@@ -413,6 +413,12 @@
 % #gw -->  access via link : <u>"https://chariteexpmri.github.io/antxdoc"
 % #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages)
 % 
+% #ba 08 Feb 2022 (12:38:25)
+% function #k [exportfiles]: #n added as alternative to export/copy files from any data-hierarchie to
+% a destination folder (no ANT-project must be loaded for this function)
+% -function should also work for files of a studie's "dat"-folder
+% #gw --> access via ANT-menu: &#8658; Main/export files (from any folder)
+% 
 % 
 % 
 % 

@@ -922,7 +922,9 @@ mh2 = uimenu(mh,'Label',' convert dicom to nifti',         'Callback',{@menubarC
 mh2 = uimenu(mh,'Label',' merge directories',              'Callback',{@menubarCB, 'xmergedirectories' },      'userdata',sprintf(' merge the  contents of pairwise assigned directories  '    ),'Separator','off');
 
 
-mh2 = uimenu(mh,'Label',' export files',                  'Callback',{@menubarCB, 'export'},'Separator','on',  'userdata',sprintf('EXPORT selected files from selected folders ')       );
+mh2 = uimenu(mh,'Label',' export files (from ANT-project)',              'Callback',{@menubarCB, 'export'},'Separator','on',  'userdata',sprintf('EXPORT selected files from selected ANT-folders (ANT-project must be loaded) ')       );
+mh2 = uimenu(mh,'Label',' export files (from any folder)',               'Callback',{@menubarCB, 'export_fromanyfolder'},'Separator','off',  'userdata',sprintf('EXPORT selected files from any folders (ANTproject not needed to be loaded) ')       );
+
 mh2 = uimenu(mh,'Label',' quit',                          'Callback',{@menubarCB, 'quit'},'Separator','on');
 
 set(get(mh,'children'),'tag','mb');
@@ -1834,6 +1836,16 @@ elseif strcmp(task,'export')
     end
     
     xexport(1);
+%________________________________________________
+    
+elseif strcmp(task,'export_fromanyfolder')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='exportfiles';
+        return ;
+    end
+    
+    exportfiles(1);
+    
     %________________________________________________
     
 elseif strcmp(task,'quit')

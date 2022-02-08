@@ -127,6 +127,12 @@
 % m=paramgui(dat,struct('uiwait',0,'pb1callback',{{@disp,rand(3,3)}}))
 % ,'info','vline.m')
 % ,'info',{'Processing Parameters','-->see process1203.m'}
+% 
+%% GET VARIABLES during runtime (within function  call)
+% [x1,x2]= paramgui('getdata')
+% x1: cell-list of current input-paramters
+% x2: struct with current input-paramters ..-> use this for stateDepended changes
+% 
 %% DYNAMICALLY SET VARIABLE FIELD
 % -during runtime, variablename must exist,
 % -variable name must  come with struct-name use 'x.reorienttype' instead of 'reorienttype'
@@ -169,16 +175,19 @@ if ischar(dat)
             if isempty(paramguipref)
                 disp([ class(paramguipref) ': <empty> ' ]);
             else
-            disp(paramguipref);
+                disp(paramguipref);
             end
             if isempty(strfind(which(mfilename),[filesep 'oldfun' filesep]))
-               disp([' ...currently running the new version: ' which(mfilename)]);
+                disp([' ...currently running the new version: ' which(mfilename)]);
             else
-               disp([' ...currently running the old version: ' which(mfilename)]); 
+                disp([' ...currently running the old version: ' which(mfilename)]);
             end
         end
+    elseif strcmp(dat,'note')
+            makeNote(varargin);
         return
     end%pref
+    
 end
 
 newpath=fullfile(fileparts(antpath),'paramgui');
@@ -2057,7 +2066,8 @@ function updateIconposition(status)
 % us.jCodePane.setCaretPosition(curpos);
 % 'updateIconposition'
 
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','paramgui');
+us=get(hf,'userdata');
 % drawnow;
 tx=char(us.jCodePane.getText);
 
@@ -2104,7 +2114,7 @@ end
 
 txall=char(us.jCodePane.getText);
 
-r=findobj(gcf,'style','pushbutton');
+r=findobj(hf,'style','pushbutton');
 iicons=[];
 for i=1:length(r)
     try
@@ -4765,6 +4775,131 @@ us.dat=dx;
 set(gcf,'userdata',us);
 
 return
+
+function makeNote(varargin)
+% disp('this function is not further resolved...');
+
+% return
+%% ===============================================
+
+hf=findobj(0,'tag','paramgui');
+hb=uicontrol(hf,'style','edit','tag','note','units','normalized')
+set(hb,'position',[0.02 0.03 .3 .3]);
+set(hb,'position',[.5 .5 .2 .3]);
+
+%% ===============================================
+% ----INPUT PARAM
+v=varargin{1};
+p=cell2struct(v(2:2:end),v(1:2:end),2);
+p0.col=[ 1     1     0];
+p0.fs =25;
+p0.text='-note-';
+p0.state=3;
+p=catstruct(p0,p);
+
+% if p.state==1
+%     p0.col=[ 1.0000    0.8000    0.2000]
+if p.state==2
+    p.col=[ 1.0000    0.8000    0.2000];
+elseif p.state==3
+    p.col=[1 0 0]; 
+end
+
+
+%----make editorPane
+try; delete(findobj(hf,'tag','note')); end
+figure(hf);
+jEditPane = javax.swing.JEditorPane('text/html', 'ssss');
+% font = java.awt.Font('Tahoma',java.awt.Font.PLAIN, 50)
+% jEditPane.setFont(font)
+
+jScrollPane = javax.swing.JScrollPane(jEditPane);
+[hcomponent, hb] = javacomponent( jScrollPane, [], hf);
+set(hb,'tag','note');
+set(hb, 'units', 'normalized', 'position', [0.02 0.03 .3 .3]);
+set(hb,'position',[.2 .3 .3 .3]);
+
+htmlStr = ['<b><div style="font-family:impact;color:green">'...
+           'Matlab</div></b> GUI is <i>' ...
+           '<font color="blue">highly</font></i> customizable'];
+%        htmlStr='123'
+jEditPane.setText(htmlStr);
+jEditPane.setEditable(false);
+
+
+try
+    % ---TEXT----
+    p.text=htmlStr
+    %p.text='<a href="https://www.w3schools.com/">Visit W3Schools.com!</a>'
+    %p.text=repmat({'eee'},[100,1])
+    %p.text={'eee' 'dddd<b>ddd'}
+    %p.text='ssss'
+    if iscell(p.text); text=strjoin(p.text,'<br>');
+    else;              text=p.text;
+    end
+    jEditPane.setText(text);
+end
+try
+    % ---fontsize----
+    % see: https://undocumentedmatlab.com/articles/gui-integrated-html-panel
+    java.lang.System.setProperty('awt.useSystemAAFontSettings', 'on');
+    jEditPane.setFont(java.awt.Font('Arial', java.awt.Font.PLAIN, p.fs));
+    jEditPane.putClientProperty(javax.swing.JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+end
+try
+    % -----bgcolor---
+    % see: https://undocumentedmatlab.com/articles/javacomponent-background-color
+    bgcolor = p.col;% [1 0 0];%get(gcf, 'Color');
+    jEditPane.setBackground(java.awt.Color(bgcolor(1),bgcolor(2),bgcolor(3)));
+end
+
+% ==============================================
+%%   
+% ===============================================
+
+
+
+
+%% ===============================================
+
+
+
+
+
+% ==============================================
+%%   
+% ===============================================
+return
+jScrollPane=findjobj(hb)
+jViewPort = jScrollPane.getViewport;
+jEditbox = jViewPort.getComponent(0);
+
+jb.setEditorKit(javax.swing.text.html.HTMLEditorKit);
+% alternative: jEditbox.setContentType('text/html');
+htmlStr = ['<b><div style="font-family:impact;color:green">'...
+           'Matlab</div></b> GUI is <i>' ...
+           '<font color="red">highly</font></i> customizable'];
+jEditbox.setText(htmlStr)
+
+% https://undocumentedmatlab.com/blog_old/rich-matlab-editbox-contents
+
+%% ===============================================
+
+
+hFig = gcf;
+jEditPane = javax.swing.JEditorPane('text/html', 'ssss')
+jScrollPane = javax.swing.JScrollPane(jEditPane)
+ 
+[hcomponent, hcontainer] = javacomponent( jScrollPane, [], hFig)
+set(hcontainer, 'units', 'normalized', 'position', [0.02 0.03 .3 .3]);
+
+
+htmlStr = ['<b><div style="font-family:impact;color:green">'...
+           'Matlab</div></b> GUI is <i>' ...
+           '<font color="red">highly</font></i> customizable'];
+jEditPane.setText(htmlStr)
+%% ===============================================
+
 
 
 
