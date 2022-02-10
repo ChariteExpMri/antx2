@@ -396,6 +396,13 @@ if settings.show_intro==1
     end
 end
 
+%% ========0add resize button for animal-LB]=======
+try
+     hf=findobj(0,'tag','ant');
+     hres=findobj(hf,'tag','lb3');
+    addResizebutton(hf,hres,'mode','UR');
+end
+
 %=====================================
 %% CHECK ELASTIX INSTALLATION
 if isunix
