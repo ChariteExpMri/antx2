@@ -711,7 +711,6 @@ if get(hvis,'value')==1
     if val>1; val=1; end
     
     set(hs,'value',val);
-    
     slid_thresh();
 end
 
@@ -3785,8 +3784,13 @@ try;          setfocus(gca);   end         % deFocus edit-fields
 % jPeer = get(handle(gcf), 'JavaFrame');
 % jPeer.getAxisComponent.requestFocus
 
+function slid_thresh_ed(e,e2)
 
-
+he=findobj(gcf,'tag','slid_thresh_ed');
+val    =str2num(get(he,'string'));
+hs=findobj(gcf,'tag','slid_thresh'); 
+set(hs,'value',val);
+slid_thresh([],[]);
 
 function slid_thresh(e,e2)
 warning off
@@ -3795,8 +3799,11 @@ hs=findobj(gcf,'tag','slid_thresh');              val    =get(hs,'value');
 hm=findobj(gcf,'tag','thresh_medfilt');           doflt  =get(hm,'value');
 hml=findobj(gcf,'tag','thresh_medfiltlength');    fltLen =str2num(get(hml,'string'));
 
+str=get(hs,'tooltipstring');
+str=[regexprep(str,[ char(10)  '#.*$' ],'') char(10) '# value: ' num2str(val) ];
+set(hs,'tooltipstring',str);
 
-
+he=findobj(gcf,'tag','slid_thresh_ed');   set(he,'string', num2str(val)) ;
 
 
 hv=findobj(gcf,'tag','thresh_visible');           visible  =get(hv,'value');
@@ -3953,8 +3960,17 @@ hb=uicontrol('style','slider','units','norm', 'tag'  ,'slid_thresh','fontsize',8
 set(hb,'position',[ .25  .9 .05 .041],'string','rw','value',0.5,'backgroundcolor','w');
 set(hb,'tooltipstring',['change contour threshold intensity' char(10) ' shortcut [shift+left/right arrow]']);
 set(hb,'parent',pan3);
-set(hb,'position',[ .285  .0 .5 1]);
+set(hb,'position',[ .385  .0 .43 1]);
 addlistener(hb,'ContinuousValueChange',@slid_thresh);
+
+
+%% - slid_thresh_ed
+hb=uicontrol('style','edit','units','norm', 'tag'  ,'slid_thresh_ed','fontsize',6);             %CHANGE-DIM
+set(hb,'position',[ .25  .9 .05 .041],'string','0.5','backgroundcolor','w');
+set(hb,'tooltipstring',['enter value {range: 0-1} to change contour threshold intensity' char(10) ' shortcut [shift+left/right arrow]']);
+set(hb,'parent',pan3);
+set(hb,'position',[ .235  .0 .15 1]);
+set(hb,'callback',@slid_thresh_ed);
 
 %% thresh_medfilt
 hb=uicontrol('style','radio','units','norm', 'tag' ,'thresh_medfilt','fontsize',7);             %CHANGE-DIM
@@ -4398,7 +4414,10 @@ set(hb,'position',[ .3 .07 .7 .04]); %PAN2
 hb=uicontrol('style','popupmenu','units','norm', 'tag'  ,'clear mask');           %SET-next-SLICE
 set(hb,'position',[ .85 .7 .15 .04],'string',{'clear slice'; 'clear all slices'},'callback',{@cb_clear});
 set(hb,'fontsize',8);
-set(hb,'tooltipstring',['clear current slice/clear all slices' char(10) 'shortcut [c]' ]);
+set(hb,'tooltipstring',['clear current slice/clear all slices' char(10) ...
+    'clear slice: shortcut [c]' char(10) ...
+    'clear all slices: shortcut ctrl+[c]' ...
+    ]);
 set(hb,'parent',pan2);
 set(hb,'position',[ .15 .8 .7 .04]); %PAN2
 
@@ -6568,24 +6587,29 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
 % % % % % %             r2=flipud(r2);
 % % % % % %         end
         % ----------------------------------------------------
+        seltype=get(gcf,'SelectionType');
+        
         si=size(r2);
-        r2=r2(:);
-        if type==1
-            %             if filltype==0
-            r2(bw==1)  =  str2num(get(findobj(hf1,'tag','edvalue'),'string'))  ;
-            %             else
-            
-            %             end
-            
-        elseif type==2
-            r2(bw==1)  =  0;
+        
+        if strcmp(seltype,'extend')==0 % do ..if not shift+left m-button is pressed
+            r2=r2(:);
+            if type==1
+                %             if filltype==0
+                r2(bw==1)  =  str2num(get(findobj(hf1,'tag','edvalue'),'string'))  ;
+                %             else
+                
+                %             end
+                
+            elseif type==2
+                r2(bw==1)  =  0;
+            end
+            %---------------
+            r2=reshape(r2,si);
         end
-        %---------------
-        r2=reshape(r2,si);
         %% ==============================================
         %%  double click --> fill
         % ===============================================
-        seltype=get(gcf,'SelectionType');
+        
         if strcmp(seltype,'open') || strcmp(seltype,'alt')
             if strcmp(seltype,'open')
                 
@@ -6691,39 +6715,75 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
                 
                 
             elseif strcmp(seltype,'alt')
+                % ==============================================
+                %%  remove object via right click
+                % ===============================================
+                
                 %disp(['now-' num2str(rand(1))]);
                 value=str2num(get(findobj(hf1,'tag','edvalue'),'string'));
-                try
-                    value=r2(round(co(2)),round(co(1))  );
-                catch
-                    return
-                    
-                end
+%                 try
+%                     value=r2(round(co(2)),round(co(1))  );
+%                 catch
+%                     return
+%                     
+%                 end
                 m1=r2==value;
                 r2(m1==1)=0;
-                x2=mean(x); y2=mean(y);
-                sm=strel('disk',1);
-                %  r2=imerode( imdilate( r1  ,sm)  ,sm);
-                m2=m1;%imclose( m1  ,sm) ;
-                warning off;
-                m3=imfill(m2,'holes');
-                m4=bwlabel(m3);
-                try
-                    clustnum=m4(round(y2), round(x2));
-                catch
-                    return
-                end
+                
+                
+                m4=bwlabeln(m1);
+                xcl=[];
+                [xcl(:,1)  xcl(:,2)]=find(m4>0);
+                cc=round(co);
+                dis=sqrt( (xcl(:,1)-cc(2)).^2+(xcl(:,2)-cc(1)).^2  );%distance
+                ix=min(find(dis==min(dis)));
+                
+                %min(dis)
+                if isempty(ix); return; end %nothing to delete
+                if min(dis)>12 ; return; end %distance to next object is to large
+                
+                clustnum=m4(xcl(ix,1),xcl(ix,2));
                 m5=m1;
                 
                 
+                 
+                m5(m4==clustnum)=0;
+                r2(m5==1)=value;
                 
+                if 0
+                    x2=mean(x); y2=mean(y);
+                    sm=strel('disk',1);
+                    %  r2=imerode( imdilate( r1  ,sm)  ,sm);
+                    m2=m1;%imclose( m1  ,sm) ;
+                    warning off;
+                    m3=imfill(m2,'holes');
+                    m4=bwlabel(m3);
+                    try
+                        clustnum=m4(round(y2), round(x2));
+                    catch
+                        return
+                    end
+                    m5=m1;
+                    
+                    
+                    if 0
+                        [xcl(:,1)  xcl(:,2)]=find(cm>0);
+                        dis=( (xcl(:,1)-cc(2)).^2+(xcl(:,2)-cc(1)).^2  );%distance
+                        ix=min(find(dis==min(dis)));
+                        thisclust=cm(xcl(ix,1),xcl(ix,2));
+                    end
                 
                 
                 
                 m5(m4==clustnum)=0;
                 r2(m5==1)=value;
+                end
             end
-        elseif strcmp(seltype,'extend')              % ### CONTOURLINE
+        elseif strcmp(seltype,'extend')              % ### 
+            % ==============================================
+            %%   CONTOURLINE
+            % ===============================================
+
             value=str2num(get(findobj(hf1,'tag','edvalue'),'string'));
             
             hp3 =findobj(gcf,'tag','panel3'); %panel3
@@ -6752,9 +6812,20 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
                 ml   = double(poly2mask(c2(i).xdata,c2(i).ydata,size(cm,1),size(cm,2)));
                 cm(ml==1)=i;
             end
-            m1=cm==cm(cc(2),cc(1));
+            
+            
+%             m1=cm==cm(cc(2),cc(1));
+%             if m1(1,1)==1 && m1(1,end)==1 &&  m1(end,1)==1 && m1(end,end)==1 %target not hitted
+%                 
+                [xcl(:,1)  xcl(:,2)]=find(cm>0);
+                dis=( (xcl(:,1)-cc(2)).^2+(xcl(:,2)-cc(1)).^2  );%distance
+                ix=min(find(dis==min(dis)));
+                thisclust=cm(xcl(ix,1),xcl(ix,2));
+                m1=cm==thisclust;
+            %end
             %m1=cm==cm(cc(1),cc(2));
             m1=imfill(m1,'holes');
+            
             if get(findobj(hf1,'tag','thresh_visible'),'value')==1
                 
             else
@@ -6814,10 +6885,10 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
         %u.r2=r2n;
         global SLICE
         SLICE.r2=r2n;
-        %         if 0
-        %             u=putsliceinto3d(u,r2n,'b');
-        %             set(hf1,'userdata',u);
-        %         end
+        if strcmp(seltype,'extend')
+                    u=putsliceinto3d(u,r2n,'b');
+                    set(hf1,'userdata',u);
+        end
     end  %type
     
     %     global lastmovecords

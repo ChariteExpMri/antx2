@@ -419,7 +419,11 @@
 % -function should also work for files of a studie's "dat"-folder
 % #gw --> access via ANT-menu: &#8658; Main/export files (from any folder)
 % 
-% 
+% #ba 11 Feb 2022 (00:31:35)
+% small changes in #k [xdraw]: #n 
+% -debugged contour-fill and delete object (right-mouse click) functions
+% #k [ant]: #n added resize buttons to animal listbox of the ANT gui. Resize the listbox in case of
+% large cohorts or long animal names/identifiers
 % 
 % 
 % 

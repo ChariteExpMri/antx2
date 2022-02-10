@@ -1,16 +1,23 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   08 Feb 2022 (12:38:25)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   11 Feb 2022 (00:31:35)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**11 Feb 2022 (00:31:35)**</ins>  
+  small changes in  __[xdraw]__:   
+  -debugged contour-fill and delete object (right-mouse click) functions  
+   __[ant]__: added resize buttons to animal listbox of the ANT gui. Resize the listbox in case of  
+  large cohorts or long animal names/identifiers  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**08 Feb 2022 (12:38:25)**</ins>  
   function  __[exportfiles]__: added as alternative to export/copy files from any data-hierarchie to  
   a destination folder (no ANT-project must be loaded for this function)  
   -function should also work for files of a studie's "dat"-folder  
   &#8618; access via ANT-menu: &#8658; Main/export files (from any folder)  
+    
 <!---->
   #T  <ins>**06 Feb 2022 (21:20:48)**</ins>  
   Updated the tutorial webside on Github-Pages. The Webside contains basic tutorials (PDF-files).  
