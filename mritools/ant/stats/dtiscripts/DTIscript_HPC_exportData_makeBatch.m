@@ -1,11 +1,11 @@
 
-%% script to distribute exported data for DTI-processing to HPC-cluster storage
+%% <b> script to distribute exported data for DTI-processing to HPC-cluster storage </b>
 % This script does the following
 % 1) transfer data to HPC-cluster storage
 % 2) create batch script that can be run on the HPC-cluster
 %     -->as copyNpaste version from help window
-% 3) <optional> transfers the batch-file to HPC-cluster* (username+password required!)
-% 4) <optional> make batch-file executable*
+% 3) {optional} transfers the batch-file to HPC-cluster* (username+password required!)
+% 4) {optional} make batch-file executable*
 %
 % * for 3+4: the user has to provide the hostname, username and password for the HPC-cluster 
 % #r TESTED ON WINDOWS ONLY!
@@ -32,7 +32,7 @@
 % 
 % -ideally the reulting HPC-slurm batch-file will than contain the explicit path 
 % to the animals in the "data"-folder
-% start slurm-batch on the HPC-cluster: type sbatch <mybatch.sh> 
+% start slurm-batch on the HPC-cluster using "sbatch mybatch.sh" ..where "mybatch.sh" is the name of your batch-file
 %% ===============================================
 
 clear; warning off;

@@ -1699,8 +1699,9 @@ set(h,'ForegroundColor','b','fontweight','bold');
 
 %% ====[lb script-name]===========================================
 scripts={
-'DTIscript_HPC_exportData_makeBatch.m' ;
+'DTIscript_HPC_exportData_makeBatch.m' 
 'DTIscript_posthoc_makeHTML_QA.m'
+'DTIscript_posthoc_exportData4Statistic.m'
 };
 
 hb=uicontrol(h,'style','listbox','units','norm','tag','scripts_lbscriptName');
@@ -1708,6 +1709,13 @@ set(hb,'string',scripts);
 set(hb,'position',[[0 0.6 0.9 0.4]]);
 set(hb,'callback',{@scripts_process, 'scriptname'} );
 set(hb,'tooltipstring',['script/function name']);
+
+
+c = uicontextmenu;
+hb.UIContextMenu = c;
+m1 = uimenu(c,'Label','show script','Callback',{@scripts_process, 'open'});
+m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">edit file (not prefered)','Callback',{@scripts_process, 'editOrigFile'});
+
 %% ====[help via addNote]===========================================
 % hb=uicontrol(h,'style','text','units','norm','tag','scripts_TXTscriptHelp');
 % set(hb,'string',{'eeee'},'backgroundcolor','w');
@@ -1718,19 +1726,27 @@ msg='select <b>script/function</b> from <u>above</u> to obtain <font color="blue
 addNote(gcf,'text',msg,'pos',[0.5 .1  .5 .47],'head','scripts/functions','mode','single','fs',30);
 %% =======[open script]========================================
 hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_open');
-set(hb,'string','open script');
-set(hb,'position',[[0.2 0.0 0.25 0.08]]);
+set(hb,'string','show script');
+set(hb,'position',[-1.21e-16 0.0056 0.25 0.08]);
 set(hb,'callback',{@scripts_process, 'open'} );
-set(hb,'tooltipstring',['<html><b>open scripts/function in help window</b><br> '...
+set(hb,'tooltipstring',['<html><b>open scripts/function in HELP window</b><br> '...
     'the script can be copied and modified']);
+%% =======[edit script]========================================
+hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_edit');
+set(hb,'string','edit script');
+set(hb,'position',[[0.3 0.0 0.25 0.08]]);
+set(hb,'callback',{@scripts_process, 'edit'} );
+set(hb,'tooltipstring',['<html><b>open scripts/function in EDITOR</b><br> '...
+    'the script can be copied and modified']);
+
 %% =========[close script panel]======================================
 %% 
 hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_close');
-set(hb,'string','close scripts-panel');
-set(hb,'position',[[0.6 0.0 0.35 0.08]]);
+set(hb,'string','close panel');
+set(hb,'position',[[0.73 0.0 0.25 0.08]]);
 % set(hb,'position',[[0.94 0.93 0.06 0.07]]);
 set(hb,'callback',{@scripts_process, 'close'} );
-set(hb,'tooltipstring',['close scripts-panel']);
+set(hb,'tooltipstring',['close']);
 %% ===============================================
 
 
@@ -1761,7 +1777,25 @@ elseif strcmp(task,'open')
         '-save script somewhere on your path'
         '-run script'};
     addNote(gcf,'text',msg,'pos',[0.5 .1  .44 .3],'head','Note','mode','single');
-
+elseif strcmp(task,'editOrigFile')
+    pw=logindlg('Password','only');
+    pw=num2str(pw);
+    if strcmp(pw,'1')
+        file=hn.String{hn.Value};
+        edit(file);
+    end
+elseif strcmp(task,'edit')
+    file=hn.String{hn.Value};
+    
+    %% ===============================================
+    cont=preadfile(file); 
+    cont=cont.all;
+    
+    str = strjoin(cont,char(10));
+    editorService = com.mathworks.mlservices.MLEditorServices;
+    editorApplication = editorService.getEditorApplication();
+    editorApplication.newEditor(str);
+    %% ===============================================
     
 end
 

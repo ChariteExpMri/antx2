@@ -371,13 +371,15 @@ cmenu = uicontextmenu('Parent',hf,...
     'Interruptible','off','Visible','on','Tag','ContextMenu');
 % Define the context menu items
 item1 = uimenu(cmenu, 'Label', 'copy selection to clipboard','callback',{@contextmenu,'copy',pan2});
-item2 = uimenu(cmenu, 'Label', 'change fontsize','callback',{@contextmenu,'fontsize',pan2});
+item2 = uimenu(cmenu, 'Label', 'change fontsize ..or use [ctrl -/+]','callback',{@contextmenu,'fontsize',pan2});
 % item3 = uimenu(cmenu, 'Label', 'Test3','callback',{@contextmenu,3});
 
 % Set up CallBack
 tableHandle=handle(jEditPane,'callbackproperties');
 set(tableHandle,'MousePressedCallback',{@mousePressedCallback,cmenu,pan2});
 
+jbh = handle(jEditPane,'CallbackProperties');
+set(jbh, 'KeyPressedCallback',{@keys_scripts,pan2});
 
 % if 0
 %     jEditPane.setBackground(java.awt.Color(0,0,0,0))
@@ -494,8 +496,31 @@ elseif strcmp(s,'fontsize')
     u.hj.setFont(java.awt.Font(ui.FontName, java.awt.Font.PLAIN, ui.FontSize));
 end
 
+function keys_scripts(e,e2,pan2)
 
+% e
+% e2
+% % 'hi'
 
+if e2.getModifiers ==2   %[1]shift ,[2]ctrl, [8]alt
+    %e2.getKeyCode
+    %methods(e2)
+    %e2.getKeyChar
+    if strcmp(e2.getKeyChar,'+')
+        %'++'
+        u=get(pan2,'userdata');
+        font= u.hj.getFont;
+        fs=font.getSize+1;
+        u.hj.setFont(java.awt.Font(font.getFontName, java.awt.Font.PLAIN,fs));
+    elseif strcmp(e2.getKeyChar,'-')
+        %'--'
+         u=get(pan2,'userdata');
+        font= u.hj.getFont;
+        fs=font.getSize-1;
+        if fs==0; return; end
+        u.hj.setFont(java.awt.Font(font.getFontName, java.awt.Font.PLAIN,fs));
+    end
+end
 
 return
 

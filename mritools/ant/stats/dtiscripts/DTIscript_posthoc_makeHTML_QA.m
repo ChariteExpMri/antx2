@@ -1,16 +1,15 @@
 
-%% MAKE HTML-file for DTI-Quality check using DTI-QA-png-images     
-%% FIRST CREATE QA-THUMBNAILA (*.png-files) BEFORE RUNNING THIS SCRIPT !
-%% #r NOTE: first create the thumbnails (*.png-images) via '*.qa.sh'-shellscript
+% <b> generate a HTML-file for DTI-Quality check using DTI-QA-png-images  </b> 
+% The script recursively searches for all png-images in the "data"-path-folder ("pain")
+% and creates a HTML-file
+% #m -please modify the MANDATORY INPUTS (pain,outname,paout ...see below)
+% 
+% !!!  FIRST CREATE QA-THUMBNAILS (*.png-files) BEFORE RUNNING THIS SCRIPT !!!
+%
 % example to create the thumbnails:
 % (1) on HPC: using script "rat_exvivo_qa_HPC.sh": 
 %  go to folder ../data/   then execute: ./../shellscripts/rat_exvivo_qa_HPC.sh
 % 
-% The script recursively searches for all png-images in the data-path-folder ("pain")
-% and creates a HTML-file
-% #m -please modify the MANDATORY INPUTS (pain,outname,paout ...see below)
-% 
-
 %% ===============================================
 
 clear; warning off;
@@ -89,8 +88,9 @@ for i=1:length(fi)
     copyfile(f1,f2,'f');
     [~,animal]= fileparts(fileparts(pas));
     if strcmp(name0,animal)==0
-        s=['<h3>' num2str(n) '] ' animal   '</h3>'];
-        w{end+1,1}=s;
+        s=['<h3>' num2str(n) '] ' animal   '</h3>'];        w{end+1,1}=s;
+        s2=['<pre>DIR: ' pas  '</pre>'];                    w{end+1,1}=s2;
+       
         n=n+1;
         name0=animal;
     end
