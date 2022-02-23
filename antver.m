@@ -425,6 +425,17 @@
 % #k [ant]: #n added resize buttons to animal listbox of the ANT gui. Resize the listbox in case of
 % large cohorts or long animal names/identifiers
 % 
+% % #ba 23 Feb 2022 (02:23:47)
+% function #k [DTIprep]: #n added a scripts-selection-option
+% - scripts can be copied and costumized for own purpose
+% - currently, there exist only two scripts:
+% 1) "DTIscript_HPC_exportData_makeBatch.m"
+%   - script allows to export DTI-data to HPC-cluster storage, write a HPC-slurm batch & make batch executable
+%   - using sbatch <myBatch> the DTI-processing can be performed on the HPC-cluster
+% 2) "DTIscript_posthoc_makeHTML_QA.m"
+%   - make HTML-file for quality assesment of DTI-processing (using png-images created by MRtrix)
+%   -this script ist for posthoc QA
+% 
 % 
 % 
 

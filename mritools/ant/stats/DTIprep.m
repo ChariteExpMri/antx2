@@ -363,23 +363,11 @@ f = uimenu('Label','MRTRIX-ISSUES/BUGs');
 set(hf     ,'UIContextMenu',c);
 set(hframe2,'UIContextMenu',c);
 
-% ==============================================
-%%   
-% ===============================================
-%% scripts-button
-hb=uicontrol('style','pushbutton','units','norm','string','scripts','tag','scripts_pb');
-set(hb,'position',[0.3678 0.025209 0.07 0.08],'fontsize',8);
-set(hb,'callback',{@scripts_pb} );
-set(hb,'backgroundcolor',[   1 1 1]);
-set(hb,'tooltipstring',[ '<html><b>collection of scripts</b><br>'...
-    'some scripts that might be usefull']);
 
 
 % ==============================================
-%%   
+%%   disable controls
 % ===============================================
-
-
 global an
 q=an;
 % q=[]
@@ -390,6 +378,17 @@ if isempty(q)
 else
     u.studypath=fileparts(q.datpath);
 end
+
+% ==============================================
+%%   scripts-button
+% ===============================================
+hb=uicontrol('style','pushbutton','units','norm','string','scripts','tag','scripts_pb');
+set(hb,'position',[0.3678 0.025209 0.07 0.08],'fontsize',8);
+set(hb,'callback',{@scripts_pb} );
+set(hb,'backgroundcolor',[   1 1 1]);
+set(hb,'tooltipstring',[ '<html><b>collection of scripts</b><br>'...
+    'some scripts that might be usefull']);
+
 
 % ==============================================
 %%
