@@ -12,10 +12,10 @@
   - currently, there exist only two scripts:  
   1) "DTIscript_HPC_exportData_makeBatch.m"  
     - script allows to export DTI-data to HPC-cluster storage, write a HPC-slurm batch & make batch executable  
-    - using sbatch <myBatch> the DTI-processing can be performed on the HPC-cluster  
+    - using "sbatch myBatchName.sh" the DTI-processing can be performed on the HPC-cluster  
   2) "DTIscript_posthoc_makeHTML_QA.m"  
     - make HTML-file for quality assesment of DTI-processing (using png-images created by MRtrix)  
-    -this script ist for posthoc QA  
+    - this script ist for posthoc QA  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**11 Feb 2022 (00:31:35)**</ins>  
   small changes in  __[xdraw]__:   
