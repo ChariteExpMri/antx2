@@ -21,7 +21,11 @@ clear; warning off;
 % files2export: These files will be obtained from "padatSource"
  
 %% ==============================================
+% ___conventional-dat-structire ____
+% padatSource='H:\Daten-2\Imaging\AG_Boehm_Sturm\ERA-Net_topdownPTSD\analysis_27nov20\dat'  ; % HPC-storage-source
+% paoutTarget='H:\Daten-2\Imaging\AG_Boehm_Sturm\ERA-Net_topdownPTSD\Brains_charge2_July2021\statistic\DTI_round1' %output-directory
 
+% ___HPC-data-structire ____
 padatSource='X:\Daten-2\Imaging\Paul_DTI\Eranet\DTI_export4mrtrix\data'  ; % HPC-storage-source
 paoutTarget='H:\Daten-2\Imaging\AG_Boehm_Sturm\ERA-Net_topdownPTSD\Brains_charge2_July2021\statistic\DTI' %output-directory
 
@@ -50,10 +54,15 @@ end
 % ==============================================
 %%  obtain animal-name
 % ===============================================
-v=regexprep(files,['.*data' [filesep filesep] ],'');
-isep=cellfun(@(a){[min(strfind(a,filesep)) ]},v);
-v=cellfun(@(a,b){[a(b+1:end) ]},v,isep);
-animal=regexprep(v,[filesep filesep '.*'],'');
+if ~isempty(strfind(files{1},[filesep 'dat' filesep]))  %conventional dat-structure
+    v=regexprep(files,['.*dat' [filesep filesep] ],'');
+    animal=regexprep(v,[filesep filesep '.*'],'');
+else    
+    v=regexprep(files,['.*data' [filesep filesep] ],'');  %HPC-data-structure
+    isep=cellfun(@(a){[min(strfind(a,filesep)) ]},v);
+    v=cellfun(@(a,b){[a(b+1:end) ]},v,isep);
+    animal=regexprep(v,[filesep filesep '.*'],'');
+end
 % ==============================================
 %%   copy files
 % ===============================================
@@ -73,7 +82,6 @@ for i=1:length(files)
 end
 fprintf('  Done.\n');
 showinfo2('output-dir',paoutTarget); %show hyperlink in Matlab-cmd
-
 
 
 
