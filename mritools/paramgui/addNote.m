@@ -50,7 +50,9 @@
 % addNote(gcf,'text','This is <b>Note-2</b><br>123','head','Remember!','col',[ 0.8392 0.9098 0.8510],'headcol',[1 0 1],'mode','multi');
 % addNote(gcf,'text','This is <b>Note-3</b><br>123','head','Lost','col',[ 0.9608    0.9216    0.9216],'headcol',[0 0 1],'pos',[0.05 0 .4 .15 ],'mode','multi');
 % addNote(gcf,'text',{'Improve this' 'better now not tomorrow' 'this is a cell-array'},'state',2, 'pos',[.45 .6 .5 .3],'fs',50,'mode','multi');
-
+%
+%% close note:
+% addNote(gcf,'note','close') ;
 
 
 function addNote(figh, varargin)
@@ -132,10 +134,26 @@ end
 %%   inputs
 % ===============================================
 
-if exist('figh')==1
+if exist('figh')==1 && ~isempty(figh)
     hf=figh;
 else
     hf=gcf;
+end
+
+
+% ==============================================
+%%   specific inputs
+% ===============================================
+if 0
+   addNote([],'note','close') ;
+end
+
+if isfield(p,'note') && strcmp(p.note,'close')
+    pans=findobj(hf,'tag','notepanel');
+    for i=1:length(pans)
+        fnote_close([],[],pans(i));
+    end
+    return;
 end
 
 % ==============================================
@@ -353,7 +371,7 @@ cmenu = uicontextmenu('Parent',hf,...
     'Interruptible','off','Visible','on','Tag','ContextMenu');
 % Define the context menu items
 item1 = uimenu(cmenu, 'Label', 'copy selection to clipboard','callback',{@contextmenu,'copy',pan2});
-% item2 = uimenu(cmenu, 'Label', 'Test2','callback',{@contextmenu,2});
+item2 = uimenu(cmenu, 'Label', 'change fontsize','callback',{@contextmenu,'fontsize',pan2});
 % item3 = uimenu(cmenu, 'Label', 'Test3','callback',{@contextmenu,3});
 
 % Set up CallBack
@@ -468,6 +486,12 @@ u=get(hp,'userdata');
 if strcmp(s,'copy')
     tx=char(u.hj.getSelectedText);
     clipboard('copy',tx);
+elseif strcmp(s,'fontsize')
+    u=get(pan2,'userdata');
+    ui=uisetfont;
+    if isnumeric(ui);return; end
+    %u.hj.setFont(java.awt.Font('Arial', java.awt.Font.PLAIN, 50));
+    u.hj.setFont(java.awt.Font(ui.FontName, java.awt.Font.PLAIN, ui.FontSize));
 end
 
 

@@ -122,7 +122,19 @@ h = uicontrol('style','text','units','normalized','position',[.3 .5 .2 .025],'ta
 
 %% PBload
 h = uicontrol('style','pushbutton','units','normalized','position',[.0 .6 .1 .08],'tag','pbload',...
-    'string','loadproj','fontsize',13,                                        'callback',{@antcb,'load'},'tooltip','load the studies''s configfile');
+    'string','loadproj','fontsize',13,   'callback',{@antcb,'load'},...
+    'tooltip',['<html><b><font color="green">load the studies''s configfile' '</b><br>'...
+    '</font>' '..see also context menu']);
+
+c = uicontextmenu;
+m1 = uimenu(c,'Label','reload project'     ,'Callback',{@loadproj_context,'reload'});
+m1 = uimenu(c,'Label','edit project-file'  ,'Callback',{@loadproj_context,'edit'});
+m1 = uimenu(c,'Label','show command to load project-file'  ,'Callback',{@loadproj_context,'loadcommand'});
+
+
+% m1 = uimenu(c,'Label','export HTML summary','Callback',@fun_summary_export);
+set(h,'UIContextMenu',c);
+
 
 % h = uicontrol('style','pushbutton','units','normalized','position',[.0 .6 .1 .08],'tag','pbload',...
 %     'string','loadproj','fontsize',13,                                        'callback',{@testcrash},'tooltip','load the studies''s configfile');
@@ -2548,6 +2560,26 @@ else
 end
 
 
-
+function loadproj_context(e,e2,task)
+if strcmp(task,'reload')
+    antcb('reload');
+elseif strcmp(task,'edit')
+    global an
+    [pa fi ext]=fileparts(an.configfile);
+    if isempty(pa); pa=pwd; end
+    configfile=fullfile(pa,[fi '.m']);
+    if exist(configfile)
+        edit(configfile)
+    end
+elseif strcmp(task,'loadcommand')
+   global an
+    [pa fi ext]=fileparts(an.configfile);
+    if isempty(pa); pa=pwd; end
+    configfile=fullfile(pa,[fi '.m']);
+    if exist(configfile)
+        disp('% LOAD THIS PROJECT:')
+        disp(['antcb(''load'','''  configfile '''  )']);
+    end 
+end
 
 

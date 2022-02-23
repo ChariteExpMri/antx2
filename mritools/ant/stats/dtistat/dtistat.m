@@ -211,7 +211,12 @@
 %
 % dtistat('savecalc','__test1.mat');               % #g save calculations as '__test1.mat' in the current folder
 % dtistat('loadcalc','__test1.mat');               % #g load a previous calculations, here '__test1.mat' from the current folder as
+% 
+% 
 % dtistat('showresult');                           % #g show results
+% dtistat('showresult','ResultWindow',0);          % #g update setting without showing result-window
+%                                                  % can be used when exporting results (without poping windows)
+% 
 % #g EXPORT
 % dtistat('export','_testExport3.xlsx');           % #g export results with default export option
 % dtistat('set','exportType',1);                   % set export type to '1': EXCEL file, sheet-wise results 
@@ -276,6 +281,27 @@
 % dtistat('showresult');                                               % #g show results again
 %
 %
+%_________________________________________________________________________________________________
+%% #ky example command line: MRTRIX
+%% short version (connectivity-files will be find within conpath-folder )
+% groupingfile = 'F:\data5\stat_Harms2020_Exp7_2020_Exp9_2021_Exp1_IntFasting\export_4stat_DTIconectome\groups\grp_f_alt_VS_m_alt.xlsx'; % % group-assignment File (Excel-file) 
+% conpath  ='F:\data5\stat_Harms2020_Exp7_2020_Exp9_2021_Exp1_IntFasting\export_4stat_DTIconectome\dat'; % % upper path containing connectivity files (csv)
+% confiles ='connectome_di_sy.csv'; % % short-name of the connectivity file (csv)
+% lutfile      = 'F:\data5\stat_Harms2020_Exp7_2020_Exp9_2021_Exp1_IntFasting\export_4stat_DTIconectome\dat\20200820CH_Exp7_M125\atlas_lut.txt'; % % LUT-File (txt-file) 
+% 
+% dtistat('set','inputsource','MRtrix' );
+% dtistat('group', groupingfile);                        % % LOAD groupAssignment (ExcelFile)
+% dtistat('conpath', conpath ,'confiles', confiles  ,'labelfile',lutfile); % % LOAD connectivity-Files & LUTfile
+% dtistat('set','within',0,'test','ttest2','tail','both' );
+% dtistat('set','FDR',1,'qFDR',0.05,'showsigsonly',1,'sort',1,'rc',0 );
+% dtistat('set','nseeds',1000000,'propthresh',1,'thresh','max','log',1 );
+% % __processing options___
+% % dtistat('calcconnectivity'); % % CALCULATION (uncomment line to execute) 
+% % dtistat('showresult');       % % SHOW RESULT (uncomment line to execute) 
+% % dtistat('savecalc','calc_test1.mat');  % %save calculation
+% % dtistat('export','test1.xlsx','exportType',1);  % %save Result as ExelFile
+% 
+% 
 %% b SUBFUNFTIONS
 % dti_changeMatrix.m   : change matrix (example: keep only left hemispheric connections)
 
@@ -442,7 +468,7 @@ if isfield(p,'new')
     return
 end
 if isfield(p,'showresult')
-    redisplay();
+    redisplay(p);
     return
 end
 if isfield(p,'export')
@@ -1586,6 +1612,7 @@ end
 if exist('par')==1
     if isfield(par,'confiles') ==1;     files    =cellstr(par.confiles);      end
     if isfield(par,'labelfile')==1;     labelfile=cellstr(par.labelfile);      end
+    if isfield(par,'conpath')==1;       conpath=cellstr(par.conpath); else; conpath=[] ;    end
 end
 
 if exist('files')~=0
@@ -1641,6 +1668,28 @@ if exist('files')==0
     
 else
     fi=files;
+    
+    if isempty(conpath) %explicit names of each csv-file
+        fi=files
+    else
+        conpath=char(conpath)
+        files  =char(files)
+        
+        if exist(conpath)
+            [csvfiles] = spm_select('FPListRec',conpath,['^' files '$']);
+            if isempty(csvfiles)
+              msgbox(['file "' files  '" not found in "conpath" (main folder containing csv-files)...check spelling  CSV-file']); 
+           return  
+            end
+            files=cellstr(csvfiles);
+            fi=files;
+        else
+           msgbox('"conpath" (main folder containing csv-files) not specified'); 
+           return
+        end  
+    end
+    
+    
 end
 
 % ==============================================
@@ -1730,10 +1779,9 @@ if isfield(us, 'groupfile') && exist(us.groupfile)==2
             
         end
         % sort "fi" and "namesMRtrix" according to excelfile
+        ixfound(ixfound==0)=[];
         fi        =fi(ixfound);
         namesMRtrix=namesMRtrix(ixfound);
-        
-        
     end
     
     
@@ -2745,7 +2793,8 @@ for i=1:size(us.pw,2)
         ip=find(strcmp(head,'p'));
         [dat isort]= sortrows(dat,ip);
     end
-    i
+
+    
     % ----- showsigsonly  ----------------------------
     if z.showsigsonly==1
         dat= dat(find([dat{:,2}]==1),:);
@@ -2851,7 +2900,11 @@ if doexport~=1
     %     uhelp(plog({},sz,0,[''],'s=0','plotlines=0' ),1);
     if exist('par')==1 & (strcmp(par,'nofig'))
     else
-        uhelp(sz,1);
+        if exist('par')==1 && isstruct(par) && isfield(par,'ResultWindow') && par.ResultWindow==0
+            %do not show result-window
+        else
+            uhelp(sz,1);
+        end
     end
     
     %     assignin('base','stat',sz);
@@ -3916,6 +3969,9 @@ if exportType==1 %sheetwise EXCEL
         end
         for j=1:size(dat,1)
             sheetname=dat{j};
+            try
+               sheetname= regexprep(sheetname,'.*#','');
+            end
             hd=dat{j,2}(1,:);
             try
                 d =dat{j,2}(2:end,:);
@@ -4390,7 +4446,11 @@ else
 end
 
 function redisplay(e,e2)
-showresults(0);
+if isstruct(e)
+    showresults(0,e);
+else
+    showresults(0);
+end
 
 
 function makeROIfile(e,e2)
@@ -5101,7 +5161,17 @@ try; grpfile = us.groupfile; catch; grpfile='UNDEFINED'; end
 try; lutfile =us.con.lutfile; catch; lutfile='UNDEFINED'; end
 try; confiles=us.con.files; catch; confiles={'''UNDEFINED'''}; end
 
+%% ===============================================
 
+ ButtonName = questdlg(['confile: mode-1 or mode-2' char(10) ...
+                      'mode-1: long list of fullpath connectivity files ' char(10) ...
+                      'mode-2: path +short name of connectivity file ' char(10)  ...
+                      '...rerunning the batch should produce the same results for mode-1 and mode-2 '], ...
+                         'Batch mode for connectivity files', ...
+                         'mode-1', 'mode-2', 'mode-2');
+                  
+%% ===============================================
+%% ===============================================
 
 d={['groupingfile = ''' char(grpfile) '''; % % group-assignment File (Excel-file) ']};
 if size(confiles,1)==1
@@ -5121,13 +5191,52 @@ else
     else
         e=cellfun(@(a){ [ sprintf('\t') '''' a '''' ]} , confiles);
         e=[ 'confiles     = {...     % % connectivity-Files '  ;e; [sprintf('\t') '};']];
-    end
-    
-    
-    
+    end 
 end
 f={['lutfile      = ''' char(lutfile) '''; % % LUT-File (txt-file) ']};
-code=  [code;  ;d; e; f;{''}];
+if strcmp(ButtonName, 'mode-1')
+    code=  [code;  ;d; e; f;{''}];
+else
+    
+    
+    %% ===============================================
+    %___conFilename
+    confile1=confiles{1};
+    [pac namec extc]=fileparts(confile1);
+    confileName=[namec extc];
+    
+    % ___conpath
+    cx1  =((cellfun(@(a){[ (( double(a)) )]} ,confiles)));
+    cxmin=min(cell2mat(cellfun(@(a){[ length(a) ]} ,cx1)));
+    cx1=cell2mat(cellfun(@(a){[ a(1:cxmin) ]} ,cx1));
+    idiff=min(find(sum(abs(cx1-repmat(cx1(1,:),[size(cx1,1) 1])),1)>0));
+    ifilesep=strfind(confile1,filesep);
+    idiff2=ifilesep(max(find(ifilesep<=idiff)));
+    if strcmp(confile1(idiff2),filesep);
+        idiff2=idiff2-1 ;
+    end
+    conpath=confile1(1:idiff2);
+    
+    e2={' '};
+    e2{end+1,1}=['conpath  =' '''' conpath      '''; % % upper path containing connectivity files (csv)' ];
+    e2{end+1,1}=['confiles =' '''' confileName  '''; % % short-name of the connectivity file (csv)' ];
+    %%%e2{end+1,1}=['labelfile=' '''' lutfile      '''; % % atlas-label file (txt-file)' ];
+       
+    
+%     e2={....
+%         ['dtistat(''conpath''  ,''' conpath  ''' ,... ' ]
+%         ['        ''confiles'' ,''' confileName  ''',...']
+%         ['        ''labelfile'','''  lutfile ''');' ]
+%         };
+%     %code=  [code;  ;d; e2; f;{''}];
+    code=  [code;  ;d; e2; f;{''}];
+
+% % % dtistat('confiles', confiles,'conpath',conpath  ,'labelfile',lutfile)
+end
+
+
+%% ===============================================
+
 
 arg={};
 h=findobj(hf,'tag','inputsource');
@@ -5138,8 +5247,12 @@ code{end+1,1}=makecode(arg);
 
 
 code{end+1,1}=['dtistat(''group'', groupingfile);                        % % LOAD groupAssignment (ExcelFile)'];
-code{end+1,1}=['dtistat(''confiles'', confiles  ,''labelfile'',lutfile); % % LOAD connectivity-Files & LUTfile'];
-
+if strcmp(ButtonName, 'mode-1')
+    code{end+1,1}=['dtistat(''confiles'', confiles  ,''labelfile'',lutfile); % % LOAD connectivity-Files & LUTfile'];
+else
+   code{end+1,1}=['dtistat(''conpath'', conpath ,''confiles'', confiles  ,''labelfile'',lutfile); % % LOAD connectivity-Files & LUTfile'];
+    
+end
 % ==============================================
 %%   other paramter
 % ===============================================

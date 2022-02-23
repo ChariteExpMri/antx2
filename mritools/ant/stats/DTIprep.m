@@ -366,6 +366,19 @@ set(hframe2,'UIContextMenu',c);
 % ==============================================
 %%   
 % ===============================================
+%% scripts-button
+hb=uicontrol('style','pushbutton','units','norm','string','scripts','tag','scripts_pb');
+set(hb,'position',[0.3678 0.025209 0.07 0.08],'fontsize',8);
+set(hb,'callback',{@scripts_pb} );
+set(hb,'backgroundcolor',[   1 1 1]);
+set(hb,'tooltipstring',[ '<html><b>collection of scripts</b><br>'...
+    'some scripts that might be usefull']);
+
+
+% ==============================================
+%%   
+% ===============================================
+
 
 global an
 q=an;
@@ -882,7 +895,9 @@ if strcmp(task,'renamefiles')
                     %[hc c]=rgetnii(fx2);
                     %find(abs(unique(c(:))==unique(a(:))==0))
                else
-                 copyfile(fx1,fx2,'f');  
+                   if strcmp(fx1,fx2)==0
+                       copyfile(fx1,fx2,'f');
+                   end
                end
                %%  ----remove 'descrip' & private  frpm HDR----------
               [paw namew extw]= fileparts(fx2);
@@ -1674,12 +1689,82 @@ uhelp([mfilename '.m']);
 
 
 
+function scripts_pb(e,e2)
+
+scripts_process([],[],'close');
+
+h=uipanel('units','norm');
+set(h,'position',[0.5 0  .5 1 ],'title','scripts','tag','scripts_panel');
+set(h,'ForegroundColor','b','fontweight','bold');
+
+
+%% ====[lb script-name]===========================================
+scripts={
+'DTIscript_HPC_exportData_makeBatch.m' ;
+'DTIscript_posthoc_makeHTML_QA.m'
+};
+
+hb=uicontrol(h,'style','listbox','units','norm','tag','scripts_lbscriptName');
+set(hb,'string',scripts);
+set(hb,'position',[[0 0.6 0.9 0.4]]);
+set(hb,'callback',{@scripts_process, 'scriptname'} );
+set(hb,'tooltipstring',['script/function name']);
+%% ====[help via addNote]===========================================
+% hb=uicontrol(h,'style','text','units','norm','tag','scripts_TXTscriptHelp');
+% set(hb,'string',{'eeee'},'backgroundcolor','w');
+% set(hb,'position',[[0 0.1 1.01 0.45]]);
+% % set(hb,'callback',{@scripts_process, 'close'} );
+% set(hb,'tooltipstring',['script/function help']);
+msg='select <b>script/function</b> from <u>above</u> to obtain <font color="blue">help.<br>';
+addNote(gcf,'text',msg,'pos',[0.5 .1  .5 .47],'head','scripts/functions','mode','single','fs',30);
+%% =======[open script]========================================
+hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_open');
+set(hb,'string','open script');
+set(hb,'position',[[0.2 0.0 0.25 0.08]]);
+set(hb,'callback',{@scripts_process, 'open'} );
+set(hb,'tooltipstring',['<html><b>open scripts/function in help window</b><br> '...
+    'the script can be copied and modified']);
+%% =========[close script panel]======================================
+%% 
+hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_close');
+set(hb,'string','close scripts-panel');
+set(hb,'position',[[0.6 0.0 0.35 0.08]]);
+% set(hb,'position',[[0.94 0.93 0.06 0.07]]);
+set(hb,'callback',{@scripts_process, 'close'} );
+set(hb,'tooltipstring',['close scripts-panel']);
+%% ===============================================
 
 
 
+function scripts_process(e,e2,task)
+hn=findobj(gcf,'tag','scripts_lbscriptName');
 
+if strcmp(task,'close')
+    delete(findobj(gcf,'tag','scripts_panel'));
+    addNote(gcf,'note','close') ;
+elseif strcmp(task,'scriptname')
+    
+    file=hn.String{hn.Value};
+    hlp=help(file); 
+    hlp=strsplit(hlp,char(10));
+    hlp=[hlp repmat('<br>',[1 2])];
+    
+    addNote(gcf,'text',hlp,'pos',[0.5 .1  .5 .42],'mode','single','fs',20);
+elseif strcmp(task,'open')
+    file=hn.String{hn.Value};
+    
+    cont=preadfile(file); 
+    cont=cont.all;
+    uhelp(cont,1,'name',['script: "' file '"']);
+    
+    msg={'-copy script to Matlab editor'
+        '-change parameter accordingly'
+        '-save script somewhere on your path'
+        '-run script'};
+    addNote(gcf,'text',msg,'pos',[0.5 .1  .44 .3],'head','Note','mode','single');
 
-
+    
+end
 
 
 
