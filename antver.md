@@ -55,7 +55,7 @@
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**14 Jan 2022 (12:03:50)**</ins>  
    __[xdeformpop]__: GUI was replaced by extended version (part of 'deform Volume Elastix'-operation)  
-   __[xsatat]__: function was updated  
+   __[xstat]__: function was updated  
     - The Powerpoint-report of the voxelwise statistic was extended  
     - programmatically change viewing parameters / generate Powerpoint-report  
     
