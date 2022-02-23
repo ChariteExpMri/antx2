@@ -1706,7 +1706,7 @@ scripts={
 
 hb=uicontrol(h,'style','listbox','units','norm','tag','scripts_lbscriptName');
 set(hb,'string',scripts);
-set(hb,'position',[[0 0.6 0.9 0.4]]);
+set(hb,'position',[[0 0.7 0.9 0.3]]);
 set(hb,'callback',{@scripts_process, 'scriptname'} );
 set(hb,'tooltipstring',['script/function name']);
 
@@ -1722,8 +1722,9 @@ m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">edit file (not pr
 % set(hb,'position',[[0 0.1 1.01 0.45]]);
 % % set(hb,'callback',{@scripts_process, 'close'} );
 % set(hb,'tooltipstring',['script/function help']);
+NotePos=[0.5 .085  .5 .58];
 msg='select <b>script/function</b> from <u>above</u> to obtain <font color="blue">help.<br>';
-addNote(gcf,'text',msg,'pos',[0.5 .1  .5 .47],'head','scripts/functions','mode','single','fs',30);
+addNote(gcf,'text',msg,'pos',NotePos,'head','scripts/functions','mode','single','fs',30);
 %% =======[open script]========================================
 hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_open');
 set(hb,'string','show script');
@@ -1763,8 +1764,8 @@ elseif strcmp(task,'scriptname')
     hlp=help(file); 
     hlp=strsplit(hlp,char(10));
     hlp=[hlp repmat('<br>',[1 2])];
-    
-    addNote(gcf,'text',hlp,'pos',[0.5 .1  .5 .42],'mode','single','fs',20);
+    NotePos=[0.5 .085  .5 .58];
+    addNote(gcf,'text',hlp,'pos',NotePos,'mode','single','fs',20);
 elseif strcmp(task,'open')
     file=hn.String{hn.Value};
     
