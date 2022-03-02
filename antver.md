@@ -12,14 +12,6 @@
   using a mask. In this tutorial the mask contains two ROIs.  
   &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
   &#8618; access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages)  
-    
-    
-    
-    
-    
- % ===============================================  
- ----- EOF  
-  make antvermd for GIT: antver('makeantver')  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**02 Mar 2022 (16:17:11)**</ins>  
   function  __[xgetparameter]__: extended  
