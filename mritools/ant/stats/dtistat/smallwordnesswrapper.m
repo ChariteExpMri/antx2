@@ -181,6 +181,9 @@ end
 % ===============================================
 swm     =mean(sw,2);
 imax    =find(swm==max(swm));  %max small worldness over average
+if length(imax)>1
+  imax= floor(length(imax)/2) ; 
+end
 % imax=4;
 q.maxSW =swm(imax);
 q.tresh =vs(imax);
@@ -193,8 +196,9 @@ if isempty((q.maxSW) ) || max(q.maxSW)==0
 end
 
 cprintf([0 .5 0],['..calculation small worldness for data sparsening successfull.' '\n' ]);
-disp(['small worldness: '   num2str(q.maxSW)    '   (threshold (keep data %): '   num2str(q.tresh)   ')']);
-
+try
+    disp(['small worldness: '   num2str(q.maxSW)    '   (threshold (keep data %): '   num2str(q.tresh)   ')']);
+end
 % ==============================================
 %%   mask matrizces
 % ===============================================

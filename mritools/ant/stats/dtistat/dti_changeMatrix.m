@@ -511,6 +511,7 @@ c={};
 con=[];
 names={};
 labelID={};
+sizemat=[];%size of dtimatrix
 for i=1:size(fi,1)
     cprintf([0 0 1],['[reading]: '   strrep(fi{i},[filesep],[filesep filesep])  '\n']);
     
@@ -523,12 +524,41 @@ for i=1:size(fi,1)
         ac=a.connectivity;           %connectMAtrix
     elseif source==2
         ac   =csvread(fi{i});
+        if i==1
+            sizemat=size(ac);
+        end
+        %check matSize
+        if sum(abs(size(ac)-sizemat))~=0
+            %% ===============================================
+            
+            [pan,name,ext]=fileparts(fi{i});
+            [~,animal]=fileparts(pan);
+            msg={'<h2>mismatching matrix size</h2> '
+                ['<b>file:</b>    ' num2str(i) ')']
+                [ '<b>file:</b>   ' [name,ext]  ]
+                [ '<b>animal:</b> '    animal   ]
+                [ '<b>path:</b>   ' pan   ]
+                ['<b>problem:</b> ' sprintf('matrix-size: [%d %d]',size(ac)) ' but size of first animal is: '  sprintf('[%d %d]',sizemat)   ]
+                };
+            %char(msg)
+            %msgbox(msg)
+            
+            % ===============================================
+            hf2=figure;
+            addNote([hf2],'text',msg,'state',3,'dlg', 1,'fs',20,'wait',1,'headcol',[0 1 1]);
+            error('mismatching matrix-sizes');
+            %% ===============================================
+            return
+        else
+          %disp('same matrixSize as 1st matrix');  
+        end
+        
         namex=namesMRtrix{i};
         label  =t(:,2);
         labelID=t(:,1);
     end
     
-    %% check
+    % check
     %     ac=[0  1  2  3  4
     %         0  0  5  6  7
     %         0  0  0  8  9
@@ -566,7 +596,7 @@ for i=1:size(fi,1)
     
     
     
-    %% check
+    % check
     % s=zeros(prod(si),1);s(ind)=val; s=reshape(s,[si]); s= s+s'
 end
 cprintf([0 0 1],['Done.\n']);
@@ -840,6 +870,10 @@ if strcmp(s.type,'excelfile')
     a=a0;
     ha=a(1,:);
     a =a(2:end,:);
+    if numel(a)==0
+       msgbox({'COIFILE-error:' char(10) 'check excel-sheet: 1st sheet is empty (data expected)!'}) ;
+       return
+    end
     iCOI=find(strcmp(ha,'COI'));
     if iCOI==3 %connections
         iuse=find(cell2mat(a(:,iCOI   ))==1);

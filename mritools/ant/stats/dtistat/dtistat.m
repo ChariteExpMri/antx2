@@ -223,8 +223,13 @@
 % dtistat('export','test1.xlsx','exportType',1)    % #g save as EXCEL file, sheet-wise results 
 % dtistat('export','test2.xlsx','exportType',2)    % #g save as EXCEL file, results in single sheet
 % dtistat('export','test2.txt' ,'exportType',3)    % #g save as TXT-file, all results in single file
+% 
+% #g EXPORT VOR vol3d
 % dtistat('export4xvol3d');                        % #g export connection for xvol3d-visualization; with GUI. #g For silent mode
 %                                                  % #g  see example below,
+% dtistat('export4xvol3d',[],'gui',1);             %default with open gui
+% dtistat('export4xvol3d',z,'gui',1);              % using parameter in z-struct with open gui
+% 
 % %r COI-FILES
 % dtistat('loadcoi','coi_TEST1.xlsx');             % #g load a COI-file,connection-of-interest-file (excel-file); see GUI for more help
 % dtistat('makecoi','__COI_blanko.xlsx');          % #g save a COI-BLANKO-file (excel-file). Here, blanko '__COI_blanko.xlsx' is saved
@@ -250,19 +255,21 @@
 % dtistat('export4xvol3d');                                              % #g export data for xvol3d with GUI
 %__________________________________________________________________________________________________
 %% #ky example command line: Export DTI-connections for xvol3d
-% % #k For silent mode: set x.gui to [0];
-% x=[];
-% x.ano        =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\ANO.nii';	   % #g select Atlas (Nifti); such as "ANO.nii"
-% x.hemi       =  'F:\data1\DTI_mratrix\dti_mratrix_simulation2_multiGRP\templates\AVGThemi.nii';  % #g select Hemisphere Mask (Nifti); such as "AVGThemi.nii"
-% x.cs         =  'diff';	         % #g connection strength (cs) or other parameter to export/display via xvol3d
-% x.outputname =  'DTIconnections';	 % #g output name string
-% x.contrast   =  'A > B';	         % #g constrast to save (see list (string) or numeric index/indices)
-% x.keep       =  'all';	         % #g connections to keep in file {'all' 'FDR' 'uncor'}
-% x.underscore =  [0];               % #g underscores in atlas labels:  {0} remove or {1} keep
-% x.LRtag      =  [0];               % #g left/right hemispheric tag in atlas labels:  {0} remove or {1} keep
-% x.gui        =  [1];               % #g show paramter GUi;  {1}silent mode (no GUI); {0} show gui
-% dtistat('export4xvol3d',x);        % #g export data for xvol3d with GUI with pre-selected parameter
-%
+% 
+% z=[];                                                                                                                                                                                                 
+% z.ano           = 'F:\data5\eranet_round2_statistic\DTI\PTSDatlas_01dec20\PTSDatlas.nii';                % % select corresponding DTI-Atlas (NIFTI-file); such as "ANO_DTI.nii"                       
+% z.hemi          = 'F:\data5\eranet_round2_statistic\DTI\templates\AVGThemi.nii';                         % % select corresponding Hemisphere Mask (Nifti-file); such as "AVGThemi.nii"                
+% z.cs            = 'diff';                                                                                % % connection strength (cs) or other parameter to export/display via xvol3d                 
+% z.sort          = [1];                                                                                   % % sort connection list: (0)no sorting ; (1)sort after CS-value; (2)sort after p-value;     
+% z.outDir        = 'F:\data5\eranet_round2_statistic\DTI\result_propTresh1\eranet_connectome_6vsAll';     % % output folder                                                                            
+% z.filePrefix    = 'e_';                                                                                  % % output filename prefix (string)                                                          
+% z.fileNameConst = '$filePrefix_$cs_$contrast_$keep';                                                     % % resulting fileName is constructed by...                                                  
+% z.contrast      = 'CTRL vs HR';                                                                          % % constrast to save (see list (string) or numeric index/indices)                           
+% z.keep          = 'FDR';                                                                                 % % connections to keep in file {'all' 'FDR' 'uncor' 'manual selection' 'p<0.001' 'p<0.0001'}
+% z.underscore    = [0];                                                                                   % % {0,1} underscores in atlas labels:  {0} remove or {1} keep                               
+% z.LRtag         = [1];                                                                                   % % {0,1} left/right hemispheric tag in atlas labels:  {0} remove or {1} keep                
+% dtistat('export4xvol3d',z,'gui',1);   % export to vol3d with open gui ('gui',1)
+%% the output will be an excel-file: 'e__diff_CTRL_vs_HR_FDR.xlsx'
 %_________________________________________________________________________________________________
 %% #ky example command line: DSIstudio-DTI Parameter
 % cd('O:\data2\x01_maritzen\Maritzen_DTI') ;                           % #g go to the main directory
@@ -732,6 +739,12 @@ h=uicontrol('style','pushbutton','units','norm','position',[.8 .8 .15 .05],...
 h=uicontrol('style','pushbutton','units','norm','position',[0.80096 0.74997 0.15 0.05],...
     'string','get batch','tag','getbatch','callback',@getbatch,'fontsize',6,...
     'tooltipstring','get batch/code');
+
+%scripts
+h=uicontrol('style','pushbutton','units','norm','position',[0.80096 0.70 0.15 0.05],...
+    'string','scripts','tag','scripts_show','callback',@scripts_show,'fontsize',6,...
+    'tooltipstring','<html><b>collection of scripts</b><br> you can modify and apply these scripts for your purpose ');
+
 % ==============================================
 %%    -between vs within
 % ===============================================
@@ -1206,6 +1219,9 @@ end
 if isempty(pax); pax=pwd; end
 file=fullfile(pax,[name '.mat']);
 
+if exist(pax)~=7
+    mkdir(pax);
+end
 
 save(file,'u');
 % disp('calculation saved');
@@ -1437,6 +1453,7 @@ set(hf,'userdata',us);
 [~,~,a]=xlsread(file);
 cprintf([1 0 1],['done.\n' ]);
 a(1,:)=[];
+if isempty(a); error(['empty group-assignment file: ' file] ); end
 
 idel=find(strcmp(cellfun(@(a){[ num2str(a)]} , a(:,1)),'NaN'));
 a(idel,:)=[];
@@ -3862,7 +3879,7 @@ if exportType==1 %sheetwise EXCEL
     
     %% for each PW   ============================================
     for i=1:pws
-        if length(pws)==1
+        if pws==1
             filename=filename0;
         else
             filename=stradd(filename0,['_' num2str(i)],2)
@@ -4789,8 +4806,14 @@ contrastlist=['all' {us.pw.str}];
 % ==============================================
 %%   PARAMETER-gui
 % ===============================================
-if exist('x')==1
+showgui=1;
+if exist('x')==1   
+    % USED FOR:  dtistat('export4xvol3d',z,'gui',1)
+    if isstruct(x) && isfield(x,'gui')
+        showgui=x.gui;
+    end
     x=x.export4xvol3d;
+    
 else
     if isfield(us,'export4xvol3d')% load pre-assigned parameters
         x=us.export4xvol3d;
@@ -4800,17 +4823,18 @@ end
 
 if exist('x')~=1;        x=[]; end
 p={...
-    'inf1'              'Importer for "xvol3d.m"            '                         '' ''
-    'ano'     ''        'select corresponding Atlas (Nifti-file); such as "ANO.nii"'  {'f'}
+    'inf1'              '___ EXPORT RESULTS FOR  vISUALIZATION ("xvol3d.m") ___           '                         '' ''
+    'ano'     ''        'select corresponding DTI-Atlas (NIFTI-file); such as "ANO_DTI.nii"'  {'f'}
     'hemi'    ''        'select corresponding Hemisphere Mask (Nifti-file); such as "AVGThemi.nii"'  {'f'}
     'cs'     cslist{1}  'connection strength (cs) or other parameter to export/display via xvol3d'  cslist
     'sort'     0        'sort connection list: (0)no sorting ; (1)sort after CS-value; (2)sort after p-value;'  {0,1,2}
     
     
-    'inf2'              '##'   '' ''
-    'outputname'    'DTIconnections'   'output name string'   {'DTIconnections'  'DTIoutput' 'DTI4xvol3d'}
-    'contrast'      contrastlist{2}   'constrast to save (see list (string) or numeric index/indices)' contrastlist
-    
+    'inf2'             '##'   '' ''
+    'outDir'           ''                 'output folder' {'d'}
+    'filePrefix'        'exp'         'output filename prefix (string)'   {'exp' 'export','DTIconnections'  'DTIoutput' 'DTI4xvol3d'}
+    'fileNameConst'     '$filePrefix_$contrast_$keep'     'resulting fileName is constructed by...' {'$filePrefix_$contrast_$keep'  '$filePrefix_$cs_$contrast_$keep' '$contrast_$keep'   }
+    'contrast'      contrastlist{2}      'constrast to save (see list (string) or numeric index/indices)' contrastlist
     'keep'       'all'    'connections to keep in file {''all'' ''FDR'' ''uncor'' ''manual selection'' ''p<0.001'' ''p<0.0001''}'  {'all' 'FDR' 'uncor' 'manual' 'p<0.001' 'p<0.0001'}
     
     'underscore'  0   '{0,1} underscores in atlas labels:  {0} remove or {1} keep '                  'b'
@@ -4818,11 +4842,11 @@ p={...
     };
 p=paramadd(p,x);
 
-if isfield(x,'gui')==0 || x.gui==1
-    showgui=1;
-else
-    showgui=0;
-end
+% if isfield(x,'gui')==0 || x.gui==1
+%     showgui=1;
+% else
+%     showgui=0;
+% end
 % %% show GUI
 if showgui==1
     [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .5 .3 ],...
@@ -4837,8 +4861,15 @@ else
     z=param2struct(p);
 end
 
+%% =========[batch]======================================
+% we want run this: dtistat('export4xvol3d',z,'gui',1)
+xmakebatch(z,p, '', 'dtistat(''export4xvol3d'',z,''gui'',1);' );
+%% ===============================================
+
 us.export4xvol3d=z;
 set(findobj(0,'tag','dtistat'),'userdata',us);
+
+
 
 
 % disp(z);
@@ -4848,6 +4879,10 @@ set(findobj(0,'tag','dtistat'),'userdata',us);
 % ===============================================
 us=get(findobj(0,'tag','dtistat'),'userdata');
 
+% ---change numeric contrast-name to readable contrastname
+if isnumeric(z.contrast)
+    z.contrast=us.pw(z.contrast).str;
+end
 
 %---ATLAS
 fAno=char(z.ano); %fullfile(pwd,'templates','ANO.nii');
@@ -4952,7 +4987,38 @@ for i=num% pws/contrasts
 %%   msgbox if empty
 % ===============================================
  if isempty(d)
-    msgbox('no data survived...process canceled');
+     outtag=export3dvol_getOutname(z);
+     outname=['_logfile_' outtag '__noSurvivers.s.txt'];
+     
+     msg={};
+     msg{end+1,1}=([  ' for "' z.contrast  '": no results survived..no excel-file written' ]);
+     msg{end+1,1}=([  '-logfile written to : ' z.outDir    ]);
+     msg{end+1,1}=([  '-logfile: ' outname   ]);
+     msg{end+1,1}=([  '-date  : ' timestr(now)]);
+     msg{end+1,1}=([  '______________________ ']);
+     if showgui==1
+         %msgbox(msg);
+         
+         fg; set(gcf,'units','norm');
+         msg2=[{[' <b><font color=blue>"' z.contrast '" ...no surviving results </b>']};
+             msg];
+         addNote([],'text',msg2',...
+             'state',2,'pos',[0 .08 1 .92],'figpos',[0.3799    0.3844    0.4000    0.2500],...
+             'IS',1,'dlg',1);
+     else
+         
+         cprintf([0.8706    0.4902         0],[ 'WARNING: for "' z.contrast  '" no results survived..no excel-file written\n'])
+         disp(char(msg));
+     end
+     
+     msg2=[msg; {''; '_input-parameter_'}; struct2list2(z,'z')];
+     
+     pa=z.outDir;
+     if isempty(pa); pa=pwd; end
+     mkdir(pa);
+     pwrite2file(fullfile(pa,outname ), msg2  );
+     
+     
     return
  end
   
@@ -5056,20 +5122,57 @@ for i=num% pws/contrasts
     
     
     % ---------------------------------
-    % output name
+    %% output name
     % ---------------------------------
-    pa=fileparts(us.groupfile);
+    %pa=fileparts(us.groupfile);
+    pa=z.outDir;
+    mkdir(pa);
     if isempty(pa)
         pa=pwd;
     end
-    outtag=us.pw(i).str;
-    outtag=regexprep(outtag,'<|>','_vs_');
-    %     regexprep('AYdede.:-_d012_=3499./()',{'[^a-zA-Z0-9_]'},{''});
-    outtag=regexprep(outtag,{'[^a-zA-Z0-9_]'},{''});
-    fileout=fullfile(pa,[z.outputname '_' outtag '.xlsx']);
+    
+    if 0
+        outtag=us.pw(i).str;
+        outtag=regexprep(outtag,'<|>','_vs_');
+        %     regexprep('AYdede.:-_d012_=3499./()',{'[^a-zA-Z0-9_]'},{''});
+        outtag=regexprep(outtag,{'[^a-zA-Z0-9_]'},{''});
+    end
+    %% ===========[filename]====================================
+    
+    outtag=export3dvol_getOutname(z);
+    if 0
+        cons=z.fileNameConst;
+        if isempty(cons)
+            cons='$filePrefix_$cs_$contrast_$keep';
+        end
+        
+        fn=fieldnames(z);
+        idx=zeros(length(fn),1);
+        for i=1:length(fn)
+            i0=regexpi(cons,['\$' fn{i} ]) ;
+            if ~isempty(i0);
+                idx(i,1)=i0 ;
+            end
+        end
+        ts=sortrows([fn num2cell(idx)],2);
+        vars=ts(find(cell2mat(ts(:,2))>0),1);
+        
+        outtagc='';
+        for i=1:length(vars)
+            dx=getfield(z,vars{i});
+            if isnumeric(dx);  dx=num2str(dx); end
+            outtagc{i}=dx;
+        end
+        outtag =strjoin(outtagc,'_');
+        outtag =regexprep(outtag,{' ' ,'<'},{'_',''});
+    end
+    
+    
+    %% ===============================================
+    fileout=fullfile(pa,[outtag '.xlsx']);
     
     % ---------------------------------
-    % save
+    %% save
     % ---------------------------------
     try; delete(fileout); end
     if exist(fileout)==2
@@ -5116,7 +5219,35 @@ for i=num% pws/contrasts
 end% pws/contrasts
 cprintf([1 0 1],['Done.\n' ]);
 
+%% ===============================================
 
+function outtag=export3dvol_getOutname(z);
+    if 1
+        cons=z.fileNameConst;
+        if isempty(cons)
+            cons='$filePrefix_$cs_$contrast_$keep';
+        end
+        
+        fn=fieldnames(z);
+        idx=zeros(length(fn),1);
+        for i=1:length(fn)
+            i0=regexpi(cons,['\$' fn{i} ]) ;
+            if ~isempty(i0);
+                idx(i,1)=i0 ;
+            end
+        end
+        ts=sortrows([fn num2cell(idx)],2);
+        vars=ts(find(cell2mat(ts(:,2))>0),1);
+        
+        outtagc='';
+        for i=1:length(vars)
+            dx=getfield(z,vars{i});
+            if isnumeric(dx);  dx=num2str(dx); end
+            outtagc{i}=dx;
+        end
+        outtag =strjoin(outtagc,'_');
+        outtag =regexprep(outtag,{' ' ,'<'},{'_',''});
+    end
 
 % ==============================================
 %%   batch
@@ -5205,21 +5336,27 @@ else
     [pac namec extc]=fileparts(confile1);
     confileName=[namec extc];
     
-    % ___conpath
-    cx1  =((cellfun(@(a){[ (( double(a)) )]} ,confiles)));
-    cxmin=min(cell2mat(cellfun(@(a){[ length(a) ]} ,cx1)));
-    cx1=cell2mat(cellfun(@(a){[ a(1:cxmin) ]} ,cx1));
-    idiff=min(find(sum(abs(cx1-repmat(cx1(1,:),[size(cx1,1) 1])),1)>0));
-    ifilesep=strfind(confile1,filesep);
-    idiff2=ifilesep(max(find(ifilesep<=idiff)));
-    if strcmp(confile1(idiff2),filesep);
-        idiff2=idiff2-1 ;
+    if strcmp(confileName, '''UNDEFINED''')
+        conpath='UNDEFINED';
+        confileName='UNDEFINED';
+    else
+        
+        % ___conpath
+        cx1  =((cellfun(@(a){[ (( double(a)) )]} ,confiles)));
+        cxmin=min(cell2mat(cellfun(@(a){[ length(a) ]} ,cx1)));
+        cx1=cell2mat(cellfun(@(a){[ a(1:cxmin) ]} ,cx1));
+        idiff=min(find(sum(abs(cx1-repmat(cx1(1,:),[size(cx1,1) 1])),1)>0));
+        ifilesep=strfind(confile1,filesep);
+        idiff2=ifilesep(max(find(ifilesep<=idiff)));
+        if strcmp(confile1(idiff2),filesep);
+            idiff2=idiff2-1 ;
+        end
+        conpath=confile1(1:idiff2);
     end
-    conpath=confile1(1:idiff2);
     
     e2={' '};
-    e2{end+1,1}=['conpath  =' '''' conpath      '''; % % upper path containing connectivity files (csv)' ];
-    e2{end+1,1}=['confiles =' '''' confileName  '''; % % short-name of the connectivity file (csv)' ];
+    e2{end+1,1}=['conpath      = ' '''' conpath      '''; % % upper path containing connectivity files (csv)' ];
+    e2{end+1,1}=['confiles     = ' '''' confileName  '''; % % short-name of the connectivity file (csv)' ];
     %%%e2{end+1,1}=['labelfile=' '''' lutfile      '''; % % atlas-label file (txt-file)' ];
        
     
@@ -5343,5 +5480,159 @@ for i=1:size(arg,1)
     end
 end
 code=['dtistat(''set'',' lin ' );'];
+
+
+function scripts_show(e,e2)
+
+
+
+
+scripts_process([],[],'close');
+
+h=uipanel('units','norm');
+xpos=0.4;
+ set(h,'position',[xpos 0  1-xpos 1 ],'title','scripts','tag','scripts_panel');
+%set(h,'position',[xpos 0.1  1-xpos-.1 .5 ],'title','scripts','tag','scripts_panel');
+
+set(h,'ForegroundColor','b','fontweight','bold');
+
+% ###########################################################################################
+% ==============================================
+%%   script-names
+% ===============================================
+
+scripts={
+'STscript_subdivideGroups_pairwiseComparisons.m'
+'STscript_subdivideGroups_specific.m'
+'STscript_DTIstatistic_simple.m'
+'STscript_DTIstatistic_diffDTImatrices.m'
+'STscript_DTIstatistic_diffDTImatrices_diffGroups.m'
+'STscript_export4vol3d_simple.m'
+'STscript_export4vol3d_manycalcs.m'
+% 'DTIscript_HPC_exportData_makeBatch.m' 
+% 'DTIscript_posthoc_makeHTML_QA.m'
+% 'DTIscript_posthoc_exportData4Statistic.m'
+};
+% ###########################################################################################
+
+%% ========[controls]=======================================
+
+hb=uicontrol(h,'style','listbox','units','norm','tag','scripts_lbscriptName');
+set(hb,'string',scripts);
+set(hb,'position',[0 0.7 1.2 0.3]);
+
+set(hb,'callback',{@scripts_process, 'scriptname'} );
+set(hb,'tooltipstring',['script/function name']);
+
+
+c = uicontextmenu;
+hb.UIContextMenu = c;
+m1 = uimenu(c,'Label','show script','Callback',{@scripts_process, 'open'});
+m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">edit file (not prefered)','Callback',{@scripts_process, 'editOrigFile'});
+
+%% ====[addNote]===========================================
+% hb=uicontrol(h,'style','text','units','norm','tag','scripts_TXTscriptHelp');
+% set(hb,'string',{'eeee'},'backgroundcolor','w');
+% set(hb,'position',[[0 0.1 1.01 0.45]]);
+% % set(hb,'callback',{@scripts_process, 'close'} );
+% set(hb,'tooltipstring',['script/function help']);
+NotePos=[xpos .085  1-xpos .58];
+NotePos=[ 0 .085  1 .62];
+msg='select <b>script/function</b> from <u>above</u> to obtain <font color="blue">help.<br>';
+han=addNote(h,'text',msg,'pos',NotePos,'head','scripts/functions','mode','single','fs',30,'IS',1);
+
+%% =======[open script]========================================
+hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_open');
+set(hb,'string','show script');
+set(hb,'position',[-1.21e-16 0.0056 0.25 0.06]);
+set(hb,'callback',{@scripts_process, 'open'} );
+set(hb,'tooltipstring',['<html><b>open scripts/function in HELP window</b><br> '...
+    'the script can be copied and modified']);
+%% =======[edit script]========================================
+hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_edit');
+set(hb,'string','edit script');
+set(hb,'position',[[0.3     0.0056 0.25 0.06]]);
+set(hb,'callback',{@scripts_process, 'edit'} );
+set(hb,'tooltipstring',['<html><b>open scripts/function in EDITOR</b><br> '...
+    'the script can be copied and modified']);
+
+%% =========[close script panel]======================================
+%% 
+hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_close');
+set(hb,'string','close panel');
+set(hb,'position',[[0.73 0.0056 0.25 0.06]]);
+% set(hb,'position',[[0.94 0.93 0.06 0.07]]);
+set(hb,'callback',{@scripts_process, 'close'} );
+set(hb,'tooltipstring',['close']);
+%% ==============[userdata]=================================
+u.NotePos=NotePos;
+u.han    =han;
+set(h,'userdata',u);
+
+
+addResizebutton(gcf,h,'mode','L','moo',0,'restore',0);
+
+
+
+function scripts_process(e,e2,task)
+hn=findobj(gcf,'tag','scripts_lbscriptName');
+hh=findobj(gcf,'tag','scripts_panel');
+u=get(hh,'userdata');
+
+
+if strcmp(task,'close')
+    delete(findobj(gcf,'tag','scripts_panel'));
+    addNote(gcf,'note','close') ;
+    addResizebutton('remove');
+elseif strcmp(task,'scriptname')
+    
+    file=hn.String{hn.Value};
+    hlp=help(file); 
+    hlp=strsplit(hlp,char(10));
+    hlp=[hlp repmat('<br>',[1 2])];
+    
+    
+    
+    NotePos=u.NotePos;
+    %NotePos=[0.5 .085  .5 .58];
+    addNote(hh,'text',hlp,'pos',NotePos,'mode','single','fs',20,'IS',1);
+    
+    
+    
+    
+elseif strcmp(task,'open')
+    file=hn.String{hn.Value};
+    
+    cont=preadfile(file); 
+    cont=cont.all;
+    uhelp(cont,1,'name',['script: "' file '"']);
+    h=findobj(gcf,'tag','scripts_lbscriptName');
+    
+    msg={'-copy script to Matlab editor'
+        '-change parameter accordingly'
+        '-save script somewhere on your path'
+        '-run script'};
+    addNote(gcf,'text',msg,'pos',[0.5 .1  .44 .3],'head','Note','mode','single');
+elseif strcmp(task,'editOrigFile')
+    pw=logindlg('Password','only');
+    pw=num2str(pw);
+    if strcmp(pw,'1')
+        file=hn.String{hn.Value};
+        edit(file);
+    end
+elseif strcmp(task,'edit')
+    file=hn.String{hn.Value};
+    
+    %% ===============================================
+    cont=preadfile(file); 
+    cont=cont.all;
+    
+    str = strjoin(cont,char(10));
+    editorService = com.mathworks.mlservices.MLEditorServices;
+    editorApplication = editorService.getEditorApplication();
+    editorApplication.newEditor(str);
+    %% ===============================================
+    
+end
 
 

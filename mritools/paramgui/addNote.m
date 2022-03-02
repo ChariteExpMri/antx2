@@ -2,17 +2,28 @@
 % addNote: add note(s) to figure
 % several notes in one figure possible 
 %
+% han=addNote(figh, varargin)
+%
+%% output
+% han:handles (struct)
 % ===============================================
 %% ___INPUT PARAMETER___
-% p0.text  ='Note';                         %text to display (cell-string or char); (default: 'Note')
-% p0.col   =[  0.8706    0.9216    0.9804]; %background color ; (default: [  0.8706    0.9216    0.9804])
-% p0.fs    =25;                             %fontsize          ; (default: 25)
-% p0.state =0;                              %state: [0]normal,[1]warning,[2]error  (default: 0)
-% p0.head  ='';                             %additional headline, only if state is [0]; (default: empty)
-% p0.headcol=[0.4667    0.6745    0.1882];  %headline-color: applies only if headline is not empty; (default: [0.4667    0.6745    0.1882])
+% p0.text  ='Note';                         %<mandatory input> text to display (cell-string or char); (default: 'Note')
+% p0.col   =[  0.8706    0.9216    0.9804]; % background color ; (default: [  0.8706    0.9216    0.9804])
+% p0.fs    =25;                             % fontsize          ; (default: 25)
+% p0.state =0;                              % state: [0]normal,[1]warning,[2]error  (default: 0)
+% p0.head  ='';                             % additional headline, only if state is [0]; (default: empty)
+% p0.headcol=[0.4667    0.6745    0.1882];  % headline-color: applies only if headline is not empty; (default: [0.4667    0.6745    0.1882])
 % p0.pos   =[.2 .2 .3 .3];                  % note position (normalized position rel. to figure); (default: [.2 .2 .3 .3])
 % p0.IS=10; % Iconsize                      % icon-size; (default: 10)
-% p0.mode ='single';                        %'single': one single note; 'multi': multiple notes (default: 'single')
+% p0.mode ='single';                        % 'single': one single note; 'multi': multiple notes (default: 'single')
+% -additonal inputs for dialogs ---
+% p0.dlg       % make dialog: [0]no, [1]yes...depending on p.state, this could be a warning- or eror-doalog
+% po.figpos    % adjust figure-Size (normalized, 4 values); if empty a default size is used
+% p0.wait      % modality of the figure: [0]no [1]yes.. wait to close figure
+% ===============================================
+% 
+% 
 % ===============================================
 %% ___EXAMPLES_____
 % cf; w1=figure;w2=figure;imagesc,imagesc; addNote(w1)
@@ -53,10 +64,49 @@
 %
 %% close note:
 % addNote(gcf,'note','close') ;
+% ==============================================
+%%   use as dialogs
+% ===============================================
+%% =====[DIALOG info]=================================
+% addNote([],'text','here is more  <b><font color=green>to do!!</b>',...
+%     'state',0,'IS',12,'dlg',1);
+%% =====[DIALOG info]=================================
+% a=strsplit(help('mean.m'),char(10));
+% addNote([],'text',a, 'state',1,'IS',12,'dlg',1);
+%% =========[DIALOG WARNING]======================================
+% addNote([],'text','this might be  <b><font color=white>stupid!!</b>',...
+%     'state',2,'pos',[0 .08 1 .92],'IS',1,'dlg',1);
+%% =========[DIALOG ERROR WITH WAIT-OPTION]=========================
+% addNote([],'text','this is an  <b><font color=white>ERROR!!</b>',...
+%     'state',3,'dlg', 1,'wait',1);
+%% ===============================================
+%
+%
+% ==============================================
+%% --- UPDATE NOTE ---
+% ==============================================
+% a note can be updated without destroing the note
+% properties than can be updated:
+%  "text":text to display;
+%  "fs": fontsize; 
+%  "col": bg-color
+% _EXAMPLE_:
+% hf=figure;
+% hs=addNote(hf,'text','this is a simple note...  you can make a long string here','state',1)
+% pause(1);
+% hs=addNote(hs,'text','<u>a new Text')
+% pause(1);
+% hs=addNote(hs,'text','<u>another Text','fs',30,'col',[1 1 0])
+% 
+% 
+% 
+% ===============================================
 
 
-function addNote(figh, varargin)
+
+function han=addNote(figh, varargin)
 warning off;
+han=[];
 % ==============================================
 %%   tests
 % ===============================================
@@ -114,6 +164,9 @@ p0.headcol=[0.4667    0.6745    0.1882];  %headline-color: applies only if headl
 p0.pos   =[.2 .2 .3 .3];                  % note position (normalized position rel. to figure)
 p0.IS=10; % Iconsize                      % icon-size
 p0.mode ='single';                        %'single': single note; 'multi': multiple notes
+p0.dlg  =0       ;                        % make dialog: [0]no, [1]yes...depending on p.state, this could be a warning- or eror-doalog
+po.figpos=[]     ;                        % adjust figure-Size (normalized, 4 values)
+p0.wait  =0      ;                        % modality of the figure: [0]no [1]yes.. wait to close figure
 % ===============================================
 
 
@@ -123,11 +176,20 @@ p0.mode ='single';                        %'single': single note; 'multi': multi
 if nargin>1
     v=varargin;
     p=cell2struct(v(2:2:end),v(1:2:end),2);
+    pinput=p; %backup input
     p=catstruct(p0,p);
 else
     p=p0;
 end
 
+% ==============================================
+%%   update without destroing the Note
+% ===============================================
+ if isstruct(figh)
+     han=figh;
+     updateNote(han,pinput);
+    return 
+ end
 
 
 % ==============================================
@@ -159,8 +221,18 @@ end
 % ==============================================
 %%   get fig-pos
 % ===============================================
+if strcmp(hf.Type,'figure')==0 %is a panel or something else
+    %figure(hf);
+    hx=hf;
+    hf=hf.Parent;
+else
+    hx=hf  ; 
+end
 
-figure(hf);
+
+
+
+
 
 % uniF=get(hf,'units');
 % set(hf,'units','norm');
@@ -183,6 +255,59 @@ if strcmp(p.mode,'single')
     
 end
 
+% ==============================================
+%%   make errorDialog
+% ===============================================
+if p.dlg==1
+    hp=uicontrol('style','pushbutton','units','norm','tag','pb_ok','string','OK');
+    set(hp,'TooltipString','close window');
+    
+    set(hp,'position',[ .42 0 .2 .08],'callback', {@buttoncallback,hp});
+    
+    
+    set(hf ,'numbertitle','off','menubar','none');
+    
+%  Resize   
+
+    if isfield(pinput,'pos')==0
+        p.pos=[0 .08 1 .92];
+    end
+    if isfield(pinput,'figpos')==0
+        set(hf,'position',[[548   347   334   225]]);
+    end
+    
+    if p.state==0 || p.state==1
+        set(hf,'name',['info (t:' datestr(now,'HH:MM:SS') ')' ]);
+    elseif p.state==2
+        set(hf,'name',['warning (t:' datestr(now,'HH:MM:SS') ')' ]);
+    elseif p.state==3
+        set(hf,'name',['error (t:' datestr(now,'HH:MM:SS') ')' ]);
+    end
+    %set(hp,'units','pixels');
+    
+    if ~isempty(p.figpos)
+        set(hf,'position',p.figpos);
+    end
+    
+    if 0
+        %% =====[DIALOG info]=================================
+         addNote([],'text','here is more  <b><font color=green>to do!!</b>',...
+            'state',0,'IS',12,'dlg',1);
+        %% =====[DIALOG info]=================================
+        a=strsplit(help('mean.m'),char(10));
+         addNote([],'text',a, 'state',1,'IS',12,'dlg',1);
+        %% =========[DIALOG WARNING]======================================
+        addNote([],'text','this might be  <b><font color=white>stupid!!</b>',...
+            'state',2,'pos',[0 .08 1 .92],'IS',1,'dlg',1);
+        %% =========[DIALOG ERROR WITH WAIT-OPTION]=========================
+         addNote([],'text','this is an  <b><font color=white>ERROR!!</b>',...
+            'state',3,'dlg', 1,'wait',1);
+        %% ===============================================
+        
+        
+    end
+end
+
 %———————————————————————————————————————————————
 %%   PANEL-2
 %———————————————————————————————————————————————
@@ -191,30 +316,37 @@ pos=p.pos;
 
 
 % delete(findobj(gcf,'tag','notepanel'));
-pan2 = uipanel('Title','','FontSize',7,'units','norm', 'BackgroundColor','white',  'Position',[0 0 .5 .3]);
+pan2 = uipanel(hx,'Title','','FontSize',7,'units','norm', 'BackgroundColor','white',  'Position',[0 0 .5 .3]);
 set(pan2,'Position',pos,'tag','notepanel','visible','on','backgroundcolor','w');
 % set(pan2,'Position',[0.8 0-.01 .205 .9]);
 set(pan2,'visible','on');
 
 
 
-% hf=findobj(0,'tag','paramgui');
-% hb=uicontrol(hf,'style','edit','tag','note_ed','units','normalized')
-% set(hb,'position',[0.02 0.03 .3 .3]);
-% set(hb,'position',[.5 .5 .2 .3]);
+
 
 
 
 % if p.state==1
 %     p0.col=[ 1.0000    0.8000    0.2000]
-if p.state==2
+if p.state==1
+    p.col=[ 0.8392    0.9098    0.8510];
+    p.head='Info!';
+    if isfield(pinput, 'headcol')~=1;
+        p.headcol=[0.8706    0.4902         0];
+    end
+elseif p.state==2
     p.col=[ 1.0000    0.8000    0.2000];
     p.head='Warning!';
-    p.headcol=[0.8706    0.4902         0];
+    if isfield(pinput, 'headcol')~=1;
+        p.headcol=[0.8706    0.4902         0];
+    end
 elseif p.state==3
     p.col=[1.0000    0.6000    0.6000];
     p.head='Error!';
-    p.headcol=[0 0 0];
+    if isfield(pinput, 'headcol')~=1;
+        p.headcol=[1 1 1];
+    end
 end
 
 
@@ -275,7 +407,12 @@ try
     else
         text2=text;
     end
-    
+    % add additional lines
+    if ischar(text2); 
+        text2=[text2 repmat('<br>',[ 1 2])];
+    else
+       text2=[text2(:); repmat([{'<br>'}],[2 1])]  ;
+    end
     jEditPane.setText(text2);
 end
 %% ===============================================
@@ -325,7 +462,7 @@ poslb=[pos(1:2) .1 .1];% [.3 .3 .1 .1]
 IS=p.IS;
 %MOVE LIST
 %% ____________________[move]____________________________________________________________________________
-hm=uicontrol('parent',hf,'style','push','units','norm','string','<html>&#9769;');
+hm=uicontrol('parent',hx,'style','push','units','norm','string','<html>&#9769;');
 set(hm,'position',poslb,'fontsize',6,'tag','note_drag',...
     'TooltipString','move panel');
 set(hm,'units','pixels');
@@ -334,7 +471,7 @@ set(hm,'position',[posN(1:2) IS IS]);
 set(hm,'units','norm');
 hdrag = findjobj(hm);
 %% ___________________[resize]_____________________________________________________________________________
-hr=uicontrol('parent',hf, 'style','push','units','norm','string','<>');
+hr=uicontrol('parent',hx, 'style','push','units','norm','string','<>');
 set(hr,'position',poslb,'fontsize',6,'tag','note_resize',...
     'TooltipString','resize panel');
 set(hr,'units','pixels');
@@ -343,7 +480,7 @@ set(hr,'position',[posN(1)+IS posN(2) IS IS]);
 set(hr,'units','norm');
 hmove = findjobj(hr);
 %% ____________________[close]____________________________________________________________________________
-hc=uicontrol('parent',hf, 'style','push','units','norm','string','x');
+hc=uicontrol('parent',hx, 'style','push','units','norm','string','x');
 set(hc,'position',poslb,'fontsize',6,'tag','note_close',...
     'TooltipString','close panel');
 set(hc,'units','pixels');
@@ -398,6 +535,14 @@ set(jbh, 'KeyPressedCallback',{@keys_scripts,pan2});
 % end
 
 % ==============================================
+%%   uutput
+% ===============================================
+
+han.pan  =pan2;
+han.close=hc;
+han.resize=hr;
+han.move  =hm;
+% ==============================================
 %%   userdata
 % ===============================================
 
@@ -413,10 +558,20 @@ u.hdrag=hdrag;
 
 
 
+%===================================================================================================
 
 set(pan2,'userdata',u);
 
+if p.wait==1
+    figure(hf);
+    uiwait(hf);
+end
 
+
+
+function buttoncallback(e,e2,hp)
+uiresume(gcf);
+close(gcf);
 
 % Turn on context menu at right mouse click (doesn't work!)
 function mousePressedCallback(hObj, eventData, cmenu, pan2)
@@ -884,4 +1039,27 @@ end
 %     set(hv,'position',[  pos2(1)-xs  pos2(2)   pos2(3:4)]);
 %     set(hv  ,'units',units_hv);
 % end
+
+function updateNote(h,p);
+%% =======update========================================
+
+u=get(h.pan,'userdata');
+if isfield(p,'text')         %change TEXT
+    u.hj.setText(p.text);
+end
+
+if isfield(p,'fs')          %change fontsize
+    hfont=u.hj.getFont;
+    u.hj.setFont(java.awt.Font(get(hfont,'FontName'), java.awt.Font.PLAIN, p.fs));
+end
+
+if isfield(p,'col') && length(p.col)==3
+    u.hj.setBackground(java.awt.Color(p.col(1),p.col(2),p.col(3)));
+end
+
+
+
+
+
+
 

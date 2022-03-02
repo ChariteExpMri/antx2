@@ -439,8 +439,12 @@
 %  -post hoc file to export necessary files from HPC-cluster to another directory
 %  - script can be used for post-hoc statistical analysis
 % 
+% #ba 02 Mar 2022 (16:17:11)
+% function #k [xgetparameter]: #n extended
+% - parameter-extraction now possible with animal-specific mask(s) located in the animal-folders
+%   potential scenario: parameter-extraction using animal-specific masks from read-out images
+%   in native space
 % 
-
 %% ===============================================
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

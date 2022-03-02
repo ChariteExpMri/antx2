@@ -1,6 +1,13 @@
 
-function xmakebatch(z,p, callerfile)
+function xmakebatch(z,p, callerfile,execCMD)
 
+% z: struct with parameter
+% p: cellarray parameter x 4 cols (parameterName parameterValue info selectionOption )
+% callerfile: function-name to execute (default: it is the parsed mfilename)
+% execCMD: execution command for the function 
+%          default: empty to obtain following execution command: dummy(1,z);
+%            with: -1st arg: 0/1 to show the gui
+%                  -2nd art: the struct with paramter
 
 if isempty(callerfile)
    hlp='';  
@@ -107,7 +114,11 @@ zz(iinf)=[];
 
 hh=[hh; zz];
 % ----------
-hh(end+1,1)={[callerfile '(' '1',  ',z' ');' ]};
+if exist('execCMD')==0
+    hh(end+1,1)={[callerfile '(' '1',  ',z' ');' ]};
+else
+    hh(end+1,1)={[execCMD ]};
+end
 % disp(char(hh));
 % uhelp(hh,1);
 

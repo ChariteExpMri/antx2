@@ -21,12 +21,20 @@
 % mode ='U' ...sesize button up
 % mode ='D' ...sesize button down
 % or any combination such as : mode ='LUDR'
+% 
+% -------optional-------
+% 'restore' :      -   [0/1]; restore previous position via contextmenu
+% 
 %% examples-1
 % fg; imagesc;hf=gcf; hres=gca,addResizebutton(hf,hres,'mode','UDLR','moo',0);
 %% example-2
-% fg; imagesc;hf=gcf; set(gca,'units','norm','position',[.3 .3 .3 .3]) ;
+% fg; imagesc;
+% hf=gcf; 
+% set(gca,'units','norm','position',[.3 .3 .3 .3]) ;
 % hb=uicontrol('style','listbox','units','norm','position',[.5 .5 .3 .3],'string',{'aa','bb'}) ;
 % addResizebutton(hf,hb,'mode','UDLR','moo',1);
+%% remove resizeButtons from current figure
+% addResizebutton('remove')
 % ===============================================
 
 
@@ -89,6 +97,13 @@ if 0
     
 end
 
+% ==============================================
+%%   close option
+% ===============================================
+if ischar(figh) && strcmp(figh,'remove')
+    delete(findobj(gcf,'tag','BUT_resizeControl'));
+    return
+end
 
 % ==============================================
 %%   inputs
@@ -104,6 +119,7 @@ figure(hf);
 p0.mode  ='R';                        ;%resize button: see 'mode'
 p0.listboxResize =1                   ;%[1]resize other listbox or [0] shift listbox
 p0.moo           =1                   ;%move other objects: [1]yes, [0]no
+p0.restore       =1                   ;%restore previous position via contextmenu
 % ===============================================
 
 
@@ -183,7 +199,9 @@ for i=1:length(modes)
     
     c = uicontextmenu;
     hb.UIContextMenu = c;
-    m1 = uimenu(c,'Label','restore default control position','Callback',@restoredefault);
+    if p.restore==1
+        m1 = uimenu(c,'Label','restore default control position','Callback',@restoredefault);
+    end
     
 end
 u.hh    =hh;

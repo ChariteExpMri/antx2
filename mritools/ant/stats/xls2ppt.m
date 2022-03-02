@@ -7,8 +7,14 @@
 % pptfile  =fullfile(pabase,'test3.pptx');
 % xls2ppt(pabase,flt,sheetnum,pptfile)
 % xls2ppt(pabase,'^.*.xlsx',2,fullfile(pwd,'brainvol.pptx'))
+%
+%% ___ OPTIONAL pairwise inputs____
+% 'append' [0,1]: [1]  append slides to to existing ppt-file via 'append', [0]: overwrite
+%
+%% example: append slides to to existing ppt-file via 'append'
+% xls2ppt('F:\data5\eranet_round2_statistic\DTI\result_test2','^res_SIG_',3,fullfile('F:\data5\eranet_round2_statistic\DTI\result_test2','123'),'append',0);
     
-function xls2ppt(pabase,flt,sheetnum,pptfile)
+function xls2ppt(pabase,flt,sheetnum,pptfile,varargin)
 % ==============================================
 %%
 % ===============================================
@@ -19,6 +25,16 @@ if 0
     %     pptfile  =fullfile(pabase,'test3.pptx');
     % xls2ppt(pabase,flt,sheetnum,pptfile)
     xls2ppt(pwd,'^.*.xlsx',2,fullfile(pwd,'brainvol.pptx'))
+end
+
+p0.append=0;
+if isempty(varargin)
+    p=p0;
+else
+    v=varargin;
+    p=cell2struct(v(2:2:end),v(1:2:end),2);
+    pinput=p; %backup input
+    p=catstruct(p0,p);
 end
 
 % pabase='H:\Daten-2\Imaging\AG_Mueller_Mainz\stat_brainvol\result';
@@ -72,7 +88,7 @@ for i=1:length(files)
     % ===============================================
     
     
-    if i==1
+    if i==1 && p.append==0
     exportToPPTX('new','Dimensions',[12 6], ...
         'Title','Example Presentation', ...
         'Author','MatLab', ...

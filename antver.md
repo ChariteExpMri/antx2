@@ -1,11 +1,21 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   23 Feb 2022 (16:40:25)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   02 Mar 2022 (16:17:11)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**02 Mar 2022 (16:17:11)**</ins>  
+  function  __[xgetparameter]__: extended  
+  - parameter-extraction now possible with animal-specific mask(s) located in the animal-folders  
+    potential scenario: parameter-extraction using animal-specific masks from read-out images  
+    in native space  
+    
+ % ===============================================  
+ ----- EOF  
+  make antvermd for GIT: antver('makeantver')  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Feb 2022 (16:40:25)**</ins>  
   function  __[DTIprep]__: added a script-selection-option  
   - scripts can be copied and costumized for own purpose  
@@ -19,6 +29,7 @@
   3) "DTIscript_posthoc_exportData4Statistic.m"  
    -post hoc file to export necessary files from HPC-cluster to another directory  
    - script can be used for post-hoc statistical analysis  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**11 Feb 2022 (00:31:35)**</ins>  
   small changes in  __[xdraw]__:   
