@@ -444,6 +444,16 @@
 % - parameter-extraction now possible with animal-specific mask(s) located in the animal-folders
 %   potential scenario: parameter-extraction using animal-specific masks from read-out images
 %   in native space
+% #ba 02 Mar 2022 (17:06:11)
+% new tutorial #bw ["tutorial_extractParamter_via_Mask.docx"] 
+% This tutorial shows how to extract parameters (mean/volume etc.) from a read-out image 
+% using a mask. In this tutorial the mask contains two ROIs.
+% #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+% #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages)
+% 
+% 
+% 
+% 
 % 
 %% ===============================================
 %----- EOF
