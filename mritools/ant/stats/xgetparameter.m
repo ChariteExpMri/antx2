@@ -181,7 +181,7 @@ if isempty(pam) % no paths in the mask--->mask located in the animal path
 %                 end
 %             end
             
-            f1=fullfile(mdir{m},x.file{1} );
+            f1=fullfile(mdir{m},z.file{1} );
             [~,animal]=fileparts(mdir{m});
             
             %--------

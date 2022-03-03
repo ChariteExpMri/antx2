@@ -1,6 +1,6 @@
 
 % addNote: add note(s) to figure
-% several notes in one figure possible 
+% several notes in one figure possible
 %
 % han=addNote(figh, varargin)
 %
@@ -22,22 +22,22 @@
 % po.figpos    % adjust figure-Size (normalized, 4 values); if empty a default size is used
 % p0.wait      % modality of the figure: [0]no [1]yes.. wait to close figure
 % ===============================================
-% 
-% 
+%
+%
 % ===============================================
 %% ___EXAMPLES_____
 % cf; w1=figure;w2=figure;imagesc,imagesc; addNote(w1)
-% 
+%
 %% simple note
 % w2=figure;imagesc; addNote(w2,'text','This is a <b>Note</b><br>123')
-% 
+%
 %% note: with headline, set BGcolor
 % w2=figure;addNote(w2,'text','This is a <b>Note</b><br>123','head','Remember!','col',[ 0.8392 0.9098 0.8510])
 %% note: with headline, set BGcolor, set headline-color
 % w2=figure;addNote(w2,'text','This is a <b>Note</b><br>123','head','Remember!','col',[ 0.8392 0.9098 0.8510],'headcol',[1 0 1])
-% 
+%
 % w2=figure;addNote(w2,'text',char(1:1000))
-% 
+%
 %% normal note
 % w2=figure;addNote(w2,'text','this is a simple note...  you can make a long string here','state',1)
 %% warning note
@@ -48,12 +48,12 @@
 % w2=figure;addNote(w2,'text','Something might be <b>improved','state',2,'pos',[0 0 1 .15])
 %% ERROR note
 % w2=figure;addNote(w2,'text','There was an <b><font color=white>Error!</b>','state',3,'pos',[0 0 1 .15],'IS',12);
-% 
+%
 % msg= ['<b><div style="font-family:impact;color:green">' 'Important</div></b>' ... '
 %     'Remember this: <i>' ...
 %     '<font color="blue">tahoma</font></i> courier'];
 % w2=figure;addNote(w2,'text',msg);
-% 
+%
 %% four notes in one figure, click onto note to set n top
 % cf
 % fg; set(gcf,'menubar','none');
@@ -88,7 +88,7 @@
 % a note can be updated without destroing the note
 % properties than can be updated:
 %  "text":text to display;
-%  "fs": fontsize; 
+%  "fs": fontsize;
 %  "col": bg-color
 % _EXAMPLE_:
 % hf=figure;
@@ -97,9 +97,9 @@
 % hs=addNote(hs,'text','<u>a new Text')
 % pause(1);
 % hs=addNote(hs,'text','<u>another Text','fs',30,'col',[1 1 0])
-% 
-% 
-% 
+%
+%
+%
 % ===============================================
 
 
@@ -121,7 +121,7 @@ if 0
     w2=figure;addNote(w2,'text','This is a <b>Note</b><br>123','head','Remember!','col',[ 0.8392 0.9098 0.8510])
     % note: with headline, set BGcolor, set headline-color
     w2=figure;addNote(w2,'text','This is a <b>Note</b><br>123','head','Remember!','col',[ 0.8392 0.9098 0.8510],'headcol',[1 0 1])
-
+    
     w2=figure;addNote(w2,'text',char(1:1000))
     
     %normal note
@@ -137,7 +137,7 @@ if 0
     
     msg= ['<b><div style="font-family:impact;color:green">' 'Important</div></b>' ... '
         'Remember this: <i>' ...
-    '<font color="blue">tahoma</font></i> courier'];
+        '<font color="blue">tahoma</font></i> courier'];
     w2=figure;addNote(w2,'text',msg);
     
     % four notes in one figure, click onto note to set n top
@@ -156,7 +156,7 @@ end
 % ===============================================
 % ----INPUT PARAM
 p0.text  ='Note';                         %text to display (cell-string or char)
-p0.col   =[  0.8706    0.9216    0.9804]; %background color 
+p0.col   =[  0.8706    0.9216    0.9804]; %background color
 p0.fs    =25;                             %fontsize
 p0.state =0;                              %state: [0]normal,[1]warning,[2]error
 p0.head  ='';                             %additional headline, only if state is [0]
@@ -185,11 +185,29 @@ end
 % ==============================================
 %%   update without destroing the Note
 % ===============================================
- if isstruct(figh)
-     han=figh;
-     updateNote(han,pinput);
-    return 
- end
+if isstruct(figh)
+    
+    isokupd=0;
+    if isfield(figh,'pan') && ishandle(figh.pan)
+        isokupd=isokupd+1;
+    end
+    if isfield(figh,'close') && ishandle(figh.close)
+        isokupd=isokupd+1;
+    end
+    if isfield(figh,'resize') && ishandle(figh.resize)
+        isokupd=isokupd+1;
+    end
+    if isfield(figh,'move') && ishandle(figh.move)
+        isokupd=isokupd+1;
+    end
+    if isokupd==4
+        han=figh;
+        updateNote(han,pinput);
+    else
+        han=[];
+    end
+    return
+end
 
 
 % ==============================================
@@ -207,7 +225,7 @@ end
 %%   specific inputs
 % ===============================================
 if 0
-   addNote([],'note','close') ;
+    addNote([],'note','close') ;
 end
 
 if isfield(p,'note') && strcmp(p.note,'close')
@@ -226,7 +244,7 @@ if strcmp(hf.Type,'figure')==0 %is a panel or something else
     hx=hf;
     hf=hf.Parent;
 else
-    hx=hf  ; 
+    hx=hf  ;
 end
 
 
@@ -267,8 +285,8 @@ if p.dlg==1
     
     set(hf ,'numbertitle','off','menubar','none');
     
-%  Resize   
-
+    %  Resize
+    
     if isfield(pinput,'pos')==0
         p.pos=[0 .08 1 .92];
     end
@@ -291,16 +309,16 @@ if p.dlg==1
     
     if 0
         %% =====[DIALOG info]=================================
-         addNote([],'text','here is more  <b><font color=green>to do!!</b>',...
+        addNote([],'text','here is more  <b><font color=green>to do!!</b>',...
             'state',0,'IS',12,'dlg',1);
         %% =====[DIALOG info]=================================
         a=strsplit(help('mean.m'),char(10));
-         addNote([],'text',a, 'state',1,'IS',12,'dlg',1);
+        addNote([],'text',a, 'state',1,'IS',12,'dlg',1);
         %% =========[DIALOG WARNING]======================================
         addNote([],'text','this might be  <b><font color=white>stupid!!</b>',...
             'state',2,'pos',[0 .08 1 .92],'IS',1,'dlg',1);
         %% =========[DIALOG ERROR WITH WAIT-OPTION]=========================
-         addNote([],'text','this is an  <b><font color=white>ERROR!!</b>',...
+        addNote([],'text','this is an  <b><font color=white>ERROR!!</b>',...
             'state',3,'dlg', 1,'wait',1);
         %% ===============================================
         
@@ -408,10 +426,10 @@ try
         text2=text;
     end
     % add additional lines
-    if ischar(text2); 
+    if ischar(text2);
         text2=[text2 repmat('<br>',[ 1 2])];
     else
-       text2=[text2(:); repmat([{'<br>'}],[2 1])]  ;
+        text2=[text2(:); repmat([{'<br>'}],[2 1])]  ;
     end
     jEditPane.setText(text2);
 end
@@ -521,12 +539,12 @@ set(jbh, 'KeyPressedCallback',{@keys_scripts,pan2});
 % if 0
 %     jEditPane.setBackground(java.awt.Color(0,0,0,0))
 %     jScrollPane.setBackground(java.awt.Color(0,0,0,1))
-%     
+%
 %     hp=findjobj(pan2)
 %     hp.setBackground(java.awt.Color(0,0,0,.1))
-%     
+%
 %     set(hb,'visible','off');
-%     
+%
 %     jPanel = pan2.JavaFrame.getPrintableComponent;  % hPanel is the Matlab handle to the uipanel
 %     jPanel.setOpaque(true)
 %     jPanel.getParent.setOpaque(false)
@@ -595,10 +613,10 @@ if eventData.isMetaDown  % right-click is like a Meta-button
     %[(posp(1)+posp(3))/2 (posp(2)+posp(4))/2]
     return
     
-  %cmenu-pos is in pixel from figur-left-bottom
-  mp=[0 0]
-  set(cmenu,'Position',mp,'Visible','on');
-
+    %cmenu-pos is in pixel from figur-left-bottom
+    mp=[0 0]
+    set(cmenu,'Position',mp,'Visible','on');
+    
     hn=findobj(gcf,'tag','notepanel');
     set(hn,'units','pixels');
     posp=get(hn,'position');
@@ -607,12 +625,12 @@ if eventData.isMetaDown  % right-click is like a Meta-button
     
     %posXn=clickX./posp(3)*posn(3);
     %posYn=(posp(4)-posp(2))+(clickY./posp(4)*posn(4));
-   %mp = [posXn posYn]
-   mp=[clickX clickY]
+    %mp = [posXn posYn]
+    mp=[clickX clickY]
     %mp = [(posp(1)+posp(3))/2 (posp(3))]
     set(gcf,'units','pixels')
-     mp=get(gcf,'currentpoint')
-     set(gcf,'units','norm')
+    mp=get(gcf,'currentpoint')
+    set(gcf,'units','norm')
     set(cmenu,'Position',mp,'Visible','on');
 else
     %'dd'
@@ -669,7 +687,7 @@ if e2.getModifiers ==2   %[1]shift ,[2]ctrl, [8]alt
         u.hj.setFont(java.awt.Font(font.getFontName, java.awt.Font.PLAIN,fs));
     elseif strcmp(e2.getKeyChar,'-')
         %'--'
-         u=get(pan2,'userdata');
+        u=get(pan2,'userdata');
         font= u.hj.getFont;
         fs=font.getSize-1;
         if fs==0; return; end
@@ -760,7 +778,7 @@ delete(u.hr);
 delete(u.hc);
 
 % return
-% 
+%
 % delete(findobj(gcf,'tag','notepanel'));
 % delete(findobj(gcf,'tag','note_drag'));
 % delete(findobj(gcf,'tag','note_resize'));
@@ -822,16 +840,16 @@ end
 % units_hv =get(hv ,'units');
 % units_fig=get(gcf,'units');
 % units_0  =get(0  ,'units');
-% 
+%
 % set(hv  ,'units','pixels');
 % set(gcf ,'units','pixels');
 % set(0   ,'units','pixels');
-% 
+%
 % posF=get(gcf,'position')   ;
 % posS=get(0  ,'ScreenSize') ;
 % pos =get(hv,'position');
 % mp=get(0,'PointerLocation');
-% 
+%
 % xx=mp(1)-posF(1);
 % if xx<0; xx=0; end
 % if xx>(posF(3)-pos(3)); xx=posF(3)-pos(3); end
@@ -839,7 +857,7 @@ end
 % if yy<0; yy=0; end
 % if yy>(posF(4)-pos(4)); yy=(posF(4)-pos(4)); end
 % set(hv,'position',[ xx yy pos(3:4)]);
-% 
+%
 % set(hv ,'units'  ,units_hv);
 % set(gcf,'units'  ,units_fig);
 % set(0  ,'units'  ,units_0);
@@ -853,7 +871,7 @@ end
 %         %         try; hv=hv(1); end
 %         units_hv =get(hv ,'units');
 %         set(hv  ,'units','pixels');
-%         
+%
 %         pos =get(hv,'position');
 %         pos2=[ pos(1)-df(1) pos(2)-df(2) pos(3:4)];
 %         set(hv,'position',pos2);
@@ -957,7 +975,7 @@ end
 % ===============================================
 
 
-% 
+%
 % function fnote_resize(e,e2,tag,dotag,movetags, downTags,upTags)
 % dotag=cellstr(dotag);
 % hv=findobj(gcf,'tag',dotag{1});
@@ -965,16 +983,16 @@ end
 % units_hv =get(hv ,'units');
 % units_fig=get(gcf,'units');
 % units_0  =get(0  ,'units');
-% 
+%
 % set(hv  ,'units','pixels');
 % set(gcf ,'units','pixels');
 % set(0   ,'units','pixels');
-% 
+%
 % posF=get(gcf,'position')   ;
 % posS=get(0  ,'ScreenSize') ;
 % pos =get(hv,'position');
 % mp=get(0,'PointerLocation');
-% 
+%
 % xx=mp(1)-posF(1);
 % yy=mp(2)-posF(2);
 % % if xx<0; xx=0; end
@@ -983,7 +1001,7 @@ end
 % % if yy<0; yy=0; end
 % % if yy>(posF(4)-pos(4)); yy=(posF(4)-pos(4)); end
 % % disp('-....');
-% 
+%
 % xs=pos(1)-xx;
 % ys=pos(2)-yy;
 % posn=[ xx yy pos(3)+xs pos(4)+ys];
@@ -1016,7 +1034,7 @@ end
 %     set(hv  ,'units',units_hv);
 % end
 % %% ===============================================
-% 
+%
 % % --------------downTags----------------
 % downTags=cellstr(downTags);
 % for i=1:length(downTags)
@@ -1028,7 +1046,7 @@ end
 %     set(hv  ,'units',units_hv);
 % end
 % %% ===============================================
-% 
+%
 % % --------------upTags----------------
 % upTags=cellstr(upTags);
 % for i=1:length(upTags)
@@ -1045,7 +1063,46 @@ function updateNote(h,p);
 
 u=get(h.pan,'userdata');
 if isfield(p,'text')         %change TEXT
-    u.hj.setText(p.text);
+    
+    
+    %% ===============================================
+    
+    try
+        if iscell(p.text); text=strjoin(p.text,'<br>');
+        else;              text=p.text;
+        end
+        
+        text2=text;
+        
+%         if ~isempty(p.head)
+%             % %         color="rgb(128, 128, 0)">
+%             %         hcol=round(p.headcol.*255)
+%             %         color="rgb(hcol(1), hcol(2), hcol(3))"
+%             
+%             %        <p style="color:rgb(255,0,0);">
+%             %p.headcol =[1 0 0]
+%             hcol=sprintf('color:rgb(%d,%d,%d)',round(p.headcol.*255));
+%             %hcol='green'
+%             %hcol='red'
+%             
+%             %         text2=[ ['<b><div style="font-family:impact;color:' hcol '">'  p.head  '</div></b>']   ];
+%             % text2= ['<b><div style="font-family:impact;color:rgb(255,0,255)">'  p.head  '</div></b>']
+%             text2= ['<b><div style="font-family:impact;' hcol '">'  p.head  '</div></b>' text];
+%         else
+%             text2=text;
+%         end
+        % add additional lines
+        if ischar(text2);
+            text2=[text2 repmat('<br>',[ 1 2])];
+        else
+            text2=[text2(:); repmat([{'<br>'}],[2 1])]  ;
+        end
+        u.hj.setText(text2);
+    end
+    %% ===============================================
+    %u.hj.setText(p.text);
+    
+    
 end
 
 if isfield(p,'fs')          %change fontsize

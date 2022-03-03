@@ -5595,12 +5595,18 @@ elseif strcmp(task,'scriptname')
     
     NotePos=u.NotePos;
     %NotePos=[0.5 .085  .5 .58];
-    addNote(hh,'text',hlp,'pos',NotePos,'mode','single','fs',20,'IS',1);
+  
     
+    
+    hs=addNote(u.han,'text',hlp);
+    if isempty(hs)
+        addNote(hh,'text',hlp,'pos',NotePos,'mode','single','fs',20,'IS',1);
+    end
     
     
     
 elseif strcmp(task,'open')
+    %% OPEN SCRIPT IN MATLAB-EDITOR
     file=hn.String{hn.Value};
     
     cont=preadfile(file); 
