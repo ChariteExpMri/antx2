@@ -5539,7 +5539,7 @@ m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">edit file (not pr
 NotePos=[xpos .085  1-xpos .58];
 NotePos=[ 0 .085  1 .62];
 msg='select <b>script/function</b> from <u>above</u> to obtain <font color="blue">help.<br>';
-han=addNote(h,'text',msg,'pos',NotePos,'head','scripts/functions','mode','single','fs',30,'IS',1);
+han=addNote(h,'text',msg,'pos',NotePos,'head','scripts/functions','mode','single','fs',20,'IS',1);
 
 %% =======[open script]========================================
 hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_open');

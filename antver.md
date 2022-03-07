@@ -1,17 +1,24 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   02 Mar 2022 (17:06:11)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   07 Mar 2022 (09:52:06)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 Mar 2022 (09:52:06)**</ins>  
+  new function  __[scripts_gui]__: This function contains a collection of scripts that can be   
+  costumized and applied. Currently the script-collection is available for the following functions:  
+  DTIprep.m; dtistat.m, xvol3d.m  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**02 Mar 2022 (17:06:11)**</ins>  
   new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  __["tutorial_extractParamter_via_Mask.docx"]__   
   This tutorial shows how to extract parameters (mean/volume etc.) from a read-out image   
   using a mask. In this tutorial the mask contains two ROIs.  
   &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
   &#8618; access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages)  
+    
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**02 Mar 2022 (16:17:11)**</ins>  
   function  __[xgetparameter]__: extended  

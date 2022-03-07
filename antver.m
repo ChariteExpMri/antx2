@@ -452,6 +452,11 @@
 % #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages)
 % 
 % 
+% #ba 07 Mar 2022 (09:52:06)
+% new function #k [scripts_gui]: #n This function contains a collection of scripts that can be 
+% costumized and applied. Currently the script-collection is available for the following functions:
+% DTIprep.m; dtistat.m, xvol3d.m
+% 
 % 
 % 
 % 

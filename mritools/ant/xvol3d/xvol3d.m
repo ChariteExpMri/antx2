@@ -35,9 +35,9 @@
 % [remove img]      : remove visualization of the selected image
 %
 %  #k There are 3 ways to visualize SI:
-%               #b  -intensity cluster #r [plot-CL] #k or 
-%               #b  -threshold #r [plot-TR]  #k or 
-%               #b  -via slice function #r [plot-SL]  
+%               #b  -intensity cluster #r [plot-CL] #k or
+%               #b  -threshold #r [plot-TR]  #k or
+%               #b  -via slice function #r [plot-SL]
 %% ________________________________________________________________________________________________
 % #g [plot-CL]          : cluster an image into N-intensity cluster/classes. Use pulldow-menu to set
 %                      the number of classes.
@@ -58,10 +58,10 @@
 %                  as classes/clusters (example:  3 classes:  "0.1 0.5 1.0" for incidency maps, with increasing
 %                  transparency from inside to outside to display an intensity "core").
 %% ________________________________________________________________________________________________
-% #g [plot-SL]           : plot Intensity Image using slice function 
+% #g [plot-SL]           : plot Intensity Image using slice function
 % [colormap]          : select colormap
 % [transparent value] : this intensity value is set transparent (default 0: i.e. '0'-values become transparent)
-% [nan nan]           : optional, set lower/upper color range limits 
+% [nan nan]           : optional, set lower/upper color range limits
 % [transparency]      : set transparency value; {range 0-1}
 %% ________________________________________________________________________________________________
 % #b Brain & materila & light
@@ -137,7 +137,7 @@
 % xvol3d('view',0)       %--> show list of defined views
 % xvol3d('view',7)       %--> set view to "view back-top" similar as via context menu
 % xvol3d('view',[90 0])  %--> set view via azimuth and elevtion to example: 90,0
-% 
+%
 % #k SAVE IMAGE (TIFF/JPG/PNG)
 % select from contextMenu: save image  (rotation must be disabled to see the contextMenu)
 %----------------------------------------------------------------------------------------------------
@@ -165,13 +165,16 @@
 % xvol3d('plotslice','cmap','hot','nanval',0,'transp',[.05],'thresh',[-2 120]); % plot via slice
 % xvol3d('imagefocus',2);                               % set foucs to image-2
 % xvol3d('plotslice','cmap','jet','nanval',0,'transp',[.04],'thresh',[nan nan]); % plot via slice
+%
+% #by ___ load property-file __
+% xvol3d('loadprop','props_complete3.prop'); %load property-file
 % 
-% 
+%
 % #wg *** Related Functions ****
 % sub_plotconnections
 % sub_plotregions
 % sub_intensimg
-% 
+%
 
 function varargout=xvol3d(varargin)
 
@@ -276,6 +279,28 @@ end
 if nargin~=0;
     
     
+     if isfield(par,'loadprop');
+        propfile=par.loadprop;
+        prop_import(propfile,par);
+     end
+     if isfield(par,'saveimg');  %xvol3d('saveimg',s)
+         saveImg(par);
+         %saveimg_saveimage_run,'save_open'}
+         %saveimg_saveimage_run([],[],'save_open');
+         
+         if isfield(par,'closeGUI') && par.closeGUI==1
+             disp('saving image(s)+closing gui');
+             saveimg_saveimage_run([],[],'save_close');
+             
+         else
+             disp('saving image(s)');
+             saveimg_saveimage_run([],[],'save_open');
+         end
+     end
+    
+     
+     
+     
     if isfield(par,'regionlabels');
         showlabel_ext(par);
     end
@@ -291,7 +316,7 @@ if nargin~=0;
     
     if isfield(par,'loadbrainmask');
         buttonwindow
-        loadbrainmask(par.loadbrainmask);
+        loadbrainmask(par.loadbrainmask,par);
     end
     if isfield(par,'loadatlas');
         buttonwindow
@@ -824,10 +849,352 @@ f2= uimenu(f,'Label','display available colormaps','Callback',@Colormaps_showAll
 
 f2= uimenu(f,'Label','convert regions with scores to "load selection" file ','Callback',@convert2loadleselection_cb);
 
+f = uimenu('Label','props');
+f2= uimenu(f,'Label','<html><font color=red>INFO: <font color=green>[props]: use import to generate a previous plot based on an previously exported property file');
+f2= uimenu(f,'Label','import prop-file (to re-rerun code) ','Callback',@prop_import_call);
+f2= uimenu(f,'Label','export prop-file (to later re-rerun code) ','Callback',@prop_export_call);
+
+f = uimenu('Label','scripts');
+f2= uimenu(f,'Label','<html><font color=red>INFO: <font color=green>[props]: see collection of scripts (can be modified and executed)');
+f2= uimenu(f,'Label','show scripts','Callback',@scripts_swow_call);
 
 
-   
+
+
+function prop_export_call(e,e2)
+prop_export();
+
+function prop_export(propfile)
+% ==============================================
+%%   export prop
+% ===============================================
+% ==============================================
+%%   UI-open
+% ===============================================
+
+if exist('propfile')==0
+    [ fi pa]=uiputfile(fullfile(pwd,'*.prop'),'save property-file (*.prop)');
+    if isnumeric(fi); return;end
+    propfile=fullfile(pa,fi);
+    [pa name ext]=fileparts(propfile);
+    propfile=fullfile(pa,[name '.prop']);
+end
+
+% ==============================================
+%%   get "main" window
+% ===============================================
+h1=findobj(0,'tag','winselection');
+u1=get(h1,'userdata');
+h2=findobj(0,'tag','xvol3d');
+u2=get(h2,'userdata');
+
+%%  =======[general]========================================
+
+g=[];
+g.info_______=' *** GENERAL PARAMETER ***';
+g.mask=u2.mask;
+curfig=gcf;
+figure(h2);
+[az el]=view;
+figure(curfig);
+g.view=[az el];
+g.brainColor=get(findobj(h2,'tag','brain'),'facecolor');
+
+p.gen=g;
+
+vgen=struct2list(p);
+head={...
+    '%% ==============================================='
+    '%%   general properties                          '
+    '%% ==============================================='
+    };
+vgen=[head; vgen; {' '}];
+
+
+%% =======[general]========================================
+m=[];
+% m.mask=u2.mask;
+m.info_______=' *** MAIN PARAMETER [xvol3d-window]*** ';
+m.showarrows =get(findobj(h1,'tag','showarrows'),'value');
+m.braindot   =get(findobj(h1,'tag','braindot'),'value');
+m.brainalpha =get(findobj(h1,'tag','brainalpha'),'string');
+
+mate=findobj(h1,'tag','material');
+m.material  =get(mate,'value') ;
+m.notused_material  =mate.String{mate.Value};
+m.rblight    =get(findobj(h1,'tag','rblight'),'value');
+p.main=m;
+vmain=struct2list(p);
+
+head={...
+    '%% ==============================================='
+    '%%   main-gui properties                         '
+    '%% ==============================================='
+    };
+vmain=[head; vmain; {' '}];
+
+% % ==============================================
+% %%   save parameter-main/general
+% % ===============================================
+% 
+% if 0
+%     fprop=fullfile(pwd,'props_main2.m')
+%     pwrite2file(fprop,v1)
+% end
+
+% ==============================================
+%%   CONNECTION-properties
+% ===============================================
+
+
+h3=findobj(0,'tag','plotconnections');
+if ~isempty(h3)
+    u3=get(h3,'userdata');
+    % ===============================================
+    v=[];
+    % ============[label ]===================================
+    v.filenode=u3.filenode;
+    v.lab  =u3.lab;
+    v.sting=u3.sting;
     
+    % ============[table ]===================================
+    d=u3.t.Data;
+    hd=get(u3.t,'ColumnName');
+    v.t.col1=d(1,strcmp(hd,'col1')) ;%dot-color
+    v.t.R1=d(1,strcmp(hd,'R1'))     ;%dot-radius
+    v.t.T1=d(1,strcmp(hd,'T1'))     ;%dot-transparency
+    
+    v.t.Lcol=d(1,strcmp(hd,'Lcol')) ;%link-color
+    v.t.LR=d(1,strcmp(hd,'LR'))     ;%link-radius
+    v.t.LT=d(1,strcmp(hd,'LT'))     ;%link-transparency
+    % ==========[window]=====================================
+    % clear v
+    v.win.nodelabel  =get(findobj(h3,'tag','nodelabel'),'value');
+    v.win.stingview  =get(findobj(h3,'tag','stingview'),'value');
+    
+    v.win.selectAll  =get(findobj(h3,'tag','selectAll'),'value');
+    v.win.allnodes   =get(findobj(h3,'tag','allnodes'),'value');
+    v.win.alllinks   =get(findobj(h3,'tag','alllinks'),'value');
+    
+    v.win.instantUpdate  =get(findobj(h3,'tag','instantUpdate'),'value');
+    v.win.selectRow      =get(findobj(h3,'tag','selectRow'),'value');
+    
+    
+    v.win.CS2RAD           =get(findobj(h3,'tag','CS2RAD'),'value');
+    v.win.CS2RADexpression =get(findobj(h3,'tag','CS2RADexpression'),'string');
+    v.win.linkintensity    =get(findobj(h3,'tag','linkintensity'),'value');
+    v.win.colorlimits      =get(findobj(h3,'tag','colorlimits'),'string');
+    
+    
+    hcmap=findobj(h3,'tag','linkcolormap');
+    v.win.linkcolormap                   =get(hcmap,'value');
+    v.win.notused_linkcolormapString      =hcmap.String{hcmap.Value};
+    con=v;
+    
+    vcon=struct2list(con);
+    head={...
+        '%% ==============================================='
+        '%%            connections properties              '
+        '%% ==============================================='
+        };
+    vcon=[head; vcon; {' '}];
+    
+end
+
+%% ==========[glue cells]===========================
+v=[vgen; vmain];
+if exist('vcon')==1
+    v=[v; vcon];
+end
+
+
+%% ==========[save prop]=====================================
+
+
+if 1
+    
+  pwrite2file(propfile,v) ;
+  showinfo2('new propfile',propfile);
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% ==============================================
+%%   end of prop-export
+% ===============================================
+
+
+function prop_import_call(e,e2)
+
+prop_import();
+
+function prop_import(propfile,par)
+cprintf([0 .5 0],[ '...loading property-file \n']);
+% ==============================================
+%%   UI-open
+% ===============================================
+
+if exist('propfile')==0
+    [ fi pa]=uigetfile(fullfile(pwd,'*.prop'),'select property-file (*.prop)');
+    if isnumeric(fi); return;end
+    propfile=fullfile(pa,fi);
+end
+% ==============================================
+%%  load prop-file
+% ===============================================
+% clc;clear; cf
+% propfile=fullfile(pwd,'props_main2.');
+if exist(propfile)==2
+    v3=preadfile(propfile);
+    v3=v3.all;
+    eval(strjoin(v3,char(10)));
+else
+    if isfield(par,'p'),   p   =par.p  ; end
+    if isfield(par,'con'), con =par.con; end
+end
+
+% ==============================================
+%%   load/set main-properties
+% ===============================================
+if exist('p')==1
+    %% =======[check con-window (or open)]===============================
+    
+    h1=findobj(0,'tag','winselection');
+    
+    if isempty(h1)
+        xvol3d;
+        h1=findobj(0,'tag','winselection');
+    end
+    
+    try
+        xvol3d('loadbrainmask',p.gen.mask,'dialog',0);
+    end
+    h2=findobj(0,'tag','xvol3d');
+    try
+        figure(h2);
+        view(p.gen.view);
+        xvol3d('view',[p.gen.view]);
+        %view([90 90]);
+    end
+    try
+        figure(h2);
+        set(findobj(h2,'tag','brain'),'facecolor',p.gen.brainColor);
+    end
+    try; xvol3d('view',[p.gen.view]); end
+    % ==============================================
+    %%   set main parameter
+    % ===============================================
+    
+    h1=findobj(0,'tag','winselection');
+    w=p.main;
+    fn=fieldnames(w);
+    for i=1:length(fn)
+        hc=findobj(h1,'tag' ,fn{i});
+        if ~isempty(hc)
+            val=getfield(w,fn{i});
+            if isnumeric(val)
+                set(hc,'value',val);
+            else
+                set(hc,'string',val);
+            end
+            
+            if strcmp(fn{i},'brainalpha')
+                hgfeval(get(hc,'callback'),hc,'alpha');
+            else
+                try ;
+                    hgfeval( get(hc,'callback'),hc);
+                catch
+                    disp(['error in parameter:"' fn{i} '"' ]);
+                    disp(lasterr);
+                end
+            end
+        end
+    end
+    try; xvol3d('view',[p.gen.view]); end
+end
+% ==============================================
+%%   load connection-properties
+% ===============================================
+if exist('prop')==1 || exist('con')
+    if exist('prop')==1
+        con=prop.con;
+    end
+    
+    %     % ==============================================
+    %     %%   load/set con-properties
+    %     % ===============================================
+    %     %clc
+    %     fprop=fullfile(pwd,'props.m');
+    %     v3=preadfile(fprop);
+    %     v3=v3.all;
+    %     eval(strjoin(v3,char(10)));
+    
+    %% =======check con-window (or open)===============================
+    h3=findobj(0,'tag','plotconnections');
+    if isempty(h3)
+        sub_plotconnections;
+        h3=findobj(0,'tag','plotconnections');
+    end
+    
+    %% ============[load file]===================================
+    
+    sub_plotconnections('load',con.filenode);
+    
+    %% ============[set table]=========================
+    t=con.t;
+    fn=fieldnames(t);
+    u=get(h3,'userdata');
+    d =u.t.Data;
+    hd=u.t.ColumnName;
+    
+    for i=1:length(fn)
+        d(:,find(strcmp(hd,fn{i}))) = getfield(t,fn{i});
+    end
+    u.t.Data=d;
+    %% ============[set userdata]=========================
+    u=get(h3,'userdata');
+    u.lab  =con.lab;
+    u.sting=con.sting;
+    set(h3,'userdata',u);
+    %% ============[set window]=========================
+    w=con.win;
+    fn=fieldnames(w);
+    for i=1:length(fn)
+        hc=findobj(h3,'tag' ,fn{i});
+        if ~isempty(hc)
+            val=getfield(w,fn{i});
+            if isnumeric(val)
+                set(hc,'value',val);
+            else
+                set(hc,'string',val);
+            end
+        end
+    end
+    
+    %% ============[plot ]===================================
+    
+    sub_plotconnections('plot'); % plot/update data
+    try; xvol3d('view',[p.gen.view]); end
+    
+end %con
+% ==============================================
+%%
+% ===============================================
+
+
+
+
 function Colormaps_showAll(e,e2)
 % show available colormaps
 hw=findobj(0,'tag','winselection');
@@ -845,7 +1212,7 @@ for i=1:length(li)
     %disp([i size(cm,1)]);
 end
 % ==============================================
-%%   
+%%
 % ===============================================
 nb(2)=[ 3];
 nb(1)=ceil(size(maps,1)./nb(2));
@@ -864,12 +1231,12 @@ set(hb,'string','Colormaps','fontsize',9,'fontweight','bold','backgroundcolor','
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
-        
-        
+
+
 function cb_help(e,e2);
 uhelp([mfilename '.m']);
 
@@ -1457,7 +1824,7 @@ if get(e,'value')==0
 else
     if get(findobj(hw,'tag','rotsave'),'value')==1
         set(e,'backgroundcolor',[1 0 0]); drawnow;
-           rotHideControls(1);
+        rotHideControls(1);
     else
         set(e,'backgroundcolor',[1 1 0]);drawnow;
     end
@@ -1488,8 +1855,8 @@ if get(e,'value')==0
             close(u.hmovie) ;
             outname=fullfile(u.hmovie.Path,u.hmovie.Filename);
             u=get(hf,'userdata');         u.hmovie=[];         set(hf,'userdata',u);
-%             fprintf('..finished.\n');
-%             showinfo2('new movie',outname);
+            %             fprintf('..finished.\n');
+            %             showinfo2('new movie',outname);
         end
     end
     set(e,'backgroundcolor',[0.9400    0.9400    0.9400]);
@@ -1507,9 +1874,9 @@ if get(e,'value')==1
     if dosave==1 && isempty(u.hmovie)==1
         %filter = {'*.mp4';'*.avi';'*.*'};
         [fi pa]= uiputfile('*.*','select movie Name');
-        if isnumeric(fi); 
-            set(e,'value',0); 
-            return; 
+        if isnumeric(fi);
+            set(e,'value',0);
+            return;
         end
         outname=fullfile(pa,fi);
         [pa fi ext]=fileparts(outname);
@@ -1540,11 +1907,11 @@ if get(e,'value')==1
         iterat=0;
     end
     
-     %-----sting
+    %-----sting
     hk=findobj(0,'tag','plotconnections'); %gui-2
     stingview=get(findobj(hk,'tag','stingview'),'value');
     %--------
-   
+    
     for i = 1:iterat
         %disp(i);
         camorbit(azstep,elstep,'data',[   0 0 1]);
@@ -1617,7 +1984,7 @@ function rotHideControls(mode)
 hf=findobj(0,'tag','xvol3d');
 tags={'explodeview' 'exploderenew'  'showbrain'  'showlabel' 'preferences'};
 if mode==1;     do='off'; else;  do='on';  end
-for i=1:length(tags); 
+for i=1:length(tags);
     set(findobj(hf,'tag',tags{i}),'visible',do);
 end
 
@@ -1721,26 +2088,26 @@ hs=findobj(0,'tag','xvol3d'); u=get(hs,'userdata');
 if exist('IDs')==0
     %ids= input('select IDs : ', 's');
     % ==============================================
-%%   
-% ===============================================
-
+    %%
+    % ===============================================
+    
     prompt = {[...
         'Enter list of numeric region-IDs (as preselection)' char(10) ...
-         '   \color{blue} '...
-         ' When done, hit [OK], than hit ["plot regions"]-Btn to show these regions.' char(10) ...
-         ' Example region-ID lists: [1 2 3] or [1 3:10] ' char(10) ....<
-          ' \color{red} - a Zero-value deletes a previously entered list ID-list ' char(10)
-         ...
-         ]...
-         };
+        '   \color{blue} '...
+        ' When done, hit [OK], than hit ["plot regions"]-Btn to show these regions.' char(10) ...
+        ' Example region-ID lists: [1 2 3] or [1 3:10] ' char(10) ....<
+        ' \color{red} - a Zero-value deletes a previously entered list ID-list ' char(10)
+        ...
+        ]...
+        };
     title = 'Preselect Regions';
     definput = {''};
     answer = inputdlg(prompt,title,[1 100],definput,struct('Interpreter','tex'));
     ids    = str2num(char(answer));
     % ==============================================
-%%   
-% ===============================================
-
+    %%
+    % ===============================================
+    
 else
     ids= IDs;
 end
@@ -1760,8 +2127,8 @@ if length(ids)==1 && ids==0                   % EMPTY ,clear preselection (ID=0)
     end
     set(hs,'userdata',u);
     
-
-else      
+    
+else
     idall=cell2mat(u.lu(:,regexpi2(u.hlu,'ID')));
     ixID=zeros(length(ids),1);
     for i=1:length(ids)
@@ -1776,7 +2143,7 @@ else
     u.selectedRegion=zeros(size(u.lu,1),1);
     u.selectedRegion(isel)=1;
     
-   
+    
     set(hs,'userdata',u);
     disp('..remember selected regions');
     delete(findobj(hf,'tag','region')); %delete previous table
@@ -1878,22 +2245,29 @@ sub_plotregions;
 function cb_loadbrainmask(e,e2)
 loadbrainmask();
 
-function loadbrainmask(maskfile)
+function loadbrainmask(maskfile,par)
 prepareWindow
-if exist('maskfile')~=1; 
-    maskfile=[]; 
+if exist('maskfile')~=1;
+    maskfile=[];
 end
 hs=findobj(0,'tag','xvol3d'); u=get(hs,'userdata');
 
+isdialog=1;
+if exist('par') && isstruct(par) && isfield(par,'dialog')
+    isdialog=par.dialog;
+end
+
 %% ------------reload  Question
-if isfield(u,'mask')==1 && exist(u.mask)==2
-    [pa fi ext]=fileparts(u.mask);
-    choice = questdlg(...
-        ['Use loaded Maskfile (' [fi ext] ')?'], ...
-        'Maskfile(Nifti)', ...
-        '[Yes]','[No] .. select another Maskfile','[Yes]');
-    if ~isempty(strfind(choice,['[No]']))
-        u=rmfield(u ,'mask');
+if isdialog==1
+    if isfield(u,'mask')==1 && exist(u.mask)==2
+        [pa fi ext]=fileparts(u.mask);
+        choice = questdlg(...
+            ['Use loaded Maskfile (' [fi ext] ')?'], ...
+            'Maskfile(Nifti)', ...
+            '[Yes]','[No] .. select another Maskfile','[Yes]');
+        if ~isempty(strfind(choice,['[No]']))
+            u=rmfield(u ,'mask');
+        end
     end
 end
 
@@ -1917,7 +2291,7 @@ if ~isempty(hbrain)
     fprintf('..deleting old brain mask');
     delete(hbrain);
 end
- fprintf('..loading brain mask');
+fprintf('..loading brain mask');
 [ha a]=rgetnii(u.mask);
 % ==============================================
 %%   info notbinary Mask
@@ -1931,7 +2305,7 @@ if length(unique(a))>2
         },'Maskfile');
 end
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -1976,17 +2350,17 @@ fprintf('..done\n');
 
 function MAKEARROW(par)
 %  lims=[xlim; ylim; zlim];
- hf=findobj(0,'tag','xvol3d');
- br=findobj(hf,'tag','brain');
- lims=getappdata(br,'lims');
- 
- 
- if exist('par')~=1
+hf=findobj(0,'tag','xvol3d');
+br=findobj(hf,'tag','brain');
+lims=getappdata(br,'lims');
+
+
+if exist('par')~=1
     aroffset =.1;
     arlength =.15;
     % aroffset =.1;
     % arlength =.15;
-   
+    
     %start 10% from left side
     arStart=(lims(:,2)-lims(:,1)).*aroffset+lims(:,1);
     arStop=(lims(:,2)-lims(:,1)).*arlength+arStart;
@@ -1996,7 +2370,7 @@ else
     arStart=(lims(:,2)-lims(:,1)).*aroffset+lims(:,1);
     arStop=(lims(:,2)-lims(:,1)).*arlength+arStart;
     
-  
+    
 end
 % ==============================================
 %%
@@ -2132,7 +2506,7 @@ function saveImg(arg)
 %% ===============================================
 global xvol3d_glob
 if isempty(xvol3d_glob)
-    xvol3d_glob.paImg=pwd;
+    xvol3d_glob.paImg=fullfile(pwd,'images');
 end
 
 hf=findobj(0,'tag','xvol3d');
@@ -2214,6 +2588,39 @@ set(hb,'position',[0.85    0.01   0.15    0.25]);
 set(hb,'string','close GUI','fontsize',7)
 set(hb,'TooltipString','close GUI ...do nothing  ');
 set(hb,'callback',{@saveimg_saveimage_run,'close'});
+% ---------------
+hb=uicontrol(hp,'style','pushbutton','units','norm','tag','saveimg_getcode');
+set(hb,'position',[0.85    0.4   0.15    0.25]);
+set(hb,'string','get code','fontsize',7)
+set(hb,'TooltipString','obtain code  ');
+set(hb,'callback',{@saveimg_saveimage_run,'getcode'});
+
+
+%===================================================================================================
+% ==============================================
+%%   execute save_image code
+% ===============================================
+if isfield(arg,'saveimg')
+    s=arg.saveimg;
+    fn=fieldnames(s);
+    for i=1:length(fn)
+        hc=findobj(hp,'tag',fn{i});
+        if ~isempty(hc)
+            val=getfield(s,fn{i});
+            style= get(hc,'style');
+            if strcmp(style,'radiobutton') || strcmp(style,'popupmenu')
+                set(hc,'value',val);
+            else
+                set(hc,'string',val);
+            end
+        end
+    end    
+end
+
+
+
+% saveimg_saveimage_run,'save_open'}
+
 
 %% ===============================================
 function saveimg_saveimage_run(e,e2,task)
@@ -2222,6 +2629,68 @@ hf=findobj(0,'tag','xvol3d');
 hp=findobj(hf,'tag' ,'saveimg_pan');
 if strcmp(task,'close')
     delete(findobj(hf,'tag' ,'saveimg_pan'));
+    
+elseif strcmp(task,'getcode')
+    %% ===============================================
+    
+    hc=findobj(hp);
+    hc(hc==hp)=[];%delete panel from list
+    hc(strcmp(get(hc,'Style'),'pushbutton'))=[];%delete buttons from list
+    
+    s=struct();
+    for i=1:length(hc)
+        style=get(hc(i),'Style');
+        if strcmp(style,'radiobutton') || strcmp(style,'popupmenu') ;
+            val=get(hc(i),'value');
+        else
+            val=get(hc(i),'string');
+        end
+        s=setfield(s,get(hc(i),'tag'),val);
+    end
+    
+    v1=struct2list(s);
+    ipath=regexpi2(v1,'s.saveimg_edPath');
+    v1=v1([ ipath setdiff(1:length(v1),ipath) ]);
+  %% ===============================================
+  
+    T={ % add some paramter-Info
+    's.saveimg_edPath='           '% outpot path for image(s)'
+    's.saveimg_rdTimeStamp='      '% add timeStamp to image-filename {0,1}'
+    's.saveimg_edPrefix='         '% prefix for image-filename {string} '
+    's.saveimg_popResol='         '% image resolution {pulldown-index}'
+    's.saveimg_popFormat='        '% image-format {pulldown-index}'
+    's.saveimg_popViewType='      '% view-type {pulldown-index}; (1)current view; (2) all views'
+    's.saveimg_edCropTol='        '% crop-tolerance (in pixel) applies only if [saveimg_rdCrop] is 1 '
+    's.saveimg_rdHideCbar='       '% hide colorbar {0,1}'
+    's.saveimg_rdCrop='           '% crop image {0,1}'
+    };
+    %lenght_par=size(char(fieldnames(s)),2);
+    for i=1:size(v1,1)
+       ic=regexpi2(v1,     T{i,1}) ;
+      v1(i,1)= {[v1{ic}  repmat(' ',[1 5 ])   T{i,2}]};
+    end
+    v1=makenicer2(v1);
+    %% ===============================================
+    
+    
+    %v1=[v1; [ 'xvol3d(''saveimg'',s); % run to save image(s)' ] ];
+    v1=[v1; [ 'xvol3d(''saveimg'',s,''closeGUI'',0 ); % cmd to save image(s) keep GUI open' ] ];
+    %xvol3d('saveimg',s,'closeGUI',1); % run to save image(s)
+%     v1=[ {'% *** save images ***'}; v1];
+     v1=strrep(v1,' ','&nbsp;');
+     v1=['<font face="Courier">' ;v1; '</font>'];
+    % v1=[  '<p>' ; v1 ;  '</p>'  ]
+    %v1=['pre{display: inline;}<pre>' ;v1 ;'</pre>'];
+    %% ===============================================
+    %'this might be  <b><font color=white>stupid!!</b>'
+    fg; 
+    addNote([],'text',v1,...%strjoin(v1,'<br>'),...
+      'pos',[0 .08 1 .92],'IS',1,'dlg',1,'name','code',...
+      'head' ,'% code to save an image','fs',20,'figpos',[381   298   691   225]);
+    
+    
+    %% ===============================================
+    
 elseif strcmp(task,'getPath')
     global xvol3d_glob
     if isempty(xvol3d_glob)
@@ -2232,8 +2701,8 @@ elseif strcmp(task,'getPath')
     xvol3d_glob.paImg=pa;
     set(findobj(hf,'tag' ,'saveimg_edPath'),'string',xvol3d_glob.paImg);
 elseif strcmp(task,'save_open') || strcmp(task,'save_close')
-   %% ===============================================
-   
+    %% ===============================================
+    figure(hf);
     % get parameter
     s.pa         =get(findobj(hp,'tag','saveimg_edPath'),'string');
     s.iscrop     =get(findobj(hp,'tag','saveimg_rdCrop'),'value');
@@ -2251,94 +2720,113 @@ elseif strcmp(task,'save_open') || strcmp(task,'save_close')
     
     w=get(findobj(hp,'tag','saveimg_popResol'),{'String' 'Value'});
     s.res    = (w{1}{w{2}});
-   %% ==========[resolve states]=====================================
-   s.timestamp='';
-   if s.istimestamp==1
-       s.timestamp = ['__' datestr(now,'dd-mm-yy,HH-MM-SS') ];
-   end
+    %% ==========[resolve states]=====================================
+    s.timestamp='';
+    if s.istimestamp==1
+        s.timestamp = ['__' datestr(now,'dd-mm-yy,HH-MM-SS') ];
+    end
     
-   % _______ IMAGE-VIEW _______
-   if strcmp(s.imgTask,'current view');
-       n=1;
-       dorotate=0;
-   else
-       c=findobj(hf,'userdata','changeview');
-       c1=get(c,'children');
-
-       n=length(c1);
-       dorotate=1;
-   end
-   % _______ COLORBAR _______
-   if s.ishideCbar==1  
-       set(findobj(hf,'type','colorbar'),'visible','off');
-   else
+    % _______ IMAGE-VIEW _______
+    if strcmp(s.imgTask,'current view');
+        n=1;
+        dorotate=0;
+    else
+        c=findobj(hf,'userdata','changeview');
+        c1=get(c,'children');
+        
+        n=length(c1);
+        dorotate=1;
+    end
+    % _______ COLORBAR _______
+    if s.ishideCbar==1
+        set(findobj(hf,'type','colorbar'),'visible','off');
+    else
         set(findobj(hf,'type','colorbar'),'visible','on');
-   end
-      
-   
+    end
+    
+    
     % _______ set panel visible off _______
     set(hp,'visible','off');
-   
-   
-   for i=1:n %over views
-       
-       if dorotate==1 %all views
-           l=c1(i).Label;
-           hgfeval( get(c1(i),'callback'),'changeview',c1(i));
-           ix=[regexpi(l,'[') regexpi(l,']')];
-          nametok=[s.prefix  pnum(i,3)  '_[' regexprep(l(ix(1)+1:ix(2)-1),'\s+',',') ']' s.timestamp];
-       else %THIS VIEW
-           [al el]=view;;
-           nametok=[s.prefix '_arb_[' [ num2str(al) ',' num2str(el) ']'] s.timestamp];
-       end
-       
-       drawnow;
-       F1=fullfile(s.pa,[ nametok '.' s.fmt ]) ;
-       print(F1, '-dtiff','-noui',['-r' s.res]);
-       %print(F1, '-dtiff','-noui','-r600');
-       % _______ CROP IMAGE _______
-       if s.iscrop==1
-           [a map]=imread(F1);
-           si=size(a);
-           a2=reshape(a,[prod(si(1:2)) si(3)  ]);
-           ar=repmat(squeeze(a(1,1,:))',[size(a2,1) 1 ]);
-           d2=(sum(a2==ar,2)==3);
-           d=reshape(d2,[si(1:2) ]);
-           bo=s.cropTol;
-           d(:,[1:bo end-bo:end])=1;
-           d([1:bo end-bo:end],:)=1;
-           
-           ho=any(d==0,1);
-           xl=[min(find(ho==1)) max(find(ho==1))];
-           ve=any(d==0,2);
-           yl=[min(find(ve==1)) max(find(ve==1))];
-           
-           ac=a(yl(1):yl(2),xl(1):xl(2) ,:);
-           if strcmp(s.fmt,'tif')
-           imwrite(ac, F1, 'Resolution', str2num(s.res));
-           elseif strcmp(s.fmt,'jpg')
-              imwrite(ac, F1,'Quality',100,'Mode','lossy');  
-           else
-              imwrite(ac, F1); 
-           end
-           %imwrite(ac, F1);
-       end
-       showinfo2('saved Image',F1,'','',F1);
-   end
-   
-   
-   set(hp,'visible','on');
-     % _______ COLORBAR _______
-   if s.ishideCbar==1  
-       set(findobj(hf,'type','colorbar'),'visible','on');
-   end
-   
-   
-   %% ========[CLOSE GUI]=======================================
-   if strcmp(task,'save_close')==1;    %
-       delete(hp);
-   end
-   
+    
+    
+    for i=1:n %over views
+        
+        if dorotate==1 %all views
+            l=c1(i).Label;
+            hgfeval( get(c1(i),'callback'),'changeview',c1(i));
+            ix=[regexpi(l,'[') regexpi(l,']')];
+            nametok=[s.prefix  pnum(i,3)  '_[' regexprep(l(ix(1)+1:ix(2)-1),'\s+',',') ']' s.timestamp];
+        else %THIS VIEW
+            [al el]=view;;
+            nametok=[s.prefix '_arb_[' [ num2str(al) ',' num2str(el) ']'] s.timestamp];
+        end
+        if exist(s.pa)==0
+            mkdir(s.pa);
+        end
+        drawnow;
+        F1=fullfile(s.pa,[ nametok '.' s.fmt ]) ;
+        print(F1, '-dtiff','-noui',['-r' s.res]);
+        %print(F1, '-dtiff','-noui','-r600');
+        % _______ CROP IMAGE _______
+        if s.iscrop==1
+            [a map]=imread(F1);
+            si=size(a);
+            a2=reshape(a,[prod(si(1:2)) si(3)  ]);
+            ar=repmat(squeeze(a(1,1,:))',[size(a2,1) 1 ]);
+            d2=(sum(a2==ar,2)==3);
+            d=reshape(d2,[si(1:2) ]);
+            bo=s.cropTol;
+            d(:,[1:bo end-bo:end])=1;
+            d([1:bo end-bo:end],:)=1;
+            
+            ho=any(d==0,1);
+            xl=[min(find(ho==1)) max(find(ho==1))];
+            ve=any(d==0,2);
+            yl=[min(find(ve==1)) max(find(ve==1))];
+            
+            ac=a(yl(1):yl(2),xl(1):xl(2) ,:);
+            if strcmp(s.fmt,'tif')
+                imwrite(ac, F1, 'Resolution', str2num(s.res));
+            elseif strcmp(s.fmt,'jpg')
+                imwrite(ac, F1,'Quality',100,'Mode','lossy');
+            else
+                imwrite(ac, F1);
+            end
+            %imwrite(ac, F1);
+        end
+        showinfo2('saved Image',F1,'','',F1);
+        %% write nodes
+        hlb=findobj(hf,'tag','labellistbox');
+        if ~isempty(hlb)
+            try
+                str=get(hlb,'string');
+                str=regexprep( str, '<.*?>', '' );%remove HTML
+                F2=fullfile(s.pa,[ 'node_list' '.txt' ]) ;
+                pwrite2file(F2,str);
+            end
+        end
+        %
+    end
+    
+    
+    set(hp,'visible','on');
+    % _______ COLORBAR _______
+    if s.ishideCbar==1
+        set(findobj(hf,'type','colorbar'),'visible','on');
+    end
+    
+    %___write cbar
+    try
+        F3=fullfile(s.pa,[ 'colorbar.' s.fmt ]) ;
+        print(F3, '-dtiff','-noui',['-r' s.res]);
+    end
+    
+    
+    %% ========[CLOSE GUI]=======================================
+    if strcmp(task,'save_close')==1;    %
+        delete(hp);
+    end
+    
 end
 %   UIControl    (saveimg_edPath)
 %   UIControl    (saveimg_pbPath)
@@ -2355,7 +2843,7 @@ end
 %   UIControl    (saveimg_pbGuiClose)
 
 
-% print(gcf,'foo.png','-dpng','-r300'); 
+% print(gcf,'foo.png','-dpng','-r300');
 % ==============================================
 %%   contextMenu
 % ===============================================
@@ -2364,23 +2852,23 @@ function hcontext(e,e2,task,arg)
 
 if strcmp(task, 'saveImg')
     saveImg(arg);
-
+    
 elseif strcmp(task, 'changeview')
     try
-    [~, cod]=strtok(e2.Source.Label,';');
+        [~, cod]=strtok(e2.Source.Label,';');
     catch
-      [~, cod]=strtok(e2.Label,';');  
+        [~, cod]=strtok(e2.Label,';');
     end
     if ~isempty(strfind(cod,'view'))
         figure(findobj(0,'tag','xvol3d'));
-    eval([cod ';']);
-    RotationCallback();
+        eval([cod ';']);
+        RotationCallback();
     end
 elseif strcmp(task, 'changearrow')
     par.aroffset =0;
     par.aroffset3 =[ 0 0 0];
     par.arlength   =.15;
-%     par.arlength3 =[.15 .15 .15];
+    %     par.arlength3 =[.15 .15 .15];
     MAKEARROW(par);
     mi=-.2;
     ma=1.3;
@@ -2421,12 +2909,12 @@ elseif strcmp(task, 'changearrow')
     hs2 = uimenu(cm,'label','use default arrows position {0.1,0.1,0.1}',  'Callback',{@arrow_context,'origpos'},   'separator','on');
     hs2 = uimenu(cm,'label','use {0,0,0} arrows position',        'Callback',{@arrow_context,'origposZero'},   'separator','off');
     hs2 = uimenu(cm,'label','set arrow color',      'Callback',{@arrow_context,'arrowcol'},   'separator','on');
-
+    
     set(findobj(gcf,'tag','arrowpos_slid1'),'UIContextMenu',cm);
     set(findobj(gcf,'tag','arrowpos_slid2'),'UIContextMenu',cm);
     set(findobj(gcf,'tag','arrowpos_slid3'),'UIContextMenu',cm);
-
-
+    
+    
 end
 function arrowpos_close(e,e2)
 delete(findobj(gcf,'tag','arrowpos_slid1'));
@@ -2474,17 +2962,17 @@ MAKEARROW(par);
 function changeview(in)
 figure(findobj(0,'tag','xvol3d'));
 if isnumeric(in) && length(in)==1
-  hc=  get(findobj(0,'tag','xvol3d'),'UIContextMenu');
-  hs=get(findobj(hc,'userdata','changeview'),'children');
-  viewlist=flipud(get(hs,'Label'));
-   if in<1 || in>length(viewlist); 
-       cprintf(-[1 0 1],[['view input must be 2 values [az,el] or 1 value as index from the following list:' ]  '\n']);
-       disp(char([cellfun(@(num,a) {[ 'index=' num2str(num) ':  ' a]}, num2cell(1:length(viewlist))', viewlist)]));
-       
-       return
-   end
-   [~, cod]=strtok(viewlist{in},';');
-   eval([cod ';']);
+    hc=  get(findobj(0,'tag','xvol3d'),'UIContextMenu');
+    hs=get(findobj(hc,'userdata','changeview'),'children');
+    viewlist=flipud(get(hs,'Label'));
+    if in<1 || in>length(viewlist);
+        cprintf(-[1 0 1],[['view input must be 2 values [az,el] or 1 value as index from the following list:' ]  '\n']);
+        disp(char([cellfun(@(num,a) {[ 'index=' num2str(num) ':  ' a]}, num2cell(1:length(viewlist))', viewlist)]));
+        
+        return
+    end
+    [~, cod]=strtok(viewlist{in},';');
+    eval([cod ';']);
     RotationCallback();
 else
     view(in);
@@ -2525,19 +3013,19 @@ set(hc,'callback',{@preferencesTasks,'resizeaxes'});
 % set(hc,'tooltipstring','move node/link-related Colorbar');
 % set(hc,'callback',{@preferencesTasks,'move_cbarConnection'});
 % set(hc,'string','<html><font size=4>CB&#9769<font size=3><br><font color=red>&#9632<font color=yellow>&#9632<font color=blue>&#9632;')
-% 
+%
 
 % --------------------------------------------------------------------------------
 function preferencesTasks(e,e2,task)
 hf=findobj(0,'tag','xvol3d');
 if strcmp(task,'change_bgcolor')
     col=uisetcolor(get(hf,'color'),'select background-color');
-    try; 
+    try;
         set(hf,'color',col);
         set(findobj(hf,'tag','prefpanel'),'backgroundcolor',col);
         set(findobj(hf,'tag','explodeview'),'backgroundcolor',col);
         
-       try; set(findobj(hf,'tag','labellistbox'),'backgroundcolor',[get(hf,'color')]); end
+        try; set(findobj(hf,'tag','labellistbox'),'backgroundcolor',[get(hf,'color')]); end
     end
 elseif strcmp(task,'moveaxes_ini')
     delete(findobj(hf,'tag','moveaxes_dragicon'));
@@ -2557,58 +3045,58 @@ elseif strcmp(task,'moveaxes_ini')
     hv=findobj(hf,'tag','moveaxes_dragicon');
     hdrag = findjobj(hv);
     set(hdrag,'MouseDraggedCallback',{@drag_object,'moveaxes_dragicon',{'ax0' 'moveaxes_delete'} }); %'listFontsizeIncrease'
-
+    
     %delete icon
     hc=uicontrol(hf, 'style','pushbutton','value',0,'units','norm','tag','moveaxes_delete');
     set(hc,'position',[.5 .5 .03 .03],'backgroundcolor','y','string','x','fontsize',7);
     set(hc,'tooltipstring','ok..drag axes done');
     set(hc,'units','pixels');
     set(hc,'position',[pos2(1)+16 pos2(2:end)],'callback', {@preferencesTasks,'moveaxes_delete'});
-  
+    
 elseif strcmp(task,'moveaxes_delete')
     delete(findobj(hf,'tag','moveaxes_dragicon'));
     delete(findobj(hf,'tag','moveaxes_delete'));
 elseif strcmp(task,'resizeaxes')
     
-      % ==============================================
-      %% resize axes
-      % ===============================================
-      warning off;
-      ax0=findobj(hf,'tag','ax0');
-      pos=get(ax0,'position');
-      prompt={['Enter axes position [x0 y0 H W], range: 0-1:' char(10) ...
-          'or keep field <empty> to use default axes position'] ,...
-          };
-      name='Axes Position ';
-      numlines=1;
-      defaultanswer={regexprep(num2str(pos),'\s+','  ')};
-      as=inputdlg(prompt,name,numlines,defaultanswer);
-      posn=str2num(as{1});
-      
-      us=get(hf,'userdata');
-      if isfield(us,'ax0pos')==0
-          us.ax0pos=get(ax0,'position');
-          set(hf,'userdata',us);
-      end
-      if isempty(posn)
-          set(ax0,'position',us.ax0pos);
-          %'default position'
-      elseif length(posn)==4
-          set(ax0,'position',posn);
-      else
-          msgbox('something went wrong...enter 4 values');
-          return
-      end
-      % ==============================================
-      %%
-      % ===============================================
-
-
-%   elseif strcmp(task,'moveaxes_drag')  
-%       'q'
-%       hv=findobj(hf,'tag','moveaxes_dragicon');
-%        hdrag = findjobj(hv);
-%        set(hdrag,'MouseDraggedCallback',{@drag_object,'moveaxes_dragicon',{} }); %'listFontsizeIncrease'
+    % ==============================================
+    %% resize axes
+    % ===============================================
+    warning off;
+    ax0=findobj(hf,'tag','ax0');
+    pos=get(ax0,'position');
+    prompt={['Enter axes position [x0 y0 H W], range: 0-1:' char(10) ...
+        'or keep field <empty> to use default axes position'] ,...
+        };
+    name='Axes Position ';
+    numlines=1;
+    defaultanswer={regexprep(num2str(pos),'\s+','  ')};
+    as=inputdlg(prompt,name,numlines,defaultanswer);
+    posn=str2num(as{1});
+    
+    us=get(hf,'userdata');
+    if isfield(us,'ax0pos')==0
+        us.ax0pos=get(ax0,'position');
+        set(hf,'userdata',us);
+    end
+    if isempty(posn)
+        set(ax0,'position',us.ax0pos);
+        %'default position'
+    elseif length(posn)==4
+        set(ax0,'position',posn);
+    else
+        msgbox('something went wrong...enter 4 values');
+        return
+    end
+    % ==============================================
+    %%
+    % ===============================================
+    
+    
+    %   elseif strcmp(task,'moveaxes_drag')
+    %       'q'
+    %       hv=findobj(hf,'tag','moveaxes_dragicon');
+    %        hdrag = findjobj(hv);
+    %        set(hdrag,'MouseDraggedCallback',{@drag_object,'moveaxes_dragicon',{} }); %'listFontsizeIncrease'
 end
 
 
@@ -2650,22 +3138,22 @@ if exist('othertags')==1
     othertags=cellstr(othertags);
     for i=1:length(othertags)
         hv=findobj(gcf,'tag',othertags{i});
-%         try; hv=hv(1); end
+        %         try; hv=hv(1); end
         units_hv =get(hv ,'units');
         set(hv  ,'units','pixels');
         
         pos =get(hv,'position');
         pos2=[ pos(1)-df(1) pos(2)-df(2) pos(3:4)];
-      set(hv,'position',pos2);
+        set(hv,'position',pos2);
         set(hv ,'units'  ,units_hv);
-    end 
+    end
 end
 
 
 function showlabel_ext(par)
 hf=findobj(0,'tag','xvol3d');
 hr=findobj(hf,'tag','showlabel');
-if strcmp(par.regionlabels,'on')==1; 
+if strcmp(par.regionlabels,'on')==1;
     val=1;
 else
     val=0;
@@ -2687,10 +3175,10 @@ delete(findobj(ha,'tag','txlabel2')),
 
 try
     hreg=findobj(0,'tag','regionselect');
-   if isempty(hreg); 
-       msgbox('no regions selected & loaded') ;
-       return
-   end
+    if isempty(hreg);
+        msgbox('no regions selected & loaded') ;
+        return
+    end
     set(findobj(hreg,'tag','lab'),'value',get(hr,'value'));
 end
 
@@ -2698,12 +3186,12 @@ end
 labelhorzal={'left','center','right'};
 u=get(hf,'userdata');
 %  if plotlabel==1
-%             
+%
 %             df=c1-ce;
 %             dfn=df./(sqrt(sum(df.^2)));
 %             ct=c1+dfn*(u.lab.needlelength)    ;%
 %             cn=c1+dfn*(u.lab.needlelength+2)  ;%
-%             
+%
 %             %             ct=c1-(sign(ce-c1)*u.lab.needlelength)    ;%
 %             %             cn=c1-(sign(ce-c1)*(u.lab.needlelength+2));%
 %             te=text(cn(:,1),cn(:,2),cn(:,3), d{i,regexpi2(cname,'label1')},'fontsize',u.lab.fs,'Color',u.lab.fcol);
@@ -2747,11 +3235,11 @@ if get(hr,'value')==1
         
         hi=hp(i);
         
-%         x=get(hi,'xdata');
-%         y=get(hi,'ydata');
-%         z=get(hi,'zdata');
-%         co=[mean(x(:))  mean(y(:))  mean(z(:)) ];
-%         co=[mean(x(:))  max(y(:))  mean(z(:)) ];
+        %         x=get(hi,'xdata');
+        %         y=get(hi,'ydata');
+        %         z=get(hi,'zdata');
+        %         co=[mean(x(:))  mean(y(:))  mean(z(:)) ];
+        %         co=[mean(x(:))  max(y(:))  mean(z(:)) ];
         
         
         cv=get(hi,'vertices');
@@ -2766,15 +3254,15 @@ if get(hr,'value')==1
             cv=cv(ir,:);
             co=mean( cv(find(cv(:,2)==max(cv(:,2))),:),1); %external right
         end
-%         cn=mean(cv,1);% mean coordinate , but not neccessary inside object
-%         dist=sum((cv-repmat(cn,[size(cv,1) 1])).^2,2);
-%         imindist=min(find(dist==min(dist)));
-%         co=cv(imindist,:);
-      dist=sqrt(sum((cv-repmat(co,[size(cv,1) 1])).^2,2  ));
-      iball=find(dist<10);
-      c1=mean(cv(iball,:)); %within spherePath
-
-%         c1=co;
+        %         cn=mean(cv,1);% mean coordinate , but not neccessary inside object
+        %         dist=sum((cv-repmat(cn,[size(cv,1) 1])).^2,2);
+        %         imindist=min(find(dist==min(dist)));
+        %         co=cv(imindist,:);
+        dist=sqrt(sum((cv-repmat(co,[size(cv,1) 1])).^2,2  ));
+        iball=find(dist<10);
+        c1=mean(cv(iball,:)); %within spherePath
+        
+        %         c1=co;
         df=(c1-cent);
         
         
@@ -2792,31 +3280,31 @@ if get(hr,'value')==1
             hl=plot3([c1(1) ct(1)],[c1(2) ct(2)],[c1(3) ct(3)],'k','color',u.lab.needlecol);
             set(hl,'linewidth',.1,'tag','txline');
         end
-
         
         
         
         
-%         %ds=(mean(abs(df)./((mx-mn)./2)*1));
-%         spacefac=1;
-%         
-%         txfac=spacefac+.1;
-%         tp =co+df*spacefac;
-%         tx=co+df*txfac;
-%         
-%         hl=plot3([tp(1) co(1) ],[tp(2)  co(2) ],[tp(3)  co(3)],'k-');
-%         set(hl,'tag','txline');
-%         
-%         label=getappdata(hi,'label');
-%         te=text(tx(1),tx(2),tx(3),label);
-%         set(te,'fontsize',4,'interpreter','none');
-%         set(te,'HorizontalAlignment','center','tag','txlabel2');
+        
+        %         %ds=(mean(abs(df)./((mx-mn)./2)*1));
+        %         spacefac=1;
+        %
+        %         txfac=spacefac+.1;
+        %         tp =co+df*spacefac;
+        %         tx=co+df*txfac;
+        %
+        %         hl=plot3([tp(1) co(1) ],[tp(2)  co(2) ],[tp(3)  co(3)],'k-');
+        %         set(hl,'tag','txline');
+        %
+        %         label=getappdata(hi,'label');
+        %         te=text(tx(1),tx(2),tx(3),label);
+        %         set(te,'fontsize',4,'interpreter','none');
+        %         set(te,'HorizontalAlignment','center','tag','txlabel2');
         
         %         perc=mean(co./ce*100);
         %         disp(label);
         %         disp(1./(mean(abs(df)./((mx-mn)./2)*1)));
     end
-%     set(findobj(ha,'tag','txline'),'linewidth',.1);
+    %     set(findobj(ha,'tag','txline'),'linewidth',.1);
 end
 
 
@@ -2845,7 +3333,7 @@ modi=[];
 for i=1:length(hp);
     ub=getappdata(hp(i),'store') ;
     try
-    modi(i,1)=ub.mode;
+        modi(i,1)=ub.mode;
     catch
         return
     end
@@ -2865,7 +3353,7 @@ ha=findobj(hf,'tag','ax0');
 hp=findobj(ha,'tag','region');
 if isempty(hp)
     msgbox('no regions loaded & selected');
-%     return
+    %     return
 end
 
 % if length(hp)==1; hp={hp}; end
@@ -3119,10 +3607,28 @@ if sum(modi)>0
 end
 
 
-
-
 function convert2loadleselection_cb(e,e2)
 
 
 xvol3d_convertscores(1);
+
+
+
+function scripts_swow_call(e,e2)
+
+scripts={...
+    'vol3dscript_loadMask.m'
+    'vol3dscript_loadConnections.m'
+    'vol3dscript_loadMask_loadConnections.m'
+    'vol3dscript_saveImage.m'
+    %'STscript_export4vol3d_simple.m'
+    %'STscript_export4vol3d_manycalcs.m'};
+%scripts={'ddf.m' 'mean.m' 'mm.m' 'snip_testNote.m'
+};
+%scripts='';
+delete(findobj(0,'tag','xvol3d_scripts_gui'));
+scripts_gui([],'figpos',[.6 .4 .4 .4], 'pos',[0 0 1 1],'name','scripts','closefig',1,'scripts',scripts);
+set(gcf,'tag','xvol3d_scripts_gui');
+
+
 

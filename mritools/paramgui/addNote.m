@@ -21,6 +21,7 @@
 % p0.dlg       % make dialog: [0]no, [1]yes...depending on p.state, this could be a warning- or eror-doalog
 % po.figpos    % adjust figure-Size (normalized, 4 values); if empty a default size is used
 % p0.wait      % modality of the figure: [0]no [1]yes.. wait to close figure
+% p0.name      % name of the figure (string; default: '')
 % ===============================================
 %
 %
@@ -167,6 +168,7 @@ p0.mode ='single';                        %'single': single note; 'multi': multi
 p0.dlg  =0       ;                        % make dialog: [0]no, [1]yes...depending on p.state, this could be a warning- or eror-doalog
 po.figpos=[]     ;                        % adjust figure-Size (normalized, 4 values)
 p0.wait  =0      ;                        % modality of the figure: [0]no [1]yes.. wait to close figure
+p0.name  =''     ;    % name of the figure (string; default: '')
 % ===============================================
 
 
@@ -303,7 +305,7 @@ if p.dlg==1
     end
     %set(hp,'units','pixels');
     
-    if ~isempty(p.figpos)
+    if isfield(p,'figpos') && ~isempty(p.figpos)
         set(hf,'position',p.figpos);
     end
     
@@ -403,7 +405,7 @@ try
     %p.text=repmat({'eee'},[100,1])
     %p.text={'eee' 'dddd<b>ddd'}
     %p.text='ssss'
-    if iscell(p.text); text=strjoin(p.text,'<br>');
+    if iscell(p.text); text=strjoin(p.text,['<br>' char(10)]);
     else;              text=p.text;
     end
     
@@ -431,6 +433,13 @@ try
     else
         text2=[text2(:); repmat([{'<br>'}],[2 1])]  ;
     end
+    %text2=strrep(text2,'<br>' ,['<div style=”opacity:0;”>' char(721) '</div>'  '<br>']);
+    col255=round(p.col*256);
+    %col255=[1 0 0];
+    col255str=sprintf('%d,%d,%d',col255);
+    symCR=31;
+    text2=strrep(text2,'<br>' ,['<font size="1";color="rgb(' col255str ')";>' char(symCR) '</font>' '<br>']);
+    
     jEditPane.setText(text2);
 end
 %% ===============================================
@@ -447,6 +456,10 @@ try
     % see: https://undocumentedmatlab.com/articles/javacomponent-background-color
     bgcolor = p.col;% [1 0 0];%get(gcf, 'Color');
     jEditPane.setBackground(java.awt.Color(bgcolor(1),bgcolor(2),bgcolor(3)));
+end
+
+if ~isempty(p.name)
+    set(hf,'name',p.name) ;
 end
 
 % ==============================================
@@ -565,6 +578,8 @@ han.move  =hm;
 % ===============================================
 
 u.hj=jEditPane;
+u.js=jScrollPane;
+u.symCR=symCR;
 u.hb=hb;
 u.pan2=pan2;
 u.hm=hm;
@@ -573,6 +588,8 @@ u.hc=hc;
 
 u.hmove=hmove;
 u.hdrag=hdrag;
+
+u.text=text2;
 
 
 
@@ -656,17 +673,112 @@ end
 
 function contextmenu(e,e2,s,pan2)
 hp=pan2;
+set(hp,'units','normalized');
 % hp=findobj(gcf,'tag','notepanel');
 u=get(hp,'userdata');
 if strcmp(s,'copy')
-    tx=char(u.hj.getSelectedText);
-    clipboard('copy',tx);
+    
+    
+    % tx=char(u.hj.getSelectedText);
+    % %      r=jEditPane
+    % % get(r,'SelectedText')
+    % % disp(tx)
+    % codeType = com.mathworks.widgets.text.mcode.MLanguage.M_MIME_TYPE;
+    % u.hj.setContentType(codeType)
+    % u.hj.putClientProperty(javax.swing.JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+    % u.hj.setText(tx)
+    %% ===============================================
+    % ==============================================
+    %%
+    % ===============================================
+    
+    r=u.hj;
+    % clc
+    % txt=char(r.getText)
+    sel=get(r,'SelectedText');
+    sel=regexprep(sel,char(160),' '); %replace "&nbsp" (this is char(160)) by space
+    symCR=u.symCR;
+    sel=regexprep(sel,[char(symCR) char(32)],[char(symCR)]);% remove strange space after symCR
+    % isep=strfind(sel,char(symCR));
+    cc=strsplit(sel,[char(symCR) ])';
+    cj=strjoin(cc,[char(10) ]);
+    clipboard('copy',cj);
+    
+    % disp(cj)
+    
+    
+    % ==============================================
+    %%
+    % ===============================================
+    
+    
+    
+    
+    return
+    
+    t1=regexprep( txt, '<.*?>', '' )
+    
+    
+    T=txt(r.getSelectionStart+1:r.getSelectionEnd+1)
+    
+    t2=regexprep( T, '<.*?>', '' )
+    t2(r.getSelectionStart+1:r.getSelectionEnd+1)
+    
+    %% ===============================================
+    
+    i1=r.getSelectionStart+1
+    i2=r.getSelectionEnd+1
+    
+    
+    %% ===============================================
+    
+    
+    return
+    
+    %% ===============================================
+    r=u.hj;
+    % clc
+    txt=char(r.getText);
+    try
+        T=txt(r.getSelectionStart+1:r.getSelectionEnd+1);
+    catch
+        T=txt(r.getSelectionStart+1:r.getSelectionEnd)  ;
+    end
+    T=regexprep(T,'<br>',char(10));
+    T(end+1)=char(10);
+    clipboard('copy',T);
+    
+    disp(T)
+    
+    %% ===============================================
+    
+    
+    %     i1=u.hj.getSelectionStart
+    %     i2=u.hj.getSelectionEnd
+    %     tx=char(u.hj.getText)
+    %     tx(i1:i2)
+    %
+    %     clipboard('copy',tx);
 elseif strcmp(s,'fontsize')
     u=get(pan2,'userdata');
-    ui=uisetfont;
-    if isnumeric(ui);return; end
+    
+    %% ===============================================
+    
+    fnt=u.hj.getFont;
+    v.FontName =fnt.getFontName;
+    v.FontSize=fnt.getSize;
+    %     v.FontUnits=;
+    
+    %     v.FontWeight
+    %     v.FontAngle
+    v2=uisetfont(v,'update font');
+%% ===============================================
+    %ui=uisetfont;
+    if isnumeric(v2);return; end
     %u.hj.setFont(java.awt.Font('Arial', java.awt.Font.PLAIN, 50));
-    u.hj.setFont(java.awt.Font(ui.FontName, java.awt.Font.PLAIN, ui.FontSize));
+    u.hj.setFont(java.awt.Font(v2.FontName, java.awt.Font.PLAIN, v2.FontSize));
+
+    
 end
 
 function keys_scripts(e,e2,pan2)
@@ -676,9 +788,14 @@ function keys_scripts(e,e2,pan2)
 % % 'hi'
 
 if e2.getModifiers ==2   %[1]shift ,[2]ctrl, [8]alt
-    %e2.getKeyCode
     %methods(e2)
-    %e2.getKeyChar
+    if 0
+        e2.getKeyCode
+        e2.getKeyChar
+        e2.getKeyText(e2.getKeyCode())
+    end
+    
+    
     if strcmp(e2.getKeyChar,'+')
         %'++'
         u=get(pan2,'userdata');
@@ -692,6 +809,8 @@ if e2.getModifiers ==2   %[1]shift ,[2]ctrl, [8]alt
         fs=font.getSize-1;
         if fs==0; return; end
         u.hj.setFont(java.awt.Font(font.getFontName, java.awt.Font.PLAIN,fs));
+    elseif strcmp(e2.getKeyText(e2.getKeyCode()),'C') ; %overriding the copy function
+        contextmenu([],[],'copy',pan2);
     end
 end
 
@@ -1073,30 +1192,28 @@ if isfield(p,'text')         %change TEXT
         end
         
         text2=text;
-        
-%         if ~isempty(p.head)
-%             % %         color="rgb(128, 128, 0)">
-%             %         hcol=round(p.headcol.*255)
-%             %         color="rgb(hcol(1), hcol(2), hcol(3))"
-%             
-%             %        <p style="color:rgb(255,0,0);">
-%             %p.headcol =[1 0 0]
-%             hcol=sprintf('color:rgb(%d,%d,%d)',round(p.headcol.*255));
-%             %hcol='green'
-%             %hcol='red'
-%             
-%             %         text2=[ ['<b><div style="font-family:impact;color:' hcol '">'  p.head  '</div></b>']   ];
-%             % text2= ['<b><div style="font-family:impact;color:rgb(255,0,255)">'  p.head  '</div></b>']
-%             text2= ['<b><div style="font-family:impact;' hcol '">'  p.head  '</div></b>' text];
-%         else
-%             text2=text;
-%         end
-        % add additional lines
         if ischar(text2);
             text2=[text2 repmat('<br>',[ 1 2])];
         else
             text2=[text2(:); repmat([{'<br>'}],[2 1])]  ;
         end
+        
+        if isfield(u,'symCR')==1
+            symCR=u.symCR;
+        else
+            symCR=31;
+        end
+        if isfield(p,'col') && length(p.col)==3
+            col255=round(p.col*256);
+        else
+            jcol=get(u.hj.getBackground );
+            col255=[jcol.Red jcol.Green jcol.Blue];
+        end
+        %col255=[1 0 0];
+        col255str=sprintf('%d,%d,%d',col255);
+        text2=strrep(text2,'<br>' ,['<font size="1";color="rgb(' col255str ')";>' char(symCR) '</font>' '<br>']);
+        
+        
         u.hj.setText(text2);
     end
     %% ===============================================

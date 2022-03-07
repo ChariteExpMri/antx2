@@ -586,6 +586,7 @@ u.t.ColumnWidth(icol_hide)={0};
 set(t,'fontsize',7);
 
 u.cind=cind; %coordinates integer
+u.filenode = filenode; %connection-file loaded
 set(gcf,'userdata',u);
 fprintf('..done\n');
 
@@ -2221,6 +2222,9 @@ hf=findobj(0,'tag','plotconnections');
 u=get(hf,'userdata');
 dx=u.t.Data;
 newcol=uisetcolor;
+if length(newcol)==1 && newcol==0
+    return
+end
 dx{ic(1),ic(2)+1}=regexprep(num2str(newcol),'\s+',' ');
 if 1
     newcolStr=regexprep(num2str(newcol),'\s+',' ');
