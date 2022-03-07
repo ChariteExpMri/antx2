@@ -290,12 +290,12 @@ else
 end
 
 if isfield(params,'title')==0 %TITLE
-    params.title='SELECTOR: use contextmenus for selectrionMode';
+    params.title=['SELECTOR [' mfilename ']: use contextmenus for selectionMode'];
 end
 
 try; delete( findobj(0,'TAG','selector'));end
 
-fg; set(gcf,'units','norm','position', [0.0778    0.0772    0.5062    0.8644]);
+fg; set(gcf,'units','norm','position', [0.0778    0.0772    0.5062    0.8644],'visible','off');
 set(gcf,'name',params.title,'NumberTitle','off','KeyPressFcn',@keypress);
 if isfield(params,'title')
    set(gcf,'name',params.title); 
@@ -311,6 +311,7 @@ set(t,'backgroundcolor','w','KeyPressFcn',@keypress);
 set(t,'Callback',@buttonDown);
 set(t,'fontname',font);
 
+set(gcf,'resizefcn',@resizeFig);
 
 % set(gcf,'ButtonDownFcn',@buttonDown);
 
@@ -340,39 +341,101 @@ set(t,'UIContextMenu',ctx);
 
 fontsize=8;
 
-p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.85 .05 .1 .02],'tag','pb1');
+%% =================[panel]==============================
+hp=uipanel(gcf,'units','norm','tag','pan_selector');
+set(hp,'position',[0 0 1 .1 ]);
+%% ===============================================
+
+
+%% ====================[ok]===========================
+% %p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.85 .05 .1 .02],'tag','pb1');
+% p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.85 .05 .1 .02],'tag','pb1');
+% set(p,'string','OK','callback',@ok,'fontsize',fontsize);
+p=uicontrol(hp,'Style','pushbutton','units','normalized',           'Position',[.85 .05 .1 .02],'tag','pb1');
 set(p,'string','OK','callback',@ok,'fontsize',fontsize);
+set(p,'tooltipstring', ['<html><font color=blue><b>OK</b><br></font> ...acctept selection']);
+set(p,'position',[.0 0.35 .08 .3],'backgroundcolor',[0.7569    0.8667    0.7765]);
+% set(p,'units','pixels');
 
-p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.85 .03 .1 .02],'tag','pbcancel');
+%% ====================[canel]===========================
+% p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.85 .03 .1 .02],'tag','pbcancel');
+% set(p,'string','Cancel','callback',@pbcancel,'fontsize',fontsize);
+p=uicontrol(hp,'Style','pushbutton','units','normalized',         'Position',[.85 .03 .1 .02],'tag','pbcancel');
 set(p,'string','Cancel','callback',@pbcancel,'fontsize',fontsize);
+set(p,'position',[.08 0.35 .06 .3])
 
-p=uicontrol('Style','text','units','normalized',              'Position',[.85 .07 .1 .02],'tag','txtbusy');
+%% ============[busy]==============================
+
+% p=uicontrol('Style','text','units','normalized',              'Position',[.85 .07 .1 .02],'tag','txtbusy');
+% set(p,'string','busy..wait..','foregroundcolor','r','backgroundcolor','w','fontsize',fontsize-1,'fontweight','bold');
+
+p=uicontrol(hp,'Style','text','units','normalized',              'Position',[.85 .07 .1 .02],'tag','txtbusy');
 set(p,'string','busy..wait..','foregroundcolor','r','backgroundcolor','w','fontsize',fontsize-1,'fontweight','bold');
+set(p,'position',[0 .8 .12 .2],'BackgroundColor',[0.9400 0.9400 0.9400]);
 
+%% ===============[help]================================
 
 
 if isfield(params,'help')
-    p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.75 .05 .1 .02],'tag','pb5');
+    %     p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.75 .05 .1 .02],'tag','pb5');
+    %     set(p,'string','help','callback',@hlp,'fontsize',fontsize);
+    p=uicontrol(hp,'Style','pushbutton','units','normalized',         'Position',[.75 .05 .1 .02],'tag','pb5');
     set(p,'string','help','callback',@hlp,'fontsize',fontsize);
+    %set(p,'position',[.3 .8 .06 .2])
+    set(p,'position',[.0 0.0 .04 .3]);
 end
 
-
-p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .05 .1 .02],'tag','pb2');
+%% ====================[sel all]===========================
+% p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .05 .1 .02],'tag','pb2');
+p=uicontrol(hp,'Style','pushbutton','units','normalized',        'Position',[.55 .05 .1 .02],'tag','pb2');
 set(p,'string','select all','callback',{@selectallButton},'fontsize',fontsize);
-p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .03 .1 .02],'tag','pb3');
+set(p,'position',[.15 0.75 .1 .25]);
+set(p,'tooltipstring', ['<html><font color=blue><b>select all </b><br></font>..select all ietms (files) from list</font>']);
+% p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .05 .1 .02],'tag','pb2');
+% set(p,'string','select all','callback',{@selectallButton},'fontsize',fontsize);
+
+%% ====================[desel all]===========================
+% p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .03 .1 .02],'tag','pb3');
+p=uicontrol(hp,'Style','pushbutton','units','normalized',         'Position',[.55 .03 .1 .02],'tag','pb3');
 set(p,'string','deselect all','callback',{@deselectallButton},'fontsize',fontsize);
-p=uicontrol('Style','popupmenu','units','normalized',         'Position' ,[.55 .01 .1 .02],'tag','pb4','tag','pop');
+set(p,'position',[.15 0.5 .1 .25]);
+set(p,'tooltipstring', ['<html><font color=blue><b>deselect all </b><br></font>..deselect all </font>']);
+% p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .03 .1 .02],'tag','pb3');
+% set(p,'string','deselect all','callback',{@deselectallButton},'fontsize',fontsize);
 
-%% FIND-Btn
-px=uicontrol('Style','pushbutton','units','normalized',         'Position',[.65 .03 .1 .02],'tag','finderwindow');
+%% ================[descend sort]===============================
+% pc=uicontrol('Style','checkbox','units','normalized',         'Position' ,[.525 .008 .025  .02],'tag','pb4','backgroundcolor','w',...
+%     'tooltipstring', '[check this] to descend sorting','tag','cbox1','callback',{@sorter});
+% p=uicontrol('Style','checkbox','units','normalized',         'Position' ,[.52 .01 .02  .02],'tag','pb4','backgroundcolor','w',...
+%     'tooltipstring', '[check this] to descend sorting','tag','cbox1','callback',{@sorter});
+p=uicontrol(hp,'Style','togglebutton','units','normalized',         'Position' ,[.52 .01 .02  .02],'tag','pb4','backgroundcolor','w',...
+    'tooltipstring', 'toogle: descend/ascend sorting','tag','cbox1','callback',{@sorter});
+set(p,'position',[.13 .015 .02 .22],'BackgroundColor',[0.9400 0.9400 0.9400]);
+set(p,'tooltipstring', ['<html><font color=blue><b>toogle: descend/ascend sorting </b>']);
+set(p,'string','<html>&#8595;'); %sort down-arrow
+% set(p,'string','<html>&#8593;');%ort up-arror
+
+%% ====================[sort]===========================
+% p=uicontrol('Style','popupmenu','units','normalized',         'Position' ,[.55 .01 .1 .02],'tag','pb4','tag','pop');
+p=uicontrol(hp,'Style','popupmenu','units','normalized',         'Position' ,[.55 .01 .1 .02],'tag','pb4','tag','pop');
+set(p,'string',cellfun(@(a) {['sort after [' a ']' ]}, ['ID' ; header(:)]) ,'callback',{@sorter},'fontsize',fontsize);
+set(p,'position',[.15 0 .13 .25]);
+set(p,'tooltipstring', ['<html><font color=blue><b>sort according to </b><br></font>...sort list</font>']);
+% p=uicontrol('Style','popupmenu','units','normalized',         'Position' ,[.55 .01 .1 .02],'tag','pb4','tag','pop');
+%% ====================[ FIND-Btn]===========================
+% px=uicontrol('Style','pushbutton','units','normalized',         'Position',[.65 .03 .1 .02],'tag','finderwindow');
+% set(px,'string','find','callback',{@finderwindow},'fontsize',fontsize);
+px=uicontrol(hp,'Style','pushbutton','units','normalized',         'Position',[.65 .03 .1 .02],'tag','finderwindow');
 set(px,'string','find','callback',{@finderwindow},'fontsize',fontsize);
-
+set(px,'position',[.15 0.25 .1 .25]);
+%% ===============================================
 
 if params.finder==1
     px=uicontrol('Style','pushbutton','units','normalized',         'Position',[.65 .05 .1 .02],'tag','pb10');
     set(px,'string','select specific','callback',{@selectspecificButton},'fontsize',fontsize);
+    set(px,'position',[.3 0.25 .1 .25]);
 end
-
+%% ===============================================
 sortstr=['selection'; 'Idx' ; header(:);];
 sortstr=cellfun(@(a,b) {['sort after [c' num2str(b) '] [' a ']' ]}, [sortstr ], num2cell([1:length(sortstr) ]'));
 sortstr(end+1,1)= {'sort after my specification'};
@@ -383,17 +446,20 @@ set(p,'string',sortstr,'callback',{@sorter},'fontsize',fontsize);
 
 % p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .01 .1 .02],'tag','pb4');
 % set(p,'string','help','callback',{@help},'fontsize',fontsize);
+%% ==================[msgbox]=============================
 
-p=uicontrol('Style','edit','units','normalized',         'Position',[.1 .03 .4 .05],'tag','tx1','max',2);
+% p=uicontrol('Style','edit','units','normalized',         'Position',[.1 .03 .4 .05],'tag','tx1','max',2);
+p=uicontrol(hp,'Style','edit','units','normalized',         'Position',[.1 .03 .4 .05],'tag','tx1','max',2);
+set(p,'position',[0.9 0 .5 1]);
+
 txtinfo={        ['selected objects   : '  num2str(sum(us.sel,1))  '/' num2str(size(us.sel,1))   ]   };
 txtinfo{end+1,1}=[' '];
 txtinfo{end+1,1}=['highlighted objects: 1'];
 txtinfo{end+1,1}=['selectionType: '  upper(params.selection) '-selection'];
 
-set(p,'position',[0 0 .5 .1]);
+set(p,'position',[0.3 0 .5 1]);
+hed=p; %use hanfle for resize
 
-pc=uicontrol('Style','checkbox','units','normalized',         'Position' ,[.525 .008 .025  .02],'tag','pb4','backgroundcolor','w',...
-    'tooltipstring', '[check this] to descend sorting','tag','cbox1','callback',{@sorter});
 
 if exist('colinfo'); if ischar(colinfo)    txtinfo{2}=colinfo   ;end;end
 addi={};
@@ -476,12 +542,51 @@ set(p2,'enable','off');
 set(findobj(gcf,'tag','lb1'),'fontname',font,'fontsize',8);
 set(findobj(gcf,'tag','lb2'),'fontname',font,'fontsize',8);
 
+set(hp,'units','pixels');
 
+
+
+% ==============================================
+%%  fig  position
+% ===============================================
 
 if isfield(params,'position')
-   set(gcf,'position',params.position); 
+    if ischar(params.position) %autoSize
+        ls=regexprep( tb2, {'<.*?>','&nbsp;','[_\]'} ,'' );
+        nchar=size(char(ls),2);
+        ht=uicontrol(gcf,'style','text','string',repmat('w',[1 nchar ]),'fontsize',8,'visible','off');
+        set(ht,'position',[0 0 1000 50]);
+        set(ht,'units','norm');
+        htext=ht.Extent;
+        set(gcf,'position',[ .3 .1 htext(3).*0.8  .8  ]);
+        delete(ht);
+    else
+        set(gcf,'position',params.position);
+    end
 end
 
+
+
+%% ===========[info-line]====================================
+
+if isfield(params,'info')
+    panpos=get(hp,'position');
+    pi=uicontrol('Style','text','units','pixels',  'Position',[0 0 50 50],'tag','info');
+    set(pi,'string',['INFO: ' params.info],'fontsize',fontsize);
+    set(pi,'position',[1 panpos(4)  panpos(3) 12]);
+    set(pi,'HorizontalAlignment','left','backgroundcolor',[1 1 0]);
+    set(pi,'units','normalized');
+    ipos=get(pi,'position');
+    set(pi,'units','pixels');
+    
+    lb1pos=get(lb1,'position');
+    set(lb1,'position',[lb1pos(1) ipos(2)+ipos(4) lb1pos(3) lb1pos(4)-ipos(4) ]);
+    
+end
+% ==============================================
+%%   add resize Button
+% ===============================================
+addResizebutton(gcf,hed,'mode','L','moo',0);
 %% ________________________________________________________________________________________________
 
 us.lb1=findobj(gcf,'tag','lb1');
@@ -509,9 +614,9 @@ set(gcf,'userdata',us);
 set(gcf,'currentobject',findobj(gcf,'tag','lb1'));
 uicontrol(findobj(gcf,'tag','lb1'));%set focus
 
-if isfield(params,'position')
-    set(gcf,'position',params.position);
-end
+% if isfield(params,'position')
+%     set(gcf,'position',params.position);
+% end
 
 
 %% SINGLE/MULTISELECTION
@@ -609,6 +714,63 @@ params=us.params;
 
 %% ________________________________________________________________________________________________
 
+function resizeFig(e,e2)
+%% ===============================================
+if 1
+    hp=findobj(gcf,'tag','pan_selector');
+    hl=findobj(gcf,'tag','lb1');
+    hl2=findobj(gcf,'tag','lb2');%header
+    
+    hf=(gcf);
+    
+    up=get(hp,'units');
+    ul=get(hl ,'units');
+    ul2=get(hl2,'units');
+    uf=get(hf,'units');
+    
+    % fix header height
+    set(hf,'units','pixels');
+    fpos=get(hf,'position');
+    set(hf,'units',uf);
+    
+    set(hl2,'units','pixels');
+    lpos2=get(hl2,'position');
+    set(hl2,'position',[lpos2(1) fpos(4)-15 lpos2(3) 15]);
+    set(hl2,'units',ul2);
+    
+    set(hp,'units','normalized');
+    set(hl,'units','normalized');
+    set(hl2,'units','normalized');
+    ppos=get(hp,'position');
+    lpos =get(hl,'position');
+    lpos2=get(hl2,'position');
+    
+    hinfo=findobj(gcf,'tag','info');
+    if ~isempty(hinfo)
+        
+        set(hinfo,'units','normalized');
+        ipos=get(hinfo,'position');
+        set(hinfo,'units','pixels');
+        iposh=ipos(4);
+        %iposh=0
+    else
+        iposh=0;
+    end
+    
+    % get(hl,'units')
+    if (1-ppos(4)-lpos2(4)-iposh)>0.1
+        set(hl,'position',[0  ppos(4)+iposh   1  1-ppos(4)-lpos2(4)-iposh  ]);
+    else
+        set(hl,'position',[0  ppos(4)+iposh   1  .1  ]);
+    end
+    
+    set(hp,'units',up);
+    set(hl,'units',ul);
+    set(hl2,'units',ul2);
+    
+end
+
+%% ===============================================
 
 
 function sliderSinc(h,e)
@@ -835,15 +997,28 @@ end
 
 us.raw=us.raw(ix,:);
 % [us.raw ix]=sortrows(us.raw,sortcol);
+% info='ascending';
+% if get(cbox,'value')==1
+%     us.raw=flipud(us.raw);
+%     ix=flipud(ix);
+%     info='descending';
+% else
+% %     us.raw=flipud(us.raw);
+% %     ix=flipud(ix);
+% end
 info='ascending';
 if get(cbox,'value')==1
     us.raw=flipud(us.raw);
     ix=flipud(ix);
-    info='descending';
+  info='descending'; 
+ % set(p,'string','<html>&#8595;'); %sort down-arrow
+ set(cbox,'string','<html>&#8593;');%ort up-arror
 else
-%     us.raw=flipud(us.raw);
-%     ix=flipud(ix);
+  set(cbox,'string','<html>&#8595;'); %sort down-arrow
+% set(p,'string','<html>&#8593;');%ort up-arror
 end
+
+
 us.tbsel   =us.tbsel(ix);
 us.tbunsel =us.tbunsel(ix);
 us.tb2     =us.tb2(ix);
@@ -1344,33 +1519,38 @@ set(findobj(findobj(0,'tag','selector'),'tag','txtbusy'),'visible','off');
 
 
 function make_note(params);
-if iscell(params.note)==0; return; end
+% if iscell(params.note)==0; return; end
 % ==============================================
 %%
 % ===============================================
-delete(findobj(gcf,'tag','pb_closenote1'));
-delete(findobj(gcf,'tag','tx_note1'));
-delete(findobj(gcf,'tag','note1'));
-%--------note:listbox
-hb=uicontrol('style' ,'listbox', 'units','norm','tag','note1');
-set(hb,'position',[.2 .5 .7 .2]);
-set(hb,'string',params.note,'min',0,'max',2000);
-set(hb,'HorizontalAlignment','left','backgroundcolor', [ 0.8706    0.9216    0.9804 ]);
-%------ note--info----
-hb=uicontrol('style' ,'pushbutton', 'units','norm','tag','tx_note1');
-set(hb,'position',[.2 .7 .3 .02]);
-set(hb,'backgroundcolor', [0.7294    0.8314    0.9569]);
-set(hb,'string','IMPORTANT','fontweight','bold');
-%------not: close
-hb=uicontrol('style' ,'pushbutton', 'units','norm','tag','pb_closenote1');
-set(hb,'string','<html>&#9746;','fontweight','bold','fontsize',12);
-set(hb,'position',[.2 .7 .02 .018]);
-set(hb,'units','pixel');
-pos=get(hb,'position');
-set(hb,'position',[pos(1) pos(2) 15 15]);
-set(hb,'units','norm');
-set(hb,'tooltipstring','close this note');
-set(hb,'callback',@close_note);
+if 1
+    delete(findobj(gcf,'tag','pb_closenote1'));
+    delete(findobj(gcf,'tag','tx_note1'));
+    delete(findobj(gcf,'tag','note1'));
+    %--------note:listbox
+    hb=uicontrol('style' ,'listbox', 'units','norm','tag','note1');
+    set(hb,'position',[.2 .5 .7 .2]);
+    set(hb,'string',params.note,'min',0,'max',2000);
+    set(hb,'HorizontalAlignment','left','backgroundcolor', [ 0.8706    0.9216    0.9804 ]);
+    %------ note--info----
+    hb=uicontrol('style' ,'pushbutton', 'units','norm','tag','tx_note1');
+    set(hb,'position',[.2 .7 .3 .02]);
+    set(hb,'backgroundcolor', [0.7294    0.8314    0.9569]);
+    set(hb,'string','IMPORTANT','fontweight','bold');
+    %------not: close
+    hb=uicontrol('style' ,'pushbutton', 'units','norm','tag','pb_closenote1');
+    set(hb,'string','<html>&#9746;','fontweight','bold','fontsize',12);
+    set(hb,'position',[.2 .7 .02 .018]);
+    set(hb,'units','pixel');
+    pos=get(hb,'position');
+    set(hb,'position',[pos(1) pos(2) 15 15]);
+    set(hb,'units','norm');
+    set(hb,'tooltipstring','close this note');
+    set(hb,'callback',@close_note);
+    
+end
+
+% hs=addNote(gcf,'text',params.note,'fs',30,'col',[0.7294    0.8314    0.9569],'pos',[0.51 .1 .5 .1]);
 
 % ==============================================
 %%

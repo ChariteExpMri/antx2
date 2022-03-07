@@ -204,8 +204,8 @@ us.sel=zeros(size(tb2,1),1);
 try; delete( findobj(0,'TAG','selector'));end
 
 fg; set(gcf,'units','norm','position', [0.0778    0.0772    0.5062    0.8644]);
-set(gcf,'name','SELECTOR: use contextmenus for selectrionMode','KeyPressFcn',@keypress);
-set(gcf,'userdata',us,'menubar','none','TAG','selector');
+set(gcf,'name',[' selector[' mfilename '.m]'],'KeyPressFcn',@keypress);
+set(gcf,'userdata',us,'menubar','none','TAG','selector','numbertitle','off');
 
 t=uicontrol('Style','listbox','units','normalized',         'Position',[0 .1 1 .9]);
 set(t,'string',tbunsel,'fontname','courier new','fontsize',14);
@@ -241,24 +241,59 @@ set(t,'UIContextMenu',ctx);
 % get(MyListbox,'UIContextMenu') 
 
 fontsize=8;
+%% ===============================================
+%% =================[panel]==============================
+hp=uipanel(gcf,'units','norm','tag','pan_selector');
+set(hp,'position',[0 0 1 .1 ]);
+%% ===============================================
 
-p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.85 .05 .1 .02],'tag','pb1');
+%% ====================[ok]===========================
+%p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.85 .05 .1 .02],'tag','pb1');
+p=uicontrol(hp,'Style','pushbutton','units','normalized',           'Position',[.85 .05 .1 .02],'tag','pb1');
 set(p,'string','OK','callback',@ok,'fontsize',fontsize);
-
-p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .05 .1 .02],'tag','pb2');
+set(p,'tooltipstring', ['<html><font color=blue><b>OK</b><br></font> ...acctept selection']);
+set(p,'position',[.0 0.35 .08 .3],'backgroundcolor',[0.7569    0.8667    0.7765]);
+% set(p,'units','pixels');
+%% ====================[sel all]===========================
+% p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .05 .1 .02],'tag','pb2');
+p=uicontrol(hp,'Style','pushbutton','units','normalized',        'Position',[.55 .05 .1 .02],'tag','pb2');
 set(p,'string','select all','callback',{@selectallButton},'fontsize',fontsize);
-p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .03 .1 .02],'tag','pb3');
+set(p,'position',[.15 0.5 .1 .25]);
+set(p,'tooltipstring', ['<html><font color=blue><b>select all </b><br></font>..select all ietms (files) from list</font>']);
+
+%% ====================[desel all]===========================
+% p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .03 .1 .02],'tag','pb3');
+p=uicontrol(hp,'Style','pushbutton','units','normalized',         'Position',[.55 .03 .1 .02],'tag','pb3');
 set(p,'string','deselect all','callback',{@deselectallButton},'fontsize',fontsize);
-p=uicontrol('Style','popupmenu','units','normalized',         'Position' ,[.55 .01 .1 .02],'tag','pb4','tag','pop');
+set(p,'position',[.15 0.25 .1 .25]);
+set(p,'tooltipstring', ['<html><font color=blue><b>deselect all </b><br></font>..deselect all </font>']);
+
+%% ====================[sort]===========================
+% p=uicontrol('Style','popupmenu','units','normalized',         'Position' ,[.55 .01 .1 .02],'tag','pb4','tag','pop');
+p=uicontrol(hp,'Style','popupmenu','units','normalized',         'Position' ,[.55 .01 .1 .02],'tag','pb4','tag','pop');
 set(p,'string',cellfun(@(a) {['sort after [' a ']' ]}, ['ID' ; header(:)]) ,'callback',{@sorter},'fontsize',fontsize);
+set(p,'position',[.15 0 .13 .25]);
+set(p,'tooltipstring', ['<html><font color=blue><b>sort according to </b><br></font>...sort list</font>']);
 
-p=uicontrol('Style','checkbox','units','normalized',         'Position' ,[.52 .01 .02  .02],'tag','pb4','backgroundcolor','w',...
-    'tooltipstring', '[check this] to descend sorting','tag','cbox1','callback',{@sorter});
+%% ====================[sort descend]===========================
 
-% p=uicontrol('Style','pushbutton','units','normalized',         'Position',[.55 .01 .1 .02],'tag','pb4');
-% set(p,'string','help','callback',{@help},'fontsize',fontsize);
+% p=uicontrol('Style','checkbox','units','normalized',         'Position' ,[.52 .01 .02  .02],'tag','pb4','backgroundcolor','w',...
+%     'tooltipstring', '[check this] to descend sorting','tag','cbox1','callback',{@sorter});
+p=uicontrol(hp,'Style','togglebutton','units','normalized',         'Position' ,[.52 .01 .02  .02],'tag','pb4','backgroundcolor','w',...
+    'tooltipstring', 'toogle: descend/ascend sorting','tag','cbox1','callback',{@sorter});
+set(p,'position',[.13 .015 .02 .22],'BackgroundColor',[0.9400 0.9400 0.9400]);
+set(p,'tooltipstring', ['<html><font color=blue><b>toogle: descend/ascend sorting </b>']);
+set(p,'string','<html>&#8595;'); %sort down-arrow
+% set(p,'string','<html>&#8593;');%ort up-arror
+%% ===================[ msgbox]============================
 
-p=uicontrol('Style','edit','units','normalized',         'Position',[.1 .03 .4 .05],'tag','tx1','max',2);
+
+% p=uicontrol('Style','edit','units','normalized',         'Position',[.1 .03 .4 .05],'tag','tx1','max',2);
+% set(p,'position',[0 0 .5 .1]);
+
+
+p=uicontrol(hp,'Style','edit','units','normalized',         'Position',[.1 .03 .4 .05],'tag','tx1','max',2);
+set(p,'position',[0.5 0 .5 1]);
 txtinfo={        ['selected objects   : '  num2str(sum(us.sel,1))  '/' num2str(size(us.sel,1))   ]   };
 txtinfo{end+1,1}=[' '];
 txtinfo{end+1,1}=['highlighted objects: 1'];
@@ -266,7 +301,7 @@ txtinfo{end+1,1}=['selectionType: '  upper(params.selection) '-selection'];
 
 
 
-set(p,'position',[0 0 .5 .1]);
+
 
 if exist('colinfo'); if ischar(colinfo)    txtinfo{2}=colinfo   ;end;end
 addi={};
@@ -286,6 +321,12 @@ set(p,'userdata',txtinfo, 'string',    txtinfo   ,'fontsize',6,'backgroundcolor'
 try;
     set(p,'tooltipstr',sprintf(strjoin('\n',txtinfo)));
 end
+
+'a'
+
+% ==============================================
+%%   
+% ===============================================
 
 set(findobj(gcf,'tag','lb1'),'fontsize',8);
 set(findobj(gcf,'tag','lb1'),'fontsize',8);
@@ -334,7 +375,7 @@ set(p2,'enable','off');
 set(findobj(gcf,'tag','lb1'),'fontname','courier new');
 set(findobj(gcf,'tag','lb2'),'fontname','courier new');
 
-
+set(hp,'units','pixels');
 if isfield(params,'position')
    set(gcf,'position',params.position); 
 end
@@ -561,7 +602,7 @@ function deselectallButton(dum,dum2)
 selectthis([],0);
 
 function sorter(dum,dum2)
-sortlist
+sortlist();
 
 function sortlist;
 
@@ -576,9 +617,12 @@ info='ascending';
 if get(cbox,'value')==1
     us.raw=flipud(us.raw);
     ix=flipud(ix);
-  info='descending';  
+  info='descending'; 
+ % set(p,'string','<html>&#8595;'); %sort down-arrow
+ set(cbox,'string','<html>&#8593;');%ort up-arror
 else
-
+  set(cbox,'string','<html>&#8595;'); %sort down-arrow
+% set(p,'string','<html>&#8593;');%ort up-arror
 end
 us.tbsel   =us.tbsel(ix);
 us.tbunsel =us.tbunsel(ix);

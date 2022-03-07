@@ -277,10 +277,10 @@ p={...
     '[50] reorient image only, x.preRotate must be defined'...
     '[100] noSPMregistration, only elastix'};
     %
-    'targetImg1'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
-    'sourceImg1'      {''}                'source image [t2], (moved image)'             {@selector2,li,{'SourceImage'},'out','list','selection','single'}
+    'targetImg1'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single','position','auto','info','select target-image'}
+    'sourceImg1'      {''}                'source image [t2], (moved image)'             {@selector2,li,{'SourceImage'},'out','list','selection','single','position','auto','info','select source-image'}
     'sourceImgNum1'   1                   'if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum) '  ''
-    'applyImg1'       {''}                'images on which the transformation is applied (do not select the sourceIMG again!)'  {@selector2,li,{'Images to Apply Trafo'},'out','list','selection','multi'}
+    'applyImg1'       {''}                'images on which the transformation is applied (do not select the sourceIMG again!)'  {@selector2,li,{'Images to Apply Trafo'},'out','list','selection','multi','position','auto','info','select apply-image(s)'}
     %
     'inf103'      '% PARAMETERS       '  '' ''
     'cost_fun'      'nmi'                                 'objective function: [nmi] norm. mutual Info, [mi] mutual Info, [ecc] entropy corrcoef,[ncc] norm. crosscorr' ,{'nmi' 'mi' 'ecc' 'ncc'}

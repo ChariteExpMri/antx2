@@ -560,6 +560,24 @@ uicontrol(fg,...
     'BackgroundColor',get(fg,'Color'),...
     'ForegroundColor',col3,...
     'String','Dir');
+% no-subdirs
+% ==============================================
+%%   
+% % ===============================================
+% delete(findobj(fg,'tag','rd_nosubdir'))
+% hx=uicontrol(fg,...
+%     'style','radio',...
+%     'units','normalized',...
+%     'Position',[0 .3 .11 .035],...
+%     lf,...
+%     'Callback',@rd_nosubdir,...
+%     'tag','rd_nosubdir',...
+%     'BackgroundColor',col1,...
+%     'ForegroundColor',col3,...
+%     'String','subdir','tooltipstring','[1]with subdirs,[0] remove subdir');
+% %% ===============================================
+
+
 
 resize_fun(fg);
 set(fg, 'ResizeFcn',@resize_fun);
@@ -648,6 +666,16 @@ hp=uicontrol('style','radio','units','normalized',...
 set(hp,'position',[0.9262 0.28864 0.07 0.025],'tooltipstring','show 4D NIFTI files only');
 set(hp,'callback',@update);
 
+%% ============[sort]===================================
+sortlist={'sort: default','sort by path length' 'sort by pathName' 'sort by fileName' 'sort by fileExtension'};
+hp=uicontrol('style','popupmenu','units','normalized',...
+    'position',[0.001 .5 .5 .09 ],'backgroundcolor',[ 0.9400    0.9400    0.9400],'foregroundcolor',[0 .6 0],...
+    'string',sortlist,'fontsize',7,'fontweight','bold','tag','sortList','horizontalalignment','left'    );
+set(hp,'position',[0.8 0.28864 0.12 0.025],'tooltipstring','sort file list');
+set(hp,'callback',@sortList);
+% set(hp,'callback',@update);
+%% ===============================================
+
 % pulldown-memory
 persistent lastfiltertoken
 
@@ -709,6 +737,38 @@ if ishandle(fg),  delete(fg); end;
 drawnow;
 return;
 %=======================================================================
+end
+
+
+function sortList(e,e2)
+hs=findobj(gcf,'tag','sortList');
+val=get(hs,'value');
+
+hl=findobj(gcf,'tag','selected');
+s=get(hl,'string');
+if isempty(s)
+    return
+end
+if val==1%sort by default
+    s=sortrows(s,1);
+elseif val==2%sort by path-length
+    s=sortrows([s (cellfun(@(a){[ length(a)  ]} ,s))],2);
+elseif val==3 || val==4 || val==5 % by pathName/fileName/extension
+    [pa name ext]=fileparts2(s);
+    if val==3%by pathName
+        t=sortrows([pa name ext],1);
+    elseif val==4%by FileName
+        t=sortrows([pa name ext],2);
+    elseif val==5%by extension
+        t=sortrows([pa name ext],3);
+    end
+    s=cellfun(@(a,b,c){[ fullfile(a,[b c])]} ,t(:,1),t(:,2),t(:,3));
+    
+    
+end
+set(hl,'string',s(:,1));
+
+
 end
 
 function p_regexphelp(e,e2)
@@ -1698,8 +1758,10 @@ if 1
 %         files4=flipud(files3(ix));
         
         
+        dx=[files2,freqs]; hdx={'files','counts'};
+        ids=selector3(dx,hdx);
         %            ids=selector2(files4);
-        ids=selector3(files4,{'files'});
+        %ids=selector3(files4,{'files'}); Older: 07Mar2022_12-39-39
         ids2=regexprep(files4([ids]),'(\s*\d*\)\s*',''); %remove filecounting, i.e. "( 34 ) "
         hflt=  findobj(gcf,'tag','regexp');
         
@@ -2094,7 +2156,7 @@ end
 % id=selector2(strrep(strrep(b,'\\','-'),' ','-'),{'file' 'sizeMB' 'date' 'MRsequence' 'protocol'});
 
 
-function [ids varargout]=selector3(tb,header,varargin)
+function [ids varargout]=DUMselector3(tb,header,varargin)
 
 
 [ids]=deal([]);

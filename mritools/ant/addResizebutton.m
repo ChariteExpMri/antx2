@@ -181,7 +181,12 @@ for i=1:length(modes)
     
     
     %% ___________________[resize]_____________________________________________________________________________
-    hb=uicontrol('parent',hf, 'style','push','units','norm','string','<');
+    if strcmp(get(get(hres,'parent'),'type'),'figure')
+        hpar=hf;
+    else % panel or else
+       hpar=get(hres,'parent'); 
+    end
+    hb=uicontrol('parent',hpar, 'style','push','units','norm','string','<');
     set(hb,'position',posB,'fontsize',5,'tag','BUT_resizeControl',...
         'TooltipString','resize panel','tooltipstring','resize control');
     set(hb,'units','pixels');
