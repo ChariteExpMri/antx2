@@ -334,9 +334,14 @@ for i=1:length(z.files)
         end
     end
     
-    % KEEP STRUCTURE
+            % KEEP STRUCTURE
     if z.keepSubdirStructure==1
         subdir=strjoin(splitdirs,filesep);
+        parest=strrep(pa,commonpath,'');
+        if strcmp(parest(1),filesep)%remove first char if this is a filesep
+           parest(1)=[]; 
+        end
+        subdir=parest;
     else % no ...do not keep it
        
        

@@ -457,6 +457,10 @@
 % costumized and applied. Currently the script-collection is available for the following functions:
 % DTIprep.m; dtistat.m, xvol3d.m
 % 
+% #ba 09 Mar 2022 (11:02:40)
+% fixed bug in #k [exportfiles]: #n :  subdir was not addressed correctly
+% 
+% 
 % 
 % 
 % 
@@ -474,14 +478,12 @@ ichanges=regexpi2(r,'#*20\d{2}.*(\d{2}:\d{2}:\d{2})' );
 lastchange=r{ichanges(end)};
 lastchange=regexprep(lastchange,{'#\w+ ', ').*'},{'',')'});
 r=[r(1:3); {[' last modification: ' lastchange ]}  ;  r(4:end)];
-
 if nargin==1
     if strcmp(varargin{1},'makeantver')
         makeantver(r);
         return
     end
 end
-
 uhelp(r,0, 'cursor' ,'end');
 set(gcf,'NumberTitle','off', 'name', 'ANTx2 - VERSION');
 % uhelp('antver.m');

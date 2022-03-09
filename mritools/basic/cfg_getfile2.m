@@ -1,5 +1,5 @@
 function [t,sts] = cfg_getfile2(varargin)
-% File selector2
+% File cfg_getfile2
 % FORMAT [t,sts] = cfg_getfile2(n,typ,mesg,sel,wd,filt,frames)
 %     n    - Number of files
 %            A single value or a range.  e.g.
@@ -198,14 +198,14 @@ if nargin > 0 && ischar(varargin{1})
             cfg_message('matlabbatch:usage','Inappropriate usage.');
     end
 else
-    [t,sts] = selector2(varargin{:});
+    [t,sts] = cfg_getfile22(varargin{:});
 end
 
 end
 %=======================================================================
 
 %=======================================================================
-function [t,ok] = selector2(n,typ,mesg,already,wd,filt,frames,varargin)
+function [t,ok] = cfg_getfile22(n,typ,mesg,already,wd,filt,frames,varargin)
 if nargin<1 || ~isnumeric(n) || numel(n) > 2
     n = [0 Inf];
 else
@@ -270,7 +270,7 @@ sfilt = mk_filter(typ,filt,eval(frames));
 
 
 
-% delete old selector2, if any
+% delete old "cfg_getfile2", if any
 fg = findobj(0,'Tag',mfilename);
 if ~isempty(fg)
     delete(fg);
@@ -1759,8 +1759,9 @@ if 1
         
         
         dx=[files2,freqs]; hdx={'files','counts'};
-        ids=selector3(dx,hdx);
-        %            ids=selector2(files4);
+        %ids=selector3(dx,hdx);
+        ids=selector2(dx,hdx);
+        %            ids=cfg_getfile2(files4);
         %ids=selector3(files4,{'files'}); Older: 07Mar2022_12-39-39
         ids2=regexprep(files4([ids]),'(\s*\d*\)\s*',''); %remove filecounting, i.e. "( 34 ) "
         hflt=  findobj(gcf,'tag','regexp');
@@ -2126,7 +2127,7 @@ end
 
 %% selectionGUI using multiple cells
 % function ids=selector(tb)
-% function ids=selector2(tb,colinfo,varargin)
+% function ids=cfg_getfile2(tb,colinfo,varargin)
 
 % pairwise varargins
 % 'iswait'      :  0/1      : [0] for debugging modus
@@ -2153,7 +2154,7 @@ end
 % '20150908_102727_20150908_FK_C1M01_1_1\…'    '77.1943'    '08-Sep-2015 10:45:11'    'fl'}
 % id=selector(tb,'Columns:  file, sizeMB, date, MRsequence');
 
-% id=selector2(strrep(strrep(b,'\\','-'),' ','-'),{'file' 'sizeMB' 'date' 'MRsequence' 'protocol'});
+% id=cfg_getfile2(strrep(strrep(b,'\\','-'),' ','-'),{'file' 'sizeMB' 'date' 'MRsequence' 'protocol'});
 
 
 function [ids varargout]=DUMselector3(tb,header,varargin)
