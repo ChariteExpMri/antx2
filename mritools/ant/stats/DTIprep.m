@@ -1690,6 +1690,24 @@ uhelp([mfilename '.m']);
 
 function scripts_pb(e,e2)
 
+scripts={
+'DTIscript_HPC_exportData_makeBatch.m' 
+'DTIscript_posthoc_makeHTML_QA.m'
+% 'DTIscript_posthoc_exportData4Statistic.m'
+'DTIscript_posthoc_exportDTImatrices_fromHPC_4Statistic.m.m'
+'DTIscript_posthoc_exportDTImaps_fromHPC_4Statistic.m'        
+};
+
+xpos=.15;
+scripts_gui(gcf, 'pos',[xpos 0 1-xpos 1],'closefig',0,'scripts',scripts);
+
+
+
+% ==============================================
+%%   older
+% ===============================================
+return
+
 scripts_process([],[],'close');
 
 h=uipanel('units','norm');
@@ -1701,8 +1719,15 @@ set(h,'ForegroundColor','b','fontweight','bold');
 scripts={
 'DTIscript_HPC_exportData_makeBatch.m' 
 'DTIscript_posthoc_makeHTML_QA.m'
-'DTIscript_posthoc_exportData4Statistic.m'
+% 'DTIscript_posthoc_exportData4Statistic.m'
+'DTIscript_posthoc_exportDTImatrices_fromHPC_4Statistic.m.m'
+'DTIscript_posthoc_exportDTImaps_fromHPC_4Statistic.m'        
 };
+
+
+
+
+
 
 hb=uicontrol(h,'style','listbox','units','norm','tag','scripts_lbscriptName');
 set(hb,'string',scripts);

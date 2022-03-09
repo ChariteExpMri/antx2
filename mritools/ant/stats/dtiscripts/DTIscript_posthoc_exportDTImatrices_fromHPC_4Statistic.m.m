@@ -1,8 +1,9 @@
 
 
-%% <b> script to extract DTI-processed files from the HPC-cluster </b>
-% - use this script when DTI-processing is finished to export files to another target-folder
-%  (for instance for statistical analysis)
+%% <b> script to extract DTI-processed DTI-matrices (csv) +lut.txt from the HPC-cluster </b>
+% <font color="red">- use this script when DTI-processing is finished  </font> to export files to another target-folder
+% <font color="blue">- this script exports: the matrix-files (*.csv) and the lut-file (*.txt)  </font> 
+% - for instance for statistical analysis
 % - the animal-names will be preserved and stored in a "dat"-folder in the target-folder
 % 
 % Note: mandatory data structure of HPC-cluster: the "data"-folder contains

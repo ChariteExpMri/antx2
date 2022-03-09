@@ -1,6 +1,6 @@
 
 
-
+% show scripts-gui
 function scripts_gui(hf,varargin)
 
 if 0
@@ -146,7 +146,7 @@ scripts=p.scripts;
 
 hb=uicontrol(h,'style','listbox','units','norm','tag','scripts_lbscriptName');
 set(hb,'string',scripts);
-set(hb,'position',[0 0.7 1.2 0.3]);
+set(hb,'position',[0 0.7 1 0.3]);
 
 set(hb,'callback',{@scripts_process, 'scriptname'} );
 set(hb,'tooltipstring',['script/function name']);
@@ -178,7 +178,7 @@ posn=get(h2,'position');
 % set(hb,'tooltipstring',['script/function help']);
 % NotePos=[xpos .085  1-xpos .58];
 % NotePos=[ 0 .058  1 .68];
-NotePos=[ 0 posn(4)  1 .68];
+NotePos=[ 0 posn(4)  1 .6];
 msg='select <b>script/function</b> from <u>above</u> to obtain <font color="blue">help.<br>';
 han=addNote(h,'text',msg,'pos',NotePos,'head','scripts/functions','mode','single','fs',20,'IS',1);
 % addResizebutton(hf,han.pan,'mode','U','moo',1);
