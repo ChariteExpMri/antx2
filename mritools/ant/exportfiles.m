@@ -31,6 +31,19 @@
 % x.keepSubdirStructure    [0] flattened hierarchy (no subdirs),
 %                          [1] the destination path contains a subfolder for each mouse
 %                          default: 1
+% x.HPCclusterStructure   [0]: no
+%                         [1]: yes, obtain from HPC-cluster. Here the data is as follows
+%                             -a 'data'-folder contains a numeric subfolders "a001", "a002" ... "a###"
+%                             -each of this subfolders contain one animal-folder (i.e a subfolder with the specific animal-id)
+%                             -and each of the animal-folder within the numeric-folder contains the data
+%                             -THE AIM HERE IS TO REMOVE THE NUMERIC SUBFOLDERS ("a001","a002") from the destination-folder 
+%                            example HPC-data-structure: 
+%                                 ..\data\a001\20210713PBS_ERANET_151_LR
+%                                 ..\data\a002\20210713PBS_ERANET_153_LR
+%                                 ..
+%                                 ..\data\a025\20210723PBS_ERANET_165_LR
+% 
+%                           -default: 0                         
 % 
 % x.prefixDirName          adds mouse Dir/folder name as prefix to the new filename,
 %                          default: ''
@@ -177,6 +190,7 @@ para={...
     'inf4' '___ Parameter ___' '' ''
     'destinationPath'      ''          'destination path to export files <required to fill>'  'd'
     'keepSubdirStructure'   1          '[0,1]: [0] flattened hierarchy (no subdirs), [1] the destination path contains the subfolders  '    'b'
+    'HPCclusterStructure'   0          '[0]no; [1]HPC-cluster-structure: data-dir contains subdirs dat001,dat002.,and each of this subdir contains one animal-folder with data ' 'b'
     %'animalsubdirs'         1          '[0,1]: [1] preserve SUBFOLDERS WITHIN ANIMAL FOLDERS in either output name or folder hierarchy or [0] do not preserve' 'b'
     'prefixDirName'         0          'adds mouse Dir/folder name as prefix to the new filename'      'b'
     'renameString'         ''          'replace file name with new file name (no file extention), !NOTE: files might be overwritten (same output name)'  {'mask' 'raw' 'test'}
@@ -373,7 +387,16 @@ for i=1:length(z.files)
         filename=[ subdir '_' filename];
     end
     
-    
+    %%   HPCclusterStructure
+    if z.HPCclusterStructure==1%HPC-clusterstructure
+       dum=subdir ;
+       splits=strsplit(dum,filesep);
+       inumfolder=regexpi2(splits,'^a\d\d\d$');
+       if ~isempty(inumfolder)
+           splits(inumfolder)=[];
+           subdir=strjoin(splits,filesep);
+       end
+    end
     
     
     %% keepSubdirStructure

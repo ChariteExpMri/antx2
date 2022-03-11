@@ -460,10 +460,22 @@
 % #ba 09 Mar 2022 (11:02:40)
 % fixed bug in #k [exportfiles]: #n :  subdir was not addressed correctly
 % 
+% #ba 11 Mar 2022 (08:24:50)
+% added a scripts collection to #k [xstat.m]: #n added scripts for voselwise statistic
+%  -scripts can be modified and applied
+%  -current scripts for voxwelwise statistic:
+%     'VWscript_twosampleStat_simple.m'
+%     'VWscript_MakeSummary_simple.m'
+%     'VWscript_twosampleStat_severalimages.m'
+%     'VWscript_MakeSummary_severalimages.m'
+%     'VWscript_twosampleStat_severalimages_severalgroups.m'
+%     'VWscript_MakeSummary_severalimages_severalgroups.m'
+% #gw --> access via ANT-menu: &#8658; Statistic/SPM-statistic (or xstat.m)  &#8658; use the [scripts]-button
 % 
 % 
 % 
 % 
+
 
 
 %% ===============================================

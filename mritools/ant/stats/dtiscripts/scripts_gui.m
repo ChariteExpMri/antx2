@@ -21,6 +21,7 @@ if (nargin==0 && exist('hf')==0) || (exist('hf')==1 && ischar(hf) && strcmp(hf,'
     scripts={ 'STscript_DTIstatistic_diffDTImatrices_diffGroups.m'
         'STscript_export4vol3d_simple.m'
         'STscript_export4vol3d_manycalcs.m'};
+    scripts=[scripts ; repmat({'ddd'},[20,1]) ;{'last'}];
 %     scripts={'ddf.m' 'mean.m' 'mm.m' 'snip_testNote.m'};
 %     scripts='';
     
@@ -146,7 +147,8 @@ scripts=p.scripts;
 
 hb=uicontrol(h,'style','listbox','units','norm','tag','scripts_lbscriptName');
 set(hb,'string',scripts);
-set(hb,'position',[0 0.7 1 0.3]);
+% set(hb,'position',[0 0.7 1 0.3]);
+set(hb,'position',[0 0.67 1 0.34]);
 
 set(hb,'callback',{@scripts_process, 'scriptname'} );
 set(hb,'tooltipstring',['script/function name']);
@@ -157,7 +159,7 @@ hb.UIContextMenu = c;
 m1 = uimenu(c,'Label','show script','Callback',{@scripts_process, 'open'});
 m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">edit file (not prefered)','Callback',{@scripts_process, 'editOrigFile'});
 
-% addResizebutton(hf,hb,'mode','D','moo',1);
+%  addResizebutton(hf,h,'mode','D','moo',1);
 
 h2=uipanel(h,'units','norm');
 % xpos=0.4;
@@ -169,6 +171,7 @@ set(h2,'position',[posp(1:3) 24]);
 
 set(h2,'units','norm');
 posn=get(h2,'position');
+% addResizebutton(hf,h2,'mode','U','moo',1);
 
 %% ====[addNote]===========================================
 % hb=uicontrol(h,'style','text','units','norm','tag','scripts_TXTscriptHelp');
@@ -181,8 +184,8 @@ posn=get(h2,'position');
 NotePos=[ 0 posn(4)  1 .6];
 msg='select <b>script/function</b> from <u>above</u> to obtain <font color="blue">help.<br>';
 han=addNote(h,'text',msg,'pos',NotePos,'head','scripts/functions','mode','single','fs',20,'IS',1);
-% addResizebutton(hf,han.pan,'mode','U','moo',1);
-
+% hr=addResizebutton(hf,han.pan,'mode','U','moo',0);
+% set(hr,'callback',@resizeUPDOWN);
 
 %% =======[open script]========================================
 hb=uicontrol(h2,'style','pushbutton','units','norm','tag','scripts_open');
@@ -227,6 +230,10 @@ addResizebutton(gcf,h,'mode','L','moo',0,'restore',0);
 
 set(gcf,'ResizeFcn',{@resizefig});
 
+
+function resizeUPDOWN(e,e2)
+% 'w'
+
 function resizefig(e,e2)
 %% ===============================================
 if 1
@@ -261,17 +268,29 @@ if strcmp(task,'close')
             close(gcf);
         end
     end
-elseif strcmp(task,'scriptname')
+elseif strcmp(task,'scriptname') % show content
     
     file=hn.String{hn.Value};
     if exist(file)==0
-        hlp=['script "'  file '"<font color="red">: File not found!</font>'];
+        hlp={['script "'  file '"<font color="red">: File not found!</font>']};
         
     else
         hlp=help(file);
+        
         hlp=strsplit(hlp,char(10));
+        hlp=regexprep(hlp,'\s','&nbsp;');
+        hlp=hlp(:);
+        
+        if 1 % add rest
+            try
+                w=preadfile(file); w=w.all;
+                code=w(size(hlp,1)+2:end);
+                code=['<div style="background-color:white;"><h1>CODE</h1><pre>' ; code; '</pre></div>'];
+                hlp=[hlp; code];
+            end
+        end
     end
-    hlp=[hlp repmat('<br>',[1 2])];
+    hlp=[hlp; repmat({'<br>'},[2 1])];
     
     NotePos=u.NotePos;
     %NotePos=[0.5 .085  .5 .58];

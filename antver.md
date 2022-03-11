@@ -1,13 +1,26 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   09 Mar 2022 (11:02:40)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   11 Mar 2022 (08:24:50)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**11 Mar 2022 (08:24:50)**</ins>  
+  added a scripts collection to  __[xstat.m]__: added scripts for voselwise statistic  
+   -scripts can be modified and applied  
+   -current scripts for voxwelwise statistic:  
+      'VWscript_twosampleStat_simple.m'  
+      'VWscript_MakeSummary_simple.m'  
+      'VWscript_twosampleStat_severalimages.m'  
+      'VWscript_MakeSummary_severalimages.m'  
+      'VWscript_twosampleStat_severalimages_severalgroups.m'  
+      'VWscript_MakeSummary_severalimages_severalgroups.m'  
+  &#8618; access via ANT-menu: &#8658; Statistic/SPM-statistic (or xstat.m)  &#8658; use the __[scripts]__-button  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**09 Mar 2022 (11:02:40)**</ins>  
   fixed bug in  __[exportfiles]__: :  subdir was not addressed correctly  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**07 Mar 2022 (09:52:06)**</ins>  
   new function  __[scripts_gui]__: This function contains a collection of scripts that can be   

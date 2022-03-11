@@ -508,14 +508,27 @@ set(gcf,'tag','vvstat','menubar','none','units','norm','name','xstat','NumberTit
 set(gcf,'position',[0.7049    0.4189    0.1503    0.4667]    ); %figure
 
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ==============================================
+%%   help
+% ===============================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %HELP
 set(h2, 'string','help','callback',@helphere);
 set(h2, 'position',[0 .0 .15 .05],'fontsize',6);
 set(h2,'tooltipstring','help for this gui');
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%% setup
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+% % ==============================================
+% %%   scripts
+% % ===============================================
+% 
+% h2=uicontrol('style','pushbutton','units','norm') ;      
+% set(h2, 'string','scripts','callback',@scripts_call);
+% set(h2, 'position',[0.0043616 0.098779 0.2 0.05],'fontsize',7,'foregroundcolor',[0 0 1]);
+% set(h2,'tooltipstring',['<html><b>collection of scripts</b><br>' ...
+%     'open scripts-gui with collection of scripts<br>'...
+%     '-scripts can be costumized and applied']);
+% ==============================================
+%%   setup
+% ===============================================
 h2=uicontrol('style','text','units','norm');            % SETUP  -TXT
 set(h2, 'string','Setup');
 set(h2, 'position',[.01 .8 .8 .05]);
@@ -751,10 +764,24 @@ set(h2,'tooltipstring',[...
     ' - create statistical results (excel-files) ' char(10)...
     ' - save thresholded volume (Nifti)'
     ]);
+set(h2,'BackgroundColor',[0.9608    0.9765    0.9922],'foregroundcolor',[0 0 1]);
+
+% % ==============================================
+% %%   scripts
+% % ===============================================
+
+h2=uicontrol('style','pushbutton','units','norm') ;      
+set(h2, 'string','scripts','callback',@scripts_call);
+set(h2, 'position',[0.33241 0.15116 0.2 0.045],'fontsize',7,'foregroundcolor',[0 0 1]);
 set(h2,'BackgroundColor',[0.9608    0.9765    0.9922])
+set(h2,'tooltipstring',['<html><b>collection of scripts</b><br>' ...
+    'open scripts-gui with collection of scripts<br>'...
+    '-scripts can be costumized and applied']);
 
 
-%% ===============================================
+% ==============================================
+%%   close
+% ===============================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %exit
 set(h2, 'string','close','callback',@xclose);
 set(h2, 'position',[0.66 .0 .33 .05]);
@@ -810,11 +837,25 @@ end
 
 
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 
 %———————————————————————————————————————————————
 %%   subs
 %———————————————————————————————————————————————
+
+
+function scripts_call(e,e2)
+
+scripts={...
+    'VWscript_twosampleStat_simple.m'
+    'VWscript_MakeSummary_simple.m'
+    'VWscript_twosampleStat_severalimages.m'
+    'VWscript_MakeSummary_severalimages.m'
+    'VWscript_twosampleStat_severalimages_severalgroups.m'
+    'VWscript_MakeSummary_severalimages_severalgroups.m'
+    };
+scripts_gui([],'figpos',[.3 .2 .4 .4], 'pos',[0 0 1 1],'name','scripts: voxelwise statistic','closefig',1,'scripts',scripts)
+% scripts_gui(gcf, 'pos',[0 0 1 1],'name','scripts: voxelwise statistic','closefig',1,'scripts',scripts)
+
 
 function xclose(e,e2)
 useotherspm(0); % swith to ANT version of SPM
@@ -2140,7 +2181,7 @@ if isdir(file)
 else
     [pa fi ext]=fileparts(file);
 end
-[~,fi,~]=fileparts(fi);
+% [~,fi,~]=fileparts(fi);
 fiout=fullfile(pa,[s.prefix fi '.xlsx']);
 
 
@@ -2190,7 +2231,9 @@ lg(end+1,1)= {['ADDITIONAL INFO*** ']};
 lg(end+1:end+size(add,1),2 )=[add];
 
 % ======[1]WRITE INFO-sheet=========================================
-pwrite2excel(fiout,{1 'info'},{'Field' ,'value'},[],lg);
+hlg=repmat({''},[1 size(lg,2) ]);
+hlg(1:2)={'Field' ,'value'};
+pwrite2excel(fiout,{1 'info'},hlg,[],lg);
 
 % ========[2]WRITE DATA-sheet =======================================
 %% (b)---write data
@@ -2400,7 +2443,7 @@ else
     else
         [pa fi ext]=fileparts(file);
     end
-    [~,fi,~]=fileparts(fi);
+    %[~,fi,~]=fileparts(fi);
     fiout=fullfile(pa,[s.prefix fi '.nii']);
 end
 

@@ -39,8 +39,9 @@
 
 
 
-function addResizebutton(figh,hres ,varargin)
+function hh=addResizebutton(figh,hres ,varargin)
 warning off;
+hh=[];
 % ==============================================
 %%
 % ===============================================
