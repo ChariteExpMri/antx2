@@ -5505,6 +5505,7 @@ scripts={
 'STscript_subdivideGroups_pairwiseComparisons.m'
 'STscript_subdivideGroups_specific.m'
 'STscript_DTIstatistic_simple.m'
+'STscript_DTIstatistic_simple2.m'
 'STscript_DTIstatistic_diffDTImatrices.m'
 'STscript_DTIstatistic_diffDTImatrices_diffGroups.m'
 'STscript_export4vol3d_simple.m'

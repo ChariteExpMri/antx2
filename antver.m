@@ -472,10 +472,22 @@
 %     'VWscript_MakeSummary_severalimages_severalgroups.m'
 % #gw --> access via ANT-menu: &#8658; Statistic/SPM-statistic (or xstat.m)  &#8658; use the [scripts]-button
 % 
+% #ba 16 Mar 2022 (11:30:01)
+% script "STscript_DTIstatistic_simple2.m" added to #k [dtistat.m]: #n  
+% This script performs the t-statistic (two groups) of the fibre-connections (*.csv-file) 
+% #gw --> access via ANT-menu: &#8658; Statistic/DTI-statistic (or dtistat.m)  &#8658; use the [scripts]-button
+% 
+% #ba 18 Mar 2022 (13:06:56)
+% added to context menu of ANTx-animal listbox: checkRegistraton via HTML-file
+% this option creates an HTML-file with the registration results for selected animals
+% you can chose between
+%     check forward registration (standard-space)
+%     check specific forward registration (open GUI) --> you can specify specific paramters
+%     check inverse registration (native-space)
+%     check specific inverse registration (open GUI) --> you can specify specific paramters
 % 
 % 
 % 
-
 
 
 %% ===============================================

@@ -674,6 +674,13 @@ hp=uicontrol('style','popupmenu','units','normalized',...
 set(hp,'position',[0.8 0.28864 0.12 0.025],'tooltipstring','sort file list');
 set(hp,'callback',@sortList);
 % set(hp,'callback',@update);
+%% ============[info-btn]===================================
+hp=uicontrol('style','pushbutton','units','normalized',...
+    'position',[0.001 .5 .5 .09 ],'backgroundcolor',[ 0.9400    0.9400    0.9400],'foregroundcolor',[0 .6 0],...
+    'string','info','fontsize',7,'fontweight','bold','tag','finfo'   );
+set(hp,'position',[0.75 0.28864 0.05 0.025],'tooltipstring','obtain file info');
+set(hp,'callback',@sinfo);
+% set(hp,'callback',@update);
 %% ===============================================
 
 % pulldown-memory
@@ -738,6 +745,109 @@ drawnow;
 return;
 %=======================================================================
 end
+
+%% ============[get file info]===================================
+function sinfo(e,e2)
+
+%% ===============================================
+
+hl=findobj(gcf,'tag','selected');
+s=get(hl,'string');
+% 
+% s={'f:\data5\schoknecht\dat\_klaus\t1.nii'
+%    'f:\data5\schoknecht\dat\_maus\t1.nii'};
+
+if ~isempty(s)
+
+[pa fi ext]=fileparts2(s);
+% [pa2 subdir ]=fileparts2(pa)
+
+asc=cellfun(@(a){[ double(a)]} ,pa);
+minlen=min(cell2mat(cellfun(@(a){[ length(a)]} ,asc)));
+asn=cell2mat(cellfun(@(a){[ a(1:minlen)]} ,asc));
+ichange=find(sum(asn-repmat(asn(1,:),[size(asn,1) 1]),1)>0);
+
+if isempty(ichange) % length(unique(pa))==1
+    
+    [pax fix ]=fileparts(pa{1});
+    to=fullfile( pax ,fix );
+    
+else
+    to=pa{1}(1:ichange);
+end
+
+
+% if strcmp(to(end),filesep)==1 % there is a filesep at the end (--> dat) ...i.e. animalnames are completely differen
+%     % this should never happen!
+% else
+   maxsfs= length(strfind(to,filesep));
+  
+   subdir={};
+   tail={};
+   images={};
+   len=[];
+   for i=1:length(s)
+       sp=strsplit(s{i},filesep);
+       subdir(i,1)=sp(maxsfs+1);
+       rest=sp(maxsfs+2:end);
+       tail(i,1:length(rest))  =rest;
+       images(i,1)=rest(end);
+       len(i,1)=length(rest);
+   end
+% end
+
+% ===============================================
+p.numfolders=length(unique(subdir));
+p.foldernames=unique(subdir);
+[~,ia]=ismember(subdir,p.foldernames);
+p.imagesPerFolder=histc(ia,unique(ia));
+
+p.images=unique(images);
+[~,ia]=ismember(images,p.images);
+p.numimages=histc(ia,unique(ia));
+
+
+p.numsubfolder=length(find(len>1));
+p.subfolderfiles=s(len>1);
+
+% &#9733; star-filled
+% &#x265E; horse
+% &#9830; diamond
+m={' #ok *** FILE-INFORMATION OF SELECTED FILES *** '};
+m(end+1,1)={ [ ' #g  - '  num2str(length(s)) ' FILES #n from #b ' num2str(p.numfolders) ' FOLDERS #n selected']};
+m(end+1,1)={ [ ' #n  - on average this are  #m ' num2str(length(s)/p.numfolders) ' files/folder '  ]};
+
+
+
+m=[m ; {''}];
+m(end+1,1)={ [ ' &#9830; #g  FILES: '  num2str(length(s))]};
+m2=plog([],[{' #k _____FILE-NAMES____' '_COUNT_'}; [p.images num2cell(p.numimages)] ],0,'','plotlines=0;al=1');
+m=[m ;m2; {''}];
+
+m(end+1,1)={ [ ' &#9830; #r FOUND SUBDIRS: '  num2str(p.numsubfolder)  ]};
+m=[m; p.subfolderfiles];
+if  p.numsubfolder>0
+    m(end+1,1)={ [ ' #r   ..CHECK IF YOU WANT THIS!..otherwise remove these files!']};
+end
+m=[m ; {''}];
+m(end+1,1)={ [ ' &#9830; #b  FOLDERS: '  num2str(p.numfolders)]};
+% m=[m; p.foldernames];
+lenc=size(char(p.foldernames),2);
+ct1=' #k _____FOLDER-NAMES____';
+ct1=[ct1 repmat('_' ,[1 6+lenc-length(ct1)])];
+m2=plog([],[{ct1 '_ImageCOUNT_'}; [p.foldernames num2cell(p.imagesPerFolder)] ],0,'','plotlines=0;al=1');
+m=[m ;m2; {''}];
+
+uhelp(m,0,'name','SELECTED FILES')
+else
+    m={' #ok *** FILE-INFORMATION OF SELECTED FILES *** '};
+    m(end+1,1)={ [ ' #m  - no files selected!']};
+    uhelp(m,0,'name','SELECTED FILES');
+end
+
+end
+
+%% ============[sort files]===================================
 
 
 function sortList(e,e2)
@@ -2699,6 +2809,11 @@ function sorter(dum,dum2)
 sortlist
 
 end
+
+
+%% ==============[sort files]=================================
+
+
 function sortlist;
 
 pop=findobj(gcf,'tag','pop');

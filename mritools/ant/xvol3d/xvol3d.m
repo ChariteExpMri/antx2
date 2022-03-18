@@ -2801,6 +2801,7 @@ elseif strcmp(task,'save_open') || strcmp(task,'save_close')
             try
                 str=get(hlb,'string');
                 str=regexprep( str, '<.*?>', '' );%remove HTML
+                str=cellfun(@(a){[a char(13)]},str); % add newline-char
                 F2=fullfile(s.pa,[ 'node_list' '.txt' ]) ;
                 pwrite2file(F2,str);
             end

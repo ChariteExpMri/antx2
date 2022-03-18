@@ -1,11 +1,26 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   11 Mar 2022 (08:24:50)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   18 Mar 2022 (13:06:56)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Mar 2022 (13:06:56)**</ins>  
+  added to context menu of ANTx-animal listbox: checkRegistraton via HTML-file  
+  this option creates an HTML-file with the registration results for selected animals  
+  you can chose between  
+      check forward registration (standard-space)  
+      check specific forward registration (open GUI) --> you can specify specific paramters  
+      check inverse registration (native-space)  
+      check specific inverse registration (open GUI) --> you can specify specific paramters  
+<!---->
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Mar 2022 (11:30:01)**</ins>  
+  script "STscript_DTIstatistic_simple2.m" added to  __[dtistat.m]__:    
+  This script performs the t-statistic (two groups) of the fibre-connections (*.csv-file)   
+  &#8618; access via ANT-menu: &#8658; Statistic/DTI-statistic (or dtistat.m)  &#8658; use the __[scripts]__-button  
+    
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**11 Mar 2022 (08:24:50)**</ins>  
   added a scripts collection to  __[xstat.m]__: added scripts for voselwise statistic  
    -scripts can be modified and applied  
@@ -17,6 +32,7 @@
       'VWscript_twosampleStat_severalimages_severalgroups.m'  
       'VWscript_MakeSummary_severalimages_severalgroups.m'  
   &#8618; access via ANT-menu: &#8658; Statistic/SPM-statistic (or xstat.m)  &#8658; use the __[scripts]__-button  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**09 Mar 2022 (11:02:40)**</ins>  
   fixed bug in  __[exportfiles]__: :  subdir was not addressed correctly  

@@ -514,8 +514,17 @@ uimenu('Parent',ContextMenu, 'Label','check registration quality of w_t2.nii (mi
 uimenu('Parent',ContextMenu, 'Label','check registration quality of x_t2.nii (middle slice) (ELASTIX)', 'callback', {@cmenuCasesCB,'warpquality_elastix' } ,'ForegroundColor',[0 0 1]);
 uimenu('Parent',ContextMenu, 'Label','check coreg- panel(ELASTIX)', 'callback', {@cmenuCasesCB,'check_coreg' } ,'ForegroundColor',[0 0 1]);
 
-uimenu('Parent',ContextMenu, 'Label','check registration via GUI', 'callback', {@cmenuCasesCB,'checkRegist' } ,'ForegroundColor',[0 0 1]);
+uimenu('Parent',ContextMenu, 'Label','check registration via GUI',                 'callback', {@cmenuCasesCB,'checkRegist' } ,'ForegroundColor',[0 0 1]);
+%% ===============================================
 
+hc3=uimenu('Parent',ContextMenu, 'Label','<html><b>check registration - make HTML-file' ,'ForegroundColor',[0 0 1]);
+uimenu('Parent',hc3, 'Label','<html><b>check forward registration (standard-space)'  , 'callback', {@cmenuCasesCB,'checkRegistHTMLforw' }          ,'ForegroundColor',[0 0 1  ]);
+uimenu('Parent',hc3, 'Label','<html>check specific forward registration (open GUI)'  , 'callback', {@cmenuCasesCB,'checkRegistHTML_forwspecific' } ,'ForegroundColor',[0 0 1  ]);
+
+uimenu('Parent',hc3, 'Label','<html><b>check inverse registration (native-space)'    , 'callback', {@cmenuCasesCB,'checkRegistHTML_inv' }          ,'ForegroundColor',[0 .5 0 ]);
+uimenu('Parent',hc3, 'Label','<html>check specific inverse registration (open GUI)'  , 'callback', {@cmenuCasesCB,'checkRegistHTML_invspecific' }  ,'ForegroundColor',[0 .5 0 ]);
+
+%% ===============================================
 
 uimenu('Parent',ContextMenu, 'Label','  SPMDISP: overlay t2.nii & ALLen(GM)', 'callback', {@cmenuCasesCB,'Rdisplaykey3inv' });
 
@@ -635,8 +644,27 @@ switch cmenutask
         statusMsg(1,' check Registration via GUI ');
         checkRegist
         statusMsg(0);
-        
-        
+    %% ===============================================
+    
+    case 'checkRegistHTMLforw'
+        statusMsg(1,' check Registration-HTML ');
+        checkregistration();
+        statusMsg(0);
+    case 'checkRegistHTML_forwspecific'
+        statusMsg(1,' check Registration-HTML ');
+        checkregistration(1,1);
+        statusMsg(0);
+    case 'checkRegistHTML_inv'
+        statusMsg(1,' check Registration-HTML ');
+        checkregistration(0,-1);
+        statusMsg(0);
+    case 'checkRegistHTML_invspecific'
+        statusMsg(1,' check Registration-HTML ');
+        checkregistration(1,-1);
+        statusMsg(0);
+         
+     %% ===============================================
+     
     case 'Rdisplaykey3inv'
         va=get(lb3,'value');
         for i=1:length(va)
