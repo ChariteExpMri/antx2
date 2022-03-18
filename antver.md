@@ -10,10 +10,10 @@
   added to context menu of ANTx-animal listbox: checkRegistraton via HTML-file  
   this option creates an HTML-file with the registration results for selected animals  
   you can chose between  
-      check forward registration (standard-space)  
-      check specific forward registration (open GUI) --> you can specify specific paramters  
-      check inverse registration (native-space)  
-      check specific inverse registration (open GUI) --> you can specify specific paramters  
+      -check forward registration (standard-space)  
+      -check specific forward registration (open GUI) --> you can specify specific paramters  
+      -check inverse registration (native-space)  
+      -check specific inverse registration (open GUI) --> you can specify specific paramters  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Mar 2022 (11:30:01)**</ins>  
   script "STscript_DTIstatistic_simple2.m" added to  __[dtistat.m]__:    
