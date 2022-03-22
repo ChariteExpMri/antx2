@@ -943,6 +943,11 @@ if ~isempty(paramsbatch)
     
     %% parameters remains here
     if isfield(p,'parfor' );   q.parfor =p.parfor;   end
+    
+%     if isfield(p,'dirs' );%externam animal-dirs
+%         mdirs
+%     end
+    
 end
 
 
@@ -952,7 +957,11 @@ paths=mdirs;
 HTMLpath=   fileparts(fileparts(paths{1}));
 ht=xhtmlgr('copyhtml','s' ,which('formgr.html'),'t',fullfile(HTMLpath,'summary.html'));
 xhtmlgr('study','page',ht,'study',HTMLpath);
-xhtmlgr('timer','page',ht,'start',datestr(now));
+if ~isempty(findobj(0,'tag','ant'))
+    xhtmlgr('timer','page',ht,'start',datestr(now));
+else
+   xhtmlgr('timer','page',ht,'start',datestr(now),'task',p.task,'mdirs',p.mdirs); 
+end
 
 
 settings=antsettings;
@@ -1042,8 +1051,8 @@ end
 
 cprintf('*black', ['..[DONE] ~' sprintf('%2.2fmin', toc(atime)/60) ' \n' ]);
 drawnow;
-antcb('update');
-antcb('status',0,'IDLE');
+try; antcb('update'); end
+try; antcb('status',0,'IDLE'); end
 drawnow
 try; antcb('update'); end
 

@@ -278,6 +278,10 @@ try
     varargout{4}=params;
 end
 
+if showgui==0
+   varargout{length(varargout)+1}=p; % third arg-out
+end
+
 function paramfiles(li,lih)
 % function paramfiles(e,e2)
 % paramgui('setdata','x.wa.elxParamfile',{'ee' 'eeed' 'fgffd'})

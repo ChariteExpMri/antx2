@@ -59,7 +59,9 @@ h=figure('color','w','units','normalized','menubar','none', 'tag','ant','name','
 % set(gcf,'closereq','spm(''Quit'')','HandleVisibility','off')
 set(h,'closereq','');
 set(h,'KeyPressFcn',@keys);
-set(h,'WindowButtonMotionFcn', @windbuttonmotion);
+if 0 % changed 'off': date: 22.mar.2022 ...> don't know what reason was
+    set(h,'WindowButtonMotionFcn', @windbuttonmotion);
+end
 
 % fg
 try
@@ -103,6 +105,22 @@ h = uicontrol('style','pushbutton','units','normalized','position',[.0 .5 .1 .05
 h = uicontrol('style','radiobutton','units','normalized','position',[.1 .5 .2 .05],'tag','rbsortprogress',...
     'string','sort-Progress','value',0,'fontsize',6,'backgroundcolor','w','callback',{@antcb,'update'},...
     'tooltip','sort folders relative to progress (performed processing steps)');
+set(h,'visible','off');
+
+list_sortprogress=...
+    {...
+    'sort:default'
+    'sort:progress_down'
+    'sort:progress_up'
+    'sort:lengthName_up'
+    'sort:lengthName_down'
+    'sort:statusMsg_up'
+    'sort:statusMsg_down'};
+
+h = uicontrol('style','popupmenu','units','normalized','position',[.1 .5 .2 .05],'tag','pop_sortprogress',...
+    'string',list_sortprogress,'value',1,'fontsize',6,'backgroundcolor','w','callback',{@antcb,'update'},...
+    'tooltip','<html>sort animals according to...<br><font color="red">WARNING! <br> the animal sorting is currently a testing mode<br>use at own risk!');
+set(h,'visible','on');
 
 %DIRS-number selected
 h = uicontrol('style','text','units','normalized','position',[.3 .5 .2 .025],'tag','tx_dirsselected',...
@@ -621,10 +639,18 @@ switch cmenutask
             %system(['explorer ' dirx]);
         end
     case 'renamedir'
-        va=get(lb3,'value')
+        va=get(lb3,'value');
         dirs=xrenamedir('dirs',an.mdirs(va));
-        an.mdirs=dirs(:,2) ;
+        %an.mdirs=dirs(:,2) ;
+        sel=[];
+        for i=1:size(dirs,1)
+            is=find(strcmp( an.mdirs,dirs{i} ));
+            sel(end+1,1)=is;
+            an.mdirs(is)=dirs(i,2);
+        end
+        set(lb3,'value',sel);
         antcb('update');
+        
     case 'selectallfolders'
         set(lb3,'value',1:size(get(lb3,'string'),1));
         lb3_callback(findobj(gcf,'tag','lb3'),[]);

@@ -1,11 +1,19 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   18 Mar 2022 (13:06:56)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   23 Mar 2022 (00:37:51)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Mar 2022 (00:37:51)** </ins>  
+  different sorting strategies of the animals in the ANT-main GUI animal-listbox implemented   
+      'default' : default sorting  
+      'progress_down' or 'progress_up'    : sort animals after atlas-registration-progress  
+      'lengthName_up' or 'lengthName_down': sort animals after animal name length  
+      'statusMsg_up'  or 'statusMsg_down' : sort animals after status message (specified via context menu: "set status")  
+  &#8618; access via ANTx Gui pulldown-menu next to the __[update]__-button   
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Mar 2022 (13:06:56)**</ins>  
   added to context menu of ANTx-animal listbox: checkRegistraton via HTML-file  
   this option creates an HTML-file with the registration results for selected animals  
@@ -14,6 +22,8 @@
       -check specific forward registration (open GUI) --> you can specify specific paramters  
       -check inverse registration (native-space)  
       -check specific inverse registration (open GUI) --> you can specify specific paramters  
+  &#8618; ANTx-animal listbox &#8658; context menu  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 Mar 2022 (11:30:01)**</ins>  
   script "STscript_DTIstatistic_simple2.m" added to  __[dtistat.m]__:    

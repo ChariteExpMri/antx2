@@ -1048,7 +1048,18 @@ if strcmp(do, 'update')
         dirsid=dirsid2;
     end
     
+    
     lb=findobj(gcf,'tag','lb3');
+    if isfield(an,'mdirs')==0
+        preseldirs=dirx(1);
+    else
+        try
+        preseldirs=an.mdirs(lb.Value);
+        catch
+            
+        end
+    end
+    
     set(lb,'userdata', [dirsid dirsid tooltip]);
     
     
@@ -1119,7 +1130,105 @@ if strcmp(do, 'update')
     set(findobj(gcf,'style','pushbutton'),'FontUnits','pixels');
     set(findobj(gcf,'style','text'),'FontUnits','pixels');
     
+    sort_progress(preseldirs);
 end
+
+%% ===============================================
+
+% sort progress
+function sort_progress(preseldirs);
+%% ===============================================
+% 'default'
+% 'progress_down'
+% 'progress_up'
+% 'lengthName_up'
+% 'lengthName_down'
+% 'statusmsg_up'
+% 'statusmsg_down'
+%% ===============================================
+hf=findobj(0,'tag','ant');
+hl=findobj(hf,'tag','lb3');
+hpop=findobj(hf,'tag','pop_sortprogress');
+sorter=hpop.String{hpop.Value};
+sorter=strrep(sorter,'sort:','');
+% disp(sorter);
+% sorter='progress_down'
+%  sorter='progress_up'
+% sorter='default'
+% %  sorter='statusmsg_up'
+% %sorter='statusmsg_down'
+% sorter='lengthName_up'
+% % sorter='lengthName_down'
+
+global an;
+mdirs=an.mdirs;
+% ==============================================
+% hl=findobj(gcf,'tag','lb3')
+li=get(hl,'string');
+va=get(hl,'value');
+% selz=zeros(size(li,1),1);
+% selz(va)=1;
+
+li2=regexprep( li, '<.*?>', '' );
+li3=regexprep(li2,'&nbsp','');
+
+% =======[sort progress]========================================
+if strcmp(sorter,'progress_down') || strcmp(sorter,'progress_up')
+    len=zeros(size(li,1),1);
+    for i=1:length(li)
+        len(i)=length( strfind(li{i},'#F5F5F'));
+    end
+    if strcmp(sorter,'progress_down')
+        [~, isort ]=sort(len,'descend');
+    else
+        [~, isort ]=sort(len,'ascend');
+    end
+elseif strcmp(sorter,'statusMsg_up') || strcmp(sorter,'statusMsg_down')    
+    issue=regexprep(li3,{'#\d\d\d\d','.*&'},{''});
+      [~,isort ]=sort(issue);
+    if strcmp(sorter,'statusMsg_down')
+         
+    else
+       isort=flipud(isort);
+    end
+elseif strcmp(sorter,'lengthName_up') || strcmp(sorter,'lengthName_down') 
+    len=cell2mat(cellfun(@(a){[ length(a)]} ,mdirs));
+     if strcmp(sorter,'lengthName_down')
+        [~, isort ]=sort(len,'ascend');
+    else
+        [~, isort ]=sort(len,'descend');
+    end
+elseif strcmp(sorter,'default')
+    [~,isort ]=sort(mdirs);
+end
+mdirsS=mdirs(isort);
+liS   =li(isort);
+
+try
+    selC=zeros(size(mdirsS,1) ,1); % find selected files
+    for i=1:length(preseldirs)
+        is=find(strcmp(mdirsS,preseldirs{i}));
+        if ~isempty(is)
+            selC(is,1)=1 ;
+        end
+        sel=find(selC);
+    end
+catch
+    sel=1;
+end
+
+tt=get(hl,'userdata'); %sort tooltip
+tts=tt(isort,:);
+% ----update -----
+an.mdirs=mdirsS;
+hl.String=liS;
+hl.Value =sel;
+set(hl,'userdata',tts); %set sorted tooltip
+
+
+%% ===============================================
+
+
 
 %% FUNCTIONS-listbox: Mouse-movement callback-->tooltip
 function tooltip_lb1(jListbox, jEventData, hListbox,tooltipscell)
@@ -1309,12 +1418,28 @@ end
 lb3=findobj(findobj(0,'tag','ant'),'tag','lb3');
 %li=get(lb3,'string');
 va=get(lb3,'value');
-paths=an.mdirs(va);
+% if ~isempty(findobj(0,'tag','ant'))
+if isfield(an,'mdirs')
+    paths=an.mdirs(va);
+else
+    [dirs] = spm_select('FPList',an.datpath,'dir');
+    if ~isempty(dirs)
+       an.mdirs=cellstr(dirs) ;
+       paths=an.mdirs(va);
+    end
+end
+% elseif isempty(findobj(0,'tag','ant')) && isfield(an,'sel')
+%     paths=an.sel;
+% end
 
 %% remove path which are taken out from analysis
 li=get(lb3,'string');
 pathshtml=li(va);
-del=regexpi2(pathshtml,'</s>');
+if ~isempty(pathshtml)
+    del=regexpi2(pathshtml,'</s>');
+else
+    del=[];
+end
 pathshtml(del)=[];
 paths(   del)=[];
 

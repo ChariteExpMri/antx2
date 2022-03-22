@@ -427,13 +427,13 @@ set(p,'tooltipstring', ['<html><font color=blue><b>sort according to </b><br></f
 % set(px,'string','find','callback',{@finderwindow},'fontsize',fontsize);
 px=uicontrol(hp,'Style','pushbutton','units','normalized',         'Position',[.65 .03 .1 .02],'tag','finderwindow');
 set(px,'string','find','callback',{@finderwindow},'fontsize',fontsize);
-set(px,'position',[.15 0.25 .1 .25]);
+set(px,'position',[.15 0.25 .045 .25]);
 %% ===============================================
 
 if params.finder==1
-    px=uicontrol('Style','pushbutton','units','normalized',         'Position',[.65 .05 .1 .02],'tag','pb10');
+    px=uicontrol(hp,'Style','pushbutton','units','normalized',         'Position',[.65 .05 .1 .02],'tag','pb10');
     set(px,'string','select specific','callback',{@selectspecificButton},'fontsize',fontsize);
-    set(px,'position',[.3 0.25 .1 .25]);
+    set(px,'position',[.195 0.25 .1 .25]);
 end
 %% ===============================================
 sortstr=['selection'; 'Idx' ; header(:);];
@@ -457,7 +457,7 @@ txtinfo{end+1,1}=[' '];
 txtinfo{end+1,1}=['highlighted objects: 1'];
 txtinfo{end+1,1}=['selectionType: '  upper(params.selection) '-selection'];
 
-set(p,'position',[0.3 0 .5 1]);
+set(p,'position',[0.35 0 .5 1]);
 hed=p; %use hanfle for resize
 
 

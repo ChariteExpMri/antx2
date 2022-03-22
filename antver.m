@@ -485,10 +485,18 @@
 %     -check specific forward registration (open GUI) --> you can specify specific paramters
 %     -check inverse registration (native-space)
 %     -check specific inverse registration (open GUI) --> you can specify specific paramters
+% #gw --> ANTx-animal listbox &#8658; context menu
+% 
+% #ba 23 Mar 2022 (00:37:51) 
+% different sorting strategies of the animals in the ANT-main GUI animal-listbox implemented 
+%     'default' : default sorting
+%     'progress_down' or 'progress_up'    : sort animals after atlas-registration-progress
+%     'lengthName_up' or 'lengthName_down': sort animals after animal name length
+%     'statusMsg_up'  or 'statusMsg_down' : sort animals after status message (specified via context menu: "set status")
+% #gw --> access via ANTx Gui pulldown-menu next to the [update]-button 
 % 
 % 
 % 
-
 
 %% ===============================================
 %----- EOF

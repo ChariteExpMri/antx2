@@ -51,10 +51,10 @@ end
 
 if 0
     
-    %�����������������������������������������������
-    %%   % simulate stuff
-    %�����������������������������������������������
-    
+ % ==============================================
+%%    simulate stuff
+% ===============================================
+
     td=2;
     showbrowser =1;
     
@@ -107,10 +107,7 @@ if 0
     
     
     
-    %�����������������������������������������������
-    %%
-    %�����������������������������������������������
-    
+   
 end
 
 
@@ -154,9 +151,9 @@ end
 
 
 
-%�����������������������������������������������
-%%
-%�����������������������������������������������
+% ==============================================
+%%   
+% ===============================================
 if strcmp(task,'copyhtml');  varargout{1}  =copyhtml(ps); end
 if strcmp(task,'study');     varargout{1}  =study(ps); end
 if strcmp(task,'timer');     varargout{1}  =timer(ps); end
@@ -168,9 +165,10 @@ if strcmp(task,'progress');  varargout{1}  =progress(ps); end
 
 if strcmp(task,'show');       varargout{1}  =show(ps); end
 
-%�����������������������������������������������
+% ==============================================
 %%   subs
-%�����������������������������������������������
+% ===============================================
+
 %===============================================
 function out=update(ps)
 
@@ -718,6 +716,23 @@ if isfield(ps,'start')
     lab=get(hlb,'string');
     val=get(hlb,'value');
     lab=lab(val);
+    if isempty(lab) % no GUI
+        lab2={...
+            '[1]  xwarp-initialize'
+            '[2a] xwarp-coregister auto'
+            '[2b] xwarp-coregister manu'
+            '[3] xwarp-segment'
+            '[4] xwarp-ELASTIX'
+            };
+        if isfield(ps,'task')
+            ix=[];
+            for i=1:length(ps.task)
+                ix(end+1,1)=min(regexpi2(lab2,num2str(ps.task(i))));
+            end
+            lab=lab2(ix);
+        end
+        
+    end
     
     proctask=[1 1 1 1];
     proctask(1)=~isempty(regexpi2(lab,'initial'));
@@ -730,6 +745,9 @@ if isfield(ps,'start')
     
     log.pas    =antcb('getallsubjects');
     log.passel =antcb('getsubjects');
+    if isempty(hlb) %no gui
+      log.passel=ps.mdirs;  
+    end
     % passel  =pas(get(findobj(findobj(0,'tag','ant'),'tag','lb3'),'value'));
     % passel=pas([1 3])
     logfile=fullfile(ps.outpath,'summaryLog.mat');

@@ -19,18 +19,26 @@
 % xbruker2nifti;                                                % all inputs provided by guis
 % xbruker2nifti( 'O:\harms1\harmsTest_ANT\pvraw', 'Rare' )      % METAFOLDER is explicitly defined, read Rare, trmb is 1Mb
 % xbruker2nifti({'guidir' 'O:\harms1\harmsTest_ANT\'}, 'Rare' ) % startfolder for GUI is defined,  read Rare, trmb is 1Mb
+%
+%% NO GUI (silent mode)
+% [1] import all Bruker-rawdata from path fullfile(pwd,'raw_Ernst'), no gui (silent mode)
+% xbruker2nifti(fullfile(pwd,'raw_Ernst'),0,[],[],'gui',0);
 
 
-
-
-function xbruker2nifti(pain,sequence,trmb,x)
+function xbruker2nifti(pain,sequence,trmb,x,varargin)
 
 if exist('pain')==0
     global an
     pain={'guidir' fileparts(an.datpath)};
     sequence=0
 end
-
+%% =========Pairwise inputs======================================
+p0.gui=1; % [0,1] show guis
+if nargin>4
+   pin= cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+   p0=catstruct2(p0,pin);
+end
+%% ===============================================
 
 fprintf('...reading Bruker-data...');
 
@@ -292,6 +300,8 @@ if ~isempty(sequence)
     mbytes      =mbytes(id);
     seq             =seq(id);
     daterec     =daterec(id);
+    
+    protocol   =protocol(id);
 end
 
 %==============================================================================
@@ -307,6 +317,9 @@ tb=[files cellstr(num2str(mbytes)) daterec seq protocol];
 
 tbhead={'file' 'sizeMB' 'date' 'MRseq' 'protocol'};
 
+if size(tb,1)~=size(addpara,1)
+    addpara=addpara(id,:);
+end
 d =[tb addpara];
 dh=[tbhead addparanamesShort(:)'];
 
@@ -356,10 +369,13 @@ cm={'open folder  [1].[].shortcut', cc1
     'show METHOD [3]', cc3
     'show ACQP  [4]', cc4
     'show VOLUME  [5]', cc5};
-id=selector2(d,dh,'iswait',1,'contextmenu',cm,'finder',1);
+if p0.gui==1 %with open gui otherwise import all files
+    id=selector2(d,dh,'iswait',1,'contextmenu',cm,'finder',1);
+    if isempty(id); return; end
+else
+    id=[1:size(d,1)]';
+end
 
-
-if isempty(id); return; end
 files=files(id);
 seq  =seq{id};
 visux=visux{id};
@@ -372,7 +388,7 @@ dx=d(id,:);
 %%  PARAMETER-gui
 %==============================================================================
 if exist('x')~=1;        x=[]; end
-showgui=1
+% % % showgui=1
 p={...
     'inf97'      [repmat('=',[1,100])]                           '' ''
     'inf98'       '              *** BrukerIMPORT  ***              '                        ,'' ''
@@ -414,10 +430,20 @@ p={...
     'origin'       'brukerOrigin'        'define center(origin) of volume'  {'brukerOrigin' 'volumeCenter'}
     };
 
+if p0.gui==1
+    showgui=1;
+else
+   showgui=0; 
+end
+
 p=paramadd(p,x);%add/replace parameter
-[m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .8 .6 ],...
-    'title','BrukerImport');
-fn=fieldnames(z);
+if showgui==1
+    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .8 .6 ],...
+        'title','BrukerImport');
+else
+    z=param2struct(p);
+end
+ fn=fieldnames(z);
 z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
 
 %==============================================================================
@@ -481,15 +507,18 @@ mkdir(paout);
 
 %% loop trhoug all 2dseq-files
 
-h = waitbar(0,'Please wait...');
+if showgui==1
+    h = waitbar(0,'Please wait...');
+end
 for i=1:size(files,1)
     
     try
         
         brukerfile=files{i};
         [pa fi]=fileparts(brukerfile);
-        waitbar(i/size(files,1),h,[' convert2nifti:  ' num2str(i) '/' num2str(size(files,1)) ]);
-        
+        if showgui==1
+            waitbar(i/size(files,1),h,[' convert2nifti:  ' num2str(i) '/' num2str(size(files,1)) ]);
+        end
         %%===============================================
         %% MAKE DIRS AND FILENAMES
         %%===============================================
@@ -656,13 +685,15 @@ for i=1:size(files,1)
     
     
 end%i
-close(h)
+if showgui==1
+    close(h)
+end
 
 makebatch(z,pain,trmb,sequence)
 pause(.5)
 drawnow;
-antcb('update');
-fprintf('[done]\n');
+try; antcb('update');end
+fprintf('[BrukerImport Done!]\n');
 
 %==============================================================================
 %%  SUBS

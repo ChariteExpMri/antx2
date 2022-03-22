@@ -304,16 +304,28 @@
 % z.files={ 'XX.nii' 	'XXrenamed.nii'  ''          %  "XX.nii" is renamed to  "XXrenamed.nii"
 %           'YY.nii' 	'YYcopied.nni' 	 ':'    };   %  "YY.nii" is copied to  "YYcopied.nii"
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
-
-
-
+% 
+% 
+% 
+% #ok NO GUI (silent mode)
+% using cell of animal-dirs as extra input ("an.mdirs"); 
+%% [1] copy&rename 'T2_TurboRARE_highres_1.nii' to 't2.nii'
+%    xrename(0,'T2_TurboRARE_highres_1.nii','t2.nii',':','dirs',an.mdirs );
+%% [2] delete file "nan_2.nii" in animal dirs defined in an.mdirs
+%    xrename(0,'t3.nii','','del','dirs',an.mdirs );
+% 
+% 
 %% #r RE-USE BATCH: see 'anth' [..anthistory] -variable in workspace
 
 
 
-function xrename(showgui,fi,finew,extractnum)
+function xrename(showgui,fi,finew,extractnum,varargin)
 
-
+p0.dummy=1;
+if nargin>4
+   pin= cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+   p0=catstruct2(p0,pin);
+end
 
 
 %———————————————————————————————————————————————
@@ -397,8 +409,11 @@ end
 %———————————————————————————————————————————————
 %%   get unique-files from all data
 %———————————————————————————————————————————————
-
+if isfield(p0,'dirs')==1 %obtain from argin-paths
+    pa=p0.dirs;
+end
 v=getuniquefiles(pa);
+
 
 %———————————————————————————————————————————————
 %%  get pairings of old&newfile (optional via gui) and extractionNUmber
@@ -406,8 +421,8 @@ v=getuniquefiles(pa);
 s.pa=pa; %additional struct
 [he tbout]=renamefiles(v,he,s, showgui);
 try
-iadd=find(~cellfun(@isempty,  regexpi(tbout(:,3), '^##$|^del$|^delete$')));
-he=[he; tbout(iadd,1:3)];
+    iadd=find(~cellfun(@isempty,  regexpi(tbout(:,3), '^##$|^del$|^delete$')));
+    he=[he; tbout(iadd,1:3)];
 end
 % he
 %
@@ -787,7 +802,9 @@ end
 makebatch(z);
 
 drawnow;
-antcb('update');
+try
+    antcb('update');
+end
 
 
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
