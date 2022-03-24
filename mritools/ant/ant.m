@@ -562,7 +562,11 @@ uimenu('Parent',ContextMenu, 'Label','   *clipboard selected folders ',         
 uimenu('Parent',ContextMenu, 'Label','   clipboard selected fullpaths-folders as MATLAB-CELL',   'callback', {@cmenuCasesCB,'copyfullpathascell' },'Separator','off');
 uimenu('Parent',ContextMenu, 'Label','   clipboard selected folders as MATLAB-CELL',             'callback', {@cmenuCasesCB,'copypathascell' },    'Separator','off');
 
+%% ===============================================
 
+hc3=uimenu('Parent',ContextMenu, 'Label','<html><b>specific tools' ,'ForegroundColor',[ 0.8706    0.4902         0]);
+uimenu('Parent',hc3, 'Label','<html><b>prune mask ("_msk.nii")'  , 'callback', {@cmenuCasesCB,'prune_mask' }          ,'ForegroundColor',[0 0 1  ],'Separator','on');
+%% ===============================================
 
 
 % uimenu('Parent',ContextMenu, 'Label','exclude case (include prev. excluded case)', 'callback', {@cmenuCasesCB,'dropout' } ,'ForegroundColor',[1 0 0], 'Separator','on');
@@ -630,6 +634,8 @@ if isempty(an)
 end
 lb3=findobj(findobj(0,'tag','ant'),'tag','lb3');
 
+seldirs=antcb('getsubjects');
+
 switch cmenutask
     case 'opdendir'
         va=get(lb3,'value');
@@ -688,7 +694,25 @@ switch cmenutask
         statusMsg(1,' check Registration-HTML ');
         checkregistration(1,-1);
         statusMsg(0);
-         
+       
+     %% ===============================================    
+     case 'prune_mask'
+        statusMsg(1,' prune_mask ');
+        
+        
+       
+        for i=1:length(seldirs)
+            f1=fullfile(seldirs{i},'_msk.nii');
+            if exist(f1)==2
+                cleanmask(f1,'arg',1);
+            else
+                disp(['not found: ' f1]);
+            end
+        end
+        
+        
+        
+        statusMsg(0);    
      %% ===============================================
      
     case 'Rdisplaykey3inv'

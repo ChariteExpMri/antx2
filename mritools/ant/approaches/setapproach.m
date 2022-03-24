@@ -19,7 +19,7 @@
 
 function varargout=setapproach
 varargout{1}=[]; %OUTPUT
-clc;
+% clc;
 delete(findobj(0,'tag','Approach'));
 % ro=approaches(0,0);
 
@@ -54,6 +54,14 @@ idunsort=str2num(char(regexprep(regexprep(app,'.*_',''),'.m','')));
 
 alist    =cellfun(@(a){[ repmat(' ',[1 4-length(num2str(a)) ]) num2str(a)]},  num2cell(idunsort(isort)));
 alistfun =app(isort);
+%% ===============================================
+
+%----approaches with nonNumeric suffix
+ir=find(ismember(app,alistfun)==0);
+alistfun=[alistfun; app(ir)];
+alist=[alist; regexprep(app(ir),{'^approach_','.m$'},'')];
+%% ===============================================
+
 
 % 
 % alist    ={'1' '2' '3' '4'};
@@ -122,7 +130,7 @@ set(hbt,'units','pixels');
 %% ==============================================
 %% Assign pb/tx/edit
 hx=uicontrol('style','pushbutton','units','norm','position',[0 0 .04 .04]);
-set(hx,'string',['>>'], 'HorizontalAlignment','left','fontsize',8,'backgroundcolor','w');
+set(hx,'string',['>>'], 'HorizontalAlignment','left','fontsize',8,'backgroundcolor',[ 1.0000    0.8431         0]);
 set(hx,'position',[0.02 .15 .04 .04],'tag','pbassign','fontweight','bold');
 set(hx,'tooltipstr','select button to assign a costumized approach (function) from path','callback',@selectfunction);
 % set(hx,'units','pixels')
@@ -190,6 +198,10 @@ else
    r=help(fun); 
    r=strsplit(r,char(10))';
    rr=uhelp(r,[],'export',1);
+   if isempty(char(rr))
+      rr={[' <html> #m there is no help for "' fun '"']
+          [' #m there is no help for "' fun '"']} ;
+   end
 end
 
 

@@ -134,12 +134,13 @@ job.opts.tpm = template(1:3) ;%{      'O:\data4\ant_upd2_win\dat\m09\segm\_b1gre
 job.opts.ngaus   = [3 2 2 4]';
 job.opts.regtype = 'animal';
 job.opts.warpreg = 1;
-job.opts.warpco  = 1.7500;
+job.opts.warpco  = 1.7500; %orig warpco-mouse: 1.7500
 job.opts.biasreg = 1.0000e-04;
 job.opts.biasfwhm= 5;
 job.opts.samp    = 0.1000;
 job.opts.msk     = {''};
 
+% % job.opts.msk={('F:\data5\nogui\dat\sus_20220215NW_ExpPTMain_009938\mask_invers.nii')}
 % ==============================================
 %%   check params (s-struct)
 % ===============================================

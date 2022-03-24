@@ -496,6 +496,18 @@
 % #gw --> access via ANTx Gui pulldown-menu next to the [update]-button 
 % 
 % 
+% #ba 24 Mar 2022 (11:34:05)
+% added "approach_photothrombosis" as option for elxMaskApproach
+% This approach can be used for photothrombotic stroke models together with a lesionmask (with name 'lesionmask.nii')
+% 
+% added #k [cleanmask.m]: #n This function can be used to delete slices from a NIFTI-image
+% - currently this function can be used to delete errornuous slices from the "_msk.nii" image,
+% generated from the skullstripping step. In some cases the registration (subsequent step) which 
+% depends on the "_msk.nii" is suboptimal. Thus use cleanmask.m to delete the affected slices from 
+% "_msk.nii"
+% this function is still in progress...
+% #gw --> ANTx-animal listbox &#8658; context menu /SPECIFIC TOOLS/prune mask ("_msk.nii")
+% 
 % 
 
 %% ===============================================

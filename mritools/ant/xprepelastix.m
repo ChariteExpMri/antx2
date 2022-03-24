@@ -13,23 +13,41 @@ function xprepelastix(s)
 %     approach=s.elxMaskApproach
 %     xprepelastix(s,approach)
 % end
-
-
-
-if isnumeric(s.elxMaskApproach)
-    fun=['approach_' num2str(s.elxMaskApproach)];
-   disp(['..using APPROACH : ' fun]); 
-   feval(fun,s);
-    
-else %EXTERNAL FILE
-   fun= char(s.elxMaskApproach);
-   pacurr=pwd;
-   [px fis ext]=fileparts(fun);
-   cd(fileparts(fun));
-   disp(['..using APPROACH : ' fun]);
-   feval(fis,s);
-   cd(pacurr);
+%% ===============================================
+if exist(char(num2str(char(s.elxMaskApproach))))==2 % explicit path
+    fun= char(s.elxMaskApproach);
+    pacurr=pwd;
+    [px fis ext]=fileparts(fun);
+    cd(fileparts(fun));
+    disp(['..using APPROACH: ' fun]);
+    feval(fis,s);
+    cd(pacurr);
+else
+    if isnumeric(s.elxMaskApproach)                 % numeric
+        fun=['approach_' num2str(s.elxMaskApproach)];
+    else                                            %string
+       fun=['approach_' (s.elxMaskApproach)]; 
+    end
+    disp(['..using APPROACH: ' fun]);
+    feval(fun,s); 
 end
+%% ===============================================
+
+    
+% if isnumeric(s.elxMaskApproach)
+%     fun=['approach_' num2str(s.elxMaskApproach)];
+%    disp(['..using APPROACH : ' fun]); 
+%    feval(fun,s);
+%     
+% else %EXTERNAL FILE
+%    fun= char(s.elxMaskApproach);
+%    pacurr=pwd;
+%    [px fis ext]=fileparts(fun);
+%    cd(fileparts(fun));
+%    disp(['..using APPROACH : ' fun]);
+%    feval(fis,s);
+%    cd(pacurr);
+% end
 
 
 

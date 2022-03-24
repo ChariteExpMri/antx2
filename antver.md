@@ -1,11 +1,23 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   23 Mar 2022 (00:37:51)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   24 Mar 2022 (11:34:05)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Mar 2022 (11:34:05)**</ins>  
+  added "approach_photothrombosis" as option for elxMaskApproach  
+  This approach can be used for photothrombotic stroke models together with a lesionmask (with name 'lesionmask.nii')  
+    
+  added  __[cleanmask.m]__: This function can be used to delete slices from a NIFTI-image  
+  - currently this function can be used to delete errornuous slices from the "_msk.nii" image,  
+  generated from the skullstripping step. In some cases the registration (subsequent step) which   
+  depends on the "_msk.nii" is suboptimal. Thus use cleanmask.m to delete the affected slices from   
+  "_msk.nii"  
+  this function is still in progress...  
+  &#8618; ANTx-animal listbox &#8658; context menu /SPECIFIC TOOLS/prune mask ("_msk.nii")  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Mar 2022 (00:37:51)** </ins>  
   different sorting strategies of the animals in the ANT-main GUI animal-listbox implemented   
       'default' : default sorting  
@@ -13,6 +25,8 @@
       'lengthName_up' or 'lengthName_down': sort animals after animal name length  
       'statusMsg_up'  or 'statusMsg_down' : sort animals after status message (specified via context menu: "set status")  
   &#8618; access via ANTx Gui pulldown-menu next to the __[update]__-button   
+    
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Mar 2022 (13:06:56)**</ins>  
   added to context menu of ANTx-animal listbox: checkRegistraton via HTML-file  

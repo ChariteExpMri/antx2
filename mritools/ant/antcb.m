@@ -1049,7 +1049,8 @@ if strcmp(do, 'update')
     end
     
     
-    lb=findobj(gcf,'tag','lb3');
+    hf=findobj(0,'tag','ant');
+    lb=findobj(hf,'tag','lb3');
     if isfield(an,'mdirs')==0
         preseldirs=dirx(1);
     else
