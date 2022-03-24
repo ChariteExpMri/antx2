@@ -508,8 +508,18 @@
 % this function is still in progress...
 % #gw --> ANTx-animal listbox &#8658; context menu /SPECIFIC TOOLS/prune mask ("_msk.nii")
 % 
+% #ba 24 Mar 2022 (23:16:21)
+% #k [cleanmask.m]: #n now also allows to remove tissue parts, help added
+% 
+% 
 % 
 
+
+
+
+
+
+% 
 %% ===============================================
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

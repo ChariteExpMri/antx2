@@ -1,11 +1,14 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   24 Mar 2022 (11:34:05)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   24 Mar 2022 (23:16:21)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Mar 2022 (23:16:21)**</ins>  
+   __[cleanmask.m]__: now also allows to remove tissue parts, help added  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Mar 2022 (11:34:05)**</ins>  
   added "approach_photothrombosis" as option for elxMaskApproach  
   This approach can be used for photothrombotic stroke models together with a lesionmask (with name 'lesionmask.nii')  
@@ -17,6 +20,7 @@
   "_msk.nii"  
   this function is still in progress...  
   &#8618; ANTx-animal listbox &#8658; context menu /SPECIFIC TOOLS/prune mask ("_msk.nii")  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 Mar 2022 (00:37:51)** </ins>  
   different sorting strategies of the animals in the ANT-main GUI animal-listbox implemented   

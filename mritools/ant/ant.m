@@ -704,7 +704,7 @@ switch cmenutask
         for i=1:length(seldirs)
             f1=fullfile(seldirs{i},'_msk.nii');
             if exist(f1)==2
-                cleanmask(f1,'arg',1);
+                cleanmask(f1,'wait',1);
             else
                 disp(['not found: ' f1]);
             end
