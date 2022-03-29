@@ -86,7 +86,12 @@ end
 p.file=file;
 
 %% ===============================================
-disp(['loading file..']);
+if p.wait==1
+    disp(['loading file..busy']);
+else
+    disp(['loading file..']);
+end
+
 hf=makegui(p);
 if p.dim~=3
     changeDim([],[])

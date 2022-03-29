@@ -81,7 +81,7 @@ for i=1:length(c)
         end
     end
 end
-
+varc=(varc(find(varc)));
 %% ===============================================
 s=c;
 s(varc)=cellfun(@(a){[ 'k.' a]} ,c(varc));

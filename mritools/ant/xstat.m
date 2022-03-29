@@ -172,6 +172,8 @@
 % xstat('set',struct('MCP','none','thresh',0.001,'clk',1,'con',con,'show',0));
 %% #m display TABLE --> make statistical table in powerpoint
 % xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  ));
+%  ---optional output: obtain resulting output file and info-struct
+% [fiout gg]=xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  ));;
 %% #m display volume --> make orthoview volume-plot in powerpoint
 % xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  ));
 %
@@ -204,6 +206,8 @@
 %% #wb programmatically save as *TXT-file*
 %% save as file 'testZ.txt' as TXT-file (type=2)
 %  xstat('export',fullfile(pwd,'testZ.txt'),struct('type',2));
+%  ---optional output: obtain resulting output file and info-struct
+% [fiout gg]=xstat('export',fullfile(pwd,'testZ.txt'),struct('type',2));
 %% save as file ('x_c_radial_dif__1ko2ko_GT_1wt2ko__FWE0.txt'), filename
 %% is constructed from internal parameter , as TXT-file (type=2)
 %  xstat('export',pwd,struct('type',2));
@@ -249,6 +253,8 @@
 %% internal parameter (InputImage,contrast-name,correctionMethoc,threshold,clusterSize)
 %% fileName here is  "x_c_radial_dif__1ko2ko_GT_1wt2ko__none0.nii"
 %  xstat('savevolume',pwd);
+%  ---optional output: obtain resulting output file and info-struct
+% [fiout gg]=xstat('savevolume',pwd);
 %% .. as previous example but prefix 'myPrefix_' is added to outputfile
 %% Filename is "myPrefix_x_c_radial_dif__1ko2ko_GT_1wt2ko__none0.nii"
 %  xstat('savevolume',pwd,struct('prefix','myPrefix_'));
@@ -261,7 +267,7 @@
 % spm_figure('close',allchild(0));   % line 347
 
 %voxelvise statistic
-function xstat(showgui,x,s )
+function varargout=xstat(showgui,x,s )
 
 if nargin>0
     
@@ -271,7 +277,9 @@ if nargin>0
     if ~isnumeric(showgui)
         if strcmp(showgui, 'report');
             if nargin==1; x=[];end
-            report(x,s) ;
+            [fiout g]=report(x,s) ;
+            varargout{1}=fiout;
+            varargout{2}=g;
         end
         if strcmp(showgui, 'loadspm');
             if nargin==1; x=[];end
@@ -282,22 +290,30 @@ if nargin>0
         end
         if strcmp(showgui, 'export');
             if nargin==2;
-                export(x,[]);
+               [fiout g]= export(x,[]);
             else
-                export(x,s);
+               [fiout g]= export(x,s);
             end 
+            varargout{1}=fiout;
+            varargout{2}=g;
         end
         if strcmp(showgui, 'savevolume');
+            fiout=[];
             if nargin==2;
-                savevolume(x,[]);
+                [fiout g]=savevolume(x,[]);
             else
-                savevolume(x,s);
-            end 
+                [fiout g]=savevolume(x,s);
+            end
+            varargout{1}=fiout;
+            varargout{2}=g;
         end
         return
     end
 end
 
+% function [fileout gg]=export(file,s)
+% fileout=[];
+% gg=   struct([]);
 
 
 types={'regression' 'pairedttest' 'twosamplettest' 'onewayanova' 'fullfactorial'};
@@ -2101,8 +2117,9 @@ cd(pabase);
 
 
 
-function export(file,s)
-
+function [fileout gg]=export(file,s)
+fileout=[];
+gg=   struct();
 %===================================================================================================
 % ==============================================
 %%   examples:
@@ -2167,9 +2184,13 @@ if s.type==2 %text--file
     [~,fi,~]=fileparts(fi);
     fiout=fullfile(pa,[s.prefix fi '.txt']);
     pwrite2file(fiout,tb);
+    
+    fileout=fiout;
+    g.tb=tb;
     try
         disp(['saved table <a href="matlab: explorerpreselect(''' fiout ''')">' fiout '</a>']);
     end
+    
     return
 end
 % ==============================================
@@ -2239,7 +2260,9 @@ pwrite2excel(fiout,{1 'info'},hlg,[],lg);
 %% (b)---write data
 % pwrite2excel(fiout,{2 sheetname},tbnumeric(1,:),tbnumeric(2,:),tbnumeric(3:end,:));
 pwrite2excel(fiout,{2 'voxstat'},tbnumeric(1,:),tbnumeric(2,:),tbnumeric(3:end,:));
-
+fileout=fiout;
+gg.hlg=hlg;
+gg.lg=lg;
 % ========[3]WRITE NOTE =======================================
 try
     note={
@@ -2379,7 +2402,7 @@ eval([v1 v2 v3]);
 % !start o:\antx\mricron\mricron.exe o:\antx\mritools\ant\templateBerlin_hres\sAVGT.nii -o O:\data\voxelwise_Maritzen4tool\bla2.nii -c -28 -l 6 -h 10 -b -0
 % !start o:\antx\mricron\mricron.exe o:\antx\mritools\ant\templateBerlin_hres\sAVGT.nii -o O:\data\voxelwise_Maritzen4tool\bla2.nii -c -28 -l 6.5488 -h 13.4955 -b -0
 
-function savevolume(file,s)
+function [fileout g]=savevolume(file,s)
 
 % "savevolume"-structParameter -----
 % s0.type=1 ; %save as: {numeric value}, [1] excelfile or [2] textfile
@@ -2388,9 +2411,11 @@ if isempty(s)==1
     s=struct();
 end
 s=catstruct(s0,s);
-save_threshvolume([],[],file,s);
+[fileout g]=save_threshvolume([],[],file,s);
 
-function save_threshvolume(e,e2,file,s)
+function [fileout g]=save_threshvolume(e,e2,file,s)
+fileout=[];
+g=struct();
 
 xSPM = evalin('base','xSPM;');
 XYZ  = xSPM.XYZ;
@@ -2459,7 +2484,8 @@ spm_write_filtered(Z, XYZ, xSPM.DIM, xSPM.M,...
 showinfo2('voxSTAT-volume',lab.template,fiout,7);
 disp('Done!');
 
-
+fileout=fiout;
+g.bgimg=lab.template;
 
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 %———————————————————————————————————————————————
@@ -3732,7 +3758,11 @@ nametag=regexprep(cj,{'\s+','<' '>','.nii'},{'#','_LT_' '_GT_',''});
 
 
 
-function report(pptfile0,s)
+function [fiout g]=report(pptfile0,s)
+fiout=[];
+g     =struct();
+
+
 figure(findobj(0,'tag','vvstat'));
 if exist('s')~=1
     s.doc='new'; %new pptfile, atherwise 'add' to add to existing pptfile
@@ -3797,6 +3827,20 @@ for jj=1:length(cons)   %:   size(get(lb,'string'),1)   %1:1,
     figure(hg)
     set(lb,'value',islide);
     hgfeval(get(lb,'callback'),lb);
+    if isfield(s,'pointer')
+        figure(hfig)
+        if isnumeric(s.pointer) && length(s.pointer)==3
+            %xyz=spm_mip_ui('GetCoords')
+            spm_mip_ui('SetCoords',s.pointer);
+        elseif ischar(s.pointer) && strcmp(s.pointer,'max')
+            [xyz,d] = spm_mip_ui('Jump',spm_mip_ui('FindMIPax'),'glmax'); %jump to max cluster
+        end
+    else
+        try
+            spm_mip_ui('Jump',findobj(findobj(0,'tag','Graphics'),'tag','hMIPax'),'glmax');
+        end
+    end
+        
     drawnow;
     if strcmp(s.show,'table')
         %--show table --------------------------
@@ -3808,9 +3852,9 @@ for jj=1:length(cons)   %:   size(get(lb,'string'),1)   %1:1,
         lt=findobj(hg,'tag','showvolume');
         hgfeval(get(lt,'callback'),lt);
         % go to local maximum
-        try
-        spm_mip_ui('Jump',findobj(findobj(0,'tag','Graphics'),'tag','hMIPax'),'glmax');
-        end
+%         try
+%         spm_mip_ui('Jump',findobj(findobj(0,'tag','Graphics'),'tag','hMIPax'),'glmax');
+%         end
         %----------------------------
         drawnow;
     end
@@ -3864,11 +3908,21 @@ end
 %     newFile = exportToPPTX('saveandclose',file);
 %
 % end
+
+
+
 newFile = exportToPPTX('saveandclose',pptfile);
 fprintf('New file has been saved: <a href="matlab:open(''%s'')">%s</a>\n',newFile,newFile);
 
 
 cd(currDir);
+%% =========out======================================
+fiout=newFile;
+g.slideNum=slideNum;
+g.pptshortname=pptfile;
+
+
+
 
 
 function helphere(e,e2)

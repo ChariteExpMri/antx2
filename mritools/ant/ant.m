@@ -897,8 +897,8 @@ switch cmenutask
         ifo={};
         ifo{end+1,1}=['[GENERAL INFO]__________________________________________________________________'];
         ifo{end+1,1}=['N-mouse-dirs: ' num2str(size(fis,1))];
-        ifo{end+1,1}=(['print all mouse folders '   ' <a href="matlab: disp(' 'char(antcb(' '''getallsubjects''' '))' ')">' an.datpath '</a>' ';' ['[' ' N=' num2str(size(fis,1))  ']' ]  ]);% show h<perlink
-        ifo{end+1,1}=(['  '   ' <a href="matlab: montage_t2image">' 'show "t2.nii" of selected paths (galery/montage) (centerpoint) ' '</a>' ';'  ]);% show h<perlink
+        ifo{end+1,1}=(['print all mouse folders '   ' <a href="matlab: disp(' 'char(antcb(' '''getallsubjects''' '))' ')">' an.datpath '</a>' '' ['[' ' N=' num2str(size(fis,1))  ']' ]  ]);% show h<perlink
+        ifo{end+1,1}=(['show montage of "t2.nii"-image'   ' <a href="matlab: montage_t2image">' 'montage' '</a>' '' ' (centerpoint)'  ]);% show h<perlink
         disp(char(ifo));
         
     case('copyfolders')
