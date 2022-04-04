@@ -675,11 +675,35 @@ m2=m(iend:end,:);
 
 
 function out=copyhtml(ps)
+%% =====[adding links]==========================================
+
+
 [pa]=fileparts(ps.t);
 warning off;
 mkdir(pa);
 copyfile(ps.s,ps.t,'f');
 out=ps.t;
+
+
+
+a=preadfile(ps.t); a=a.all;
+is=regexpi2(a,'</body>');
+
+li={'<font size="+1">'
+    '<a href="summary_steps/stp1_initialization.html" target="_blank">initialization</a>&nbsp;&nbsp;&nbsp;'
+    '<a href="summary_steps/stp2_coregistration.html" target="_blank">coregistration</a>&nbsp;&nbsp;&nbsp;'
+    '<a href="summary_steps/stp3_segmentation.html"   target="_blank">segmentation</a>&nbsp;&nbsp;&nbsp;'
+    '<a href="summary_steps/stp4_warping.html"        target="_blank">warping</a><br>&nbsp;&nbsp;&nbsp;'
+    '</font>'};
+
+m1=a(1:is-1); 
+m2=a(is:end);
+
+m=[m1;li; m2];
+pwrite2file(ps.t,m );
+%% ===============================================
+
+
 
 function out=study(ps)
 out=[];

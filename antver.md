@@ -1,13 +1,22 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   24 Mar 2022 (23:16:21)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   04 Apr 2022 (13:54:22)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**04 Apr 2022 (13:54:22)**</ins>  
+  added  __[HTMLprocsteps.m]__: this function creates additional HTML-files for the   
+  processing report (initialization, coregistration, segementation and warping).  
+  These HTML-files are available as hyperlinks in the "summary.html"-report and depicts  
+  the output if each processing step for all animals. Thus you may not need to select the   
+  'inspect'-hyperlink for each animal. Just select respective hyperlink to obtain an   
+  overview for all animals.    
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Mar 2022 (23:16:21)**</ins>  
    __[cleanmask.m]__: now also allows to remove tissue parts, help added  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Mar 2022 (11:34:05)**</ins>  
   added "approach_photothrombosis" as option for elxMaskApproach  

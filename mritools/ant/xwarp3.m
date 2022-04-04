@@ -172,7 +172,9 @@ else
    xhtml('timer','page',fullfile(s.pa,'summary','summary.html'),'rerun',datestr(now));
 end
 
- 
+%% HTML-overview-one page for all animals
+HTMLprocsteps(fileparts(fileparts(s.pa)),struct('refresh',1,'show',0));
+
 
 %% =================================================================================
 %% [1] INITIALIZATION:
@@ -962,6 +964,8 @@ if ~isempty(findobj(0,'tag','ant'))
 else
    xhtmlgr('timer','page',ht,'start',datestr(now),'task',p.task,'mdirs',p.mdirs); 
 end
+%% HTML-overview-one page for all animals
+HTMLprocsteps(HTMLpath,struct('refresh',1,'show',0));
 
 
 settings=antsettings;
@@ -1046,8 +1050,8 @@ if  do_deleteSummaryLOG == 1;  % delete Logfile.mat at the end
     end
 end
     
-    
-
+%% HTML-overview-one page for all animals (no HTML-refresh at the end)
+HTMLprocsteps(HTMLpath,struct('refresh',0,'show',0));
 
 cprintf('*black', ['..[DONE] ~' sprintf('%2.2fmin', toc(atime)/60) ' \n' ]);
 drawnow;

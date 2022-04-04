@@ -45,7 +45,7 @@ if isempty(exportdir)
     if testpath==1
         exportdir=fullfile(pwd,'export2');
     else
-        ps=uigetdir(pwd,'select destination folder to export HTML-summary' );
+        ps=uigetdir(fullfile(pwd),'select destination folder to export HTML-summary' );
         if isnumeric(ps) && ps==0
             disp('..cancelled: no destination folder selected to export HTML-summary') ;
             return
@@ -81,6 +81,11 @@ if exist(fS1)~=2
     error([fS1 ' .. does not exist']);
 end
 copyfile(fS1,fT1,'f');
+% copy singleSteps-HTML
+Fss=fullfile(w.pa_index,'summary_steps');
+fst=fullfile(w.pa_export,'summary_steps');
+copyfile(Fss,fst,'f');
+
 %Exporting summary subdir for each animal
 cprintf([0 .5 0], [  '..Exporting summaries of animals (n=' num2str(length(w.pa_animals)) ') \n'    ]);
 

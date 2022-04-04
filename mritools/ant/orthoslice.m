@@ -13,7 +13,7 @@
 % p.axcol      =[0 0 0];      % axes color; default: [0 0 1]
 % p.maskcol    =[.7 .7 .7]    % color of the brainMaks (usefull when "blobthresh" is set)
 % p.fs         =9;            % colorbar fontsize; default: 9
-% p.cursorcolor=[0 0 1];      % cursorcolor; default: [0 0 1] (i.e spm cursor color)
+% p.cursorcol  =[0 0 1];      % cursorcolor; default: [0 0 1] (i.e spm cursor color)
 % p.cursorwidth=0.5;          % cursor width; default: 0.5 
 % p.showparams =0;            % display parameter; {0,1}; default: 0
 % ===============================================
@@ -64,9 +64,9 @@ p.cmap       ='spmhot';     % colormap (string, 'spmhot' is spms-colormap); defa
 p.clim       =[];           % color limit [min max]; default: [] (i.e. use map's min max)
 p.blobthresh =[];           % lower image threshold -->produces blobs; default: [] (so no blobs)
 p.axcol      =[0 0 0];      % axes color; default: [0 0 1]
-p.maskcol    =[.7 .7 .7]    % color of the brainMaks (usefull when "blobthresh" is set)
+p.maskcol    =[.7 .7 .7];    % color of the brainMaks (usefull when "blobthresh" is set)
 p.fs         =9;            % colorbar fontsize; default: 9
-p.cursorcolor=[0 0 1];      % cursorcolor; default: [0 0 1] (i.e spm cursor color)
+p.cursorcol=[0 0 1];      % cursorcol; default: [0 0 1] (i.e spm cursor color)
 p.cursorwidth=0.5;          % cursor width; default: 0.5 
 p.showparams =0;            % display parameter; {0,1}; default: 0
 %% ========[varinpit]=======================================
@@ -88,6 +88,7 @@ p.f=f;
 %% ===============================================
 
 update(p)
+varargout{1}=gcf;
 
 return
 
@@ -119,26 +120,51 @@ u=get(gcf,'userdata');
 co=get(gca,'CurrentPoint');
 co=round(co(1,[1 2]));
 % get(gca,'tag')
+val=[0];
 if strcmp(get(gca,'tag'),'ax1')
     w=u.gx{1}(3);
     lx=linspace(w.x(1),w.x(2),size(w.a,2));
     ly=linspace(w.y(1),w.y(2),size(w.a,1));
     ce=[    u.p.ce(1)     lx(co(1))   ly(co(2))  ];
+    
+    val(1)=w.a(co(2),co(1));
+    if size(u.gx,2)>1
+      w2=u.gx{2}(3); 
+      val(2)=w2.a(co(2),co(1));
+    end
+    
+    
 elseif strcmp(get(gca,'tag'),'ax2')
     w=u.gx{1}(1);
     lx=linspace(w.x(1),w.x(2),size(w.a,2));
     ly=linspace(w.y(1),w.y(2),size(w.a,1));
     ce=[lx(co(1)) u.p.ce(2)  ly(co(2))  ];
+    
+    val(1)=w.a(co(2),co(1));
+    if size(u.gx,2)>1
+      w2=u.gx{2}(1); 
+      val(2)=w2.a(co(2),co(1));
+    end
 elseif strcmp(get(gca,'tag'),'ax3')
     w=u.gx{1}(2);
     lx=fliplr(linspace(w.x(1),w.x(2),size(w.a,2)));
     ly=linspace(w.y(1),w.y(2),size(w.a,1));
     ce=[lx(co(2))   ly(co(1)) u.p.ce(3) ];
+    
+    val(1)=w.a(co(1),size(w.a,2)-co(2)+1);
+    if size(u.gx,2)>1
+      w2=u.gx{2}(2); 
+      val(2)=w2.a(co(1),size(w2.a,2)-co(2)+1);
+    end
 end
+
+% max(w2.a(:))
 
 p=u.p;
 p.ce=ce;
+p.val=val;
 update(p);
+% val
 return
 %% ===============================================
 % % cf
@@ -205,7 +231,12 @@ if sum(round(ce==round(ce)))==3;
 else; 
     mmstr=sprintf('%2.3f,%2.3f,%2.3f ',ce);
 end
-set(hf,'name',[mmstr sprintf('[%d,%d,%d]',idx)]);
+if isfield(p,'val')
+    valstr=num2str(p.val);
+else
+    valstr='';
+end
+set(hf,'name',[mmstr sprintf('[%d,%d,%d]',idx) '  ' valstr ]);
 
 
 ordspm=1;
@@ -364,27 +395,27 @@ for i=1:3
     set(gca,'tag',['ax' num2str(i)]);
     
     if ord(i)==1
-        hline(cz,'color',p.cursorcolor,'linewidth',p.cursorwidth);
-        vline(cx,'color',p.cursorcolor,'linewidth',p.cursorwidth);
+        hline(cz,'color',p.cursorcol,'linewidth',p.cursorwidth);
+        vline(cx,'color',p.cursorcol,'linewidth',p.cursorwidth);
         
     elseif ord(i)==3
-        hline(cz,'color',p.cursorcolor,'linewidth',p.cursorwidth);
-        vline(cy,'color',p.cursorcolor,'linewidth',p.cursorwidth);
+        hline(cz,'color',p.cursorcol,'linewidth',p.cursorwidth);
+        vline(cy,'color',p.cursorcol,'linewidth',p.cursorwidth);
     elseif ord(i)==2
         if ordspm==0
-            hline(cy,'color',p.cursorcolor,'linewidth',p.cursorwidth);
-            vline(cx,'color',p.cursorcolor,'linewidth',p.cursorwidth);
+            hline(cy,'color',p.cursorcol,'linewidth',p.cursorwidth);
+            vline(cx,'color',p.cursorcol,'linewidth',p.cursorwidth);
         elseif ordspm==1
             if ord(i)==2
-                hline(size(w.a,2)-cx,'color',p.cursorcolor,'linewidth',p.cursorwidth);
-                vline(cy,'color',p.cursorcolor,'linewidth',p.cursorwidth);
+                hline(size(w.a,2)-cx,'color',p.cursorcol,'linewidth',p.cursorwidth);
+                vline(cy,'color',p.cursorcol,'linewidth',p.cursorwidth);
             else
-                hline(cy,'color',p.cursorcolor,'linewidth',p.cursorwidth);
-                vline(cx,'color',p.cursorcolor,'linewidth',p.cursorwidth);
+                hline(cy,'color',p.cursorcol,'linewidth',p.cursorwidth);
+                vline(cx,'color',p.cursorcol,'linewidth',p.cursorwidth);
             end
         end
     end
-    
+    set(findobj(gcf,'type','line'),'ButtonDownFcn',@btndown);
 
     %  axis normal
     set(gca,'YDir','normal');

@@ -511,6 +511,14 @@
 % #ba 24 Mar 2022 (23:16:21)
 % #k [cleanmask.m]: #n now also allows to remove tissue parts, help added
 % 
+% #ba 04 Apr 2022 (13:54:22)
+% added #k [HTMLprocsteps.m]: this function creates additional HTML-files for the 
+% processing report (initialization, coregistration, segementation and warping).
+% These HTML-files are available as hyperlinks in the "summary.html"-report and depicts
+% the output if each processing step for all animals. Thus you may not need to select the 
+% 'inspect'-hyperlink for each animal. Just select respective hyperlink to obtain an 
+% overview for all animals.  
+% 
 % 
 % 
 

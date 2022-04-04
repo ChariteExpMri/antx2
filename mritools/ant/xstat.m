@@ -1354,7 +1354,7 @@ save(fullfile(outdir,'xstatParameter.mat'),'par');
 %%   save MIP
 % ===============================================
 mipfile=fullfile(outdir,'xstatMIP.mat');
-makeMIP(x.AVGT,'show',0,'save', mipfile);
+makeMIP(x.AVGT,'show',0,'save', mipfile,'setorigin',0);
 
 
 
@@ -3760,7 +3760,7 @@ nametag=regexprep(cj,{'\s+','<' '>','.nii'},{'#','_LT_' '_GT_',''});
 
 function [fiout g]=report(pptfile0,s)
 fiout=[];
-g     =struct();
+g=struct();
 
 
 figure(findobj(0,'tag','vvstat'));

@@ -497,6 +497,9 @@ if strcmp(do, 'run2') || strcmp(do, 'run');
         xhtmlgr('study','page',ht,'study',HTMLpath);
         xhtmlgr('timer','page',ht,'start',datestr(now));
         
+        %% HTML-overview-one page for all animals (HTML-refresh at the end)
+        HTMLprocsteps(HTMLpath,struct('refresh',1,'show',0));
+        
         settings=antsettings;
         if ~isfield(settings,'show_HTMLprogressReport') || (settings.show_HTMLprogressReport==1)
             %isfield(r,'k')==0 || r.k==1
@@ -806,6 +809,11 @@ if strcmp(do, 'run2') || strcmp(do, 'run');
         end
     end
     
+    
+    %% HTML-overview-one page for all animals (HTML-refresh at the end)
+     HTMLprocsteps(HTMLpath,struct('refresh',1,'show',0));
+     
+    %update ANT-gui
     antcb('status',0);
 end
 

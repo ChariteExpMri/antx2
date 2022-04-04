@@ -143,6 +143,10 @@ if strcmp(task,'timer');     varargout{1}  =timer(ps); end
 if strcmp(task,'add');       varargout{1}  =add(ps); end
 if strcmp(task,'progress');  varargout{1}  =progress(ps); end
 
+if strcmp(task,'addprocessinglinks'); 
+    varargout{1}=addprocessingLinks(ps)
+    
+end
 %———————————————————————————————————————————————
 %%   subs
 %———————————————————————————————————————————————
@@ -161,6 +165,16 @@ for i=1:length(files)
 end
 filesOKbool= all(okvec);
 
+
+% function out=addprocessingLinks(ps)
+% 
+% 'a'
+% files=HTMLprocsteps(fileparts(fileparts(ps.subject)),struct('refresh',0,'show',0));
+%% ===============================================
+
+
+
+%% ===============================================
 
 
 function out=add(ps)
@@ -458,7 +472,19 @@ elseif isfield(ps,'progress')
     m=hreplace(m,'value="','"></meter>'  ,num2str(ps.progress));
     
 end
-hsave(ps.page,m)
+
+%adding links
+% 'a'
+% is=regexpi2(m,'</body>');
+% m1=m(1:is-1)
+% m2=m(is:end)
+% 
+% w={'<a href="https://www.w3schools.com/">Visit W3Schools.com!</a>'
+%    '<a href="https://www.w3schools.com/">Visit W3Schools.com!</a>'
+%    '<a href="https://www.w3schools.com/">Visit W3Schools.com!</a>'}
+% x=[m1;w;m2]
+
+hsave(ps.page,m);
 
 
 function m=hopen(page)

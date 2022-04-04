@@ -28,6 +28,8 @@ if hstate==0 %setupHTML
     xhtml('timer'  ,   'page',ht,'progress',1);
     xhtml('timer'  ,   'page',ht,'start',datestr(now));
     
+%      xhtml('addprocessinglinks','page',ht,'subject',px);
+    
 elseif hstate==1 %init
 %     atic=tic; pause(td); atoc=toc(atic);
 %     hinfo=['processing Time: ' secs2hms(atoc)];

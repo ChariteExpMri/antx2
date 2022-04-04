@@ -28,6 +28,7 @@ mipstruct=struct();
 % ===============================================
 par.show=0;  %show output: [0]no; [1] yes
 par.save=[]; %save MIP:  empty or fullpath filename to save MIP
+par.setorigin=0; % set origin (lines): 0,1
 
 if nargin>1
     parIN=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
@@ -117,10 +118,14 @@ end
 d2=imfill(d2,'holes');
 % d3  =imdilate(d2,ones(5,5))-d2;
 d3=imdilate(d2,strel('disk',2))-d2;
-d3(CXYZ(2),1:2:end)=1; d3(1:2:end,CXYZ(1))=1;
+if par.setorigin==1
+    d3(CXYZ(2),1:2:end)=1; d3(1:2:end,CXYZ(1))=1;
+end
 da=d3;
 % fg,imagesc(da);
-d(CXYZ(2),1:2:end)=1; d(1:2:end,CXYZ(1))=0;
+if par.setorigin==1
+    d(CXYZ(2),1:2:end)=1; d(1:2:end,CXYZ(1))=0;
+end
 sa=d;
 
 % ========================================================
@@ -136,10 +141,14 @@ end
 d2=imfill(d2,'holes');
 % d3  =imdilate(d2,ones(5,5))-d2;
 d3=imdilate(d2,strel('disk',2))-d2;
-d3(CXYZ(3),1:2:end)=1; d3(1:2:end,CXYZ(1))=1;
+if par.setorigin==1
+    d3(CXYZ(3),1:2:end)=1; d3(1:2:end,CXYZ(1))=1;
+end
 db=d3;
 % fg,imagesc(db);
-d(CXYZ(3),1:2:end)=1; d(1:2:end,CXYZ(1))=1;
+if par.setorigin==1
+    d(CXYZ(3),1:2:end)=1; d(1:2:end,CXYZ(1))=1;
+end
 sb=d;
 % ========================================================
 %  [d ds]=getslices(file,3,['15'],[],0 );
@@ -154,10 +163,14 @@ end
 d2=imfill(d2,'holes');
 % d3  =imdilate(d2,ones(5,5))-d2;ds
 d3=imdilate(d2,strel('disk',2))-d2;
-d3(CXYZ(3),1:2:end)=1; d3(1:2:end,CXYZ(2))=1;
+if par.setorigin==1
+    d3(CXYZ(3),1:2:end)=1; d3(1:2:end,CXYZ(2))=1;
+end
 dc=d3;
 % fg,imagesc(dc);
-d(CXYZ(3),1:2:end)=1; d(1:2:end,CXYZ(2))=1;
+if par.setorigin==1
+    d(CXYZ(3),1:2:end)=1; d(1:2:end,CXYZ(2))=1;
+end
 sc=d;
 
 
