@@ -632,7 +632,8 @@ for i=1:size(pa,1)      %PATH
                                 eval([  img2{im} '=dum;' ]);
                             end
                             [hu u]=rgetnii(s1);
-                            code2=regexprep(code,'i','u');
+                            %code2=regexprep(code,'i','u');
+                            code2=regexprep(code,'(?<![a-zA-Z])i(?![a-zA-Z])','u');
                             %evalstr=['mo=' code2 ';' ];
                             evalstr=[  code2 ';' ];
                             eval(evalstr);

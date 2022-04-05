@@ -1112,6 +1112,9 @@ mh2 = uimenu(mh,'Label',' DTI-statistic',                          'Callback',{@
 mh = uimenu(f,'Label','Snips');
 % mh2 = uimenu(mh,'Label',' flatten bruker Data path for dataImport',                      'Callback',{@menubarCB, 'flattenBrukerdatapath'});
 % mh2 = uimenu(mh,'Label',' generate Jacobian Determinant',                                'Callback',{@menubarCB, 'generateJacobian'});
+
+mh2 = uimenu(mh,'Label','<html><font color="blue">scripts collection',                                  'Callback',{@menubarCB, 'scripts_call'});
+
 mh2 = uimenu(mh,'Label','get corrected lesion volume',                                  'Callback',{@menubarCB, 'getlesionvolume'});
 mh2 = uimenu(mh,'Label','create Maps (incidenceMaps/MeanImage etc)',                                           'Callback',{@menubarCB, 'makeMaps'});
 
@@ -2191,6 +2194,16 @@ elseif strcmp(task,'generateJacobian')
     %________________________________________________
     
     %________________________________________________
+elseif strcmp(task,'scripts_call')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='scripts_collection';
+        return ;
+    end
+    
+    statusMsg(1,'scripts colleciton');
+    scripts_collection();
+    statusMsg(0);
+    
 elseif strcmp(task,'getlesionvolume')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xgetlesionvolume';
@@ -2199,7 +2212,7 @@ elseif strcmp(task,'getlesionvolume')
     
     statusMsg(1,' get corrected lesion volume');
     xgetlesionvolume;
-    statusMsg(0);
+    statusMsg(0);    
     %________________________________________________
 elseif strcmp(task,'makeMaps')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here

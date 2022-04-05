@@ -284,7 +284,7 @@ elseif strcmp(task,'scriptname') % show content
         if 1 % add rest
             try
                 w=preadfile(file); w=w.all;
-                code=w(size(hlp,1)+2:end);
+                code=w(size(hlp,1)+3:end);
                 code=['<div style="background-color:white;"><h1>CODE</h1><pre>' ; code; '</pre></div>'];
                 hlp=[hlp; code];
             end
