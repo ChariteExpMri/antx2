@@ -9,6 +9,7 @@ function scripts_collection()
 %% ===============================================
 
 scripts={...
+    'sc_xrename.m'
     'sc_register_to_standardspace.m'
     'sc_transformimage_exportfile.m'
 %     'VWscript_twosampleStat_simple.m'
