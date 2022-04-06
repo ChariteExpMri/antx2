@@ -539,9 +539,9 @@
 % #k [scripts_collection.m]: #n extended.. now contains the following scripts/examples
 % 'sc_xrename.m'                    .. shows how to rename files + basic file manipulation
 % 'sc_register_to_standardspace.m'  .. shows how to register 't2.nii' to standard-space
-% 'sc_transformimage_exportfile.m'  .. shows how transform another image to standard-space +export files
-% 'sc_checkregistrationHTML.m'      .. shows how generate HTMLfiles to check the registration
-% 'sc_getantomicalLabels.m'         .. shows how extract anatomical-based parameters from images
+% 'sc_transformimage_exportfile.m'  .. shows how to transform another image to standard-space & export files
+% 'sc_checkregistrationHTML.m'      .. shows how to generate HTMLfiles to check the registration
+% 'sc_getantomicalLabels.m'         .. shows how to extract anatomical-based parameters from images and save as excel-files
 % #gw --> access via ANT-menu: &#8658; SNIPS/scripts collection 
 % 
 % 
