@@ -7,8 +7,8 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Apr 2022 (12:21:31)**</ins>  
-  bugfix in  __[exportfiles.m]__:   
-  bugfix in  __[xstat.m]__: .. multifactorial design  
+  bugfix in  __[exportfiles.m]__:  ...internal file-filter was vuggy    
+  bugfix in  __[xstat.m]__: .. multifactorial design was buggy  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**05 Apr 2022 (12:39:20)**</ins>  
   added  __[scripts_collection.m]__: This GUI contains scripts which can can be costumized  
