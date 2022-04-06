@@ -535,6 +535,7 @@
 % 
 % bugfix in #k [sub_atlaslabel2xls.m]: #n ... removing default-sheets was not working
 % 
+% #ba 06 Apr 2022 (17:39:47)
 % #k [scripts_collection.m]: #n extended.. now contains the following scripts/examples
 % 'sc_xrename.m'                    .. shows how to rename files + basic file manipulation
 % 'sc_register_to_standardspace.m'  .. shows how to register 't2.nii' to standard-space
