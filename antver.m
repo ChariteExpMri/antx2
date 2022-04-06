@@ -525,7 +525,7 @@
 % #gw --> access via ANT-menu: &#8658; SNIPS/scripts collection
 % 
 % #ba 06 Apr 2022 (12:21:31)
-% bugfix in #k [exportfiles.m]: #n  ...internal file-filter was vuggy  
+% bugfix in #k [exportfiles.m]: #n  ...internal file-filter was buggy  
 % bugfix in #k [xstat.m]: .. multifactorial design was buggy
 % 
 % 
