@@ -1354,7 +1354,7 @@ save(fullfile(outdir,'xstatParameter.mat'),'par');
 %%   save MIP
 % ===============================================
 mipfile=fullfile(outdir,'xstatMIP.mat');
-makeMIP(x.AVGT,'show',0,'save', mipfile,'setorigin',0);
+makeMIP(x.AVGT,'show',0,'save', mipfile);
 
 
 
@@ -3002,7 +3002,21 @@ end
 s.d=s.d(ivalid,:);
 
 levels    =s.d(:,2:length(s.dfactornames)+1);
-levels    =cell2mat(cellfun(@(a){[str2num(a)]},levels));
+%% ---convert to numeric
+levelsnumeric=cell(size(levels,1),size(levels,2));
+levelsstring =levels;
+for i=1:size(levels,2)
+   uniL=unique(levels(:,i));
+   numL=cellfun(@(a){[num2str(a)]},num2cell([1:length(uniL)]'));
+   uniLS=cellfun(@(a){['^' a '$']},uniL);
+   levelsnumeric(:,i)=regexprep(levels(:,i),uniLS,numL);
+end
+% levels    =cell2mat(cellfun(@(a){[str2num(a)]},levels));
+levels    =cell2mat(cellfun(@(a){[str2num(a)]},levelsnumeric));
+%% ----
+
+
+
 regressors=[];
 if ~isempty(s.regressname)
     regressors=s.d(:,length(s.dfactornames)+2: length(s.dfactornames)+2 +length(s.regressname)-1);
@@ -3030,10 +3044,12 @@ if ~isempty(covars);     covars=cell2mat(covars);          end
 
 
 %———————————————————————————————————————————————
-%   get other parans
+%   get other params
 %———————————————————————————————————————————————
 outdir    = s.output_dir;
-try; rmdir(outdir,'s'); end
+if 0
+    try; rmdir(outdir,'s'); end
+end
 try;mkdir(outdir);end
 mask      = s.mask;
 
@@ -3760,7 +3776,7 @@ nametag=regexprep(cj,{'\s+','<' '>','.nii'},{'#','_LT_' '_GT_',''});
 
 function [fiout g]=report(pptfile0,s)
 fiout=[];
-g=struct();
+g     =struct();
 
 
 figure(findobj(0,'tag','vvstat'));
@@ -3859,15 +3875,31 @@ for jj=1:length(cons)   %:   size(get(lb,'string'),1)   %1:1,
         drawnow;
     end
     %% ----get info ------------------------
+    mspm=struct();
+    mspm.title ='';
+    mspm.nsigvox=nan;
+    mspm.stat='';
+    try;    xspm=evalin('base','xSPM'); end
+    try;    mspm.nsigvox=length(xspm.Z);     end
+    try;    mspm.title  =xspm.title;       end
+    try;    mspm.stat  =xspm.STAT;       end
+    
+    %msp
+    % ===============================================
+    
     info=...
         {
         %['Contrast: ' lb.String{lb.Value} ]
+        ['Contrast: ' mspm.title ]
         ['MCP: ' get(findobj(hg,'tag','mcp'),'string')]
         ['TR: ' get(findobj(hg,'tag','thresh'),'string')]
         ['CLustersize: ' get(findobj(hg,'tag','clustersize'),'string')]
         ['DIR: '         foldername]
+        ['statistic: '         mspm.stat]
+        ['no sign. voxel: '         num2str(mspm.nsigvox)]
         };
     
+   % disp(char(info))
     
     %% ----------------------------
     

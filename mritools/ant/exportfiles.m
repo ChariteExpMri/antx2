@@ -235,10 +235,15 @@ if exist(z.sourcePath)==7 && ~isempty(char(z.fileNames))
     parec=z.sourcePath;
     fileNames=cellstr(z.fileNames);
     filt=cellfun(@(a){['^' a '$' ]} ,fileNames);
-    filt=strjoin(fileNames,'|');
+    filt=strjoin(filt,'|');
     
     [files2,~] = spm_select('FPListRec',parec,filt);
     files2=cellstr(files2);
+    
+    % do not copy from "segm"-subfolder--> remove thos files
+    idel=regexpi2(files2,[filesep filesep 'segm' filesep filesep]);
+    files2(idel)=[];
+
 else
     files2={};
 end

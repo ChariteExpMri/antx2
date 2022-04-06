@@ -1,15 +1,20 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   05 Apr 2022 (12:39:20)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   06 Apr 2022 (12:21:31)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Apr 2022 (12:21:31)**</ins>  
+  bugfix in  __[exportfiles.m]__:   
+  bugfix in  __[xstat.m]__: .. multifactorial design  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**05 Apr 2022 (12:39:20)**</ins>  
   added  __[scripts_collection.m]__: This GUI contains scripts which can can be costumized  
   The scripts-collection will be extended in the near future    
   &#8618; access via ANT-menu: &#8658; SNIPS/scripts collection  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**04 Apr 2022 (13:54:22)**</ins>  
   added  __[HTMLprocsteps.m]__: This function creates additional HTML-files for the   

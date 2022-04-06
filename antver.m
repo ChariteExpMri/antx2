@@ -524,6 +524,9 @@
 % The scripts-collection will be extended in the near future  
 % #gw --> access via ANT-menu: &#8658; SNIPS/scripts collection
 % 
+% #ba 06 Apr 2022 (12:21:31)
+% bugfix in #k [exportfiles.m]: #n 
+% bugfix in #k [xstat.m]: .. multifactorial design
 % 
 % 
 % 
