@@ -21,9 +21,14 @@
 % [tb tbh v]=antcb('getuniquefiles',pa)  ;% get table (tb)+header(tbh) of all unique file over mouseDirs (pa),
 %                                   [v] is a struct with tb and tbh
 % antcb('getsubdirs', x.datapath);  % get subdirs of a directory
+% antcb('studydir')               ;%obtain current ANT-study-directory' 
+%                                 ..for help: antcb('studydir?'); 
 %
 % antcb('selectimageviagui', mypath, 'single');  %select an image from upperDatapath via gui
 % antcb('selectimageviagui', mypath, 'multi');   %select several images from upperDatapath via gui
+
+
+
 %====================================================================================================
 %%                  UICALLBACKS
 %====================================================================================================
@@ -72,6 +77,14 @@ if strcmp(do, 'watchfile?');    watchfile('?')  ; end
 if strcmp(do,'selectdirs')  ;   varargout=selectdirs(input2);  end
 if strcmp(do,'selectdirs?') ;   varargout=selectdirs('?');    end
 if strcmp(do,'helpfun') ;       helpfun(input2{2});    end
+
+if strcmp(do,'studydir')  || strcmp(do,'studydir?')  
+    [o1 o2 ]=studydir(input2); 
+%     if ~isempty(o1);         varargout{1}=o1;    end
+%     if ~isempty(o2);         varargout{2}=o2;    end
+    varargout{1}=o1; 
+    varargout{2}=o2; 
+end
 
 if strcmp(do,'checkProjectfile') ;varargout=checkProjectfile;return; end
 
@@ -2091,7 +2104,119 @@ disp('..done');
 
 
 
+function [o1 o2]=studydir(argin)
+[o1 o2]=deal([]);
+if strcmp(argin{1}, 'studydir?')
+    % ## studydir (anker)
+    
+    %  sdir=antcb('studydir');%obtain current ANT-study-directory'
+    % output: sdir...path of the study-directory
+    % [sdir sinfo]=antcb('studydir','info'); %obtain info of current ANT-study-directory'
+    % the info-output is displayd example:
+    %         study-dir    : "F:\data5\nogui"
+    %         creation time: 18-Mrz-2022 13:32:37
+    %         dir size     : 6.41 TB
+    %         no files     : 1106
+    %         No animals   : 8
+    % ..sinfo: is a struct with some information
+    % __OBTAIN INFO FOR ANOTHER DIRECTORY__
+    %[sdir sinfo]=antcb('studydir','sdir','F:\data5\klaus','info'); %obtain info for another directory
+    %     
+    % ## studydir (anker)
+    antcb('helpfun', 'studydir');
+    return
+end
 
+iotherStudyPath=regexpi2(argin,'sdir');
+if ~isempty(iotherStudyPath);        %another path
+    sdir=argin{iotherStudyPath+1};
+else                                 % rely on global "an"-struct
+    global an
+    sdir=[];
+    try
+        sdir=fileparts(an.datpath);
+    end
+end
+
+o1=sdir;
+if exist(sdir)~=7
+    o1='folder not found ';
+     disp(['folder not found: "' sdir '"!']);
+    return
+end
+%% ===============================================
+
+if ~isempty(regexpi2(argin,'info'));
+    [pau sdirshort]=fileparts(sdir);
+    k=dir(pau) ;
+    uppderdirs={k(:).name};
+    is=find(strcmp(uppderdirs,sdirshort));
+    try
+        cprintf('*[0 .5 .8]',['study-dir    : "' strrep(sdir,filesep, [filesep filesep])   '"\n']);
+    catch
+        disp(['study-dir    : ' sdir]);
+    end
+    disp(['creation time: '  k(is).date ]);
+    
+    %get dir-size
+    [dirsize_MB nfiles]= DirSize(sdir);
+    dirsize_MB=dirsize_MB./((1024*1024));
+    if dirsize_MB<1000
+        dirsize_str=sprintf('%2.2f MB',dirsize_MB);
+    else
+        dirsize_str=sprintf('%2.2f TB',dirsize_MB/1024);
+    end
+    disp(['dir size     : '  dirsize_str ]);
+    disp(['no files     : '  num2str(nfiles) ]);
+    % no animals
+    [mdirs] = spm_select('FPList',sdir,'dir');mdirs=cellstr(mdirs); % % get all animals
+    nanimals=size(char(mdirs),1);
+    disp(['No animals   : '  num2str(nanimals)]);
+    
+    
+    o2.sdir=sdir;
+    o2.ctime=k(is).date;
+    o2.size=dirsize_str;
+    o2.nanimals=nanimals;
+    o2.mdirs  =mdirs;
+    
+end
+%% ===============================================
+
+
+function [out nfiles] = DirSize(dirIn)
+%DirSize Determine the size of a directory in bytes.
+%   bytes = DirSize(dirIn) Recursively searches the directory indicated by
+%   the string dirIn and all of its subdirectories, summing up the file
+%   sizes as it goes.  
+%   
+%   Example:
+%   ________
+%       DirSize(pwd)./(1024*1024)  %Returns size of the current directory
+%       in megabytes.
+%Richard Moore
+%April 17, 2013
+originDir = pwd;
+cd(dirIn);
+a = dir;
+out = 0;
+nfiles=sum(~[a.isdir]);
+for x = 1:1:numel(a)
+    %Check to make sure that this part of 'a' is an actual file or
+    %subdirectory.  
+    if ~strcmp(a(x).name,'.')&&~strcmp(a(x).name,'..')
+        %Add up the sizes.
+        out = out + a(x).bytes;
+        if a(x).isdir 
+            %Ooooooh, recursive!  Fancy!
+            [outmb outn] =DirSize([dirIn '\' a(x).name]);
+            out=out+outmb;
+            nfiles=nfiles+outn;
+            %out = out + DirSize([dirIn '\' a(x).name]);
+        end
+    end
+end
+cd(originDir);
 
 
 

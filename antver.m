@@ -526,12 +526,14 @@
 % 
 % #ba 06 Apr 2022 (12:21:31)
 % bugfix in #k [exportfiles.m]: #n  ...internal file-filter was buggy  
-% bugfix in #k [xstat.m]: .. multifactorial design was buggy
+% bugfix in #k [xstat.m]: #n ... multifactorial design was buggy
+% 
+% #ba 06 Apr 2022 (14:47:57)
+% #k [antcb.m]: #n extended.. antcb('studydir') obtain study-folder
+% [sdir sinfo]=antcb('studydir','info');  % obtain info for the study (storage-size/number of files/animals)
+% see antcb('studydir?') for help
 % 
 % 
-% 
-
-
 
 
 

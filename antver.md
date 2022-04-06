@@ -1,14 +1,20 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   06 Apr 2022 (12:21:31)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   06 Apr 2022 (14:47:57)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Apr 2022 (14:47:57)**</ins>  
+   __[antcb.m]__: extended.. antcb('studydir') obtain study-folder  
+  __[sdir sinfo]__=antcb('studydir','info');  % obtain info for the study (storage-size/number of files/animals)  
+  see antcb('studydir?') for help  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Apr 2022 (12:21:31)**</ins>  
   bugfix in  __[exportfiles.m]__:  ...internal file-filter was buggy    
-  bugfix in  __[xstat.m]__: .. multifactorial design was buggy  
+  bugfix in  __[xstat.m]__: ... multifactorial design was buggy  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**05 Apr 2022 (12:39:20)**</ins>  
   added  __[scripts_collection.m]__: This GUI contains scripts which can can be costumized  

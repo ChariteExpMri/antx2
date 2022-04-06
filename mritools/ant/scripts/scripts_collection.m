@@ -12,6 +12,7 @@ scripts={...
     'sc_xrename.m'
     'sc_register_to_standardspace.m'
     'sc_transformimage_exportfile.m'
+    'sc_checkregistrationHTML.m'
 %     'VWscript_twosampleStat_simple.m'
 %     'VWscript_MakeSummary_simple.m'
 %     'VWscript_twosampleStat_severalimages.m'
