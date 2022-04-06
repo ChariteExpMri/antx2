@@ -7,7 +7,7 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Apr 2022 (17:39:47)**</ins>  
-   __[scripts_collection.m]__: extended.. now contains the following scripts/examples  
+   __[scripts_collection.m]__: extended.. now contains the following scripts/examples:  
   'sc_xrename.m'                    .. shows how to rename files + basic file manipulation  
   'sc_register_to_standardspace.m'  .. shows how to register 't2.nii' to standard-space  
   'sc_transformimage_exportfile.m'  .. shows how to transform another image to standard-space & export files  
