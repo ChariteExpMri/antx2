@@ -330,6 +330,7 @@ if isexcel==1  % EXCEL EXISTS
     %%  write data to excelsheets
     %====================================================================================================
     xlswrite(fileout, infox,  'INFO'   )  ;
+    try; xlsremovdefaultsheets(fileout); end ,%remove default excel-sheets
     for i=1:length(pp.paramname)
         tbx=[...
             pp.Eheader

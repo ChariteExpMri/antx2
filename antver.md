@@ -10,6 +10,16 @@
    __[antcb.m]__: extended.. antcb('studydir') obtain study-folder  
   __[sdir sinfo]__=antcb('studydir','info');  % obtain info for the study (storage-size/number of files/animals)  
   see antcb('studydir?') for help  
+    
+  bugfix in  __[sub_atlaslabel2xls.m]__: ... removing default-sheets was not working  
+    
+   __[scripts_collection.m]__: extended.. now contains the following scripts/examples  
+  'sc_xrename.m'                    .. shows how to rename files + basic file manipulation  
+  'sc_register_to_standardspace.m'  .. shows how to register 't2.nii' to standard-space  
+  'sc_transformimage_exportfile.m'  .. shows how transform another image to standard-space +export files  
+  'sc_checkregistrationHTML.m'      .. shows how generate HTMLfiles to check the registration  
+  'sc_getantomicalLabels.m'         .. shows how extract anatomical-based parameters from images  
+  &#8618; access via ANT-menu: &#8658; SNIPS/scripts collection   
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Apr 2022 (12:21:31)**</ins>  
   bugfix in  __[exportfiles.m]__:  ...internal file-filter was buggy    
