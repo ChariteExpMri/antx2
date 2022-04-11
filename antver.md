@@ -1,11 +1,17 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   06 Apr 2022 (17:39:47)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   11 Apr 2022 (12:23:25)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**11 Apr 2022 (12:23:25)**</ins>  
+   __[xstatlabels.m]__: GUI was refreshed, added scripts-collection for xstatlabels  
+  -This function performes regionwise statisitics of an image-parameter such as intensity mean or volume  
+   between groups   
+  &#8618; access via ANT-menu: &#8658; STATISTIC/label-based statistik  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Apr 2022 (17:39:47)**</ins>  
    __[scripts_collection.m]__: extended.. now contains the following scripts/examples:  
   'sc_xrename.m'                    .. shows how to rename files + basic file manipulation  
@@ -14,6 +20,7 @@
   'sc_checkregistrationHTML.m'      .. shows how to generate HTMLfiles to check the registration  
   'sc_getantomicalLabels.m'         .. shows how to extract anatomical-based parameters from images and save as excel-files  
   &#8618; access via ANT-menu: &#8658; SNIPS/scripts collection   
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**06 Apr 2022 (14:47:57)**</ins>  
    __[antcb.m]__: extended.. antcb('studydir') obtain study-folder  

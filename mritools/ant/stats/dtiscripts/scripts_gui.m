@@ -1,4 +1,21 @@
 
+% #ko *** scripts-collection ***
+% #k THIS GUI CONTAINS SCRIPTS...YOU CAN MODIFY AND APPLY THE SCRIPTS...
+% - The upper listbox contains the list of scripts
+% - select on of the scripts from the above list to obtain the content of the script
+%   in the lower box
+% 
+% select #b [show script] #n to see the the content of the script in a new window
+% select #b [edit script] #n to open script in the editor
+%    - this is the way to costumize and run the script 
+% select #b [close script] #n to close the scripts-collection
+%
+% clicke and drag #b [&#8615]-BTN #n to change the upper and lower listbox size ratios
+%
+% #m SHORTCUTS
+% [CTRL +/-] change the fontsize of the selected listbox
+% [1/2/3] change GUI-layout: [1]default [2] extended high, [3] extended high+width
+
 
 % show scripts-gui
 function scripts_gui(hf,varargin)
@@ -148,7 +165,7 @@ scripts=p.scripts;
 hb=uicontrol(h,'style','listbox','units','norm','tag','scripts_lbscriptName');
 set(hb,'string',scripts);
 % set(hb,'position',[0 0.7 1 0.3]);
-set(hb,'position',[0 0.67 1 0.34]);
+set(hb,'position',[0 0.67 1 0.33]);
 
 set(hb,'callback',{@scripts_process, 'scriptname'} );
 set(hb,'tooltipstring',['script/function name']);
@@ -214,6 +231,14 @@ set(hb,'units','pixels','position',[200 0 100 24]); %pan-pos
 set(hb,'callback',{@scripts_process, 'close'} );
 set(hb,'tooltipstring',['close']);
 % set(hb,'units','pixels')
+%% =========[help btn]======================================
+hb=uicontrol(h2,'style','pushbutton','units','norm','tag','help');
+set(hb,'string','<html><b>?');
+% set(hb,'position',[[0.73 0 0.25 0.06]]); %fig-pos
+set(hb,'units','pixels','position',[350 0 24 24]); %pan-pos
+set(hb,'callback',{@scripts_process, 'help'},'foregroundcolor',[0.8706    0.4902         0] );
+set(hb,'tooltipstring',['get some help']);
+% set(hb,'units','pixels')
 %% ===============================================
 
 set(h2,'units','pixels');
@@ -223,12 +248,152 @@ u.NotePos=NotePos;
 u.han    =han;
 u.p      =p;
 u.h2     =h2;
+
 set(h,'userdata',u);
+
+set(gcf,'WindowKeyPressFcn', @keys);
+
+
+%% =========[shift listboxes]======================================
+%%
+hb=uicontrol(hf,'style','pushbutton','units','norm','tag','shiftlistboxes');
+set(hb,'string',['<html>' '&#8615' ],'fontsize',7,'backgroundcolor','w');
+set(hb,'tooltipstring',['<html><b>drag button to resize layout of listboxes']);
+%% ===============================================
+
+hf=gcf;
+hp =findobj(hf,'tag','notepanel');
+uni_hp=get(hp,'units');
+uni_hb=get(hp,'units');
+% ---
+set(hp,'units','pixels');
+set(hb,'units','pixels');
+% ---
+
+rpos=get(hp,'position');
+% spos=get(hb,'position');
+% butwid=rpos(3)/10;
+butwid=16;
+pp=[rpos(3)-butwid-16 rpos(2)+rpos(4)-7  butwid   8 ];
+% set(hb,'position',[rpos(3)-115 rpos(2)-2 100 8]);
+set(hb,'position',[pp]);
+
+set(hb,'units',uni_hb);
+set(hp,'units',uni_hp);
+%% ===============================================
+
+
+
+% rpos=get(hp,'position');
+% spos=get(hb,'position');
+% pp=[rpos(3)-spos(3)-16 rpos(2)+rpos(4)-7  spos(3)   8 ];
+% 
+% % hb1=findobj(hf,'tag','scripts_lbscriptName');
+% hb1 =findobj(hf,'tag','notepanel');
+% runi=get(hb1,'units');
+% set(hb1,'units','pixels');
+% rpos=get(hb1,'position');
+% set(hb1,'units',runi);
+% 
+% set(hb,'units','pixels');
+% set(hb,'position',[rpos(3)-115 rpos(2)-7 100 8]);
+% set(hb,'units','norm');
+
+
+hmove = findjobj(hb);
+set(hmove,'MouseDraggedCallback', @shiftlistboxes_cb);
+%% ===============================================
 
 
 addResizebutton(gcf,h,'mode','L','moo',0,'restore',0);
-
 set(gcf,'ResizeFcn',{@resizefig});
+% set(gcf,'WindowButtonDownFcn',@bb)
+
+
+function shiftlistboxes_cb(e,e2)
+% 'a'
+% w=get(e.MouseDraggedCallbackData);
+% set(gcf,'units','pixels');
+% get(gcf,'CurrentPoint')
+
+hv=findobj(gcf,'tag','shiftlistboxes');hv=hv(1);
+units_hv =get(hv ,'units');
+units_fig=get(gcf,'units');
+% ----
+set(hv  ,'units','pixels');
+set(gcf ,'units','pixels');
+set(0   ,'units','pixels');
+% ----
+posF=get(gcf,'position')   ;
+posS=get(0  ,'ScreenSize') ;
+pos =get(hv,'position');
+mp=get(0,'PointerLocation');
+
+xx=mp(1)-posF(1);
+yy=mp(2)-posF(2);
+% add=pos(2)-yy;
+
+xs=pos(1)-xx;
+ys=pos(2)-yy;
+% posn=[ xx yy pos(3)+xs pos(4)+ys]; % resize -down-left
+% % posn=[ pos(1:2) pos(3)+xs pos(4)+ys]
+% if posn(3)<0; posn(3)=3; end
+% if posn(4)<0; posn(4)=3; end
+%
+% set(hv,'position',posn);
+set(hv ,'units'  ,units_hv);
+set(gcf,'units'  ,units_fig);
+% df=[pos(1)-xx pos(2)-yy];
+% ----------------------------
+% ==============================================
+%%   BUTTON: moving-icon
+% ===============================================
+units_hv =get(hv ,'units');
+set(hv  ,'units','pixels');
+pos2=get(hv,'position');
+% pp= [  pos2(1)-xs  pos2(2)-(pos2(4)/2)-ys   pos2(3:4)];
+pp= [  pos2(1)  pos2(2)-(pos2(4)/2)-ys   pos2(3:4)];
+if pp(2)<0 || (pp(2)+pp(4)) > posF(4) % do not allow to drag button outside figure
+   set(hv  ,'units',units_hv);
+   return
+end
+
+set(hv,'position',pp);
+set(hv  ,'units',units_hv);
+
+% ==============================================
+%%   script-lb (above shifting pushbutton)
+% ===============================================
+hx=findobj(gcf,'tag','scripts_lbscriptName');
+units_hx=get(hx,'units');
+set(hx,'units','pixels');
+posr=get(hx,'position');
+dfy=posr(2)-yy  ;
+yh=posr(4)+dfy  ;
+if yh>0
+    pp=[ posr(1) yy   posr(3) yh];
+    set(hx,'position',pp);%
+end
+set(hx,'units',units_hx);
+% ==============================================
+%%   notepanel-lb (below shifting pushbutton)
+% ===============================================
+hx=findobj(gcf,'tag','notepanel');
+units_hx=get(hx,'units');
+set(hx,'units','pixels');
+posr=get(hx,'position');
+dfy=yy-posr(2)+5 ;% go [5] to be below, to end lower box beneath shifting-button
+% yh=posr(4)+dfy  ;
+if dfy>0
+    pp=[ posr(1) posr(2)   posr(3) dfy];
+    set(hx,'position',pp);%
+end
+set(hx,'units',units_hx);
+
+
+
+%% ===============================================
+
 
 
 function resizeUPDOWN(e,e2)
@@ -244,11 +409,104 @@ if 1
     notepos=get(u.han.pan,'position');
     set(u.han.pan,'units','pixels');
     pp=get(u.han.pan,'position');
+    
+%     % shift above figure/panel
+%     hh=findobj(gcf,'tag','scripts_panel');
+%     unit_hh=get(hh,'units');
+%     set(hh,'units','pixels');
+%     poshh=get(hh,'position');
+%     set(hh,'units',unit_hh);
+%     
+%     hl=findobj(hh,'tag','scripts_lbscriptName');
+%     unit_hl=get(hl,'units');
+%     set(hl,'units','pixels');
+%     poshl=get(hl,'position');
+%     
+%     
+%    [poshh; poshl;   ];
+%    [poshh(4) poshl(4)+poshl(2)];
+%    high=poshh(4)-poshl(4);
+%    ybas=poshh(4)-high;
+%    set(hl,'position', [poshl(1)  ybas poshl(3) high] );
+%    set(hl,'units',unit_hl);
+%     drawnow
+    
+    %pp(4)
     if pp(4)>40
         set(u.han.pan,'position',[ pp(1) posp(4)  pp(3) pp(4)+(pp(2)-posp(4))  ]);
     end
     set(u.han.pan,'units',unibef);
+    
+    
+    
 end
+
+%% ======addjust shift pushbutton =========================================
+
+uni_f=get(gcf,'units');
+uni_0=get(0,'units');
+
+set(gcf,'units','pixels');
+set(0,'units','pixels');
+
+pos_sc=get(0,'ScreenSize');
+pos_fg=round(get(gcf,'position'));
+
+df=pos_sc(3)-(pos_fg(3)); %check if max-resize via fullscreenBTN
+
+set(gcf,'units',uni_f);
+set(0,'units',uni_0);
+
+nloop=1;
+if df==0
+   nloop=2; 
+end
+
+for i=1:nloop
+    drawnow
+    hf=gcf;
+    hb  =findobj(hf,'tag','shiftlistboxes');
+    hp =findobj(hf,'tag','notepanel');
+    uni_hp=get(hp,'units');
+    uni_hb=get(hp,'units');
+    % ---
+    set(hp,'units','pixels');
+    set(hb,'units','pixels');
+    % ---
+    
+    rpos=get(hp,'position');
+    spos=get(hb,'position');
+    % pp=[rpos(3)-spos(3)-16 rpos(2)+rpos(4)-7  spos(3)   8 ];
+    pp=[rpos(3)-spos(3)-16 rpos(2)+rpos(4)-7  16  8 ];
+    % set(hb,'position',[rpos(3)-115 rpos(2)-2 100 8]);
+    set(hb,'position',[pp]);
+    
+    set(hb,'units',uni_hb);
+    set(hp,'units',uni_hp);
+end
+
+% if 1
+% set(findobj(gcf,'tag','notepanel'),'visible','off')
+%     % shift above figure/panel
+%     hh=findobj(gcf,'tag','scripts_panel');
+%     unit_hh=get(hh,'units');
+%     set(hh,'units','pixels');
+%     poshh=get(hh,'position');
+%     set(hh,'units',unit_hh);
+%     
+%     hl=findobj(hh,'tag','scripts_lbscriptName');
+%     unit_hl=get(hl,'units');
+%     set(hl,'units','pixels');
+%     poshl=get(hl,'position');
+%     
+%     
+%    [poshh; poshl;   ];
+%    [poshh(4) poshl(4)+poshl(2)]
+%    high=poshh(4)-poshl(4);
+%    ybas=poshh(4)-high
+%    set(hl,'position', [poshl(1)  ybas poshl(3) high] );
+%    set(hl,'units',unit_hl);
+% end
 
 %% ===============================================
 
@@ -268,8 +526,10 @@ if strcmp(task,'close')
             close(gcf);
         end
     end
+elseif strcmp(task,'help') % show help
+    uhelp([mfilename '.m']);
 elseif strcmp(task,'scriptname') % show content
-    
+    if isempty(hn.Value); return; end
     file=hn.String{hn.Value};
     if exist(file)==0
         hlp={['script "'  file '"<font color="red">: File not found!</font>']};
@@ -299,9 +559,16 @@ elseif strcmp(task,'scriptname') % show content
     
     hs=addNote(u.han,'text',hlp);
     if isempty(hs)
-        addNote(hh,'text',hlp,'pos',NotePos,'mode','single','fs',20,'IS',1);
+      hs=addNote(hh,'text',hlp,'pos',NotePos,'mode','single','fs',20,'IS',1);
     end
     
+    if 1 % disable EDITABLE TO 0
+       hg=get(hs.pan,'userdata'); 
+       hg.hj.setEditable(0);
+       jbh = handle(hg.hj,'CallbackProperties');
+       set(jbh, 'KeyPressedCallback',{@keys_pan,hs.pan});
+
+    end
     
     
 elseif strcmp(task,'open')
@@ -322,7 +589,7 @@ elseif strcmp(task,'open')
         '-change parameter accordingly'
         '-save script somewhere on your path'
         '-run script'};
-    addNote(gcf,'text',msg,'pos',[0.5 .1  .44 .3],'head','Note','mode','single');
+   addNote(gcf,'text',msg,'pos',[0.5 .1  .44 .3],'head','Note','mode','single');
 elseif strcmp(task,'editOrigFile')
     pw=logindlg('Password','only');
     pw=num2str(pw);
@@ -352,3 +619,113 @@ elseif strcmp(task,'edit')
     %% ===============================================
     
 end
+
+
+function keys(e,e2)
+
+
+if strcmp(e2.Modifier,'control')==1
+    if strcmp(e2.Key,'l')
+        figresizekeys(2);
+    elseif strcmp(e2.Key,'n')
+        figresizekeys(1);
+    end
+    
+    
+    if strcmp(e2.Character,'+')==1 || strcmp(e2.Character,'-')==1
+        hl=findobj(gcf,'tag','scripts_lbscriptName');
+        fs=get(hl,'fontsize');
+        if strcmp(e2.Character,'+')==1;
+            set(hl,'fontsize',fs+1);
+        elseif strcmp(e2.Character,'-')==1;
+            if fs>1
+                set(hl,'fontsize',fs-1);
+            end
+        end
+        
+    end
+else
+     if strcmp(e2.Key,'2')
+       figresizekeys(2);
+    elseif strcmp(e2.Key,'1') 
+       figresizekeys(1);
+     elseif strcmp(e2.Key,'3')
+       figresizekeys(3);
+    end
+end
+
+function figresizekeys(arg)
+if arg==1
+    uni_f=get(gcf,'units');
+    uni_0=get(0  ,'units');
+    set(gcf  ,'units','pixels');
+    set(0    ,'units','pixels');
+    
+    w=get(0,'default');
+    set(gcf,'position',w.defaultFigurePosition);
+    
+    set(gcf,'units',uni_f);
+    set(0  ,'units',uni_0);
+elseif arg==2 %resize
+    uni_f=get(gcf,'units');
+    uni_0=get(0  ,'units');
+    set(gcf  ,'units','normalized');
+    set(0    ,'units','normalized');
+    
+    w=get(0,'default');
+    pos0=w.defaultFigurePosition;
+    pos=get(gcf,'position'); 
+    set(gcf,'units',uni_f);
+    set(0  ,'units',uni_0);
+    
+    set(gcf,'position',[ .3  0.07 .4  .9]);
+    uni_f=get(gcf,'units');
+    uni_0=get(0  ,'units');   
+elseif arg==3
+    
+    uni_f=get(gcf,'units');
+    set(gcf,'units','normalized');
+    pos=get(gcf,'position');
+    set(gcf,'position',[ 0.3  0.07 0.7  .9]);
+    set(gcf,'units',uni_f);
+end
+
+
+
+function keys_pan(e,e2,pan2)
+
+if e2.getModifiers ==2   %[1]shift ,[2]ctrl, [8]alt
+    %methods(e2)
+    if 0
+        e2.getKeyCode
+        e2.getKeyChar
+        e2.getKeyText(e2.getKeyCode())
+    end
+    
+    
+    if strcmp(e2.getKeyChar,'+')
+        %'++'
+        u=get(pan2,'userdata');
+        font= u.hj.getFont;
+        fs=font.getSize+1;
+        u.hj.setFont(java.awt.Font(font.getFontName, java.awt.Font.PLAIN,fs));
+    elseif strcmp(e2.getKeyChar,'-')
+        %'--'
+        u=get(pan2,'userdata');
+        font= u.hj.getFont;
+        fs=font.getSize-1;
+        if fs==0; return; end
+        u.hj.setFont(java.awt.Font(font.getFontName, java.awt.Font.PLAIN,fs));
+    elseif strcmp(e2.getKeyText(e2.getKeyCode()),'C') ; %overriding the copy function
+        contextmenu([],[],'copy',pan2);
+    end
+else
+    if strcmp(e2.getKeyChar,'2') || strcmp(e2.getKeyChar,'l')
+       figresizekeys(2);
+    elseif strcmp(e2.getKeyChar,'1') || strcmp(e2.getKeyChar,'n')
+       figresizekeys(1);
+     elseif strcmp(e2.getKeyChar,'3')
+       figresizekeys(3);
+    end 
+end
+

@@ -27,10 +27,11 @@
 % [get batch   ]: get batch with parameters to re-run (if GUI-parameters are not
 %                 specified the batch will contain empty fields for those paramters)
 %_________________________________________________________________
-% #wr REGIONS FILE: 
+% #wr REGIONS FILE   -OPTION-1: 
 %   -a regions file can be additionally used to test a few specific regions or combinations of regions.
 %   -The regionsfile has to be an excelfile, specifically the 1st data sheet is used. In the 1st data sheet
-%    the 1st column contains the label of anatomical regions. The 2nd column contains a number. 
+%    the 1st column contains the label of anatomical regions. The 2nd column contains a number.
+%  #r - is is assumed that the 1st ROW is a HEADER (label in the header-row are arbitrary) 
 % Regions with the same number in the 2nd column will be combined,i.e. data of those regions will be pooled.
 % Note: - that the order of the labels (column-1) and the explicit value of the number in column-2 is arbitrary.
 %       - Be carefull with the exact spelling of the labels otherwise the region will not be found in the label-column
@@ -40,7 +41,10 @@
 % EXAMPLE: In this example the data of the below Somatomotor areas will be pooled (same value in column-2: 22),
 % also the data of the below cingulate area will be pooled (same value in column-2: 5), while the data for 
 %     Dorsal auditory area (value: 3) and Olfactory areas (value: 1000) remain unpooled
-%     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% #m regions with the same mergeID will be pooled
+% #m note: for mergeID=3 there is only one region (this region is not merged/pooled)
+%     _____[content of the region file]____(2 colums)__________
+%     region                                           mergeID
 %     Somatomotor areas, Layer 2/3                         22
 %     Somatomotor areas, Layer 5                           22
 %     Somatomotor areas, Layer 6a                          22
@@ -50,7 +54,40 @@
 %     Anterior cingulate area, ventral part, layer 5       5
 %     Anterior cingulate area, ventral part, 6a            5
 %     Olfactory areas                                     1000
-%     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%     ________________________________________________________
+%_________________________________________________________________
+% #wr REGIONS FILE   -OPTION-2:   ONLY REGIONS that should be used
+% #r now the Excelfile contains only one column!!!
+% #m each of the regions of the regionfile will be analyzed separately
+% 
+%     _____[content of the region file]____(1 colum)___________
+%     region                                          
+%     Somatomotor areas, Layer 2/3                         
+%     Somatomotor areas, Layer 5                           
+%     Somatomotor areas, Layer 6a                          
+%     Somatomotor areas, Layer 6b                          
+%     Dorsal auditory area                                 
+%     Anterior cingulate area, ventral part, layer 2/3     
+%     Anterior cingulate area, ventral part, layer 5       
+%     Anterior cingulate area, ventral part, 6a            
+%     Olfactory areas                                     
+%     ________________________________________________________
+% 
+% #k this is identical to 2 two-column-file if the mergeIDs are different for all regions ...
+%     _____[content of the region file]____(2 colums)__________
+%     region                                           mergeID
+%     Somatomotor areas, Layer 2/3                         1
+%     Somatomotor areas, Layer 5                           2
+%     Somatomotor areas, Layer 6a                          3
+%     Somatomotor areas, Layer 6b                          4
+%     Dorsal auditory area                                 5
+%     Anterior cingulate area, ventral part, layer 2/3     6
+%     Anterior cingulate area, ventral part, layer 5       7
+%     Anterior cingulate area, ventral part, 6a            8
+%     Olfactory areas                                      9
+%     ________________________________________________________
+% 
+% 
 %_________________________________________________________________
 % #wb AUTOMATIZE: examples
 %  xstatlabels(struct('data',fullfile(pwd,'data_cbf_allen_space.xls'),'dataSheet','mean','aux',...
@@ -127,7 +164,14 @@
 % v.issort       =  [0];          % % sort results according the p-value: [0]no, [1]yes,sort 
 % v.process      =  [0];          % % calculate statistic [0]no, [1]yes, (simulates pressing the [process]-button) 
 % xstatlabels(v);     % % RUN statistic
-
+% 
+% #ok POSTHOC
+%% xstatlabels('run');  % process data (is like pressing the [process]-button) 
+%% posthoc:  export results as excelfile
+% xstatlabels('export')   % this ask for the filename  
+% xstatlabels('export','file',fullfile(pwd,'__export_klaus2.xlsx')); %silent mode
+% 
+% 
 
 function xstatlabels(varargin)
 warning off;
@@ -170,10 +214,16 @@ if 0
     
 end
 
+%% =========dealing with posthoc inputs======================================
+if nargin>0
+    if ~isstruct(varargin{1})
+        processpost(varargin);
+        return
+    end
+end
 
 
-
-
+%% ===============================================
 
 try; delete(findobj(0,'tag','stat')); end
 
@@ -184,45 +234,60 @@ set(gcf,'tag','stat','color','w','name',['stat [' mfilename ']'],'NumberTitle','
 set(gcf,'menubar','none','units','normalized','position',[0.5594    0.4122    0.3889    0.4667]);
 
 
-
-
-h=uicontrol('style','pushbutton','units','norm','position',[0 .8 .15 .05],...
+% panel for Data
+h1=uipanel('units','norm');
+set(h1,'position',[0 .83 .41 .07]);
+%--PB load data
+h=uicontrol('style','pushbutton','units','norm','position',[0.0043999 0.84165 0.15 0.05],...
     'string','load data','tag','loaddata','callback',@getdatafile,...
-    'TooltipString', 'load excelfile containing the data');
-
-h=uicontrol('style','pushbutton','units','norm','position',[0 .75 .15 .05],...
-    'string','load aux','tag','loadaux','callback',@getauxfile,...
-    'TooltipString', 'load excelfile containing mouseID and group assignment');
-
-
-h=uicontrol('style','text','units','norm',     'position',[.2 .85 .2 .05],'string','sheet','tag','txtsheetnum','backgroundcolor','w');
-h=uicontrol('style','popupmenu','units','norm','position',[.2 .8 .2 .05],'string','select sheet','tag','popdatasheet',...
+    'TooltipString', '<html><b>load data</b><br>load excelfile containing the data');
+% data sheet-selection
+h=uicontrol('style','popupmenu','units','norm','position',[.2 0.83927 .2 .05],'string','select sheet','tag','popdatasheet',...
     'callback',@call_datacheet,...
-    'TooltipString', 'select the data sheet');
+    'TooltipString',   '<html>select the Excel-<b>sheet</b> containing the <font color=red>data');
+
+
+
+% text-'sheet'
+% h=uicontrol('style','text','units','norm',     'position',[0.17761 0.89641 0.2 0.05],'string','sheet','tag','txtsheetnum','backgroundcolor','w');
+
+
+% panel for GA
+h2=uipanel('units','norm');
+set(h2,'position',[0 .64 .41 .165]);
+%--PB load group assignment (GA)
+h=uicontrol('style','pushbutton','units','norm','position',[0.0061855 0.75118 0.15 0.05],...
+    'string','load group agmt','tag','loadaux','callback',@getauxfile,...
+    'TooltipString', '<html><b>load group assignment (excel-file)</b><br>load excelfile containing mouseID and group assignment');
+% GA sheet-selection
 h=uicontrol('style','popupmenu','units','norm','position',[.2 .75 .2 .05],'string','select sheet',...
     'tag','popdauxsheet','callback',@call_auxcheet,...
-    'TooltipString', 'select the sheet containing mouseID and group assignment');
+    'TooltipString', '<html>select the Excel-<b>sheet</b> containing <font color=red>mouseID and group assignment');
 
 
-%ID
-h=uicontrol('style','text','units','norm',   'position',[.0 .7 .2 .05],'string','ID','backgroundcolor','w');
+%text ID-col
+h=uicontrol('style','text','units','norm',   'position',[.0 .695 .2 .05],'string','ID','foregroundcolor','b');
 set(h,'HorizontalAlignment','right');
-h=uicontrol('style','popupmenu','units','norm','position',[.2 .7 .2 .05],'string','select column','tag','popID',...
+%pop ID-col
+h=uicontrol('style','popupmenu','units','norm','position',[.2 .7 .2 .05],'string','column','tag','popID',...
     'callback',@call_popID,...
-    'TooltipString', 'select the column that contains the mouseID/names');
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%% groupfactor-1
-h=uicontrol('style','text','units','norm',     'position',[.0 .65 .2 .05],'string','groupFactor1','backgroundcolor','w');
+    'TooltipString', '<html>select the Excel-<b>column</b> with <font color=red>mouseIDs (animal names)');
+
+%txt group-col
+h=uicontrol('style','text','units','norm',     'position',[.0 .645 .2 .05],'string','group-colum','foregroundcolor','b');
 set(h,'HorizontalAlignment','right');
+% pop group-col
 h=uicontrol('style','popupmenu','units','norm','position',[.2 .65 .2 .05],'string','select column','tag','popgroupF1',...
     'callback',@call_groupFactor1,...
-    'TooltipString', 'select the column that contains the group assignment');
-
-%between vs within
-h=uicontrol('style','checkbox','units','norm','position',[.4 .65 .2 .05],'string','within',...
+    'TooltipString', '<html>select the Excel-<b>column</b> with the <font color=red>group assignment</font><br>..which animal belongs to which group...');
+% ==============================================
+%%   
+% ===============================================
+%between vs within group
+h=uicontrol('style','checkbox','units','norm','position',[[0.46689 0.70833 0.2 0.05]],'string','within',...
     'tag','F1design','backgroundcolor','w','callback',@call_f1design,...
-    'TooltipString', 'check if you have repeated/within data');
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+    'TooltipString', '<html><b> between vs within groups </b><br>[ ] between/independent groups<br>[x] repeated/within group');
+
 %% groupfactor-2
 h=uicontrol('style','text','units','norm',     'position',[.0 .60 .2 .05],'string','groupFactor2','backgroundcolor','w');
 set(h,'HorizontalAlignment','right','tag','groupFactor2');
@@ -282,10 +347,10 @@ h=uicontrol('style','text','units','norm','position',[.06 .52 .05 .03],'string',
     'backgroundcolor','w');
 
 
-%••••••••  type of test ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% =====type of test==========================================
 h=uicontrol('style','popupmenu','units','norm','position',[0 .45 .2 .05],...
     'string',{'ttest2' 'ranksum' 'permutation','permutation2'},'tag','testsbetween',...
-    'callback',@typeoftest1,'position',[.5 .65 .1 .05],'tag','typeoftest1',...
+    'callback',@typeoftest1,'position',[0.46689 0.65833 0.1 0.05],'tag','typeoftest1',...
     'tooltipstring','select type of test');
 
 
@@ -325,6 +390,18 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.6 .4 .2 .05],...
 
 h=uicontrol('style','pushbutton','units','norm','position',[0.8 .4 .15 .05],...
     'string','get batch','tag','xbatch','callback',@xbatch,'backgroundcolor','w','tooltipstring','get code to re-run');
+
+%% =======[scripts]========================================
+
+h2=uicontrol('style','pushbutton','units','norm');
+set(h2, 'string','scripts','callback',@scripts_call);
+set(h2, 'position',[0.8 .35 .15 .05]);
+set(h2,'BackgroundColor',[0.9608    0.9765    0.9922],'fontsize',7,'foregroundcolor',[0 0 1]);
+set(h2,'tooltipstring',['<html><b>collection of scripts</b><br>' ...
+    'open scripts-gui with collection of scripts<br>'...
+    '-scripts can be costumized and applied']);
+
+
 
 h=uicontrol('style','pushbutton','units','norm','position',[0.9 .5 .1 .025],...
     'string','code snippet','tag','xbatch','callback',@codesnippet,'fontsize',4,...
@@ -543,7 +620,7 @@ disp('..wait...');
 hfig=findobj(0,'tag','stat');
 us=get(hfig,'userdata');
 % figure(hfig);
-loadExcelatlas
+loadExcelatlas();
 % save('us','us');
 us=get(hfig,'userdata');
 a2_sub(us)
@@ -921,7 +998,7 @@ end
 if ~isfield(us,'f1design'); us.f1design=0; end
 if ~isfield(us,'f2'); us.f2=''; end
 %———————————————————————————————————————————————
-%%   read auxdata
+%%   read groupAssignment
 %———————————————————————————————————————————————
 [a  aa aaa]=xlsread(us.aux, us.auxSheet);
 he=aaa(1,:);
@@ -939,6 +1016,8 @@ catch
     us.idf1=cellfun(@(a){[  num2str(a)]} ,us.idf1);
 end
 
+us.idf1=cellfun(@(a){[ num2str(a)]} ,us.idf1); %1st column (animal-name) to string
+us.idf1(find(strcmp(us.idf1(:,1),'NaN')),:)=[]; %remove NAN-rows
 %———————————————————————————————————————————————
 %%   read data
 %———————————————————————————————————————————————
@@ -948,6 +1027,7 @@ ids=cellfun(@(a){[ num2str(a)]},he);
 
 aaa(strcmp(cellfun(@(a) {[num2str(a)]}, aaa(:,1) ),'NaN'),:)=[]; %remove ending NAN-rows
 aaa(1,:)=[];%remove Header
+
 
 if 0
     
@@ -1072,10 +1152,26 @@ ilab=find(cellfun(@isempty,regexpi(laball,['NaN']))==1);
 
 lab =laball(ilab);
 
-%% load reagionfile
+% ==============================================
+%%   load regionfile
+% ===============================================
 if isfield(us,'regionsfile')
     if exist(us.regionsfile)==2
         [~,~,rf]=xlsread(us.regionsfile);
+        rf=cellfun(@(a){[ num2str(a)]} ,rf);
+        %remove NAN-rows
+        idel=find(strcmp(cellfun(@(a){[ num2str(a) ]} ,rf(:,1)),'NaN'));
+        rf(idel,:)=[];
+        %remove NAN-columns
+        idel=find(strcmp(cellfun(@(a){[ num2str(a) ]} ,rf(1,:)),'NaN'));
+        rf(:,idel)=[];
+        
+        %% only regions given
+        if size(rf,2)==1 %
+            rf(1,2)={'regionmergeID'}
+            mergeID=cellfun(@(a){[ num2str(a)]} ,num2cell([1:size(rf,1)-1]'))
+            rf(2:end,2)=mergeID
+        end
         rf=rf(:,1:2);
         
         temp=cellfun(@(a) {[ num2str(a)]}, rf(:,1)); %determine&REMOVE NAN and empty-row
@@ -1121,10 +1217,11 @@ if isfield(us,'regionsfile')
                 idxInDatavec=[idxInDatavec idxInData];
             end
             laboutputvec=laball(idxInDatavec);
+            idxInDatavec=idxInDatavec(:);
             
             if ~isempty(laboutputvec)
                 if length(idxInDatavec)>1
-                    regs= [regs;  { [ '@' pnum(igr,3) ]  idxInDatavec  laboutputvec}];
+                    regs= [regs;  { [ '@' pnum(igr,3) ]  num2cell(idxInDatavec)  laboutputvec}];
                     igr=igr+1;
                 else
                     regs= [regs;  { laboutputvec{1}   idxInDatavec  []}];
@@ -1140,6 +1237,7 @@ if isfield(us,'regionsfile')
     end
     
 end
+
 
 
 
@@ -1244,16 +1342,18 @@ if us.f1design==0 %between
             sid.tb =[ sid.grp' sid.animal' sid.dat'];
             sid.htb=['group' 'animal' sid.reg'] ;
         else
+            
+            %% =================merging region to be merged==============================
             x=zeros(size(ilab,1), length(i1));
             y=zeros(size(ilab,1), length(i2));
             for j=1:size(ilab,1)
                 ids=ilab{j};
                 
-%                 disp('-------------');
-%                 disp(aaa(ids,1));
+                %                 disp('-------------');
+                %                 disp(aaa(ids,1));
                 
-                if ~isnumeric(ids); 
-                    ids=cell2mat(ids) ;  
+                if ~isnumeric(ids);
+                    ids=cell2mat(ids) ;
                 end
                 
                 if length(ids)==1;
@@ -1264,14 +1364,27 @@ if us.f1design==0 %between
                     else
                         labsgrouped{j,1}=[  strjoin(aaa(ids,1),' ,')  ];% single region but addressed as "combined"-->to obtain the label in the output
                     end
-                        
+                    
                 else
-                   
+                    
                     x(j,:)= nanmean(cell2mat(  (aaa(ids,  cell2mat(tb(i1,end))))    ),1)  ;
                     y(j,:)= nanmean(cell2mat(  (aaa(ids,  cell2mat(tb(i2,end))))    ),1)  ;
                     labsgrouped{j,1}=[  strjoin(aaa(ids,1),' ,')  ];
                 end
             end
+            %__singleData2export_____
+            sid={};
+            sid.info  ='single animal Data for DataExport';
+            sid.dat   =num2cell([x y]);
+            sid.reg   =us.regions(:,1) ;%aaa(ilab,1);
+            sid.animal=[he(cell2mat(tb(i1,end))) he(cell2mat(tb(i2,end)))];
+            sid.grp=[repmat(comb(i,1),[ 1 length(i1)]) repmat(comb(i,2),[ 1 length(i2)])];
+            sid.tb =[ sid.grp' sid.animal' sid.dat'];
+            sid.htb=['group' 'animal' sid.reg'] ;
+            
+            %% ===============================================
+
+
         end
         %disp(sprintf(['groupsize ' ': %d vs %d'],[size(x,2) size(y,2)]));
         
@@ -1393,6 +1506,9 @@ if exist('task') && strcmp(task,'export')
         file=fullfile(pa,file);
     else
         file=par.exportfile;
+        [pam fil ext]=fileparts(file);
+        if isempty(pam); pam=pwd; end
+        file=fullfile(pam,[fil '.xlsx']);
     end
     disp('..exporting.. ');
 else
@@ -1451,12 +1567,26 @@ sz{end+1,1}='                [Med1|Med2] median of group1|2              [range1
 sz{end+1,1}='                [pVar]      pooled variance                 [SEpVar] standard error of pooled variance ';
 sz{end+1,1}='                [n1|n2]     groupsize of group1|2           [df] degrees of freedom '   ;
 
-
+% regionsfile
+if isfield(us,'regionsfile') && ~isempty(us.regionsfile)
+    sz{end+1,1}=['regionsfile   : '     '"' us.regionsfile '"'];
+else
+    sz{end+1,1}=['regionsfile   :      none'];
+end
 
 if isfield(us,'regions')
     igroup=regexpi2(us.regions(:,1),'@');
-    for i=1:length(igroup)
-      sz{end+1,1}= ['region ' us.regions{igroup(i),1}   ' -with subregions: ' us.pw(1).labsgrouped{igroup(i)}];
+    if isempty(igroup)
+       regsused=[us.regions(:,1)];
+       if ~isempty(regsused)
+           regsused=cellstr(regsused);
+           sz{end+1,1}=['  .. statistic performed for the following regions only: '];
+           sz=[sz; cellfun(@(a){[repmat(' ',[1 5]) '"' num2str(a) '"']} ,regsused)];
+       end
+    else
+        for i=1:length(igroup)
+            sz{end+1,1}= ['region ' us.regions{igroup(i),1}   ' -with subregions: ' us.pw(1).labsgrouped{igroup(i)}];
+        end
     end
 end
 
@@ -1591,10 +1721,12 @@ if doexport==1
             end
         end 
     end
-    [~,ix]=unique(T2(:,2),'stable');
-    T3=T2(ix,:);
-    xlswrite( file,  [HT1; T3], ['singleData']);
-    xlsAutoFitCol(file,'singleData','A:BBB');
+    if ~isempty(T2)
+        [~,ix]=unique(T2(:,2),'stable');
+        T3=T2(ix,:);
+        xlswrite( file,  [HT1; T3], ['singleData']);
+        xlsAutoFitCol(file,'singleData','A:BBB');
+    end
 %     try
 %     [~,sheetnames]=xlsfinfo(file)
 %     catch
@@ -2644,9 +2776,14 @@ helps={...
     'showsigsonly' '% % show significant results only:  [0]no, show all, [1]yes, show signif. results only' 
     'issort'      '% % sort results according the p-value: [0]no, [1]yes,sort '
     'process'     '% % calculate statistic [0]no, [1]yes, (simulates pressing the [process]-button) '
+    };   
+
+if 1 %remove "process"
+    idel=regexpi2(helps(:,1),'process');
+    helps(idel,:)=[];
+    v2(idel)=[];
     
-   
-    };
+end
 
 v3=v2;
 for i=1:size(v2,1)
@@ -2658,10 +2795,24 @@ for i=1:size(v2,1)
    v3{i}=[v3{i}   repmat(' ',[1 nwid-length(v3{i})+1]) helps{i,2}];
 end
 
-v4=['% #by [xstatlabels.m] '; 'v = [];' ; v3;  'xstatlabels(v);     % % RUN statistic';];
+% v4=['% #by [xstatlabels.m] '; 'v = [];' ; v3;  'xstatlabels(v);     % % RUN statistic';];
+%  uhelp(v4,1);
+%% ===============================================
+
+code=[...
+    {'% #by [xstatlabels.m] '}
+    'v = [];'
+    v3
+    'xstatlabels(v);      % % SET all Parameter   ';
+    'xstatlabels(''run'');  % % RUN statistic';
+    ' '
+    '% % OPTTIONAL: export results as excelfile:'
+    '% xstatlabels(''export'',''file'',''myFILENAME.xlsx''); % % Export excelfile (enter proper filename for "myFILENAME" such as fullfile(pwd,''result_123.xlsx'')) ';
+    ];
+uhelp(code,1);
+%% ===============================================
 
 
- uhelp(v4,1);
 
 
 
@@ -2688,3 +2839,43 @@ v4=['% #by [xstatlabels.m] '; 'v = [];' ; v3;  'xstatlabels(v);     % % RUN stat
 %         'isfdr',1 ,'showsigsonly',0 ,...
 %         'issort',1,'qFDR',0.05,'process',1,'outvar','sx',...
 %         'regionsfile', fullfile(pwd,'#myRegions_test.xls'  )  )  
+
+
+function processpost(varargin)
+argin=['task' varargin{1}];
+p=cell2struct(argin(2:2:end),argin(1:2:end),2);
+
+if strcmp(p.task,'export') %export data
+    if isfield(p,'file')
+        p.exportfile=p.file;
+        p=rmfield(p,'file');
+    end
+    
+    if isfield(p,'sigonly')
+        hf=findobj(0,'tag','stat');
+        hb=findobj(hf,'tag','showsigsonly');
+        set(hb,'value',p.sigonly);
+        
+        u=get(hf,'userdata');
+        u.showsigsonly=p.sigonly;
+        set(hf,'userdata',u)
+    end
+    out=showresults('export', p);
+elseif strcmp(p.task,'run') || strcmp(p.task,'process') %
+    process();
+end
+
+
+function  scripts_call(e,e2)
+
+
+scripts={...
+    'sc_regionbasedStatistic.m'
+    'sc_regionbasedStatistic_severalImages.m'
+    'sc_regionbasedStatistic_severalImages_ROI.m'
+    };
+scripts_gui([],'figpos',[.3 .2 .4 .4], 'pos',[0 0 1 1],'name','scripts: region-based statistic','closefig',1,'scripts',scripts)
+% scripts_gui(gcf, 'pos',[0 0 1 1],'name','scripts: region-based statistic','closefig',1,'scripts',scripts)
+
+
+

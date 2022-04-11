@@ -544,9 +544,17 @@
 % 'sc_getantomicalLabels.m'         .. shows how to extract anatomical-based parameters from images and save as excel-files
 % #gw --> access via ANT-menu: &#8658; SNIPS/scripts collection 
 % 
+% #ba 11 Apr 2022 (12:23:25)
+% #k [xstatlabels.m]: #n GUI was refreshed, added scripts-collection for xstatlabels
+% -This function performes regionwise statisitics of an image-parameter such as intensity mean or volume
+%  between groups 
+% #gw --> access via ANT-menu: &#8658; STATISTIC/label-based statistik
+% 
+% 
 % 
 
-% 
+
+
 %% ===============================================
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
