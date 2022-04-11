@@ -8,7 +8,7 @@
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**11 Apr 2022 (12:23:25)**</ins>  
    __[xstatlabels.m]__: GUI was refreshed, added scripts-collection for xstatlabels  
-  -This function performes regionwise statisitics of an image-parameter such as intensity mean or volume  
+  -This function performes regionwise statistics of an image-parameter such as intensity mean or volume  
    between groups   
   &#8618; access via ANT-menu: &#8658; STATISTIC/label-based statistik  
 <!---->
