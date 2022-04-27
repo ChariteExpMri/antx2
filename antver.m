@@ -550,10 +550,13 @@
 %  between groups 
 % #gw --> access via ANT-menu: &#8658; STATISTIC/label-based statistik
 % 
+% #ba 27 Apr 2022 (17:30:24)
+% #k [xbruker2nifti.m]: #n now supports comandline mode (silent/no GUI) with filter option
+% -fun "selector2.m" supports preselection of rows
+% -fun "lastmodified.m" added; return filenames and date of the last modified files in direc and subfolders (sorted)"
 % 
 % 
-
-
+% 
 
 %% ===============================================
 %----- EOF

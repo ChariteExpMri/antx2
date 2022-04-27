@@ -20,12 +20,88 @@
 % xbruker2nifti( 'O:\harms1\harmsTest_ANT\pvraw', 'Rare' )      % METAFOLDER is explicitly defined, read Rare, trmb is 1Mb
 % xbruker2nifti({'guidir' 'O:\harms1\harmsTest_ANT\'}, 'Rare' ) % startfolder for GUI is defined,  read Rare, trmb is 1Mb
 %
+% ==========================================================
 %% NO GUI (silent mode)
+% 
+%=============[IMPORT ALL FILES]================
 % [1] import all Bruker-rawdata from path fullfile(pwd,'raw_Ernst'), no gui (silent mode)
 % xbruker2nifti(fullfile(pwd,'raw_Ernst'),0,[],[],'gui',0);
+% 
+% [2] import all data to a specific directory (paout), no GUI
+% xbruker2nifti(fullfile(pwd,'raw_Ernst'),0,[],[],'gui',0,'paout',fullfile(pwd,'dat2'));
+% 
+% ===========[DISPLAY ONLY] ===================================
+%% just display the BRUKERDATA (no DATA-import!) in CMD-WINDOW 
+% xbruker2nifti(fullfile(pwd,'raw_Ernst'),0,[],[],'show',1);
+%% just display the BRUKERDATA (no DATA-import!) in extra-WINDOW 
+% xbruker2nifti(fullfile(pwd,'raw_Ernst'),0,[],[],'show',2);
+% 
+% ===========[FILTER] ===================================
+%% import specific files via filter ("flt"+cell)
+% 'flt', {columnName   string}
+% columnName: short name of the column to address:
+%    AVAILABLE COLUMNS:
+%     'SubjectId'    'StudNo'    'ExpNo'    'PrcNo'    'MRseq'    
+%     'protocol'    'sizeMB'     'date'    'file'    'StudId'   
+%     'SubjectName' 'CoreDim'
+%     --> example 'si' for 'sizeMB'; 'pro' for 'protocol'
+% string: string to find in columnName 
+%
+% flt-options-snips-example
+% {'pro'    'RARE'}  import all file with string 'RARE' in protocol-column
+% {'pro'    'T2'}    import all file with string 'T2' in protocol-column
+% {'pro'    'T2|DTI_EPI'} import all files with string T2 or DTI_EPI in protocol-column
+% {'pro'    '^T2|^DTI_EPI'}  import all files starting with string T2 or DTI_EPI in protocol-column
+% {'date'    '2020'}  import all files from 2020 (date-column)
+% {'date'    'Jun-2021'} import all files from Jun-2020 (date-column)
+% {'date'    '2020|2021'} import all files 2020 or 2021 (date-column)
+% {'MR'    'Fisp|Rare'} import all files with string Fisp or Rare in 'MR'-column
+% {'si'    '>20'} import all larger than 20MB (sizeMB-column)
+% {'si'    '<20'}  import all below 20MB (sizeMB-column)
+% {'si'    '>20 & <30'} import all between 20MB and 30MB (sizeMB-column)
+% flt-options-EXAMPLES:
+% xbruker2nifti(fullfile(pwd,'raw_Ernst'),0,[],[],'gui',0,'paout',fullfile(pwd,'dat2'),'flt',{'pro' 'RARE'}); % import only files with "RARE" from protocol-column
+% xbruker2nifti(fullfile(pwd,'raw_Ernst'),0,[],[],'gui',0,'paout',fullfile(pwd,'dat2'),'flt',{'si' '>20 & <30'});% import all between 20MB and 30MB (sizeMB-column)
+% 
+% -to obtain the table WITHOUT data-import just type (with your raw-data-path):
+% xbruker2nifti(fullfile(pwd,'raw_Ernst'),0,[],[],'show',1)
+% -se also "BRUKER DATA EXAMPLE-TABLE" below
+% 
+% ===========[FILTER DTI-data] ===================================
+% show only DTI-filtered files (no data import):
+% xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0,'show',1,'flt',{'pro' 'DTI_EPI_seg_b'});
+% import DTI-filtered files
+% xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0,'paout',fullfile(pwd,'dat'),'flt',{'pro' 'DTI_EPI_seg_b'});
+% import DTI-filtered files, open GUI with preselected DTI-files
+% xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',1,'paout',fullfile(pwd,'dat'),'flt',{'pro' 'DTI_EPI_seg_b'});
+% 
+% 
+% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+%      BRUKER DATA EXAMPLE-TABLE                                                                                                                                                                                                                
+% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+% SubjectId             StudNo ExpNo PrcNo MRseq    protocol                sizeMB  date                 file                                                                 StudId                 SubjectName           CoreDim 
+% Kevin                 12     1     1     FLASH    1_Localizer_multi_slice 1.10592 17-Jun-2021 11:46:44 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\1\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
+% Kevin                 12     10    1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:46:44 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\10\pdata\1\2dseq 20180808_A1812081_GADO BreinDMD_Alzet        2       
+% Kevin                 12     11    1     FLASH    1_Localizer_multi_slice 1.10592 17-Jun-2021 11:46:26 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\11\pdata\1\2dseq 20180808_A1812081_GADO BreinDMD_Alzet        2       
+% Kevin                 12     12    1     FieldMap B0Map-ADJ_B0MAP         1.04858 17-Jun-2021 11:46:34 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\12\pdata\1\2dseq 20180808_A1812081_GADO BreinDMD_Alzet        3       
+% Kevin                 12     2     1     DtiEpi   DTI_EPI_3D_40dir_sat    23.3856 17-Jun-2021 11:46:06 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\2\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        3       
+% Kevin                 12     2     2     DtiEpi   nan                      29.399 17-Jun-2021 11:45:56 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\2\pdata\2\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        3       
+% Kevin                 12     3     1     RARE     T2_TurboRARE_highres      2.375 17-Jun-2021 11:46:20 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\3\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
+% Kevin                 12     4     1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:46:38 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\4\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
+% Kevin                 12     5     1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:46:24 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\5\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
+% Kevin                 12     6     1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:45:38 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\6\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
+% Kevin                 12     7     1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:46:30 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\7\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
+% Kevin                 12     8     1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:46:12 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\8\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
+% Kevin                 12     9     1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:46:34 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\9\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
+% 20201118CH_Exp10_9258 1      1     1     FLASH    1-1_TriPilot-multi      1.96608 18-Nov-2020 12:46:12 F:\data5\nogui\raw_Ernst\20201118CH_Exp10_9258.5c1\1\pdata\1\2dseq   1                      20201118CH_Exp10_9258 2       
+% 20201118CH_Exp10_9258 1      2     1     FISP     1-2_FISP_sagittal        0.0256 18-Nov-2020 12:46:16 F:\data5\nogui\raw_Ernst\20201118CH_Exp10_9258.5c1\2\pdata\1\2dseq   1                      20201118CH_Exp10_9258 2       
+% 20201118CH_Exp10_9258 1      3     1     RARE     2_1_T2_ax_mousebrain     4.1943 18-Nov-2020 12:46:14 F:\data5\nogui\raw_Ernst\20201118CH_Exp10_9258.5c1\3\pdata\1\2dseq   1                      20201118CH_Exp10_9258 2       
+% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+
 
 
 function xbruker2nifti(pain,sequence,trmb,x,varargin)
+warning off;
 
 if exist('pain')==0
     global an
@@ -38,7 +114,19 @@ if nargin>4
    pin= cell2struct(varargin(2:2:end),varargin(1:2:end),2);
    p0=catstruct2(p0,pin);
 end
+%% =========declare additional vars ========================
+if isfield(p0,'paout') && ~isempty(p0.paout)
+    paout=p0.paout;
+    if exist(paout)~=7; mkdir(paout); end
+end
+
+if isfield(p0,'show') && ~isempty(p0.show) %display only
+    paout='dummy_path';
+end
+    
 %% ===============================================
+
+
 
 fprintf('...reading Bruker-data...');
 
@@ -369,13 +457,77 @@ cm={'open folder  [1].[].shortcut', cc1
     'show METHOD [3]', cc3
     'show ACQP  [4]', cc4
     'show VOLUME  [5]', cc5};
+
+%% =============[visualize only]==================================
+if isfield(p0,'show')==1 && isfield(p0,'flt')==0
+    disp('..');
+    cprintf('*[0 .5 .8]',[' BRUKER DATA ...no data imported,.. display only  \n']);
+    if p0.show==1
+        disp(char(plog([],[dh; d],0,'BRUKER DATA ','al=1')));
+    elseif p0.show==2
+        uhelp(plog([],[dh; d],0,'BRUKER DATA ','al=1'));
+    end
+    
+    return
+end
+%% ===========[ GUI: file selection]========================
+disp(' ');
 if p0.gui==1 %with open gui otherwise import all files
-    id=selector2(d,dh,'iswait',1,'contextmenu',cm,'finder',1);
-    if isempty(id); return; end
+    
+    if isfield(p0,'flt') && ~isempty(p0.flt) %FILTER OPTION
+        try
+            id=filterfiles(d,dh,p0);
+            id=selector2(d,dh,'iswait',1,'contextmenu',cm,'finder',1,'preselect',id);
+        catch
+            id=selector2(d,dh,'iswait',1,'contextmenu',cm,'finder',1);
+        end
+            
+    else
+        id=selector2(d,dh,'iswait',1,'contextmenu',cm,'finder',1);
+    end
+%     if isempty(id);
+%         
+%         return; 
+%     end
 else
-    id=[1:size(d,1)]';
+   
+    
+    if isfield(p0,'flt') && ~isempty(p0.flt) %FILTER OPTION
+        id=filterfiles(d,dh,p0);
+    else
+        id=[1:size(d,1)]';
+    end
+  
+    
 end
 
+if isempty(id)
+    disp('  ');
+    cprintf('*[0 .5 .8]',[' no files selected or found...no data imported..  \n']);
+    return
+end
+if id==-1
+    disp('  ');
+    cprintf('*[0 .5 .8]',[' GUI aborted by user...no data imported..  \n']);
+    return
+end
+
+%% =============[visualize only]==================================
+if isfield(p0,'show')==1 && isfield(p0,'flt')==1 && p0.show~=0
+    disp('..');
+    cprintf('*[0 .5 .8]',[' BRUKER DATA ...no data imported,.. display only  \n']);
+    if p0.show==1
+        disp(char(plog([],[dh; d(id,:)],0,'BRUKER DATA ','al=1')));
+    elseif p0.show==2
+        uhelp(plog([],[dh; d(id,:)],0,'BRUKER DATA ','al=1'));
+    end
+    
+    return
+end
+%% ===============================================
+
+
+    
 files=files(id);
 seq  =seq{id};
 visux=visux{id};
@@ -449,45 +601,6 @@ z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
 %==============================================================================
 %% RENAME AFTER PROTOCOL
 %==============================================================================
-% keyboard
-
-
-% if z.renamefiles==1
-%
-%     f = fg; set(gcf,'menubar','none');
-%     t = uitable('Parent', f,'units','norm', 'Position', [0 0.1 1 .85], 'Data', tbrename,'tag','table');
-%     t.ColumnName = {'Protocol name                                            ', '(optional) rename coresponding file to..                         '};
-%     t.ColumnEditable = [false true ];
-%     t.BackgroundColor = [1 1 1; 0.9451    0.9686    0.9490];
-%
-%     tx=uicontrol('style','text','units','norm','position',[0 .96 1 .03 ],'string','OPTIONAL: RENAME FILES (..otherwise protocol name is used)','fontweight','bold','backgroundcolor','w');
-%     pb=uicontrol('style','pushbutton','units','norm','position',[.05 0.02 .15 .05 ],'string','OK','fontweight','bold','backgroundcolor','w',...
-%         'callback',   'set(gcf,''userdata'',get(findobj(gcf,''tag'',''table''),''Data''));'          );%@renameFile
-%
-%
-%     h={' #yg  ***RENAME FILES USING PROTOCOL AS IDENTIFIER ***'} ;
-%     h{end+1,1}=[' #### **NOTE*** THIS STEP IS OPTIONAL' ];
-%     h{end+1,1}=['The 1st column represents the Protocol-name from MRI aquisition (readout from Bruker data ) '];
-%     h{end+1,1}=['The 2nd column can ( ### optional! ##### ) be used to rename the protocol-related volumes '];
-%     h{end+1,1}=[' which will be imported '];
-%     h{end+1,1}=[' if cells in the 2nd column are empty, the import function uses the protocol name '];
-%     h{end+1,1}=[' from the 1st column'];
-%     %    uhelp(h,1);
-%     %    set(gcf,'position',[ 0.55    0.7272    0.45   0.1661 ]);
-%
-%     setappdata(gcf,'phelp',h);
-%
-%     pb=uicontrol('style','pushbutton','units','norm','position',[.85 0.02 .15 .05 ],'string','Help','fontweight','bold','backgroundcolor','w',...
-%         'callback',   'uhelp(getappdata(gcf,''phelp''),1); set(gcf,''position'',[ 0.55    0.7272    0.45   0.1661 ]);'          );%@renameFile
-%     % set(gcf,''position'',[ 0.55    0.7272    0.45   0.1661 ]);
-%     drawnow;
-%     waitfor(f, 'userdata');
-%     % disp('geht weiter');
-%     tbrename=get(f,'userdata');
-% %     disp(tbrename);
-%     close(f);
-% end
-
 tbrename=repmat(unique(protocol(:)),[1 2]);
 if ~isempty(z.renameFiles) && ~isempty(char(z.renameFiles));
     tbrename   =z.renameFiles;
@@ -804,6 +917,49 @@ he=tbrename(~cellfun('isempty' ,tbrename(:,2)),:);
 %     disp(tbrename);
 close(f);
 
+
+function id=filterfiles(d,dh,p0);
+
+
+%% ===============================================
+id=[];
+% p0.flt={'pro'    'RARE'}
+% p0.flt={'pro'    'T2'}
+% p0.flt={'pro'    'T2|DTI_EPI'}
+% p0.flt={'pro'    '^T2|^DTI_EPI'}
+% p0.flt={'date'    '2020'}
+% p0.flt={'date'    'Jun-2021'}
+% 
+% p0.flt={'date'    '2020|2021'}
+% p0.flt={'MR'    'Fisp|Rare'}
+% 
+% p0.flt={'si'    '>20'}
+% p0.flt={'si'    '<20'}
+% p0.flt={'si'    '>20 & <30'}
+% p0.flt={'si'    '>1.7 & <1.8'}
+
+
+
+
+ic=regexpi2(dh,p0.flt{1}); %GET COLUMN(S)
+
+for i=1:length(ic)
+    if length(regexpi(p0.flt{2},'>|<'))>0
+        siMB=str2num(char(d(:,ic(i))));
+        if length(regexpi(p0.flt{2},'>|<'))==1
+            nid=find(eval(['siMB' p0.flt{2}]));
+        else
+            nid=find(eval(['siMB' regexprep(p0.flt{2},'&', '&siMB') ]));
+        end   
+        
+    else
+        nid=regexpi2(d(:,ic(i)),p0.flt{2});
+    end
+    id=[id; nid(:)];
+end
+
+% d(id,:)
+%% ===============================================
 
 
 

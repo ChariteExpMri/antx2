@@ -2873,6 +2873,7 @@ scripts={...
     'sc_regionbasedStatistic.m'
     'sc_regionbasedStatistic_severalImages.m'
     'sc_regionbasedStatistic_severalImages_ROI.m'
+    'sc_convertXLSfile_to_powerpoint.m'
     };
 scripts_gui([],'figpos',[.3 .2 .4 .4], 'pos',[0 0 1 1],'name','scripts: region-based statistic','closefig',1,'scripts',scripts)
 % scripts_gui(gcf, 'pos',[0 0 1 1],'name','scripts: region-based statistic','closefig',1,'scripts',scripts)

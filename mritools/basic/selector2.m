@@ -14,6 +14,8 @@
 % 'finder'      :0/1  : shows an additonal finder WINDOW, default 0
 % 'title'       : title string in window-header
 % 'note'        : add a note on top of the window, info in note must be of type cell
+% 'preselect'   : preselect row(s) ; numeric array (see example below)
+% 
 %% IN
 % tb is a multiCell of strings
  % colinfo <optional>:char with infos, e.g. columnames 
@@ -24,18 +26,23 @@
 %% example
 % id=selector(tb)
 % id=selector(tb,'Columns:  file, sizeMB, date, MRsequence');%with columnInfo
+%% ===============================================
 %% EXAMPLE
-% tb={   '20150908_101706_20150908_FK_C1M02_1_1\�'    '4.1943'    '08-Sep-2015 10:45:06'    'RARE'
-%        '20150908_102727_20150908_FK_C1M04_1_1\�'    '4.1943'    '08-Sep-2015 10:45:12'    'RARE'
-% '20150908_102727_20150908_FK_C1M064_1_1\�'    '4.1943'    '08-Sep-2015 10:45:12'    'RARE'
-% '20150908_102727_20150908_FK_C1M043_1_1\�'    '4.1943'    '08-Sep-2010 10:45:12'    'RARE'
-% '20150908_102727_20150908_FK_C1M04_1_1\�'    '3.1943'    '08-Sep-2015 10:45:00'    'fl'
-% '20150908_102727_20150908_FK_C1M082_1_1\�'    '2.1943'    '08-Sep-2014 10:45:01'    'RARE'
-% '20150908_102727_20150908_FK_C1M01_1_1\�'    '77.1943'    '08-Sep-2015 10:45:11'    'fl'}
-% id=selector(tb,'Columns:  file, sizeMB, date, MRsequence');
-%
-% id=selector2(strrep(strrep(b,'\\','-'),' ','-'),{'file' 'sizeMB' 'date' 'MRsequence' 'protocol'});
-%
+% tb={...
+%     '20150908_101706_20150908_FK_C1M02'    '4.1943'    '08-Sep-2015 10:45:06'    'RARE'
+%     '20150908_102727_20150908_FK_C1M04'    '4.1943'    '08-Sep-2015 10:45:12'    'RARE'
+%     '20150908_102727_20150908_FK_C1M064'    '4.1943'    '08-Sep-2015 10:45:12'    'RARE'
+%     '20150908_102727_20150908_FK_C1M043'    '4.1943'    '08-Sep-2010 10:45:12'    'RARE'
+%     '20150908_102727_20150908_FK_C1M048'    '3.1943'    '08-Sep-2015 10:45:00'    'fl'
+%     '20150908_102727_20150908_FK_C1M082'    '2.1943'    '08-Sep-2014 10:45:01'    'RARE'
+%     '20150908_102727_20150908_FK_C1M011'    '77.1943'    '08-Sep-2015 10:45:11'    'fl'};
+% htb={'name' 'sizeMB' 'date' 'MRsequence'};
+% id=selector2(tb,htb,'finder',1);
+%% ===============================================
+% with ROW-preselection (preselect rows: 1,3,4)
+% id=selector2(tb,htb,'iswait',1,'finder',1,'preselect',[1 3 4]);
+% 
+%% ===============================================
 % EXAMPLE-2
 % tb={  'cx'     ' 6'    'g33'
 %     'b1'     '10'    'g3' 
@@ -624,6 +631,18 @@ if strcmp(us.params.selection,'single')
     t=findobj(gcf,'tag','lb1');
     set(t,'Max',1);
 end
+
+%% preselection
+if isfield(params,'preselect') && ~isempty(params.preselect)
+    htl=findobj(gcf,'tag','lb1');
+    set(htl,'value',params.preselect);
+    drawnow;
+    
+    tablecellselection(nan,nan);
+    
+end
+
+
 %% WAIT-check
 if isfield(params,'iswait')
     iswait=params.iswait;
