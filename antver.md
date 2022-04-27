@@ -9,7 +9,7 @@
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**27 Apr 2022 (17:30:24)**</ins>  
    __[xbruker2nifti.m]__: now supports comandline mode (silent/no GUI) with filter option  
   -fun "selector2.m" supports preselection of rows  
-  -fun "lastmodified.m" added; return filenames and date of the last modified files in direc and subfolders (sorted)"  
+  -fun "lastmodified.m" added; return name and date of the last modified files of a directory and subfolders (sorted)  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**11 Apr 2022 (12:23:25)**</ins>  
    __[xstatlabels.m]__: GUI was refreshed, added scripts-collection for xstatlabels  
