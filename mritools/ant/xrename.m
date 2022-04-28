@@ -746,6 +746,13 @@ for i=1:size(pa,1)      %PATH
                         eval(['b=a(:,:,:,' thisvol ');']);
                     end
                     
+                    %% delete targetfile if exists 
+                    if strcmp(thisvol,':')==1
+                        if exist(s2)==2
+                            delete(s2);
+                        end
+                    end
+                    
                     %% write volume
                     if save_separately==0
                         for k = 1 : size(hb,1)
