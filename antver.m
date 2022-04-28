@@ -555,7 +555,10 @@
 % -fun "selector2.m" supports preselection of rows
 % -fun "lastmodified.m" added; return name and date of the last modified files of a directory and subfolders (sorted)
 % 
-% 
+% #ba 28 Apr 2022 (13:43:07)
+% #k [DTIprep.m]: #n prepare data for DTI-processing via Mrtrix. Ideally DTI-processing could start
+% - added check and reordering optin for b-table & DWI-files
+% #gw --> access via ANT-menu: &#8658; Statistic/DTIprep for mrtrix.
 % 
 
 %% ===============================================

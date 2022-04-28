@@ -35,6 +35,13 @@
 % #ky (c) get the DTI-template #k (i.e. a specific DTI-atlas). 
 %   -The atlas has to be constructed in advance. For atlas-construction you can use
 %     [xexcel2atlas.m] available via ANT menu: Tools/"make mask from excelfile".
+% #ko (d) check file assignment !!  #k via button [check file assignment] 
+%    - it is important that the order of the b-tables and DWI-files (DTI-data) corresponds
+%    - to theck this : hit button [check file assignment] 
+%    - to reorder b-tables / DWI-files  --> use menu: tools/reorder b-table/DWI-data
+
+
+
 % #r &#9654; Preserve ORDER! First do (a),than (b), than (c)!
 % #n &#9654; You can close the DTI-prep gui anytime! The userinput and progress is stored in a
 %    mat-file ("check.mat") in the folder #r "DTI".
@@ -195,7 +202,7 @@ set(hb,'tooltipstring',[...
 
 
 %% ----------update-checklist-------------------
-hb=uicontrol('style','pushbutton','units','norm','string','check status','tag','getchecklist');
+hb=uicontrol('style','pushbutton','units','norm','string','update listbox','tag','getchecklist');
 set(hb,'position',[0.34816 0.66457 0.15 0.1]);
 set(hb,'callback',{@process, 'getchecklist'},'backgroundcolor',[0.8392    0.9098    0.8510]);
 
@@ -289,15 +296,18 @@ set(hb,'callback',@selectallsteps );
 set(hb,'tooltipstring',['-select all processing steps']);
 set(hb,'value',1);
 %% ===============================================
-%% mdir_type
+%% mdir_type: all animals
 hb=uicontrol('style','radio','units','norm','string','all animals','tag',   'allmdirs');
-set(hb,'position',[[0.22495 0.52299 0.11 0.085]],'fontsize',7,'backgroundcolor','w');
+set(hb,'position',[[0.22495 0.52299 0.11 0.085]],'fontsize',7,'backgroundcolor','w','foregroundcolor','m');
 set(hb,'callback',@mdir_type );
 set(hb,'tooltipstring',['<html><b>animal selection </b><br>' ...
-    ['[x] DTIprep is done for all animals ' '<br>']...
+    ['[x] DTIprep is done for all animals in dat-folder ' '<br>']...
     ['[ ] DTIprep is done for selected animals via ANT-gui animal-listbox()' ]...
     ]);
-set(hb,'value',1);
+set(hb,'value',0);
+
+
+
 %% ===============================================
 %% ===============================================
 
@@ -307,7 +317,7 @@ hb=uicontrol('style','pushbutton','units','norm','string','run all steps','tag',
 set(hb,'position',[0.21959 0.025209 0.11 0.1],'fontsize',8);
 set(hb,'callback',{@process, 'runallpreprocsteps'} );
 set(hb,'backgroundcolor',[   0.8039    0.8784    0.9686]);
-set(hb,'tooltipstring',[ '<html><b>run all steps gray processing steps from above</b><br>']);
+set(hb,'tooltipstring',[ '<html><b>run all selected processing steps (gray buttons) </b><br>']);
 
 
 % ==============================================
@@ -319,6 +329,13 @@ set(hb,'position',[0.22317 0.91118 0.05 0.08],'fontsize',8);
 set(hb,'callback',{@xhelp} );
 set(hb,'backgroundcolor',[   1 1 1]);
 set(hb,'tooltipstring',[ 'get some help']);
+%% file assignmnet
+% delete(hb)
+hb=uicontrol('style','pushbutton','units','norm','string','check file assignment','tag','xhelp');
+set(hb,'position',[[0.16781 0.80157 0.15 0.08]],'fontsize',7,'foregroundcolor','m','fontweight','bold');
+set(hb,'callback',{@context,'checkassignment'} );
+set(hb,'backgroundcolor',[   1 1 1]);
+set(hb,'tooltipstring',[ 'check b-table & DTI-data file assignment (order)']);
 
 % ==============================================
 %%   contextmenu.
@@ -340,9 +357,10 @@ m= uimenu(c,'Label','which animal dirs are selected?','Callback',{@context,'chec
 m= uimenu(c,'Label','<html><font color =red> delete files','Callback',{@context,'deletefiles'},'separator','on');
 
 
-m= uimenu(c,'Label','<html><font color =green>check assignment of b-table & DTI/DWI-file',  'Callback',{@context,'checkassignment'},'separator','on');
-m= uimenu(c,'Label','<html><font color =green>sow voxel size of 1st DTI/DWI-file ',  'Callback',{@context,'getvoxSize'},'separator','on');
+m= uimenu(c,'Label','<html><font color =blue><b>check assignment of b-tables & (DWI-files)',  'Callback',{@context,'checkassignment'},'separator','on');
+m= uimenu(c,'Label','<html><font color =blue>reorder b-table/DWI-data',   'Callback',{@context,'reorder_data'},'separator','off');
 
+m= uimenu(c,'Label','<html><font color =green>sow voxel size of 1st DTI/DWI-file ',  'Callback',{@context,'getvoxSize'},'separator','on');
 
 m= uimenu(c,'Label','<html><font color =green>show comands for mrtrix',  'Callback',{@context,'comands_for_mrtrix'},'separator','on');
 
@@ -352,7 +370,25 @@ m= uimenu(c,'Label','<html><font color =green>show comands for mrtrix',  'Callba
 %%   
 % ===============================================
 
-f = uimenu('Label','                                                                                                       ');
+f = uimenu('Label','                             ');
+f = uimenu('Label','<html><b>Tools');
+
+m= uimenu(f,'Label','open study directory','Callback',{@context,'openStudyDir'},'separator','on');
+m= uimenu(f,'Label','open DTI-directory',  'Callback',{@context,'openDTIDir'},'separator','off');
+m= uimenu(f,'Label','which animal dirs are selected?','Callback',{@context,'checkSelectedDirs'},'separator','on');
+% m= uimenu(c,'Label',' show configfile','Callback',{@context,'showConfigfile'});
+m= uimenu(f,'Label','<html><font color =red> delete files','Callback',{@context,'deletefiles'},'separator','on');
+
+
+m= uimenu(f,'Label','<html><font color =blue><b>check assignment of b-tables & (DWI-files)',  'Callback',{@context,'checkassignment'},'separator','on');
+m= uimenu(f,'Label','<html><font color =blue>reorder b-table/DWI-data',   'Callback',{@context,'reorder_data'},'separator','off');
+
+m= uimenu(f,'Label','<html><font color =green>sow voxel size of 1st DTI/DWI-file ',  'Callback',{@context,'getvoxSize'},'separator','on');
+
+m= uimenu(f,'Label','<html><font color =green>show comands for mrtrix',  'Callback',{@context,'comands_for_mrtrix'},'separator','on');
+
+
+
 f = uimenu('Label','MRTRIX-ISSUES/BUGs');
     uimenu(f,'Label','Solution: ERROR ""inconsistent b-values detected" ','Callback',{@MRTRIXissue, 'inconsistent-b-values'});
 
@@ -524,7 +560,12 @@ end
 if strcmp(task,'getbtable')
     o=getBtable;
     
-    load(f1)
+    % sort b-table accord size of entries in txt-files
+    [~,isort]=sort(cell2mat(cellfun(@(a){[ size(a,1) ]} ,o(:,2))));
+    o=o(isort,:);
+    
+    
+    load(f1);
     bfi={};
     ck=zeros(size(o,1), 1);
     try
@@ -558,7 +599,7 @@ if strcmp(task,'getDTItemplate')
     mesg='select DTI-template (NIFTI-file) and LUT-ile(txt-file)  (arbitrary order)';
     %    [t,sts] = spm_select(n,typ,mesg,sel,wd,filt,frames)
     [t,sts] = spm_select(2,'any',mesg,[],pax,'.*.nii|.*.txt');
-    if sts==0; return, end
+    if sts==0; return; end
     
     if size(t,1)~=2;
         msgbox({'ERROR' ...
@@ -1299,8 +1340,108 @@ end
 
 
 % ==============================================
-%%
+%%  reorder bb-table & DWI-data
 % ===============================================
+if strcmp(task,'reorder_data')
+    ms_error={'reorder of b-tables NOT POSSIBLE'
+        'FIRST, define USER INPUT (b-tables)'
+        };
+    %%
+    err=0;
+    try
+        hf=findobj(0,'tag','DTIprep');
+        u=get(hf,'userdata');
+        f1=fullfile(u.studypath,'DTI','check.mat');
+        d=load(f1); d=d.d;
+    catch
+        err=1 ;
+    end
+    if err==1;
+        msgbox(ms_error,'warning');
+        return
+    end
+    
+    if isfield(d,'btable') && ~isempty(d.btable) && ...
+       isfield(d,'DTIfileName') && ~isempty(d.DTIfileName)
+       % dummy
+    else
+         msgbox('both b-tables and DWI-data must be loaded before reordering.. ','reodering');
+         return
+    end
+    
+    
+    %% ===============================================
+    % btable
+    [~, btableNames, ext]= fileparts2(d.btable);
+    cellfun(@(a,b){[ a b ]} ,btableNames, ext);
+    btableNames0=cellfun(@(a,b){[ a b ]} ,btableNames, ext);
+    btableNames=regexprep(btableNames0,'_','\\_');
+    % DWI-files
+    DTIfileName0=d.DTIfileName;
+    DTIfileName=regexprep(DTIfileName0,'_','\\_');
+    
+    
+    prompt={...
+        ['\color{magenta} Reorder such that b-table and DWI-data match! '... 
+        'Changing one of the two items might be sufficient. ' '\color{black}' char(10) ...
+        '\bf b-table \rm (current order): ' char(10)...
+        strjoin(btableNames,char(10)) char(10)...
+        '\bf ENTER NEW ORDER \rm (EXAMPLE: [2 1 3 4]): ' ] ...
+        ...
+        ['\bf DWI-data \rm (current order): ' char(10)...
+        strjoin(DTIfileName,char(10)) char(10)...
+        '\bf ENTER NEW ORDER \rm (current order):' ] ...
+        };
+    name='Reorder b-table & DWI-data';
+    numlines=[1, 70];
+    defa1=1: length(btableNames);
+    defa2=1: length(DTIfileName);
+    defaultanswer={regexprep(num2str(defa1),'\s+',' ')  regexprep(num2str(defa2),'\s+',' ')};
+    opt=struct('Resize','on','WindowStyle','normal','Interpreter','tex');
+    
+    answer  =inputdlg(prompt,name,numlines,defaultanswer,opt);
+    
+    % ===============================================
+    
+    neworder1=str2num(num2str(answer{1}));
+    if length(neworder1)~=length(btableNames) || length(intersect( defa1 ,neworder1))~=length(defa1)
+        msgbox('b-table: number of indices for ordering does not match..aborted.','reodering');
+        return
+    end
+    neworder2=str2num(num2str(answer{2}));
+    if length(neworder2)~=length(DTIfileName) || length(intersect( defa2 ,neworder2))~=length(defa2)
+        msgbox('DWI-data: number of indices for ordering does not match..aborted.','reodering');
+        return
+    end
+ 
+    % reorder data
+    d.btable      =d.btable(neworder1);
+    d.DTIfileName =d.DTIfileName(neworder2);
+    
+   if 1 %save data
+       save(f1,'d');
+   end
+    
+    %% ===============================================
+    updateLB();
+    
+    %% ===============================================
+    cprintf('*[0 .5 .8]',['_____REORDINGING B-TABLES & DWI-FILES___ \n']);
+    cprintf('*[0 .5 .8]',['[1] b-table: new order  \n']);
+    disp(btableNames0(neworder1));
+    cprintf('*[0 .5 .8]',['[2] DWI-data: new order  \n']);
+    disp(DTIfileName0(neworder2));
+    
+    %% ===============================================
+    
+    
+end
+
+% ==============================================
+%%   
+% ===============================================
+
+
 if strcmp(task,'checkassignment')
     
     
@@ -1345,8 +1486,11 @@ if strcmp(task,'checkassignment')
         
         ms{end+1,1}=['  '];
         ms{end+1,1}=[' #dw ' repmat('_',[1 80])];
-        ms{end+1,1}=[' #dw -The table does not state that these files exist!  '];
-        uhelp(ms,0,'name','assignment');
+        ms{end+1,1}=[' #dw -Please check correspondence of b-tables and input-DWI-files!  '];
+        ms{end+1,1}=[' #dw  to reorder files use contextmenu: reorder..  '];
+        ms{end+1,1}=[' #dw -The table does not state that these files exist for each animal!  '];
+        drawnow;
+        uhelp(ms,1,'name','assignment');
         
 %         chktab=[{['\bf' '___b-table___'] ['       ___DWI-file___' '\rm']} ;chktab];
 %         chklist=cellfun(@(a,b){[ a repmat(' ',[1 size(char(chktab(:,1)),2)+2-length(a)]) b ]},  chktab(:,1),chktab(:,2));
@@ -1698,9 +1842,12 @@ scripts={
 'DTIscript_posthoc_exportDTImaps_fromHPC_4Statistic.m'        
 };
 
-xpos=.15;
-scripts_gui(gcf, 'pos',[xpos 0 1-xpos 1],'closefig',0,'scripts',scripts);
+% xpos=.15;
+% scripts_gui(gcf, 'pos',[xpos 0 1-xpos 1],'closefig',0,'scripts',scripts);
 
+
+scripts_gui([],'figpos',[.3 .2 .4 .4], 'pos',[0 0 1 1],'name','scripts: DTIprep','closefig',1,'scripts',scripts);
+% scripts_gui(gcf, 'pos',[0 0 1 1],'name','scripts: voxelwise statistic','closefig',1,'scripts',scripts)
 
 
 % ==============================================

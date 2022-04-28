@@ -6,7 +6,7 @@ function out=getBtable()
 out=[];
 
 % close all; clear;
-warning off
+warning off;
 
 clc
 % ==============================================
@@ -16,7 +16,7 @@ ui=1;
 if ui==1
     pax=pwd;
     
-    [pas,sts] = spm_select(1,'dir','select a single(!) raw data set','',pax)
+    [pas,sts] = spm_select(1,'dir','select a single(!) raw data set','',pax);
     if sts==0; return; end
 else
     pas='F:\data4\ernst_DTImrtrix\raw_DTI';
