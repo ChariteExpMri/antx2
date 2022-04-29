@@ -334,6 +334,7 @@ uimenu('Parent',ctx,'Label','select/unselect this [s]',  'callback',@selecthighl
 uimenu('Parent',ctx,'Label','select all [a]',   'callback',@selectall,'separator','on');
 uimenu('Parent',ctx,'Label','deselect all [d]', 'callback',@deselectall);
 uimenu('Parent',ctx,'Label','find & select [f]','callback',@findAndSelect,'separator','on');
+uimenu('Parent',ctx,'Label','multi find & select [f]','callback',@findnested,'separator','on');
 if isfield(params,'contextmenu')
    for i=1:size(params.contextmenu,1)
       uimenu('Parent',ctx,'Label',params.contextmenu{i,1},'callback',params.contextmenu{i,2},...
@@ -1210,10 +1211,10 @@ function tablecellselection(t,b)
 selectthis(t,2);
 
 
-
-
-
 function selectspecificButton(t,b)
+findnested([],[]);
+
+function selectspecificButton_old(t,b)
 t=findobj(gcf,'tag','lb1');
 us=get(gcf,'userdata');
 
@@ -1410,8 +1411,12 @@ t=us.Table; %t=findobj(gcf,'tag','lb1');
 value=get(t,'value');
 if mode==0
     idx=1:size(get(t,'string'),1);
-elseif mode==2  %..highlighted in listbox  %%sinlge selection via 's'
+elseif mode==2  %..highlighted in listbox  %%sinlge selection via 's' (toggle)
     idx=value;%get(t,'value');
+ elseif mode==3  %..force highlighted (no toggle)
+     idx=value;%get(t,'value');   
+elseif mode==4  %..force non-highlighted (no toggle)
+     idx=value;%get(t,'value')
 elseif mode==1
     idx=1:size(get(t,'string'),1);
 end
@@ -1433,6 +1438,34 @@ if mode==2
         if us.sel(this)==0  %selected for process NOW
             us.sel(this)=1;
             us.tb2(this,:)=us.tbsel(this,:);
+        else%deSelect
+            us.sel(this)=0;
+            %us.tb2(this,:)=us.tb0(this,:);
+            us.tb2(this,:)=us.tbunsel(this,:);
+        end
+    end
+elseif mode==3 %force highlight
+    set(findobj(findobj(0,'tag','selector'),'tag','txtbusy'),'visible','on');drawnow;
+    for i=1:length(idx)
+        this=idx(i);
+        
+        if us.sel(this)==0  %selected for process NOW
+            us.sel(this)=1;
+            us.tb2(this,:)=us.tbsel(this,:);
+%         else%deSelect
+%             us.sel(this)=0;
+%             %us.tb2(this,:)=us.tb0(this,:);
+%             us.tb2(this,:)=us.tbunsel(this,:);
+       end
+    end
+elseif mode==4 %force nonhighlight/deselected
+    set(findobj(findobj(0,'tag','selector'),'tag','txtbusy'),'visible','on');drawnow;
+    for i=1:length(idx)
+        this=idx(i);
+        
+        if us.sel(this)==0  %selected for process NOW
+%             us.sel(this)=1;
+%             us.tb2(this,:)=us.tbsel(this,:);
         else%deSelect
             us.sel(this)=0;
             %us.tb2(this,:)=us.tb0(this,:);
@@ -1581,7 +1614,335 @@ delete(findobj(gcf,'tag','note1'));
 
 
 
+function findnested(e,e2)
+%% ===============================================
 
+hf=findobj(0,'tag','selector');
+us=get(hf,'userdata');
+
+hd=us.header;
+d=us.raw;
+
+uniinput={};
+for i=1:length(hd);
+    uniinput{i,1}=unique(d(:,i),'stable' );
+end
+
+delete(findobj(hf,'tag','hfm'));
+panpos=[.2 .3 .6 .25];
+hpa=uipanel('title','findMultiple','units','normalized','position',    panpos,'tag','hfm');
+
+% column-selection
+hp1=uicontrol('parent',hpa,'style','popupmenu','units','normalized','tag','hfm_col','string',hd,...
+    'callback',{@findnested_callback,'selectFromcolumn'});
+set(hp1,'position',[.0 .8 .3 .2],'value',1);
+set(hp1,'tooltipstring',['<html><b>column</b><br>' ...
+    'select column']);
+%listbox
+hp1=uicontrol('parent',hpa,'style','listbox','units','normalized','tag','hfm_lb','string',uniinput{1},'max',1000);
+set(hp1,'position',[.0 0 .3 .9]);
+set(hp1,'tooltipstring',[...
+    '<html><b>available items of this column</b><br>' ...
+    'select 1/nultiple available strings from selected column<br>'...
+    '..than hit <b>[parse]-button</b>']);
+% parse
+hp1=uicontrol('parent',hpa,'style','pushbutton','units','normalized','tag','hfm_getfromLB','string','>',...
+    'callback',{@findnested_callback,'selectFromLB'});
+set(hp1,'position',[.3 .6 .1 .1],'string','parse>','backgroundcolor',[1.0000    0.9490    0.8667]);
+set(hp1,'tooltipstring',[...
+    '<html><b>parse data</b><br>' ...
+    'parse selected items from left listbox to right edit box'...
+    '']);
+
+%edit
+hp1=uicontrol('parent',hpa,'style','edit','units','normalized','tag','hfm_ed1','string','','max',1000);
+set(hp1,'HorizontalAlignment','left');
+set(hp1,'position',[.4 .15 .6 .85]);
+set(hp1,'tooltipstring',[...
+    '<html><b>files with these properties should be selected</b><br>' ]);
+
+%% ==============pan-tool=================================
+
+ img=[129	129	129	129	129	129	129	0	0	129	129	129	129	129	129	129
+        129	129	129	0	0	129	0	215	215	0	0	0	129	129	129	129
+        129	129	0	215	215	0	0	215	215	0	215	215	0	129	129	129
+        129	129	0	215	215	0	0	215	215	0	215	215	0	129	0	129
+        129	129	129	0	215	215	0	215	215	0	215	215	0	0	215	0
+        129	129	129	0	215	215	0	215	215	0	215	215	0	215	215	0
+        129	0	0	129	0	215	215	215	215	215	215	215	0	215	215	0
+        0	215	215	0	0	215	215	215	215	215	215	215	215	215	215	0
+        0	215	215	215	0	215	215	215	215	215	215	215	215	215	0	129
+        129	0	215	215	215	215	215	215	215	215	215	215	215	215	0	129
+        129	129	0	215	215	215	215	215	215	215	215	215	215	215	0	129
+        129	129	0	215	215	215	215	215	215	215	215	215	215	0	129	129
+        129	129	129	0	215	215	215	215	215	215	215	215	215	0	129	129
+        129	129	129	129	0	215	215	215	215	215	215	215	0	129	129	129
+        129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129
+        129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129];
+img=uint8(img);
+img(img==img(1,1))=255;
+if size(img,3)==1; img=repmat(img,[1 1 3]); end
+img=double(img)/255;
+%% ______________
+
+hp=uicontrol('style','pushbutton','units','norm','tag', 'hfm_pbmovepan');
+set(hp,'position',[panpos(1) panpos(2)+panpos(4) .015 .015],'string','',...
+    'CData',img,'tooltipstr',['shift panel position' char(10) 'left mouseclick+move mouse/trackpad pointer position' ]);%, 'callback', {@changecolumn,-1} );
+je = findjobj(hp); % hTable is the handle to the uitable object
+set(je,'MouseDraggedCallback',{@hfm_motio,hpa}  );
+set(hp,'units','pixels');
+pos=get(hp,'position');
+set(hp,'position',[pos(1:2) 16 16]);
+% set(hp,'units','norm');
+set(hp,'tooltipstring',[...
+    '<html><b>drag icon to move panel</b>']);
+%% ===============================================
+set(hpa,'units','pixels');
+%select
+hp1=uicontrol('parent',hpa,'style','pushbutton','units','normalized','tag','hfm_select','string','select',...
+    'callback',{@findnested_callback,'select'});
+set(hp1,'position',[.4 0 .1 .11]);
+set(hp1,'backgroundcolor',[0.8392    0.9098    0.8510]);
+set(hp1,'tooltipstring',[...
+    '<html><b>select files in SELECTOR-listbox</b><br>' ...
+    'hit this button if the edit box defines the selection of files']);
+
+%deselect
+hp1=uicontrol('parent',hpa,'style','pushbutton','units','normalized','tag','hfm_deselect','string','deselect',...
+    'callback',{@findnested_callback,'deselect'});
+set(hp1,'position',[.5 0 .1 .11]);
+set(hp1,'backgroundcolor',[0.9373    0.8667    0.8667]);
+
+set(hp1,'tooltipstring',[...
+    '<html><b>deselect currently selected files in SELECTOR-listbox</b><br>' ...
+    'selected files via [select]-button will be deselected again']);
+
+%deselect-all
+hp1=uicontrol('parent',hpa,'style','pushbutton','units','normalized','tag','hfm_deselectAll','string','deselect all',...
+    'callback',{@findnested_callback,'deselectAll'});
+set(hp1,'position',[.65 0 .13 .11]);
+set(hp1,'backgroundcolor',[0.8824    0.7176    0.7176]);
+set(hp1,'tooltipstring',[...
+    '<html><b>deselect all tagged files in SELECTOR-listbox</b><br>' ...
+    'hit this button to clear the selection']);
+
+
+
+%close
+hp1=uicontrol('parent',hpa,'style','pushbutton','units','normalized','tag','hfm_select','string','close',...
+    'callback',{@findnested_callback,'close'});
+set(hp1,'position',[.9 0 .1 .11]);
+set(hp1,'tooltipstring',[...
+    '<html><b>close this panel</b><br>' ...
+    '--']);
+
+%clear
+hp1=uicontrol('parent',hpa,'style','pushbutton','units','normalized','tag','hfm_clear','string','clear',...
+    'callback',{@findnested_callback,'clear'});
+% set(hp1,'position',[.9 0.01 .1 .15]);
+set(hp1,'position',[.32 0.9 .08 .09]);
+set(hp1,'tooltipstring',[...
+    '<html><b>clear edit box</b><br>']);
+
+v.d  =d;
+v.hd =hd;
+v.uniinput=uniinput;
+set(hpa,'userdata',v);
+
+%% ===============================================
+function hfm_motio(e,e2,hpa)
+if 1%try
+    units=get(0,'units');
+    set(0,'units','norm');
+    mp=get(0,'PointerLocation');
+    set(0,'units',units);
+    
+    fp  =get(gcf,'position');
+    hp  =findobj(gcf,'tag','hfm_pbmovepan');
+    set(hp,'units','norm');
+    pos =get(hp,'position');
+    set(hp,'units','pixels');
+    mid=pos(3:4)/2;
+    newpos=[(mp(1)-fp(1))./(fp(3))  (mp(2)-fp(2))./(fp(4))];
+    if newpos(1)-mid(1)<0; newpos(1)=mid(1); end
+    if newpos(2)-mid(2)<0; newpos(2)=mid(2); end
+    if newpos(1)-mid(1)+pos(3)>1; newpos(1)=1-pos(3)+mid(1); end
+    if newpos(2)-mid(2)+pos(4)>1; newpos(2)=1-pos(4)+mid(2); end
+    df=pos(1:2)-newpos+mid;
+    hx=[hp hpa];
+    for i=1:length(hx)
+        set(hx(i),'units','norm');
+        pos2=get(hx(i),'position');
+        pos3=[ pos2(1:2)-df   pos2([3 4])];
+        if length(hx)==1
+            set(hx,'position', pos3);
+        else
+            set(hx(i),'position', pos3);
+        end
+        set(hx(i),'units','pixels');
+    end
+end
+
+
+function findnested_callback(e,e2,task)
+hf=findobj(0,'tag','selector');
+hp=findobj(hf,'tag','hfm');
+v=get(hp,'userdata');
+
+% task
+% v
+if strcmp(task,'close')
+    delete(findobj(hf,'tag','hfm'));
+    delete(findobj(hf,'tag','hfm_pbmovepan'));
+elseif strcmp(task,'selectFromcolumn')
+    hc=findobj(hf,'tag','hfm_col');
+    colnr=hc.Value;
+    col=v.hd(colnr);
+     hl=findobj(hf,'tag','hfm_lb');
+     set(hl,'value',1);
+     set(hl,'string',v.uniinput{colnr});
+elseif strcmp(task,'clear')
+    he=findobj(hf,'tag','hfm_ed1');
+    set(he,'string','');
+ elseif strcmp(task,'deselectAll')   
+    %deselectallButton
+    selectthis([],0);
+elseif strcmp(task,'selectFromLB')  
+    %% ===============================================
+    
+     hl=findobj(hf,'tag','hfm_lb');
+     items=hl.String(hl.Value);
+     hc=findobj(hf,'tag','hfm_col');
+    colnr=hc.Value;
+    col=v.hd{colnr};
+    b0=[ '##' col '##' strjoin(items,'|')];
+    
+    he=findobj(hf,'tag','hfm_ed1');
+    s=get(he,'string');
+    s2=cellstr(s);
+    idel=regexpi2(cellstr(s), ['##' col '##'] );
+    if ~isempty(idel)
+        s2(idel)=[];
+    end
+    if isempty(s)
+     s2=[]; 
+    end
+    s3=[s2; {b0}];
+    set(he,'string',s3);
+     %% ===============================================
+elseif strcmp(task,'select') || strcmp(task,'deselect')  
+    %% ===============================================
+    
+    he=findobj(hf,'tag','hfm_ed1');
+    s=cellstr(get(he,'string'));
+    [a b]=strtok(s,'##');
+    a=regexprep(a,'\s+','');
+    b=regexprep(b,'##','');
+    flt0=[a b];
+    flt0(find(cellfun(@isempty,(a))),:)=[];
+    if isempty(char(flt0)); return;end
+    p0.flt=flt0;
+    d=v.d;
+    dh=v.hd;
+    
+    % ===============================================
+    %     function id=filterfiles(d,dh,p0);
+    % ===============================================
+    id=[];
+    % p0.flt={'pro'    'RARE'}
+    % p0.flt={'pro'    'T2'}
+    % p0.flt={'pro'    'T2|DTI_EPI'}
+    % p0.flt={'pro'    '^T2|^DTI_EPI'}
+    % p0.flt={'date'    '2020'}
+    % p0.flt={'date'    'Jun-2021'}
+    %
+    % p0.flt={'date'    '2020|2021'}
+    % p0.flt={'MR'    'Fisp|Rare'}
+    %
+    % p0.flt={'si'    '>20'}
+    % p0.flt={'si'    '<20'}
+    % p0.flt={'si'    '>20 & <30'}
+    % p0.flt={'si'    '>1.7 & <1.8'}
+    
+    % ===============================================
+    if numel(p0.flt)==1
+        id=[1:size(d,1)];
+    else
+        if length(p0.flt)==2
+            flt=p0.flt;
+        else
+            %flt=reshape(p0.flt(:)',  [length(p0.flt(:))/2  2 ])';
+            flt=reshape(p0.flt(:),  [2 length(p0.flt(:))/2  ])';
+        end
+        % select specific sets based on as numeric array
+        iset=find(strcmp(flt(:,1),'set'));
+        if ~isempty(iset)
+            if isnumeric(flt{iset,2})
+                flt{iset,2}=  strjoin(cellfun(@(a){[ num2str(a) ]} ,num2cell(flt{iset,2})),'|');
+            end
+        end
+        
+        
+        uw=zeros(size(d,1),size(flt,1) );
+        id=[];
+        for j=1:size(flt,1)
+            dfl=flt(j,:);
+            ic=regexpi2(dh,dfl{1}); %GET COLUMN(S)
+            id0=[];
+            for i=1:length(ic)
+                if length(regexpi(dfl{2},'>|<'))>0
+                    siMB=str2num(char(d(:,ic(i))));
+                    if length(regexpi(dfl{2},'>|<'))==1
+                        nid=find(eval(['siMB' dfl{2}]));
+                    else
+                        nid=find(eval(['siMB' regexprep(dfl{2},'&', '&siMB') ]));
+                    end
+                    
+                else
+                    nid=regexpi2(d(:,ic(i)),dfl{2});
+                end
+                id0=[id0; nid(:)];
+            end
+            uw(id0,j)=1;
+        end
+        id=find(sum(uw,2)==size(uw,2));
+    end
+
+% ==select the files =============================================
+hf=findobj(0,'tag','selector');
+us=get(hf,'userdata');
+lb1=findobj(hf,'tag','lb1');
+%   id2sel= regexpi2(us.raw(:,icol), str);
+%   lb1=findobj(gcf,'tag','lb1');
+%   set(lb1,'value',id2sel);
+ds=d(id,:);
+%% ===============================================
+raw={};
+for i=1:size(us.raw,1)
+   raw{i,1}= strjoin(us.raw(i,:),'_');
+end
+ds2={};
+for i=1:size(ds,1)
+   ds2{i,1}= strjoin(ds(i,:),'_');
+end
+id2=find(ismember(raw,ds2));
+
+%% ===============================================
+
+
+
+set(lb1,'value',id2);
+if strcmp(task,'select')
+ selectthis([],3); 
+else %deselect
+   selectthis([],4); 
+end
+    
+%% ===============================================
+    
+    
+     
+end
 
 
 
