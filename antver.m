@@ -560,6 +560,11 @@
 % - added check and reordering optin for b-table & DWI-files
 % #gw --> access via ANT-menu: &#8658; Statistic/DTIprep for mrtrix.
 % 
+% #ba 29 Apr 2022 (08:23:36)
+% #k [xbruker2nifti.m]: #n command line support was exteded (file filter options)
+% 
+% 
+% 
 
 %% ===============================================
 %----- EOF

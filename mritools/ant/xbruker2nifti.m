@@ -19,7 +19,35 @@
 % xbruker2nifti;                                                % all inputs provided by guis
 % xbruker2nifti( 'O:\harms1\harmsTest_ANT\pvraw', 'Rare' )      % METAFOLDER is explicitly defined, read Rare, trmb is 1Mb
 % xbruker2nifti({'guidir' 'O:\harms1\harmsTest_ANT\'}, 'Rare' ) % startfolder for GUI is defined,  read Rare, trmb is 1Mb
-%
+%% ===============================================
+%% output
+% if specified, the output (struct) contains the following fields (after conversion):
+%          hd: header of 'd', columnnames  {cell} 
+%           d: data-array, each row represent a Bruker raw-data file with parameters {cell} 
+%         raw: raw data file, fullpath {cell} 
+%       nifti: converted nifti-files {cell}
+%     success: success of conversion, bool-array,  [double]
+%      errmsg: error messages for failed conversion {cell}
+%% ===============================================
+%% OPTIONAL PAIRWISE INPUT ARGUMENTS
+% gui: [0/1] : [1]show [0]hide gui (fileselection+parameter specification)
+% show: [0/1/2]: display files, if show is [1] or [2] no files are converted, only displayed
+%         [1]: display files in cmd-window
+%         [2]: display files in extra window
+% paout: output-path for converted files
+%       - if not specified the dat-folder of the loaded ANT-project is used. For this, the
+%         ANT-project must be loaded 
+%       - otherwise specify a fullpath folder 
+% prefix: -(string), add a prefix string to the converted NIFTI-filenames
+% suffix: -(string), add a suffix string to the converted NIFTI-filenames
+% flt   : filter option 
+%        - if empty ( '' ,[],{''} ) show all files  , example :   .. 'flt','',..
+%        - otherwise a cell with pairwise inputs: abbreviation of column-name (ACN) and search string (SS)
+%          in this case the searchstring is searched in the data of the respective column
+%        - filters can be combined using : {ACN,SS,ACN,SS,...ACN,SS}: 
+%          example: all files from set 2,3,5,6,7,8 with string 'RARE' or 'FISP' in protocol-name
+%                    .. 'flt',{'set' [2 3 5:8] 'pro','RARE|FISP'}
+% 
 % ==========================================================
 %% NO GUI (silent mode)
 % 
@@ -41,9 +69,8 @@
 % 'flt', {columnName   string}
 % columnName: short name of the column to address:
 %    AVAILABLE COLUMNS:
-%     'SubjectId'    'StudNo'    'ExpNo'    'PrcNo'    'MRseq'    
-%     'protocol'    'sizeMB'     'date'    'file'    'StudId'   
-%     'SubjectName' 'CoreDim'
+%     'set'     'SubjectId'  'StudNo'  'ExpNo'  'PrcNo'        'MRseq'   'protocol' 
+%     'sizeMB'  'date'       'file'    'StudId'  'SubjectName' 'CoreDim' 
 %     --> example 'si' for 'sizeMB'; 'pro' for 'protocol'
 % string: string to find in columnName 
 %
@@ -67,7 +94,30 @@
 % xbruker2nifti(fullfile(pwd,'raw_Ernst'),0,[],[],'show',1)
 % -se also "BRUKER DATA EXAMPLE-TABLE" below
 % 
-% ===========[FILTER DTI-data] ===================================
+%%  filter: import all files from sets (datasets) 1 and 2  
+% xbruker2nifti(fullfile(pwd,'raw_mix'),0,[],[],'gui',0,'show',1,'paout',fullfile(pwd,'dat'),'flt',{'set',1:2});
+% 
+% ===========[MULTI-FILTER] ===================================
+% combine filter options (pairwise: abbreviation of column & search string,abbreviation of column & search string... )
+%% multi-filter: from sets 2 and 3 only, import all files with protocol RARE or FISP
+% xbruker2nifti(fullfile(pwd,'raw_mix'),0,[],[],'gui',0,'show',1,'paout',fullfile(pwd,'dat'),'flt',{'set' '2|3' 'pro','RARE|FISP'});
+% 
+%% multi-filter: from sets 1 and 2 only, import all files with size >2MB
+% xbruker2nifti(fullfile(pwd,'raw_mix'),0,[],[],'gui',0,'show',1,'paout',fullfile(pwd,'dat'),'flt',{'set',1:2,'si','>2'});
+% 
+%% multi-filter: from sets 2 and 3 only, import all files with protocol RARE or FISP and size >0.1MB
+% xbruker2nifti(fullfile(pwd,'raw_mix'),0,[],[],'gui',0,'show',1,'paout',fullfile(pwd,'dat'),'flt',{'set' 2:3,'pro' 'RARE|FISP','si' '>0.1'});
+% 
+%% multi-filter: from sets 1,2,3 only, import all files with protocol RARE or FISP and size >0.001MB and date 2021 or 2022
+% xbruker2nifti(fullfile(pwd,'raw_mix'),0,[],[],'gui',0,'show',1,'paout',fullfile(pwd,'dat'),'flt',{'set' 1:3,'pro' 'RARE|FISP','si' '>0.001','dat','2021|2022'});
+% 
+%%  adding prefix- and/or suffix-string to output data-filenames
+% xbruker2nifti(fullfile(pwd,'raw_mix'),0,[],[],'gui',0,'show',1,'paout',fullfile(pwd,'dat'),'prefix','MOS_');
+% xbruker2nifti(fullfile(pwd,'raw_mix'),0,[],[],'gui',0,'show',1,'paout',fullfile(pwd,'dat'),'suffix','_MOS');
+% xbruker2nifti(fullfile(pwd,'raw_mix'),0,[],[],'gui',0,'show',1,'paout',fullfile(pwd,'dat'),'prefix','MOS_','suffix','_MOS');
+% 
+% 
+% ===========[EXAMPLE FILTER DTI-data] ===================================
 % show only DTI-filtered files (no data import):
 % xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0,'show',1,'flt',{'pro' 'DTI_EPI_seg_b'});
 % import DTI-filtered files
@@ -77,30 +127,39 @@
 % 
 % 
 % ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-%      BRUKER DATA EXAMPLE-TABLE                                                                                                                                                                                                                
-% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-% SubjectId             StudNo ExpNo PrcNo MRseq    protocol                sizeMB  date                 file                                                                 StudId                 SubjectName           CoreDim 
-% Kevin                 12     1     1     FLASH    1_Localizer_multi_slice 1.10592 17-Jun-2021 11:46:44 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\1\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
-% Kevin                 12     10    1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:46:44 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\10\pdata\1\2dseq 20180808_A1812081_GADO BreinDMD_Alzet        2       
-% Kevin                 12     11    1     FLASH    1_Localizer_multi_slice 1.10592 17-Jun-2021 11:46:26 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\11\pdata\1\2dseq 20180808_A1812081_GADO BreinDMD_Alzet        2       
-% Kevin                 12     12    1     FieldMap B0Map-ADJ_B0MAP         1.04858 17-Jun-2021 11:46:34 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\12\pdata\1\2dseq 20180808_A1812081_GADO BreinDMD_Alzet        3       
-% Kevin                 12     2     1     DtiEpi   DTI_EPI_3D_40dir_sat    23.3856 17-Jun-2021 11:46:06 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\2\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        3       
-% Kevin                 12     2     2     DtiEpi   nan                      29.399 17-Jun-2021 11:45:56 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\2\pdata\2\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        3       
-% Kevin                 12     3     1     RARE     T2_TurboRARE_highres      2.375 17-Jun-2021 11:46:20 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\3\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
-% Kevin                 12     4     1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:46:38 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\4\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
-% Kevin                 12     5     1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:46:24 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\5\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
-% Kevin                 12     6     1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:45:38 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\6\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
-% Kevin                 12     7     1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:46:30 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\7\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
-% Kevin                 12     8     1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:46:12 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\8\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
-% Kevin                 12     9     1     RARE     RARE-T1W-7min           1.73538 17-Jun-2021 11:46:34 F:\data5\nogui\raw_Ernst\20180808_082822_Kevin_1_12\9\pdata\1\2dseq  20180808_A1812081_GADO BreinDMD_Alzet        2       
-% 20201118CH_Exp10_9258 1      1     1     FLASH    1-1_TriPilot-multi      1.96608 18-Nov-2020 12:46:12 F:\data5\nogui\raw_Ernst\20201118CH_Exp10_9258.5c1\1\pdata\1\2dseq   1                      20201118CH_Exp10_9258 2       
-% 20201118CH_Exp10_9258 1      2     1     FISP     1-2_FISP_sagittal        0.0256 18-Nov-2020 12:46:16 F:\data5\nogui\raw_Ernst\20201118CH_Exp10_9258.5c1\2\pdata\1\2dseq   1                      20201118CH_Exp10_9258 2       
-% 20201118CH_Exp10_9258 1      3     1     RARE     2_1_T2_ax_mousebrain     4.1943 18-Nov-2020 12:46:14 F:\data5\nogui\raw_Ernst\20201118CH_Exp10_9258.5c1\3\pdata\1\2dseq   1                      20201118CH_Exp10_9258 2       
-% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+%      BRUKER DATA                                                                                                                                                                                                                                                        
+% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+% set SubjectId                      StudNo ExpNo PrcNo MRseq        protocol                sizeMB   date                 file                                                                                      StudId                 SubjectName           CoreDim 
+% 1   Kevin                          12     1     1     FLASH        1_Localizer_multi_slice  1.10592 17-Jun-2021 11:46:44 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\1\pdata\1\2dseq                         20180808_A1812081_GADO BreinDMD_Alzet        2       
+% 1   Kevin                          12     10    1     RARE         RARE-T1W-7min            1.73538 17-Jun-2021 11:46:44 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\10\pdata\1\2dseq                        20180808_A1812081_GADO BreinDMD_Alzet        2       
+% 1   Kevin                          12     11    1     FLASH        1_Localizer_multi_slice  1.10592 17-Jun-2021 11:46:26 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\11\pdata\1\2dseq                        20180808_A1812081_GADO BreinDMD_Alzet        2       
+% 1   Kevin                          12     12    1     FieldMap     B0Map-ADJ_B0MAP          1.04858 17-Jun-2021 11:46:34 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\12\pdata\1\2dseq                        20180808_A1812081_GADO BreinDMD_Alzet        3       
+% 1   Kevin                          12     2     1     DtiEpi       DTI_EPI_3D_40dir_sat     23.3856 17-Jun-2021 11:46:06 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\2\pdata\1\2dseq                         20180808_A1812081_GADO BreinDMD_Alzet        3       
+% 1   Kevin                          12     2     2     DtiEpi       nan                       29.399 17-Jun-2021 11:45:56 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\2\pdata\2\2dseq                         20180808_A1812081_GADO BreinDMD_Alzet        3       
+% 1   Kevin                          12     3     1     RARE         T2_TurboRARE_highres       2.375 17-Jun-2021 11:46:20 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\3\pdata\1\2dseq                         20180808_A1812081_GADO BreinDMD_Alzet        2       
+% 1   Kevin                          12     4     1     RARE         RARE-T1W-7min            1.73538 17-Jun-2021 11:46:38 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\4\pdata\1\2dseq                         20180808_A1812081_GADO BreinDMD_Alzet        2       
+% 1   Kevin                          12     5     1     RARE         RARE-T1W-7min            1.73538 17-Jun-2021 11:46:24 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\5\pdata\1\2dseq                         20180808_A1812081_GADO BreinDMD_Alzet        2       
+% 1   Kevin                          12     6     1     RARE         RARE-T1W-7min            1.73538 17-Jun-2021 11:45:38 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\6\pdata\1\2dseq                         20180808_A1812081_GADO BreinDMD_Alzet        2       
+% 1   Kevin                          12     7     1     RARE         RARE-T1W-7min            1.73538 17-Jun-2021 11:46:30 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\7\pdata\1\2dseq                         20180808_A1812081_GADO BreinDMD_Alzet        2       
+% 1   Kevin                          12     8     1     RARE         RARE-T1W-7min            1.73538 17-Jun-2021 11:46:12 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\8\pdata\1\2dseq                         20180808_A1812081_GADO BreinDMD_Alzet        2       
+% 1   Kevin                          12     9     1     RARE         RARE-T1W-7min            1.73538 17-Jun-2021 11:46:34 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\9\pdata\1\2dseq                         20180808_A1812081_GADO BreinDMD_Alzet        2       
+% 2   20201118CH_Exp10_9258          1      1     1     FLASH        1-1_TriPilot-multi       1.96608 18-Nov-2020 12:46:12 F:\data5\nogui\raw_mix\20201118CH_Exp10_9258.5c1\1\pdata\1\2dseq                          1                      20201118CH_Exp10_9258 2       
+% 2   20201118CH_Exp10_9258          1      2     1     FISP         1-2_FISP_sagittal         0.0256 18-Nov-2020 12:46:16 F:\data5\nogui\raw_mix\20201118CH_Exp10_9258.5c1\2\pdata\1\2dseq                          1                      20201118CH_Exp10_9258 2       
+% 2   20201118CH_Exp10_9258          1      3     1     RARE         2_1_T2_ax_mousebrain      4.1943 18-Nov-2020 12:46:14 F:\data5\nogui\raw_mix\20201118CH_Exp10_9258.5c1\3\pdata\1\2dseq                          1                      20201118CH_Exp10_9258 2       
+% 3   20220301_ECM_Round11_Cage1_M04 1      1     1     FLASH        1_Localizer             0.393216 10-Mrz-2022 11:24:24 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\1\pdata\1\2dseq ECM longitudinal       Cage1_M04             2       
+% 3   20220301_ECM_Round11_Cage1_M04 1      2     1     RARE         03_T2_TurboRARE           2.0736 10-Mrz-2022 11:24:28 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\2\pdata\1\2dseq ECM longitudinal       Cage1_M04             2       
+% 3   20220301_ECM_Round11_Cage1_M04 1      3     1     RARE         RARE                      0.3584 10-Mrz-2022 11:24:22 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\3\pdata\1\2dseq ECM longitudinal       Cage1_M04             2       
+% 3   20220301_ECM_Round11_Cage1_M04 1      4     1     User:epi_mre 07_epi_mre                 3.402 10-Mrz-2022 11:24:26 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\4\pdata\1\2dseq ECM longitudinal       Cage1_M04             2       
+% 3   20220301_ECM_Round11_Cage1_M04 1      4     3     User:epi_mre 07_epi_mre                 3.402 10-Mrz-2022 11:24:26 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\4\pdata\3\2dseq ECM longitudinal       Cage1_M04             2       
+% 3   20220301_ECM_Round11_Cage1_M04 1      6     1     FieldMap     B0Map-ADJ_B0MAP          1.04858 10-Mrz-2022 11:24:22 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\6\pdata\1\2dseq ECM longitudinal       Cage1_M04             3       
+% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 
 
 
-function xbruker2nifti(pain,sequence,trmb,x,varargin)
+function varargout=xbruker2nifti(pain,sequence,trmb,x,varargin)
+if nargout==1
+    varargout{1}=[];
+end
 warning off;
 
 if exist('pain')==0
@@ -112,7 +171,8 @@ end
 p0.gui=1; % [0,1] show guis
 if nargin>4
    pin= cell2struct(varargin(2:2:end),varargin(1:2:end),2);
-   p0=catstruct2(p0,pin);
+   %p0=catstruct2(p0,pin);
+   p0=catstruct(p0,pin);
 end
 %% =========declare additional vars ========================
 if isfield(p0,'paout') && ~isempty(p0.paout)
@@ -120,7 +180,7 @@ if isfield(p0,'paout') && ~isempty(p0.paout)
     if exist(paout)~=7; mkdir(paout); end
 end
 
-if isfield(p0,'show') && ~isempty(p0.show) %display only
+if isfield(p0,'show') && ~isempty(p0.show) && p0.show>0 %display only
     paout='dummy_path';
 end
     
@@ -419,28 +479,38 @@ dh=dh(:,is);
 % if 1 %% full parameterview
 %     id=selector2(d,dh);
 % end
-
-%________________________________________________
+%% ----internal animal-unifier-----
+if 1
+    intnumUni=unique(d(:,1),'stable');
+    [~,ia ]=ismember(d(:,1),intnumUni);
+    intnum=cellfun(@(a){[ num2str(a) ]} ,num2cell(ia));
+    dh=['set ' dh];
+    d=[intnum d];
+end
+%% ________________________________________________
 
 cc1=['us=get(gcf,''userdata'');'...
     'lb1=findobj(gcf,''tag'',''lb1'');'...
     'va=min(get(lb1,''value''));'...
-    'fname=us.raw{va,10};'...
+    'fname=us.raw{va,11};'...
     'explorer(fileparts(fname));'  ];
 cc2=['us=get(gcf,''userdata'');'       'lb1=findobj(gcf,''tag'',''lb1'');'...
-    'va=min(get(lb1,''value''));'          'fname=us.raw{va,10};'...
+    'va=min(get(lb1,''value''));'...       
+    'fname=us.raw{va,11};'...
     'tx=preadfile(strrep(fname,''2dseq'',''visu_pars''));'...
     'if  us.showinbrowser==0; uhelp([{'' #yg VISU_PARS ''}; tx.all  ], 1);   set(findobj(gcf,''tag'',''txt''),''backgroundcolor'',''w'');'...
     'else   ;r=tx.all; e=[''<html><pre>'' ;r ;''</pre></html>'']; hfile=''____deleteMeSoon.html'' ;pwrite2file2(hfile,e,[]); eval([''! start  '' hfile]);'...
     'end;'];
 cc3=['us=get(gcf,''userdata'');'       'lb1=findobj(gcf,''tag'',''lb1'');'...
-    'va=min(get(lb1,''value''));'          'fname=us.raw{va,10};'...
+    'va=min(get(lb1,''value''));'...
+    'fname=us.raw{va,11};'...
     'tx=preadfile(fullfile(fileparts(fileparts(fileparts(fname))),''method''));'...
     'if  us.showinbrowser==0; uhelp([{'' #yg METHOD ''}; tx.all  ], 1);  set(findobj(gcf,''tag'',''txt''),''backgroundcolor'',''w'');'...
     'else   ;r=tx.all; e=[''<html><pre>'' ;r ;''</pre></html>'']; hfile=''____deleteMeSoon.html'' ;pwrite2file2(hfile,e,[]); eval([''! start  '' hfile]);'...
     'end;'];
 cc4=['us=get(gcf,''userdata'');'       'lb1=findobj(gcf,''tag'',''lb1'');'...
-    'va=min(get(lb1,''value''));'          'fname=us.raw{va,10};'...
+    'va=min(get(lb1,''value''));' ...
+    'fname=us.raw{va,11};'...
     'tx=preadfile(fullfile(fileparts(fileparts(fileparts(fname))),''acqp''));'...
     'if  us.showinbrowser==0; uhelp([{'' #yg ACQP ''}; tx.all  ], 1);   set(findobj(gcf,''tag'',''txt''),''backgroundcolor'',''w'');'...
     'else   ;r=tx.all; e=[''<html><pre>'' ;r ;''</pre></html>'']; hfile=''____deleteMeSoon.html'' ;pwrite2file2(hfile,e,[]); eval([''! start  '' hfile]);'...
@@ -448,7 +518,7 @@ cc4=['us=get(gcf,''userdata'');'       'lb1=findobj(gcf,''tag'',''lb1'');'...
 cc5=['us=get(gcf,''userdata'');'...
     'lb1=findobj(gcf,''tag'',''lb1'');'...
     'va=min(get(lb1,''value''));'...
-    'fname=us.raw{va,10};'...
+    'fname=us.raw{va,11};'...
     'montage2(fname);'  ];
 
 
@@ -459,17 +529,17 @@ cm={'open folder  [1].[].shortcut', cc1
     'show VOLUME  [5]', cc5};
 
 %% =============[visualize only]==================================
-if isfield(p0,'show')==1 && isfield(p0,'flt')==0
-    disp('..');
-    cprintf('*[0 .5 .8]',[' BRUKER DATA ...no data imported,.. display only  \n']);
-    if p0.show==1
-        disp(char(plog([],[dh; d],0,'BRUKER DATA ','al=1')));
-    elseif p0.show==2
-        uhelp(plog([],[dh; d],0,'BRUKER DATA ','al=1'));
-    end
-    
-    return
-end
+% if isfield(p0,'show')==1 && isfield(p0,'flt')==0
+%     disp('..');
+%     cprintf('*[0 .5 .8]',[' BRUKER DATA ...no data imported,.. display only  \n']);
+%     if p0.show==1
+%         disp(char(plog([],[dh; d],0,'BRUKER DATA ','al=1')));
+%     elseif p0.show==2
+%         uhelp(plog([],[dh; d],0,'BRUKER DATA ','al=1'));
+%     end
+%     
+%     return
+% end
 %% ===========[ GUI: file selection]========================
 disp(' ');
 if p0.gui==1 %with open gui otherwise import all files
@@ -486,18 +556,18 @@ if p0.gui==1 %with open gui otherwise import all files
         id=selector2(d,dh,'iswait',1,'contextmenu',cm,'finder',1);
     end
 %     if isempty(id);
-%         
-%         return; 
+%
+%         return;
 %     end
 else
-   
+    
     
     if isfield(p0,'flt') && ~isempty(p0.flt) %FILTER OPTION
         id=filterfiles(d,dh,p0);
     else
         id=[1:size(d,1)]';
     end
-  
+    
     
 end
 
@@ -513,13 +583,20 @@ if id==-1
 end
 
 %% =============[visualize only]==================================
-if isfield(p0,'show')==1 && isfield(p0,'flt')==1 && p0.show~=0
+% if isfield(p0,'show')==1 && isfield(p0,'flt')==1 && p0.show~=0
+if isfield(p0,'show')==1 && p0.show~=0
     disp('..');
     cprintf('*[0 .5 .8]',[' BRUKER DATA ...no data imported,.. display only  \n']);
     if p0.show==1
         disp(char(plog([],[dh; d(id,:)],0,'BRUKER DATA ','al=1')));
     elseif p0.show==2
         uhelp(plog([],[dh; d(id,:)],0,'BRUKER DATA ','al=1'));
+    end
+    if nargout==1
+        out.info='display only';
+        out.hd=dh;
+        out.d =d(id,:);
+        varargout{1}=out;
     end
     
     return
@@ -623,6 +700,17 @@ mkdir(paout);
 if showgui==1
     h = waitbar(0,'Please wait...');
 end
+%% ===============================================
+% PARAMETER-OUTPUT __
+%   if nargout==1
+out.info='bruker-imported files';
+out.hd=dh;
+out.d =d(id,:);
+
+out.raw     =files;
+out.nifti   =repmat({''},[size(files,1) 1]);
+out.success =repmat(0,[size(files,1) 1]);
+out.errmsg  =repmat({''},[size(files,1) 1]);
 for i=1:size(files,1)
     
     try
@@ -677,6 +765,15 @@ for i=1:size(files,1)
         
         % FULLPATH-FILENAME
         fpname=fullfile(outdir, fname );
+        % add prefix
+        if isfield(p0,'prefix') && ischar(p0.prefix)
+           fpname= stradd(fpname,p0.prefix,1);
+        end
+        % add suffix
+        if isfield(p0,'suffix') && ischar(p0.suffix)
+           fpname= stradd(fpname,p0.suffix,2);
+        end
+        
         %disp([pnum(i,4) '] create <a href="matlab: explorer('' ' outdir '  '')">' fpname '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(files{i}) '  '')">' files{i}  '</a>']);% show h<perlink
         
         %==============================================================================
@@ -762,16 +859,16 @@ for i=1:size(files,1)
             delete(strrep(fpname,'.nii','.mat')) ; %% delete helper.mat
         end
         fclose('all');
-        
-        % if 1
-        %     w=Visu;g=struct2list(w);uhelp([{[ ' #yg ' fname]}; g],1) ;
-        % end
+
+        out.success(i,1)=1; %succesfull;
+        out.nifti{i,1}=fpname; %write filename to output-struct;
         
         %% SUCCESS
         disp([pnum(i,4) '] create <a href="matlab: explorer('' ' outdir '  '')">' fpname '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(files{i}) '  '')">' files{i}  '</a>']);% show h<perlink
         
     catch
  
+        out.errmsg{i,1}=regexprep(lasterr,char(10),'; ');
         %% ERROR
         try ;      protoc=bh.v.VisuAcquisitionProtocol; catch; protoc='??'; end
         er=[  [' [' dh{1} '] ' dx{i,1}  ]  [' [protocol] ' protoc  ] ];
@@ -792,6 +889,7 @@ for i=1:size(files,1)
             delete(strrep(fpname,'.nii','.mat')) ; %% delete helper.mat
         end
         fclose('all');
+        out.nifti{i,1}='error'; %write filename to output-struct;
     end
     
     
@@ -799,11 +897,18 @@ for i=1:size(files,1)
     
 end%i
 if showgui==1
-    close(h)
+    close(h);
 end
 
-makebatch(z,pain,trmb,sequence)
-pause(.5)
+%% ==========output-vsriable =====================================
+
+if nargout==1
+    varargout{1}=out;
+end
+
+
+makebatch(z,pain,trmb,sequence);
+pause(.5);
 drawnow;
 try; antcb('update');end
 fprintf('[BrukerImport Done!]\n');
@@ -938,24 +1043,71 @@ id=[];
 % p0.flt={'si'    '>20 & <30'}
 % p0.flt={'si'    '>1.7 & <1.8'}
 
-
-
-
-ic=regexpi2(dh,p0.flt{1}); %GET COLUMN(S)
-
-for i=1:length(ic)
-    if length(regexpi(p0.flt{2},'>|<'))>0
-        siMB=str2num(char(d(:,ic(i))));
-        if length(regexpi(p0.flt{2},'>|<'))==1
-            nid=find(eval(['siMB' p0.flt{2}]));
-        else
-            nid=find(eval(['siMB' regexprep(p0.flt{2},'&', '&siMB') ]));
-        end   
-        
+%% ===============================================
+if numel(p0.flt)==1
+    id=[1:size(d,1)];
+else
+    if length(p0.flt)==2
+        flt=p0.flt;
     else
-        nid=regexpi2(d(:,ic(i)),p0.flt{2});
+        %flt=reshape(p0.flt(:)',  [length(p0.flt(:))/2  2 ])';
+        flt=reshape(p0.flt(:),  [2 length(p0.flt(:))/2  ])';
     end
-    id=[id; nid(:)];
+    % select specific sets based on as numeric array
+    iset=strcmp(flt(:,1),'set');
+    if ~isempty(iset)
+        if isnumeric(flt{iset,2})
+          flt{iset,2}=  strjoin(cellfun(@(a){[ num2str(a) ]} ,num2cell(flt{iset,2})),'|');
+        end
+    end
+    
+    
+    uw=zeros(size(d,1),size(flt,1) );
+    id=[];
+    for j=1:size(flt,1)
+        dfl=flt(j,:);
+        ic=regexpi2(dh,dfl{1}); %GET COLUMN(S)
+        id0=[];
+        for i=1:length(ic)
+            if length(regexpi(dfl{2},'>|<'))>0
+                siMB=str2num(char(d(:,ic(i))));
+                if length(regexpi(dfl{2},'>|<'))==1
+                    nid=find(eval(['siMB' dfl{2}]));
+                else
+                    nid=find(eval(['siMB' regexprep(dfl{2},'&', '&siMB') ]));
+                end
+                
+            else
+                nid=regexpi2(d(:,ic(i)),dfl{2});
+            end
+            id0=[id0; nid(:)];
+        end
+        uw(id0,j)=1;
+    end
+    id=find(sum(uw,2)==size(uw,2));
+end
+
+
+%% ===============================================
+
+%========[old]===========================================================================================
+if 0
+    ic=regexpi2(dh,p0.flt{1}); %GET COLUMN(S)
+    
+    for i=1:length(ic)
+        if length(regexpi(p0.flt{2},'>|<'))>0
+            siMB=str2num(char(d(:,ic(i))));
+            if length(regexpi(p0.flt{2},'>|<'))==1
+                nid=find(eval(['siMB' p0.flt{2}]));
+            else
+                nid=find(eval(['siMB' regexprep(p0.flt{2},'&', '&siMB') ]));
+            end
+            
+        else
+            nid=regexpi2(d(:,ic(i)),p0.flt{2});
+        end
+        id=[id; nid(:)];
+    end
 end
 
 % d(id,:)

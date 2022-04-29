@@ -1,15 +1,19 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   28 Apr 2022 (13:43:07)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   29 Apr 2022 (08:23:36)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**29 Apr 2022 (08:23:36)**</ins>  
+   __[xbruker2nifti.m]__: command line support was exteded (file filter options)  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Apr 2022 (13:43:07)**</ins>  
    __[DTIprep.m]__: prepare data for DTI-processing via Mrtrix. Ideally DTI-processing could start  
   - added check and reordering optin for b-table & DWI-files  
   &#8618; access via ANT-menu: &#8658; Statistic/DTIprep for mrtrix.  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**27 Apr 2022 (17:30:24)**</ins>  
    __[xbruker2nifti.m]__: now supports comandline mode (silent/no GUI) with filter option  
