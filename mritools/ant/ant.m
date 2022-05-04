@@ -1,14 +1,49 @@
 
 
 % #b [ANT]-TOOLBOX MAIN GUI
-% #wg                                                                   #k
-% #wg              *         *      *   * * * * * *                     #k
-% #wg            *   *       * *    *        *                          #k
-% #wg           *     *      *  *   *        *                          #k
-% #wg          * * * * *     *   *  *        *                          #k
-% #wg         *         *    *    * *        *                          #k
-% #wg        *           *   *      *        *     2017, v1.0           #k
-% #wg                                                                   #k
+% type "ant" to open the ANT-GUI
+% FOR INFORMATION/HELP SEE TUTORIALS: https://chariteexpmri.github.io/antxdoc/
+% ANIMAL-TEMPLATES CAN BE FOUND HERE: https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
+% see also GITHUB-PROJECT: https://github.com/ChariteExpMri/antx2
+% 
+% ==============================================
+%%   create project-file
+% ===============================================
+% create project-file (m-file) via: ANT-menu: Main/new project
+%  -in the "settings"-window add the path of the target template (path of your animal template) in field "x.wa.refpath"
+%     example: on my system the ANIMAL-TEMPLATE "mouse_Allen2017HikishimaLR" (mouse template) is stored here:
+%     "f:\anttemplates\mouse_Allen2017HikishimaLR"
+% ==============================================
+%%   load a project
+% ===============================================
+% 
+%  -via [loadproj]-button, or
+%  -via cmd: antcb('load', 'yourprojectfile.m'); where 'yourprojectfile.m' is the created project-file (m-file)
+% 
+% ==============================================
+%%  close GUI
+% ===============================================
+% antcb('close');
+% 
+% 
+% ==============================================
+%%   NO GUI OPTION
+% not finished project, mosts functions needs to be adapted
+% ...not done yet.. 
+% ===============================================
+% -CREATE A PROJECT-FILE WITHOUT GUI: HERE THE PROJECTFILE "proj2.m" IS CREATED USING A VOXELSIZE
+%  OF [.07 .07 .07] mm, and the ANIMAL-TEMPLATE "mouse_Allen2017HikishimaLR" is used, with species 'mouse'
+%  makeproject('projectname',fullfile(pwd,'proj2.m'), 'voxsize',[.07 .07 .07],'wa_refpath','F:\anttemplates\mouse_Allen2017HikishimaLR','wa_species','mouse')
+% -LOAD A PROJECT-FILE "proj.m" WITHOUT GUI:
+%  loadconfig(fullfile(pwd,'proj.m'));
+% -CHECK GLOBAL VARAIBLE "an"
+%  global an
+% 
+% 
+% 
+% 
+% other help: see antcb
+
 
 
 % #k

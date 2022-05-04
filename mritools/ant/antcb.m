@@ -74,7 +74,7 @@ end
 if strcmp(do, 'watchfile');     watchfile(input2); end
 if strcmp(do, 'watchfile?');    watchfile('?')  ; end
 
-if strcmp(do,'selectdirs')  ;   varargout=selectdirs(input2);  end
+if strcmp(do,'selectdirs')  ;   varargout=selectdirs(input2,nargout);  end
 if strcmp(do,'selectdirs?') ;   varargout=selectdirs('?');    end
 if strcmp(do,'helpfun') ;       helpfun(input2{2});    end
 
@@ -1471,7 +1471,17 @@ global an
 lb3=findobj(findobj(0,'tag','ant'),'tag','lb3');
 %li=get(lb3,'string');
 
-paths=an.mdirs;
+if isfield(an,'mdirs')==1
+    paths=an.mdirs;
+else
+    tempdir = spm_select('FPList',an.datpath,'dir');
+    if isempty(tempdir)
+        an.mdirs=[];
+    else
+        an.mdirs=cellstr(tempdir);
+    end
+    paths=an.mdirs;
+end
 % %% remove 'deselected' files
 % [pathstr, name, ext] = fileparts2(paths);
 % paths(regexpi2(name,'^_'))=[];
@@ -1828,7 +1838,7 @@ end
 
 
 
-function out=selectdirs(input);
+function out=selectdirs(input, nargoutCaller);
 out{1}=[];
 if ischar(input) && strcmp(input,'?')
     '###'
@@ -1876,6 +1886,30 @@ end
 % antcb('selectdirs',{'MMRE_age_20w_mouse5_cage6_13122017'}); %select this directory
 % antcb('selectdirs',{'MMRE_age_20w_mouse5_cage6_13122017'
 %                     'MMRE_age_20w_mouse5_cage6_13122017'}); %select several directories by list
+%-------------
+%% OPTIONAL OUTPUTS arguments (up to 4)
+% 1st out-arg: fullpath list of selected animal-folders {cell}
+% 2nd out-arg: list of selected animals {cell}
+% 3rd out-arg: fullpath list of selected animal-folders {cell}, Matlab-style with curlies
+% 4th out-arg: list of selected animals {cell}, Matlab-style with curlies
+% example: select the 1st two animals and obtain output variab\s
+% [r1 r2 r3 r4]=antcb('selectdirs',[1 2])
+% r1 = 
+%     'F:\data5\nogui\dat\1001_a1'
+%     'F:\data5\nogui\dat\1001_a2'
+% r2 = 
+%     '1001_a1'
+%     '1001_a2'
+% r3 = 
+%     '{'
+%     '  'F:\data5\nogui\dat\1001_a1''
+%     '  'F:\data5\nogui\dat\1001_a2''
+%     '};'
+% r4 = 
+%     '{'
+%     '  '1001_a1''
+%     '  '1001_a2''
+%     '};
 % ================================================================================
 % ## selectdirs (anker)
 global an
@@ -1891,6 +1925,12 @@ hfig=findobj(0,'tag','ant');
 lb3=findobj(hfig,'tag','lb3'); %get mouse folder
 li=get(lb3,'string');
 
+usegui=1;
+if isempty(hfig) && isempty(lb3)
+    usegui=0;
+    li=an.mdirs;
+end
+
 % md    = regexprep(strrep(li,'<html>',''),'<font.*','');   %mouseDirs
 % fp    = stradd(md,[an.datpath filesep],1);                %fullpath mouseDirs
 
@@ -1899,9 +1939,11 @@ px=fileparts(fp{1});
 md=strrep(fp,[px filesep],'');
 
 if strcmp(input{1},'all')
-    set(lb3,'value',[1:length(li)])
+    iselect=[1:length(li)];
+    set(lb3,'value',iselect);
 elseif strcmp(input{1},'none')
-    set(lb3,'value',[]);
+    iselect=[];
+    set(lb3,'value',iselect);
     
 elseif isnumeric(input{1})
     del=setdiff(input{1},[1:length(li)]);
@@ -1909,7 +1951,8 @@ elseif isnumeric(input{1})
     if ~isempty(del)
         disp(['could not found following mouse-indices: ' regexprep(num2str(del(:)'),'\s+',';')]);
     end
-    set(lb3,'value',isect);
+    iselect=isect;
+    set(lb3,'value',iselect);
 % elseif ~isempty(strfind(char(input{1}),'.nii') )
 elseif strcmp(input{1},'file')
     %% =================find file(s) in folder ===========
@@ -1939,19 +1982,19 @@ elseif strcmp(input{1},'file')
         oper='and';
     end
     
-    sel=[];
+    iselect=[];
     if strcmp(oper,'and')        || strcmp(oper,'&')
-      sel=find(t_and);
+      iselect=find(t_and);
     elseif strcmp(oper,'or')     || strcmp(oper,'|')
-     sel=find(t_or);
+     iselect=find(t_or);
     elseif strcmp(oper,'andnot') || strcmp(oper,'~&') || strcmp(oper,'not')
-      sel=find(t_andnot);
+      iselect=find(t_andnot);
     elseif strcmp(oper,'ornot')  || strcmp(oper,'~|')
-     sel=find(t_ornot);
+     iselect=find(t_ornot);
     end
      
     %disp(sel)
-    set(lb3,'value',sel);
+    set(lb3,'value',iselect);
    
     %% ===============================================
     
@@ -1977,7 +2020,8 @@ else
             end
             is=is2;
         end
-        set(lb3,'value',find(is==1)) ;
+        iselect=find(is==1);
+        set(lb3,'value',iselect) ;
     else
         
         if length(input)==1; input{2}='find'   ; end
@@ -1988,8 +2032,12 @@ else
             if exist(fi{i})==2;  is(i)=1;end
         end
         
-        if     strcmp(input{2}, 'find');   set(lb3,'value',find(is==1))     ;
-        elseif strcmp(input{2}, 'not' );   set(lb3,'value',find(is==0))     ;
+        if     strcmp(input{2}, 'find');  
+            iselect=find(is==1);
+            set(lb3,'value',iselect)     ;
+        elseif strcmp(input{2}, 'not' );   
+            iselect=find(is==0);
+            set(lb3,'value',iselect)     ;
         end
     end
     % elseif iscell(input{2})
@@ -2002,14 +2050,34 @@ else
     
 end
 
+if usegui==1;
+    li2=get(lb3,'string');
+    va2=get(lb3,'value');
+    index=va2;
+else %using NOGUI
+    index=iselect;
+end
+% md    = regexprep(strrep(li2(va2),'<html>',''),'<font.*','');   %mouseDirs
+% fp    = stradd(md,[an.datpath filesep],1);                %fullpath mouseDirs
+% matmd =['{';stradd(stradd(md,'     ''',1),'''',2) ; '};'];%mouseDirs matlabcell
+% matfp =['{';stradd(stradd(fp,'     ''',1),'''',2) ; '};'];%fullpath mouseDirs matlabcell
+
+%% ============[output]===================================
 
 
-li2=get(lb3,'string');
-va2=get(lb3,'value');
-md    = regexprep(strrep(li2(va2),'<html>',''),'<font.*','');   %mouseDirs
-fp    = stradd(md,[an.datpath filesep],1);                %fullpath mouseDirs
-matmd =['{';stradd(stradd(md,'     ''',1),'''',2) ; '};'];%mouseDirs matlabcell
-matfp =['{';stradd(stradd(fp,'     ''',1),'''',2) ; '};'];%fullpath mouseDirs matlabcell
+sel_mdirFP=fp(index);
+[~,sel_mdir]=fileparts2(sel_mdirFP);
+sel_mdirFPcell=[{'{'}; cellfun(@(a){['  ''' a  '''' ]} ,sel_mdirFP)  ;{'};'}];
+sel_mdircell=[{'{'}; cellfun(@(a){['  ''' a  '''' ]} ,sel_mdir)  ;{'};'}];
+
+
+out={sel_mdirFP sel_mdir sel_mdirFPcell sel_mdircell};
+if nargoutCaller==0
+    out={};
+else
+    out=out(1:nargoutCaller);
+end
+%% ===============================================
 
 
 hgfeval(get(lb3,'callback'),lb3);
@@ -2018,7 +2086,7 @@ hgfeval(get(lb3,'callback'),lb3);
 % hgfeval(hc,hl)
 
 % out={md fp matmd matfp};
-out={};
+% out={};
 
 
 function out=checkProjectfile;
