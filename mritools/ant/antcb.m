@@ -1867,7 +1867,12 @@ end
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'|');   %same as previous line
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'ornot'); %select all dirs not containing either 't2.nii' or 'x_t2.nii'
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'~|');    %same as previous line
+%
+%% example: select only those animals tha contain all of the following files: 'NI_b100.nii','NI_b900.nii','NI_b1600.nii' and 'NI_b2500.nii'
+% antcb('selectdirs','file',{'NI_b100.nii' 'NI_b900.nii' 'NI_b1600.nii' 'NI_b2500.nii'},'and');
 % 
+% 
+% by ANIMAL-NAME 
 % antcb('selectdirs',{'MMRE_age_20w_mouse5_cage6_13122017'}); %select this directory
 % antcb('selectdirs',{'MMRE_age_20w_mouse5_cage6_13122017'
 %                     'MMRE_age_20w_mouse5_cage6_13122017'}); %select several directories by list
