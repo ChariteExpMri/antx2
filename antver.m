@@ -563,9 +563,12 @@
 % #ba 29 Apr 2022 (08:23:36)
 % #k [xbruker2nifti.m]: #n command line support was exteded (file filter options)
 % 
+% #ba 04 May 2022 (14:53:04)
+% antcb('selectdirs') command extended using filesearch-operation
+% example:  antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'or');  %select all dirs containing either 't2.nii' or 'x_t2.nii'      
 % 
 % 
-
+% 
 %% ===============================================
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

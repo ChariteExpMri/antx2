@@ -1,13 +1,24 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   29 Apr 2022 (08:23:36)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   04 May 2022 (14:53:04)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**04 May 2022 (14:53:04)**</ins>  
+  antcb('selectdirs') command extended using filesearch-operation  
+  example:  antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'or');  %select all dirs containing either 't2.nii' or 'x_t2.nii'        
+    
+    
+    
+ % ===============================================  
+ ----- EOF  
+  make antvermd for GIT: antver('makeantver')  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**29 Apr 2022 (08:23:36)**</ins>  
    __[xbruker2nifti.m]__: command line support was exteded (file filter options)  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**28 Apr 2022 (13:43:07)**</ins>  
    __[DTIprep.m]__: prepare data for DTI-processing via Mrtrix. Ideally DTI-processing could start  

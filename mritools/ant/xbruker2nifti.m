@@ -722,6 +722,8 @@ p={...
     'ExpNo_File'     0        'VisuExperimentNumber (parent folder of "pdata"),(bool)'  'b'
     'PrcNo_File'     1        'VisuProcessingNumber/ReconstructionNumber(subfolder of "pdata"),(bool)'  'b'
     'renameFiles'   ''   'rename files   -->via GUI'  {@renamefiles,protocol,[]}
+    'prefix'        ''   'add prefix to filename' {'NI_' [regexprep(datestr(now),{':' ' '},'_') '_'] ''}
+    'suffix'        ''   'add suffix to filename' {'_NI' ['_' regexprep(datestr(now),{':' ' '},'_')] ''}
     %
     'inf300'      [repmat('=',[1,100])]                                    ''  ''
     'inf32'      '  [3] ADDITIONAL OPTIONS       '                                    ''  ''
@@ -735,12 +737,19 @@ else
     showgui=0;
 end
 
+if isfield(p0,'prefix')==1; x.prefix=p0.prefix  ; end
+if isfield(p0,'suffix')==1; x.suffix=p0.suffix  ; end
+
 p=paramadd(p,x);%add/replace parameter
 if showgui==1
     [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .8 .6 ],...
         'title','BrukerImport');
 else
     z=param2struct(p);
+end
+if isempty(z); 
+%     cprintf([0 .5 .8],[' ..user abort!  \n']);
+    return
 end
 fn=fieldnames(z);
 z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
@@ -756,6 +765,17 @@ if ~isempty(z.renameFiles) && ~isempty(char(z.renameFiles));
     tbrename=[tbrename; rest];
 end
 tbrename(:,2)=regexprep(tbrename(:,2),{'[\s&$%,\\.;:()[]{}<>"!?=/}@#+*]'},{''});%PRUNE
+
+% ==============================================
+%%   some more variables to assign
+% ===============================================
+if ~isempty(char(z.prefix))
+    p0.prefix=char(z.prefix);
+end
+if ~isempty(char(z.suffix))
+    p0.suffix=char(z.suffix);
+end
+
 
 
 

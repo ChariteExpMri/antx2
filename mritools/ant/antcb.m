@@ -1840,12 +1840,34 @@ end
 % SELECTDIRS - SELECT MOUSE DIRECTORIES in ANT-GUI:
 %  specify either (all dirs),(via id),(via existing/nonexisting file within folder) or (from list)
 % EXAMPLES:
-% [md FPmd matmd matFPmd]=antcb('selectdirs')          ;%select all directories
+% antcb('selectdirs')          ;%select all directories
 % antcb('selectdirs','all');                          ;%(same as above )select all directories
+% antcb('selectdirs','none');                         ;%select no animal folder (deselect all)
 % antcb('selectdirs',[1 2]);                          ;%select directories 1 and 2 (selected by index)
-% antcb('selectdirs','LWE.nii','find');               ;%select all directories that contains a "LWE.nii" file
-% antcb('selectdirs','LWE.nii');                      ;%(same as above) select all directories that contains a "LWE.nii"
-% antcb('selectdirs','LWE.nii','not');                ;%select all directories not containing "LWE.nii"
+% 
+%% select dirs containing or not containing specific files
+% 1st arg: 'selectdirs'
+% 2nd arg: 'file'
+% 3rd arg: one or more filenames; as cell for multiple files to search, otherwise char
+% 4rd arg: optional, the operator  
+%         'and'    (or '&')     all files must exist in folder
+%         'or'     (or '|')     one of the files must exist in folder
+%         'andnot' (or '~&')    all files must not exist in folder       
+%         'or'     (or '~|')    one of the files must not exist in folder
+% --------------------
+% antcb('selectdirs','file',{'t2.nii'});          % select all dirs containing the file"t2.nii"
+% antcb('selectdirs','file',{'x_t2.nii'},'not');  % select all dirs not containing the file"x_t2.nii
+% 
+% antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'and');   %select all dirs containing both 't2.nii' and 'x_t2.nii'
+% antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'&');     %same as previous line
+% antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'andnot');%select all dirs not containing both 't2.nii' and 'x_t2.nii'
+% antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'~&');    %same as previous line
+% 
+% antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'or');  %select all dirs containing either 't2.nii' or 'x_t2.nii'
+% antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'|');   %same as previous line
+% antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'ornot'); %select all dirs not containing either 't2.nii' or 'x_t2.nii'
+% antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'~|');    %same as previous line
+% 
 % antcb('selectdirs',{'MMRE_age_20w_mouse5_cage6_13122017'}); %select this directory
 % antcb('selectdirs',{'MMRE_age_20w_mouse5_cage6_13122017'
 %                     'MMRE_age_20w_mouse5_cage6_13122017'}); %select several directories by list
@@ -1856,7 +1878,7 @@ global an
 input=input(2:end);
 
 if  isempty(input)
-    input{1}='all'
+    input{1}='all';
 end
 % if isempty(input); input{1}='all'  ; end
 
@@ -1873,6 +1895,9 @@ md=strrep(fp,[px filesep],'');
 
 if strcmp(input{1},'all')
     set(lb3,'value',[1:length(li)])
+elseif strcmp(input{1},'none')
+    set(lb3,'value',[]);
+    
 elseif isnumeric(input{1})
     del=setdiff(input{1},[1:length(li)]);
     isect=intersect(input{1},[1:length(li)]);
@@ -1881,6 +1906,50 @@ elseif isnumeric(input{1})
     end
     set(lb3,'value',isect);
 % elseif ~isempty(strfind(char(input{1}),'.nii') )
+elseif strcmp(input{1},'file')
+    %% =================find file(s) in folder ===========
+  
+    if ischar(input{2})
+        files={input{2}};
+    else
+        files=input{2};
+    end
+    isexist=zeros(size(fp,1), length(files));
+    for i=1:length(fp)
+        for j=1:length(files)
+            if exist(fullfile(fp{i},files{j}))==2
+               isexist(i,j)=1; 
+            end
+        end
+    end
+    t_and=sum(isexist,2)==size(isexist,2);
+    t_or =any(isexist,2);
+     
+    t_andnot= sum(isexist,2)==0;
+    t_ornot= sum(isexist,2)<size(isexist,2);
+    
+    try
+        oper=input{3};
+    catch
+        oper='and';
+    end
+    
+    sel=[];
+    if strcmp(oper,'and')        || strcmp(oper,'&')
+      sel=find(t_and);
+    elseif strcmp(oper,'or')     || strcmp(oper,'|')
+     sel=find(t_or);
+    elseif strcmp(oper,'andnot') || strcmp(oper,'~&') || strcmp(oper,'not')
+      sel=find(t_andnot);
+    elseif strcmp(oper,'ornot')  || strcmp(oper,'~|')
+     sel=find(t_ornot);
+    end
+     
+    %disp(sel)
+    set(lb3,'value',sel);
+   
+    %% ===============================================
+    
 else
     if ischar(input{1})==1
         input{1}=cellstr(input{1});
