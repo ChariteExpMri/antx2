@@ -1,0 +1,31 @@
+
+=====================================
+ SET PATH OF ELASTIC IN .bashrc-FILE
+=====================================
+see: elastix-manual (section 3.2)
+see: https://usermanual.wiki/Document/elastix490manual.1389615963/html#pf17
+
+Linux: Add the following lines to your .bashrc file:
+------------------------------------------------------
+export PATH=folder/bin:$PATHexport
+LD_LIBRARY_PATH=folder/lib:$LD_LIBRARY_PATH
+-----------
+...where "folder" is the path to the linux-elastix-folder (which is within the antx2-folder):
+EXAMPLE:
+my linux-elastix-folder is "/sc-projects/sc-proj-agtiermrt/Daten-2/ressources/antx2/mritools/elastix/elastix_linux64_v4.7/"
+thus in my .bahrc-file it states: 
+#--------------------------[ELASTIX-PATH in bashrc]-----------------------------------------------
+export PATH=/sc-projects/sc-proj-agtiermrt/Daten-2/ressources/antx2/mritools/elastix/elastix_linux64_v4.7/bin:$PATH
+export LD_LIBRARY_PATH=/sc-projects/sc-proj-agtiermrt/Daten-2/ressources/antx2/mritools/elastix/elastix_linux64_v4.7/lib:$LD_LIBRARY_PATH
+#-------------------------------------------------------------------------------------------------
+
+#when done, save .bashrc-file, exit editor, than type the following to execute the .bashrc-file again:
+source .bashrc
+# check installation, by typing:
+elastix
+ -->  if successfull you will the folowing:
+Use "elastix --help" for information about elastix-usage.
+
+
+
+
