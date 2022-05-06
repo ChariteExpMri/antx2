@@ -1455,15 +1455,17 @@ end
 % end
 
 %% remove path which are taken out from analysis
-li=get(lb3,'string');
-pathshtml=li(va);
-if ~isempty(pathshtml)
-    del=regexpi2(pathshtml,'</s>');
-else
-    del=[];
+try
+    li=get(lb3,'string');
+    pathshtml=li(va);
+    if ~isempty(pathshtml)
+        del=regexpi2(pathshtml,'</s>');
+    else
+        del=[];
+    end
+    pathshtml(del)=[];
+    paths(   del)=[];
 end
-pathshtml(del)=[];
-paths(   del)=[];
 
 
 function paths=getallsubjects
