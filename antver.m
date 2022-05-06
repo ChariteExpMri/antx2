@@ -567,8 +567,15 @@
 % antcb('selectdirs') command extended using filesearch-operation
 % example:  antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'or');  %select all dirs containing either 't2.nii' or 'x_t2.nii'      
 % 
+% #ba 06 May 2022 (14:17:26)
+% #k [updateantx.m]: #n noGUI-update/install function for antx-project via GITHUB (no graphical userinterface)
+% -type "updateantx(2)" to just update local antx-toolbox
+% -see help of updateantx.m for more information
 % 
 % 
+
+
+
 %% ===============================================
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

@@ -113,6 +113,11 @@ function count = cprintf(style,format,varargin)
 % Programmed and Copyright by Yair M. Altman: altmany(at)gmail.com
 % $Revision: 1.07 $  $Date: 2012/08/06 13:07:25 $
 
+
+formatBackup=format;
+
+try
+
 warning off;
   persistent majorVersion minorVersion
   if isempty(majorVersion)
@@ -241,6 +246,11 @@ warning off;
       count = count1;
   end
   return;  % debug breakpoint
+  
+catch % no java/GUI-option
+    fprintf(formatBackup);
+end
+  
 
 % Process the requested style information
 function [underlineFlag,boldFlag,style] = processStyleInfo(style)
