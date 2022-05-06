@@ -29,8 +29,11 @@ if exist('code')~=1
     code=1;% check updates
 end
 
-
-
+%% git clone: error setting certificate verify locations #36
+%% https://github.com/scalingexcellence/scrapybook/issues/36
+try
+    git config --global http.sslverify "false"
+end
 
 %% ===============================================
 
