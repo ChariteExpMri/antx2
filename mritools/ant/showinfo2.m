@@ -19,10 +19,9 @@
 
 function showinfo2(msg,im1,im2,colorstr,msg2)
 
-
+isdekstop=usejava('desktop');
 
 if 0
-    
     clear
     msg=' result';
     px='/media/parallels/M/data4/CT_Oelschlegel3/dat/ALinuxtest1';
@@ -37,19 +36,22 @@ end
 [pa fi ext]=fileparts(im1);
 if strcmp(ext,'.nii')==0 ;%~isempty(regexp(im1,'.xls|.xlsx'))
     if exist('msg2')~=1; msg2='';end
-      name=[fi ext];
-      if ispc
-          disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
-              ' or <a href="matlab: system(''start ' im1 ''');">' 'open' '</a>' ' '  msg2 ]);
-      elseif ismac
-          disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
-              ' or <a href="matlab: system(''open ' im1 ''');">' 'open' '</a>' ' '  msg2  ]);
-     elseif isunix
-          disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
-              ' or <a href="matlab: system(''xdg-open ' im1 ''');">' 'open' '</a>'  ' '  msg2 ]);     
-          
-          
-      end
+    name=[fi ext];
+    if isdekstop==1
+        if ispc
+            disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
+                ' or <a href="matlab: system(''start ' im1 ''');">' 'open' '</a>' ' '  msg2 ]);
+        elseif ismac
+            disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
+                ' or <a href="matlab: system(''open ' im1 ''');">' 'open' '</a>' ' '  msg2  ]);
+        elseif isunix
+            disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
+                ' or <a href="matlab: system(''xdg-open ' im1 ''');">' 'open' '</a>'  ' '  msg2 ]);
+        else
+            disp([msg '[' name ']:' im1 ',' msg2 ]);
+        end
+        
+    end
     return
     
 end
@@ -111,19 +113,24 @@ if ~ isempty(im2)
             if exist('msg2')==0
                 msg2=[' [' name1 ' - ' name2 ']:'];
             end
-            
+           if isdekstop==1 
              disp([msg  msg2 '<a href="matlab: explorerpreselect(''' b.img ''');">' 'Explorer' '</a>' ...
             ' or <a href="matlab: rmricron([],''' a.img ''' ,''' b.img ''', ' colorstr ')">' 'MRicron' '</a>'   ]);
+           else
+               disp([msg msg2 ':"' a.img '","' b.img '"' ]); 
+           end
         else
             name1=a.name;
             name2=b.name;
             if exist('msg2')==0
                 msg2=[' [' name1 ' - ' name2 ']:'];
             end
-            
-                   disp([msg msg2 ' <a href="matlab: explorerpreselect(''' b.img ''');">' 'Explorer' '</a>' ...
-            ' or <a href="matlab: rmricron([],''' a.img ''' ,''' b.img ''', ' colorstr ')">' 'MRicron' '</a>'   ]);
-        
+            if isdekstop==1
+                disp([msg msg2 ' <a href="matlab: explorerpreselect(''' b.img ''');">' 'Explorer' '</a>' ...
+                    ' or <a href="matlab: rmricron([],''' a.img ''' ,''' b.img ''', ' colorstr ')">' 'MRicron' '</a>'   ]);
+            else
+                 disp([msg msg2 ':"' a.img '","' b.img '"' ]); 
+            end
         end
         
        
@@ -137,8 +144,12 @@ if isempty(im2)
         msg2='';
     end
     %SINGLE IMG
-    disp([msg ' [' a.name ']: <a href="matlab: explorerpreselect(''' a.img ''');">' 'Explorer' '</a>' ...
-        ' or <a href="matlab: rmricron([], ''' a.img ''',[], 0)">' 'MRicron' '</a>' ' ' msg2  ]);
+    if isdekstop==1
+        disp([msg ' [' a.name ']: <a href="matlab: explorerpreselect(''' a.img ''');">' 'Explorer' '</a>' ...
+            ' or <a href="matlab: rmricron([], ''' a.img ''',[], 0)">' 'MRicron' '</a>' ' ' msg2  ]);
+    else
+        disp([msg ' [' a.name ']: "' a.img '", ' msg2]);
+    end
 end
 
 

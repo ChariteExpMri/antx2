@@ -407,6 +407,19 @@ atl.tb=tb;
 [atl.hhemi atl.hemi ]  =rgetnii(atl.hemi);   %hemo mask
 [atl.havgt atl.avgt ]  =rgetnii(atl.avgt);   %hemo mask
 
+
+%===================================================================================================
+% ==============================================
+%%   check if atlas has different voxelsize 
+% ===============================================
+if sum((atl.hano.dim-atl.hhemi.dim).^2) ~=0
+    [htemp,dtemp ]=rreslice2target(atl.atlas , atl.hhemi.fname, [], 0,64);
+    htemp.dt=[64 0];
+    atl.hano=htemp;
+    atl.ano=dtemp;
+end
+
+
 %% make RGB COLUME
 atl.anoRGB =rgbvolume(atl.ano,tb);%build RGB volume buildColLabeling2
 
