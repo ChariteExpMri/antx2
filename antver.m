@@ -572,8 +572,11 @@
 % -type "updateantx(2)" to just update local antx-toolbox
 % -see help of updateantx.m for more information
 % 
+% #ba 09 May 2022 (15:52:33)
+% #k [xmaskgenerator.m]: #n implemented reslicing if another atlas is used with a different voxel-size
 % 
-
+% 
+% 
 
 
 %% ===============================================
