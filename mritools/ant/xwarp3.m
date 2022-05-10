@@ -100,6 +100,7 @@ end
 % INPUT:
 %% =========================================================
 warning off;
+isDesktop=usejava('desktop'); % check whether java-desktop is emplemented
 process=upper(mfilename);
 % struct to variables
 if ~isfield(s,'task') || isempty(s.task); s.task=1:4 ;end  %  if  s.task is empty or not declared
@@ -136,7 +137,11 @@ infoc.a2=[ repmat('*',[1 length(infoc.a1)+10]) ];
 showinfo(infoc.a2   ,1,maincol);
 showinfo(infoc.a1   ,1,maincol);
 % showinfo(infoc.a2   ,1);
-disp(['  dir: <a href="matlab: systemopen('' ' s.pa '  '');">' s.pa '</a>']);% show h<perlink
+if isDesktop==1
+    disp(['  dir: <a href="matlab: systemopen('' ' s.pa '  '');">' s.pa '</a>']);% show h<perlink
+else
+    disp(['dir: "' s.pa '" ']);
+end
 
 %templetpath
 s.templatepath=fullfile(fileparts(fileparts(s.pa)),'templates');
