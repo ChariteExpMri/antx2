@@ -624,9 +624,19 @@ if find(s.task==3)
         
         
         if isempty(findobj(0,'tag','Graphics'));
-            spm fmri;drawnow;
+            % DISPLAY_COMMAND_OUTPUT_IN_CMD-WINDOW
+            if isDesktop==1
+                spm fmri;drawnow;
+            else
+                %SOURCE: https://en.wikibooks.org/wiki/SPM/Faster_SPM
+                spm('defaults', 'fmri')
+                %spm_jobman('initcfg')
+                spm_get_defaults('cmdline',true);
+            end
         end
         loadspmmouse;drawnow;
+        
+        
         xsegment(t2,template,s); %
         
         fastsegment(s.pa, 'post','subdir','segm');
