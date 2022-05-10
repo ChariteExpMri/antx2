@@ -689,9 +689,14 @@ if find(s.task==3)
     
     
     img2=fullfile(s.pa,'c1t2.nii');
-    disp([' [' ID '] [' strrep(img2,[s.pa filesep],'') '] segmented <a href="matlab: explorerpreselect(''' img2 ''')">' 'explorer' '</a>' ...
-        ' or <a href="matlab: rmricron([],''' s.t2 ''' ,''' img2 ''', 1,[20 -4])">' 'MRicron' '</a>' ...
-        ]);
+    % DISPLAY_COMMAND_OUTPUT_IN_CMD-WINDOW
+    if isDesktop==1
+        disp([' [' ID '] [' strrep(img2,[s.pa filesep],'') '] segmented <a href="matlab: explorerpreselect(''' img2 ''')">' 'explorer' '</a>' ...
+            ' or <a href="matlab: rmricron([],''' s.t2 ''' ,''' img2 ''', 1,[20 -4])">' 'MRicron' '</a>' ...
+            ]);
+    else
+        disp(['SEGMENTATION: GM,WM CSF were created; [GM]: "' strrep(img2,[s.pa filesep],'') '"; see also WM ("c2t2.nii") and CSF ("c3t2.nii")']);
+    end
     
      %% HTML summary
     hinfo={['processing time: ' secs2hms(toc(timetask))]};
