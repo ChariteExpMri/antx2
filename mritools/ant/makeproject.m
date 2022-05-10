@@ -20,7 +20,9 @@
 % wa_orientelxParamfile   single Parameter file for rough Rigid-body registration; default: "trafoeuler2.txt"; use trafoeuler3.txt for large dislocations
 % wa_elxMaskApproach      used registration approach..click icon for further information
 % wa_elxParamfile         ELASTIX Parameterfiles, fullpath of either Par0025affine.txt+Par0033bspline_EM2.txt  or par_affine038CD1.txt+par_bspline033CD1.txt
-% 
+%
+%% optional output:
+% fullpath-name of the ANTx-project-file (proj.m)
 % 
 %% examples with WITH SPECIFIED PARAMETERS 
 % makeproject('projectname',fullfile(pwd,'projA.m'), 'voxsize',[.07 .07 .07],'wa_refpath','F:\anttemplates\mouse_Allen2017HikishimaLR','wa_species','mouse')
@@ -39,7 +41,7 @@
 %
 
 
-function makeproject(varargin)
+function varargout=makeproject(varargin)
 
 if 0
 
@@ -143,6 +145,12 @@ mkdir(p.datpath);
 if ~isempty(char(msg))
     disp(msg);
 end
+
+if nargout>0
+    varargout{1}=f1;
+end
+
+showinfo2('ANTX-project created', f1);
 
 
 % ==============================================
