@@ -575,9 +575,11 @@
 % #ba 09 May 2022 (15:52:33)
 % #k [xmaskgenerator.m]: #n implemented reslicing if another atlas is used with a different voxel-size
 % 
+% #ba 11 May 2022 (00:08:32)
+% #k [dispfiles.m]: #n display files folderwise in command-window (no GUI)
 % 
 % 
-
+% 
 
 %% ===============================================
 %----- EOF

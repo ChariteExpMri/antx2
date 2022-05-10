@@ -855,7 +855,12 @@ end
 if strcmp(do, 'update')
     fig=findobj(0,'tag','ant');
     global an
-    if isempty(an); disp('no project loaded');return;end
+    if isempty(an) 
+        if ~isempty(findobj(0,'tag','ant'))
+            disp('no project loaded');
+        end
+        return;
+    end
     % [dirx,sts] = spm_select(inf,'dir','select mouse folders',[],an.datpath,'s'); %GUI
     %     [sts dirx] = spm_select('FPlist',an.datpath,'s');
     %     if isempty(dirx); return; end

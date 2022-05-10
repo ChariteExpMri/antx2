@@ -346,11 +346,13 @@ end
 %———————————————————————————————————————————————
 if exist('showgui')==0 || isempty(showgui) ;    showgui=1                ;end
 % if exist('x')==0                           ;    x=[]                     ;end
-if exist('pa')==0      || isempty(pa)      ;    pa=antcb('getsubjects')  ;end
-% if isempty(x) || ~isstruct(x)  ;  %if no params spezified open gui anyway
-%     showgui  =1   ;
-%     x=[]          ;
-% end
+% if exist('pa')==0      || isempty(pa)      ;    pa=antcb('getsubjects')  ;end
+
+if isfield(p0,'mdirs') && ~isempty(char(p0.mdirs))
+    pa=p0.mdirs;
+else
+    pa=antcb('getsubjects')  ;
+end
 
 
 if exist('fi')~=1;
@@ -412,6 +414,8 @@ end
 if isfield(p0,'dirs')==1 %obtain from argin-paths
     pa=p0.dirs;
 end
+if ischar(pa); pa=cellstr(pa); end
+
 v=getuniquefiles(pa);
 
 
@@ -441,7 +445,7 @@ volnum=he(:,3);
 he_aux={};
 recycle('on'); %set recycle-bin to on
 
-for i=1:size(pa,1)      %PATH
+for i=1:length(pa)      %PATH
     for j=1:length(fi)  %FILE
         s1=fullfile(pa{i},fi{j}); %OLD FILENAME
         if exist(s1)==2  %CHK EXISTENCE
@@ -676,44 +680,6 @@ for i=1:size(pa,1)      %PATH
                         else
                             disp(['New IMG ..math operation: ' s2  ]);
                         end
-                        
-                        
-                        %                         else                            % SAME IMAGE IMAGE-OPERATION
-                        %
-                        %
-                        %                            code2=[ regexprep(code,{'(' ,'i'},{'g3(' 'g2'})];
-                        %                             mis=regexprep(strsplit(code2,';')',' ','');
-                        %                             mis(cellfun('isempty' ,mis))=[];
-                        %                             imis=cellfun('isempty' ,regexpi(mis,'g3'));
-                        %                             mis(imis)=cellfun(@(a){['g3=' a]} , mis(imis) );
-                        %                             code2= [strjoin(mis,';') ';'];
-                        %
-                        %                             [ha a ]=rgetnii(s1);
-                        %                             g5=zeros(size(a));
-                        %
-                        %                             for vol=1:size(a,4)
-                        %                                 g1=a(:,:,:,vol);
-                        %                                 si=size(g1);
-                        %                                 g2=g1(:); g3=g2;%zeros(size(g2));
-                        %
-                        %                                 eval([code2 ';']);
-                        %                                 g4=reshape(g3,[si]);
-                        %                                 g5(:,:,:,vol)=g4;
-                        %                             end
-                        %                             %                         try; delete(s2); end
-                        %                             %                         try; ha=rmfield(ha,'pinfo');end
-                        %                             %                            try; ha=rmfield(ha,'dt');end
-                        %                             % %                         ha.pinfo=[1]
-                        %                             %                        try; ha=rmfield(ha,'private');end
-                        %                             if ha.dt(2)==2
-                        %                                 ha.dt(2)=4;
-                        %                             end
-                        %                             delete(s2);
-                        %                             rsavenii(s2,ha,g5);
-                        %                             %[hb b]=rgetnii(s2);unique(b)
-                        %                             disp(['New IMG ..math operation: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
-                        %                                 ]);
-                        %                         end
                     catch
                         disp('problem with math operation');
                         continue
@@ -784,6 +750,7 @@ for i=1:size(pa,1)      %PATH
                     end
                     
                     %% write volume
+                    warning off;
                     if save_separately==0
                         for k = 1 : size(hb,1)
                             hb(k).fname = s2;
@@ -791,7 +758,9 @@ for i=1:size(pa,1)      %PATH
                             spm_create_vol(hb(k));
                             spm_write_vol(hb(k),b(:,:,:,k));
                         end
-                        try; delete( strrep(s2,'.nii','.mat')  ) ;     end
+                        try; 
+                            delete( strrep(s2,'.nii','.mat')  ) ; 
+                        end
                         
                         if isDesktop==1
                             disp(['created: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
@@ -851,7 +820,7 @@ if ~isempty(he_aux)
 else
     z.files=he;
 end
-makebatch(z);
+makebatch(z,p0);
 
 drawnow;
 try
@@ -1508,7 +1477,9 @@ set(ht,'position',ht_pos2)
 %________________________________________________
 %%  batch
 %________________________________________________
-function makebatch(z)
+function makebatch(z,p0)
+%% ===============================================
+
 try
     hlp=help(mfilename);
     hlp=hlp(1:min(strfind(hlp,char(10)))-1);
@@ -1521,20 +1492,77 @@ hh{end+1,1}=('% ======================================================');
 hh{end+1,1}=[ '% BATCH:        [' [mfilename '.m' ] ']' ];
 hh{end+1,1}=[ '% descr:' hlp];
 hh{end+1,1}=('% ======================================================');
-if isempty(z.files{1})
-    hh(end+1,1)={[mfilename '(' '1'  ');' ]};
-elseif size(z.files,2)==2
+
+if ~isstruct(p0)
+    
+    if isempty(z.files{1})
+        hh(end+1,1)={[mfilename '(' '1'  ');' ]};
+    elseif size(z.files,2)==2
+        hh=[hh; 'z=[];' ];
+        z.files=z.files(:,1:2);
+        hh=[hh; struct2list(z)];
+        hh(end+1,1)={[mfilename '(' '1',  ',z.files(:,1),z.files(:,2)' ');' ]};
+    elseif size(z.files,2)==3
+        hh=[hh; 'z=[];' ];
+        hh=[hh; struct2list(z)];
+        hh(end+1,1)={[mfilename '(' '1',  ',z.files(:,1),z.files(:,2),z.files(:,3) ' ');' ]};
+    end
+    
+    %===================================================================================================
+    %% ===============================================
+    
+elseif isstruct(p0)
+     %% ===============================================
+    p0=rmfield(p0,'dummy');
+    z2=catstruct(z,p0);
+    fn=fieldnames(p0);
+    ap={};%additonal parameter
+    for i=1:length(fn)
+        %         va=getfield(p0,fn{i})
+        %         if isnumeric(va);
+        %             va=num2str(va);
+        %         elseif ischar(va)
+        %             va=[ '''' va '''']
+        %         end
+        %addstr= [addstr '''' fn{i} '''' ',' va ];
+        ap{end+1,1}=[ '''' fn{i} ''''];
+        ap{end+1,1}=[ 'z.' fn{i}  ];
+    end
+    if isempty(char(ap))
+        aplist='';
+    else
+          aplist=[ ','  strjoin(ap,',')  ];  
+    end
+
+    % ===============================================
+    
+   
     hh=[hh; 'z=[];' ];
-    z.files=z.files(:,1:2);
-    hh=[hh; struct2list(z)];
-    hh(end+1,1)={[mfilename '(' '1',  ',z.files(:,1),z.files(:,2)' ');' ]};
-elseif size(z.files,2)==3
-    hh=[hh; 'z=[];' ];
-    hh=[hh; struct2list(z)];
-    hh(end+1,1)={[mfilename '(' '1',  ',z.files(:,1),z.files(:,2),z.files(:,3) ' ');' ]};
+    hh=[hh; struct2list2(z2,'z')];
+    
+    reginput={'z.files(:,1)' 'z.files(:,2)' 'z.files(:,3)'};
+    
+    ac=[reginput(1:size(z.files,2)) ...
+        repmat( {'[]'},[1 3-length(reginput(1:size(z.files,2)))])];
+    a1=strjoin(ac,',');
+    
+    isDesktop=usejava('desktop');
+    a2=[ mfilename '(' num2str(isDesktop)  ',' a1 ');' ];
+    hh(end+1,1)={a2};
+    
+    
+    %disp(char(hh));
+    
+    %hh(end+1,1)={[mfilename '(''0',',z.files(:,1),z.files(:,2),z.files(:,3) ' ');' ]};
+    
+    %% ===============================================
+    
 end
+
+
 % disp(char(hh));
 % uhelp(hh,1);
+%% ===============================================
 
 try
     v = evalin('base', 'anth');
