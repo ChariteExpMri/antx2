@@ -575,7 +575,10 @@ if find(s.task==2)
         v=  spm_vol(w1);
         spm_get_space(w1,     (M) * v.mat);
     end
-    cf;
+    %% close figure if manual mode
+    if s.autoreg==0
+        cf;
+    end
     
      %% HTML summary
     hinfo={['processing time: ' secs2hms(toc(timetask))]};
