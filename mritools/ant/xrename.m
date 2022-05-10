@@ -1,6 +1,6 @@
 
 %% #bc [xrename] RENAME/DELETE/EXTRACT/EXPAND/COPY file(s) from selected ant-mousefolders
-% #wb THESE TAKSKS CAN BE PERFORMED IN THE MOMENT:  
+% #wb THESE TAKSKS CAN BE PERFORMED IN THE MOMENT:
 % #b - rename file
 % #b - copy+rename file
 % #b - delete file
@@ -14,7 +14,7 @@
 % - dirs:  works on preselected dirs (not all dirs), i..e mouse-folders in [ANT] have to be selected before
 % - 'newname'-column contains the new filename (file-extension is not needed)
 % - copy   a file: type 'copy' or ':'in the [TASK]-column
-% - delete a file: type '##','del' or 'delete' in the [TASK]-column 
+% - delete a file: type '##','del' or 'delete' in the [TASK]-column
 %                  or type "##" in the '[NEWNAME]-column
 %  - file-deletion: in case of errornous deletion --> deleted files are temporally stored in the recycle-nin
 % __________________________________________________________________________________________________________________
@@ -33,12 +33,12 @@
 %   #r - see warning
 % #k 'copy & rename file' : #n copy and rename selected file(s) ...the file is copied and then renamed
 %   #r - see warning
-% #k 'rename file'        : #n rename selected file(s) ...the file is renamed 
+% #k 'rename file'        : #n rename selected file(s) ...the file is renamed
 %   #r - see warning
 % #k 'clear all fields'   : #n just clears all fields in 2nd and 3rd column
 % #k 'delete file'        : #n delete selected file(s) ...this files will be permanently removed
 % #k 'show image info'    : #n show image information (file paths; existence of files; header information)
-% 
+%
 %
 %% #by RENAME FILES
 %     - type a new name in the [NewName] column (but not "##" this would delete the file)
@@ -48,7 +48,7 @@
 %%       [FileName]    [NewName]           [TASK]
 %% T2_TurboRARE.nii       t2.nii                               !! the new file name is "t2.nii"
 %%  or
-%% T2_TurboRARE.nii       t2.nii            rename             !! the new file name is "t2.nii"   
+%% T2_TurboRARE.nii       t2.nii            rename             !! the new file name is "t2.nii"
 %__________________________________________________________________________________________________________________
 %% #by COPY FILES
 %     - in the [NewName]-COLUMN type a file-name (but not "##" this would delete the file)
@@ -64,7 +64,7 @@
 %    - in the [NewName]-COLUMN type "##"  or "delete"  (without "); the [TASK]-column is empty
 %    - or: [NewName] is empty and  [TASK]-column contains "##"
 %
-%% [examples]: delete "T2_TurboRARE.nii"    
+%% [examples]: delete "T2_TurboRARE.nii"
 %%       [FileName]      [NewName]            [TASK]
 %% T2_TurboRARE.nii       _##                                      !! use "##", to delete the volume
 %% T2_TurboRARE.nii       delete                                   !! type delete, to delete the volume
@@ -73,7 +73,7 @@
 %% T2_TurboRARE.nii                             delete             !! type delete, to delete the volume
 %__________________________________________________________________________________________________________________
 %% #by EXTRACT 3D-volumes
-%   extract 1/more volumes from 4D volume and save as 3D or 4D-volume 
+%   extract 1/more volumes from 4D volume and save as 3D or 4D-volume
 %   - a new filename in the [NEWNAME]-column must be given (do not use '##'  ..this would delete the orig. file)
 %   - in the [Task]-column -type matlabstyle-like index-indications to extract the respective volume(s):
 %    EXAMPLES:  single volume   :  "1" or "2" or "5" or "end"   ... to extract the 1st or 2nd or 5th or last single volume
@@ -114,79 +114,79 @@
 %
 %% #by Threshold Image (tr:)
 % threshold image and save as new file
-% filled task code in column-3, EXAMPLES: 
+% filled task code in column-3, EXAMPLES:
 %    'tr: i>3=0'        threshold image, values above 3 are set to 0
 %    'tr: i<3=0'        threshold image, values below 3 are set to 0
 %    'tr: i <=4=0'      threshold image, values <=4 are set to 0
 %    'tr: i >=4=0'      threshold image, values >=4 are set to 0
 %    'tr: i ~=0=1'      threshold image, nonzero values are set to 1
 %    'tr: i<0=3; i>6=6' threshold image, values<0 are set to 3 and values>6 are set to 6
-% 
+%
 % #k Combined thresholds (such as 'tr: i<0=3; i>6=6; ) will be executed from left to right and
 % #k must be separated by semicolon
 % #m see contextmenu/"enter 2nd & 3rd column extended" for examples (there: column-3 pulldown menu)
 % #r Don't forget to specify an output filename in the 2nd-column, otherwise the input file is overwritten!
 % #g CMD:  example: threshold image ('INPUT.nii'), values <0.7 set to 0, file stored as 'OUTPUT.nii'
-%     xrename(1, 'c2t2.nii' , 'zzz' , 'tr: i<.7=0');  % 1st arg indcates that GUI is poping up when executed    
+%     xrename(1, 'c2t2.nii' , 'zzz' , 'tr: i<.7=0');  % 1st arg indcates that GUI is poping up when executed
 %__________________________________________________________________________________________________________________
-% 
+%
 %% #by MATHEMATICAL OPERATIONS (ma:)
 % SIMPLE MATHEMATICAL OPERATIONS CAN BE Done using the [TASK]-column
-% examples: threshold image, extract ROI from atlas image, combine mask(s) with image etc.  
+% examples: threshold image, extract ROI from atlas image, combine mask(s) with image etc.
 % #k used CONVENTIONS:
-% #k  'mo: '      .. use 'mo:' to indicate a math operation, 
+% #k  'mo: '      .. use 'mo:' to indicate a math operation,
 % #k  'i'         .. is the internal input image,
 % #k  'i+number'  .. refers to another image  in the [TASK]-column; (the respective images must be indicated with 'i+number' ...see examples)
-% #k  'o'         .. is the internal output image 
+% #k  'o'         .. is the internal output image
 % #k  'dt'        .. <optional>; use 'dt=number' to set the datatype of the stored image ...see spm_type
-% #k  structure:   is allways:  'mo: o=...do something with i and or combine with i1/i2...etc ' 
+% #k  structure:   is allways:  'mo: o=...do something with i and or combine with i1/i2...etc '
 % #g EXAMPLES:
 % #r NOTE the columns in z.files correspond to 'FileName', 'NewName' and 'TASK'-columns in the GUI-TABLE!
 % ==============================================
-%%  #g get right Striatum-mask of SIGMA-RAT atlas (striatum: id=73) via 'AVGThemi.nii' (internally refered via 'i1') 
+%%  #g get right Striatum-mask of SIGMA-RAT atlas (striatum: id=73) via 'AVGThemi.nii' (internally refered via 'i1')
 %%  #g and save file as 'striatum_Right.nii'
-% z.files={ 'ANO.nii' 	'striatum_Right.nii' 	'mo: o=(i1==2).*(i==73);'                                                   
-%          'AVGThemi.nii' 	'' 	  'i1' };                                                           
-% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) ); 
+% z.files={ 'ANO.nii' 	'striatum_Right.nii' 	'mo: o=(i1==2).*(i==73);'
+%          'AVGThemi.nii' 	'' 	  'i1' };
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
 % ==============================================
 %%   #g recode left/right Striatum of SIGMA-RAT atlas (id=73); store with datatype=2 ('dt=2')
-% z.files={ 'ANO.nii' 	'striatum_newID.nii' 	'mo: o=(i1==1).*(i==73)*3; o=o+(i1==2).*(i==73)*4; dt=2;'                                                   
-%          'AVGThemi.nii' 	'' 	  'i1' };                                                           
-% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) ); 
+% z.files={ 'ANO.nii' 	'striatum_newID.nii' 	'mo: o=(i1==1).*(i==73)*3; o=o+(i1==2).*(i==73)*4; dt=2;'
+%          'AVGThemi.nii' 	'' 	  'i1' };
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
 % ==============================================
-%%  #g  mask 'x_t2.nii' with 'AVGTmask.nii', here 'AVGTmask.nii' is internally refered as 'i1' 
+%%  #g  mask 'x_t2.nii' with 'AVGTmask.nii', here 'AVGTmask.nii' is internally refered as 'i1'
 %%  #g i.e. multiply all voxels larger than 0 with 'x_t2.nii'
-% z.files={ 'x_t2.nii' 	'x_t2Masked.nii' 	'mo: o=(i1>0).*i;'                                                   
-%          'AVGTmask.nii' 	'' 	         'i1' };                                                           
-% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) ); 
+% z.files={ 'x_t2.nii' 	'x_t2Masked.nii' 	'mo: o=(i1>0).*i;'
+%          'AVGTmask.nii' 	'' 	         'i1' };
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
 % ==============================================
 %% #g threshold 't2.nii' with thresholded GM- and WM-segmentation images'
 %% #g i.e.  threshold GM and WM independently at 0.3, add both masks and make all values above 0 1, than
 %% #g multiply with 't2.nii' and store as 't2Masked.nii'
 %% #g  note that GM and WM are internally referenced via i1 and i2
-% z.files={ 't2.nii' 	't2Masked.nii' 	'mo: o=(((i1>0.3)+(i2>0.3))>0).*i;'                                                   
-%          'c1t2.nii' 	'' 	         'i1'  
-%          'c2t2.nii' 	'' 	         'i2' };   
-% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) ); 
-% 
+% z.files={ 't2.nii' 	't2Masked.nii' 	'mo: o=(((i1>0.3)+(i2>0.3))>0).*i;'
+%          'c1t2.nii' 	'' 	         'i1'
+%          'c2t2.nii' 	'' 	         'i2' };
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
+%
 %__________________________________________________________________________________________________________________
 %% #by voxel resolution (vr:)
 % change voxel resolution of an image via  the [TASK]-column
 % example: in [TASK]-column type :  "vr: .1 .1 .1" to change the voxel resolution of an image (previous vox resolution was: [.09 .09 .09])
 %          "vr: .1 .1 .1"  this is identical to "vr: .1"
 % #g change voxel resolution of 'AVGT.nii' to [.1 .1 .1] and save as 'test33.nii'
-% z.files={ 'AVGT.nii' 	'test33.nii' 	'vr: .1' };                                                     
-% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );   
+% z.files={ 'AVGT.nii' 	'test33.nii' 	'vr: .1' };
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
 %__________________________________________________________________________________________________________________
 %% #by voxel scaling (vf:)
 % change voxel scaling of an image via  the [TASK]-column
 % this will scal up an image ...PURPOSE: scale up an image ba factor 10 to use software tools for human brain (and it's resolution)
 % example: in [TASK]-column type :  "vf: 10 10 10"  or 'vf: 10' to scale up the brain in x,y,z-direction by factor 10
 % #g inflate 'AVGT.nii' by voxel fator 1.5,1.5 and 1 in  x,y,z direction and store as 'inflated'
-% z.files={ 'AVGT.nii' 	'inflated.nii' 	'vf: 1.5 1.5 1' };                                            
-% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );   
+% z.files={ 'AVGT.nii' 	'inflated.nii' 	'vf: 1.5 1.5 1' };
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
 %__________________________________________________________________________________________________________________
-% 
+%
 % #r -----simple examples------
 % #g  to rename  a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN is empty
 % #g  to copy    a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN  is ":"  (without "")
@@ -304,17 +304,17 @@
 % z.files={ 'XX.nii' 	'XXrenamed.nii'  ''          %  "XX.nii" is renamed to  "XXrenamed.nii"
 %           'YY.nii' 	'YYcopied.nni' 	 ':'    };   %  "YY.nii" is copied to  "YYcopied.nii"
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
-% 
-% 
-% 
+%
+%
+%
 % #ok NO GUI (silent mode)
-% using cell of animal-dirs as extra input ("an.mdirs"); 
+% using cell of animal-dirs as extra input ("an.mdirs");
 %% [1] copy&rename 'T2_TurboRARE_highres_1.nii' to 't2.nii'
 %    xrename(0,'T2_TurboRARE_highres_1.nii','t2.nii',':','dirs',an.mdirs );
 %% [2] delete file "nan_2.nii" in animal dirs defined in an.mdirs
 %    xrename(0,'t3.nii','','del','dirs',an.mdirs );
-% 
-% 
+%
+%
 %% #r RE-USE BATCH: see 'anth' [..anthistory] -variable in workspace
 
 
@@ -323,8 +323,8 @@ function xrename(showgui,fi,finew,extractnum,varargin)
 
 p0.dummy=1;
 if nargin>4
-   pin= cell2struct(varargin(2:2:end),varargin(1:2:end),2);
-   p0=catstruct2(p0,pin);
+    pin= cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+    p0=catstruct2(p0,pin);
 end
 
 
@@ -431,12 +431,14 @@ end
 %———————————————————————————————————————————————
 %%  process
 %———————————————————————————————————————————————
+isDesktop=usejava('desktop');% is DEKSTOP enabled
+
 if isempty(he); return; end
 
 fi   =he(:,1);
 finew=he(:,2);
 volnum=he(:,3);
- he_aux={};
+he_aux={};
 recycle('on'); %set recycle-bin to on
 
 for i=1:size(pa,1)      %PATH
@@ -469,18 +471,22 @@ for i=1:size(pa,1)      %PATH
                     %% rename
                     try
                         movefile(s1,s2,'f');
-                        disp(['renamed: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
+                        if isDesktop==1
+                            disp(['renamed: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
+                        else
+                            disp(['renamed file: ' s2]);
+                        end
                     end
-               elseif ~isempty(regexpi(volnum{j},'^##$|^del$|^delete$')); %delete     
-                  % 'delete me'
-                   delete(s1);
-                   if exist(s1)==0
-                       cprintf([0 .5 0],['file deleted: '  strrep(s1,filesep,[filesep filesep]) '\n']);
-                   else
-                       cprintf([1 0 1],['could not delete: '  strrep(s1,filesep,[filesep filesep]) '\n']);
-                   end
+                elseif ~isempty(regexpi(volnum{j},'^##$|^del$|^delete$')); %delete
+                    % 'delete me'
+                    delete(s1);
+                    if exist(s1)==0
+                        cprintf([0 .5 0],['file deleted: '  strrep(s1,filesep,[filesep filesep]) '\n']);
+                    else
+                        cprintf([1 0 1],['could not delete: '  strrep(s1,filesep,[filesep filesep]) '\n']);
+                    end
                     
-                 
+                    
                     
                 elseif strfind(volnum{j},'vf:'); %vox factor
                     % ==============================================
@@ -504,9 +510,15 @@ for i=1:size(pa,1)      %PATH
                         voxsi=sprintf('[%2.3f %2.3f %2.3f]',  vec(7), vec(8), vec(9));
                         voxsi2=sprintf('[%2.3f %2.3f %2.3f]', vec2(7),vec2(8),vec2(9));
                         
-                        disp(['New IMG with altered voxSize: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
-                            ' new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
-                       % regexprep()
+                        
+                        if isDesktop==1
+                            disp(['New IMG with altered voxSize: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
+                                ' new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
+                        else
+                            disp(['New IMG with altered voxSize: ' s2 '; new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
+                        end
+                        
+                        % regexprep()
                     catch
                         disp('problem with voxelfactor');
                         continue
@@ -534,8 +546,14 @@ for i=1:size(pa,1)      %PATH
                         resize_img5(s1,s2, vox, BB, [], interp);
                         voxsi=sprintf('[%2.3f %2.3f %2.3f]',  voxold(1), voxold(2), voxold(3));
                         voxsi2=sprintf('[%2.3f %2.3f %2.3f]', vox(1)   , vox(2)     ,vox(3));
-                        disp(['New IMG with altered voxSize: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
-                            ' new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
+                        
+                        if isDesktop==1
+                            disp(['New IMG with altered voxSize: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
+                                ' new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
+                        else
+                            disp(['New IMG with altered voxSize: ' s2 '; new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
+                        end
+                        
                         try; delete(regexprep(s2,'.nii$','.mat')); end
                     catch
                         disp('problem with voxel resolution');
@@ -543,64 +561,64 @@ for i=1:size(pa,1)      %PATH
                     end
                 elseif ~isempty( regexpi(volnum{j} ,'^i\d+')  )
                     % just a catcher...do nothing
-               elseif strfind(volnum{j},'tr:'); %vox factor     
-                  try
-                    [pax fix ex]=fileparts(finew{j});
-                    s2=fullfile(pa{i},[fix '.nii' ]);
-                    if isempty(fix)
-                        s2=s1; % work on imputFile
+                elseif strfind(volnum{j},'tr:'); %vox factor
+                    try
+                        [pax fix ex]=fileparts(finew{j});
+                        s2=fullfile(pa{i},[fix '.nii' ]);
+                        if isempty(fix)
+                            s2=s1; % work on imputFile
+                        end
+                        if isempty(volnum{j})
+                            disp('..could not threshold image: --> no threshold defined...example: "tr:i<3=0" to set all values in image<3 to zero')
+                        end
+                        
+                        [ha a ]=rgetnii(s1);
+                        dims=[ha(1).dim max(size(ha))];
+                        a2=reshape(a,[prod(dims) 1]);
+                        
+                        %% --- threshold image
+                        code=volnum{j};
+                        %code='tr:    i==3=0';
+                        %code='tr:    i>3=0';
+                        %code='tr:    i<3=0';
+                        % code='tr:    i <=3=0;';
+                        %code='tr:    i >=3=0;';
+                        %code='tr:    i ~=3=0;';
+                        %code='tr:    i<0=3; i>6=6;';
+                        %a2=1:10
+                        %code=regexprep(code,'==','#');
+                        %                     code=regexprep(code,'==','EQ');
+                        %                     code=regexprep(code,'<=','LE');
+                        %                     code=regexprep(code,'>=','GTE');
+                        %                     code=regexprep(code,'<','LL');
+                        %                     code=regexprep(code,'>','GG');
+                        %                     code=regexprep(code,'~=','NE');
+                        
+                        rep1= {'==' '<=' '>='   '<'   '>'    '~='}  ;
+                        rep2= {'EQ' 'LE' 'GTE'  'LL'  'GG'   'NE'} ;
+                        code=regexprep(code,rep1,rep2);
+                        
+                        code=regexprep(code,{ ['tr:' '\s+']  'i' '=' },{'' 'a2(a2' ')='});
+                        code=[code ';'];
+                        code=regexprep(code,rep2,rep1);
+                        
+                        eval(code);
+                        
+                        a2=reshape(a2, dims);
+                        %                     if ha.dt(1)==2
+                        rsavenii(s2 ,ha,a2,[64 0]);
+                        %                     else
+                        %                         rsavenii(s2 ,ha,a2);
+                        %                     end
+                        showinfo2(['threshold image: ' s2 ' '],s2);
+                    catch
+                        disp([' ..threshold image...something went wrong  (internal code: "' code '")']);
                     end
-                    if isempty(volnum{j})
-                        disp('..could not threshold image: --> no threshold defined...example: "tr:i<3=0" to set all values in image<3 to zero')
-                    end
                     
-                    [ha a ]=rgetnii(s1);
-                    dims=[ha(1).dim max(size(ha))];
-                    a2=reshape(a,[prod(dims) 1]);
-                    
-                    %% --- threshold image
-                    code=volnum{j};
-                    %code='tr:    i==3=0';
-                    %code='tr:    i>3=0';
-                    %code='tr:    i<3=0';
-                    % code='tr:    i <=3=0;';
-                    %code='tr:    i >=3=0;';
-                    %code='tr:    i ~=3=0;';
-                    %code='tr:    i<0=3; i>6=6;';
-                    %a2=1:10
-                    %code=regexprep(code,'==','#');
-                    %                     code=regexprep(code,'==','EQ');
-                    %                     code=regexprep(code,'<=','LE');
-                    %                     code=regexprep(code,'>=','GTE');
-                    %                     code=regexprep(code,'<','LL');
-                    %                     code=regexprep(code,'>','GG');
-                    %                     code=regexprep(code,'~=','NE');
-                    
-                    rep1= {'==' '<=' '>='   '<'   '>'    '~='}  ;
-                    rep2= {'EQ' 'LE' 'GTE'  'LL'  'GG'   'NE'} ;
-                    code=regexprep(code,rep1,rep2);
-                    
-                    code=regexprep(code,{ ['tr:' '\s+']  'i' '=' },{'' 'a2(a2' ')='});
-                    code=[code ';'];
-                    code=regexprep(code,rep2,rep1);
-                    
-                    eval(code);
-
-                    a2=reshape(a2, dims);
-%                     if ha.dt(1)==2
-                       rsavenii(s2 ,ha,a2,[64 0]); 
-%                     else
-%                         rsavenii(s2 ,ha,a2);
-%                     end
-                    showinfo2(['threshold image: ' s2 ' '],s2);
-                  catch
-                      disp([' ..threshold image...something went wrong  (internal code: "' code '")']);
-                  end
-                    
-                 %% test   
+                    %% test
                     
                     
-                
+                    
                     
                     
                     
@@ -609,9 +627,9 @@ for i=1:size(pa,1)      %PATH
                     %% mathematical operation
                     % ===============================================
                     try
-                         code=volnum{j};
-                         
-                       %code='ma: (i<.5)=0; (i>=.5)=1;'
+                        code=volnum{j};
+                        
+                        %code='ma: (i<.5)=0; (i>=.5)=1;'
                         %code='ma: (i<.5)=.5'
                         %code='ma: i+4'
                         %code='ma: i=(i1==1).*(i==73);'
@@ -620,75 +638,82 @@ for i=1:size(pa,1)      %PATH
                         img =regexpi(code,'i\d+','match');
                         
                         %if ~isempty(img)                % USE ANOTHER IMAGE-OPERATION
-                           dt=[];
-                            img2=strrep(img,'i','u');
-                            for im=1:length(img)
-                                r1= regexpi(tbout(:,3),['^\s{0,10}' img{im} '\s{0,10}$']);
-                                fileaux   =tbout{find(~cellfun('isempty',r1)),1};
-                                tblin=tbout(find(~cellfun('isempty',r1)),1:3);
-                                he_aux=[he_aux; tblin];
-                                fpfileaux =fullfile(fileparts(s1),fileaux);
-                                [hdum dum]=rgetnii(fpfileaux);
-                                eval([  img2{im} '=dum;' ]);
-                            end
-                            [hu u]=rgetnii(s1);
-                            %code2=regexprep(code,'i','u');
-                            code2=regexprep(code,'(?<![a-zA-Z])i(?![a-zA-Z])','u');
-                            %evalstr=['mo=' code2 ';' ];
-                            evalstr=[  code2 ';' ];
-                            eval(evalstr);
-                            
-                            
-                            if hu.dt(1)==2
-                               hu.dt(1) =4;
-                            end
-                            if ~isempty(dt)
-                                hu.dt(1)=dt(1);
-                            end
-                            
-                            %disp(hu.dt);
-                            
-                            delete(s2);
-                            rsavenii(s2,hu,o);
-                            %[hb b]=rgetnii(s2);unique(b)
-                            disp(['New IMG ..math operation: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
-                                ]);
-%                         else                            % SAME IMAGE IMAGE-OPERATION
-%                             
-%              
-%                            code2=[ regexprep(code,{'(' ,'i'},{'g3(' 'g2'})];
-%                             mis=regexprep(strsplit(code2,';')',' ','');
-%                             mis(cellfun('isempty' ,mis))=[];
-%                             imis=cellfun('isempty' ,regexpi(mis,'g3'));
-%                             mis(imis)=cellfun(@(a){['g3=' a]} , mis(imis) );
-%                             code2= [strjoin(mis,';') ';'];
-%                             
-%                             [ha a ]=rgetnii(s1);
-%                             g5=zeros(size(a));
-%                             
-%                             for vol=1:size(a,4)
-%                                 g1=a(:,:,:,vol);
-%                                 si=size(g1);
-%                                 g2=g1(:); g3=g2;%zeros(size(g2));
-%                                 
-%                                 eval([code2 ';']);
-%                                 g4=reshape(g3,[si]);
-%                                 g5(:,:,:,vol)=g4;
-%                             end
-%                             %                         try; delete(s2); end
-%                             %                         try; ha=rmfield(ha,'pinfo');end
-%                             %                            try; ha=rmfield(ha,'dt');end
-%                             % %                         ha.pinfo=[1]
-%                             %                        try; ha=rmfield(ha,'private');end
-%                             if ha.dt(2)==2
-%                                 ha.dt(2)=4;
-%                             end
-%                             delete(s2);
-%                             rsavenii(s2,ha,g5);
-%                             %[hb b]=rgetnii(s2);unique(b)
-%                             disp(['New IMG ..math operation: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
-%                                 ]);
-%                         end
+                        dt=[];
+                        img2=strrep(img,'i','u');
+                        for im=1:length(img)
+                            r1= regexpi(tbout(:,3),['^\s{0,10}' img{im} '\s{0,10}$']);
+                            fileaux   =tbout{find(~cellfun('isempty',r1)),1};
+                            tblin=tbout(find(~cellfun('isempty',r1)),1:3);
+                            he_aux=[he_aux; tblin];
+                            fpfileaux =fullfile(fileparts(s1),fileaux);
+                            [hdum dum]=rgetnii(fpfileaux);
+                            eval([  img2{im} '=dum;' ]);
+                        end
+                        [hu u]=rgetnii(s1);
+                        %code2=regexprep(code,'i','u');
+                        code2=regexprep(code,'(?<![a-zA-Z])i(?![a-zA-Z])','u');
+                        %evalstr=['mo=' code2 ';' ];
+                        evalstr=[  code2 ';' ];
+                        eval(evalstr);
+                        
+                        
+                        if hu.dt(1)==2
+                            hu.dt(1) =4;
+                        end
+                        if ~isempty(dt)
+                            hu.dt(1)=dt(1);
+                        end
+                        
+                        %disp(hu.dt);
+                        
+                        delete(s2);
+                        rsavenii(s2,hu,o);
+                        %[hb b]=rgetnii(s2);unique(b)
+                        
+                        
+                        if isDesktop==1
+                            disp(['New IMG ..math operation: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>' ]);
+                        else
+                            disp(['New IMG ..math operation: ' s2  ]);
+                        end
+                        
+                        
+                        %                         else                            % SAME IMAGE IMAGE-OPERATION
+                        %
+                        %
+                        %                            code2=[ regexprep(code,{'(' ,'i'},{'g3(' 'g2'})];
+                        %                             mis=regexprep(strsplit(code2,';')',' ','');
+                        %                             mis(cellfun('isempty' ,mis))=[];
+                        %                             imis=cellfun('isempty' ,regexpi(mis,'g3'));
+                        %                             mis(imis)=cellfun(@(a){['g3=' a]} , mis(imis) );
+                        %                             code2= [strjoin(mis,';') ';'];
+                        %
+                        %                             [ha a ]=rgetnii(s1);
+                        %                             g5=zeros(size(a));
+                        %
+                        %                             for vol=1:size(a,4)
+                        %                                 g1=a(:,:,:,vol);
+                        %                                 si=size(g1);
+                        %                                 g2=g1(:); g3=g2;%zeros(size(g2));
+                        %
+                        %                                 eval([code2 ';']);
+                        %                                 g4=reshape(g3,[si]);
+                        %                                 g5(:,:,:,vol)=g4;
+                        %                             end
+                        %                             %                         try; delete(s2); end
+                        %                             %                         try; ha=rmfield(ha,'pinfo');end
+                        %                             %                            try; ha=rmfield(ha,'dt');end
+                        %                             % %                         ha.pinfo=[1]
+                        %                             %                        try; ha=rmfield(ha,'private');end
+                        %                             if ha.dt(2)==2
+                        %                                 ha.dt(2)=4;
+                        %                             end
+                        %                             delete(s2);
+                        %                             rsavenii(s2,ha,g5);
+                        %                             %[hb b]=rgetnii(s2);unique(b)
+                        %                             disp(['New IMG ..math operation: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
+                        %                                 ]);
+                        %                         end
                     catch
                         disp('problem with math operation');
                         continue
@@ -701,7 +726,7 @@ for i=1:size(pa,1)      %PATH
                     % ==============================================
                     %%   %% extractvolume
                     % ===============================================
-
+                    
                     
                     thisvol= lower(volnum{j});
                     save_separately =0;
@@ -722,7 +747,12 @@ for i=1:size(pa,1)      %PATH
                         if strcmp(thisvol,'rename');
                             try
                                 movefile(s1,s2,'f');
-                                disp(['renamed: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
+                                if isDesktop==1
+                                    disp(['renamed: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
+                                else
+                                    disp(['renamed: ' s2  ]);
+                                end
+                                
                                 continue
                             end
                         end
@@ -746,7 +776,7 @@ for i=1:size(pa,1)      %PATH
                         eval(['b=a(:,:,:,' thisvol ');']);
                     end
                     
-                    %% delete targetfile if exists 
+                    %% delete targetfile if exists
                     if strcmp(thisvol,':')==1
                         if exist(s2)==2
                             delete(s2);
@@ -762,7 +792,13 @@ for i=1:size(pa,1)      %PATH
                             spm_write_vol(hb(k),b(:,:,:,k));
                         end
                         try; delete( strrep(s2,'.nii','.mat')  ) ;     end
-                        disp(['created: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
+                        
+                        if isDesktop==1
+                            disp(['created: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
+                        else
+                            disp(['created: ' s2  ]);
+                        end
+                        
                     else  %write separate volumes
                         vec_allvols=1:size(ha,1);
                         eval(['vol_id =vec_allvols(' thisvol ');']);
@@ -778,9 +814,17 @@ for i=1:size(pa,1)      %PATH
                             
                             if k==1
                                 if size(hb,1)==1
-                                    disp(['created: one separate vol: <a href="matlab: explorerpreselect(''' s3 ''')">' s3 '</a>'  ]);
+                                    if isDesktop==1
+                                        disp(['created: one separate vol: <a href="matlab: explorerpreselect(''' s3 ''')">' s3 '</a>'  ]);
+                                    else
+                                        disp(['created: one separate vol: : ' s3  ]);
+                                    end
                                 else
-                                    disp(['created: several separate vol, starting with: <a href="matlab: explorerpreselect(''' s3 ''')">' s3 '</a>'  ]);
+                                    if isDesktop==1
+                                        disp(['created: several separate vol, starting with: <a href="matlab: explorerpreselect(''' s3 ''')">' s3 '</a>'  ]);
+                                    else
+                                        disp(['created: several separate vol, starting with: ' s3  ]);
+                                    end
                                 end
                             end
                         end
@@ -815,10 +859,10 @@ try
 end
 
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%% subs
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 
+% ==============================================
+%%   subs
+% ===============================================
 
 
 
@@ -860,7 +904,7 @@ end
 tb       = [v.tb(:,1)  newname  extractvolnum  v.tb(:,2:end) ] ;
 %  tbh      = [ v.tbh(1)  'NEW FILENAME (no extension)' 'TASK (extract volnum)' v.tbh(2:end)];
 %  tbh      = [ v.tbh(1)  'NEW FILENAME               ' 'TASK                 ' v.tbh(2:end)];
- tbh      = [ v.tbh(1)  'NEW FILENAME_______________' 'TASK_________________' v.tbh(2:end)];
+tbh      = [ v.tbh(1)  'NEW FILENAME_______________' 'TASK_________________' v.tbh(2:end)];
 
 
 
@@ -1007,7 +1051,7 @@ us.hj =jtable;
 us.s  =s;
 set(gcf,'userdata',us);
 % ==============================================
-%%   
+%%
 % ===============================================
 
 % waitspin(0,'Done!');
@@ -1089,14 +1133,14 @@ hs = uimenu(cmenu,'label','<html><font color=green>  show image info'           
 
 % hs = uimenu(cmenu,'label','show current image using MRICRON',         'Callback',{@hcontext, 'showMRICRON'},'separator','off');
 % hs = uimenu(cmenu,'label','open folder of current image',                     'Callback',{@hcontext, 'openPath'},'separator','off');
-% 
-% 
+%
+%
 % hs = uimenu(cmenu,'label','select all files from this folder (colum-wise selection)',         'Callback',{@hcontext, 'selallfilefromdir'},'separator','on');
 % hs = uimenu(cmenu,'label','deselect all files from this folder (colum-wise selection)',       'Callback',{@hcontext, 'deselallfilefromdir'});
-% 
+%
 % hs = uimenu(cmenu,'label','select this files from all folders (row-wise selection)',      'Callback',{@hcontext, 'selfilefromalldir'},'separator','on');
 % hs = uimenu(cmenu,'label','delect this files from all folders (row-wise selection)',       'Callback',{@hcontext, 'deselfilefromalldir'});
-% 
+%
 % hs = uimenu(cmenu,'label','select all',         'Callback',{@hcontext, 'selectall'},'separator','on');
 % hs = uimenu(cmenu,'label','deselect all',       'Callback',{@hcontext, 'deselectall'});
 
@@ -1114,20 +1158,20 @@ elseif strcmp(task,'pop2')
     
     list=get(hb,'userdata');
     set(he,'string',list{hb.Value,1});
-%     set(he,'string',hb.String{hb.Value});
+    %     set(he,'string',hb.String{hb.Value});
 elseif strcmp(task,'cancel')
     set(findobj(gcf,'tag','pan1'),'userdata','cancel');
-%     delete(findobj(gcf,'tag','pan1'));
+    %     delete(findobj(gcf,'tag','pan1'));
     uiresume(gcf);
 elseif strcmp(task,'ok')
     set(findobj(gcf,'tag','pan1'),'userdata','ok');
-     uiresume(gcf);
+    uiresume(gcf);
 end
 
 function hcontext(e,e2,task)
 us=get(gcf,'userdata');
 if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'rename') ||...
-        strcmp(task,'deleteFile') ||  strcmp(task,'enter2and3_extended') ||  strcmp(task,'clearfields')  
+        strcmp(task,'deleteFile') ||  strcmp(task,'enter2and3_extended') ||  strcmp(task,'clearfields')
     e=us.hj;
     selrows=get(e,'SelectedRows');
     
@@ -1145,7 +1189,7 @@ if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'renam
         % ==============================================
         %%
         % ===============================================
-       ht= findobj(gcf,'tag','table');
+        ht= findobj(gcf,'tag','table');
         
         delete(findobj(0,'tag','pan1'));
         hp = uipanel('Title','enter 2nd/3rd column','FontSize',8,...
@@ -1185,14 +1229,14 @@ if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'renam
             'del'     'delete this file ("del", same as "##")'
             '1:ends'  'expand entire 4D-file to separate 3D-files ("1:ends")'
             '1:3s'    'expand the first 3D-volumes of 4D-file to separate 3D-files ("1:3s")'
-            ''        'empty this field'  
+            ''        'empty this field'
             'tr: i<=3=0'               'threshold image: set all values <=3 to ZERO  '
             'tr: i<=3=1;i>20=20;'  'threshold image: set all values <=3 to ONE; and values >20 t0 20  '
             'tr: i~=0=1;'          'threshold image: set all non-zero values to ONE'
             };
         listbk=[[list2 ; {''} ;lis(:,1) ] [list2 ; {''} ;lis(:,2) ]];
         
-         
+        
         hb=uicontrol(hp,'style','popupmenu','units','norm','tag','pan_pop_col3');
         set(hb,'position',[.55   .25 .45 .2],'string',listbk(:,2));
         set(hb,'tooltipstring','selected item from popup-menu is used to fill the left edit box');
@@ -1212,7 +1256,7 @@ if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'renam
         
         
         uiwait(gcf);
-
+        
         
         hb=findobj(gcf,'tag','pan1');
         col2=get(findobj(gcf,'tag','pan_ed_col2'),'string');
@@ -1227,7 +1271,7 @@ if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'renam
         % ==============================================
         %%
         % ===============================================
-
+        
         
     elseif strcmp(task,'copyNrename')
         prompt = {[' enter new filename ']};
@@ -1241,9 +1285,9 @@ if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'renam
         num_lines = [ones(size(prompt')) ones(size(prompt'))*75];
         defaultans = {''};
         out = inputdlg(prompt,dlg_title,num_lines,defaultans);
-     elseif strcmp(task,'deleteFile')
-         out={'','del'};
-    elseif strcmp(task,'clearfields') 
+    elseif strcmp(task,'deleteFile')
+        out={'','del'};
+    elseif strcmp(task,'clearfields')
         out={'',''};
         selrows=[1:size(us.tb,1)]-1;
     end
@@ -1266,8 +1310,8 @@ if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'renam
         end
     end
     
-  elseif strcmp(task,'showimageinfo') 
-       e=us.hj;
+elseif strcmp(task,'showimageinfo')
+    e=us.hj;
     iselrows=get(e,'SelectedRows')+1;
     files=us.tb(iselrows,1);
     show_imageinfo(files);
@@ -1276,7 +1320,7 @@ end
 
 function show_imageinfo(files);
 % ==============================================
-%%   
+%%
 % ===============================================
 us=get(gcf,'userdata');
 pa=us.s.pa;
@@ -1294,7 +1338,7 @@ for j=1:length(files)
         end
         filelist=[filelist; fn2];
     end
-   filelist=[filelist; repmat({''},1,size(filelist,2))]; 
+    filelist=[filelist; repmat({''},1,size(filelist,2))];
 end
 % uhelp( plog([],[ filelist],0, '','al=1;space=0' ),1);
 % oo=plog([],[ filelist],0, ' #wk *** [1] FILE INFORMATION ***','al=1;space=0' );
@@ -1307,9 +1351,9 @@ oo=plog([],[ filelist],0, '','al=1;space=0;plotlines=0' );
 o={};
 for i=1:size(filelist,1)
     if ~isempty(strfind(filelist{i,1},'num'))
-     o(end+1,1)={[ '  #ko ' repmat(' ',[1 70]) ]};
-    o(end+1,1)={[ ' ' filelist{i,2}] };
-    o(end+1,1)={[ '  #ko ' repmat(' ',[1 70]) ]};
+        o(end+1,1)={[ '  #ko ' repmat(' ',[1 70]) ]};
+        o(end+1,1)={[ ' ' filelist{i,2}] };
+        o(end+1,1)={[ '  #ko ' repmat(' ',[1 70]) ]};
     elseif isnumeric(filelist{i,1})
         
         
@@ -1340,9 +1384,9 @@ for i=1:size(filelist,1)
             t=[t; repmat('-',[1 70])];
             o=[o; t];
         else
-           o=[o; repmat('-',[1 70])]; 
+            o=[o; repmat('-',[1 70])];
         end
-%         o=[o; {'';'';''}];
+        %         o=[o; {'';'';''}];
     end
 end
 o=[o; {'';'';''}];
@@ -1353,7 +1397,7 @@ set(gcf,'name','image information','numbertitle','off');
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
 function mouseclickedTable(e,e2)
 
@@ -1366,26 +1410,26 @@ if get(e2,'Button')==3 %context menu
     ht=findobj(gcf,'tag','table');
     
     
-     cmenu = uicontextmenu;
-      
-     hs = uimenu(cmenu,'label','show current image in Matlab',         'Callback',{@hcontext, 'showImageIntern'},'separator','on');
-     hs = uimenu(cmenu,'label','show current image using MRICRON',         'Callback',{@hcontext, 'showMRICRON'},'separator','off');
-     hs = uimenu(cmenu,'label','open folder of current image',                     'Callback',{@hcontext, 'openPath'},'separator','off');
-
-      
-      hs = uimenu(cmenu,'label','select all files from this folder (colum-wise selection)',         'Callback',{@hcontext, 'selallfilefromdir'},'separator','on');
-      hs = uimenu(cmenu,'label','deselect all files from this folder (colum-wise selection)',       'Callback',{@hcontext, 'deselallfilefromdir'});
-
-      hs = uimenu(cmenu,'label','select this files from all folders (row-wise selection)',      'Callback',{@hcontext, 'selfilefromalldir'},'separator','on');
-      hs = uimenu(cmenu,'label','delect this files from all folders (row-wise selection)',       'Callback',{@hcontext, 'deselfilefromalldir'});
-
-      hs = uimenu(cmenu,'label','select all',         'Callback',{@hcontext, 'selectall'},'separator','on');
-      hs = uimenu(cmenu,'label','deselect all',       'Callback',{@hcontext, 'deselectall'});
-      
-
-      set(ht,'UIContextMenu',cmenu);
-      
-      return
+    cmenu = uicontextmenu;
+    
+    hs = uimenu(cmenu,'label','show current image in Matlab',         'Callback',{@hcontext, 'showImageIntern'},'separator','on');
+    hs = uimenu(cmenu,'label','show current image using MRICRON',         'Callback',{@hcontext, 'showMRICRON'},'separator','off');
+    hs = uimenu(cmenu,'label','open folder of current image',                     'Callback',{@hcontext, 'openPath'},'separator','off');
+    
+    
+    hs = uimenu(cmenu,'label','select all files from this folder (colum-wise selection)',         'Callback',{@hcontext, 'selallfilefromdir'},'separator','on');
+    hs = uimenu(cmenu,'label','deselect all files from this folder (colum-wise selection)',       'Callback',{@hcontext, 'deselallfilefromdir'});
+    
+    hs = uimenu(cmenu,'label','select this files from all folders (row-wise selection)',      'Callback',{@hcontext, 'selfilefromalldir'},'separator','on');
+    hs = uimenu(cmenu,'label','delect this files from all folders (row-wise selection)',       'Callback',{@hcontext, 'deselfilefromalldir'});
+    
+    hs = uimenu(cmenu,'label','select all',         'Callback',{@hcontext, 'selectall'},'separator','on');
+    hs = uimenu(cmenu,'label','deselect all',       'Callback',{@hcontext, 'deselectall'});
+    
+    
+    set(ht,'UIContextMenu',cmenu);
+    
+    return
     
     
     
@@ -1402,24 +1446,24 @@ if get(e2,'Button')==3 %context menu
     num_lines = [ones(size(defaultans')) ones(size(defaultans'))*75];
     out = inputdlg(prompt,dlg_title,num_lines,defaultans);
     
-   if length(out)==0
-       return
-   end
+    if length(out)==0
+        return
+    end
     
     jtable=e;
     
     for i=1:length(selrows)
         jtable.setValueAt(java.lang.String(out{1}), selrows(i), 1); % to insert this value in cell (1,1)
     end
-     for i=1:length(selrows)
+    for i=1:length(selrows)
         jtable.setValueAt(java.lang.String(out{2}), selrows(i), 2); % to insert this value in cell (1,1)
     end
-
+    
     
     % ==============================================
     %%
     % ===============================================
-
+    
 end
 
 function resizefig(e,e2)
@@ -1440,8 +1484,8 @@ set(hb,'units','pixels');
 ht_pos2=[ht_pos(1)  hb_pos(2)+hb_pos(4)  ht_pos(3)   1-(hb_pos(2)+hb_pos(4)+hb_pos(4)/2  )  ];
 
 if ht_pos2(4)<.2
-%     ht_pos2=[ht_pos(1)  hb_pos(2)+hb_pos(4)  ht_pos(3)   1-(hb_pos(2)+hb_pos(4)+hb_pos(4)/2  )  ];
-
+    %     ht_pos2=[ht_pos(1)  hb_pos(2)+hb_pos(4)  ht_pos(3)   1-(hb_pos(2)+hb_pos(4)+hb_pos(4)/2  )  ];
+    
     return
 end
 
@@ -1473,10 +1517,10 @@ catch
 end
 
 hh={};
-hh{end+1,1}=('% ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
+hh{end+1,1}=('% ======================================================');
 hh{end+1,1}=[ '% BATCH:        [' [mfilename '.m' ] ']' ];
 hh{end+1,1}=[ '% descr:' hlp];
-hh{end+1,1}=('% ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
+hh{end+1,1}=('% ======================================================');
 if isempty(z.files{1})
     hh(end+1,1)={[mfilename '(' '1'  ');' ]};
 elseif size(z.files,2)==2
@@ -1556,14 +1600,14 @@ v.tbh=[{'Unique-Files-In-Study', '#found'} tbh];
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 function waitspin(status,msg)
 if status==1
-     hv=findobj(gcf,'tag','waitspin');
-     try; delete(hv); end
-     
+    hv=findobj(gcf,'tag','waitspin');
+    try; delete(hv); end
+    
     try
         % R2010a and newer
         iconsClassName = 'com.mathworks.widgets.BusyAffordance$AffordanceSize';
@@ -1588,32 +1632,32 @@ if status==1
     
     
     hv=findobj(gcf,'tag','waitspin');
-%     us=get(gcf,'userdata');
-%     us.hwaitspin =hv;
-%     us.jwaitspin =jObj;
-%     set(gcf,'userdata',us);
+    %     us=get(gcf,'userdata');
+    %     us.hwaitspin =hv;
+    %     us.jwaitspin =jObj;
+    %     set(gcf,'userdata',us);
     setappdata(hv,'userdata',jObj);
     
 elseif status==2
     hv=findobj(gcf,'tag','waitspin');
     hv=hv(1);
     jObj=getappdata(hv,'userdata');
-%     us=get(gcf,'userdata');
-%     jObj=us.jwaitspin;
+    %     us=get(gcf,'userdata');
+    %     jObj=us.jwaitspin;
     jObj.setBusyText(msg); %'All done!');
     jObj.getComponent.setBackground(java.awt.Color(1.0, 0.78, 0.0));  % orange
     set(hv,'visible','on');
     drawnow;
 elseif status==0
-     hv=findobj(gcf,'tag','waitspin');
-     hv=hv(1);
+    hv=findobj(gcf,'tag','waitspin');
+    hv=hv(1);
     jObj=getappdata(hv,'userdata');
     %us=get(gcf,'userdata');
     %jObj=us.jwaitspin;
     jObj.stop;
     jObj.setBusyText(msg); %'All done!');
     jObj.getComponent.setBackground(java.awt.Color(.4667,    0.6745,    0.1882));  % green
-%     pause(.2);
+    %     pause(.2);
     %jObj.getComponent.setVisible(false);
     %set(us.hwaitspin,'visible','off');
     set(hv,'visible','off');
@@ -1632,57 +1676,57 @@ col=e.columnAtPoint(e2.getPoint())+1;
 % us=get(gcf,'userdata');
 % idc=idx+1;
 try
-   if col==1
-       ms=['<html><font color="blue"><b>' 'EXISTING FILES' '</font></b><br>' ...
-           '<font color="black">'  ...
-           '  you can also select 1/several images and use the context menu' ...
-           ''];
-   elseif col==2
-       ms=['<html><font color="blue"><b>' 'NEW FILENAME' '</font></b><br>'  ...
-           '<font color="black">'  ...
-           'enter (copy+modify) a new file name here<br>' ...
-           '<font color="red">"nii."-extension is not necessary'];
-   elseif col==3
-      ms=['<html><font color="blue"><b>' 'TASK' '</b></font><br>'  ...
-           '<font color="black">'  ...
-           '<b>copy file    :</b>  type ":" or "copy" <br>'...
-           '<b>rename file  :</b>  type "rename" <br>'...
-           '<b>delete file:</b>  type "##" or "del" or "delete"        <br>'...
-           '<b>extract 4D-volume:</b>  type index such as "[2 4 10]"   <br>' ...
-           '<b>voxel factor     ("vf: .."):</b>  type "vf: 1.5" to scale up image by factor 1.5  <br>' ...
-           '<b>voxel resolution ("vr: .."):</b>  type "vr: [0.1 0.1 0.1]" to define a new voxel resolution  <br>' ...
-           '<b>math operation   ("mo: .."):</b>  "mo: o=i>.5"  <font color="green"> --> see HELP <font color="black"> <br>' ...
-           '<b>threshold image  ("tr: .."):</b>  "tr: i<3=0" to set all values below 3 to zero   <br>' ...
-           '<font color="red"> ..Don''t forget to type a new filename in column-2!' 
-           ];
-   else  
-       us=get(gcf,'userdata');
-       colname=us.tbh{col};
-       drawnow;
-       if col==4
-           ms=['<html><font color="blue"><b>' colname '</font></b><br>' ...
-               '<font color="black"> number of files found'  ...
-               ''];
-       else
-           ms=['<html><font color="blue"><b>' colname '</font></b><br>' ...
-               '<font color="black">'  ...
-               ''];
-       end
-       
-       
-  
-   end
-
-% ms=[us.c{idc,1} char(10) 'ID: '  num2str(us.c{idc,4}) char(10) ...
-%     'children: '  num2str(length(us.c{idc,5}))];
-
-%     ms=['<html><font color="black"><b>' us.c{idc,1} '</font><br>'...
-%         '<font color="red">'       ' ID: ' num2str(us.c{idc,4})       '</font>' ...
-%         '</b><font color="blue">'     ' ; #children: ' num2str(length(us.c{idc,5})) '</font></b><br>' ...
-%         '</b><font color="grey">'     ' VOL (ID) : ' num2str(us.volume(idc)) ' qmm ' '</font></b><br>' ...
-%         '</b><font color="grey">'     ' VOL (tot): ' num2str(us.volumetot(idc)) ' qmm ' '</font></b><br>' ...
-%         ...
-%         '</html>'];
+    if col==1
+        ms=['<html><font color="blue"><b>' 'EXISTING FILES' '</font></b><br>' ...
+            '<font color="black">'  ...
+            '  you can also select 1/several images and use the context menu' ...
+            ''];
+    elseif col==2
+        ms=['<html><font color="blue"><b>' 'NEW FILENAME' '</font></b><br>'  ...
+            '<font color="black">'  ...
+            'enter (copy+modify) a new file name here<br>' ...
+            '<font color="red">"nii."-extension is not necessary'];
+    elseif col==3
+        ms=['<html><font color="blue"><b>' 'TASK' '</b></font><br>'  ...
+            '<font color="black">'  ...
+            '<b>copy file    :</b>  type ":" or "copy" <br>'...
+            '<b>rename file  :</b>  type "rename" <br>'...
+            '<b>delete file:</b>  type "##" or "del" or "delete"        <br>'...
+            '<b>extract 4D-volume:</b>  type index such as "[2 4 10]"   <br>' ...
+            '<b>voxel factor     ("vf: .."):</b>  type "vf: 1.5" to scale up image by factor 1.5  <br>' ...
+            '<b>voxel resolution ("vr: .."):</b>  type "vr: [0.1 0.1 0.1]" to define a new voxel resolution  <br>' ...
+            '<b>math operation   ("mo: .."):</b>  "mo: o=i>.5"  <font color="green"> --> see HELP <font color="black"> <br>' ...
+            '<b>threshold image  ("tr: .."):</b>  "tr: i<3=0" to set all values below 3 to zero   <br>' ...
+            '<font color="red"> ..Don''t forget to type a new filename in column-2!'
+            ];
+    else
+        us=get(gcf,'userdata');
+        colname=us.tbh{col};
+        drawnow;
+        if col==4
+            ms=['<html><font color="blue"><b>' colname '</font></b><br>' ...
+                '<font color="black"> number of files found'  ...
+                ''];
+        else
+            ms=['<html><font color="blue"><b>' colname '</font></b><br>' ...
+                '<font color="black">'  ...
+                ''];
+        end
+        
+        
+        
+    end
+    
+    % ms=[us.c{idc,1} char(10) 'ID: '  num2str(us.c{idc,4}) char(10) ...
+    %     'children: '  num2str(length(us.c{idc,5}))];
+    
+    %     ms=['<html><font color="black"><b>' us.c{idc,1} '</font><br>'...
+    %         '<font color="red">'       ' ID: ' num2str(us.c{idc,4})       '</font>' ...
+    %         '</b><font color="blue">'     ' ; #children: ' num2str(length(us.c{idc,5})) '</font></b><br>' ...
+    %         '</b><font color="grey">'     ' VOL (ID) : ' num2str(us.volume(idc)) ' qmm ' '</font></b><br>' ...
+    %         '</b><font color="grey">'     ' VOL (tot): ' num2str(us.volumetot(idc)) ' qmm ' '</font></b><br>' ...
+    %         ...
+    %         '</html>'];
     
     jtable.setToolTipText(ms);
 end
