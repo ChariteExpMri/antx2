@@ -599,8 +599,14 @@ if nargin==1
         return
     end
 end
-uhelp(r,0, 'cursor' ,'end');
-set(gcf,'NumberTitle','off', 'name', 'ANTx2 - VERSION');
+isDesktop=usejava('desktop');
+if isDesktop==1
+    uhelp(r,0, 'cursor' ,'end');
+    set(gcf,'NumberTitle','off', 'name', 'ANTx2 - VERSION');
+else
+    disp(char(r));
+end
+    
 % uhelp('antver.m');
 if 0
     clipboard('copy', [    ['% #ba '   datestr(now,'dd mmm yyyy (HH:MM:SS)') repmat(' ',1,0) ]           ]);
