@@ -136,7 +136,7 @@ f1=projectname ;%fullfile(pwd,'proj.m')
 pwrite2file(f1,q);
 
 % disp('created projectfile: ' )
-showinfo2('created projectfile',f1);
+% showinfo2('created projectfile',f1);
 % edit(f1)
 
 warning off
@@ -145,12 +145,18 @@ mkdir(p.datpath);
 if ~isempty(char(msg))
     disp(msg);
 end
+%% ==============[optional output]=================================
 
 if nargout>0
     varargout{1}=f1;
 end
 
-showinfo2('ANTX-project created', f1);
+%% =============[display CMDwin]==================================
+if exist(f1)==2
+    showinfo2('ANTX-project created', f1);
+else
+    disp('...could not create ANTX-project');
+end
 
 
 % ==============================================
