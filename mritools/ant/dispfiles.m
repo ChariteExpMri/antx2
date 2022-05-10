@@ -1,7 +1,7 @@
 
 % display files folderwise in command-window (no GUI)
 % 
-%% optional pairwise inputs
+%% [OPTIONAL PAIRWISE INPUTS] ___________________________________________
 % 'form':  form to display (default: 1)
 %       1    files x folder ..long version
 %       11   files x folder ..compact version
@@ -20,7 +20,7 @@
 % show : show in comand-window (default: 1)
 %       [1] yes
 %       [0] no
-%% optional output
+%% [OPTIONAL OUTPUT] ___________________________________________
 % o-struct with
 %     hm:       header of m: {'dirs x files'}
 %     m:        dirs x files table, with '1' if file exists otherwise '0'; example:  [13x51 double]
@@ -29,9 +29,9 @@
 %     dirsshort:shortname-dirs; example:   {13x1 cell}
 %     mainpath: upper path of 'dirs'; example:'F:\data5\nogui\dat'
 % 
-% 
-%% example
+%% [EXAMPLES] ______________________________________________________
 % dispfiles;  %show all NIFTI from loaded project-file
+% o=dispfiles('flt','.*'); % show all files
 % dispfiles('form',2,'flt','^t2.*.nii');  % find all NIFTIs starting with 't2'
 % dispfiles('form',2,'flt','^ANO|^AVG.*.nii')  %find all NIFTI-files starting with ANO or AVG
 % dispfiles('form',2,'flt','^ANO|^AVG.*.nii','counts',0,'dir',fullfile(pwd,'dat2')); %%find all NIFTI-files starting with ANO or AVG, show no count-column/row, use explicit main folder
