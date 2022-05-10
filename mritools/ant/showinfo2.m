@@ -47,11 +47,12 @@ if strcmp(ext,'.nii')==0 ;%~isempty(regexp(im1,'.xls|.xlsx'))
         elseif isunix
             disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
                 ' or <a href="matlab: system(''xdg-open ' im1 ''');">' 'open' '</a>'  ' '  msg2 ]);
-        else
-            disp([msg '[' name ']:' im1 ',' msg2 ]);
         end
-        
+    else
+        disp([msg '[' name ']:' im1 ',' msg2 ]);
     end
+    
+    
     return
     
 end
@@ -61,7 +62,7 @@ end
 if exist('colorstr')==0
     colorstr='0';
 else
-   colorstr= num2str(colorstr);
+    colorstr= num2str(colorstr);
 end
 
 if exist('im2')~=1; im2=''; end
@@ -71,9 +72,9 @@ if exist('im2')==1
         direc= im2;
     else
         direc= 1;
-    end 
-end    
-  if exist('direc')~=1; direc=1; end
+    end
+end
+if exist('direc')~=1; direc=1; end
 
 
 a.img              =im1;
@@ -84,7 +85,7 @@ a.name             =[a.fil a.ext];
 
 do=1;
 if ~ isempty(im2)
-    swap=0; 
+    swap=0;
     if isnumeric(im2);
         if direc==1 %forward
             im2=fullfile(a.pa,'AVGT.nii');
@@ -95,7 +96,7 @@ if ~ isempty(im2)
         if strcmp(im1,im2)==1
             do=0;
         else
-           swap=1; 
+            swap=1;
         end
     end
     
@@ -113,12 +114,12 @@ if ~ isempty(im2)
             if exist('msg2')==0
                 msg2=[' [' name1 ' - ' name2 ']:'];
             end
-           if isdekstop==1 
-             disp([msg  msg2 '<a href="matlab: explorerpreselect(''' b.img ''');">' 'Explorer' '</a>' ...
-            ' or <a href="matlab: rmricron([],''' a.img ''' ,''' b.img ''', ' colorstr ')">' 'MRicron' '</a>'   ]);
-           else
-               disp([msg msg2 ':"' a.img '","' b.img '"' ]); 
-           end
+            if isdekstop==1
+                disp([msg  msg2 '<a href="matlab: explorerpreselect(''' b.img ''');">' 'Explorer' '</a>' ...
+                    ' or <a href="matlab: rmricron([],''' a.img ''' ,''' b.img ''', ' colorstr ')">' 'MRicron' '</a>'   ]);
+            else
+                disp([msg msg2 ':"' a.img '","' b.img '"' ]);
+            end
         else
             name1=a.name;
             name2=b.name;
@@ -129,13 +130,13 @@ if ~ isempty(im2)
                 disp([msg msg2 ' <a href="matlab: explorerpreselect(''' b.img ''');">' 'Explorer' '</a>' ...
                     ' or <a href="matlab: rmricron([],''' a.img ''' ,''' b.img ''', ' colorstr ')">' 'MRicron' '</a>'   ]);
             else
-                 disp([msg msg2 ':"' a.img '","' b.img '"' ]); 
+                disp([msg msg2 ':"' a.img '","' b.img '"' ]);
             end
         end
         
-       
-    
-    
+        
+        
+        
     end
 end
 
