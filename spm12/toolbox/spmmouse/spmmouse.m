@@ -314,7 +314,7 @@ switch cmd,
             newdefs.stats.results.mipmat         = animal.mipmat;
 
         catch
-            fprintf(1,'..warning setting defaults in spmmouse not loaded...but this neend''t to be a problem!u\n');
+            fprintf(1,'..warning setting defaults in spmmouse not loaded...but this neend''t to be a problem!\n');
             return;
         end
 

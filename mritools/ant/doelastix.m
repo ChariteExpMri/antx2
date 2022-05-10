@@ -217,8 +217,8 @@ end
 
 %% direction also assigned using 1/-1
 if   isnumeric(task);
-    if task==1          ;   task='transform';
-    elseif  task==-1  ;  task='transforminv';
+    if      task==1     ;  task='transform';
+    elseif  task==-1    ;  task='transforminv';
     end
 end
 %% —————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1017,7 +1017,12 @@ assignin('base','anth',v);
 
 
 %disp([' [f: doelastix.m]: <a href="matlab: uhelp(anth)">' 'batch' '</a>' ]);
-disp(sprintf(['[f: doelastix.m]: <a href="matlab: uhelp(anth)">' 'batch' '</a>' ]));
+sDesktop=usejava('desktop');
+if isDesktop==1
+    disp(sprintf(['[f: doelastix.m]: <a href="matlab: uhelp(anth)">' 'batch' '</a>' ]));
+else
+   disp('for batch see variable "anth"'); 
+end
 
 
 
