@@ -629,11 +629,13 @@ if find(s.task==3)
                 spm fmri;drawnow;
             else
                 %SOURCE: https://en.wikibooks.org/wiki/SPM/Faster_SPM
-                spm('defaults', 'fmri')
+                disp('..no-GUI SPM-version ...');
+                spm('defaults', 'fmri');
                 %spm_jobman('initcfg')
                 spm_get_defaults('cmdline',true);
             end
         end
+        disp('....load SPMmouse');
         loadspmmouse;drawnow;
         
         %% ============[SEGMENTATION ]====================
