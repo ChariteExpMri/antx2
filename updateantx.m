@@ -472,8 +472,9 @@ if ~isempty(msg)
         cprintf([ 1 0 1],'-----------------------------\n');
         cprintf([ 1 0 1],'  MODIFIED GITHUB FILES      \n');
         cprintf([ 1 0 1],'-----------------------------\n');
-        cprintf([ 0 0 0],'The following files have been created or modified in GITHUB.\n');
-        cprintf([ 0 0 0],'Note that the list might contain also locally modified or deleted files.\n');
+        cprintf([ 0 0 0]   ,'The following files have been created or modified in GITHUB:\n');
+        cprintf([ .5 .5 .5],'   (Note that the list might contain also locally modified or deleted files.)\n');
+        cprintf([ 1 0 1],'_____MODIFIED GITHUB FILES: \n');
         cprintf([ .5 .5 .5],msg);
         cprintf([ .5 .5 .5],'\n');
     elseif strcmp(message,'recheck')
