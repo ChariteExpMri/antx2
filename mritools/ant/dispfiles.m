@@ -29,7 +29,8 @@
 %     dirsshort:shortname-dirs; example:   {13x1 cell}
 %     mainpath: upper path of 'dirs'; example:'F:\data5\nogui\dat'
 % 
-%% [EXAMPLES] ______________________________________________________
+%% [EXAMPLES] ______________________________________________________antver
+
 % dispfiles;  %show all NIFTI from loaded project-file
 % o=dispfiles('flt','.*'); % show all files
 % dispfiles('form',2,'flt','^t2.*.nii');  % find all NIFTIs starting with 't2'

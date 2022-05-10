@@ -604,7 +604,7 @@ if isDesktop==1
     uhelp(r,0, 'cursor' ,'end');
     set(gcf,'NumberTitle','off', 'name', 'ANTx2 - VERSION');
 else
-    disp(char(r));
+    help antver
 end
     
 % uhelp('antver.m');
