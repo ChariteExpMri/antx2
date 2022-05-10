@@ -635,17 +635,17 @@ if find(s.task==3)
                 spm_get_defaults('cmdline',true);
             end
         end
-        disp('....load SPMmouse');
+        %disp('....load SPMmouse');
         loadspmmouse;drawnow;
         
         %% ============[SEGMENTATION ]====================
         
-        disp('### call xsegment...');
+        %disp('### call xsegment...');
         xsegment(t2,template,s); %SEGEMENTATION
         
         %% ===========POSTHOC -FASTSEGMENT ========
         
-        disp('### call fastsegment-post...');
+        %disp('### call fastsegment-post...');
         fastsegment(s.pa, 'post','subdir','segm');
         
         %check result- CHECK WHETHER MASK IS PART OF THE BORDER

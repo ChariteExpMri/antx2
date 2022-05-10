@@ -5,9 +5,19 @@ function spmmouse(varargin)
 
 global spmmouseset
 
-    fg = spm_figure('FindWin','Menu');
-    if isempty(fg)
-        spm('PET');
+isDesktop=usejava('desktop');   
+    
+    % DISPLAY_COMMAND_OUTPUT_IN_CMD-WINDOW
+    if isDesktop==1
+        fg = spm_figure('FindWin','Menu');
+        if isempty(fg)
+            spm('PET');
+        end
+    else
+        spm('defaults', 'fmri');
+        %spm_jobman('initcfg')
+        spm_get_defaults('cmdline',true);
+        
     end
     
     % what should we do
@@ -28,7 +38,7 @@ switch lower(str)
     case 'loadimage'
         loadimage;
     case 'autochk'
-        autochk;
+        autochk;clear
     case 'slideru'
         slideru;
     case 'sliderl'
