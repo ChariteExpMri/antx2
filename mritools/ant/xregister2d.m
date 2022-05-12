@@ -231,7 +231,7 @@ disp([sprintf('   elapsed time: %2.2f min', btic/60)]);
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 % function  transformx(ref,img,imgnew, g   );
 function  transformx(pa,g   );
-
+disp('intransform____###');
 %% check existence of files
 ref = fullfile(pa,char(g.refIMG));
 sou = fullfile(pa,char(g.sourceIMG));
@@ -245,7 +245,7 @@ for i=1:size(app)
 end
 app=app(find(appexist==1));
 
-
+disp('files exists____###');
 
 
 
