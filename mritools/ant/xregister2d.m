@@ -214,9 +214,9 @@ for i=1:size(pa,1)
 end
 
 
-
-makebatch(z,p);
-
+try
+    makebatch(z,p);
+end
 
 btic=toc(atic);
 disp(['.DONE!  FUNCTION: [' [mfilename '.m' ] ']; BATCH: see["anth"] in workspace']);
