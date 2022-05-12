@@ -1017,7 +1017,7 @@ assignin('base','anth',v);
 
 
 %disp([' [f: doelastix.m]: <a href="matlab: uhelp(anth)">' 'batch' '</a>' ]);
-sDesktop=usejava('desktop');
+isDesktop=usejava('desktop');
 if isDesktop==1
     disp(sprintf(['[f: doelastix.m]: <a href="matlab: uhelp(anth)">' 'batch' '</a>' ]));
 else

@@ -53,16 +53,17 @@
 % showgui: (optional)  :  0/1   :no gui/open gui
 % x      : (optional)  : struct with one/more specified parameters from above:
 %
-% xregister2d(1) or  FUNCTION    ... open PARAMETER_GUI with defaults
+% xregister2d(1) or               ... open PARAMETER_GUI with defaults
 % xregister2d(0,z)                ...run without GUI with specified parametes (z-struct)
 % xregister2d(1,z)                ...run with opening GUI with specified parametes (z-struct)
+% xregister2d(0,z,mdirs);         ... (for no graphics support): where mdirs is a cell of fullpath animal-folders
 %
 % ______________________________________________________________________________________________
 %% #ky BATCH EXAMPLE
-%%% ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%%% ==========================================================
 %%% BATCH:        [xregister2d.m]
 %%% descr:  #b slicewise register (2D)  sourceImage(nii) to referenceImage (nii)
-%%% ••••••••••••••••••••••••••••••••••••••••••••••••••••••
+%%% ==========================================================
 % z=[];
 % z.refIMG            = { 't2.nii' };      % % (<<) SELECT REFERENCE IMAGE (example: t2.nii)
 % z.sourceIMG         = { 'cbf.nii' };     % % (<<) SELECT IMAGE to transform in 2D
@@ -84,23 +85,19 @@
 %% #r RE-USE BATCH: see 'anth' [..anthistory] -variable in workspace
 %
 %
+%% #r noGUI-version (scenario with no graphics support)
+% xregister2d(0,z,mdirs);  % where mdirs is a cell of fullpath animal-folders
+% 
+% 
 
 function xregister2d(showgui,x,pa)
 
 
-%———————————————————————————————————————————————
-%%   example
-%———————————————————————————————————————————————
-if 0
-    
-    
-    
-    
-end
 
-%———————————————————————————————————————————————
-%%   PARAMS
-%———————————————————————————————————————————————
+% ==============================================
+%%    PARAMS
+% ===============================================
+
 if exist('showgui')==0 || isempty(showgui) ;    showgui=1                ;end
 if exist('x')==0                           ;    x=[]                     ;end
 if exist('pa')==0      || isempty(pa)      ;    pa=antcb('getsubjects')  ;end
@@ -118,9 +115,9 @@ end
 % pa=antcb('getsubjects'); %path
 v=getuniquefiles(pa);
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%%  PARAMETER-gui
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ==============================================
+%%   PARAMETER-gui
+% ===============================================
 if exist('x')~=1;        x=[]; end
 p={...
     'inf0'      '*** SLICEWISE TRANSFORM-2D      ****     '         '' ''
@@ -164,16 +161,13 @@ else
     z=param2struct(p);
 end
 
-
-%———————————————————————————————————————————————
-%%   PROCESS
-%———————————————————————————————————————————————
+% ==============================================
+%%    PROCESS
+% ===============================================
 atic=tic;  %timer
-
-
 g=z;
 
-%% chekcs
+%% checks
 g.refIMG    =cellstr(g.refIMG);
 g.sourceIMG =cellstr(g.sourceIMG);
 g.applyIMG =cellstr(g.applyIMG);
@@ -203,7 +197,7 @@ disp('*** register2D (slicewise) ***');
 size(pa)
 disp(length(pa))
 for i=1:length(pa)
-    disp('inloop____###');
+    %disp('inloop____###');
     transformx(pa{i},g );
     
     
@@ -231,13 +225,11 @@ disp(['.DONE!  FUNCTION: [' [mfilename '.m' ] ']; BATCH: see["anth"] in workspac
 disp([sprintf('   elapsed time: %2.2f min', btic/60)]);
 
 
-
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%% subs
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-% function  transformx(ref,img,imgnew, g   );
+% ==============================================
+%%   subs
+% ===============================================
 function  transformx(pa,g   );
-disp('intransform____###');
+% disp('intransform____###');
 %% check existence of files
 ref = fullfile(pa,char(g.refIMG));
 sou = fullfile(pa,char(g.sourceIMG));
@@ -251,7 +243,7 @@ for i=1:size(app)
 end
 app=app(find(appexist==1));
 
-disp('files exists____###');
+% disp('files exists____###');
 
 
 
@@ -273,14 +265,9 @@ set_ix(pfile0{3},'ResultImageFormat','nii');
 %% use this pfile
 pfile=pfile0(find([g.rigid g.affine g.bspline]==1));
 
-
-
-
-
-%———————————————————————————————————————————————
-%%
-%———————————————————————————————————————————————
-
+% ==============================================
+%%   
+% ===============================================
 
 %% LOAD IMAGES
 [ha a ]=rgetnii(ref);
@@ -362,18 +349,18 @@ for i=1:size(snum,1)
     %% reslice 2D
     rreslice2target(fsource, ftarget, fsource, g.InterpOrder    ,hb.dt);   % # hb.dt
     
-    % %     %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
     if ~isempty(pfile)
-        %———————————————————————————————————————————————
-        %% RUN ELASTIX
-        %———————————————————————————————————————————————
+        % ==============================================
+        %%   RUN ELASTIX
+        % ===============================================
+        
         try
             cprintf([.8 0 1], ['<busy>..run ELASTIX in [' strrep(mdir,[fileparts(mdir) filesep],'') ']'     [', Slice[' num2str(snum(i,2)) '] onto >> slice[' num2str(snum(i,1)) ']\n']]);
         end
         %     disp(['•PATH             : ' strrep(mdir,[fileparts(mdir) filesep],'')]);
-        disp(['•TRAFOS             : ' strjoin(strrep(pfile,[mdir filesep],''),' • ')]);
-        disp(['•Ref & Source files : ' ['[' strrep(ref,[(mdir) filesep],'') '] • [' strrep(sou,[(mdir) filesep],'') ']'] ]);
-        disp(['•Applied files      : ' strjoin(strrep(app,[mdir filesep],''),' • ')]);
+        disp(['TRAFOS             : ' strjoin(strrep(pfile,[mdir filesep],''),'  ')]);
+        disp(['Ref & Source files : ' ['[' strrep(ref,[(mdir) filesep],'') '] , [' strrep(sou,[(mdir) filesep],'') ']'] ]);
+        disp(['Applied files      : ' strjoin(strrep(app,[mdir filesep],''),'  ')]);
         
         
         %% MAKE DIR
@@ -392,9 +379,9 @@ for i=1:size(snum,1)
         wfiles=cellstr(rmovs);
         tfile=cellstr(tfile);
         
-        %———————————————————————————————————————————————
-        %%   RUN TRANSFORMIX
-        %———————————————————————————————————————————————
+        % ==============================================
+        %%      RUN TRANSFORMIX
+        % ===============================================
         try
             cprintf([0 .5 1], ['<busy>..run TRANSFORMIX in [' strrep(mdir,[fileparts(mdir) filesep],'') ']' [' : slice[' num2str(snum(i,2)) '] onto >> slice[' num2str(snum(i,1)) ']\n']]);
         end
@@ -438,10 +425,11 @@ for i=1:size(snum,1)
         %         set_ix(tfile{end},'Size'     ,hb.dim(1:2));
         %         set_ix(tfile{end},'Spacing'  ,[hb.mat(1,1) hb.mat(2,2)]);
         %     end
-        
-        %———————————————————————————————————————————————
+       
+        % ==============================================
         %%   GET VOLUME
-        %———————————————————————————————————————————————
+        % ===============================================
+
         %[hd d]=rgetnii(wfiles{end});
         [hd d]=rgetnii(wim);
         
@@ -489,12 +477,9 @@ for i=1:size(snum,1)
 end
 
 
-
-
-%———————————————————————————————————————————————
+% ==============================================
 %%   stack image  newImage
-%———————————————————————————————————————————————
-
+% ===============================================
 zeromat = zeros(size(a));
 for i=1:size(xd,4)           % for each VOLUME
     w  = zeromat;
@@ -516,96 +501,14 @@ for i=1:size(xd,4)           % for each VOLUME
     if g.createMask == 1
         foutmask=fullfile(mdir, strrep(g.applyIMGnew{i},'.nii','mask.nii'));
         rsavenii(foutmask,ha,wm   , [2 0]   );
-    end
-    
-    
-    
-    
-    
+    end    
 end
 
 
 
-%———————————————————————————————————————————————
-%%
-%———————————————————————————————————————————————
-%
-%
-% if hb.dim(3)~=size(d2,3)
-%     d3=zeros([size(d2,1) size(d2,2) hb.dim(3)]);
-%     for i=1:size(snum,1)
-%         d3(:,:,snum(i,1))=d2(:,:,i);
-%     end
-% else
-%     d3=d2;
-% end
-%
-%
-%
-% if strcmp(g.xyresolution,'ref')
-%     if strcmp(g.sliceAssign,'auto')
-%         hx=hb;
-%         hx.dim=[ha.dim([1 2]) hb.dim([3])];
-%         hx.mat=[...
-%             ha.mat([1:2],:)
-%             hb.mat([3:4],:)];
-%         %         rsavenii(imgnew,hx,d3);
-%
-%
-%     else
-%
-%         sspacea=[1:ha.dim(3)].*ha.mat(3,3)+ha.mat(3,4);
-%         sspaceb=[1:hb.dim(3)].*hb.mat(3,3)+hb.mat(3,4);
-%
-%
-%         %rsl=g.sliceAssign(1,1)-1;
-%         rsl=snum(1,1);
-%         ce=sspacea(rsl);
-%
-%         hx=hb;
-%         hx.dim=[ha.dim([1 2]) hb.dim([3])];
-%         hx.mat=[...
-%             ha.mat([1:2],:)
-%             hb.mat([3:4],:)];
-%         hx.mat(3,4)=ce
-%         hx.mat(3,3)=ha.mat(3,3)
-%         %         rsavenii(imgnew,hx,d3);
-%     end
-%
-% else
-%     hx=hb;
-%     %     rsavenii(imgnew,hx,d3);
-% end
-%
-%
-% %———————————————————————————————————————————————
-% %%   save new image
-% %———————————————————————————————————————————————
-% rsavenii(imgnew,hx,d3);
-% if g.reslice2refIMG==1
-%     rreslice2target(imgnew, ref,imgnew, g.InterpOrder,hx.dt);
-% end
-%
-% % MASK
-% if g.createMask==1
-%     imgnewmask=strrep(imgnew,'.nii','_mask.nii');
-%     rsavenii(imgnewmask,hx,ones(size(d3)));
-%
-%     if g.reslice2refIMG==1
-%         rreslice2target(imgnewmask, ref,imgnewmask, 0,[2 0]);
-%     end
-%
-% end
-%
-% try
-%     disp(['2d-registered image: <a href="matlab: explorerpreselect(''' imgnew ''')">' imgnew '</a>']);
-% end
-
-
-
-%———————————————————————————————————————————————
-%%   cleanUP
-%———————————————————————————————————————————————
+% ==============================================
+%%     cleanUP
+% ===============================================
 % try;delete(fix);end  % DELETE TARGET-2d-NIFTI
 
 if g.cleanup==1
@@ -634,9 +537,9 @@ if g.cleanup==1
     end
 end
 
-%———————————————————————————————————————————————
-%%   keepFolder
-%———————————————————————————————————————————————
+% ==============================================
+%%     keepFolder
+% ===============================================
 if g.keepFolder==0
     % DELETE TARGET-2d-NIFTI
     try; rmdir(fileparts(outdir),'s'); end
@@ -657,44 +560,45 @@ end
 
 
 
-return
+% % % return
+% % % 
+% % % % return
+% % % hr=spm_vol(ref);     hr=hr(1);
+% % % ha=spm_vol(img);
+% % % 
+% % % copyfile(img,imgnew,'f');
+% % % hb = spm_vol(imgnew);
+% % % for i = 1:size(hb,1)
+% % %     hc     = hb(i)       ; %get orig header
+% % %     hc.mat = hr.mat      ; % REPLACE -[mat]
+% % %     if g.keep_dt==0
+% % %         hc.dt   =hr.dt   ; % replace [dt]
+% % %     end
+% % %     spm_create_vol(hc);
+% % % end
+% % % try; delete( strrep(imgnew,'.nii','.mat')  ) ;     end
+% % % 
+% % % 
+% % % [~,imgs]=fileparts(img); imgs=[imgs ];
+% % % [~,refs]=fileparts(ref); refs=[refs ];
+% % % 
+% % % 
+% % % disp([...
+% % %     'NEW: <a href="matlab: explorerpreselect(''' imgnew ''')">' imgnew '</a>' ...
+% % %     ' OLD: <a href="matlab: explorerpreselect(''' img    ''')">' imgs    '</a>'...
+% % %     ' REF: <a href="matlab: explorerpreselect(''' ref    ''')">' refs    '</a>' ]);
+% % % 
+% % % 
+% % % % disp(['NEW: <a href="matlab: explorerpreselect(''' imgnew ''')">' imgnew '</a>' ]);
+% % % % disp(['OLD: <a href="matlab: explorerpreselect(''' img    ''')">' img    '</a>' ]);
+% % % % disp(['REF: <a href="matlab: explorerpreselect(''' img    ''')">' img    '</a>' ]);
 
-% return
-hr=spm_vol(ref);     hr=hr(1);
-ha=spm_vol(img);
-
-copyfile(img,imgnew,'f');
-hb = spm_vol(imgnew);
-for i = 1:size(hb,1)
-    hc     = hb(i)       ; %get orig header
-    hc.mat = hr.mat      ; % REPLACE -[mat]
-    if g.keep_dt==0
-        hc.dt   =hr.dt   ; % replace [dt]
-    end
-    spm_create_vol(hc);
-end
-try; delete( strrep(imgnew,'.nii','.mat')  ) ;     end
 
 
-[~,imgs]=fileparts(img); imgs=[imgs ];
-[~,refs]=fileparts(ref); refs=[refs ];
 
-
-disp([...
-    'NEW: <a href="matlab: explorerpreselect(''' imgnew ''')">' imgnew '</a>' ...
-    ' OLD: <a href="matlab: explorerpreselect(''' img    ''')">' imgs    '</a>'...
-    ' REF: <a href="matlab: explorerpreselect(''' ref    ''')">' refs    '</a>' ]);
-
-
-% disp(['NEW: <a href="matlab: explorerpreselect(''' imgnew ''')">' imgnew '</a>' ]);
-% disp(['OLD: <a href="matlab: explorerpreselect(''' img    ''')">' img    '</a>' ]);
-% disp(['REF: <a href="matlab: explorerpreselect(''' img    ''')">' img    '</a>' ]);
-
-
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%________________________________________________
-%%  generate list of nifit-files within pa-path
-%________________________________________________
+% ==============================================
+%%    generate list of nifit-files within pa-path
+% ===============================================
 function v=getuniquefiles(pa)
 % keyboard
 % global an
@@ -748,19 +652,17 @@ end
 v.tb =[li cellstr(num2str(ncount)) tb];
 v.tbh=[{'Unique-Files-In-Study', '#found'} tbh];
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+% ==============================================
+%%   selectfile
+% ===============================================
 function he=selectfile(v,selectiontype)
 he=selector2(v.tb,v.tbh,...
     'out','col-1','selection',selectiontype);
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%________________________________________________
-%%  rename files
-%________________________________________________
+% ==============================================
+%%   rename files
+% ===============================================
 function he=renamefiles(li,lih)
-
-
-
 %% get parameter from paramgui
 hpara = findobj(0,'tag','paramgui');
 us    = get(hpara,'userdata');
@@ -841,7 +743,6 @@ close(f);
 
 function makebatch(z,p)
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 
 try
     hlp=help(mfilename);
@@ -850,18 +751,12 @@ catch
     hlp='';
 end
 
-% hh={};
-% hh{end+1,1}=('%%% ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
-% hh{end+1,1}=[ '%%% #g BATCH:        [' [mfilename '.m' ] ']' ];
-% hh{end+1,1}=[ '%%% descr: ' hlp];
-% hh{end+1,1}=('% ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
-% hh=[hh; 'z=[];' ];
 
 hh={};
-hh{end+1,1}=('% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
+hh{end+1,1}=('% % ======================================================');
 hh{end+1,1}=['% % #g FUNCTION:        [' [mfilename '.m' ] ']' ];
 hh{end+1,1}=['% % #b info :            ' hlp];
-hh{end+1,1}=('% % ••••••••••••••••••••••••••••••••••••••••••••••••••••••');
+hh{end+1,1}=('% % ======================================================');
 hh=[hh; 'z=[];' ];
 % uhelp(hh,1);
 
