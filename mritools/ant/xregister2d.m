@@ -110,6 +110,9 @@ if isempty(x) || ~isstruct(x)  ;  %if no params spezified open gui anyway
 end
 
 if ischar(pa); pa=cellstr(pa); end
+if isnumeric(pa) || isempty(char(pa))
+   error(['no animal-folders selected/specified']) ;
+end
 
 %% get unique-files from all data
 % pa=antcb('getsubjects'); %path
