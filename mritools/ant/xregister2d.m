@@ -85,7 +85,7 @@
 %
 %
 
-function xregister2d(showgui,x)
+function xregister2d(showgui,x,pa)
 
 
 %———————————————————————————————————————————————
