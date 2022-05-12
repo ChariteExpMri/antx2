@@ -109,7 +109,7 @@ if isempty(x) || ~isstruct(x)  ;  %if no params spezified open gui anyway
     x=[]          ;
 end
 
-if ischar(pa); pa=cellstr(pa);end
+if ischar(pa); pa=cellstr(pa); end
 
 %% get unique-files from all data
 % pa=antcb('getsubjects'); %path
@@ -198,7 +198,7 @@ g.applyIMGnew= stradd(g.applyIMG,g.prefix,1);
 %% running trough MOUSEfolders
 disp('*** register2D ***');
 for i=1:size(pa,1)
-    transformx(pa{i},g )u
+    transformx(pa{i},g );
     
     
     %     ref=fullfile(pa{i},z.refIMG{1});
