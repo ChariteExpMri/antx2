@@ -194,8 +194,8 @@ g.applyIMGnew= stradd(g.applyIMG,g.prefix,1);
 
 %% running trough MOUSEfolders
 disp('*** register2D (slicewise) ***');
-size(pa)
-disp(length(pa))
+% size(pa);
+% disp(length(pa));
 for i=1:length(pa)
     %disp('inloop____###');
     transformx(pa{i},g );
