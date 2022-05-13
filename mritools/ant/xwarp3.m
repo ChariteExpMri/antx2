@@ -1058,9 +1058,9 @@ elseif q.parfor==1
     
     screensize=get(0,'ScreenSize');
     sizwin=[screensize(3)*2./4 screensize(4)*2/20];
-    try
-        ppm = ParforProgMon('analysis', Nm ,1, sizwin(1),sizwin(2) );
-    end
+%     try
+%         ppm = ParforProgMon('analysis', Nm ,1, sizwin(1),sizwin(2) );
+%     end
     
     parfor j=1:Nm
         try
@@ -1071,7 +1071,7 @@ elseif q.parfor==1
             %             lok(j,1)={['xwarp3-failed : ' v]};
         end
         
-        try;ppm.increment();end
+%         try;ppm.increment();end
     end
     %===============================================================================
     
