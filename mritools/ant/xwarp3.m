@@ -640,12 +640,12 @@ if find(s.task==3)
         
         %% ============[SEGMENTATION ]====================
         
-        %disp('### call xsegment...');
+        disp('### call xsegment...');
         xsegment(t2,template,s); %SEGEMENTATION
         
         %% ===========POSTHOC -FASTSEGMENT ========
         
-        %disp('### call fastsegment-post...');
+        disp('### call fastsegment-post...');
         fastsegment(s.pa, 'post','subdir','segm');
         ['#check: ' s.pa]
         
