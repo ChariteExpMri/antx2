@@ -188,6 +188,27 @@ if p.show==1
         he2=['  ' cellfun(@(a){[ repmat('=',[1 length(a)]) ]} , fisuni(:)' )];
         w=plog([],[[ {'  '}  fisuni(:)'  ]; [ he2]; [  dirs2(:)  df2  ] ],0,'FILE x FOLDER','al=1;');
         disp(char(w));
+%         
+%         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+%         FILE x FOLDER
+%         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+%         x_t2.nii counts
+%         ======== ======
+%         1001_a1                         +        1/1
+%         1001_a2                         .        0/1
+%         20201118CH_Exp10_9258           +        1/1
+%         Devin_5apr22                    +        1/1
+%         Kevin                           +        1/1
+%         anna_issue                      .        0/1
+%         empty                           .        0/1
+%         k3339                           .        0/1
+%         nodata                          .        0/1
+%         statImage                       .        0/1
+%         sus_20220215NW_ExpPTMain_009938 +        1/1
+%         ventr                           .        0/1
+%         xx31                            .        0/1
+%         counts                          5/13
+%         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
         
     elseif p.form==11
         
@@ -205,12 +226,12 @@ if p.show==1
         hedirs=repmat({''},[ size(he2,1) 1] );
         helin={repmat('=',[1 nc ])};
         dlin =repmat({'='},[1 size(df3,2) ]);
-        w=plog([],[[hedirs he2];[helin dlin]; [ fisuni  (df3)]],0,'FILE x FOLDER','al=1;');
+        w=plog([],[[hedirs he2];[helin dlin]; [ fisuni(:)  (df3)]],0,'FILE x FOLDER','al=1;');
         
         irep=regexpi2(w,'====');
         w{irep}=repmat('-',[ 1 length(w{irep}) ]);
         disp(char(w));
-    elseif p.form==2
+
         
     elseif p.form==1
         % ==============================================
@@ -218,12 +239,23 @@ if p.show==1
         % ===============================================
         df3=df2';
         he2=['  ' cellfun(@(a){[ repmat('=',[1 length(a)]) ]} , dirs2(:)' )];
-        w=plog([],[[ {'  '}  dirs2(:)'  ]; [ he2]; [  fisuni  df3  ] ],0,'FILE x FOLDER','al=1;');
+        w=plog([],[[ {'  '}  dirs2(:)'  ]; [ he2]; [  fisuni(:)  df3  ] ],0,'FILE x FOLDER','al=1;');
         disp(char(w));
         
         
-        
-        
+%         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+%         FILE x FOLDER
+%         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+%         1001_a1 1001_a2 20201118CH_Exp10_9258 Devin_5apr22 Kevin anna_issue empty k3339 nodata statImage sus_20220215NW_ExpPTMain_009938 ventr xx31  counts
+%         ======= ======= ===================== ============ ===== ========== ===== ===== ====== ========= =============================== ===== ====  ======
+%         1-1_TriPilot-multi_1.nii                      .       .       +                     .            .     .          .     .     .      .         .                               .     .     1/13
+%         1-2_FISP_sagittal_1.nii                       .       .       +                     .            .     .          .     .     .      .         .                               .     .     1/13
+%         1_Localizer_multi_slice_1.nii                 .       .       .                     .            +     .          .     .     .      .         .                               .     .     1/13
+%         2_1_T2_ax_mousebrain_1.nii                    .       .       +                     .            .     .          .     .     .      .         .                               .     .     1/13
+%         ANO.nii                                       +       +       +                     +            +     +          .     +     .      .         +                               .     +     9/13
+%         AVGT.nii                                      +       +       +                     +            +     +          .     +     .      +         +                               .     +     10/13
+%         AVGThemi.nii                                  +       +       +
+%         
         
     end
 end
