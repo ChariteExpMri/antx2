@@ -640,13 +640,13 @@ if find(s.task==3)
         
         %% ============[SEGMENTATION ]====================
         
-        disp('### call xsegment...');
-        disp('template');
-        disp(template);
-        disp('t2');
-        disp(t2);
-        disp('s');
-        disp(s);
+%         disp('### call xsegment...');
+%         disp('template');
+%         disp(template);
+%         disp('t2');
+%         disp(t2);
+%         disp('s');
+%         disp(s);
         xsegment(t2,template,s); %SEGEMENTATION
         
         %% ===========POSTHOC -FASTSEGMENT ========

@@ -18,6 +18,7 @@ if exist('param')~=1
 end
 
 spmversion=spm('ver');
+disp(spmversion);
 if strcmp(spmversion,'SPM12')
     runsegmSPM12(t2,template,param);
 elseif strcmp(spmversion,'SPM8')
