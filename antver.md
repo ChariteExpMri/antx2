@@ -8,11 +8,11 @@
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**13 May 2022 (01:12:05)**</ins>  
    __[xregister2d.m]__: modified  
-   - runs on machines without graphic support  
-   - option to allow parallel processing over animals   
+   -runs on machines without graphic support  
+   -option to allow parallel processing over animals   
    __[xcoreg.m]__: modified  
-   - runs on machines without graphic support  
-   - option to allow parallel processing over animals   
+   -runs on machines without graphic support  
+   -option to allow parallel processing over animals   
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**11 May 2022 (00:08:32)**</ins>  
    __[dispfiles.m]__: display files folderwise in command-window (no GUI)  

@@ -582,11 +582,11 @@
 % 
 % #ba 13 May 2022 (01:12:05)
 % #k [xregister2d.m]: #n modified
-%  - runs on machines without graphic support
-%  - option to allow parallel processing over animals 
+%  -runs on machines without graphic support
+%  -option to allow parallel processing over animals 
 % #k [xcoreg.m]: #n modified
-%  - runs on machines without graphic support
-%  - option to allow parallel processing over animals 
+%  -runs on machines without graphic support
+%  -option to allow parallel processing over animals 
 % 
 % 
 % 
