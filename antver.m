@@ -580,7 +580,7 @@
 % examples with ant: dispfiles('form',2,'flt','.*.nii','counts',0);
 % example no graphics support: dispfiles('form',2,'flt','.*.nii','counts',0,'dir',fullfile(pwd,'dat'));
 % 
-% % #ba 13 May 2022 (01:12:05)
+% #ba 13 May 2022 (01:12:05)
 % #k [xregister2d.m]: #n modified
 %  - runs on machines without graphic support
 %  - option to allow parallel processing over animals 
