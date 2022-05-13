@@ -196,15 +196,15 @@ if find(s.task==1)
      %% HTML summary
      timetask=tic;
     
-     disp('---prexhtmlgr');
+     %disp('---prexhtmlgr');
      %% HTML PROCESS_REPORT (group)
      xhtmlgr('update','page',fullfile((fileparts(fileparts(s.pa))),'summary.html'),'currentTask',1, 'currentsubject',s.pa);
-     disp('---posthtmlgr');
+     %disp('---posthtmlgr');
 
     
     %% copy templates to studyTemplatepath
     t=xcreatetemplatefiles2(s,0);
-    disp('---posth_createTemplatefiles');
+    %disp('---posth_createTemplatefiles');
     
     if 1
         t2=fullfile(s.pa,'t2.nii');
@@ -212,7 +212,7 @@ if find(s.task==1)
         ha=rmfield(ha,'private');
         rsavenii(t2,ha,a );
     end
-    disp('---post_removePrivate');
+    %disp('---post_removePrivate');
     
     if exist(fullfile(s.pa,'defs.mat'))==0  %% COPY TPMS if not exists
         %% COPY TEMPLATES FROM studyTemplatepath to current MOUSEPATH
@@ -252,15 +252,15 @@ if find(s.task==1)
         save(fullfile(s.pa, 'defs.mat' ),'defs'  );
     else
         refIMG      =fullfile(s.pa,'_refIMG.nii');
-        disp('check s.pa:');
-        disp(s.pa)
-        class(s.pa)
+        %disp('#check s.pa:');
+        %disp(s.pa)
+        %class(s.pa)
         
         load(fullfile(s.pa,'defs.mat'));
         tpm         =replacefilepath(defs.tpms(:,1),s.pa);   %tpm=defs.tpms(:,1);
         
-        disp('check this...filepath');
-        disp(tpm);
+        %disp('#check this...filepath');
+        %disp(tpm);
         
         for j=1:length(tpm)
             spm_get_space(tpm{j}, defs.tpms{j,2}  );
@@ -279,10 +279,10 @@ if find(s.task==1)
             %..>> DO NOTHING
         end
     end
-    disp('check---BG-removal');
+    
     %% SKULLSTRIP T2.nii
     if s.usePriorskullstrip==1
-        disp('check---skullstripp');
+        %disp('#check---skullstripp');
         fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: use pcnn3d-tool ' ]);
 
         %if isfield(s,'species') && strcmp(s.species,'rat')  % ##-RAT-##
