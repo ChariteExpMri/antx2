@@ -252,6 +252,10 @@ if find(s.task==1)
         save(fullfile(s.pa, 'defs.mat' ),'defs'  );
     else
         refIMG      =fullfile(s.pa,'_refIMG.nii');
+        disp('check s.pa:');
+        disp(s.pa)
+        class(s.pa)
+        
         load(fullfile(s.pa,'defs.mat'));
         tpm         =replacefilepath(defs.tpms(:,1),s.pa);   %tpm=defs.tpms(:,1);
         
