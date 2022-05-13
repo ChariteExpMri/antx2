@@ -590,6 +590,7 @@
 % 
 % #ba 13 May 2022 (16:46:56)
 % new tutorial #bw ["tutorial_noGraphic_support.docx"] 
+% This tutorial shows how to work on machines without graphic support and without GUIs 
 %     1) Optional: how to set the paths of elastix in unix/linux-system:
 %     2) Optional: open interactive session on hpc-cluster and start matlab
 %     3) Basics
