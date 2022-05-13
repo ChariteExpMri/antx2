@@ -1,11 +1,37 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   13 May 2022 (01:12:05)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   13 May 2022 (16:46:56)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**13 May 2022 (16:46:56)**</ins>  
+  new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  __["tutorial_noGraphic_support.docx"]__   
+      1) Optional: how to set the paths of elastix in unix/linux-system:  
+      2) Optional: open interactive session on hpc-cluster and start matlab  
+      3) Basics  
+         -add antx-paths  
+         -go to study-folder  
+         -update ant-toolbox  
+         -create a project-file:   
+         -load a project-file "proj.m"   
+         -check whether the project-file is loaded   
+      4) Import bruker-data  
+      5) Visualize files and folders  
+      6) Selection of animals  
+      7) Rename files  
+      8) Register “t2.nii” to template (standard space, ss)  
+      9) Extract the first 3d-volume from the 4d-vlume 'dti_b100.nii'   
+      10) Coregister 'dti_b100_1stimg.nii' to ‘t2.nii’  
+      11) Transform another image to standard-space  
+      12) Transform another image to native-space  
+      13) Check registration in standard-space - create html-file  
+      14) Check registration in native-space - create html-file  
+  This tutorial shows how work without GUis or on machines without graphic support  
+  &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+  &#8618; access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages)  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**13 May 2022 (01:12:05)**</ins>  
    __[xregister2d.m]__: modified  
    -runs on machines without graphic support  
@@ -13,6 +39,7 @@
    __[xcoreg.m]__: modified  
    -runs on machines without graphic support  
    -option to allow parallel processing over animals   
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**11 May 2022 (00:08:32)**</ins>  
    __[dispfiles.m]__: display files folderwise in command-window (no GUI)  

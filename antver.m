@@ -588,8 +588,31 @@
 %  -runs on machines without graphic support
 %  -option to allow parallel processing over animals 
 % 
-% 
-% 
+% #ba 13 May 2022 (16:46:56)
+% new tutorial #bw ["tutorial_noGraphic_support.docx"] 
+%     1) Optional: how to set the paths of elastix in unix/linux-system:
+%     2) Optional: open interactive session on hpc-cluster and start matlab
+%     3) Basics
+%        -add antx-paths
+%        -go to study-folder
+%        -update ant-toolbox
+%        -create a project-file: 
+%        -load a project-file "proj.m" 
+%        -check whether the project-file is loaded 
+%     4) Import bruker-data
+%     5) Visualize files and folders
+%     6) Selection of animals
+%     7) Rename files
+%     8) Register “t2.nii” to template (standard space, ss)
+%     9) Extract the first 3d-volume from the 4d-vlume 'dti_b100.nii' 
+%     10) Coregister 'dti_b100_1stimg.nii' to ‘t2.nii’
+%     11) Transform another image to standard-space
+%     12) Transform another image to native-space
+%     13) Check registration in standard-space - create html-file
+%     14) Check registration in native-space - create html-file
+% This tutorial shows how work without GUis or on machines without graphic support
+% #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+% #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages)
 % 
 
 
