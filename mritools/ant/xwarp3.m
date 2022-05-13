@@ -635,7 +635,7 @@ if find(s.task==3)
                 spm_get_defaults('cmdline',true);
             end
         end
-        %disp('....load SPMmouse');
+        %disp('....load SPMmouse');exit
         loadspmmouse;drawnow;
         
         % cut image
