@@ -204,15 +204,15 @@ if find(s.task==1)
     
     %% copy templates to studyTemplatepath
     t=xcreatetemplatefiles2(s,0);
+    disp('---posth_createTemplatefiles');
     
     if 1
         t2=fullfile(s.pa,'t2.nii');
         [ha a]=rgetnii(t2);
         ha=rmfield(ha,'private');
         rsavenii(t2,ha,a );
-        
     end
-    
+    disp('---post_removePrivate');
     
     if exist(fullfile(s.pa,'defs.mat'))==0  %% COPY TPMS if not exists
         %% COPY TEMPLATES FROM studyTemplatepath to current MOUSEPATH
