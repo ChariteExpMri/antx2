@@ -1935,7 +1935,12 @@ li=get(lb3,'string');
 usegui=1;
 if isempty(hfig) && isempty(lb3)
     usegui=0;
-    li=an.mdirs;
+    if isfield(an,'mdirs')==0
+        [li] = spm_select('FPList',an.datpath,'dir','.*');
+        li=cellstr(li);
+    else
+        li=an.mdirs;
+    end
 end
 
 % md    = regexprep(strrep(li,'<html>',''),'<font.*','');   %mouseDirs
