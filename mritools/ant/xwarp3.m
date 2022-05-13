@@ -254,6 +254,10 @@ if find(s.task==1)
         refIMG      =fullfile(s.pa,'_refIMG.nii');
         load(fullfile(s.pa,'defs.mat'));
         tpm         =replacefilepath(defs.tpms(:,1),s.pa);   %tpm=defs.tpms(:,1);
+        
+        disp('check this...filepath');
+        disp(tpm);
+        
         for j=1:length(tpm)
             spm_get_space(tpm{j}, defs.tpms{j,2}  );
         end
@@ -271,8 +275,10 @@ if find(s.task==1)
             %..>> DO NOTHING
         end
     end
+    disp('check---BG-removal');
     %% SKULLSTRIP T2.nii
     if s.usePriorskullstrip==1
+        disp('check---skullstripp');
         fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: use pcnn3d-tool ' ]);
 
         %if isfield(s,'species') && strcmp(s.species,'rat')  % ##-RAT-##
