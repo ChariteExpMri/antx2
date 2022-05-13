@@ -63,7 +63,7 @@
 % -----------------
 % x.centerering   : make copy of targetIMG & set origin to "center" ,than apply centeringTRafo
 %                   to all coregistered images. Default: [0]	
-% -----------------
+% __________________________________________
 % #b RESLICING VOLUME  PARAMETER (OPTIONAL)
 % x.reslicing     : reslice images,  [0] no, do not reslice, [1] reslice to target Image (targetImg1) 
 %                  Default: [0]		
@@ -99,6 +99,11 @@
 % x.preRotate    : the 3 rotation angles (in radians)
 % % ------------------------------------------
 % #b  x.cleanup       : remove interim steps {0|1: no|yes}; Default: [1]
+% 
+% __________________________________________
+% x.isparallel         - parallel processing over animals: [0]no,[1]yes'.
+%                      - if [1]:  parallel processing TBX must be available
+%                      - default: [0]
 % 
 % #g ==============================================================================
 % #g BLOCK-2, BLOCK-3... etc .. other coregistrations in the same pipeline
@@ -211,6 +216,11 @@
 %
 %% #by RE-USE BATCH: see 'anth' [..anthistory] -variable in workspace
 % 
+%% #r noGUI-version (scenario with no graphics support)
+% xcoreg(0,z,mdirs);  % where mdirs is a cell of fullpath animal-folders
+% 
+
+
 % update 01.04.21: 
 % preRotate & pre-elastix-registration work with 4D-data
 % if sourceImgage is 4D, it uses the 1st volume
@@ -220,13 +230,17 @@
 
 function xcoreg(showgui,x,pa)
 
+isExtPath=0; % external path
+if exist('pa')==1 && ~isempty(pa)
+    isExtPath=1;
+end
 
 %===========================================
 %%   PARAMS
 %===========================================
 if exist('showgui')==0 || isempty(showgui) ;    showgui=1                ;end
 if exist('x')==0                          ;    x=[]                     ;end
-if exist('pa')==0      || isempty(pa)      ;    pa=antcb('getsubjects')  ;end
+if isExtPath==0      ;    pa=antcb('getsubjects')  ;end
 
 if ischar(pa);                      pa=cellstr(pa);   end
 if isempty(x) || ~isstruct(x)  ;  %if no params spezified open gui anyway
@@ -288,12 +302,13 @@ p={...
     'tol'           [0.01 0.01 0.01   0.001 0.001 0.001]  'tolerences for accuracy of each param' ,{'0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001' ;' 0.02 0.02 0.02 0.001 0.001 0.001'}
     'fwhm'          [7 7]                                 'smoothing to apply to 256x256 joint histogram' ,''
     'centerering'   [0]                                   'make copy of targetIMG & set origin to "center" ,than apply centeringTRafo to all coregistered images,  ' ,'b'
-    
+
+        
      'inf2002'      [ '% RESLICE VOLUME (OPTIONAL) '    repmat('_',[1,90])]   '' ''
     'reslicing'    [0]      'reslice images,  [0] no, do not reslice, [1] reslice to target Image (targetImg1) ' ,{0 1 2}'
     'interpOrder'  'auto'   'interpolation order [0]nearest neighbour, [1] trilinear interpolation, ["auto"] to autodetect interpolation order' {'auto',0,1}'
     'prefix'       'r'      'file prefix for the new resliced volume (if empty, overwrite the soureIMG  )'   '' 
-    
+
     
     'inf2001'       [ '% ELASTIX: rigid,affine, bspline  (OPTIONAL) '    repmat('_',[1,90])]   '' ''
     'warping'       [0]        'USE ELASTIX, example..do subsequent nonlinear warping [0|1],  ' ,'b'
@@ -305,9 +320,12 @@ p={...
     'preRotate'     []  'pre-rotate image prior to any task [3 values;  string or numerical],   ' ,{ '1.5708 3.1416 0'}
     
 
+    'inf3000'        ''                           '' ''
+    'inf3001'      [ '% PARALLEL-PROCESSING OVER ANIMALS '    repmat('_',[1,90])]   '' ''
+    'isparallel'    0    'parallel processing over animals: [0]no,[1]yes' 'b'
+
     
-    
-    %
+    'inf199'        ''                           '' ''
     'inf200'        ''                           '' ''
     'inf201'      [ '%___  BLOCK-2 (optional)  '    repmat('_',[1,90])]   '' ''
     'targetImg2'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
@@ -352,6 +370,24 @@ else
     z=param2struct(p);
 end
 
+% ==============================================
+%%   BATCH
+% ===============================================
+try
+    isDesktop=usejava('desktop');
+    % xmakebatch(z,p, mfilename,isDesktop)
+    if isExtPath==0
+        xmakebatch(z,p, mfilename,['xcoreg(' num2str(isDesktop) ',z);' ]);
+    else
+        xmakebatch(z,p, mfilename,['xcoreg(' num2str(isDesktop) ',z,mdirs);' ],pa);
+    end
+end
+
+% return
+% ==============================================
+%%   
+% ===============================================
+
 
 %% TASK
 if iscell(z.TASK)
@@ -370,7 +406,7 @@ end
 %===========================================
 %%   process
 %===========================================
-makebatch(z);
+% makebatch(z);
 
 
 %% SHOW
@@ -472,9 +508,48 @@ assignin('base','anth',v);
 %===========================================
 %% COREG
 %===========================================
-
-
 function do_coregister(t2,z,modus)
+
+proc=cell2mat(t2(:,1));
+nprocs=unique(proc);
+
+timetot=tic;
+% z.isparallel=1;  %check parallel-processing
+
+if z.isparallel==0
+    for i=1:length(nprocs)
+        ix=find(proc==i);
+        t2sub=t2(ix,:);
+        
+        [mdirfp filename ext]=fileparts(t2sub{find(strcmp(t2sub(:,4),'t')),6});
+        [~, animal ]=fileparts(mdirfp);
+        cprintf('*[0 0 1]', [ '[' num2str(i) ']' 'COREG: "' animal '" with TARGET-IMG: "' filename ext '"'  '\n'] );
+        
+        do_coregisterInner(t2sub,z,modus);
+    end
+elseif z.isparallel==1
+    disp(' ...  using parallel processing across animals');
+    parfor i=1:length(nprocs)
+        ix=find(proc==i);
+        t2sub=t2(ix,:);
+        
+        [mdirfp filename ext]=fileparts(t2sub{find(strcmp(t2sub(:,4),'t')),6});
+        [~, animal ]=fileparts(mdirfp);
+%         try
+           cprintf('*[0 0 1]', [ '[' num2str(i) ']' 'COREG: "' animal '" with TARGET-IMG: "' filename ext '"'  '\n'] );
+%         catch
+%             disp([ '[' num2str(i) ']' 'COREG: "' animal '" with TARGET-IMG: "' filename ext '"'  ] );
+%         end
+          drawnow; pause(1);
+         do_coregisterInner(t2sub,z,modus);
+    end
+end
+    
+cprintf('[.5 .5 .5]', [ '.. For BATCH: see["anth"] in workspace.'  '\n'] );
+cprintf('*[0 0 1]', [ ['DONE! [' mfilename '.m]'  sprintf(' dT: %2.2f min', toc(timetot)/60)  ]  '\n'] );
+
+
+function do_coregisterInner(t2,z,modus)
 
 atic=tic;
 
@@ -487,11 +562,15 @@ atic=tic;
 % pause(1);
 % fprintf(['\b\b [done] ELA ' sprintf('%2.2fmin',toc(atic)/60) '\n']);
 
+[mdirfp filename ext]=fileparts(t2{find(strcmp(t2(:,4),'t')),6});
+[~, animal ]=fileparts(mdirfp);
+
+
 proc=cell2mat(t2(:,1));
 nprocs=unique(proc);
 
 
-for i=1:length(nprocs)
+for i=nprocs;%1:length(nprocs)
     g=t2(proc==i,:);
     displog={};
     
@@ -551,7 +630,7 @@ for i=1:length(nprocs)
           end
           if strcmp(modus,'reorient_only')
               try; displog={s.ac{1} }'; end
-              fprintf(['\b\b [done] ELA ' sprintf('%2.2fmin',toc(atic)/60) '\n']);
+              disp(['[done] "' animal '",  ELA ' sprintf('%2.2fmin',toc(atic)/60) '\n']);
               try; showinfo2([ 'reorient: ' fileparts(displog{1}) ], displog{1}); end
               
               continue
@@ -588,8 +667,8 @@ for i=1:length(nprocs)
             matlabbatch{2}.spm.spatial.coreg.estimate.eoptions.fwhm =     z.fwhm       ;%[7 7];
             %     spm_jobman('run',matlabbatch)
             %disp(['coregistration:  refIMG:' s.sc{1}]);
-            cprintf([0 .5 0] ,['targetIMG: '    ]);
-            cprintf([0 0 1] ,[ strrep(s.tc{1},filesep,['/' filesep])  '\n']);
+            %cprintf([0 .5 0] ,['targetIMG: '    ]);
+            %cprintf([0 0 1] ,[ strrep(s.tc{1},filesep,['/' filesep])  '\n']);
             fprintf('.. register images..');
             evalc('spm_jobman(''run'',matlabbatch)');
             % spm_jobman('run',matlabbatch);
@@ -811,9 +890,12 @@ for i=1:length(nprocs)
 
     catch
         %%PROBLEM
-        
-        disp([pnum(i,4) '] coreg failed <a href="matlab: explorer('' ' fileparts(char(s.t)) '  '')">' char(s.t) '</a>']);% show h<perlink
-        
+        isDesktop=usejava('desktop');
+        if isDesktop==1
+            disp([pnum(i,4) '] coreg failed <a href="matlab: explorer('' ' fileparts(char(s.t)) '  '')">' char(s.t) '</a>']);% show h<perlink
+        else
+            disp([pnum(i,4) '] coreg failed "' animal '"']);% 
+        end
         
     end
     

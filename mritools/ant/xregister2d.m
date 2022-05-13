@@ -33,18 +33,21 @@
 %                       as [15 1] to assign refIMG-slice-15 to sourceIMG-slice-1 or
 %                       or [15 1; 16 2]  to assign refIMG-slice-15 to sourceIMG-slice-1 and
 %                       refIMG-slice-16 to sourceIMG-slice-2
-% x.reslice2refIMG'    - force to match dimensions of refImage'  <boolean> [1] yes, [0] no    (default: 1)
+% x.reslice2refIMG     - force to match dimensions of refImage'  <boolean> [1] yes, [0] no    (default: 1)
 %                      - NOTE: currently, this is mandatory to later warp the sourceIMG to Allen-space
 %                      - this step fills "spacing" dummy slices with zero-elements
-% x.createMask'        - create binary MaskImage    <boolean> [1] yes, [0] no    (default: 1)
+% x.createMask         - create binary MaskImage    <boolean> [1] yes, [0] no    (default: 1)
 %                      - mask name: filename: "newfilename+_mask"]'  'b'
 %                      - rule: registered slices with "1"s, spacing dummy slices with "0"-elements
 %                      - NOTE: maskImage can be later used to assist the atlas-based read out of
 %                        values in native or allen space. For Allen space readout, the registered
 %                        sourceIMG and corresponding mask has to be brought into Allen space
+% x.isparallel         - parallel processing over animals: [0]no,[1]yes'.
+%                      - if [1]:  parallel processing TBX must be available
+%                      - default: [0]
 % __________________________________________
 % x.cleanup           - remove unnecessary data afterwards, <boolean> [1] yes, [0] no (default: 1)
-% x.keepFolder=       - keeps local 2d-elastix folder       <boolean> [1] yes, [0] no (default: 0)
+% x.keepFolder        - keeps local 2d-elastix folder       <boolean> [1] yes, [0] no (default: 0)
 %
 % ______________________________________________________________________________________________
 %% #ky RUN-def:
@@ -87,12 +90,15 @@
 %
 %% #r noGUI-version (scenario with no graphics support)
 % xregister2d(0,z,mdirs);  % where mdirs is a cell of fullpath animal-folders
-% 
-% 
+%
+%
 
 function xregister2d(showgui,x,pa)
 
-
+isExtPath=0; % external path
+if exist('pa')==1 && ~isempty(pa)
+    isExtPath=1;
+end
 
 % ==============================================
 %%    PARAMS
@@ -100,7 +106,8 @@ function xregister2d(showgui,x,pa)
 
 if exist('showgui')==0 || isempty(showgui) ;    showgui=1                ;end
 if exist('x')==0                           ;    x=[]                     ;end
-if exist('pa')==0      || isempty(pa)      ;    pa=antcb('getsubjects')  ;end
+% if exist('pa')==0      || isempty(pa)      ;    pa=antcb('getsubjects')  ;end
+if isExtPath==0;    pa=antcb('getsubjects')  ;end
 if isempty(x) || ~isstruct(x)  ;  %if no params spezified open gui anyway
     showgui  =1   ;
     x=[]          ;
@@ -108,7 +115,7 @@ end
 
 if ischar(pa); pa=cellstr(pa); end
 if isnumeric(pa) || isempty(char(pa))
-   error(['no animal-folders selected/specified']) ;
+    error(['no animal-folders selected/specified']) ;
 end
 
 %% get unique-files from all data
@@ -128,12 +135,8 @@ p={...
     'applyIMG'      {''}      '(<<) SELECT 1/more IMAGES to apply transformation, (if empty sourceIMG is transformed         '  {@selectfile,v,'multi'}
     'inf77'     '====================================================================================================='        '' ''
     %     'renameIMG'     ''       '(optional) rename-string for the new file, otherwise the prefix "p"+sourceIMG-name is used'  {@renamefiles,[],[]}
-    'prefix'     'p'       'this prefix is used for the output file >>[prefix+"name of applyIMG"]'   {@renamefiles,[],[]}
+    'prefix'        'p'       'this prefix is used for the output file >>[prefix+"name of applyIMG"]'   {@renamefiles,[],[]}
     
-    
-    % z.applyIMG          = { '' };            % % (<<) SELECT IMAGE to apply transformation, (if empty sourceIMG is also the applied IMAGE)
-    
-    %   'fileprefix'    'h_'     'add a file-prefix to output-files (this is only used if "renameIMG" is empty )'   ''
     'rigid'          0        'do rigid transformation'    'b'
     'affine'         1        'do affine transformation'   'b'
     'bspline'        1        'do b-spline transformation' 'b'
@@ -144,6 +147,8 @@ p={...
     'sliceAssign'     'auto' 'Slice-to-slice assigment of refIMG & sourceIMG: "auto" use image information; otherwise specify as pairwise vector/matrix such as [15 1] or [15 1; 16 2]  ' {'auto'; '1 15'}
     'reslice2refIMG'      1    'force to match dimensions of refImage'  'b'
     'createMask'          1    'create binary MaskImage  [ used slices contain "1"-elements; filename: "newfilename+_mask"]'  'b'
+    'isparallel'          0    'parallel processing over animals: [0]no,[1]yes' 'b'
+    'verbose'             2    'verbosity level in command window: [0]no info,[1]some info,[2] more info in CMD-window' {0:2}
     'inf9'     '====================================================================================================='        '' ''
     'cleanup'         1        'remove unnecessary data' 'b'
     'keepFolder'      1        'keeps local 2d-elastix folder' 'b'
@@ -152,14 +157,28 @@ p={...
 p=paramadd(p,x);%add/replace parameter
 %% show GUI
 if showgui==1
-    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .5 .35 ],...
-        'title','PARAMETERS: replaceheader','info',{@uhelp, 'xregister2d.m'});
+    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .5 .42 ],...
+        'title',mfilename,'info',{@uhelp, 'xregister2d.m'});
     if isempty(m); return; end
     fn=fieldnames(z);
     z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
 else
     z=param2struct(p);
 end
+
+% ==============================================
+%%   BATCH
+% ===============================================
+try
+    isDesktop=usejava('desktop');
+    % xmakebatch(z,p, mfilename,isDesktop)
+    if isExtPath==0
+        xmakebatch(z,p, mfilename,['xregister2d(' num2str(isDesktop) ',z);' ]);
+    else
+        xmakebatch(z,p, mfilename,['xregister2d(' num2str(isDesktop) ',z,mdirs);' ],pa);
+    end
+end
+
 
 % ==============================================
 %%    PROCESS
@@ -191,38 +210,43 @@ g.applyIMGnew= stradd(g.applyIMG,g.prefix,1);
 
 
 
+% ==============================================
+%%   loop over animals
+% ===============================================
 
 %% running trough MOUSEfolders
-disp('*** register2D (slicewise) ***');
+disp(['*** register2D (slicewise via "' mfilename '") ***']);
 % size(pa);
 % disp(length(pa));
-for i=1:length(pa)
-    %disp('inloop____###');
-    transformx(pa{i},g );
-    
-    
-    %     ref=fullfile(pa{i},z.refIMG{1});
-    %     if exist(ref)==2
-    %         img =fullfile(pa{i},g.fold{1});
-    %         if exist(img)==2
-    %             %                 disp('---------');
-    %             %                 disp(['ref: ' ref]);
-    %             %                 disp(['img: ' img]);
-    %             %                 disp('---------');
-    %             imgnew = char(fullfile(pa{i},g.fnew));
-    %             transformx(ref,img,imgnew, g   );
-    %         end
-    %     end
+
+% z.isparallel=1;
+if z.isparallel==0;
+    for i=1:length(pa)
+        transformx(pa{i},g );
+    end
+elseif z.isparallel==1;
+    disp('...parallel processing over animals');
+    parfor i=1:length(pa)
+        transformx(pa{i},g );
+    end
 end
 
 
-try
-    makebatch(z,p);
-end
+
+% ==============================================
+%%   batch
+% ===============================================
+% try
+%     makebatch(z,p);
+% end
+% ==============================================
+%%   end...message
+% ===============================================
 
 btic=toc(atic);
-disp(['.DONE!  FUNCTION: [' [mfilename '.m' ] ']; BATCH: see["anth"] in workspace']);
-disp([sprintf('   elapsed time: %2.2f min', btic/60)]);
+disp(['.. For BATCH: see["anth"] in workspace.']);
+disp(['DONE! [' mfilename '.m]'  sprintf(' dT: %2.2f min', btic/60)  ]);
+
 
 
 % ==============================================
@@ -266,7 +290,7 @@ set_ix(pfile0{3},'ResultImageFormat','nii');
 pfile=pfile0(find([g.rigid g.affine g.bspline]==1));
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 %% LOAD IMAGES
@@ -318,6 +342,7 @@ end
 
 
 mdir=pa;
+[~, animalname]=fileparts(mdir);
 
 %% warp slicewise
 % offset=[];
@@ -353,14 +378,17 @@ for i=1:size(snum,1)
         % ==============================================
         %%   RUN ELASTIX
         % ===============================================
-        
-        try
-            cprintf([.8 0 1], ['<busy>..run ELASTIX in [' strrep(mdir,[fileparts(mdir) filesep],'') ']'     [', Slice[' num2str(snum(i,2)) '] onto >> slice[' num2str(snum(i,1)) ']\n']]);
+        if g.verbose>0
+            try
+                cprintf([.8 0 1], ['_____[2D-REG: SLICE-' num2str(i) ' of "'  animalname '"]_______\n']);
+                cprintf([.8 0 1], [' ..running ELASTIX in [' strrep(mdir,[fileparts(mdir) filesep],'') ']'     [', Slice[' num2str(snum(i,2)) '] onto >> slice[' num2str(snum(i,1)) '] ..PLEASE WAIT...\n']]);
+            end
         end
-        %     disp(['•PATH             : ' strrep(mdir,[fileparts(mdir) filesep],'')]);
-        disp(['TRAFOS             : ' strjoin(strrep(pfile,[mdir filesep],''),'  ')]);
-        disp(['Ref & Source files : ' ['[' strrep(ref,[(mdir) filesep],'') '] , [' strrep(sou,[(mdir) filesep],'') ']'] ]);
-        disp(['Applied files      : ' strjoin(strrep(app,[mdir filesep],''),'  ')]);
+        if g.verbose>1
+            disp(['  -Trafo-files         : ' strjoin(strrep(pfile,[mdir filesep],', '),'  ')]);
+            disp(['  -Ref & Source files : ' ['' strrep(ref,[(mdir) filesep],'') ', ' strrep(sou,[(mdir) filesep],'') ''] ]);
+            disp(['  -Applied files      : ' strjoin(strrep(app,[mdir filesep],', '),' ')]);
+        end
         
         
         %% MAKE DIR
@@ -383,7 +411,9 @@ for i=1:size(snum,1)
         %%      RUN TRANSFORMIX
         % ===============================================
         try
-            cprintf([0 .5 1], ['<busy>..run TRANSFORMIX in [' strrep(mdir,[fileparts(mdir) filesep],'') ']' [' : slice[' num2str(snum(i,2)) '] onto >> slice[' num2str(snum(i,1)) ']\n']]);
+            if g.verbose>0
+                cprintf([0 .5 1], [' ..running TRANSFORMIX in [' strrep(mdir,[fileparts(mdir) filesep],'') ']' [' : slice[' num2str(snum(i,2)) '] onto >> slice[' num2str(snum(i,1)) '] ..PLEASE WAIT...\n']]);
+            end
         end
         set_ix(tfile{end},'FinalBSplineInterpolationOrder' ,g.InterpOrder);      % INTERPOLATION
     end
@@ -425,11 +455,11 @@ for i=1:size(snum,1)
         %         set_ix(tfile{end},'Size'     ,hb.dim(1:2));
         %         set_ix(tfile{end},'Spacing'  ,[hb.mat(1,1) hb.mat(2,2)]);
         %     end
-       
+        
         % ==============================================
         %%   GET VOLUME
         % ===============================================
-
+        
         %[hd d]=rgetnii(wfiles{end});
         [hd d]=rgetnii(wim);
         
@@ -494,14 +524,20 @@ for i=1:size(xd,4)           % for each VOLUME
     hfin=spm_vol(fin);
     rsavenii(fout,ha,w   , hfin.dt   );
     try
-        disp(['2d-registered image: <a href="matlab: explorerpreselect(''' ...
-            fout ''')">' fout '</a>']);
+        if g.verbose>0
+            if usejava('desktop')==1
+                disp(['2d-registered image: <a href="matlab: explorerpreselect(''' ...
+                    fout ''')">' fout '</a>']);
+            else
+                disp(['2d-registered image: "' fout '"']);
+            end
+        end
     end
     
     if g.createMask == 1
         foutmask=fullfile(mdir, strrep(g.applyIMGnew{i},'.nii','mask.nii'));
         rsavenii(foutmask,ha,wm   , [2 0]   );
-    end    
+    end
 end
 
 
@@ -561,11 +597,11 @@ end
 
 
 % % % return
-% % % 
+% % %
 % % % % return
 % % % hr=spm_vol(ref);     hr=hr(1);
 % % % ha=spm_vol(img);
-% % % 
+% % %
 % % % copyfile(img,imgnew,'f');
 % % % hb = spm_vol(imgnew);
 % % % for i = 1:size(hb,1)
@@ -577,18 +613,18 @@ end
 % % %     spm_create_vol(hc);
 % % % end
 % % % try; delete( strrep(imgnew,'.nii','.mat')  ) ;     end
-% % % 
-% % % 
+% % %
+% % %
 % % % [~,imgs]=fileparts(img); imgs=[imgs ];
 % % % [~,refs]=fileparts(ref); refs=[refs ];
-% % % 
-% % % 
+% % %
+% % %
 % % % disp([...
 % % %     'NEW: <a href="matlab: explorerpreselect(''' imgnew ''')">' imgnew '</a>' ...
 % % %     ' OLD: <a href="matlab: explorerpreselect(''' img    ''')">' imgs    '</a>'...
 % % %     ' REF: <a href="matlab: explorerpreselect(''' ref    ''')">' refs    '</a>' ]);
-% % % 
-% % % 
+% % %
+% % %
 % % % % disp(['NEW: <a href="matlab: explorerpreselect(''' imgnew ''')">' imgnew '</a>' ]);
 % % % % disp(['OLD: <a href="matlab: explorerpreselect(''' img    ''')">' img    '</a>' ]);
 % % % % disp(['REF: <a href="matlab: explorerpreselect(''' img    ''')">' img    '</a>' ]);

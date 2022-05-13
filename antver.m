@@ -577,9 +577,21 @@
 % 
 % #ba 11 May 2022 (00:08:32)
 % #k [dispfiles.m]: #n display files folderwise in command-window (no GUI)
+% examples with ant: dispfiles('form',2,'flt','.*.nii','counts',0);
+% example no graphics support: dispfiles('form',2,'flt','.*.nii','counts',0,'dir',fullfile(pwd,'dat'));
+% 
+% % #ba 13 May 2022 (01:12:05)
+% #k [xregister2d.m]: #n modified
+%  - runs on machines without graphic support
+%  - option to allow parallel processing over animals 
+% #k [xcoreg.m]: #n modified
+%  - runs on machines without graphic support
+%  - option to allow parallel processing over animals 
 % 
 % 
 % 
+% 
+
 
 %% ===============================================
 %----- EOF

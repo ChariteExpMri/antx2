@@ -1,13 +1,24 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   11 May 2022 (00:08:32)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   % 13 May 2022 (01:12:05)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
     
     
 ------------------  
+  % ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**13 May 2022 (01:12:05)**</ins>  
+   __[xregister2d.m]__: modified  
+   - runs on machines without graphic support  
+   - option to allow parallel processing over animals   
+   __[xcoreg.m]__: modified  
+   - runs on machines without graphic support  
+   - option to allow parallel processing over animals   
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**11 May 2022 (00:08:32)**</ins>  
    __[dispfiles.m]__: display files folderwise in command-window (no GUI)  
+  examples with ant: dispfiles('form',2,'flt','.*.nii','counts',0);  
+  example no graphics support: dispfiles('form',2,'flt','.*.nii','counts',0,'dir',fullfile(pwd,'dat'));  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**09 May 2022 (15:52:33)**</ins>  
    __[xmaskgenerator.m]__: implemented reslicing if another atlas is used with a different voxel-size  

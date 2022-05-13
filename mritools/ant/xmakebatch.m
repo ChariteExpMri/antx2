@@ -1,5 +1,5 @@
 
-function xmakebatch(z,p, callerfile,execCMD)
+function xmakebatch(z,p, callerfile,execCMD,mdirs)
 
 % z: struct with parameter
 % p: cellarray parameter x 4 cols (parameterName parameterValue info selectionOption )
@@ -32,8 +32,9 @@ else
     hh{end+1,1}=['% % #b info :            ' hlp];
 end
 hh{end+1,1}=('% % =====================================================');
-hh=[hh; 'z=[];' ];
+% hh=[hh; 'z=[];' ];
 % uhelp(hh,1);
+he={'z=[];'};
 
 
 
@@ -112,10 +113,21 @@ zz=cellfun(@(a,b) {[a repmat(' ' ,1,sizx-size(a,2)) b ]}, zz,ph);
 iinf=regexpi2(zz,'^[A-z].inf\d+\s{0,1000}=');
 zz(iinf)=[];
 
-hh=[hh; zz];
+if exist('mdirs')==1 && ~isempty(char(mdirs))
+    mdirs=cellstr(mdirs);
+    mdirs=mdirs(:);
+    hdirs=[['mdirs={'  repmat(' ',[1 35]) ' % % used animal folders'] ...
+        ;(cellfun(@(a){[ repmat(' ',[1 4 ])  '''' a '''']} ,mdirs)); '    };' ; ' '];
+else
+    hdirs={};
+end
+
+
+hh=[hh;hdirs; he; zz];
+isDesktop=usejava('desktop');
 % ----------
 if exist('execCMD')==0
-    hh(end+1,1)={[callerfile '(' '1',  ',z' ');' ]};
+    hh(end+1,1)={[callerfile '(' num2str(isDesktop),  ',z' ');' ]};
 else
     hh(end+1,1)={[execCMD ]};
 end
