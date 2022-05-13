@@ -273,7 +273,7 @@ if find(s.task==1)
     end
     %% SKULLSTRIP T2.nii
     if s.usePriorskullstrip==1
-        fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: use pcnn3d-tool' ]);
+        fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: use pcnn3d-tool ' ]);
 
         %if isfield(s,'species') && strcmp(s.species,'rat')  % ##-RAT-##
         if isfield(s,'species') && (strcmp(s.species,'rat') || strcmp(s.species,'etruscianshrew'))   
@@ -283,7 +283,7 @@ if find(s.task==1)
             %skullstrip_pcnn3d(s.t2, fullfile(s.pa, '_msk.nii' ),  'skullstrip'   );
             evalc('skullstrip_pcnn3d(s.t2, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip''   )'); ;
         end
-        fprintf('done.\n ');
+        fprintf('..done.\n ');
         
     elseif s.usePriorskullstrip==2 
         % ==============================================
@@ -293,7 +293,7 @@ if find(s.task==1)
         disp('"t2.nii" copied as "_msk.nii" ');
         msk=fullfile(s.pa,'_msk.nii');
         copyfile(s.t2,msk,'f');
-        fprintf('done.\n ');
+        fprintf('..done.\n ');
     elseif s.usePriorskullstrip==3 % '_msk.nii' allready exists (same props as t2.nii)    
         % ==============================================
         %%   dirty maskingApproach for tubes
@@ -301,7 +301,7 @@ if find(s.task==1)
         fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']..' ]);
         %         skullstrip2(s.t2,5,[3:7],20,1,0,1);
         skullstrip2(s.t2,5,[3],1,20,1,0,1);
-        fprintf('done.\n ');
+        fprintf('..done.\n ');
     elseif s.usePriorskullstrip==4 % '_msk.nii' allready exists (same props as t2.nii)
         % ==============================================
         %%  mutitube: use t2.nii but remove background
@@ -330,7 +330,7 @@ if find(s.task==1)
         %montage2(mx2);
         msk=fullfile(s.pa,'_msk.nii');
         rsavenii(msk,hc,mx2.*c);
-        disp('done');
+        disp('..done.');
     elseif s.usePriorskullstrip==-1 % 
         % ==============================================
         %% '_msk.nii exist in path'
@@ -647,6 +647,7 @@ if find(s.task==3)
         
         %disp('### call fastsegment-post...');
         fastsegment(s.pa, 'post','subdir','segm');
+        ['#check: ' s.pa]
         
         %check result- CHECK WHETHER MASK IS PART OF THE BORDER
         
