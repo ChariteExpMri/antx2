@@ -196,10 +196,10 @@ if find(s.task==1)
      %% HTML summary
      timetask=tic;
     
-     
+     disp('---prexhtmlgr');
      %% HTML PROCESS_REPORT (group)
      xhtmlgr('update','page',fullfile((fileparts(fileparts(s.pa))),'summary.html'),'currentTask',1, 'currentsubject',s.pa);
-
+     disp('---posthtmlgr');
 
     
     %% copy templates to studyTemplatepath
