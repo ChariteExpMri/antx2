@@ -228,9 +228,9 @@ end
 % ==============================================
 %%   run job
 % ===============================================
-disp('check: before: spm_run_preproc_spm8.m ');
+% disp('check: before: spm_run_preproc_spm8.m ');
 spm_run_preproc_spm8(job);  % spm8-function
-disp('check: after: spm_run_preproc_spm8.m ');
+% disp('check: after: spm_run_preproc_spm8.m ');
 
 
 

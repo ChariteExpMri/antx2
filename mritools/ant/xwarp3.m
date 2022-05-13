@@ -629,7 +629,8 @@ if find(s.task==3)
             else
                 %SOURCE: https://en.wikibooks.org/wiki/SPM/Faster_SPM
                 disp('..no-GUI SPM-version ...');
-                spm('defaults', 'fmri');
+                %spm('defaults', 'fmri');
+                spm('Defaults','fmri');
                 spm_jobman('initcfg');
                 spm_get_defaults('cmdline',true);
             end
