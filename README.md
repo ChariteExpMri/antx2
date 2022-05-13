@@ -17,6 +17,13 @@
 # ANTx2
 ANTx2 stands for **A** tlas **N** ormalization **T** oolbox using elasti **x**. It is a MATLAB toolbox for image registration of mouse magnetic resonance imaging data developed for research laboratories/departments.
 
+<pre>____________________________________________________________________________________________
+&#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a> 
+&#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a> 
+&#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a> 
+____________________________________________________________________________________________
+</pre>
+
 ## **Requirements**
 - Windows (tested: Windows 10)
 - Linux (tested: Ubuntu 16.04.6 LTS, (MINT17/Linuxfx))
@@ -127,13 +134,6 @@ Scripts in the freiburgLight directory using SPM functions underly the GNU Gener
 
 ANTx2 also includes the pvmatlab package of Bruker BioSpin GmbH, which is intended for Bruker users only. Please respect the legal issues in the manual within the pvtools\_bruker directory and request permission to use the package by Bruker&#39;s preclinical MRI software customer support before using ANTx2. Otherwise please delete the directory pvtools\_bruker.
 
-<pre>
-____________________________________________________________________________________________
-&#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a> 
-&#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a> 
-&#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a> 
-____________________________________________________________________________________________
-</pre>
 
 ## **Citation policy**
 * When using ANTx2 in publications please use the following citation: <br>
