@@ -61,6 +61,7 @@ DISADVANTAGE: no update feature (or you have to install the GIT client post hoc)
 </pre>
 ### <ins> Check For Updates </ins> ###
  - To check for updates select EXTRAS/"CHECK FOR UPATES (GITHUB)" from the ant main gui
+ - Or type  updateantx(2) in Matlab's CMD-window
 
 ### <ins> Download Templates </ins> ###
   Templates are not included in this repository.
@@ -125,6 +126,12 @@ Scripts in the freiburgLight directory using SPM functions underly the GNU Gener
 -->
 
 ANTx2 also includes the pvmatlab package of Bruker BioSpin GmbH, which is intended for Bruker users only. Please respect the legal issues in the manual within the pvtools\_bruker directory and request permission to use the package by Bruker&#39;s preclinical MRI software customer support before using ANTx2. Otherwise please delete the directory pvtools\_bruker.
+
+
+% #b &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a> 
+% #b &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a> 
+% #b &#8658; Templates  : <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a> 
+% 
 
 ## **Citation policy**
 * When using ANTx2 in publications please use the following citation: <br>
