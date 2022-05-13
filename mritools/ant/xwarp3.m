@@ -619,8 +619,7 @@ if find(s.task==3)
     if s.fastSegment==1
         fastsegMethod=2;        % [1] using '_msk.nii',[2] using _b1gray/_b2white/_b3csf.nii
         disp([ 'fastsegmentation..method-' num2str(fastsegMethod) ]);
-        cutimage(s.pa,'meth',fastsegMethod,'show',0);
-        [t2 template] =fastsegment(s.pa, 'pre','subdir','segm');
+      
         
         
         if isempty(findobj(0,'tag','Graphics'));
@@ -638,6 +637,10 @@ if find(s.task==3)
         %disp('....load SPMmouse');
         loadspmmouse;drawnow;
         
+        % cut image
+        cutimage(s.pa,'meth',fastsegMethod,'show',0);
+        [t2 template] =fastsegment(s.pa, 'pre','subdir','segm');
+        
         %% ============[SEGMENTATION ]====================
         
 %         disp('### call xsegment...');
@@ -651,9 +654,9 @@ if find(s.task==3)
         
         %% ===========POSTHOC -FASTSEGMENT ========
         
-        disp('### call fastsegment-post...');
+        %disp('### call fastsegment-post...');
         fastsegment(s.pa, 'post','subdir','segm');
-        ['#check: ' s.pa]
+        %['#check: ' s.pa]
         
         %check result- CHECK WHETHER MASK IS PART OF THE BORDER
         
