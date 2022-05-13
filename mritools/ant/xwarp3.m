@@ -631,7 +631,7 @@ if find(s.task==3)
                 %SOURCE: https://en.wikibooks.org/wiki/SPM/Faster_SPM
                 disp('..no-GUI SPM-version ...');
                 spm('defaults', 'fmri');
-                %spm_jobman('initcfg')
+                spm_jobman('initcfg');
                 spm_get_defaults('cmdline',true);
             end
         end
@@ -974,6 +974,7 @@ q.parfor =0;
 atime  =tic;
 lmiss   ={};
 lok     ={};
+
 %--------------------------------------
 if ~isempty(paramsbatch)
     p=struct();
