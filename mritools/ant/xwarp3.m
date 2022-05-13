@@ -1075,13 +1075,13 @@ elseif q.parfor==1
 %     end
     
     parfor j=1:Nm
-        try
+%         try
             v=mouse{j};
             antfun(tasks{1} ,v,  tasks{2} ,tasks{3}  ,an);
             %lok(j,1)={['xwarp3-success : ' v]};
-        catch
-            %             lok(j,1)={['xwarp3-failed : ' v]};
-        end
+%         catch
+%             %             lok(j,1)={['xwarp3-failed : ' v]};
+%         end
         
 %         try;ppm.increment();end
     end
