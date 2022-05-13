@@ -1943,7 +1943,7 @@ if isempty(hfig) && isempty(lb3)
     end
 end
 
-% md    = regexprep(strrep(li,'<html>',''),'<font.*','');   %mouseDirs
+% md    = regexprep(strrep(li,'<html>',''),'<font.*','');   %mouseupDirs
 % fp    = stradd(md,[an.datpath filesep],1);                %fullpath mouseDirs
 
 fp=antcb('getallsubjects');
