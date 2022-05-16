@@ -50,9 +50,8 @@
 % checkreghtml(mdirs,filepairs,outpath,struct('size',300,'outputstring','CK_'))
 % 
 %% [Example-2]: example without an opened ANT-project
-%  pa={
-%     'F:\data3\graham_ana4\dat\20190122GC_MPM_01'
-%     'F:\data3\graham_ana4\dat\20190122GC_MPM_02' };   
+%  pa={'F:\data3\graham_ana4\dat\20190122GC_MPM_01'
+%      'F:\data3\graham_ana4\dat\20190122GC_MPM_02'};   
 % filepairs ={'AVGT.nii','x_T1.nii' };
 % outpath   ='F:\data3\graham_ana4\check';
 % checkreghtml(pa,filepairs,outpath);
