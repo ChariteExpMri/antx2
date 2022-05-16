@@ -1,19 +1,67 @@
 
 %% write html file with overlay of specific images 
-% pa=...
-%     {
+% checkreghtml(mdirs, filepairs,outpath,p)
+% ==============================================
+%%   INPUT 
+% ===============================================
+% mdirs      : list of animal-dirs (fullpath), {cell}
+% filepairs  : pair of images to overlay (bg-& fg-image) {cell}
+% outpath    : <optional> output-folder for resulting HTML-file+ressource
+%              -folder is created if not exists
+%              - if empty or not specified, the folder "checks" is created in the current wd.                 
+% p          : <optional> struct with optional inputs (all fields are optional)
+% ____[p]-struct___________________________________
+% size         image size in pixels (default: 400)
+% grid         show grid onto images, [0]no;[1]yes;  (default: 1)
+% gridspace    space between grid-lines in pixels (default: 20)
+% gridcolor    color of the grid (RGB); (default: [1 0 0])
+% dim          dimension to slice along (default: 2); 
+%              -for standard-space: dim=2 result in coronal slices
+%              -for native-space:   dim=1 result in coronal slices for animal-bore-positioning as done in Berlin
+% slices       number of slices to show (default: 'n20')
+% 
+%                  # slices can be coded as string () or numericial:
+%             ___string___  INDICATE NUMBER OF IMAGES to plot OR IMAGE STEPWIDTH
+%                   (1) using 'n'+number of slices to plot
+%                    example: 'n20' to obtain 20 slices
+%                   (2) to code stepsize ('stepwidth'), 
+%                    example: '3' to get each 3rd slice
+%                   (3) string with 2 or 3 elements: 'stepwidth startpos endpos'
+%                    example: '2 20'    : each 2nd slice in the range 20th to end-20th slice
+%                    example: '3 10 10' : each 3rd slice in the range 10th to end-10th slice
+%                    -use nan for startpos or endpos to reset to 1st or endth slice, respectively
+%                    example: '3 nan 20'  : each 3rd slice within slice range  1 to end-20
+%                              '3 20 nan'  : each 3rd slice within slice range  20 to end
+%             ___numerical___  INDICATE REAL IMAGE INDEX
+%                  # as numeric value #  to obtain the real slice indices
+%                    example: [ 100:2:120]  : get each 2nd slice fom index 100 to index 120
+%                    example: [ 100 120]    : get slice of index 100 and 120
+% 
+% outputstring output string used as prefix for HTML-file and depending subfolder; (default: '')
+%              -if empty, the prefix 'r' is used 
+% 
+% ==============================================
+%%   Examples
+% ===============================================
+%% [Example-1]: select first two animals in antProject, make HTML with overlay of 'AVGT.nii' and 'x_t2.nii'
+% mdirs=antcb('selectdirs',[1 2]); 
+% filepairs={'AVGT.nii','x_t2.nii' };
+% outpath=fullfile(pwd,'checks');
+% checkreghtml(mdirs,filepairs,outpath,struct('size',300,'outputstring','CK_'))
+% 
+%% [Example-2]: example without an opened ANT-project
+%  pa={
 %     'F:\data3\graham_ana4\dat\20190122GC_MPM_01'
-%     'F:\data3\graham_ana4\dat\20190122GC_MPM_02'
-%     };
-% filepairs={'AVGT.nii','x_T1.nii' }
-% outpath='F:\data3\graham_ana4\check'
-% checkreghtml(pa,filepairs,outpath)
-% checkreghtml(pa,filepairs,outpath,struct('size',300))
+%     'F:\data3\graham_ana4\dat\20190122GC_MPM_02' };   
+% filepairs ={'AVGT.nii','x_T1.nii' };
+% outpath   ='F:\data3\graham_ana4\check';
+% checkreghtml(pa,filepairs,outpath);
 
 
 
-function checkreghtml(datapaths, filepairs,outpath,p0)
+function checkreghtml(mdirs, filepairs,outpath,p0)
 warning off
+%% ============[params ]===================================
 
 p.size      =400; %imageSize 
 p.grid      =1; %show grid
@@ -23,6 +71,8 @@ p.dim       =2;  %dimension to plot
 p.slices    ='n6';
 p.outputstring  =''; %<optional: outputstring
 
+%% ==========[merge inputs ]=============================
+
 if exist('p0')
     p=catstruct(p,p0);
 end
@@ -30,26 +80,17 @@ end
 if ischar(p.dim)==1
     p.dim =str2num(p.dim);
 end
-
-if 0
-    pa=...
-        {
-        'F:\data3\graham_ana4\dat\20190122GC_MPM_01'
-        'F:\data3\graham_ana4\dat\20190122GC_MPM_02'
-        };
-%     filepairs={'x_T1.nii', 'AVGT.nii';}
-    filepairs={'AVGT.nii','x_T1.nii' }
-    filepairs={'AVGT.nii','blob.nii' }
-    outpath='F:\data3\graham_ana4\check'
-    
-    checkreghtml(pa,filepairs,outpath)
-    
-    
+if ~exist('outpath') || isempty(outpath)
+    outpath=fullfile(pwd,'checks');
+else
+    outpath=char(outpath);
 end
+%% ===============================================
+
 % ==============================================
 %%
 % ===============================================
-pas=cellstr(datapaths);
+pas=cellstr(mdirs);
 fname1=filepairs{1};
 fname2=filepairs{2};
 
@@ -57,14 +98,15 @@ fname2=filepairs{2};
 [~,tag1]=fileparts(fname1);
 [~,tag2]=fileparts(fname2);
 name=[tag1 '--' tag2];
-if ~isempty(p.outputstring)
-    
+if ~isempty(p.outputstring) % add outputstring
     if strcmp(p.outputstring(1),'_')==0
-        name=[name '_' p.outputstring];
+        name=[p.outputstring  '_' name ];
         
     else
-        name=[name p.outputstring];
+        name=[ p.outputstring name];
     end
+else
+    name=['r_' name ];
 end
 
 % add DIM
@@ -84,7 +126,7 @@ p.subpath=subpath;
 % ==============================================
 %%
 % ===============================================
-htmlfile=fullfile(outpath,[ 'r_' name '.html']);
+htmlfile=fullfile(outpath,[  name '.html']);
 cssfile=fullfile(outpath,subpath,'styles.css');
 writeCSS(cssfile,p);
 
@@ -116,7 +158,11 @@ for i=1:length(pas)
     f1=fullfile(px,fname1);
     f2=fullfile(px,fname2);
     isOK=0;
-    slices=num2str(p.slices);
+    if isnumeric(p.slices)
+        slices=(p.slices);
+    else
+        slices=num2str(p.slices);
+    end
     if exist(f1) && exist(f2)
         [d ds]=getslices(f1,     p.dim,slices,[],0 );
         [o os]=getslices({f1 f2},p.dim,slices,[],0 );
