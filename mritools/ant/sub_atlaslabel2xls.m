@@ -268,7 +268,7 @@ end
 
 
 
-if isexcel==1  % EXCEL EXISTS
+if isexcel==11  % EXCEL EXISTS
     %====================================================================================================
     %%  get colorized EXCELSHEET
     %====================================================================================================
@@ -354,7 +354,7 @@ else
     %clear an ;% cler global here, because an as global  is destroyed using javaddoath
     %%  EXCEL not available
     try
-        disp('..excel is not available..using package excelpackage from Alec de Zegher ');
+        
         pa2excel=fullfile(fileparts(which('xlwrite.m')),'poi_library');
         javaaddpath(fullfile(pa2excel,'poi-3.8-20120326.jar'));
         javaaddpath(fullfile(pa2excel,'poi-ooxml-3.8-20120326.jar'));
@@ -370,8 +370,9 @@ else
                 ];
             xlwrite(fileout, tbx,  pp.paramname{i}    )  ;
         end
+        disp('..excel is not available..using package excelpackage from Alec de Zegher ');
     catch
-        disp('..excel is not available..using "writetable" ');
+        
         writetable(table(infox),fileout,'Sheet','INFO')
         for i=1:length(pp.paramname)
             tbx=[...
@@ -388,6 +389,12 @@ else
             end
             writetable(T,fileout,'Sheet',pp.paramname{i} );
         end
+        % add SHEEET "atlas" WITH:  'Region'  'colHex'  'colRGB'  'ID'  'Children'
+        try
+            T=cell2table(z.atlasTB,'VariableNames',z.atlasTBH);
+            writetable(T,fileout,'Sheet','atlas' );
+        end
+        disp('..excel is not available..using "writetable" ');
     end
     
     global an

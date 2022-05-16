@@ -621,9 +621,15 @@
 % The update button allows to retrieve the latest updates from GitHub
 % (no GUis/no imput requested from user)
 % 
+% #ba 17 May 2022 (00:20:29) 
+% #k [xgetlabels4.m]  #n modified
+% - get regionwise parameter now runs on HPC without GUI/graphic support ...
+%   see help of xgetlabels4.m ...Example-4
+% - "hemisphere": 'separate' added to obtain region-wise parameters for each hemisphere separately
+%    in one run --> this results in two Excel-files (..left & ...right)
 % 
 % 
-
+% 
 
 
 %% ===============================================
