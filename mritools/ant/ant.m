@@ -2733,6 +2733,29 @@ cname=getenv('COMPUTERNAME');
 if strcmp(cname,'STEFANKOCH06C0')==1
     disp('The source machine can''t be updatet from Github');
 else
+    thispa=pwd;
+    go2pa =fileparts(which('antlink.m'));
+    cd(go2pa);
+     try
+        w=git('log -p -1');
+        w=strsplit(w,char(10))';
+        date1=w(min(regexpi2(w,'Date: ')));
+     catch
+        cd(thispa); 
+    end
+    
     updateantx(2);
-    antcb('reload');
+    
+    try
+        w=git('log -p -1');
+        w=strsplit(w,char(10))';
+        date2=w(min(regexpi2(w,'Date: ')));
+    catch
+        cd(thispa);
+    end
+    
+    cd(thispa);
+    if strcmp(date1,date2)~=1
+        antcb('reload');
+    end
 end
