@@ -1,7 +1,7 @@
 
 
-%% #yk xgetlabels4: get regionwise parameter for an image
-%
+%% #yk xgetlabels4: extract regionwise parameter from an image across animals
+% 
 %% #ko readout parameter: 'frequency', 'percOverlapp','volref','vol','mean','std','median','min','max'    
 %  'percOverlapp': regionwise percent overlap with a mask ('masks'-must be defined, otherwise "100%")
 %                 or regionwise percent survived above threshold-value  
@@ -10,8 +10,9 @@
 %  'mean',  'std','median','min','max'  : parmaeter value within a region, mask/threshold-dependent
 % #b: OUTPUT: excelfile with parameter values for the selected animal(s)..stored in the "results"-folder
 %  
-%
-%% #ko PARAMETER
+% ==============================================
+%%   INPUT PARAMETER
+% ===============================================
 % 'files'   (read-out image) NIFTI file used for regionwise calculation of the readout parameter
 %          - i.e. the resulting output: frequncies/intensities/mean... is extracted from this file
 % 'masks'  (optional) a corresponding mask file. #b For instance a lesion mask file.
@@ -50,9 +51,10 @@
 %                 'native'  :  read from images in native space ("t2.nii"-space)
 %                 'other'   :  see above
 % 'hemisphere'  hemisphere to use:  {'left','right','both'}
-%                 'left' : read data from left hemisphere only
-%                 'right': read data from right hemisphere only
-%                 'both' : read data from both hemispheres (united)
+%                 'left'     : read data from left hemisphere only
+%                 'right'    : read data from right hemisphere only
+%                 'both'     : read data from both hemispheres united
+%                 'separate' : read data from both hemispheres separately --> create two excelfiles
 % 
 % 'threshold'   - lower intensity threshold value (values >=threshold will be excluded); 
 %               - #r leave this field empty when using a mask ('masks'-parameter)
@@ -66,13 +68,24 @@
 %                       ..stored in the "results"-folder (using xlsx"-format)
 %                   (c) select file or enter fullpath-filename : the file is stored using the
 %                       specific path and fileName (using xlsx"-format)
-%                      
+%               - if "fileNameOut" is specified and "hemisphere" is "separate", the suffix 'left'/'right' 
+%                 is appended to the filename
 % 
+% ==============================================
+%%   output PARAMETER
+% ===============================================
+% -if specified 1st arg-out is the filename of the resulting excelfile 
+% - if 'hemisphere' is 'separate' two excelfiles will be created
+% 
+% ==============================================
+%%   RUN AND BATCH
+% ===============================================
 %% #ko RUN
 % select animal(s) from gui before
 % xgetlabels4: open gui, parmaeter will be defined via gui
 % xgetlabels4(1,x); %open gui, use predfined struct-filed
 % xgetlabels4(0,x); %no gui, use predfined struct-filed
+% xgetlabels4(0,x,mdirs);   % specify animal-folders to process (cell-array), used for noGUI/noGraphic-support 
 %% #ko BATCH
 % type "anth" or select [anth]-button from main-gui
 %
@@ -100,29 +113,86 @@
 % x.hemisphere   =  'both';	% hemisphere used: [left,right or both]
 % x.threshold    =  '';	% lower intensity threshold value (values >=threshold will be excluded); leave field empty when using a mask
 % xgetlabels4(1,x);  % gui pops up
+% 
+% ==========================================================
+%%  EXAMPLE-3: with ANT-GUI but NO parameter window shown
+%  AIM:  obtain regionwise parameters from "t2.nii" in native space
+% ===========================================================
+% clear all                             ; % % clear all
+% antcb('load',fullfile(pwd,'proj.m'))  ; % % load PROJECT
+% mdirs=antcb('selectdirs',[3 4])       ; % % SELECT ANIMALS: here index 3 AND 4 
+% z=[];                                                                                                                                              
+% z.files        =  't2.nii';     % % files used for calculation                                                                                
+% z.atlas        = 'ANO.nii';     % % select atlas here (default: ANO.nii), atlas has to be the standard space atlas                            
+% z.space        = 'native';      % % use images from "standard","native" or "other" space                                                      
+% z.hemisphere   = 'both';        % % hemisphere used: [left,right or both]                                                                     
+% z.fileNameOut  = 't2_a';        % % <optional> specific name of the output-file. EMPTY FIELD: use timestamp+paramter for file name            
+% xgetlabels4(0,z);               % % get labels  (no ParamterGUI)
+% antcb('close');                         % % close antx
+% 
+% ==============================================
+%%  EXAMPLE-4:  no GUI/noGraphics, only commands
+%  AIM:  obtain regionwise parameters from "t2.nii" in native space 
+% ===============================================
+% clear all
+% loadconfig(fullfile(pwd,'proj.m'));                % % load project-file
+% mdirs={'F:\data5\nogui\dat\20201118CH_Exp10_9258'  % % define animal-folders to process
+%        'F:\data5\nogui\dat\Devin_5apr22'}           
+% z=[];                                                                                                                                              
+% z.files        = 't2.nii';     % % files used for calculation                                                                                
+% z.atlas        = 'ANO.nii';    % % select atlas here (default: ANO.nii), atlas has to be the standard space atlas                            
+% z.space        = 'native';     % % use images from "standard","native" or "other" space                                                      
+% z.hemisphere   = 'both';       % % hemisphere used: [left,right or both]                                                                     
+% z.fileNameOut  = 't2_b';       % % <optional> specific name of the output-file. EMPTY FIELD: use timestamp+paramter for file name            
+% xgetlabels4(0,z,mdirs);        % % get labels 
+% ==============================================
+%%  EXAMPLE-5:  no GUI/noGraphics, only commands
+%  AIM:  obtain regionwise parameters from "t2.nii" in native space for both hemispheres separately
+%        --> this will produce two excelfiles
+% ===============================================
+% clear all
+% loadconfig(fullfile(pwd,'proj.m')); % % project-file
+% mdirs={'F:\data5\nogui\dat\20201118CH_Exp10_9258'
+%        'F:\data5\nogui\dat\Devin_5apr22'}  %% animal-folders to process
+% z=[];                                                                                                                                              
+% z.files        = 't2.nii';     % % files used for calculation                                                                                
+% z.atlas        = 'ANO.nii';          % % select atlas here (default: ANO.nii), atlas has to be the standard space atlas                            
+% z.space        = 'native';      % % use images from "standard","native" or "other" space                                                      
+% z.hemisphere   = 'seperate';     % % hemisphere used: [left,right or both]                                                                     
+% z.fileNameOut  = fullfile(pwd,'results2','t2.xlsx');            % % <optional> specific name of the output-file. EMPTY FIELD: use timestamp+paramter for file name            
+% xgetlabels4(0,z,mdirs);  
 
 
 
-function [z varargout] = xgetlabels4(showgui,x)
+
+function [varargout] = xgetlabels4(showgui,x,mdirs)
 warning off;
 
-if 0
-    
-end
+% ==============================================
+%%   input
+% ===============================================
 
+isExtPath=0; % external path
+if exist('mdirs')==1 && ~isempty(mdirs)
+    isExtPath=1;
+end
 %====================================================================================================
 
 if exist('showgui')~=1;  showgui=1; end
 if exist('x')~=1;        x=[]; end
-if isempty(x); showgui=1; end
+if isempty(x);           showgui=1; end
+if isExtPath==0      ; 
+    pa=antcb('getsubjects'); 
+else
+    pa=mdirs;
+end
 %====================================================================================================
 
-pa=antcb('getsubjects');
 v=getuniquefiles(pa);
 
 p={...
-    'inf98'      '*** GET ANATOMICAL LABELS             '                         '' ''
-    'inf100'     '==================================='                          '' ''
+    'inf98'      '*** GET ANATOMICAL LABELS, EXTRACT REGIONWISE PARAMETERS ***            '                         '' ''
+    'inf100'     '============================================================'                          '' ''
     
     'inf11'        '____[ FILES/MASKS]________________________________________________________'    '' ''
     
@@ -142,7 +212,7 @@ p={...
     'inf3'      ' % PARAMETERS ' ''  ''
     'atlas'       'ANO.nii'     'select atlas here (default: ANO.nii), atlas has to be the standard space atlas' {@selectAtlas,v}
     'space'      'standard'     'use images from "standard","native" or "other" space '               {'standard' 'native' 'other'}
-    'hemisphere'  'both'        'hemisphere used: [left,right or both]'                                     {'left','right','both'}
+    'hemisphere'  'both'        'hemisphere used: "left","right","both" (united)  or "seperate" (left and right separated)'                                     {'left','right','both' 'seperate'}
     
     'threshold'    ''     'lower intensity threshold value (values >=threshold will be excluded); leave field empty when using a mask' {'' 0}
     
@@ -167,31 +237,99 @@ p={...
 p=paramadd(p,x);%add/replace parameter
 
 
+% ==============================================
+%%   %% show GUI
+% ===============================================
 
-%% show GUI
+
 if showgui==1
     hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
     [m z]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .6 .5 ],...
-        'title','LABELING','info',hlp);
+        'title',['regionwise labeling [' mfilename '.m]'],'info',hlp);
     if isempty(m); return; end
     fn=fieldnames(z);
     z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
 else
     z=param2struct(p);
 end
+% ==============================================
+%%   make batch
+% ===============================================
+% xmakebatch(z,p, mfilename); % ## BATCH
 
+% ==============================================
+%%   BATCH
+% ===============================================
+try
+    isDesktop=usejava('desktop');
+    % xmakebatch(z,p, mfilename,isDesktop)
+    if isExtPath==0
+        xmakebatch(z,p, mfilename,['xgetlabels4(' num2str(isDesktop) ',z);' ]);
+    else
+        xmakebatch(z,p, mfilename,['xgetlabels4(' num2str(isDesktop) ',z,mdirs);' ],pa);
+    end
+end
+
+% ==============================================
+%%   labeling
+% ===============================================
 disp('..Atlas labeling..');
-xmakebatch(z,p, mfilename); % ## BATCH
-
 
 s=z;
-s=getatlasType(s);  %get atlasType (1,2,3,4)
-s=checkfiles(s);
+s=getatlasType(s,pa);  %get atlasType (1,2,3,4)
+s=checkfiles(s,pa);
 s=readAtlas(s);     % read the atlas -->parse to table in s-struct
 
 % assignin('base','s',s);
 % return
 
+if strcmp(s.hemisphere, 'seperate')
+  
+    fout2={};
+    for i=1:2
+        s2=s;
+        if   i==1; s2.hemisphere='left'  ;
+        else i==2; s2.hemisphere='right';
+        end
+        if ~isempty(s2.fileNameOut)
+            [paout foutname ext]=fileparts(s2.fileNameOut);
+            outname=fullfile(paout, [ foutname '_' s2.hemisphere ]);
+            s2.fileNameOut=[outname];
+        end
+        
+        [pp ]=extractdataMain(s2);
+        fout=sub_atlaslabel2xls(pp,s2);  %save to excel
+        fout2{i,1}=fout;
+        showinfo2('new file' ,fout); 
+    end
+    if nargout==1; varargout{1}=fout2; end  %%   output 
+else
+    
+    [pp ]=extractdataMain(s);
+    fout=sub_atlaslabel2xls(pp,s);  %save to excel
+    showinfo2('new file' ,fout);
+    if nargout==1; varargout{1}=fout; end  %%   output
+end
+
+
+
+
+
+% disp('------------------------------------');
+% disp(s);
+
+return
+
+
+
+%====================================================================================================
+
+
+%% ##############################################################
+%% % ###############################  SUBS  ###############################
+%% ##############################################################
+
+function [pp ]=extractdataMain(s);
 dx    =[];
 names ={};
 voxvol=[];
@@ -219,30 +357,6 @@ pp         = dum;
 pp.tb      = dx;
 pp.names   = names;
 pp.voxvol  = voxvol;
-
-
-fout=sub_atlaslabel2xls(pp,s);  %save to excel
-showinfo2('new file' ,fout);
-
-
-
-
-
-
-
-% disp('------------------------------------');
-% disp(s);
-
-return
-
-
-
-%====================================================================================================
-
-
-%% ##############################################################
-%% % ###############################  SUBS  ###############################
-%% ##############################################################
 
 
 
@@ -950,7 +1064,7 @@ else
 end
 
 
-function s=checkfiles(s)
+function s=checkfiles(s,mdirs)
 %% make fullpath-files -check sanity & order for files and masks
 z=s;
 if ischar(z.files);  z.files=cellstr(z.files); end
@@ -973,7 +1087,8 @@ if fi_empty==1; error('## no input files found'); return; end
 files={};
 [pa fi ext]=fileparts(z.files{1});
 if isempty(pa)                              % # use GUI selection --> make fullpath files
-    px=antcb('getsubjects');
+    %px=antcb('getsubjects');
+    px=mdirs;
     files=stradd(px,[ filesep z.files{1}],2);
 else
     files=z.files;
@@ -985,7 +1100,8 @@ z.masks=cellstr(z.masks);
 if ma_empty==0
     [pa fi ext]=fileparts(z.masks{1});
     if isempty(pa)                              % # use GUI selection --> make fullpath files
-        px=antcb('getsubjects');
+        %px=antcb('getsubjects');
+        px=mdirs;
         masks=stradd(px,[ filesep z.masks{1}],2);
     else
         masks=z.masks;
@@ -1273,14 +1389,14 @@ end
 
 
 
-function s=getatlasType(s);
+function s=getatlasType(s,mdirs);
 %% GET ATLAS ,parse to struct
 
 s.atlas=char(s.atlas);
 
 % get template-path
-px=antcb('getsubjects');
-s.patemp=fullfile(fileparts(fileparts(px{1})),'templates');
+% px=antcb('getsubjects');
+s.patemp=fullfile(fileparts(fileparts(mdirs{1})),'templates');
 
 [pa fi ext]=fileparts(s.atlas);
 islocal=1;
