@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   13 May 2022 (16:46:56)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   16 May 2022 (16:13:10)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 May 2022 (16:13:10)**</ins>  
+  update-pushbutton added next to antver-button in ANTx-main gui  
+  The update-pushbutto allows to retriev the latest updates from GitHub (no GUis/no imput requested from user)  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**13 May 2022 (16:46:56)**</ins>  
   new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  __["tutorial_noGraphic_support.docx"]__   
   This tutorial shows how to work on machines without graphic support and without GUIs   
@@ -33,6 +37,7 @@
   This tutorial shows how work without GUis or on machines without graphic support  
   &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
   &#8618; access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**13 May 2022 (01:12:05)**</ins>  
    __[xregister2d.m]__: modified  
