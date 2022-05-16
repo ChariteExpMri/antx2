@@ -327,7 +327,26 @@ h = uicontrol('style','pushbutton','units','normalized','position',[.94 .65 .08 
 % set(h,'position',[.2 .65 .08 .02],'fontsize',6,'backgroundcolor','w','foregroundcolor',[.7 .7 .7])  
 set(h,'position',[.5 .67 .25 .027],'fontsize',7,'backgroundcolor','w','foregroundcolor',[0.9294    0.6941    0.1255],...
     'horizontalalignment','left','callback',{@callantver});
-%============================================
+%% ===============================================
+% get update ...no questions ask
+%% ===============================================
+h = uicontrol('style','pushbutton','units','normalized','position',[.94 .65 .04 .05],...
+    'tag','ant_cfm',...
+    'string','','fontsize',13,  'callback',{@updateTBXnow},...
+    'tooltip', '<html><b>get lastest updates from Github</b><br>forced updated, no user-input',...
+    'backgroundcolor','w');
+set(h,'position',[.75 .668 .04 .05]);
+set(h,'units','pixels');
+posi=get(h,'position');
+set(h,'position',[posi(1:2) 14 14]);
+set(h,'units','norm');
+icon=fullfile(antpath,'icons','Download_16.png');
+[e map]=imread(icon)  ;
+set(h,'cdata',e);
+
+
+%% ===============================================
+
 
 
 % disp('try; evalc(''system(''TASKKILL /F /IM explorer.exe & explorer'')''); end;')
@@ -2709,3 +2728,10 @@ elseif strcmp(task,'loadcommand')
 end
 
 
+function updateTBXnow(e,e2)
+cname=getenv('COMPUTERNAME');
+if strcmp(cname,'STEFANKOCH06C0')==1
+    disp('The source machine can''t be updatet from Github');
+else
+    updateantx(2);
+end
