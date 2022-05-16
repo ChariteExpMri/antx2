@@ -2734,4 +2734,5 @@ if strcmp(cname,'STEFANKOCH06C0')==1
     disp('The source machine can''t be updatet from Github');
 else
     updateantx(2);
+    antcb('reload');
 end
