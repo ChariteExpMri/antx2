@@ -612,6 +612,7 @@
 %     12) Transform another image to native-space
 %     13) Check registration in standard-space - create html-file
 %     14) Check registration in native-space - create html-file
+%     15) REGIONWISE PARAMETER-EXTRACTION  
 % This tutorial shows how work without GUis or on machines without graphic support
 % #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/
@@ -627,7 +628,7 @@
 %   see help of xgetlabels4.m ...Example-4
 % - "hemisphere": 'separate' added to obtain region-wise parameters for each hemisphere separately
 %    in one run --> this results in two Excel-files (..left & ...right)
-% 
+% - ["tutorial_noGraphic_support.docx"] was extended
 % 
 % 
 
