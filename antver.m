@@ -617,8 +617,9 @@
 % #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/
 % 
 % #ba 16 May 2022 (16:13:10)
-% update-pushbutton added next to antver-button in ANTx-main gui
-% The update-pushbutto allows to retriev the latest updates from GitHub (no GUis/no imput requested from user)
+% [update]-button added next to [ant version]-button in ANTx-main gui
+% The update button allows to retrieve the latest updates from GitHub
+% (no GUis/no imput requested from user)
 % 
 % 
 % 
