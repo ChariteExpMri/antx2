@@ -321,6 +321,13 @@ set(h,'UIContextMenu',c);
 % idate=max(regexpi2(vstring,' \w\w\w 20\d\d (\d\d'));
 % dateLU=['ANTx2  vers.' char(regexprep(vstring(idate), {' (.*'  '  #\w\w ' },{''}))];
 dateLU=antcb('version');
+gitpath=fileparts(which('antlink.m'));
+w=git([' -C ' gitpath ' log -1 --pretty="format:%ci"']);
+if isempty(strfind(w,'fatal'))
+    dateLU=['ANTx2 v: ' w ];
+end
+
+
 h = uicontrol('style','pushbutton','units','normalized','position',[.94 .65 .08 .05],'tag','txtversion',...
     'string',dateLU,'fontsize',5,'fontweight','normal',...
     'tooltip',['date of last update' char(10) '..click to see last updates "antver"']);
