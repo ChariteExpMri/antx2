@@ -357,7 +357,8 @@ disp(char(w));
 
 %% check date of modification on REMOTE GIT-repo
 w=git(['-C ' gitpath ' log -1 --format=%cd origin']);
-trep=(strsplit(w,char(10))');
+w=(strsplit(w,char(10))');
+trep=w;
 w{end}=[w{end} '  .. latest REMOTE version' ];
 cprintf('*[0.9294    0.6941    0.1255]', ['*** date of latest REMOTE GITHUB COMMIT ***'   '\n'] );
 disp(char(w));
