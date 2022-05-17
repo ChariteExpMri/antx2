@@ -8,8 +8,8 @@
     
 ------------------  
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 May 2022 (12:29:46)**</ins>  
-  __[update]__-button next to __[ant version]__-button obtained a context-menu  
-  - context menu options: update-info, force update, help on update  
+  __[update]__-button:  a context-menu was added  
+  - context menu options: update-info, force update, show last local changes, help on update  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 May 2022 (00:20:29)** </ins>  
    __[xgetlabels4.m]__  modified  
