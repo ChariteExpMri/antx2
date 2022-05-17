@@ -1,7 +1,8 @@
 
 % noGUI-update/install function for antx-project via GITHUB (no graphical userinterface)
 %% ___ INFO ___________________
-% updateantx('info');  % get status information, (update status, last commit, last modified files)
+% updateantx('info');     % display status information, (update status, last commit, last modified files)
+% updateantx('changes');  % display last local modified files (compare last update with penultimate update) 
 %% ___ UPDATES ___________________
 % updateantx();   % check for updates, if available, user is asked to update via cmd-window
 % updateantx(1);  % same as updateantx()
