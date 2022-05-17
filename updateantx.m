@@ -348,18 +348,19 @@ cprintf('*[0 .5 0]', ['*** date of last 5 LOCAL updates ***'   '\n'] );
 disp(char(w));
 
 %% check date of last modification on LOCAL GIT-repo
-wloc=git(['-C ' gitpath ' log -1 --format=%cd']);
-wloc=(strsplit(wloc,char(10))');
-wloc{end}=[wloc{end} '  .. latest local version' ];
+w=git(['-C ' gitpath ' log -1 --format=%cd']);
+w=(strsplit(w,char(10))');
+tloc=w;
+w{end}=[w{end} '  .. latest local version' ];
 cprintf('*[0 .5 0]', ['*** date of latest LOCAL update ***'   '\n'] );
-disp(char(wloc));
+disp(char(w));
 
 %% check date of modification on REMOTE GIT-repo
-wrep=git(['-C ' gitpath ' log -1 --format=%cd origin']);
-wrep=(strsplit(wrep,char(10))');
-wrep{end}=[wrep{end} '  .. latest REMOTE version' ];
+w=git(['-C ' gitpath ' log -1 --format=%cd origin']);
+trep=(strsplit(w,char(10))');
+w{end}=[w{end} '  .. latest REMOTE version' ];
 cprintf('*[0.9294    0.6941    0.1255]', ['*** date of latest REMOTE GITHUB COMMIT ***'   '\n'] );
-disp(char(wrep));
+disp(char(w));
 
 %% check modified files on REMOTE GIT-repo
 git(['-C ' gitpath ' fetch origin']);
@@ -371,7 +372,7 @@ cprintf('*[0.9294    0.6941    0.1255]', ['*** LAST CHANGES OF REMOTE GITHUB-REP
 disp(char(modfiles));
 
 %% update-suggestion
-if strcmp(wrep,wloc)~=1
+if strcmp(trep,tloc)~=1
     cprintf('*[1 0 1]', ['UPDATING IS SUGGESTED!    type "updateantx(2)" to update toolbox'   '\n'] );
 else
     cprintf('*[0 .5 0]', ['EVERYTHING IS UP-TO-DATE'   '\n'] );
