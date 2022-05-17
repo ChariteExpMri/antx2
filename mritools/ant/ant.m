@@ -324,7 +324,8 @@ dateLU=antcb('version');
 gitpath=fileparts(which('antlink.m'));
 w=git([' -C ' gitpath ' log -1 --pretty="format:%ci"']);
 if isempty(strfind(w,'fatal'))
-    dateLU=['ANTx2 v: ' w ];
+    [w1 w2]=strtok(w,'+');
+    dateLU=['ANTx2 v: ' w1 ];
 end
 
 
