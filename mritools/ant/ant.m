@@ -328,10 +328,10 @@ h = uicontrol('style','pushbutton','units','normalized','position',[.94 .65 .08 
 set(h,'position',[.5 .67 .25 .027],'fontsize',7,'backgroundcolor','w','foregroundcolor',[0.9294    0.6941    0.1255],...
     'horizontalalignment','left','callback',{@callantver});
 %% ===============================================
-% get update ...no questions ask
+% update-pushbutton :get update ...no questions ask
 %% ===============================================
 h = uicontrol('style','pushbutton','units','normalized','position',[.94 .65 .04 .05],...
-    'tag','ant_cfm',...
+    'tag','update_btn',...
     'string','','fontsize',13,  'callback',{@updateTBXnow},...
     'tooltip', '<html><b>get lastest updates from Github</b><br>forced updated, no user-input',...
     'backgroundcolor','w');
@@ -343,6 +343,12 @@ set(h,'units','norm');
 icon=fullfile(antpath,'icons','Download_16.png');
 [e map]=imread(icon)  ;
 set(h,'cdata',e);
+
+cmm=uicontextmenu;
+uimenu('Parent',cmm, 'Label','check update-status',             'callback', {@updateTBX_context,'info' });
+uimenu('Parent',cmm, 'Label','help: update from GitHUB-repo' ,   'callback', {@updateTBX_context,'help' } ,'ForegroundColor',[0 .5 0],'separator','on');
+
+set(h,'UIContextMenu',cmm);
 
 
 %% ===============================================
@@ -2730,6 +2736,17 @@ end
 % ==============================================
 %%   update tbx via button, no user-questions
 % ===============================================
+function updateTBX_context(e,e2,task)
+cname=getenv('COMPUTERNAME');
+if strcmp(task,'help')
+    help updateantx
+elseif strcmp(task,'info')
+    if strcmp(cname,'STEFANKOCH06C0')==1
+        disp('The source machine can''t be updatet from Github');  %my computer---not allowed
+    else
+        updateantx('info');
+    end
+end
 
 function updateTBXnow(e,e2)
 cname=getenv('COMPUTERNAME');
