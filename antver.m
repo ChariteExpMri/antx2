@@ -630,6 +630,12 @@
 %    in one run --> this results in two Excel-files (..left & ...right)
 % - ["tutorial_noGraphic_support.docx"] was extended
 % 
+% #ba 17 May 2022 (12:29:46)
+% [update]-button next to [ant version]-button obtained a context-menu
+% - context menu options: update-info, force update, help on update
+% 
+% 
+% 
 % 
 
 

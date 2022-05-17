@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   17 May 2022 (00:20:29)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   17 May 2022 (12:29:46)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 May 2022 (12:29:46)**</ins>  
+  __[update]__-button next to __[ant version]__-button obtained a context-menu  
+  - context menu options: update-info, force update, help on update  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 May 2022 (00:20:29)** </ins>  
    __[xgetlabels4.m]__  modified  
   - get regionwise parameter now runs on HPC without GUI/graphic support ...  
@@ -14,6 +18,7 @@
   - "hemisphere": 'separate' added to obtain region-wise parameters for each hemisphere separately  
      in one run --> this results in two Excel-files (..left & ...right)  
   - __["tutorial_noGraphic_support.docx"]__ was extended  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**16 May 2022 (16:13:10)**</ins>  
   __[update]__-button added next to __[ant version]__-button in ANTx-main gui  
