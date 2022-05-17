@@ -26,7 +26,10 @@
 %
 % antcb('selectimageviagui', mypath, 'single');  %select an image from upperDatapath via gui
 % antcb('selectimageviagui', mypath, 'multi');   %select several images from upperDatapath via gui
+%
 
+
+% antcb('versionupdate'), 
 
 
 %====================================================================================================
@@ -834,10 +837,23 @@ end
 %          version/versionupdate
 %====================================================================================================
 if strcmp(do, 'version');
-    vstring=strsplit(help('antver'),char(10))';
-    idate=max(regexpi2(vstring,' \w\w\w 20\d\d (\d\d'));
-    dateLU=['ANTx2  vers.' char(regexprep(vstring(idate), {' (.*'  '  #\w\w ' },{''}))];
+    
+   
+    
+    gitpath=fileparts(which('antlink.m'));
+    w=git([' -C ' gitpath ' log -1 --pretty="format:%ci"']);
+    if isempty(strfind(w,'fatal'))
+        [w1 w2]=strtok(w,'+');
+        dateLU=['ANTx2 v: ' w1 ];
+    else
+        vstring=strsplit(help('antver'),char(10))';
+        idate=max(regexpi2(vstring,' \w\w\w 20\d\d (\d\d'));
+        dateLU=['ANTx2  vers.' char(regexprep(vstring(idate), {' (.*'  '  #\w\w ' },{''}))];
+        
+    end
+    
     varargout{1}=dateLU;
+    
     return
 end
 
