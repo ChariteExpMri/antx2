@@ -370,7 +370,11 @@ git(['-C ' gitpath ' fetch origin']);
 [~,finames ext]=fileparts2(strsplit(w,char(10))');
 modfiles=cellfun(@(a,b){[ a b]},finames,ext);
 cprintf('*[0.9294    0.6941    0.1255]', ['*** LAST CHANGES OF REMOTE GITHUB-REPOSITORY ***'   '\n'] );
-disp(char(modfiles));
+if ~isempty(w)
+    disp(char(modfiles));
+else
+    disp( '  .. none ..'  )
+end
 
 %% update-suggestion
 if strcmp(trep,tloc)~=1
