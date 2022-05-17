@@ -346,7 +346,8 @@ set(h,'cdata',e);
 
 cmm=uicontextmenu;
 uimenu('Parent',cmm, 'Label','check update-status',             'callback', {@updateTBX_context,'info' });
-uimenu('Parent',cmm, 'Label','help: update from GitHUB-repo' ,   'callback', {@updateTBX_context,'help' } ,'ForegroundColor',[0 .5 0],'separator','on');
+uimenu('Parent',cmm, 'Label','force update',                    'callback', {@updateTBX_context,'forceUpdate' } ,'ForegroundColor',[1 0 1],'separator','on');
+uimenu('Parent',cmm, 'Label','help: update from GitHUB-repo' ,  'callback', {@updateTBX_context,'help' } ,'ForegroundColor',[0 .5 0],'separator','on');
 
 set(h,'UIContextMenu',cmm);
 
@@ -2742,16 +2743,22 @@ if strcmp(task,'help')
     help updateantx
 elseif strcmp(task,'info')
     if strcmp(cname,'STEFANKOCH06C0')==1
-        disp('The source machine can''t be updatet from Github');  %my computer---not allowed
+        disp('The source machine can''t be updated from Github');  %my computer---not allowed
     else
         updateantx('info');
+    end
+elseif strcmp(task,'forceUpdate')
+    if strcmp(cname,'STEFANKOCH06C0')==1
+        disp('The source machine can''t be updated from Github');  %my computer---not allowed
+    else
+        updateantx(3);
     end
 end
 
 function updateTBXnow(e,e2)
 cname=getenv('COMPUTERNAME');
 if strcmp(cname,'STEFANKOCH06C0')==1
-    disp('The source machine can''t be updatet from Github');  %my computer---not allowed
+    disp('The source machine can''t be updated from Github');  %my computer---not allowed
 else
     thispa=pwd;
     go2pa =fileparts(which('antlink.m'));
