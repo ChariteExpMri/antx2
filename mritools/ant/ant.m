@@ -1,6 +1,6 @@
 
 
-% #b [ANT]-TOOLBOX MAIN GUI
+% #b [ANTx2]-TOOLBOX MAIN GUI
 % type "ant" to open the ANT-GUI
 % FOR INFORMATION/HELP SEE TUTORIALS: https://chariteexpmri.github.io/antxdoc/
 % ANIMAL-TEMPLATES CAN BE FOUND HERE: https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
