@@ -23,7 +23,7 @@
 %         
 % ________________________________________________________________
 % #r ADDITIONAL FILES FOR "OTHER SPACE". NECESSARY IF "OTHER SPACE"-SCENARIO
-% Irrelevant for "native" and "standard" space.
+% - This option is not relevant for "native" and "standard" space!
 % "OTHER SPACE" (see parameter below) describes the situation where the image is not in standard space (i.e. templates space)
 % and not in the native space ("t2.nii"-space). 
 % Examplary situation: The aim is to keep the read-out image in the original space. This space differs from native space:
