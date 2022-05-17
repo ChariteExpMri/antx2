@@ -347,7 +347,7 @@ set(h,'cdata',e);
 cmm=uicontextmenu;
 uimenu('Parent',cmm, 'Label','check update-status',             'callback', {@updateTBX_context,'info' });
 uimenu('Parent',cmm, 'Label','force update',                    'callback', {@updateTBX_context,'forceUpdate' } ,'ForegroundColor',[1 0 1],'separator','on');
-uimenu('Parent',cmm, 'Label','show last local changes (files)', 'callback', {@updateTBX_context,'filechanges_local' } ,'ForegroundColor',[0.8627    0.8627    0.8627],'separator','on');
+uimenu('Parent',cmm, 'Label','show last local changes (files)', 'callback', {@updateTBX_context,'filechanges_local' } ,'ForegroundColor',[0.4941    0.4941    0.4941],'separator','on');
 
 uimenu('Parent',cmm, 'Label','help: update from GitHUB-repo' ,  'callback', {@updateTBX_context,'help' } ,'ForegroundColor',[0 .5 0],'separator','on');
 
