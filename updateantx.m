@@ -19,7 +19,7 @@
 %
 
 
-function updateantx(code,varargin)
+function varargout=updateantx(code,varargin)
 
 % % setstatus(1,'Up-to-date. No updates found.');
 % cprintf('www', ['alternative'  '\n']);
@@ -35,6 +35,12 @@ else
     if ischar(code)
         if strcmp(code,'info')
             disp_info(code,varargin);
+        elseif strcmp(code,'changes')
+            if nargout==0
+                lastChanges(varargin);
+            else
+                varargout{1}=lastChanges(varargin);
+            end
             
         end
         return
@@ -378,11 +384,40 @@ end
 
 %% update-suggestion
 if strcmp(trep,tloc)~=1
-    cprintf('*[1 0 1]', ['UPDATING IS SUGGESTED!    type "updateantx(2)" to update toolbox'   '\n'] );
+    cprintf('*[1 0 1]', ['UPDATE IS SUGGESTED!    type "updateantx(2)" to update toolbox'   '\n'] );
 else
     cprintf('*[0 .5 0]', ['EVERYTHING IS UP-TO-DATE'   '\n'] );
 end
 
+
+function varargout=lastChanges(varargin)
+%% show last modified LOLAL files (after update) compared to prev update
+gitpath=get_localGitpath;
+w=git(['-C ' gitpath ' diff --name-only HEAD HEAD~1']);
+[~,finames ext]=fileparts2(strsplit(w,char(10))');
+modfiles=cellfun(@(a,b){[ a b]},finames,ext);
+% disp('__ LAST CHANGES OF LOCAL REPOSITORY ___');
+cprintf('*[.7 .7 .7]', ['__ LAST CHANGES OF LOCAL REPOSITORY ___'   '\n'] );
+disp(char(modfiles));
+varargout{1}=modfiles;
+
+
+
+% 
+% function 
+% %% check modified files on REMOTE GIT-repo
+% gitpath=get_localGitpath;
+% git(['-C ' gitpath ' fetch origin']);
+% [w st]=git(['-C ' gitpath ' diff --name-only -G. origin']);
+% 
+% [~,finames ext]=fileparts2(strsplit(w,char(10))');
+% modfiles=cellfun(@(a,b){[ a b]},finames,ext);
+% cprintf('*[0.9294    0.6941    0.1255]', ['*** LAST CHANGES OF REMOTE GITHUB-REPOSITORY ***'   '\n'] );
+% if ~isempty(w)
+%     disp(char(modfiles));
+% else
+%     disp( '  .. none ..'  )
+% end
 
 
 % ==============================================
