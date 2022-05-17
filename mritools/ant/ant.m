@@ -2783,6 +2783,10 @@ else
     
     cd(thispa);
     if strcmp(date1,date2)~=1   %COMPARE date1 & date2 ...if changes--->reload tbx
-        antcb('reload');
+        q=updateantx('changes');
+        if ~isempty(find(strcmp(q,'ant.m')));
+            disp(' ant.main gui was modified: reloading GUI');
+            antcb('reload');
+        end
     end
 end
