@@ -1,6 +1,6 @@
 
 % display files folderwise in command-window (no GUI)
-% 
+%
 %% [OPTIONAL PAIRWISE INPUTS] ___________________________________________
 % 'form':  form to display (default: 1)
 %       1    files x folder ..long version
@@ -15,8 +15,9 @@
 %         '^ANO|^AVG.*.nii'  ...all NIFTI-files starting with ANO or AVG
 % 'counts' show extra column/raw with counts
 %        [0] no; [1] yes    ..default: [1]
-% dir     : upper dir (dat-dir) to search in subdirs
+% dir     :-as  <char> : upper dir (dat-dir) to search in subdirs
 %           default: use data-path from loaded project (an.datpath)
+%         : as <cell> list of fullpath-animal-dirs 
 % show : show in comand-window (default: 1)
 %       [1] yes
 %       [0] no
@@ -28,7 +29,7 @@
 %     files:    filenames; example  {1x51 cell}
 %     dirsshort:shortname-dirs; example:   {13x1 cell}
 %     mainpath: upper path of 'dirs'; example:'F:\data5\nogui\dat'
-% 
+%
 %% [EXAMPLES] ______________________________________________________antver
 
 % dispfiles;  %show all NIFTI from loaded project-file
@@ -68,9 +69,25 @@ end
 % ==============================================
 %%   get datpath
 % ===============================================
-if ~isempty(p.dir) && exist(p.dir)==7
-    pam=p.dir;
-else
+useglobVar=1; % use animal-selection via "an"
+
+if isfield(p,'dir') && ~isempty(p.dir)
+    if ischar(p.dir)
+        if ~isempty(p.dir) && exist(p.dir)==7
+            pam=p.dir;
+            useglobVar=0;
+        end
+    elseif iscell(p.dir)
+        if sum(existn(p.dir)==7)==length(p.dir)
+            pam=p.dir;
+            useglobVar=0;
+        end
+    end
+    
+end
+
+
+if useglobVar==1
     global an
     if ~isempty(an) && isfield(an,'datpath')
         pam=an.datpath;
@@ -79,11 +96,17 @@ end
 
 % [files,dirs] = spm_select('FPListRec',direc,filt)
 %% ============[obtain all files]===================================
-
-[dirs] = spm_select('FPList',pam,'dir','.*');
-dirs=cellstr(dirs);
-[dirs2] = spm_select('List',pam,'dir','.*');
-dirs2=cellstr(dirs2);
+if ischar(pam)
+    [dirs] = spm_select('FPList',pam,'dir','.*');
+    dirs=cellstr(dirs);
+    [dirs2] = spm_select('List',pam,'dir','.*');
+    dirs2=cellstr(dirs2);
+elseif iscell(pam)
+    dirs      =pam;
+    [~, dirs2]=fileparts2(pam);
+else
+    error('dir(s) not specified');
+end
 
 % p.flt='.*.nii';
 % fis={};
@@ -139,6 +162,7 @@ end
 % ==============================================
 %%  prep display in cmd-window
 % ===============================================
+w=[];
 df2=df;
 df2=num2cell(df2);
 df2=cellfun(@(a){[ num2str(a) ]} , df2 );
@@ -155,7 +179,7 @@ if p.counts==1
     fisuni(end+1)={'counts'};
 end
 % plog([],[ dirs2 num2cell(df)],0,'','al=1;')
-if p.show==1
+if 1
     if p.form==22
         % ==============================================
         %%   not transposed :  mdirs x files
@@ -177,7 +201,10 @@ if p.show==1
         
         irep=regexpi2(w,'====');
         w{irep}=repmat('-',[ 1 length(w{irep}) ]);
-        disp(char(w))
+        
+        if p.show==1 % show table
+            disp(char(w))
+        end
         
         
     elseif p.form==2
@@ -187,28 +214,31 @@ if p.show==1
         
         he2=['  ' cellfun(@(a){[ repmat('=',[1 length(a)]) ]} , fisuni(:)' )];
         w=plog([],[[ {'  '}  fisuni(:)'  ]; [ he2]; [  dirs2(:)  df2  ] ],0,'FILE x FOLDER','al=1;');
-        disp(char(w));
-%         
-%         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-%         FILE x FOLDER
-%         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-%         x_t2.nii counts
-%         ======== ======
-%         1001_a1                         +        1/1
-%         1001_a2                         .        0/1
-%         20201118CH_Exp10_9258           +        1/1
-%         Devin_5apr22                    +        1/1
-%         Kevin                           +        1/1
-%         anna_issue                      .        0/1
-%         empty                           .        0/1
-%         k3339                           .        0/1
-%         nodata                          .        0/1
-%         statImage                       .        0/1
-%         sus_20220215NW_ExpPTMain_009938 +        1/1
-%         ventr                           .        0/1
-%         xx31                            .        0/1
-%         counts                          5/13
-%         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        
+        if p.show==1 % show table
+            disp(char(w))
+        end
+        %
+        %         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        %         FILE x FOLDER
+        %         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        %         x_t2.nii counts
+        %         ======== ======
+        %         1001_a1                         +        1/1
+        %         1001_a2                         .        0/1
+        %         20201118CH_Exp10_9258           +        1/1
+        %         Devin_5apr22                    +        1/1
+        %         Kevin                           +        1/1
+        %         anna_issue                      .        0/1
+        %         empty                           .        0/1
+        %         k3339                           .        0/1
+        %         nodata                          .        0/1
+        %         statImage                       .        0/1
+        %         sus_20220215NW_ExpPTMain_009938 +        1/1
+        %         ventr                           .        0/1
+        %         xx31                            .        0/1
+        %         counts                          5/13
+        %         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
         
     elseif p.form==11
         
@@ -230,8 +260,12 @@ if p.show==1
         
         irep=regexpi2(w,'====');
         w{irep}=repmat('-',[ 1 length(w{irep}) ]);
-        disp(char(w));
-
+        
+        
+        if p.show==1 % show table
+            disp(char(w))
+        end
+        
         
     elseif p.form==1
         % ==============================================
@@ -240,24 +274,33 @@ if p.show==1
         df3=df2';
         he2=['  ' cellfun(@(a){[ repmat('=',[1 length(a)]) ]} , dirs2(:)' )];
         w=plog([],[[ {'  '}  dirs2(:)'  ]; [ he2]; [  fisuni(:)  df3  ] ],0,'FILE x FOLDER','al=1;');
-        disp(char(w));
         
         
-%         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-%         FILE x FOLDER
-%         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-%         1001_a1 1001_a2 20201118CH_Exp10_9258 Devin_5apr22 Kevin anna_issue empty k3339 nodata statImage sus_20220215NW_ExpPTMain_009938 ventr xx31  counts
-%         ======= ======= ===================== ============ ===== ========== ===== ===== ====== ========= =============================== ===== ====  ======
-%         1-1_TriPilot-multi_1.nii                      .       .       +                     .            .     .          .     .     .      .         .                               .     .     1/13
-%         1-2_FISP_sagittal_1.nii                       .       .       +                     .            .     .          .     .     .      .         .                               .     .     1/13
-%         1_Localizer_multi_slice_1.nii                 .       .       .                     .            +     .          .     .     .      .         .                               .     .     1/13
-%         2_1_T2_ax_mousebrain_1.nii                    .       .       +                     .            .     .          .     .     .      .         .                               .     .     1/13
-%         ANO.nii                                       +       +       +                     +            +     +          .     +     .      .         +                               .     +     9/13
-%         AVGT.nii                                      +       +       +                     +            +     +          .     +     .      +         +                               .     +     10/13
-%         AVGThemi.nii                                  +       +       +
-%         
+        if p.show==1 % show table
+            disp(char(w))
+        end
+        
+        
+        %         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        %         FILE x FOLDER
+        %         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        %         1001_a1 1001_a2 20201118CH_Exp10_9258 Devin_5apr22 Kevin anna_issue empty k3339 nodata statImage sus_20220215NW_ExpPTMain_009938 ventr xx31  counts
+        %         ======= ======= ===================== ============ ===== ========== ===== ===== ====== ========= =============================== ===== ====  ======
+        %         1-1_TriPilot-multi_1.nii                      .       .       +                     .            .     .          .     .     .      .         .                               .     .     1/13
+        %         1-2_FISP_sagittal_1.nii                       .       .       +                     .            .     .          .     .     .      .         .                               .     .     1/13
+        %         1_Localizer_multi_slice_1.nii                 .       .       .                     .            +     .          .     .     .      .         .                               .     .     1/13
+        %         2_1_T2_ax_mousebrain_1.nii                    .       .       +                     .            .     .          .     .     .      .         .                               .     .     1/13
+        %         ANO.nii                                       +       +       +                     +            +     +          .     +     .      .         +                               .     +     9/13
+        %         AVGT.nii                                      +       +       +                     +            +     +          .     +     .      +         +                               .     +     10/13
+        %         AVGThemi.nii                                  +       +       +
+        %
         
     end
+end
+
+if nargout>0
+    o.m2=(w);
+    varargout{1}=o;
 end
 
 

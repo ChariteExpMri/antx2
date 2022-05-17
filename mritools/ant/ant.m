@@ -216,7 +216,9 @@ set(h,'cdata',e);
 %% SETTINGS
 h = uicontrol('style','pushbutton','units','normalized','position',[.25 .6 .04 .05],...
     'tag','ant_cfm',...
-    'string','','fontsize',13,   'callback',{@openCFM,'all'},'tooltip', 'open Case-FileMatrix (all animals)',...
+    'string','','fontsize',13,   'callback',{@openCFM,'all'},...
+    'tooltip', ['<html><b>open Case-FileMatrix for <font color="fuchsia"> all </font>animals</b><br>',...
+    '<font color="green">see context menu for more options'],...
     'backgroundcolor','w');
 % icon=which('profiler.gif');
 icon=fullfile(matlabroot,'toolbox','matlab', 'icons','HDF_grid.gif');
@@ -226,13 +228,23 @@ map(inoLila,:)=repmat([0 .5 0],[length(inoLila) 1]);
 e=ind2rgb(e,map);
 % e(e<=0.01)=nan;
 set(h,'cdata',e);
+
+cmm=uicontextmenu;
+uimenu('Parent',cmm, 'Label','show CFM of all animals in TXT-window',             'callback', {@ant_cfm_ontext,'window',1 });
+uimenu('Parent',cmm, 'Label','show CFM of all animals in CMD-window',             'callback', {@ant_cfm_ontext,'cmdwindow',1 });
+set(h,'UIContextMenu',cmm);
+
+
+
 % ==============================================
 %%   CFM -selected
 % ===============================================
 %% SETTINGS
 h = uicontrol('style','pushbutton','units','normalized','position',[.29 .6 .04 .05],...
     'tag','ant_cfm',...
-    'string','','fontsize',13,   'callback',{@openCFM,'sel'},'tooltip', 'open Case-FileMatrix (selected animals)',...
+    'string','','fontsize',13,   'callback',{@openCFM,'sel'},...
+    'tooltip', ['<html><b>open Case-FileMatrix for <font color="red"> selected </font>animals</b><br>',...
+    '<font color="green">see context menu for more options'],...
     'backgroundcolor','w');
 % icon=which('profiler.gif');
 % icon=fullfile(matlabroot,'toolbox','matlab', 'icons','HDF_grid.gif');
@@ -243,6 +255,11 @@ e2=e(:,[3:8 end-1:end],:);
 % e=ind2rgb(e,map);
 % e(e<=0.01)=nan;
 set(h,'cdata',e2);
+
+cmm=uicontextmenu;
+uimenu('Parent',cmm, 'Label','show CFM of selected animals in TXT-window',             'callback', {@ant_cfm_ontext,'window',2 });
+uimenu('Parent',cmm, 'Label','show CFM of selected animals in CMD-window',             'callback', {@ant_cfm_ontext,'cmdwindow',2 });
+set(h,'UIContextMenu',cmm);
 
 % ==============================================
 %%   %% SETTINGS
@@ -358,9 +375,7 @@ cmm=uicontextmenu;
 uimenu('Parent',cmm, 'Label','check update-status',             'callback', {@updateTBX_context,'info' });
 uimenu('Parent',cmm, 'Label','force update',                    'callback', {@updateTBX_context,'forceUpdate' } ,'ForegroundColor',[1 0 1],'separator','on');
 uimenu('Parent',cmm, 'Label','show last local changes (files)', 'callback', {@updateTBX_context,'filechanges_local' } ,'ForegroundColor',[.5 .5 .5],'separator','on');
-
 uimenu('Parent',cmm, 'Label','help: update from GitHUB-repo' ,  'callback', {@updateTBX_context,'help' } ,'ForegroundColor',[0 .5 0],'separator','on');
-
 set(h,'UIContextMenu',cmm);
 
 
@@ -2729,6 +2744,10 @@ if strcmp(task,'reload')
     antcb('reload');
 elseif strcmp(task,'edit')
     global an
+    if isfield(an,'configfile')==0
+        disp('no project file loaded');
+        return
+    end
     [pa fi ext]=fileparts(an.configfile);
     if isempty(pa); pa=pwd; end
     configfile=fullfile(pa,[fi '.m']);
@@ -2737,6 +2756,10 @@ elseif strcmp(task,'edit')
     end
 elseif strcmp(task,'loadcommand')
    global an
+    if isfield(an,'configfile')==0
+        disp('no project file loaded');
+        return
+    end
     [pa fi ext]=fileparts(an.configfile);
     if isempty(pa); pa=pwd; end
     configfile=fullfile(pa,[fi '.m']);
@@ -2810,3 +2833,27 @@ else
         end
     end
 end
+
+
+function ant_cfm_ontext(e,e2,task,animalmode)
+if strcmp(task,'window')
+    if animalmode==1
+        [w]=dispfiles('show',0);
+    elseif animalmode==2
+        mdirs=antcb('getsubjects');
+        [w]=dispfiles('dir',mdirs,'show',0);
+    end
+    uhelp(w.m2,1,'name','CFM');
+elseif strcmp(task,'cmdwindow')
+    if animalmode==1
+        dispfiles('show',1);
+    elseif animalmode==2
+        mdirs=antcb('getsubjects');
+        dispfiles('dir',mdirs);
+        
+    end
+    %disp('...for more info: help dispfiles');
+    disp('   <a href="matlab: help dispfiles;">help dispfiles</a>')
+end
+
+
