@@ -1,20 +1,23 @@
 
 % noGUI-update/install function for antx-project via GITHUB (no graphical userinterface)
+%% ___ INFO ___________________
+% updateantx('info');  % get status information, (update status, last commit, last modified files)
 %% ___ UPDATES ___________________
-% updateantx();   % check for updates, if available, user is asked to update via cmd-window 
+% updateantx();   % check for updates, if available, user is asked to update via cmd-window
 % updateantx(1);  % same as updateantx()
-% updateantx(2) ; % just update (simplest version, user is not asked), 
+% updateantx(2) ; % just update (simplest version, user is not asked),
 % updateantx(3) ; % hard reset, in case some local files have been modified/deleted
 %% ___ FRESH INSTALLATION ___________________
 % updateantx(4,'path',LOCAL-PATH-TO-INSTALL-THE-TOOLBOX);
 % ..replace "LOCAL-PATH-TO-INSTALL-THE-TOOLBOX" with yout destination-path
 % updateantx(4,'path',pwd); % FRESH INSTALLATION to current directory
-% or 
+% or
 % updateantx(4,'path',fullfile(pwd,'antx2'))
 %
 %% ___ ".git"-folder is missing/deleted ___________________
 % updateantx(13)  ;% re-initiate .git
-% 
+%
+
 
 function updateantx(code,varargin)
 
@@ -28,6 +31,14 @@ end
 
 if exist('code')~=1
     code=1;% check updates
+else
+    if ischar(code)
+        if strcmp(code,'info')
+            disp_info(code,varargin);
+            
+        end
+        return
+    end
 end
 
 %% git clone: error setting certificate verify locations #36
@@ -57,7 +68,7 @@ if nargin>1
         fn=fieldnames(p0);
         for i=1:length(fn)
             p=setfield(p,fn{i},getfield(p0,fn{i}));
-        end       
+        end
     catch
         error('optional args must be come as pairs');
     end
@@ -281,14 +292,14 @@ if updatecode==4
         cd(p.pathbefore);
     end
     
-
+    
     pa=p.path;
     [pa2 pa1]=fileparts(pa);
     if strcmp(pa1,'antx2');%antx2-path selected
         patempup=pa2;
     else
         patempup=pa;
-    end   
+    end
     cd(patempup);
     
     % remove paths
@@ -310,8 +321,62 @@ if updatecode==4
     p2.antpath    =fullfile(patempup,'antx2');
     p2.pathbefore =p.pathbefore;
     installer(p2);
-    %% =============================================== 
+    %% ===============================================
 end
+
+
+% ==============================================
+%%   function local repo
+% ===============================================
+function gitpath=get_localGitpath
+gitpath=fileparts(which('antlink.m'));
+if isempty(gitpath)
+    error('.git not found --- link ANTx-path via antlink first');
+end
+
+% ==============================================
+%%   disp_info
+% ===============================================
+function disp_info(code,varargin)
+gitpath=get_localGitpath;
+
+%% check date of last 5 modification on LOCAL GIT-repo
+w=git(['-C ' gitpath ' log -5 --format=%cd']);
+w=flipud(strsplit(w,char(10))');
+w{end}=[w{end} '  .. latest local version' ];
+cprintf('*[0 .5 0]', ['*** date of last 5 LOCAL updates ***'   '\n'] );
+disp(char(w));
+
+%% check date of last modification on LOCAL GIT-repo
+wloc=git(['-C ' gitpath ' log -1 --format=%cd']);
+wloc=(strsplit(wloc,char(10))');
+wloc{end}=[wloc{end} '  .. latest local version' ];
+cprintf('*[0 .5 0]', ['*** date of latest LOCAL update ***'   '\n'] );
+disp(char(wloc));
+
+%% check date of modification on REMOTE GIT-repo
+wrep=git(['-C ' gitpath ' log -1 --format=%cd origin']);
+wrep=(strsplit(wrep,char(10))');
+wrep{end}=[wrep{end} '  .. latest REMOTE version' ];
+cprintf('*[0.9294    0.6941    0.1255]', ['*** date of latest REMOTE GITHUB COMMIT ***'   '\n'] );
+disp(char(wrep));
+
+%% check modified files on REMOTE GIT-repo
+git(['-C ' gitpath ' fetch origin']);
+[w st]=git(['-C ' gitpath ' diff --name-only -G. origin']);
+
+[~,finames ext]=fileparts2(strsplit(w,char(10))');
+modfiles=cellfun(@(a,b){[ a b]},finames,ext);
+cprintf('*[0.9294    0.6941    0.1255]', ['*** LAST CHANGES OF REMOTE GITHUB-REPOSITORY ***'   '\n'] );
+disp(char(modfiles));
+
+%% update-suggestion
+if strcmp(wrep,wloc)~=1
+    cprintf('*[1 0 1]', ['UPDATING IS SUGGESTED!    type "updateantx(2)" to update toolbox'   '\n'] );
+else
+    cprintf('*[0 .5 0]', ['EVERYTHING IS UP-TO-DATE'   '\n'] );
+end
+
 
 
 % ==============================================
@@ -349,10 +414,10 @@ end
 if 1
     
     %% NOTE the installationPath without 'ANTx2' otherwise 'ANTx2' is within 'ANTx2'-dir
-%     if exist(p2.antpath)
-%         mkdir(p2.antpath);
-%     end
-%     cd(p2.antpath);
+    %     if exist(p2.antpath)
+    %         mkdir(p2.antpath);
+    %     end
+    %     cd(p2.antpath);
     
     if 1
         %% ===============================================
@@ -370,8 +435,8 @@ if 1
         
         if ~isempty(strfind(msg,'unable to access')) || (exist(fullfile(p2.antpath,'.git'))~=7)
             if (exist(fullfile(p2.antpath,'.git'))~=7)
-               disp('..failed to remove "antx2"-directory');
-               cprintf([1 0 1],['..PLEASE REMOVE DIRECTORY MANUALLY and try again!' '.\n']);
+                disp('..failed to remove "antx2"-directory');
+                cprintf([1 0 1],['..PLEASE REMOVE DIRECTORY MANUALLY and try again!' '.\n']);
             end
             if ~isempty(strfind(msg,'unable to access'))
                 disp('issue -cloning REPO (check newtork/firewall/proxy settings)');
@@ -489,7 +554,7 @@ if ~isempty(msg)
         cprintf([ 0 0 0],'button to update those files.\n');
         cprintf([ .5 .5 .5],msg);
         cprintf([ .5 .5 .5],'\n');
-    end    
+    end
 else
     cprintf([ 0.4667    0.6745    0.1882],'------------------------------------------------\n');
     cprintf([ 0.4667    0.6745    0.1882],' ::.STATUS: UP-TO-DATE. NO NEWER UPDATES FOUND      \n');
