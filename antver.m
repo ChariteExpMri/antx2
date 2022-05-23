@@ -634,7 +634,11 @@
 % [update]-button:  a context-menu was added
 % - context menu options: update-info, force update, show last local changes, help on update
 % 
-% 
+% #ba 23 May 2022 (16:16:07)
+% #k [xrename.m]  #n modified
+% - added a file-filter 
+% - wildcard-option from command-line ..first tests
+% - bug removed in context menu
 % 
 % 
 

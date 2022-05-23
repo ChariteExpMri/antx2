@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   17 May 2022 (12:29:46)  
+ ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) last modification:   23 May 2022 (16:16:07)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,9 +7,16 @@
     
     
 ------------------  
+  ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**23 May 2022 (16:16:07)**</ins>  
+   __[xrename.m]__  modified  
+  - added a file-filter   
+  - wildcard-option from command-line ..first tests  
+  - bug removed in context menu  
+<!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 May 2022 (12:29:46)**</ins>  
   __[update]__-button:  a context-menu was added  
   - context menu options: update-info, force update, show last local changes, help on update  
+    
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**17 May 2022 (00:20:29)** </ins>  
    __[xgetlabels4.m]__  modified  

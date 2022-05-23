@@ -37,7 +37,7 @@
 %   #r - see warning
 % #k 'clear all fields'   : #n just clears all fields in 2nd and 3rd column
 % #k 'delete file'        : #n delete selected file(s) ...this files will be permanently removed
-% #k 'show image info'    : #n show image information (file paths; existence of files; header information)
+% #k 'show  info'         : #n show file information (file paths; existence of files; header information)
 %
 %
 %% #by RENAME FILES
@@ -288,7 +288,24 @@
 % %             expand all volumes from c_nan2neu_2.nii starting from 3rd vol  --> x2_003.nii/x2_004.nii...x2_"last volume as number".nii
 %    xrename(1, {'msme2neu_1.nii' 'c_nan2neu_2.nii'}, {'x1' 'x2'} ,{'3s' '[3:end s]'})
 %
-%
+% 
+% ==============================================
+%%    wildcards
+% ===============================================
+% xrename(1,{'^.*.doc'},{},{'del'});  %delete all doc-files
+% xrename(1,{'^.*.doc'},{'newdoc.doc'},{':'}); %make copy of all docfiles...call it 'newdoc.doc'
+% 
+% ==============================================
+%%    optional pairwise inputs
+% ===============================================
+% dir : fullpath dirs (cellarray) to perform the task
+% flt : file-filter; default: '.*.nii'  so select only from nifti-files
+%     -examples:
+%       xrename(1,{},{},{},'flt','.*.txt');
+%       xrename(1,{},{},{},'flt','.*.xlsx|.*xls');
+%    ! please use no file-filter if you have a preselection of files!
+% 
+% 
 % __________________________________________________________________________________________________________________
 %
 %% #yg BATCH EXAMPLE-II   [xrename.m]
@@ -365,9 +382,17 @@ else
         he{1,2}=finew;
     else
         he(:,1)=fi(:);
-        he(:,2)=finew(:);
+        if isempty(finew(:)) %empty
+            he(:,2)={''};
+        else
+            he(:,2)=finew(:);
+        end
     end
-    he(:,3)=repmat({''},[1 size(he,1)]);
+    if ~iscell(he)
+        he=repmat({''},[1 3]);
+    else
+        he(:,3)=repmat({''},[1 size(he,1)]);
+    end
 end
 
 if exist('extractnum')
@@ -391,8 +416,8 @@ if exist('extractnum')
         extractnum=regexprep(regexprep(extractnum,'NaN',''),'\s+',' ');
         if size(he,1) == size(extractnum,1)
             he(:,3)=extractnum;
-        else
-            error('extractnum be of same size as fi & finew');
+%         else
+%             error('extractnum be of same size as fi & finew');
         end
         
         
@@ -416,14 +441,67 @@ if isfield(p0,'dirs')==1 %obtain from argin-paths
 end
 if ischar(pa); pa=cellstr(pa); end
 
-v=getuniquefiles(pa);
+% ==============================================
+%%   filter data
+% ===============================================
+s.flt='.*.nii';
+if isfield(p0,'flt')==1
+    s.flt=p0.flt;
+end
+
+
+if ~isempty(he)
+    he=cellfun(@(a){[num2str(a)]} ,he);
+    [~,~, ext]=fileparts2(he(:,1));
+    uniext=unique(ext);
+    if length(uniext)==1 && isempty(uniext{1})
+        
+    else
+    s.flt=strjoin(uniext,'|');
+    end    
+end
+v=getuniquefiles(pa,'flt',s.flt);
+
+%% =============add to do column ==================================
+if 0
+    he2=he;
+    col3=he(:,1)
+    unicol3=unique(col3);
+    if ~isempty(char(unicol3))
+        for i=1:length(unicol3)
+            ix=regexpi2(he(:,1),unicol3{i});
+            incol3=he(strcmp(col3,unicol3{i} ),3)
+            try;incol3=incol3{1}; end
+            he2(ix,3)={incol3};
+        end
+    end
+    
+    he=he2;
+end
+
 
 
 %———————————————————————————————————————————————
 %%  get pairings of old&newfile (optional via gui) and extractionNUmber
 %———————————————————————————————————————————————
+% ==============================================
+%%   SHOW GUI
+% ===============================================
+delete(findobj(0,'tag','xrename'));
 s.pa=pa; %additional struct
-[he tbout]=renamefiles(v,he,s, showgui);
+
+[ v2,he2 ]=parse4gui(v,he);
+if usejava('desktop')==0;
+    showgui=0;
+end
+if showgui==0
+    he=he2; tbout=v2.tb ;
+else
+    [he tbout]=renameGUI(v2,he2,s, showgui);
+end
+
+% return
+% keyboard
 try
     iadd=find(~cellfun(@isempty,  regexpi(tbout(:,3), '^##$|^del$|^delete$')));
     he=[he; tbout(iadd,1:3)];
@@ -462,9 +540,9 @@ for i=1:length(pa)      %PATH
                     end
                 end
             else % RENAME FILE  /extract volume
-                
+                [pax0 fix0 ex0]=fileparts(s1);
                 [pax fix ex]=fileparts(finew{j});
-                s2=fullfile(pa{i},[fix '.nii' ]);
+                s2=fullfile(pa{i},[fix ex0 ]);
                 %                 if 1
                 %                     disp('---rename-test--');
                 %                     disp(['old: ' s1]);
@@ -696,8 +774,9 @@ for i=1:length(pa)      %PATH
                     
                     thisvol= lower(volnum{j});
                     save_separately =0;
-                    
-                    [ha a]   =rgetnii(s1); %MASKexr
+                    if strcmp(ex0,'.nii') %nifti-file
+                        [ha a]   =rgetnii(s1); %MASKexr
+                    end
                     if isnumeric(thisvol)
                         try
                             hb = ha(thisvol);
@@ -732,14 +811,15 @@ for i=1:length(pa)      %PATH
                             save_separately=0;
                         end
                         
-                        
-                        try
-                            eval(['hb=ha(' thisvol ');']);
-                        catch
-                            disp('problem with extraction-index: maybe larger than #volumes stored file');
-                            continue
+                        if strcmp(ex0,'.nii') %nifti-file
+                            try
+                                eval(['hb=ha(' thisvol ');']);
+                            catch
+                                disp('problem with extraction-index: maybe larger than #volumes stored file');
+                                continue
+                            end
+                            eval(['b=a(:,:,:,' thisvol ');']);
                         end
-                        eval(['b=a(:,:,:,' thisvol ');']);
                     end
                     
                     %% delete targetfile if exists
@@ -751,53 +831,63 @@ for i=1:length(pa)      %PATH
                     
                     %% write volume
                     warning off;
-                    if save_separately==0
-                        for k = 1 : size(hb,1)
-                            hb(k).fname = s2;
-                            hb(k).n     = [k 1];
-                            spm_create_vol(hb(k));
-                            spm_write_vol(hb(k),b(:,:,:,k));
-                        end
-                        try; 
-                            delete( strrep(s2,'.nii','.mat')  ) ; 
-                        end
-                        
-                        if isDesktop==1
-                            disp(['created: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
-                        else
-                            disp(['created: ' s2  ]);
-                        end
-                        
-                    else  %write separate volumes
-                        vec_allvols=1:size(ha,1);
-                        eval(['vol_id =vec_allvols(' thisvol ');']);
-                        
-                        for k = 1 : size(b,4)
-                            s3=fullfile(pa{i},[fix '_' pnum(vol_id(k) ,3) '.nii' ]);
-                            hc       =hb(k);
-                            hc.fname = s3;
-                            hc.n     = [1 1] ;
-                            spm_create_vol(hc);
-                            spm_write_vol(hc,b(:,:,:,k));
-                            try; delete( strrep(s3,'.nii','.mat')  ) ;     end
+                    if strcmp(ex0,'.nii') %nifti-file
+                        if save_separately==0
+                            for k = 1 : size(hb,1)
+                                hb(k).fname = s2;
+                                hb(k).n     = [k 1];
+                                spm_create_vol(hb(k));
+                                spm_write_vol(hb(k),b(:,:,:,k));
+                            end
+                            try;
+                                delete( strrep(s2,'.nii','.mat')  ) ;
+                            end
                             
-                            if k==1
-                                if size(hb,1)==1
-                                    if isDesktop==1
-                                        disp(['created: one separate vol: <a href="matlab: explorerpreselect(''' s3 ''')">' s3 '</a>'  ]);
+                            if isDesktop==1
+                                disp(['created: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
+                            else
+                                disp(['created: ' s2  ]);
+                            end
+                            
+                        else  %write separate volumes
+                            vec_allvols=1:size(ha,1);
+                            eval(['vol_id =vec_allvols(' thisvol ');']);
+                            
+                            for k = 1 : size(b,4)
+                                s3=fullfile(pa{i},[fix '_' pnum(vol_id(k) ,3) '.nii' ]);
+                                hc       =hb(k);
+                                hc.fname = s3;
+                                hc.n     = [1 1] ;
+                                spm_create_vol(hc);
+                                spm_write_vol(hc,b(:,:,:,k));
+                                try; delete( strrep(s3,'.nii','.mat')  ) ;     end
+                                
+                                if k==1
+                                    if size(hb,1)==1
+                                        if isDesktop==1
+                                            disp(['created: one separate vol: <a href="matlab: explorerpreselect(''' s3 ''')">' s3 '</a>'  ]);
+                                        else
+                                            disp(['created: one separate vol: : ' s3  ]);
+                                        end
                                     else
-                                        disp(['created: one separate vol: : ' s3  ]);
-                                    end
-                                else
-                                    if isDesktop==1
-                                        disp(['created: several separate vol, starting with: <a href="matlab: explorerpreselect(''' s3 ''')">' s3 '</a>'  ]);
-                                    else
-                                        disp(['created: several separate vol, starting with: ' s3  ]);
+                                        if isDesktop==1
+                                            disp(['created: several separate vol, starting with: <a href="matlab: explorerpreselect(''' s3 ''')">' s3 '</a>'  ]);
+                                        else
+                                            disp(['created: several separate vol, starting with: ' s3  ]);
+                                        end
                                     end
                                 end
                             end
-                        end
-                    end %write vol
+                        end %write vol
+                    else
+                        % NOT A NIFTI_____
+                        copyfile( s1,s2, 'f');
+                         if isDesktop==1
+                             disp(['created: file: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
+                         else
+                             disp(['created: file: ' s2  ]);
+                         end
+                    end
                     
                     
                     
@@ -833,20 +923,24 @@ end
 %%   subs
 % ===============================================
 
+function  [ v2,he2 ]=parse4gui(v,he);
+%% ===============================================
 
-
-%________________________________________________
-%%  rename files
-%________________________________________________
-function [he tbout]=renamefiles(v,he,s, showgui)
-% keyboard
+if isempty(he)
+    he=repmat({''},[ 1 3]) ;
+end
 
 %% predefined file-rename
 newname       =repmat({''}, [size(v.tb,1) 1]);
 extractvolnum =repmat({''}, [size(v.tb,1) 1]);
 if ~isempty(he{1})
     for i=1:size(he,1)
-        id=regexpi2(v.tb(:,1), ['^' he{i,1}] );
+        % wildcard
+        if ~isempty(strfind( he{i,1},'*'))
+            id=regexpi2(v.tb(:,1), ['^' he{i,1}] );
+        else
+            id=find(strcmp(v.tb(:,1), [ he{i,1}]));
+        end
         if ~isempty(id)
             newname(id,1)       = he(i,2);
             extractvolnum(id,1) = he(i,3);
@@ -854,20 +948,26 @@ if ~isempty(he{1})
     end
 end
 
+%% ===============================================
 
-%% NO_GUI
-if showgui == 0
-    tb       = [v.tb(:,1)  newname extractvolnum ] ;
-    ishange=find(~cellfun('isempty' ,tb(:,2))) ;
-    if isempty(ishange)
-        he=[];
-        tbout=tb;
-    else
-        he= tb(ishange,1:3);
-        tbout=tb;
-    end
-    return
-end
+
+% %% NO_GUI
+% if showgui == 0
+%     tb       = [v.tb(:,1)  newname extractvolnum ] ;
+%     ishange=find(~cellfun('isempty' ,tb(:,2))) ;
+%     if isempty(ishange)
+%         he=[];
+%         tbout=tb;
+%     else
+%         he= tb(ishange,1:3);
+%         tbout=tb;
+%     end
+%     v2.tbh=v.tbh;
+%     v2.tb =tbout;
+%     he2=he;
+%     
+%     return
+% end
 
 %% GUI
 tb       = [v.tb(:,1)  newname  extractvolnum  v.tb(:,2:end) ] ;
@@ -882,34 +982,114 @@ tbh      = [ v.tbh(1)  'NEW FILENAME_______________' 'TASK_________________' v.t
 tbh{1}='Filename';  %give better name
 tbh   =upper(tbh);
 
-tbeditable=[0 1 1   zeros(1,length(v.tbh(2:end))) ]; %EDITABLE
 
-
+if size(tb,2)<length(tbh)
+    tb=[tb repmat({''},[1 length(tbh)-size(tb,2)])];
+end
 for i=1:size(tbh,2)
     addspace=size(char(tb(:,i)),2)-size(tbh{i},2)+3;
     tbh(i)=  { [' ' tbh{i} repmat(' ',[1 addspace] )  ' '  ]};
 end
 
+v2.tbh=tbh;
+v2.tb =tb;
+he2=he;
 
-
-% make figure
-f = fg; set(gcf,'menubar','none','units','normalized','position',[    0.3049    0.0867    0.6000    0.8428]);
-tx=uicontrol('style','text','units','norm','position',[0 .95 1 .05 ],...
-    'string',      '..rename/copy/delete/extract/expand NIFTIs, see [help]...',... % UPPER-TITLE
-    'fontweight','bold','backgroundcolor','w','tag','msg');
-
-
-[~,MLvers] = version;
-MatlabVersdate=str2num(char(regexpi(MLvers,'\d\d\d\d','match')));
-if MatlabVersdate<=2014
+%________________________________________________
+%%  rename files
+%________________________________________________
+function [he tbout]=renameGUI(v,he,s, showgui)
+% keyboard
+tb= v.tb;
+tbh=v.tbh;
+if 0
+    if isempty(he)
+        he=repmat({''},[ 1 3]) ;
+    end
     
-    t = uitable('Parent', f,'units','norm', 'Position', [0 0.05 1 .93], 'Data', tb,'tag','table',...
-        'ColumnName',tbh, 'ColumnEditable',logical(tbeditable));
-else
+    %% predefined file-rename
+    newname       =repmat({''}, [size(v.tb,1) 1]);
+    extractvolnum =repmat({''}, [size(v.tb,1) 1]);
+    if ~isempty(he{1})
+        for i=1:size(he,1)
+            id=regexpi2(v.tb(:,1), ['^' he{i,1}] );
+            if ~isempty(id)
+                newname(id,1)       = he(i,2);
+                extractvolnum(id,1) = he(i,3);
+            end
+        end
+    end
     
-    t = uitable('Parent', f,'units','norm', 'Position', [0 0.05 1 .93], 'Data', tb,'tag','table',...
-        'ColumnWidth','auto');
-    t.ColumnName =tbh;
+    
+    %% NO_GUI
+    if showgui == 0
+        tb       = [v.tb(:,1)  newname extractvolnum ] ;
+        ishange=find(~cellfun('isempty' ,tb(:,2))) ;
+        if isempty(ishange)
+            he=[];
+            tbout=tb;
+        else
+            he= tb(ishange,1:3);
+            tbout=tb;
+        end
+        return
+    end
+    
+    %% GUI
+    tb       = [v.tb(:,1)  newname  extractvolnum  v.tb(:,2:end) ] ;
+    %  tbh      = [ v.tbh(1)  'NEW FILENAME (no extension)' 'TASK (extract volnum)' v.tbh(2:end)];
+    %  tbh      = [ v.tbh(1)  'NEW FILENAME               ' 'TASK                 ' v.tbh(2:end)];
+    tbh      = [ v.tbh(1)  'NEW FILENAME_______________' 'TASK_________________' v.tbh(2:end)];
+    
+    
+    
+    % tb    =tb(: ,[1 end 2:end-1 ]); % 2nd element is new name
+    % tbh   =tbh(:,[1 end 2:end-1 ]);
+    tbh{1}='Filename';  %give better name
+    tbh   =upper(tbh);
+    
+end
+%% ===============================================
+
+
+tbeditable=[0 1 1   zeros(1,length(v.tbh(2:end))) ]; %EDITABLE
+
+if 0
+    if size(tb,2)<length(tbh)
+        tb=[tb repmat({''},[1 length(tbh)-size(tb,2)])];
+    end
+    for i=1:size(tbh,2)
+        addspace=size(char(tb(:,i)),2)-size(tbh{i},2)+3;
+        tbh(i)=  { [' ' tbh{i} repmat(' ',[1 addspace] )  ' '  ]};
+    end
+end
+
+isFig=0;
+if ~isempty(findobj(0,'tag','xrename'))
+    isFig=1;
+end
+
+if isFig==0
+    % make figure
+    f = fg; set(gcf,'menubar','none','units','normalized','position',[    0.3049    0.0867    0.6000    0.8428]);
+    set(f,'tag','xrename');
+    tx=uicontrol('style','text','units','norm','position',[0 .95 1 .05 ],...
+        'string',      '..rename/copy/delete/extract/expand NIFTIs, see [help]...',... % UPPER-TITLE
+        'fontweight','bold','backgroundcolor','w','tag','msg');
+    
+    
+    [~,MLvers] = version;
+    MatlabVersdate=str2num(char(regexpi(MLvers,'\d\d\d\d','match')));
+    if MatlabVersdate<=2014
+        
+        t = uitable('Parent', f,'units','norm', 'Position', [0 0.05 1 .93], 'Data', tb,'tag','table',...
+            'ColumnName',tbh, 'ColumnEditable',logical(tbeditable));
+    else
+        
+        t = uitable('Parent', f,'units','norm', 'Position', [0 0.05 1 .93], 'Data', tb,'tag','table',...
+            'ColumnWidth','auto');
+        t.ColumnName =tbh;
+    end
     
     %columnsize-auto
     % set(t,'units','pixels');
@@ -919,143 +1099,153 @@ else
     t.ColumnEditable =logical(tbeditable ) ;% [false true  ];
     t.BackgroundColor = [1 1 1; 0.9451    0.9686    0.9490];
     
+    
+    % waitspin(1,'wait...');
+    drawnow;
+    
+    ht=findobj(gcf,'tag','table');
+    jscrollpane = javaObjectEDT(findjobj(ht));
+    viewport    = javaObjectEDT(jscrollpane.getViewport);
+    jtable      = javaObjectEDT( viewport.getView );
+    % set(jtable,'MouseClickedCallback',@selID)
+    set(jtable,'MousemovedCallback',@mousemovedTable);
+    
+    set(jtable,'MouseClickedCallback',@mouseclickedTable);
+      
+
+    h={' '};
+    h0={};
+    h0{end+1,1}=[' '];
+    h0{end+1,1}=[' ##m   *** [ ' upper(mfilename)  '] ***'   ];
+    h0{end+1,1}=[' _______________________________________________'];
+    hlp=help(mfilename);
+    h=[h0; strsplit2(hlp,char(10))' ; h ];
+    
+    setappdata(gcf,'phelp',h);
+    
+    set(gcf,'name',[' manipulate file [' mfilename '.m]'],'NumberTitle','off');
+    set(gcf,'SizeChangedFcn', @resizefig);
+    % ==============================================
+    %%   controls
+    % ===============================================
+    
+    %% HELP
+    pb=uicontrol('style','pushbutton','units','norm','position',[.45 0 .15 .03 ],'string','Help','fontweight','bold','backgroundcolor','w',...
+        'callback',   'uhelp(getappdata(gcf,''phelp''),1); set(gcf,''position'',[    0.2938    0.4094    0.6927    0.4933 ]);'          );%@renameFile
+    set(pb,'tooltipstring','get some help');
+    set(pb,'units','pixels');
+    
+    %% OK
+    pb=uicontrol('style','pushbutton','units','norm','position',[.05 0 .15 .03 ],'string','OK','fontweight','bold','backgroundcolor','w' );%@renameFile
+    set(pb,'tooltipstring','OK..proceed','tag','ok');
+    %set(pb, 'callback',   'set(gcf,''userdata'',get(findobj(gcf,''tag'',''table''),''Data''));' );
+    set(pb, 'callback',{@isOK,1});
+    set(pb,'units','pixels');
+    
+    %% CANCEL
+    pb=uicontrol('style','pushbutton','units','norm','position',[.8 0 .15 .03 ],'string','CANCEL','fontweight','bold','backgroundcolor','w');
+    %set(pb, 'callback',   'set(gcf,''userdata'',0);'       )   ;%@renameFile
+    set(pb, 'callback',{@isOK,0});
+    set(pb,'tooltipstring','cancel');
+    set(pb,'units','pixels');
+    
+    %% ===============================================
+    %% filefilter
+    options = {'.*.nii','.*.txt','.*','.*.xls|.*.xlsx' };
+    if isfield(s,'flt')
+        is=find(strcmp(options,s.flt));
+        if ~isempty(is)
+          options=  options([is setdiff(1:length(options),is)]);
+        else
+            options=[s.flt options];
+        end
+          
+    end
+    
+    position = [10,100,90,20];  % pixels
+    hContainer = gcf;  % can be any uipanel or figure handle
+    
+    model = javax.swing.DefaultComboBoxModel(options);
+    [jCombo hb] = javacomponent('javax.swing.JComboBox', position, hContainer);
+    jCombo.setModel(model);
+    jCombo.setEditable(true);
+    set(hb,'position',[250 2 70 18]); %set final position
+    set(hb,'tag', 'filterfile');
+    set(jCombo,'ActionPerformedCallback',@filterfilelist);
+    jCombo.setToolTipText('file filter');
+    %% ===============================================
+    %% filefilter-txt
+    hv=uicontrol('style','text','units','pixels','position',[0 0 10 10 ],...
+        'string','file-filter','backgroundcolor','w');
+   set(hv,'position',[250 20 130 18],'horizontalalignment','left');
+
+    
+    %% ===============================================
+    
+    
+    
+    us.tb  =tb;
+    us.tbh =tbh;
+    us.hj =jtable;
+    us.s  =s;
+    us.he =he;
+    us.hj_flt=jCombo;
+    us.isOK=0;
+    
+    set(gcf,'userdata',us);
+    % ==============================================
+    %%
+    % ===============================================
+    
+    % waitspin(0,'Done!');
+    drawnow;
+    
+    % ==============================================
+    %%   context menu
+    % ===============================================
+    contextmenu_make();
+else %fig exists
+    %keyboard
+    f=gcf;
+    us=get(f,'userdata');
+    ht=findobj(0,'tag','table');
+    ht.Data=tb;
+    us.tb   =tb;
+    us.tbh  =tbh;
+    set(f,'userdata',us);
 end
-% waitspin(1,'wait...');
-drawnow;
-
-ht=findobj(gcf,'tag','table');
-jscrollpane = javaObjectEDT(findjobj(ht));
-viewport    = javaObjectEDT(jscrollpane.getViewport);
-jtable      = javaObjectEDT( viewport.getView );
-% set(jtable,'MouseClickedCallback',@selID)
-set(jtable,'MousemovedCallback',@mousemovedTable);
-
-set(jtable,'MouseClickedCallback',@mouseclickedTable);
-
-% MAKE BUTTONS
-% h={' #yg  ***RENAME FILES  ***'} ;
-% h{end+1,1}=[' - select one/several imageS TO RENAME/EXTRACT/DELETE'];
-% h{end+1,1}=['- dirs:  works on preselected dirs (not all dirs), i..e mouse-folders in [ANT] have to be selected before'];
-% h{end+1,1}=[' - [newname]-column contains the new filename (file-extension is not needed)'];
-% h{end+1,1}=[' - NOTE: "##" (double-hash) in [NEWNAME]-column will delete the file'];
-% h{end+1,1}=[' - NOTE: strings such as "1", "2","1:3","end","end-1:end",":"  (without ""!) in [TASK]-COLUMN WILL EXTRACT THE VOLUME(S) '];
-% h{end+1,1}=['         and writes a new file with this data...but only if a new filename in the [NEWNAME]-column is given AND!...'];
-% h{end+1,1}=['        the new filename is not "##"'];
-% h{end+1,1}=[' - NOTE: to simply rename a file (no deletion/no extraction) the new file is not allowed to be named "##" AND ! the '];
-% h{end+1,1}=['         [TASK]-column must be empty'];
-% h{end+1,1}=[' ------simple example------'];
-% h{end+1,1}=[' #g  to rename  a file:  name in [NEWNAME]-column  is "something" but not "##"   &    [TASK]-COLUMN is empty'];
-% h{end+1,1}=[' #g  to delete  a file:  name in [NEWNAME]-column  is "##"'];
-% h{end+1,1}=[' #g  to extract a file:  name in [NEWNAME]-column  is "something" but not "##"   &    [TASK]-COLUMN is something like "1", "2","1:3","end","end-1:end",":" (without "")'];
-% h{end+1,1}=[''];
-
-
-% h{end+1,1}=['renaming:  -files are really renamed (no local copies with new filenamse will be created) '];
-% h{end+1,1}=['       -ony those files are treated from those folders that have been selected in the [ANT]-gui mouse-folder listbox'];
-% h{end+1,1}=['        thus, check the occurence of the specific file (see [#count]-column)'];
-% h{end+1,1}=['       -there is no priority in renaming the file, thus in some cases it might be better to call this'];
-% h{end+1,1}=['        function sveral times: for example: if A and B files exist in a folder or in several folders and you want to swap the names such that  '];
-% h{end+1,1}=['          file-A becoms file-B and vice versa.'];
-% h{end+1,1}=['          in such case: {1} call this function and rename file-A to file-ADUMMY, and  file-B to file-BDUMMY  (ADUMMY/BDUMMY are just non-existing,new names in the folder)'];
-% h{end+1,1}=['                        {2} call this function AGAIN (!) and rename file-ADUMMY to file-B, and  file-BDUMMY to file-A'];
-%
-% h{end+1,1}=[' #r 1st column: the original-filename '];
-% h{end+1,1}=[' #r 2nd column: NEW-FILENAME:  type a new filename here, if so, this file will be really(!) renamed '];
-% h{end+1,1}=['    - no file-extension needed'];
-% h{end+1,1}=['    - you can rename as many files as you like'];
-% h{end+1,1}=['    - if column-2 is empty this equals cancelling the process '];
-% h{end+1,1}=['    - the filename from column-1 can be copied (ctrl+c) and pasted(ctrl+v) in column-2 (to modify it..)'];
-% h{end+1,1}=['    - additional option: [##] will delete the file  (2-hash-signs without brackets)'];
-% h{end+1,1}=[' #r 3rd column: EXTRACT-VOLNUM:  FOR VOLUME EXTRACTION OR VOLUME EXPANSION: '];
-% h{end+1,1}=['     - strings such as "1" , "2" , "1:3" , "end" ,"2:5" , "end-1:end" , ":"   (without ""!)- TO EXTRACT THIS VOLUMES'];
-% h{end+1,1}=['     - strings such as "1s", "2s", "1:3s", "ends","2:5s", "end-1:ends", ":s"  (without ""!)- TO EXPAND THIS VOLUMES'];
-%
-% h{end+1,1}=[' #r columns 4-7 gives additional information:'];
-% h{end+1,1}=['   [#found]: how often is this file found across selected mouse-folders in [ant]-gui'];
-% h{end+1,1}=['           -again: appropriate mousefolders in ANT-gui must be selected in advance'];
-% h{end+1,1}=['   [Ndims]      : number of dimensions,i.e. 3 or 4 dims' ];
-% h{end+1,1}=['   [size]       : number of [x,y,z]-voxels, and in case of a 4d-volume,also the number of volumes (size of 4th.dimension) '];
-% h{end+1,1}=['   [resolution] : [x,y,z]-voxel-resolution'];
-% h{end+1,1}=['  '];
-% h{end+1,1}=['  '];
-h={' '};
-
-h0={};
-h0{end+1,1}=[' '];
-h0{end+1,1}=[' ##m   *** [ ' upper(mfilename)  '] ***'   ];
-h0{end+1,1}=[' _______________________________________________'];
-hlp=help(mfilename);
-h=[h0; strsplit2(hlp,char(10))' ; h ];
-
-setappdata(gcf,'phelp',h);
-
-set(gcf,'name',[' manipulate file [' mfilename '.m]'],'NumberTitle','off');
-set(gcf,'SizeChangedFcn', @resizefig);
-% ==============================================
-%%   controls
-% ===============================================
-
-%% HELP
-pb=uicontrol('style','pushbutton','units','norm','position',[.45 0 .15 .03 ],'string','Help','fontweight','bold','backgroundcolor','w',...
-    'callback',   'uhelp(getappdata(gcf,''phelp''),1); set(gcf,''position'',[    0.2938    0.4094    0.6927    0.4933 ]);'          );%@renameFile
-set(pb,'tooltipstring','get some help');
-set(pb,'units','pixels');
-
-%% OK
-pb=uicontrol('style','pushbutton','units','norm','position',[.05 0 .15 .03 ],'string','OK','fontweight','bold','backgroundcolor','w',...
-    'callback',   'set(gcf,''userdata'',get(findobj(gcf,''tag'',''table''),''Data''));'          );%@renameFile
-set(pb,'tooltipstring','OK..proceed','tag','ok');
-set(pb,'units','pixels');
-
-%% CANCEL
-pb=uicontrol('style','pushbutton','units','norm','position',[.8 0 .15 .03 ],'string','CANCEL','fontweight','bold','backgroundcolor','w',...
-    'callback',   'set(gcf,''userdata'',0);'          );%@renameFile
-set(pb,'tooltipstring','cancel');
-set(pb,'units','pixels');
-
-
-us.tb  =tb;
-us.tbh =tbh;
-us.hj =jtable;
-us.s  =s;
-set(gcf,'userdata',us);
-% ==============================================
-%%
-% ===============================================
-
-% waitspin(0,'Done!');
-drawnow;
-
-% ==============================================
-%%   context menu
-% ===============================================
-contextmenu_make();
-
-
 
 
 % ==============================================
 %%   wait
 % ===============================================
+uiwait(gcf)
 
-waitfor(f, 'userdata');
+% waitfor(f, 'userdata');
 % disp('geht weiter');
+
+
 try
-    tb=get(f,'userdata');
+    
+    u=get(gcf,'userdata');
+    tb=u.tb;
+    
+    %tb=get(f,'userdata');
     %% cancel
-    if isnumeric(tb)
-        if tb==0
+    if u.isOK==0;%isnumeric(tb)
             he=[];
             tbout=tb;
             close(f);
             return;
-        end
     end
     
     %%
-    
+    ht=findobj(gcf,'tag','table');
+    tb   =ht.Data;
+    tbout=tb;
+    ishange=find(~cellfun('isempty' ,ht.Data(:,2)));
     % ikeep=find(cellfun('isempty' ,tb(:,2))) ;
-    ishange=find(~cellfun('isempty' ,tb(:,2))) ;
+    %ishange=find(~cellfun('isempty' ,tb(:,2))) ;
     if isempty(ishange)
         he=[];
         tbout=tb;
@@ -1063,23 +1253,45 @@ try
         he= tb(ishange,1:3);
         tbout=tb;
     end
-    % oldnames={};
-    % for i=1:length(ikeep)
-    %     [pas fis ext]=fileparts(tb{ikeep(i),1});
-    %     tb(ikeep(i),2)={[fis ext]};
-    % end
-    % oldnames={};
-    % for i=1:length(ishange)
-    %     [pas  fis  ext]=fileparts(tb{ishange(i),1});
-    %     [pas2 fis2 ext2]=fileparts(tb{ishange(i),2});
-    %     tb(ishange(i),2)={[fis2 ext]};
-    % end
-    % he=tb;
-    %     disp(tb);
     close(f);
 catch
     [he tbout]=deal({});
 end
+
+
+function isOK(e,e2,task)
+u=get(gcf,'userdata');
+if task==1
+    u.isOK=1;
+   set(gcf,'userdata',u);
+end
+uiresume(gcf);
+    
+
+
+
+function filterfilelist(e,e2)
+
+% disp('iii')
+us=get(gcf,'userdata');
+flt=char(us.hj_flt.getSelectedItem);
+v=getuniquefiles( us.s.pa,'flt',flt);
+ht=findobj(gcf,'tag','table');
+[ v2,he2 ]=parse4gui(v,[]);
+ht.Data=v2.tb;  % set table
+
+us.tb  =v2.tb;
+us.htb =v2.tbh;
+us.he  =he2;
+set(gcf,'userdata',us);
+
+% he      =us.he;
+% showgui =1;
+% s       =us.s;
+% [he tbout]=renamefiles(v,he,s, showgui);
+% 's'
+
+
 
 function contextmenu_make()
 us=get(gcf,'userdata');
@@ -1096,7 +1308,7 @@ hs = uimenu(cmenu,'label','clear all fields'      ,         'Callback',{@hcontex
 
 hs = uimenu(cmenu,'label','delete file'           ,         'Callback',{@hcontext, 'deleteFile'},'separator','on');
 
-hs = uimenu(cmenu,'label','<html><font color=green>  show image info'           ,         'Callback',{@hcontext, 'showimageinfo'},'separator','on');
+hs = uimenu(cmenu,'label','<html><font color=green>  show file info'           ,         'Callback',{@hcontext, 'showimageinfo'},'separator','on');
 
 
 
@@ -1131,10 +1343,11 @@ elseif strcmp(task,'pop2')
 elseif strcmp(task,'cancel')
     set(findobj(gcf,'tag','pan1'),'userdata','cancel');
     %     delete(findobj(gcf,'tag','pan1'));
-    uiresume(gcf);
+    delete(findobj(gcf,'tag','pan_ed_cancel'));
+    %uiresume(gcf);
 elseif strcmp(task,'ok')
     set(findobj(gcf,'tag','pan1'),'userdata','ok');
-    uiresume(gcf);
+    delete(findobj(gcf,'tag','pan_ed_cancel'));
 end
 
 function hcontext(e,e2,task)
@@ -1224,7 +1437,9 @@ if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'renam
         set(hb,'callback',{@pan_callback,'cancel'});
         
         
-        uiwait(gcf);
+        %hb=findobj(gcf,'tag','pan1');
+        hdel=findobj(gcf,'tag','pan_ed_cancel');
+        waitfor(hdel);
         
         
         hb=findobj(gcf,'tag','pan1');
@@ -1298,7 +1513,7 @@ pa=us.s.pa;
 %———————————————————————————————————————————————
 filelist={};
 for j=1:length(files)
-    filelist=[filelist; {' #ky num' [' #ko image #b "' files{j} '"' ] ''}];
+    filelist=[filelist; {' #ky num' [' #ko FILE #b "' files{j} '"' ] ''}];
     for i=1:size(pa,1)
         fn=fullfile(pa{i},files{j});
         fn2={i fn ' #g file exist'};
@@ -1330,28 +1545,43 @@ for i=1:size(filelist,1)
         
         if isempty(strfind(filelist{i,3},'not'))
             file=filelist{i,2};
-            h1=spm_vol(file);
-            dim4=length(h1);
-            h1=h1(1);
-            h1.dim=[h1.dim dim4]; %add 4th dim
-            %
-            
-            t={};
-            t=[t; '   dim:     ' sprintf('[%d %d %d %d]',[h1.dim ]) ];
-            t=[t; '   dt:      ' sprintf('[%d %d]',[h1.dt ]) ];
-            if sum(h1.pinfo==round(h1.pinfo))
-                t=[t; '   pinfo:   ' sprintf('[%d %d %d]',[h1.pinfo ]) ];
+            [~,~,fmt]=fileparts(file);
+            if strcmp(fmt,'.nii')
+                h1=spm_vol(file);
+                dim4=length(h1);
+                h1=h1(1);
+                h1.dim=[h1.dim dim4]; %add 4th dim
+                %
+                
+                t={};
+                t=[t; '   dim:     ' sprintf('[%d %d %d %d]',[h1.dim ]) ];
+                t=[t; '   dt:      ' sprintf('[%d %d]',[h1.dt ]) ];
+                if sum(h1.pinfo==round(h1.pinfo))
+                    t=[t; '   pinfo:   ' sprintf('[%d %d %d]',[h1.pinfo ]) ];
+                else
+                    t=[t; '   pinfo:   ' sprintf('[%2.5f %2.5f %2.5f]',[h1.pinfo ]) ];
+                end
+                t=[t; '   mat:     '];
+                mat=plog([],num2cell(h1.mat),[0],'s','plotlines=0;d=4');
+                t=[t; cellfun(@(a) {[ repmat(' ',[1 10]) a]},  mat)];
+                %t=[t; plog([],num2cell(h1.mat),[0],'s','plotlines=0')];
+                t=[t; '   n:       ' sprintf('[%d %d]',[h1.n ]) ];
+                t=[t; '   descrip: ' h1.descrip ];
+                t=[t; repmat('-',[1 70])];
+                o=[o; t];
             else
-                t=[t; '   pinfo:   ' sprintf('[%2.5f %2.5f %2.5f]',[h1.pinfo ]) ];
+                %% ===============================================
+                
+                k=dir(file);
+                t={};
+                t=[t; '      date:     ' k.date ];
+                t=[t; '  size(KB):     ' num2str(k.bytes/1000) ];
+                
+                  o=[o; t];
+                
+                %% ===============================================
+                
             end
-            t=[t; '   mat:     '];
-            mat=plog([],num2cell(h1.mat),[0],'s','plotlines=0;d=4');
-            t=[t; cellfun(@(a) {[ repmat(' ',[1 10]) a]},  mat)];
-            %t=[t; plog([],num2cell(h1.mat),[0],'s','plotlines=0')];
-            t=[t; '   n:       ' sprintf('[%d %d]',[h1.n ]) ];
-            t=[t; '   descrip: ' h1.descrip ];
-            t=[t; repmat('-',[1 70])];
-            o=[o; t];
         else
             o=[o; repmat('-',[1 70])];
         end
@@ -1360,7 +1590,7 @@ for i=1:size(filelist,1)
 end
 o=[o; {'';'';''}];
 uhelp([' #wk *** [1] FILE INFORMATION ***'; oo; ' '; ' #wk *** [2] HEADER INFORMATION ***';' '; o]);
-set(gcf,'name','image information','numbertitle','off');
+set(gcf,'name','file information','numbertitle','off');
 
 
 
@@ -1512,7 +1742,7 @@ if ~isstruct(p0)
     %% ===============================================
     
 elseif isstruct(p0)
-     %% ===============================================
+    %% ===============================================
     p0=rmfield(p0,'dummy');
     z2=catstruct(z,p0);
     fn=fieldnames(p0);
@@ -1531,12 +1761,12 @@ elseif isstruct(p0)
     if isempty(char(ap))
         aplist='';
     else
-          aplist=[ ','  strjoin(ap,',')  ];  
+        aplist=[ ','  strjoin(ap,',')  ];
     end
-
+    
     % ===============================================
     
-   
+    
     hh=[hh; 'z=[];' ];
     hh=[hh; struct2list2(z2,'z')];
     
@@ -1579,23 +1809,32 @@ assignin('base','anth',v);
 %________________________________________________
 %%  generate list of nifit-files within pa-path
 %________________________________________________
-function v=getuniquefiles(pa)
+function v=getuniquefiles(pa,varargin)
 % keyboard
 % global an
 % pa=antcb('getallsubjects'); %path
 % pa=antcb('getsubjects'); %path
 
+if nargin==1
+    flt='.*.nii*$';
+    %flt='.*.txt*$';
+else
+    p=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+    flt=p.flt;
+end
+
 li={};
 fi2={};
 fifull={};
 for i=1:length(pa)
-    [files,~] = spm_select('FPList',pa{i},['.*.nii*$']);
+    [files,~] = spm_select('FPList',pa{i},flt);
     if ischar(files); files=cellstr(files);   end;
     fis=strrep(files,[pa{i} filesep],'');
     fi2=[fi2; fis];
     fifull=[fifull; files];
 end
-li=unique(fi2);
+% li=unique(fi2);
+fi2(cellfun(@isempty, fi2))=[];
 [li dum ncountid]=unique(fi2);
 %% count files
 ncount=zeros(size(li,1),1);
@@ -1607,19 +1846,23 @@ fifull2=fifull(dum);
 tb  = repmat({''},[size(fifull2,1)  ,4]);
 tbh ={'Ndims' 'size' 'resolution' 'origin'} ;
 for i=1:size(fifull2,1)
-    ha=spm_vol(fifull2{i});
-    ha0=ha;
-    ha=ha(1);
-    if length(ha0)==1
-        tb{i,1}='3';
-        tag='';
-    else
-        tb{i,1}='4' ;
-        tag= length(ha0);
+    try
+        ha=spm_vol(fifull2{i});
+        ha0=ha;
+        ha=ha(1);
+        if length(ha0)==1
+            tb{i,1}='3';
+            tag='';
+        else
+            tb{i,1}='4' ;
+            tag= length(ha0);
+        end
+        tb{i,2}=sprintf('%i '   ,[ha.dim tag]);
+        tb{i,3}=sprintf('%2.2f ',diag(ha.mat(1:3,1:3))');
+        tb{i,4}=sprintf('%2.2f ',ha.mat(1:3,4)')  ;
+    catch
+        tb(i,2:4)={''};
     end
-    tb{i,2}=sprintf('%i ',[ha.dim tag]);
-    tb{i,3}=sprintf('%2.2f ',diag(ha.mat(1:3,1:3))');
-    tb{i,4}=sprintf('%2.2f ',ha.mat(1:3,4)')  ;
 end
 
 
