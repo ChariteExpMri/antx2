@@ -708,7 +708,7 @@ if 0
 end
 %% ============[new dots/symbols]===================================
 tb={};
-tb(end+1,:)={ '#ba'    '&#9830; '  'blue' } ;
+tb(end+1,:)={ '#ba'    '<font color ="blue">&#9830; </font>'  'blue' } ;
 
 tb(end+1,:)={ '#yk'    '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
 tb(end+1,:)={ '#ok'    '![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) '  'green' } ;
