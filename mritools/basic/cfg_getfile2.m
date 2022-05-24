@@ -1853,6 +1853,8 @@ if 1
         %files= ((filetags));
         
         [files2,junk,ind] = unique(files);
+        files2=regexprep(files2(:,1),',.*',''); % remove ',1' in filename
+
         freqs = histc(ind,1:numel(files2));
         freqs=cellstr(num2str(freqs));
         

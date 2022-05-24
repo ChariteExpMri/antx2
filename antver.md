@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   24 May 2022 (10:17:17)  
+ &#x1F34E; last modification:   24 May 2022 (13:15:17)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,8 +7,12 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**24 May 2022 (13:15:17)**</ins>  
+    __[cfg_getfile2.m]__  bug in filter-funtion removed  
+<!---->
   &#x1F535;   <ins>**24 May 2022 (10:17:17)**</ins>  
   -embedded symbols changed in readme.md and antver.md (...seems no further support of placeholder service "via.placeholder.com")  
+    
 <!---->
   &#x1F535;   <ins>**23 May 2022 (16:16:07)**</ins>  
    __[xrename.m]__  modified  

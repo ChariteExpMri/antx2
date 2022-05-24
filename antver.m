@@ -643,10 +643,11 @@
 % #ba 24 May 2022 (10:17:17)
 % -embedded symbols changed in readme.md and antver.md (...seems no further support of placeholder service "via.placeholder.com")
 % 
+% #ba 24 May 2022 (13:15:17)
+%  #k [cfg_getfile2.m]  #n bug in filter-funtion removed
 % 
 % 
 % 
-
 
 
 
