@@ -785,7 +785,7 @@
    registration step  
 <!---->
   &#x1F535;   <ins>**07 May 2019 (14:16:48)**</ins>  
-  ![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+)  new version "ANTx2"  
+  &#x1F34E;  new version "ANTx2"  
      - SPM-package: SPM12  
      - templates were outsourced and can be downloaded from:  
        https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9  
