@@ -291,7 +291,7 @@
   &#8618; access via ANT-menu: &#8658; Main/export files (from any folder)  
     
 <!---->
-  #T  <ins>**06 Feb 2022 (21:20:48)**</ins>  
+  &#x1F4D9;   <ins>**06 Feb 2022 (21:20:48)**</ins>  
   Updated the tutorial webside on Github-Pages. The Webside contains basic tutorials (PDF-files).  
   &#8618;  access via link : <u>"https://chariteexpmri.github.io/antxdoc"  
   &#8618; access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages)  
