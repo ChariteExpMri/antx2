@@ -641,7 +641,7 @@
 % - bug removed in context menu
 % 
 % #ba 24 May 2022 (10:17:17)
-% -changed symbols in readme.md and anter.md (...seems to be no further support of placeholder service "via.placeholder.com")
+% -embedded symbols changed in readme.md and antver.md (...seems no further support of placeholder service "via.placeholder.com")
 % 
 % 
 % 

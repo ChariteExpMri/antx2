@@ -8,7 +8,7 @@
     
 ------------------  
   &#x1F535;   <ins>**24 May 2022 (10:17:17)**</ins>  
-  -changed symbols in readme.md and anter.md (...seems to be no further support of placeholder service "via.placeholder.com")  
+  -embedded symbols changed in readme.md and antver.md (...seems no further support of placeholder service "via.placeholder.com")  
 <!---->
   &#x1F535;   <ins>**23 May 2022 (16:16:07)**</ins>  
    __[xrename.m]__  modified  
