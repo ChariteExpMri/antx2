@@ -640,14 +640,7 @@
 % - wildcard-option from command-line ..first tests
 % - bug removed in context menu
 % 
-% `#ffffff` test
-% test1
-% '<font color ="`#ffffff`">&#9830; </font> test20'
-% test2
-% '<font color =`#ffffff`>&#9830; </font> test_2a'
-% ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) `#f03c15` test3
-% <style>p{color:Blue;}</style> hallo
-% test4
+% &#x1F537; test
 %
 
 

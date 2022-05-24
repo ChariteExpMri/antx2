@@ -13,14 +13,7 @@
   - wildcard-option from command-line ..first tests  
   - bug removed in context menu  
     
-  `#ffffff` test  
-  test1  
-  '<font color ="`#ffffff`">&#9830; </font> test20'  
-  test2  
-  '<font color =`#ffffff`>&#9830; </font> test_2a'  
-  !__[#f03c15]__(https://via.placeholder.com/15/f03c15/000000?text=+) `#f03c15` test3  
-  <style>p{color:Blue;}</style> hallo  
-  test4  
+  &#x1F537; test  
 <!---->
   <font color ="blue">&#9830; </font>  <ins>**17 May 2022 (12:29:46)**</ins>  
   __[update]__-button:  a context-menu was added  
