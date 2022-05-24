@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F535; last modification:   23 May 2022 (16:16:07)  
+ &#x1F535; last modification:   24 May 2022 (10:17:17)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,38 +7,15 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**24 May 2022 (10:17:17)**</ins>  
+  -changed symbols in readme.md and anter.md (...seems to be no further support of placeholder service "via.placeholder.com")  
+<!---->
   &#x1F535;   <ins>**23 May 2022 (16:16:07)**</ins>  
    __[xrename.m]__  modified  
   - added a file-filter   
   - wildcard-option from command-line ..first tests  
   - bug removed in context menu  
     
-  &#x1F537; test  
-   
-    
-  ==============================================  
- %   temporary symbol checks  
-  ===============================================  
-  &#x1F34E; :RED APPLE   
-  &#x1F34F; :GREEN APPLE   
-  &#x1F499; :BLUE HEART  
-  &#x1F49A; :GREEN HEART  
-  &#x1F49B; :YELLOW HEART  
-  &#x1F49C; :PURPLE HEART  
-  &#x1F4D7; :GREEN BOOK  
-  &#x1F4D8; :BLUE BOOK  
-  &#x1F4D9; :ORANGE BOOK  
-    
-  &#x1F534; :LARGE RED CIRCLE  
-  &#x1F535; :LARGE BLUE CIRCLE      -->  used for new entries  
-  &#x1F536; :LARGE ORANGE DIAMOND  
-  &#x1F537; :LARGE BLUE DIAMOND  
-  &#x1F538; :SMALL ORANGE DIAMOND  
-  &#x1F539; :SMALL BLUE DIAMOND  
-  &#x1F53A; :UP-POINTING RED TRIANGLE  
-  &#x1F53B; :DOWN-POINTING RED TRIANGLE  
-  &#x1F53C; :UP-POINTING SMALL RED TRIANGLE  
-  &#x1F53D; :DOWN-POINTING SMALL RED TRIANGLE  
 <!---->
   &#x1F535;   <ins>**17 May 2022 (12:29:46)**</ins>  
   __[update]__-button:  a context-menu was added  

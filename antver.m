@@ -640,9 +640,18 @@
 % - wildcard-option from command-line ..first tests
 % - bug removed in context menu
 % 
-% &#x1F537; test
-%
+% #ba 24 May 2022 (10:17:17)
+% -changed symbols in readme.md and anter.md (...seems to be no further support of placeholder service "via.placeholder.com")
 % 
+% 
+% 
+% 
+
+
+
+
+
+
 % ==============================================
 %%   temporary symbol checks
 % ===============================================
@@ -719,26 +728,25 @@ it=find(~cellfun(@isempty,regexpi(s1,['#\w+.*(\d\d:\d\d:\d\d)'])));
 it(end+1)=size(s1,1);
 
 %% ==============[old dots/symbols ... not working anymore]=================================
-if 0
-    % https://stackoverflow.com/questions/11509830/how-to-add-color-to-githubs-readme-md-file
-    tb(1,:)={ '#yk'    '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
-    tb(2,:)={ '#ok'    '![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) '  'green' } ;
-    tb(3,:)={ '#ra'    '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
-    tb(4,:)={ '#bw'    '![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+) '  'margenta' } ;
-    tb(5,:)={ '#gw -->' '&#8618;'  'green arrow' } ;
-    tb(6,:)={ '#ba'    '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
-    tb(7,:)={ '#k '     ' '  'remove tag' } ;
-    tb(8,:)={ ' #n '    ' '  'remove tag' } ;
-    tb(9,:)={ ' #b '    ' '  'remove tag' } ;
-end
+% if 0
+%     % https://stackoverflow.com/questions/11509830/how-to-add-color-to-githubs-readme-md-file
+%     tb(1,:)={ '#yk'    '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
+%     tb(2,:)={ '#ok'    '![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) '  'green' } ;
+%     tb(3,:)={ '#ra'    '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
+%     tb(4,:)={ '#bw'    '![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+) '  'margenta' } ;
+%     tb(5,:)={ '#gw -->' '&#8618;'  'green arrow' } ;
+%     tb(6,:)={ '#ba'    '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
+%     tb(7,:)={ '#k '     ' '  'remove tag' } ;
+%     tb(8,:)={ ' #n '    ' '  'remove tag' } ;
+%     tb(9,:)={ ' #b '    ' '  'remove tag' } ;
+% end
 %% ============[new dots/symbols]===================================
 tb={};
 tb(end+1,:)={ '#ba'    '&#x1F535; ' '&#x1F535; LARGE BLUE CIRCLE --new date dot '   } ;
 tb(end+1,:)={ '#bw'    '&#x1F4D7; ' '&#x1F4D7; GREEN BOOK -->new tutorial '   } ;
 tb(end+1,:)={ '#ra'    '&#x1F535; ' '&#x1F535; LARGE BLUE CIRCLE --new date dot (used in older dates in antver) '   } ;
-tb(end+1,:)={ '#ok'    '&#x1F34E; '  '&#x1F34E; green apple   new antx-version' } ;
-
-tb(end+1,:)={ '#T'    '&#x1F4D9; '  '&#x1F4D9; :ORANGE BOOK, new   github pages' } ;
+tb(end+1,:)={ '#ok'    '&#x1F34E; ' '&#x1F34E; green apple   new antx-version' } ;
+tb(end+1,:)={ '#T'     '&#x1F4D9; ' '&#x1F4D9; :ORANGE BOOK, new   github pages' } ;
 
 tb(end+1,:)={ '#yk'    '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
 tb(end+1,:)={ '#gw -->' '&#8618;'  'green arrow' } ;
