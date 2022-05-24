@@ -642,6 +642,29 @@
 % 
 % &#x1F537; test
 %
+% 
+% ==============================================
+%%   checks items
+% ===============================================
+% &#x1F34E; :RED APPLE 
+% &#x1F34F; :GREEN APPLE 
+% &#x1F499; :BLUE HEART
+% &#x1F49A; :GREEN HEART
+% &#x1F49B; :YELLOW HEART
+% &#x1F49C; :PURPLE HEART
+% &#x1F4D7; :GREEN BOOK
+% &#x1F4D8; :BLUE BOOK
+% &#x1F4D9; :ORANGE BOOK
+% &#x1F534; :LARGE RED CIRCLE
+% &#x1F535; :LARGE BLUE CIRCLE
+% &#x1F536; :LARGE ORANGE DIAMOND
+% &#x1F537; :LARGE BLUE DIAMOND
+% &#x1F538; :SMALL ORANGE DIAMOND
+% &#x1F539; :SMALL BLUE DIAMOND
+% &#x1F53A; :UP-POINTING RED TRIANGLE
+% &#x1F53B; :DOWN-POINTING RED TRIANGLE
+% &#x1F53C; :UP-POINTING SMALL RED TRIANGLE
+% &#x1F53D; :DOWN-POINTING SMALL RED TRIANGLE
 
 
 %% ===============================================
