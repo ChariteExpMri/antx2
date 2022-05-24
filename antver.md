@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- <font color ="blue">&#9830; </font>last modification:   23 May 2022 (16:16:07)  
+ &#x1F535; last modification:   23 May 2022 (16:16:07)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,7 +7,7 @@
     
     
 ------------------  
-  <font color ="blue">&#9830; </font>  <ins>**23 May 2022 (16:16:07)**</ins>  
+  &#x1F535;   <ins>**23 May 2022 (16:16:07)**</ins>  
    __[xrename.m]__  modified  
   - added a file-filter   
   - wildcard-option from command-line ..first tests  
@@ -17,7 +17,7 @@
    
     
   ==============================================  
- %   checks items  
+ %   temporary symbol checks  
   ===============================================  
   &#x1F34E; :RED APPLE   
   &#x1F34F; :GREEN APPLE   
@@ -29,7 +29,7 @@
   &#x1F4D8; :BLUE BOOK  
   &#x1F4D9; :ORANGE BOOK  
   &#x1F534; :LARGE RED CIRCLE  
-  &#x1F535; :LARGE BLUE CIRCLE  
+  &#x1F535; :LARGE BLUE CIRCLE      -->  used for new entries  
   &#x1F536; :LARGE ORANGE DIAMOND  
   &#x1F537; :LARGE BLUE DIAMOND  
   &#x1F538; :SMALL ORANGE DIAMOND  
@@ -39,12 +39,12 @@
   &#x1F53C; :UP-POINTING SMALL RED TRIANGLE  
   &#x1F53D; :DOWN-POINTING SMALL RED TRIANGLE  
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**17 May 2022 (12:29:46)**</ins>  
+  &#x1F535;   <ins>**17 May 2022 (12:29:46)**</ins>  
   __[update]__-button:  a context-menu was added  
   - context menu options: update-info, force update, show last local changes, help on update  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**17 May 2022 (00:20:29)** </ins>  
+  &#x1F535;   <ins>**17 May 2022 (00:20:29)** </ins>  
    __[xgetlabels4.m]__  modified  
   - get regionwise parameter now runs on HPC without GUI/graphic support ...  
     see help of xgetlabels4.m ...Example-4  
@@ -53,13 +53,13 @@
   - __["tutorial_noGraphic_support.docx"]__ was extended  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**16 May 2022 (16:13:10)**</ins>  
+  &#x1F535;   <ins>**16 May 2022 (16:13:10)**</ins>  
   __[update]__-button added next to __[ant version]__-button in ANTx-main gui  
   The update button allows to retrieve the latest updates from GitHub  
   (no GUis/no imput requested from user)  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**13 May 2022 (16:46:56)**</ins>  
+  &#x1F535;   <ins>**13 May 2022 (16:46:56)**</ins>  
   new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  __["tutorial_noGraphic_support.docx"]__   
   This tutorial shows how to work on machines without graphic support and without GUIs   
       1) Optional: how to set the paths of elastix in unix/linux-system:  
@@ -88,7 +88,7 @@
   &#8618; access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**13 May 2022 (01:12:05)**</ins>  
+  &#x1F535;   <ins>**13 May 2022 (01:12:05)**</ins>  
    __[xregister2d.m]__: modified  
    -runs on machines without graphic support  
    -option to allow parallel processing over animals   
@@ -97,51 +97,51 @@
    -option to allow parallel processing over animals   
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**11 May 2022 (00:08:32)**</ins>  
+  &#x1F535;   <ins>**11 May 2022 (00:08:32)**</ins>  
    __[dispfiles.m]__: display files folderwise in command-window (no GUI)  
   examples with ant: dispfiles('form',2,'flt','.*.nii','counts',0);  
   example no graphics support: dispfiles('form',2,'flt','.*.nii','counts',0,'dir',fullfile(pwd,'dat'));  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**09 May 2022 (15:52:33)**</ins>  
+  &#x1F535;   <ins>**09 May 2022 (15:52:33)**</ins>  
    __[xmaskgenerator.m]__: implemented reslicing if another atlas is used with a different voxel-size  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**06 May 2022 (14:17:26)**</ins>  
+  &#x1F535;   <ins>**06 May 2022 (14:17:26)**</ins>  
    __[updateantx.m]__: noGUI-update/install function for antx-project via GITHUB (no graphical userinterface)  
   -type "updateantx(2)" to just update local antx-toolbox  
   -see help of updateantx.m for more information  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**04 May 2022 (14:53:04)**</ins>  
+  &#x1F535;   <ins>**04 May 2022 (14:53:04)**</ins>  
   antcb('selectdirs') command extended using filesearch-operation  
   example:  antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'or');  %select all dirs containing either 't2.nii' or 'x_t2.nii'        
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**29 Apr 2022 (08:23:36)**</ins>  
+  &#x1F535;   <ins>**29 Apr 2022 (08:23:36)**</ins>  
    __[xbruker2nifti.m]__: command line support was exteded (file filter options)  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**28 Apr 2022 (13:43:07)**</ins>  
+  &#x1F535;   <ins>**28 Apr 2022 (13:43:07)**</ins>  
    __[DTIprep.m]__: prepare data for DTI-processing via Mrtrix. Ideally DTI-processing could start  
   - added check and reordering optin for b-table & DWI-files  
   &#8618; access via ANT-menu: &#8658; Statistic/DTIprep for mrtrix.  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**27 Apr 2022 (17:30:24)**</ins>  
+  &#x1F535;   <ins>**27 Apr 2022 (17:30:24)**</ins>  
    __[xbruker2nifti.m]__: now supports comandline mode (silent/no GUI) with filter option  
   -fun "selector2.m" supports preselection of rows  
   -fun "lastmodified.m" added; return name and date of the last modified files of a directory and subfolders (sorted)  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**11 Apr 2022 (12:23:25)**</ins>  
+  &#x1F535;   <ins>**11 Apr 2022 (12:23:25)**</ins>  
    __[xstatlabels.m]__: GUI was refreshed, added scripts-collection for xstatlabels  
   -This function performes regionwise statistics of an image-parameter such as intensity mean or volume  
    between groups   
   &#8618; access via ANT-menu: &#8658; STATISTIC/label-based statistik  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**06 Apr 2022 (17:39:47)**</ins>  
+  &#x1F535;   <ins>**06 Apr 2022 (17:39:47)**</ins>  
    __[scripts_collection.m]__: extended.. now contains the following scripts/examples:  
   'sc_xrename.m'                    .. shows how to rename files + basic file manipulation  
   'sc_register_to_standardspace.m'  .. shows how to register 't2.nii' to standard-space  
@@ -151,7 +151,7 @@
   &#8618; access via ANT-menu: &#8658; SNIPS/scripts collection   
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**06 Apr 2022 (14:47:57)**</ins>  
+  &#x1F535;   <ins>**06 Apr 2022 (14:47:57)**</ins>  
    __[antcb.m]__: extended.. antcb('studydir') obtain study-folder  
   __[sdir sinfo]__=antcb('studydir','info');  % obtain info for the study (storage-size/number of files/animals)  
   see antcb('studydir?') for help  
@@ -159,18 +159,18 @@
   bugfix in  __[sub_atlaslabel2xls.m]__: ... removing default-sheets was not working  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**06 Apr 2022 (12:21:31)**</ins>  
+  &#x1F535;   <ins>**06 Apr 2022 (12:21:31)**</ins>  
   bugfix in  __[exportfiles.m]__:  ...internal file-filter was buggy    
   bugfix in  __[xstat.m]__: ... multifactorial design was buggy  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**05 Apr 2022 (12:39:20)**</ins>  
+  &#x1F535;   <ins>**05 Apr 2022 (12:39:20)**</ins>  
   added  __[scripts_collection.m]__: This GUI contains scripts which can can be costumized  
   The scripts-collection will be extended in the near future    
   &#8618; access via ANT-menu: &#8658; SNIPS/scripts collection  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**04 Apr 2022 (13:54:22)**</ins>  
+  &#x1F535;   <ins>**04 Apr 2022 (13:54:22)**</ins>  
   added  __[HTMLprocsteps.m]__: This function creates additional HTML-files for the   
   processing report (initialization, coregistration, segementation and warping).  
   These HTML-files are available as hyperlinks in the "summary.html"-report and depicts  
@@ -179,11 +179,11 @@
   overview for all animals.    
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**24 Mar 2022 (23:16:21)**</ins>  
+  &#x1F535;   <ins>**24 Mar 2022 (23:16:21)**</ins>  
    __[cleanmask.m]__: now also allows to remove tissue parts, help added  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**24 Mar 2022 (11:34:05)**</ins>  
+  &#x1F535;   <ins>**24 Mar 2022 (11:34:05)**</ins>  
   added "approach_photothrombosis" as option for elxMaskApproach  
   This approach can be used for photothrombotic stroke models together with a lesionmask (with name 'lesionmask.nii')  
     
@@ -196,7 +196,7 @@
   &#8618; ANTx-animal listbox &#8658; context menu /SPECIFIC TOOLS/prune mask ("_msk.nii")  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**23 Mar 2022 (00:37:51)** </ins>  
+  &#x1F535;   <ins>**23 Mar 2022 (00:37:51)** </ins>  
   different sorting strategies of the animals in the ANT-main GUI animal-listbox implemented   
       'default' : default sorting  
       'progress_down' or 'progress_up'    : sort animals after atlas-registration-progress  
@@ -206,7 +206,7 @@
     
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**18 Mar 2022 (13:06:56)**</ins>  
+  &#x1F535;   <ins>**18 Mar 2022 (13:06:56)**</ins>  
   added to context menu of ANTx-animal listbox: checkRegistraton via HTML-file  
   this option creates an HTML-file with the registration results for selected animals  
   you can chose between  
@@ -217,13 +217,13 @@
   &#8618; ANTx-animal listbox &#8658; context menu  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**16 Mar 2022 (11:30:01)**</ins>  
+  &#x1F535;   <ins>**16 Mar 2022 (11:30:01)**</ins>  
   script "STscript_DTIstatistic_simple2.m" added to  __[dtistat.m]__:    
   This script performs the t-statistic (two groups) of the fibre-connections (*.csv-file)   
   &#8618; access via ANT-menu: &#8658; Statistic/DTI-statistic (or dtistat.m)  &#8658; use the __[scripts]__-button  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**11 Mar 2022 (08:24:50)**</ins>  
+  &#x1F535;   <ins>**11 Mar 2022 (08:24:50)**</ins>  
   added a scripts collection to  __[xstat.m]__: added scripts for voselwise statistic  
    -scripts can be modified and applied  
    -current scripts for voxwelwise statistic:  
@@ -236,17 +236,17 @@
   &#8618; access via ANT-menu: &#8658; Statistic/SPM-statistic (or xstat.m)  &#8658; use the __[scripts]__-button  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**09 Mar 2022 (11:02:40)**</ins>  
+  &#x1F535;   <ins>**09 Mar 2022 (11:02:40)**</ins>  
   fixed bug in  __[exportfiles]__: :  subdir was not addressed correctly  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**07 Mar 2022 (09:52:06)**</ins>  
+  &#x1F535;   <ins>**07 Mar 2022 (09:52:06)**</ins>  
   new function  __[scripts_gui]__: This function contains a collection of scripts that can be   
   costumized and applied. Currently the script-collection is available for the following functions:  
   DTIprep.m; dtistat.m, xvol3d.m  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**02 Mar 2022 (17:06:11)**</ins>  
+  &#x1F535;   <ins>**02 Mar 2022 (17:06:11)**</ins>  
   new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  __["tutorial_extractParamter_via_Mask.docx"]__   
   This tutorial shows how to extract parameters (mean/volume etc.) from a read-out image   
   using a mask. In this tutorial the mask contains two ROIs.  
@@ -255,13 +255,13 @@
     
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**02 Mar 2022 (16:17:11)**</ins>  
+  &#x1F535;   <ins>**02 Mar 2022 (16:17:11)**</ins>  
   function  __[xgetparameter]__: extended  
   - parameter-extraction now possible with animal-specific mask(s) located in the animal-folders  
     potential scenario: parameter-extraction using animal-specific masks from read-out images  
     in native space  
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**23 Feb 2022 (16:40:25)**</ins>  
+  &#x1F535;   <ins>**23 Feb 2022 (16:40:25)**</ins>  
   function  __[DTIprep]__: added a script-selection-option  
   - scripts can be copied and costumized for own purpose  
   - currently, there exist only three scripts:  
@@ -276,14 +276,14 @@
    - script can be used for post-hoc statistical analysis  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**11 Feb 2022 (00:31:35)**</ins>  
+  &#x1F535;   <ins>**11 Feb 2022 (00:31:35)**</ins>  
   small changes in  __[xdraw]__:   
   -debugged contour-fill and delete object (right-mouse click) functions  
    __[ant]__: added resize buttons to animal listbox of the ANT gui. Resize the listbox in case of  
   large cohorts or long animal names/identifiers  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**08 Feb 2022 (12:38:25)**</ins>  
+  &#x1F535;   <ins>**08 Feb 2022 (12:38:25)**</ins>  
   function  __[exportfiles]__: added as alternative to export/copy files from any data-hierarchie to  
   a destination folder (no ANT-project must be loaded for this function)  
   -function should also work for files of a studie's "dat"-folder  
@@ -296,12 +296,12 @@
   &#8618; access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages)  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**06 Feb 2022 (21:18:33)**</ins>  
+  &#x1F535;   <ins>**06 Feb 2022 (21:18:33)**</ins>  
   function  __[getNiftiheader]__: obtain NIFTI-header information of one/several NIFTI-files  
   function  __[reslice_nii2]__: reslice image by applying the header's transformation matrix  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**27 Jan 2022 (11:43:10)**</ins>  
+  &#x1F535;   <ins>**27 Jan 2022 (11:43:10)**</ins>  
    __[xstat]__:  voxelwise analysis was extended.  
     - post-hoc paramter modifications and summary report can executed from comandline  
     - write summary as powerpoint-files, write statistical table as excel-file,   
@@ -312,19 +312,19 @@
     The single data be further used for plots/visualization or other purposes  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**14 Jan 2022 (12:03:50)**</ins>  
+  &#x1F535;   <ins>**14 Jan 2022 (12:03:50)**</ins>  
    __[xdeformpop]__: GUI was replaced by extended version (part of 'deform Volume Elastix'-operation)  
    __[xstat]__: function was updated  
     - The Powerpoint-report of the voxelwise statistic was extended  
     - programmatically change viewing parameters / generate Powerpoint-report  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**12 Jan 2022 (17:12:52)**</ins>  
+  &#x1F535;   <ins>**12 Jan 2022 (17:12:52)**</ins>  
    __[xstatlabels.m]__: 'export' as excel-file now also contains the single animal data  
    __[xgetparameter.m]__: added parameter "integrated density"  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**06 Jan 2022 (13:37:22)**</ins>  
+  &#x1F535;   <ins>**06 Jan 2022 (13:37:22)**</ins>  
    __[xcreateMaps.m]__ solved bugs:  
   - selection of animals via left ANT-listbox before running this function enabled  
   - previous image-operation  "abs" ...sumation over images debugged. Note that this option produces the same  
@@ -333,26 +333,26 @@
     
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**03 Jan 2022 (14:08:14)**</ins>  
+  &#x1F535;   <ins>**03 Jan 2022 (14:08:14)**</ins>  
    __[xgetlabels4.m]__ A specifc fileName for resulting excel-file can be entered.  
     
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**20 Dec 2021 (14:42:46)**</ins>  
+  &#x1F535;   <ins>**20 Dec 2021 (14:42:46)**</ins>  
    __[xstatlabels.m]__ The group-column in the "group-assignment"-Excel-file can be numeric now  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**08 Dec 2021 (01:22:39)**</ins>  
+  &#x1F535;   <ins>**08 Dec 2021 (01:22:39)**</ins>  
    __[xvol3d.m]__ save image as (tif/jpg/png) via context-menu (disable rotation-mode  before access the context menu)  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**06 Dec 2021 (17:03:18)**</ins>  
+  &#x1F535;   <ins>**06 Dec 2021 (17:03:18)**</ins>  
    __[cfm.m]__ --> case-file-matrix: visualize data (files x dirs), basic file-manipulation  
   &#8618; access via ANT-GUI: Two new icons next to study-history-icon: CFM of all animals from   
   the current study or CFM for selected animals (selected via left listbox)  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**28 Nov 2021 (23:58:44)**</ins>  
+  &#x1F535;   <ins>**28 Nov 2021 (23:58:44)**</ins>  
    __[xcreateMaps.m]__ create MAPS across animals (heatmaps/IncidenceMaps/MeanImage Maps etc)  
   xcreateMaps.m: (former version "xincidencemap.m")  
   choose a math. operation across images: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*}  
@@ -361,11 +361,11 @@
    __[xrealign_elastix.m]__  --> replace NANs by Zeros in 4D-volume after realignment  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**28 Nov 2021 (00:33:52)**</ins>  
+  &#x1F535;   <ins>**28 Nov 2021 (00:33:52)**</ins>  
    __[xstatlabels.m]__ added tail-option for hypothesis-testing   
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**27 Nov 2021 (23:15:21)**</ins>  
+  &#x1F535;   <ins>**27 Nov 2021 (23:15:21)**</ins>  
     __[xgetparameter.m ]__ obtain mask-based parameter from images (multimasks & masks can be mulinary)  
   mask-based paramters are:  'frequency'   'vol'     'mean'    'std'    'median'  'integrDens'  'min' 'max'      
   MASK: you can use several masks/images, each with several sub-masks/(IDs), IDS across masks  
@@ -375,32 +375,32 @@
   .. CURRENTLY ONY PROVIDED FOR IMAGES/MASKS IN STANDARD-SPACE  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**01 Nov 2021 (17:29:22)**</ins>  
+  &#x1F535;   <ins>**01 Nov 2021 (17:29:22)**</ins>  
     __[DTIprep]__ minor changes ..added some solutions to avoid some MRtrix-BUGs:  
   --> see help of DTIprep.m  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**29 Sep 2021 (17:11:33)**</ins>  
+  &#x1F535;   <ins>**29 Sep 2021 (17:11:33)**</ins>  
   Created a web-side with tutorials   
   Depending on the time, further tutorials will be uploaded soon  
   &#8618;  access via link : <u>"https://chariteexpmri.github.io/antxdoc"  
     
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**28 Sep 2021 (13:33:22)**</ins>  
+  &#x1F535;   <ins>**28 Sep 2021 (13:33:22)**</ins>  
   small changes in   
     __[uhelp]__ added: hyperlink selection via context menu   
     __[cfg_getfile2]__ added: 4D-Nifti filter  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**21 Sep 2021 (22:50:00)**</ins>  
+  &#x1F535;   <ins>**21 Sep 2021 (22:50:00)**</ins>  
    __[DTIprep.m]__: updated  
   &#9745; DTIprep for "multi-shell" (multi b-value diffusion acquisitions) analysis: finished  
   -wrote some info/help to work with DTIprep.     
   -added context menu (check b-table/DWI-files; delete files etc.)  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**21 Sep 2021 (01:01:34)**</ins>  
+  &#x1F535;   <ins>**21 Sep 2021 (01:01:34)**</ins>  
    __[DTIprep.m]__: prepare data for DTI-processing via Mrtrix. Ideally DTI-processing could start  
   after conventional registration of the "t2.nii" image to the normal space und running   
   this DTIprep-step (a suitable DTI-atlas must be provided).  
@@ -411,18 +411,18 @@
    &#9832; DTIprep for "multi-shell" analysis: has to be adjusted & tested!   
   &#8618; access via ANT-menu: &#8658; Statistic/DTIprep for mrtrix.  
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**15 Sep 2021 (17:30:22)**</ins>  
+  &#x1F535;   <ins>**15 Sep 2021 (17:30:22)**</ins>  
    __[anthistory.m]__: load a project from history, i.a. from a list of previous ANTx calls/studies  
   &#8618; access via ANT main GUI: &#8658; __[green book]__-button. Hit button to open the history.  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**13 Sep 2021 (15:05:32)**</ins>  
+  &#x1F535;   <ins>**13 Sep 2021 (15:05:32)**</ins>  
    __[setanimalstatus.m]__: set a processing status tag for selected animal(s)  
   The status tag appears in the left listbox (animals) and tooltip when hovering over the animal.  
   &#8618; access via animal-listbox &#8658; context-menu/set status  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**08 Sep 2021 (10:42:24)**</ins>  
+  &#x1F535;   <ins>**08 Sep 2021 (10:42:24)**</ins>  
    __[sub_sting.m]__ creates node-related needles with numeric annotations (labels) onto 3D-brain (for DTI-data)  
   -annotations are view-dependent and will be adjusted accordingly   
   -labels appear at positions along a circle circumventing the brain  
@@ -430,13 +430,13 @@
   -function is part of xvol3d.m/sub_plotconnections to display DTI-connection onto a 3D brain  
     
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**23 Aug 2021 (14:12:17)**</ins>  
+  &#x1F535;   <ins>**23 Aug 2021 (14:12:17)**</ins>  
    __[xcalcSNRimage.m]__ convert image to SNR-image   
   according to Gudbjartsson H, Patz S. 1995: The Rician distribution of noisy MRI data. Magn Reson Med.; 34(6): 910–914.)  
   -can be used for Fluorine-19 (19F)-contrast images   
   &#8618;  access via ANT-menu: SNIPS/convert image to SNR-image  
 <!---->
-  <font color ="blue">&#9830; </font>  <ins>**19 Aug 2021 (23:50:18)**</ins>  
+  &#x1F535;   <ins>**19 Aug 2021 (23:50:18)**</ins>  
    __[xrename.m]__: now allows to threshold an image  
   &#8618;  access via ANT-menu: Tools/manipulate files  
 <!---->

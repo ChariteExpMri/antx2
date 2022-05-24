@@ -644,7 +644,7 @@
 %
 % 
 % ==============================================
-%%   checks items
+%%   temporary symbol checks
 % ===============================================
 % &#x1F34E; :RED APPLE 
 % &#x1F34F; :GREEN APPLE 
@@ -656,7 +656,7 @@
 % &#x1F4D8; :BLUE BOOK
 % &#x1F4D9; :ORANGE BOOK
 % &#x1F534; :LARGE RED CIRCLE
-% &#x1F535; :LARGE BLUE CIRCLE
+% &#x1F535; :LARGE BLUE CIRCLE      -->  used for new entries
 % &#x1F536; :LARGE ORANGE DIAMOND
 % &#x1F537; :LARGE BLUE DIAMOND
 % &#x1F538; :SMALL ORANGE DIAMOND
@@ -732,7 +732,7 @@ if 0
 end
 %% ============[new dots/symbols]===================================
 tb={};
-tb(end+1,:)={ '#ba'    '<font color ="blue">&#9830; </font>'  'blue' } ;
+tb(end+1,:)={ '#ba'    '&#x1F535; ' 'LARGE BLUE CIRCLE '   } ;
 
 tb(end+1,:)={ '#yk'    '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
 tb(end+1,:)={ '#ok'    '![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) '  'green' } ;
