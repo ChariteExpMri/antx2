@@ -641,7 +641,11 @@
 % - bug removed in context menu
 % 
 % `#ffffff` test
-% test
+% test1
+% '<font color ="`#ffffff`">&#9830; </font> test20'
+% test2
+% '<font color =`#ffffff`>&#9830; </font> test_2a'
+% 
 % 
 
 

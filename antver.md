@@ -14,7 +14,10 @@
   - bug removed in context menu  
     
   `#ffffff` test  
-  test  
+  test1  
+  '<font color ="`#ffffff`">&#9830; </font> test20'  
+  test2  
+  '<font color =`#ffffff`>&#9830; </font> test_2a'  
 <!---->
   <font color ="blue">&#9830; </font>  <ins>**17 May 2022 (12:29:46)**</ins>  
   __[update]__-button:  a context-menu was added  
