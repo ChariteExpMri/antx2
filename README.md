@@ -30,7 +30,10 @@ ________________________________________________________________________________
 - MAC (tested: OS X El Capitan/Catalina)
 - MATLAB, all functions were tested for R2015b/16a. Versions above 2018b should work (otherwise please send a mail)
 
+<!---
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) Inspect [**last changes/updates**](antver.md).<br>
+-->
+&#9830; Inspect [**last changes/updates**](antver.md).<br>
 
 ## Tutorials ##
 Tutorials can be found here: https://chariteexpmri.github.io/antxdoc
