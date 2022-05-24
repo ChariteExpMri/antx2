@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F535; last modification:   24 May 2022 (10:17:17)  
+ &#x1F34E; last modification:   24 May 2022 (10:17:17)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
