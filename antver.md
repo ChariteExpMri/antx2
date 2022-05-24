@@ -12,6 +12,9 @@
   - added a file-filter   
   - wildcard-option from command-line ..first tests  
   - bug removed in context menu  
+    
+  `#ffffff` test  
+  test  
 <!---->
   <font color ="blue">&#9830; </font>  <ins>**17 May 2022 (12:29:46)**</ins>  
   __[update]__-button:  a context-menu was added  

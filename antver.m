@@ -640,6 +640,8 @@
 % - wildcard-option from command-line ..first tests
 % - bug removed in context menu
 % 
+% `#ffffff` test
+% test
 % 
 
 
