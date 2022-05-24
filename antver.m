@@ -656,8 +656,6 @@
 % &#x1F4D8; :BLUE BOOK
 % &#x1F4D9; :ORANGE BOOK
 % 
-% &#x1F533; :test circle1
-% &#x1F536; : test circle2
 % &#x1F534; :LARGE RED CIRCLE
 % &#x1F535; :LARGE BLUE CIRCLE      -->  used for new entries
 % &#x1F536; :LARGE ORANGE DIAMOND
@@ -735,12 +733,12 @@ if 0
 end
 %% ============[new dots/symbols]===================================
 tb={};
-tb(end+1,:)={ '#ba'    '&#x1F535; ' 'LARGE BLUE CIRCLE '   } ;
+tb(end+1,:)={ '#ba'    '&#x1F535; ' 'LARGE BLUE CIRCLE --new date dot '   } ;
+tb(end+1,:)={ '#bw'    '&#x1F4D7; ' '&#x1F4D7; :GREEN BOOK -->new tutorial '   } ;
 
 tb(end+1,:)={ '#yk'    '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
 tb(end+1,:)={ '#ok'    '![#c5f015](https://via.placeholder.com/15/c5f015/000000?text=+) '  'green' } ;
 tb(end+1,:)={ '#ra'    '![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) '  'blue' } ;
-tb(end+1,:)={ '#bw'    '![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+) '  'margenta' } ;
 tb(end+1,:)={ '#gw -->' '&#8618;'  'green arrow' } ;
 tb(end+1,:)={ '#k '     ' '  'remove tag' } ;
 tb(end+1,:)={ ' #n '    ' '  'remove tag' } ;

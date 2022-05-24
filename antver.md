@@ -29,8 +29,6 @@
   &#x1F4D8; :BLUE BOOK  
   &#x1F4D9; :ORANGE BOOK  
     
-  &#x1F533; :test circle1  
-  &#x1F536; : test circle2  
   &#x1F534; :LARGE RED CIRCLE  
   &#x1F535; :LARGE BLUE CIRCLE      -->  used for new entries  
   &#x1F536; :LARGE ORANGE DIAMOND  
@@ -63,7 +61,7 @@
     
 <!---->
   &#x1F535;   <ins>**13 May 2022 (16:46:56)**</ins>  
-  new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  __["tutorial_noGraphic_support.docx"]__   
+  new tutorial &#x1F4D7;  __["tutorial_noGraphic_support.docx"]__   
   This tutorial shows how to work on machines without graphic support and without GUIs   
       1) Optional: how to set the paths of elastix in unix/linux-system:  
       2) Optional: open interactive session on hpc-cluster and start matlab  
@@ -250,7 +248,7 @@
     
 <!---->
   &#x1F535;   <ins>**02 Mar 2022 (17:06:11)**</ins>  
-  new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  __["tutorial_extractParamter_via_Mask.docx"]__   
+  new tutorial &#x1F4D7;  __["tutorial_extractParamter_via_Mask.docx"]__   
   This tutorial shows how to extract parameters (mean/volume etc.) from a read-out image   
   using a mask. In this tutorial the mask contains two ROIs.  
   &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
@@ -510,7 +508,7 @@
     
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Nov 2020 (14:08:48)**</ins>  
-  - NEW TUTORIAL  ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  __['tutorial_prepareforFSL.doc']__  
+  - NEW TUTORIAL  &#x1F4D7;  __['tutorial_prepareforFSL.doc']__  
     PROBLEM: How to use the backtransformed template brain mask for resting-state  
     data processed via FSL. IMPORTANT..this tutorial is not finished!  
       This tutorial explains the following steps  
@@ -528,7 +526,7 @@
               12. Mask first EPI-image with brain mask  
               13. Scale up 4D data for FSL  
              &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
-  -  NEW TUTORIAL  ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  __['tutor_multitube_manualSegment.doc']__  
+  -  NEW TUTORIAL  &#x1F4D7;  __['tutor_multitube_manualSegment.doc']__  
      PROBLEM: Several animals located in one image (I call this "multitube")  
          This tutorial explains the following steps:  
                 1. Manual segment images --> draw masks  
@@ -544,7 +542,7 @@
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**18 Nov 2020 (13:30:53)**</ins>  
   - __[xdownloadtemplate.m]__ added: check internet connection status  
-  - new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  __['tutorial_brukerImport.doc']__    
+  - new tutorial &#x1F4D7;  __['tutorial_brukerImport.doc']__    
     This tutorial deals with conversion of Bruker data to NIFTI files.  
       &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
@@ -595,7 +593,7 @@
      &#8618; access via ANT-menu: Tools/draw mask  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**22 Sep 2020 (13:30:09)**</ins>  
-  new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  __['tutorial_convertDICOMs.doc']__    
+  new tutorial &#x1F4D7;  __['tutorial_convertDICOMs.doc']__    
   This tutorial deals with the conversion of dicom to NIFTI files.  
      &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
@@ -634,7 +632,7 @@
   will be renamed (adding a prefix 's' such as "s20130422_TF_001_m1_s3_e6_p1").  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**24 Aug 2020 (09:27:02)**</ins>  
-  new tutorial ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  __["tutorial_orientation_and_manucoreg.doc"]__   
+  new tutorial &#x1F4D7;  __["tutorial_orientation_and_manucoreg.doc"]__   
   This tutorial deals with image orientation for template registration and manual coregistration.  
     &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
 <!---->
@@ -750,7 +748,7 @@
   __[maskgenerator]__ added region-lection list and online link to compare selected regions  
 <!---->
   ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+)   <ins>**04 Nov 2019 (11:35:28)**</ins>  
-  set up GITHUB repository ![#FF00FF](https://via.placeholder.com/15/FF00FF/000000?text=+)  https://github.com/ChariteExpMri/antx2/  
+  set up GITHUB repository &#x1F4D7;  https://github.com/ChariteExpMri/antx2/  
   -primary checks macOS, Linux MINT  
   -updated __[uhelp]__  
 <!---->
