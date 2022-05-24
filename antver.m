@@ -655,6 +655,9 @@
 % &#x1F4D7; :GREEN BOOK
 % &#x1F4D8; :BLUE BOOK
 % &#x1F4D9; :ORANGE BOOK
+% 
+% &#x1F533; :test circle1
+% &#x1F536; : test circle2
 % &#x1F534; :LARGE RED CIRCLE
 % &#x1F535; :LARGE BLUE CIRCLE      -->  used for new entries
 % &#x1F536; :LARGE ORANGE DIAMOND
