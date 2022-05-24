@@ -9,6 +9,9 @@
 ------------------  
   &#x1F535;   <ins>**24 May 2022 (13:15:17)**</ins>  
     __[cfg_getfile2.m]__  bug in filter-funtion removed  
+    __[cfm.m]__  case-file matrix ...  
+    - copy/copy&rename (context menu) of files with different filenames in one step  
+    - delete files (context menu) with different filenames in one step  
 <!---->
   &#x1F535;   <ins>**24 May 2022 (10:17:17)**</ins>  
   -embedded symbols changed in readme.md and antver.md (...seems no further support of placeholder service "via.placeholder.com")  

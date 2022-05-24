@@ -2634,16 +2634,7 @@ pb_update([],[]);
 
 function renameFiles(task)
 %% ===============================================
-if strcmp(task,'renameFiles')
-    userootfile=1;
-     tit='rename File:';
-    head=['\color{red}\bf RENAME SELECTED FILES\color{black}\rm' char(10)  ]; 
-else % copyNrename
-    userootfile=0;
-    tit='copy & rename File:';
-    head=['\color{blue}\bf COPY AND RENAME SELECTED FILES\color{black}\rm' ...
-        char(10) '\color{red}\rm - choose ONE option only \color{black}\rm' char(10)] ;
-end
+
 
 
 u=get(gcf,'userdata');
@@ -2651,47 +2642,123 @@ s=getSlectedFiles();
 %% ===============================================
 fis=cellfun(@(a,b,c){[fullfile(a, b,c )]},s(:,1),s(:,6),s(:,3));
 unifiles=unique(cellfun(@(a,b){[fullfile(a, b)]},s(:,6),s(:,3)));
-if length(unifiles)>1
-   msgbox({'files with different File-Names where selected'...
-       '...Please select files with identical names '});
-   return
-end
+% if length(unifiles)>1
+%    msgbox({'files with different File-Names where selected'...
+%        '...Please select files with identical names '});
+%    return
+% end
 % unifiles{1}='_herr_man.nii'
-name=[tit '"' unifiles{1} '"'];
-prompt={...
-    [head char(10)    ...
-    ' - do not enter file extension, the original file extension is used' char(10) char(10) ...
-    'Enter a new fileName:'  ]
-    ['Enter PREFIX (add a prefix to existing fileName: ' char(10) ' -if needed use underscore,  E.g.: "prefix\_" + OldFilename + FileExtension'  ]
-    ['Enter SUFFIX (add a suffix to existing fileName: ' char(10) ' -if needed use underscore,  E.g.: OldFilename+"\_suffix" + FileExtension'  ]
-    };
-numlines=[1 100];
-defaultanswer={''  '' ''};
-options.Resize='on';
-options.WindowStyle='normal';
-options.Interpreter='tex';
-if userootfile==1
-    prompt       =prompt(1);
-    defaultanswer=defaultanswer(1);
+%% ===============================================
+
+
+    
+if strcmp(task,'renameFiles')
+    userootfile=1;
+     tit='rename Files:';
+    head=['\color{red}\bf RENAME SELECTED FILES\color{black}\rm' char(10)  ]; 
+else % copyNrename
+    userootfile=0;
+    tit='copy & rename Files:';
+    head=['\color{blue}\bf COPY AND RENAME SELECTED FILES\color{black}\rm' ...
+        char(10) '\color{red}\rm - choose ONE option only \color{black}\rm' char(10)] ;
 end
 
-q=inputdlg(prompt,name,numlines,defaultanswer,options);
-if isempty(q); return; end
-isel=find(~cellfun(@isempty,q));
-if isempty(isel) || length(isel)>1;
-   warndlg('ONly one selecion allows...terminated');
-   return
+
+
+
+if length(unifiles)==1
+    %% ===============================================
+    
+    name=[tit '"' unifiles{1} '"'];
+    prompt={...
+        [head char(10)    ...
+        ' - do not enter file extension, the original file extension is used' char(10) char(10) ...
+        'Enter a new fileName:'  ]
+        ['Enter PREFIX (add a prefix to existing fileName: ' char(10) ' -if needed use underscore,  E.g.: "prefix\_" + OldFilename + FileExtension'  ]
+        ['Enter SUFFIX (add a suffix to existing fileName: ' char(10) ' -if needed use underscore,  E.g.: OldFilename+"\_suffix" + FileExtension'  ]
+        };
+    numlines=[1 100];
+    defaultanswer={''  '' ''};
+    options.Resize='on';
+    options.WindowStyle='modal';
+    options.Interpreter='tex';
+    if userootfile==1
+        prompt       =prompt(1);
+        defaultanswer=defaultanswer(1);
+    end
+    q=inputdlg(prompt,name,numlines,defaultanswer,options);
+    %% ===============================================
+    
+    if isempty(q); return; end
+    isel=find(~cellfun(@isempty,q));
+    if isempty(isel) || length(isel)>1;
+        warndlg('ONly one selecion allows...terminated');
+        return
+    end
+else
+    %% =====[ more than 1 different filename selected]==========================================
+    unifiles_str=cellfun(@(a){[ 'old name: "'  a  '"' ]} ,unifiles(2:end));
+     name=[tit ];
+    prompt0={...
+        [head char(10)    ...
+        ' - do not enter file extension, the original file extension is used' char(10) ...
+        'Enter a new fileName:'  char(10) ...
+        'old name: "'  unifiles{1}  '"']};
+    prompt=[prompt0; unifiles_str(:) ];
+    numlines=[1 100];
+    defaultanswer=unifiles(:)';
+    options.Resize='on';
+    options.WindowStyle='modal';
+    options.Interpreter='tex';
+    %if userootfile==1
+%         prompt       =prompt(1);
+%         defaultanswer=defaultanswer(1);
+%     end
+    q=inputdlg(prompt,name,numlines,defaultanswer,options);
+    if isempty(strjoin(q,''))
+       warndlg('no new filename obtained...terminated');
+        return 
+    end
+    
+    
+    %% ===============================================
+    
 end
+%% ===============================================
 [pa nameold ext] =fileparts2(fis);
-if isel==1
-    [~,name]=fileparts(q{isel});
-   fis2=cellfun(@(a,b){[fullfile(a, [name b])]},pa,ext);
-elseif isel==2
-    pref=q{isel};
-   fis2=cellfun(@(a,b,c){[fullfile(a, [pref   b c])]},pa,nameold,ext);
-elseif isel==3
-    suff=q{isel};
-   fis2=cellfun(@(a,b,c){[fullfile(a, [   b suff c])]},pa,nameold,ext);
+if length(unifiles)==1
+    if isel==1
+        [~,name]=fileparts(q{isel});
+        fis2=cellfun(@(a,b){[fullfile(a, [name b])]},pa,ext);
+    elseif isel==2
+        pref=q{isel};
+        fis2=cellfun(@(a,b,c){[fullfile(a, [pref   b c])]},pa,nameold,ext);
+    elseif isel==3
+        suff=q{isel};
+        fis2=cellfun(@(a,b,c){[fullfile(a, [   b suff c])]},pa,nameold,ext);
+    end
+else % more than 1 files changed
+    %% ===============================================
+    
+    nameorig=    cellfun(@(a,b){[a b]} ,nameold,ext );
+    namenew =    q(:);
+    fis2={};
+    for i=1:length(unifiles)
+        ix=find(strcmp(nameorig,unifiles{i}));
+        [~,namenewshort,~]=fileparts(namenew{i});
+        if ~isempty(namenewshort)
+        dum=cellfun(@(a,b){[fullfile(a, [namenewshort b])]},pa(ix),ext(ix));
+        fis2(ix,1)=dum;
+        end
+    end
+    % remove file-from-list which have no new specified filename
+    
+    
+    %% ===============================================
+    idel=find(cellfun('isempty',fis2));
+    fis2(idel,:)=[];
+    fis(idel,:) =[];
+    
 end
 
 %% ===============================================

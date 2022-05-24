@@ -645,6 +645,9 @@
 % 
 % #ba 24 May 2022 (13:15:17)
 %  #k [cfg_getfile2.m]  #n bug in filter-funtion removed
+%  #k [cfm.m]  #n case-file matrix ...
+%   - copy/copy&rename (context menu) of files with different filenames in one step
+%   - delete files (context menu) with different filenames in one step
 % 
 % 
 % 
