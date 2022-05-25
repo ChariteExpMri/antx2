@@ -88,7 +88,7 @@ clear global an;
 %%                  UICONTROLS
 %==================================================
 %% FIG
-h=figure('color','w','units','normalized','menubar','none', 'tag','ant','name','ANT',...
+h=figure('color','w','units','normalized','menubar','none', 'tag','ant','name','ANTx2',...
     'NumberTitle','off',...
     'position',[  0.5396    0.42    0.3677    0.4994]);
 % set(gcf,'closereq','spm(''Quit'')','HandleVisibility','off')
@@ -230,8 +230,10 @@ e=ind2rgb(e,map);
 set(h,'cdata',e);
 
 cmm=uicontextmenu;
-uimenu('Parent',cmm, 'Label','show CFM of all animals in TXT-window',             'callback', {@ant_cfm_ontext,'window',1 });
-uimenu('Parent',cmm, 'Label','show CFM of all animals in CMD-window',             'callback', {@ant_cfm_ontext,'cmdwindow',1 });
+uimenu('Parent',cmm, 'Label','show CFM of all animals in TXT-window',             'callback', {@ant_cfm_ontext,'win','all' 1});
+uimenu('Parent',cmm, 'Label','show CFM of all animals in TXT-window TRANSPOSED',  'callback', {@ant_cfm_ontext,'win','all' 2});
+uimenu('Parent',cmm, 'Label','show CFM of all animals in CMD-window',             'callback', {@ant_cfm_ontext,'cmd','all' 1});
+uimenu('Parent',cmm, 'Label','show CFM of all animals in CMD-window TRANSPOSED',  'callback', {@ant_cfm_ontext,'cmd','all' 2});
 set(h,'UIContextMenu',cmm);
 
 
@@ -257,8 +259,11 @@ e2=e(:,[3:8 end-1:end],:);
 set(h,'cdata',e2);
 
 cmm=uicontextmenu;
-uimenu('Parent',cmm, 'Label','show CFM of selected animals in TXT-window',             'callback', {@ant_cfm_ontext,'window',2 });
-uimenu('Parent',cmm, 'Label','show CFM of selected animals in CMD-window',             'callback', {@ant_cfm_ontext,'cmdwindow',2 });
+uimenu('Parent',cmm, 'Label','show CFM of selected animals in TXT-window',             'callback', {@ant_cfm_ontext,'win','sel' 1 });
+uimenu('Parent',cmm, 'Label','show CFM of selected animals in TXT-window TRANSPOSED',  'callback', {@ant_cfm_ontext,'win','sel' 2 });
+uimenu('Parent',cmm, 'Label','show CFM of selected animals in CMD-window',             'callback', {@ant_cfm_ontext,'cmd','sel' 1 });
+uimenu('Parent',cmm, 'Label','show CFM of selected animals in CMD-window TRANSPOSED',  'callback', {@ant_cfm_ontext,'cmd','sel' 2 });
+
 set(h,'UIContextMenu',cmm);
 
 % ==============================================
@@ -2835,25 +2840,49 @@ else
 end
 
 
-function ant_cfm_ontext(e,e2,task,animalmode)
-if strcmp(task,'window')
-    if animalmode==1
-        [w]=dispfiles('show',0);
-    elseif animalmode==2
-        mdirs=antcb('getsubjects');
-        [w]=dispfiles('dir',mdirs,'show',0);
-    end
-    uhelp(w.m2,1,'name','CFM');
-elseif strcmp(task,'cmdwindow')
-    if animalmode==1
-        dispfiles('show',1);
-    elseif animalmode==2
-        mdirs=antcb('getsubjects');
-        dispfiles('dir',mdirs);
-        
-    end
-    %disp('...for more info: help dispfiles');
-    disp('   <a href="matlab: help dispfiles;">help dispfiles</a>')
+function ant_cfm_ontext(e,e2,dispmode,sel, form)
+
+% check if project is loaded
+mdirs=antcb('getsubjects');
+if isempty(mdirs)
+   return 
 end
 
+if strcmp(sel,'all')
+     mdirs=antcb('getallsubjects');
+else
+     mdirs=antcb('getsubjects');
+end
+
+if strcmp(dispmode,'win')
+   [w]=dispfiles('dir',mdirs,'show',0,'form',form); 
+   uhelp(w.m2,1,'name','CFM');
+else
+   [w]=dispfiles('dir',mdirs,'show',1,'form',form); 
+    
+end
+ disp('   <a href="matlab: help dispfiles;">help dispfiles</a>')
+% 
+% keyboard
+% 
+% if strcmp(dispmode,'win')
+%     if strcmp(sel,'all')
+%         [w]=dispfiles('show',0,'form',form);
+%     else
+%         mdirs=antcb('getsubjects');
+%         [w]=dispfiles('dir',mdirs,'show',0,'form',form);
+%     end
+%     uhelp(w.m2,1,'name','CFM');
+% else
+%     if animalmode==1
+%         dispfiles('show',1);
+%     elseif animalmode==2
+%         mdirs=antcb('getsubjects');
+%         dispfiles('dir',mdirs);
+%         
+%     end
+%     %disp('...for more info: help dispfiles');
+%     disp('   <a href="matlab: help dispfiles;">help dispfiles</a>')
+% end
+% 
 

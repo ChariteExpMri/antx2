@@ -649,6 +649,9 @@
 %   - copy/copy&rename (context menu) of files with different filenames in one step
 %   - delete files (context menu) with different filenames in one step
 % 
+% #ba 25 May 2022 (11:44:39)
+% #k [sub_atlaslabel2xls.m] #n - bug removed when writing xls-file
+% 
 % 
 % 
 

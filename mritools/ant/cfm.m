@@ -1082,6 +1082,7 @@ if isnewfig==1
     set(hb,'backgroundcolor','w','fontsize',6);
     set(hb,'position',[0.90675 0.60169 0.1 0.032]);
     set(hb,'tooltipstring',['single-/multi-select files']);
+    set(hb,'backgroundcolor',[0.8392    0.9098    0.8510]);
     
     %% reduce table
     hb=uicontrol('style','radio','units','norm','tag','rd_reduce','string','reduce');
@@ -1441,10 +1442,12 @@ elseif u.foldertype==2 && u.useANT==1
     uimenu(cmenu, 'Label', '<html><b><font color =orange> pre-select animals in ANT', 'Callback'     , {@context, 'selectAnt'},'separator','on');
 end
 
-uimenu(cmenu, 'Label', '<html><b><font color =black> select column |	',   'Callback'         , {@context, 'selectColumn'},'separator','on');
-uimenu(cmenu, 'Label', '<html><b><font color =black> select row -'   ,       'Callback'             , {@context, 'selectRow'});
-uimenu(cmenu, 'Label', '<html><b><font color =black> select range []'         , 'Callback'             , {@context, 'selectRange_call'});
-uimenu(cmenu, 'Label', '<html><b><font color =black> select DIRS and FILES from list'   , 'Callback'    , {@context, 'selectFilesFromDirs_call'});
+
+uimenu(cmenu, 'Label', '<html><b><font color =black> deselect all',          'Callback'         , {@context, 'deselectAll'},'separator','on');
+uimenu(cmenu, 'Label', '<html><n><font color =black> select column |	',   'Callback'         , {@context, 'selectColumn'},'separator','off');
+uimenu(cmenu, 'Label', '<html><n><font color =black> select row -'   ,       'Callback'             , {@context, 'selectRow'});
+uimenu(cmenu, 'Label', '<html><n><font color =black> select range []'         , 'Callback'             , {@context, 'selectRange_call'});
+uimenu(cmenu, 'Label', '<html><n><font color =black> select DIRS and FILES from list'   , 'Callback'    , {@context, 'selectFilesFromDirs_call'});
 
 
 uimenu(cmenu, 'Label', '<html><b><font color =purple> copy and rename files', 'Callback'            , {@context, 'copyNrename'},'separator','on');
@@ -1488,6 +1491,8 @@ end
 
 if strcmp(task, 'viewfiles')
     openfile('multi');
+elseif strcmp(task, 'deselectAll')
+    deselectAll();
 elseif strcmp(task, 'selectRow')
     selectRow();
 elseif strcmp(task, 'selectColumn')
@@ -1910,7 +1915,11 @@ end
 %     end
 % end
 
-
+function deselectAll()
+u=get(gcf,'userdata');
+u.sel=zeros(size(u.sel));
+set(gcf,'userdata',u);
+delete(findobj(gcf,'tag','sel'));
 
 function selectRow() %files
 u=get(gcf,'userdata');
@@ -1994,7 +2003,19 @@ end
 drawnow;
 ri=ceil([pos(1) pos(1)+pos(3) ]-.5);
 do=ceil([pos(2) pos(2)+pos(4) ]-.5);
+
 u=get(gcf,'userdata');
+
+if do(2)>size(u.sel,1);  %down-chk
+    do(2)=size(u.sel,1);
+end
+if ri(2)>size(u.sel,2) %right-check
+    ri(2)=size(u.sel,2);
+end
+if ri(1)<1; ri(1)=1; end %left-chk
+if do(1)<1; do(1)=1; end %left-chk
+
+
 %% ===============================================
 % zo=zeros(size(u.v1));
 % zo(do(1):do(2),ri(1):ri(2)   )=1;
@@ -2350,6 +2371,11 @@ end
 function motion(e,e2)
 %% ===============================================
 hf=findobj(0,'tag','cfmatrix');
+hc=get(0,'CurrentFigure');
+if handle(hf)~=handle(hc)  % check if this is the current figure
+    %'not same handle'
+    return
+end
 ax=findobj(hf,'type','axes');
 axes(ax);
 % 'www'

@@ -299,7 +299,8 @@ if strcmp(do, 'updateParameterLB');
     color='#33cc33';
     colergen = @(color,text) ['<html><b><font color='  color '   >' text '</html>'  ];
     an.ls{iproject}=colergen('#007700',   an.ls{iproject} );
-    set(findobj(0,'tag','ant'),'name' ,['[ant2]' ' ' projectdir ' (' projname '.m)']);
+    %set(findobj(0,'tag','ant'),'name' ,['[ant2]' ' ' projectdir ' (' projname '.m)']);
+    set(findobj(0,'tag','ant'),'name' ,['[ANTx2]' ' ' projectdir ' (' projname '.m)']);
     
     
     

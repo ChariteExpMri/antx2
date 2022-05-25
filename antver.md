@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   24 May 2022 (13:15:17)  
+ &#x1F34E; last modification:   25 May 2022 (11:44:39)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,11 +7,15 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**25 May 2022 (11:44:39)**</ins>  
+   __[sub_atlaslabel2xls.m]__ - bug removed when writing xls-file  
+<!---->
   &#x1F535;   <ins>**24 May 2022 (13:15:17)**</ins>  
     __[cfg_getfile2.m]__  bug in filter-funtion removed  
     __[cfm.m]__  case-file matrix ...  
     - copy/copy&rename (context menu) of files with different filenames in one step  
     - delete files (context menu) with different filenames in one step  
+    
 <!---->
   &#x1F535;   <ins>**24 May 2022 (10:17:17)**</ins>  
   -embedded symbols changed in readme.md and antver.md (...seems no further support of placeholder service "via.placeholder.com")  

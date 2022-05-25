@@ -15,6 +15,11 @@
 %         '^ANO|^AVG.*.nii'  ...all NIFTI-files starting with ANO or AVG
 % 'counts' show extra column/raw with counts
 %        [0] no; [1] yes    ..default: [1]
+% 'countsonly' show only counts ...just filenames and counts across folders
+%           [0] no; [1] yes    ..default: [1]
+%         - 'counts' has to be set to [1] if 'countsonly' should be used
+%           example: dispfiles('countsonly',1,'form',1)
+% 
 % dir     :-as  <char> : upper dir (dat-dir) to search in subdirs
 %           default: use data-path from loaded project (an.datpath)
 %         : as <cell> list of fullpath-animal-dirs 
@@ -52,6 +57,7 @@ p.form =1;
 p.counts=1;
 p.dir   =[];
 p.show  =1;
+p.countsonly=0;
 
 if nargin>0
     pin= cell2struct(varargin(2:2:end),varargin(1:2:end),2);
@@ -213,7 +219,21 @@ if 1
         % ===============================================
         
         he2=['  ' cellfun(@(a){[ repmat('=',[1 length(a)]) ]} , fisuni(:)' )];
-        w=plog([],[[ {'  '}  fisuni(:)'  ]; [ he2]; [  dirs2(:)  df2  ] ],0,'FILE x FOLDER','al=1;');
+        x=[[ {'  '}  fisuni(:)'  ]; [ he2]; [  dirs2(:)  df2  ] ];
+        if p.countsonly==1
+            x=[[ {'  '}  fisuni(:)'  ]; [ he2]; [  dirs2(end)  df2(end,:)  ] ];
+        end
+        
+        % resort counts as 2nd column
+        try
+            x=[x(:,1) x(:,end) x(:,2:end-1)];
+            x=[x(1,:); x(2,:);x(end,:); x(2:end-1,:)];
+        end
+        
+        w=plog([],x,0,'FILE x FOLDER','al=1;');
+        
+        
+        
         
         if p.show==1 % show table
             disp(char(w))
@@ -273,7 +293,20 @@ if 1
         % ===============================================
         df3=df2';
         he2=['  ' cellfun(@(a){[ repmat('=',[1 length(a)]) ]} , dirs2(:)' )];
-        w=plog([],[[ {'  '}  dirs2(:)'  ]; [ he2]; [  fisuni(:)  df3  ] ],0,'FILE x FOLDER','al=1;');
+        x=[[ {'  '}  dirs2(:)'  ]; [ he2]; [  fisuni(:)  df3  ] ];
+        if p.countsonly==1
+            he2=he2([1 end]);
+            df3=df3(:,[end]);
+            x=[[ {' ' 'counts'}  ]; [ he2]; [  fisuni(:)  df3  ] ];
+        end
+        
+          % resort counts as 2nd column
+        try
+            x=[x(:,1) x(:,end) x(:,2:end-1)];
+            x=[x(1,:); x(2,:);x(end,:); x(2:end-1,:)];
+        end
+        
+        w=plog([],x,0,'FILE x FOLDER','al=1;');
         
         
         if p.show==1 % show table
