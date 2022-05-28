@@ -657,7 +657,7 @@
 %  - now works completely via command line (no-GUIs) --> see help DTIprep
 %  - sorting+matching of btables and DWIfiles enabled (please confirm visually!)
 %  - registration with parallel processing supported ...to enable change flag in the DTIconfig.m file in the DTI-folder
-% 
+%  - click DTIprep "scripts"-button to obtain an examle of DTIprep via COMMAND LINE 
 % 
 % 
 % 

@@ -122,6 +122,7 @@
 % ===============================================
 % - DTIprep can be performed via command line
 % - please use either command line mode or GUI-mode !
+% - click DTIprep "scripts"-button to obtain an examle of DTIprep via COMMAND LINE ("DTIscript_runDTIprep_COMANDLINE.m")
 % 
 % - Here a "DTI"-folder is created in the studies folder containing a DTI-struct
 %   with necessary inputs
@@ -2517,6 +2518,7 @@ uhelp([mfilename '.m']);
 function scripts_pb(e,e2)
 
 scripts={
+    'DTIscript_runDTIprep_COMANDLINE.m'
     'DTIscript_HPC_exportData_makeBatch.m'
     'DTIscript_posthoc_makeHTML_QA.m'
     % 'DTIscript_posthoc_exportData4Statistic.m'
@@ -2536,22 +2538,23 @@ scripts_gui([],'figpos',[.3 .2 .4 .4], 'pos',[0 0 1 1],'name','scripts: DTIprep'
 %%   older
 % ===============================================
 return
-
-scripts_process([],[],'close');
-
-h=uipanel('units','norm');
-set(h,'position',[0.5 0  .5 1 ],'title','scripts','tag','scripts_panel');
-set(h,'ForegroundColor','b','fontweight','bold');
-
-
-%% ====[lb script-name]===========================================
-scripts={
-    'DTIscript_HPC_exportData_makeBatch.m'
-    'DTIscript_posthoc_makeHTML_QA.m'
-    % 'DTIscript_posthoc_exportData4Statistic.m'
-    'DTIscript_posthoc_exportDTImatrices_fromHPC_4Statistic.m.m'
-    'DTIscript_posthoc_exportDTImaps_fromHPC_4Statistic.m'
-    };
+% 
+% scripts_process([],[],'close');
+% 
+% h=uipanel('units','norm');
+% set(h,'position',[0.5 0  .5 1 ],'title','scripts','tag','scripts_panel');
+% set(h,'ForegroundColor','b','fontweight','bold');
+% 
+% 
+% % %% ====[lb script-name]===========================================
+% % scripts={
+% %   
+% %     'DTIscript_HPC_exportData_makeBatch.m'
+% %     'DTIscript_posthoc_makeHTML_QA.m'
+% %     % 'DTIscript_posthoc_exportData4Statistic.m'
+% %     'DTIscript_posthoc_exportDTImatrices_fromHPC_4Statistic.m.m'
+% %     'DTIscript_posthoc_exportDTImaps_fromHPC_4Statistic.m'
+% %     };
 
 
 
