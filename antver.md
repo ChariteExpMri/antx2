@@ -12,7 +12,7 @@
    - now works completely via command line (no-GUIs) --> see help DTIprep  
    - sorting+matching of btables and DWIfiles enabled (please confirm visually!)  
    - registration with parallel processing supported ...to enable change flag in the DTIconfig.m file in the DTI-folder  
-   - click DTIprep "scripts"-button to obtain an examle of DTIprep via COMMAND LINE ( &#9822; "DTIscript_runDTIprep_COMANDLINE.m")  
+   - click DTIprep "scripts"-button to obtain an examle of DTIprep via COMMAND LINE ( &#9829; "DTIscript_runDTIprep_COMANDLINE.m")  
 <!---->
   &#x1F535;   <ins>**25 May 2022 (11:44:39)**</ins>  
    __[sub_atlaslabel2xls.m]__ - bug removed when writing xls-file  
