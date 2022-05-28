@@ -656,7 +656,7 @@
 % #k [DTIprep.m] #n - preparation for DTI-processing
 %  - now works completely via command line (no-GUIs) --> see help DTIprep
 %  - sorting+matching of btables and DWIfiles enabled (please confirm visually!)
-%  - registration with parallle processing supported ...to enable change flag in the DTIconfig.m-file in the DTI-folder
+%  - registration with parallel processing supported ...to enable change flag in the DTIconfig.m file in the DTI-folder
 % 
 % 
 % 
