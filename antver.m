@@ -768,7 +768,7 @@ tb(end+1,:)={ '#T'     '&#x1F4D9; ' '&#x1F4D9; :ORANGE BOOK, new   github pages'
 
 tb(end+1,:)={ '#yk'    '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
 tb(end+1,:)={ '#gw -->' '&#8618;'  'green arrow' } ;
-tb(end+1,:)={ '#wm -->' '&#9755;'  'SCCRIPTS' } ;
+tb(end+1,:)={ '#wm -->' '&#263B;'  'SCRIPTS' } ;
 tb(end+1,:)={ '#k '     ' '  'remove tag' } ;
 tb(end+1,:)={ ' #n '    ' '  'remove tag' } ;
 tb(end+1,:)={ ' #b '    ' '  'remove tag' } ;
