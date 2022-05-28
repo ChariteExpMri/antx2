@@ -657,7 +657,7 @@
 %  - now works completely via command line (no-GUIs) --> see help DTIprep
 %  - sorting+matching of btables and DWIfiles enabled (please confirm visually!)
 %  - registration with parallel processing supported ...to enable change flag in the DTIconfig.m file in the DTI-folder
-%  - click DTIprep "scripts"-button to obtain an examle of DTIprep via COMMAND LINE ( #gw --> "DTIscript_runDTIprep_COMANDLINE.m")
+%  - click DTIprep "scripts"-button to obtain an examle of DTIprep via COMMAND LINE ( #wm --> "DTIscript_runDTIprep_COMANDLINE.m")
 % 
 % 
 % 
@@ -768,6 +768,7 @@ tb(end+1,:)={ '#T'     '&#x1F4D9; ' '&#x1F4D9; :ORANGE BOOK, new   github pages'
 
 tb(end+1,:)={ '#yk'    '![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) '  'red' } ;
 tb(end+1,:)={ '#gw -->' '&#8618;'  'green arrow' } ;
+tb(end+1,:)={ '#wm -->' '&#9827;'  'SCCRIPTS' } ;
 tb(end+1,:)={ '#k '     ' '  'remove tag' } ;
 tb(end+1,:)={ ' #n '    ' '  'remove tag' } ;
 tb(end+1,:)={ ' #b '    ' '  'remove tag' } ;
