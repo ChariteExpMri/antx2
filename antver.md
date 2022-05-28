@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   25 May 2022 (11:44:39)  
+ &#x1F34E; last modification:   28 May 2022 (18:20:48)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,8 +7,15 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**28 May 2022 (18:20:48)**</ins>  
+   __[DTIprep.m]__ - preparation for DTI-processing  
+   - now works completely via command line (no-GUIs) --> see help DTIprep  
+   - sorting+matching of btables and DWIfiles enabled (please confirm visually!)  
+   - registration with parallle processing supported ...to enable change flag in the DTIconfig.m-file in the DTI-folder  
+<!---->
   &#x1F535;   <ins>**25 May 2022 (11:44:39)**</ins>  
    __[sub_atlaslabel2xls.m]__ - bug removed when writing xls-file  
+    
 <!---->
   &#x1F535;   <ins>**24 May 2022 (13:15:17)**</ins>  
     __[cfg_getfile2.m]__  bug in filter-funtion removed  

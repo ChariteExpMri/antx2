@@ -652,12 +652,19 @@
 % #ba 25 May 2022 (11:44:39)
 % #k [sub_atlaslabel2xls.m] #n - bug removed when writing xls-file
 % 
+% #ba 28 May 2022 (18:20:48)
+% #k [DTIprep.m] #n - preparation for DTI-processing
+%  - now works completely via command line (no-GUIs) --> see help DTIprep
+%  - sorting+matching of btables and DWIfiles enabled (please confirm visually!)
+%  - registration with parallle processing supported ...to enable change flag in the DTIconfig.m-file in the DTI-folder
+% 
+% 
 % 
 % 
 
-
-
-
+%% ===============================================
+%----- EOF
+% make antvermd for GIT: antver('makeantver')
 
 % ==============================================
 %%   temporary symbol checks
@@ -684,9 +691,7 @@
 % &#x1F53D; :DOWN-POINTING SMALL RED TRIANGLE
 
 
-%% ===============================================
-%----- EOF
-% make antvermd for GIT: antver('makeantver')
+
 
 
 function antver(varargin)
@@ -699,6 +704,12 @@ r=[r(1:3); {[' last modification: ' lastchange ]}  ;  r(4:end)];
 if nargin==1
     if strcmp(varargin{1},'makeantver')
         makeantver(r);
+        return
+    elseif strcmp(varargin{1},'new')
+        a= preadfile(which('antver.m')); a=a.all;
+        gotoline=min(regexpi2(a,'EOF'))-5;
+        matlab.desktop.editor.openAndGoToLine(which('antver.m'), gotoline);
+        clipboard('copy', [    ['% #ba '   datestr(now,'dd mmm yyyy (HH:MM:SS)') repmat(' ',1,0) ]           ]);
         return
     end
 end

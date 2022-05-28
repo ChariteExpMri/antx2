@@ -2,24 +2,34 @@
 % run
 % getBtable()
 % out=getBtable()   ; % % output: cell  name, b-table and some info from the raw-data
-function out=getBtable()
+function out=getBtable(brukerdata)
 out=[];
+isGUI=1;
+if exist('brukerdata')==1
+    brukerdata=char(brukerdata);
+    if exist(brukerdata)==7
+        pas=brukerdata;
+        isGUI=0;
+    else
+       error('brucker data do not exist'); 
+    end
+end
 
 % close all; clear;
 warning off;
 
-clc
+% clc
 % ==============================================
 %%
 % ===============================================
-ui=1;
-if ui==1
+
+if isGUI==1
     pax=pwd;
-    
+    cprintf('*[1 0 1]', [ 'Please select one(!) raw data set via GUI' '\n' ]);
     [pas,sts] = spm_select(1,'dir','select a single(!) raw data set','',pax);
     if sts==0; return; end
-else
-    pas='F:\data4\ernst_DTImrtrix\raw_DTI';
+% else
+%     pas='F:\data4\ernst_DTImrtrix\raw_DTI';
 end
 % ==============================================
 %%
@@ -264,11 +274,13 @@ if size(b,1)>0
         % ==============================================
         %%
         % ===============================================
-        cprintf([0 .5 1], [ num2str(i) 'b-table "' name '" stored as ' strrep(f2,[filesep],[filesep filesep])  '\n']);
-        disp(     ['    input file   : '  p.file ]);
-        disp(     ['    scan-No      : ' num2str(p.scanNo) ]);
-        disp(     ['    no directions: ' num2str(size(tbl,1))   ' (with '  num2str(p.num_a0image) ' images acquired without diffusion gradients)' ]);
-        showinfo2(['    output file  :  '] ,f2  ,[],[], [ '>> ' f2 '' ]);
+        if 0
+            cprintf([0 .5 1], [ num2str(i) 'b-table "' name '" stored as ' strrep(f2,[filesep],[filesep filesep])  '\n']);
+            disp(     ['    input file   : '  p.file ]);
+            disp(     ['    scan-No      : ' num2str(p.scanNo) ]);
+            disp(     ['    no directions: ' num2str(size(tbl,1))   ' (with '  num2str(p.num_a0image) ' images acquired without diffusion gradients)' ]);
+            showinfo2(['    output file  :  '] ,f2  ,[],[], [ '>> ' f2 '' ]);
+        end
         % ==============================================
         %%
         % ===============================================
@@ -285,7 +297,30 @@ end
 %%   output
 % ===============================================
 if exist('b')==1
-    out=b;
+    
+    [~,isort]=sort(cell2mat(cellfun(@(a){[ size(a,1) ]} ,b(:,2))));
+    c=b(isort,:);
+    
+    for i=1:size(c,1)
+        name=c{i,1};
+        f2=c{i,3}.fileout;
+        % ===============================================
+        cprintf([0 .5 1], [ num2str(i) 'b-table "' name '" stored as ' strrep(f2,[filesep],[filesep filesep])  '\n']);
+        fprintf(         ['    no directions   : ']);
+        cprintf('*[1 0 0]', [ num2str(size(c{i,2},1)) ' ']);
+        cprintf([0 0 0], [ '(with '  num2str(c{i,3}.num_a0image) ' image(s) acquired without diffusion gradients)' '\n']);
+        
+%         disp(     ['    no directions   : ' num2str(size(c{i,2},1))   ' (with '  num2str(c{i,3}.num_a0image) ' images acquired without diffusion gradients)' ]);
+        showinfo2(['    output file     :  '] ,f2  ,[],[], [ '>> ' f2 '' ]);
+        disp(     ['        ..input file: '  c{i,3}.file ]);
+        disp(     ['        ..scan-No   : ' num2str(c{i,3}.scanNo) ]);
+        
+        % ==============================================
+        
+    end
+    
+    
+    out=c;
 end
 
 
