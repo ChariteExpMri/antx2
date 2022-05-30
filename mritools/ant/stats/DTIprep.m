@@ -2110,8 +2110,8 @@ if ~isempty(find(task==1))
     msg=[msg '(1)distribute; '];
 end
 if ~isempty(find(task==2))
-    process([],[],'(2)deformfiles',pp);
-     msg=[msg 'deform; '];
+    process([],[],'deformfiles',pp);
+     msg=[msg '(2)deform; '];
 end
 if ~isempty(find(task==3))
     process([],[],'registerimages',pp);
