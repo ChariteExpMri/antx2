@@ -659,8 +659,17 @@
 %  - registration with parallel processing supported ...to enable change flag in the DTIconfig.m file in the DTI-folder
 %  - click DTIprep "scripts"-button to obtain an examle of DTIprep via COMMAND LINE ( #wm --> "DTIscript_runDTIprep_COMANDLINE.m")
 % 
+% #ba 30 May 2022 (14:44:32)
+% #k [DTIprep.m] #n - bug removed from CMDline-coregistration step
+% The commandline tutorial #bw ["tutorial_noGraphic_support.docx"] was extended:
+% the following steps where included
+%     16) DTI-preprocessing: Import DTI/DWI-files from Bruker rawdata
+%     17) DTI-preprocessing: rename DWI-files
+%     18) DTI-preprocessing: A special DTI-atlas is needed
+%     19) DTI-preprocessing: Perform DTI-preprocessing
 % 
 % 
+
 
 %% ===============================================
 %----- EOF
