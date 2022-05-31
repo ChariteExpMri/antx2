@@ -116,9 +116,14 @@
 %  'grad_b1600.txt'      % %  ||
 %  'grad_b3400.txt'      % %  ||
 %  'grad_b6000.txt'      % %  ||
+%
+% ==============================================
+%%   #lk [1] COMMANDS: GUI-mode                         
+% ===============================================
+% DTIprep('scripts')  ; % open the scripts-window 
 % 
 % ==============================================
-%%   #lk [2] COMMAND LINE MODE                          
+%%   #lk [2] COMMANDS: command-line-mode                          
 % ===============================================
 % - DTIprep can be performed via command line
 % - please use either command line mode or GUI-mode !
@@ -298,7 +303,8 @@ if nargin>0
         end
         
         return
-        
+    elseif strcmp(varargin{1},'scripts')
+        scripts_pb();
     elseif strcmp(varargin{1},'check')
         nogui_check();
         return

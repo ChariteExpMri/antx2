@@ -744,6 +744,7 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.80096 0.74997 0.15
 h=uicontrol('style','pushbutton','units','norm','position',[0.80096 0.70 0.15 0.05],...
     'string','scripts','tag','scripts_show','callback',@scripts_show,'fontsize',6,...
     'tooltipstring','<html><b>collection of scripts</b><br> you can modify and apply these scripts for your purpose ');
+set(h,'foregroundcolor',[0 0 01 ],'fontweight','bold');
 
 % ==============================================
 %%    -between vs within
@@ -5484,7 +5485,32 @@ code=['dtistat(''set'',' lin ' );'];
 
 function scripts_show(e,e2)
 
+figtitle='scripts: DTIstat';
+close(findobj(0,'name',figtitle));
 
+scripts={
+'STscript_subdivideGroups_pairwiseComparisons.m'
+'STscript_subdivideGroups_specific.m'
+'STscript_DTIstatistic_simple.m'
+'STscript_DTIstatistic_simple2.m'
+'STscript_DTIstatistic_diffDTImatrices.m'
+'STscript_DTIstatistic_diffDTImatrices_diffGroups.m'
+'STscript_export4vol3d_simple.m'
+'STscript_export4vol3d_manycalcs.m'
+% 'DTIscript_HPC_exportData_makeBatch.m' 
+% 'DTIscript_posthoc_makeHTML_QA.m'
+% 'DTIscript_posthoc_exportData4Statistic.m'
+};
+
+
+scripts_gui([],'figpos',[.3 .2 .4 .4], 'pos',[0 0 1 1],'name',figtitle,'closefig',1,'scripts',scripts);
+% scripts_gui(gcf, 'pos',[0 0 1 1],'name','scripts: voxelwise statistic','closefig',1,'scripts',scripts)
+
+
+% ==============================================
+%%   older
+% ===============================================
+return
 
 
 scripts_process([],[],'close');

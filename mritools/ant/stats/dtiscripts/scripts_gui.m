@@ -222,12 +222,22 @@ set(hb,'callback',{@scripts_process, 'edit'} );
 set(hb,'tooltipstring',['<html><b>open scripts/function in EDITOR</b><br> '...
     'the script can be copied and modified']);
 set(hb,'foregroundcolor',[0 0 1],'fontweight','bold');
+
+%% =========[show scripts summary panel]======================================
+%%
+hb=uicontrol(h2,'style','pushbutton','units','norm','tag','scripts_summary');
+set(hb,'string','scripts summary');
+% set(hb,'position',[[0.73 0 0.25 0.06]]); %fig-pos
+set(hb,'units','pixels','position',[200 0 100 24]); %pan-pos
+set(hb,'callback',{@scripts_process, 'scripts_summary'} );
+set(hb,'tooltipstring',['show summary of all scripts']);
+set(hb,'foregroundcolor',[1 0 .5],'fontweight','bold');
 %% =========[close script panel]======================================
 %%
 hb=uicontrol(h2,'style','pushbutton','units','norm','tag','scripts_close');
 set(hb,'string','close scripts');
 % set(hb,'position',[[0.73 0 0.25 0.06]]); %fig-pos
-set(hb,'units','pixels','position',[200 0 100 24]); %pan-pos
+set(hb,'units','pixels','position',[470 0 100 24]); %pan-pos
 set(hb,'callback',{@scripts_process, 'close'} );
 set(hb,'tooltipstring',['close']);
 % set(hb,'units','pixels')
@@ -509,7 +519,49 @@ end
 % end
 
 %% ===============================================
+function scripts_summary()
+%% ===============================================
+%  waitspin(1,'BUSY summary','..obtaining scripts summary');
+ waitspin(1,'BUSY','analsysis-1','position',[6 30  55 55],'color',[1 .5 0]);
+%  pause(1);
+%  waitspin(2,'BUSY stuff2',{'analsysis-2' '...another messagge!'}); pause(1);
 
+
+hb=findobj(0,'tag','scripts_lbscriptName');
+hb=hb(1);
+hf=(get(hb,'parent'));
+if strcmp(get(hf,'type'),'figure')~=1;
+   hf=(get(hf,'parent')); 
+end
+scriptscolName='';
+try; 
+    scriptscolName=get(hf,'Name'); 
+end
+li=get(hb,'string');
+
+figname='scripts_summary';
+delete(findobj(0,'name',figname));
+drawnow;
+% v2={'';[' <html><H1> *** LIST OF AVAILABLE SCRIPTS ***' ]; ' ee  ';' cc ';' dd '};
+v2={''; ['<html><h1 style="color:red;font-size:30px;">  *** LIST OF AVAILABLE SCRIPTS ***  </h1> '];...
+    ['<html><h1 style="color:red;font-size:20px;">         ' repmat('&nbsp;',[1 10]) scriptscolName '  </h1> '];...
+    ['<html><h1 style="color:red;font-size:20px;">         ' repmat('_',[1 70])  '  </h1> '];...
+    ''};
+for i=1:length(li)
+   v=help(li{i}) ;
+   v=strsplit(v,[char(10) ] )';
+   v=cellfun(@(a){['<html>' a]} ,v );
+   vh={[' #lk  [' num2str(i) ']   ' li{i}   '                    ' ]};
+   v2=[v2;      vh;  v ; {'   '}];
+end
+
+hf_help=uhelp(v2,1,'name',figname);
+% figure(hf);
+waitspin(0,'Done');
+% figure(hf_help);
+
+
+%% ===============================================
 
 function scripts_process(e,e2,task)
 hn=findobj(gcf,'tag','scripts_lbscriptName');
@@ -528,6 +580,8 @@ if strcmp(task,'close')
     end
 elseif strcmp(task,'help') % show help
     uhelp([mfilename '.m']);
+elseif strcmp(task,'scripts_summary')
+    scripts_summary();
 elseif strcmp(task,'scriptname') % show content
     if isempty(hn.Value); return; end
     file=hn.String{hn.Value};

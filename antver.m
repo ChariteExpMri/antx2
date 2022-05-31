@@ -667,6 +667,11 @@
 %     17) DTI-preprocessing: rename DWI-files
 %     18) DTI-preprocessing: A special DTI-atlas is needed
 %     19) DTI-preprocessing: Perform DTI-preprocessing
+% % #ba 31 May 2022 (21:32:35)
+% #k [scripts_gui.m] #n was modified
+% - [scripts summary]-button added
+% - scripts currently available for: [xstat.m], [DTIprep.m], [dtistat.m]
+% - there is also a general scripts-collection: #gw --> access via ANT-menu: Snips/scripts collection
 % 
 % 
 

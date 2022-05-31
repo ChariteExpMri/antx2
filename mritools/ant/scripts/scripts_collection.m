@@ -21,6 +21,6 @@ scripts={...
 %     'VWscript_twosampleStat_severalimages_severalgroups.m'
 %     'VWscript_MakeSummary_severalimages_severalgroups.m'
     };
-scripts_gui([],'figpos',[.3 .2 .4 .4], 'pos',[0 0 1 1],'name','scripts: voxelwise statistic','closefig',1,'scripts',scripts)
+scripts_gui([],'figpos',[.3 .2 .4 .4], 'pos',[0 0 1 1],'name','scripts: general','closefig',1,'scripts',scripts)
 % scripts_gui(gcf, 'pos',[0 0 1 1],'name','scripts: voxelwise statistic','closefig',1,'scripts',scripts)
 %% ===============================================
