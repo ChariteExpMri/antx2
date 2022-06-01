@@ -2523,14 +2523,23 @@ uhelp([mfilename '.m']);
 
 function scripts_pb(e,e2)
 
+% scripts={
+%     'DTIscript_runDTIprep_COMANDLINE.m'
+%     'DTIscript_HPC_exportData_makeBatch.m'
+%     'DTIscript_posthoc_makeHTML_QA.m'
+%     % 'DTIscript_posthoc_exportData4Statistic.m'
+%     'DTIscript_posthoc_exportDTImatrices_fromHPC_4Statistic.m.m'
+%     'DTIscript_posthoc_exportDTImaps_fromHPC_4Statistic.m'
+%     };
 scripts={
-    'DTIscript_runDTIprep_COMANDLINE.m'
-    'DTIscript_HPC_exportData_makeBatch.m'
-    'DTIscript_posthoc_makeHTML_QA.m'
-    % 'DTIscript_posthoc_exportData4Statistic.m'
-    'DTIscript_posthoc_exportDTImatrices_fromHPC_4Statistic.m.m'
-    'DTIscript_posthoc_exportDTImaps_fromHPC_4Statistic.m'
-    };
+ 'DTIscript_exportToHPC_makeBatch.m'
+ 'DTIscript_makeQA_HTML_from_screenshots.m'
+ 'DTIscript_importFromHPC_allData.m'
+ 'DTIscript_importFromHPC_connectome.m'
+ 'DTIscript_importFromHPC_DWImaps.m'
+ 'DTIscript_runDTIprep_COMANDLINE.m'
+};
+
 
 % xpos=.15;
 % scripts_gui(gcf, 'pos',[xpos 0 1-xpos 1],'closefig',0,'scripts',scripts);

@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   % 31 May 2022 (21:32:35)  
+ &#x1F34E; last modification:   01 Jun 2022 (14:39:14)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,7 +7,10 @@
     
     
 ------------------  
-  % &#x1F535;   <ins>**31 May 2022 (21:32:35)**</ins>  
+  &#x1F535;   <ins>**01 Jun 2022 (14:39:14)**</ins>  
+   __[DTIprep.m]__ -scripts prettified  
+<!---->
+  &#x1F535;   <ins>**31 May 2022 (21:32:35)**</ins>  
    __[scripts_gui.m]__ was modified  
   - __[scripts summary]__-button added  
   - scripts currently available for: __[xstat.m]__, __[DTIprep.m]__, __[dtistat.m]__  

@@ -1,5 +1,5 @@
 
-% <b> generate a HTML-file for DTI-Quality check using DTI-QA-png-images  </b> 
+% <b> generate a HTML-file for DTI-Quality check using DTI-QA-images (*.png)  </b> 
 % <font color="red">- use this script when DTI-processing is finished  </font>
 % The script recursively searches for all png-images in the "data"-path-folder ("pain")
 % and creates a HTML-file

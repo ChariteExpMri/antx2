@@ -1,29 +1,33 @@
 
-%% <b> script to distribute exported data for DTI-processing to HPC-cluster storage </b>
-% This script does the following
-% 1) transfer data to HPC-cluster storage
-% 2) create batch script that can be run on the HPC-cluster
-%     -->as copyNpaste version from help window
-% 3) {optional} transfers the batch-file to HPC-cluster* (username+password required!)
-% 4) {optional} make batch-file executable*
-%
+%% <b> exported data to HPC-cluster for DTI-processing  storage </b>
+% <font color="blue"> This script does the following:
+%     1) transfer necessary data to HPC-cluster storage
+%     2) create batch script that can be run on the HPC-cluster
+%         -->as copyNpaste version from help window
+%     3) {optional} transfers the batch-file to HPC-cluster* (username+password required!)
+%     4) {optional} make batch-file executable*
+% </font>
 % * for 3+4: the user has to provide the hostname, username and password for the HPC-cluster 
-% #r TESTED ON WINDOWS ONLY!
+% <font color="red"><b>- TESTED ON WINDOWS ONLY! </b> </font>
 % 
-% #r NOTE/PREREQUISITES:
-% -first use "export-files" from DTI-prep-function to obtain only the necessary
-% data for DTI-processing. The data from this export-folder is than transferred to 
-% the HPCcluster.
-% Example the export-folder "DTI_export4mrtrix" contains the animal-folder, and 
-% each animal folder contains the following files (15 files):
-%     ANO_DTI.nii      dwi_b100.nii     grad_b100.txt    rc_ix_AVGTmask.nii  
-%     ANO_DTI.txt      dwi_b1600.nii    grad_b1600.txt   rc_mt2.nii  
-%     atlas_lut.txt    dwi_b3400.nii    grad_b3400.txt   rc_t2.nii
-%                      dwi_b6000.nii    grad_b6000.txt   c_t2.nii 
-% 
+% <b><u><font color="fuchsia"> PREREQUISITES </font></b></u>
+% - standard registration to atlas has to be done before
+% - all DTIprep-steps have to be done before 
+% - The DTIprep-step "export-files" is necessary to create the export-folder "DTI_export4mrtrix" with necessary files!
+% - The data from "DTI_export4mrtrix"-folder is than transferred to the HPC-cluster.
+%   <b> EXAMPLE FOR MULTISHELL-APPROACH </b>
+% The folder "DTI_export4mrtrix" contains the animal-folder
+% and each animal folder contains the following files (15 files): 
+% <pre style="color:0000FF;font-size:15x;line-height:.0;padding:0;margin:0;">
+%    -  "ANO_DTI.nii"         "rc_ix_AVGTmask.nii"
+%    -  "ANO_DTI.txt"         "atlas_lut.txt"
+%    -  "c_t2.nii"            "rc_t2.nii"         "rc_mt2.nii"
+%    -  "dwi_b100.nii"        "dwi_b900.nii"      "dwi_b1600.nii"    "dwi_b2500.nii"
+%    -  "grad_b100.txt"       "grad_b900.txt"     "grad_b1600.txt"   "grad_b2500.txt  
+% </PRE>
 % 
 %% ===============================================
-%% How to run hte batch-file on HPC-cluster
+% <b><u><font color="fuchsia"> HOW TO RUN BATCH ON HPC? </font></b></u>
 % [1] The "shellscripts"-folder with the necessary shellscripts must be manually
 % copied to HPC-storage, into the study-folder. The study folder ("pastudy")
 % will finally contain two folders: 

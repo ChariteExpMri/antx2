@@ -8,6 +8,7 @@
 % select #b [show script] #n to see the the content of the script in a new window
 % select #b [edit script] #n to open script in the editor
 %    - this is the way to costumize and run the script 
+% select #b [scripts summary] #n see summary (help) of all scripts
 % select #b [close script] #n to close the scripts-collection
 %
 % clicke and drag #b [&#8615]-BTN #n to change the upper and lower listbox size ratios
@@ -15,7 +16,7 @@
 % #m SHORTCUTS
 % [CTRL +/-] change the fontsize of the selected listbox
 % [1/2/3] change GUI-layout: [1]default [2] extended high, [3] extended high+width
-
+% [e] edit script (open copy of the script in editor)   
 
 % show scripts-gui
 function scripts_gui(hf,varargin)
@@ -674,40 +675,6 @@ elseif strcmp(task,'edit')
     
 end
 
-
-function keys(e,e2)
-
-
-if strcmp(e2.Modifier,'control')==1
-    if strcmp(e2.Key,'l')
-        figresizekeys(2);
-    elseif strcmp(e2.Key,'n')
-        figresizekeys(1);
-    end
-    
-    
-    if strcmp(e2.Character,'+')==1 || strcmp(e2.Character,'-')==1
-        hl=findobj(gcf,'tag','scripts_lbscriptName');
-        fs=get(hl,'fontsize');
-        if strcmp(e2.Character,'+')==1;
-            set(hl,'fontsize',fs+1);
-        elseif strcmp(e2.Character,'-')==1;
-            if fs>1
-                set(hl,'fontsize',fs-1);
-            end
-        end
-        
-    end
-else
-     if strcmp(e2.Key,'2')
-       figresizekeys(2);
-    elseif strcmp(e2.Key,'1') 
-       figresizekeys(1);
-     elseif strcmp(e2.Key,'3')
-       figresizekeys(3);
-    end
-end
-
 function figresizekeys(arg)
 if arg==1
     uni_f=get(gcf,'units');
@@ -745,11 +712,49 @@ elseif arg==3
 end
 
 
+function keys(e,e2)
+
+if strcmp(e2.Modifier,'control')==1
+    if strcmp(e2.Key,'l')
+        figresizekeys(2);
+    elseif strcmp(e2.Key,'n')
+        figresizekeys(1);
+    elseif strcmp(e2.Key,'e')
+        disp('editint original file!');
+        scripts_process([],[],'editOrigFile');
+    elseif strcmp(e2.Character,'+')==1 || strcmp(e2.Character,'-')==1
+        hl=findobj(gcf,'tag','scripts_lbscriptName');
+        fs=get(hl,'fontsize');
+        if strcmp(e2.Character,'+')==1;
+            set(hl,'fontsize',fs+1);
+        elseif strcmp(e2.Character,'-')==1;
+            if fs>1
+                set(hl,'fontsize',fs-1);
+            end
+        end
+        
+    end
+else
+     if strcmp(e2.Key,'2')
+       figresizekeys(2);
+    elseif strcmp(e2.Key,'1') 
+       figresizekeys(1);
+     elseif strcmp(e2.Key,'3')
+       figresizekeys(3);
+    elseif strcmp(e2.Key,'e')
+        disp('edit original file!');
+        scripts_process([],[],'edit');
+    end
+end
+
+
+
+
 
 function keys_pan(e,e2,pan2)
 
 if e2.getModifiers ==2   %[1]shift ,[2]ctrl, [8]alt
-    %methods(e2)
+    %% using modifiers
     if 0
         e2.getKeyCode
         e2.getKeyChar
@@ -772,14 +777,19 @@ if e2.getModifiers ==2   %[1]shift ,[2]ctrl, [8]alt
         u.hj.setFont(java.awt.Font(font.getFontName, java.awt.Font.PLAIN,fs));
     elseif strcmp(e2.getKeyText(e2.getKeyCode()),'C') ; %overriding the copy function
         contextmenu([],[],'copy',pan2);
+     elseif strcmp(e2.getKeyText(e2.getKeyCode()),'E')
+        scripts_process([],[],'editOrigFile');
     end
 else
+    %% no modifiers
     if strcmp(e2.getKeyChar,'2') || strcmp(e2.getKeyChar,'l')
        figresizekeys(2);
     elseif strcmp(e2.getKeyChar,'1') || strcmp(e2.getKeyChar,'n')
        figresizekeys(1);
      elseif strcmp(e2.getKeyChar,'3')
        figresizekeys(3);
+      elseif strcmp(e2.getKeyText(e2.getKeyCode()),'E')
+        scripts_process([],[],'edit');
     end 
 end
 
