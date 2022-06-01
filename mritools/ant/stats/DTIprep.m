@@ -117,13 +117,18 @@
 %  'grad_b3400.txt'      % %  ||
 %  'grad_b6000.txt'      % %  ||
 %
+% ====================================================
+%%   #lk [1] COMMANDS: GUI-mode  &  command-line-mode                       
+% =====================================================
+% DTIprep('scripts','cmd')   ; % show available scripts in CMD-window
+%
 % ==============================================
-%%   #lk [1] COMMANDS: GUI-mode                         
+%%   #lk [2] COMMANDS: GUI-mode                         
 % ===============================================
-% DTIprep('scripts')  ; % open the scripts-window 
+% DTIprep('scripts')         ; % open the scripts-window only
 % 
 % ==============================================
-%%   #lk [2] COMMANDS: command-line-mode                          
+%%   #lk [3] COMMANDS: command-line-mode                          
 % ===============================================
 % - DTIprep can be performed via command line
 % - please use either command line mode or GUI-mode !
@@ -304,7 +309,7 @@ if nargin>0
         
         return
     elseif strcmp(varargin{1},'scripts')
-        scripts_pb();
+        scripts(varargin);
     elseif strcmp(varargin{1},'check')
         nogui_check();
         return
@@ -2519,18 +2524,17 @@ function xhelp(e,e2)
 
 uhelp([mfilename '.m']);
 
-
-
 function scripts_pb(e,e2)
+scripts();
+function scripts(argin)
 
-% scripts={
-%     'DTIscript_runDTIprep_COMANDLINE.m'
-%     'DTIscript_HPC_exportData_makeBatch.m'
-%     'DTIscript_posthoc_makeHTML_QA.m'
-%     % 'DTIscript_posthoc_exportData4Statistic.m'
-%     'DTIscript_posthoc_exportDTImatrices_fromHPC_4Statistic.m.m'
-%     'DTIscript_posthoc_exportDTImaps_fromHPC_4Statistic.m'
-%     };
+isGUI=1; %GUI mode
+if exist('argin') && length(argin)>1
+    if iscell(argin) && strcmp(argin{2},'cmd')
+        isGUI=0;
+    end
+end
+
 scripts={
  'DTIscript_exportToHPC_makeBatch.m'
  'DTIscript_makeQA_HTML_from_screenshots.m'
@@ -2540,6 +2544,15 @@ scripts={
  'DTIscript_runDTIprep_COMANDLINE.m'
 };
 
+if isGUI==0
+    cprintf('*[1 0 1]','*** AVAILABLE SCRIPTS for [DTIprep] ***\n');
+    disp(char(scripts));
+    disp('____________________________________________________________');
+    disp('...please make a copy of the script and modify accordingly ')
+    disp('____________________________________________________________');
+    return
+    
+end
 
 % xpos=.15;
 % scripts_gui(gcf, 'pos',[xpos 0 1-xpos 1],'closefig',0,'scripts',scripts);
