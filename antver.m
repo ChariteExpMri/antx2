@@ -677,10 +677,10 @@
 %
 % #ba 02 Jun 2022 (16:51:58)
 % #k [ant.m] #n was modified
-% -The menu of the ant-GUI is now sensitive to the pressed mouse-button:
-%   [left mouseclick ] to execute the function
-%   [right mouseclick] to display the underlying function in the CMD-Window with hyperlink to obtain the function's help
-%   [cmd]+[left mouseclick ] to obtain the help of the function
+% The menu of the ant-GUI is now sensitive to the pressed mouse-button:
+%  - [left mouseclick ] to execute the function
+%  - [right mouseclick] to display the underlying function in the CMD-Window with hyperlink to obtain the function's help
+%  - [cmd]+[left mouseclick ] to obtain the help of the function
 % 
 % 
 % 
