@@ -1246,8 +1246,8 @@ mh = uimenu(f,'Label','Info');
 mh2 = uimenu(mh,'Label',['<html><font color=green><u><b>*** Menu info ***</u></b><br>'...
     '<font size=5><b>[mouse click]</b></font><br>'...
     '<font size=5><b>[left]</b>     - execute function</font><br>'...
+    '<font size=5><b>[shift+left]</b> - show function help</font><br>'...
     '<font size=5><b>[right]</b>    - show function name in commandline</font><br>'...
-    '<font size=5><b>[cmd+left]</b> - show function help</font><br>'...
     ]);
 mh2 = uimenu(mh,'Label','keyboard shortcuts',                                           'Callback',{@menubarCB, 'keyboard'},'separator','on');
 
@@ -1374,18 +1374,18 @@ function menuclick_cb(e,e2,hm,hj)
 hf=findobj(0,'tag','ant');
 u=get(hf,'userdata');
 % u.ismenuinterupted=1;
-e2.getButton;
+% disp('------------------------');
+% e2.getButton;
+% get(e2)
+
+
 if double(e2.getButton)==1   %     'left'
     
     u.mousekey='left';
-    %     u=get(hf,'userdata');     u.ismenuinterupted=0;     set(hf,'userdata',u);
-    %     %hgfeval(get(hm,'callback'));
-    %     cb=get(hm,'callback');
-    %     menubarCB([],[],cb{2},0);
-    %    menubarCB([],[],'klaus',0);
-    %     u=get(hf,'userdata');     u.ismenuinterupted=1;     set(hf,'userdata',u);
-elseif double(e2.getButton)==2 %'cmd'
-    u.mousekey='cmd';
+    
+    if get(e2,'ShiftDown')==1 %'cmd'
+        u.mousekey='cmd';
+    end
 elseif double(e2.getButton)==3%     'rightclick
     %     showfunctionhelp(e,e2,hm,hj);
     u.mousekey='right';
