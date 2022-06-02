@@ -1,6 +1,29 @@
 
 % this installs/updates ANTx2-TBX
-% selection is done via GUI
+% #m THE UPDATE-MODE IS SELECTED VIA GUI
+% #r _______NOTE______________________________________________________________________
+% #r Instead of using "installfromgithub.m" use one the following two options for 
+% #r faster and more convenient update procedure:
+% #r (1) type: updateantx(2)        ..or 
+% #r (2) hit [download latest updates from Github]-Button right to the [antver]-button
+% #r _________________________________________________________________________________
+% #lk  ____BUTTONS_______ 
+% #b [check for update]
+%    - check for updates...if updates where found click...
+%        #b [yes, update now] #n ..to update the toolbox
+%        #b [no]              #n ..to cancel
+% #b [update without check]
+%      - just update toolbox.. don't ask questions
+%      - this works only if no files of the toolbox where modified ore deleted
+% #b [rebuild]
+%    -use "rebuild" in case of locally modified or deleted files 
+%    -use "rebuild"  if [update without check] failed!
+% #b [fresh installation]
+%    - make a fresh installation
+%    - you have to specify a target-directory to download/save the toolbox
+% hit #b [close] #n when finished..
+% 
+%-------------------------
 
 
 function installfromgithub(varargin)
