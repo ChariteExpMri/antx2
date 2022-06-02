@@ -1247,8 +1247,8 @@ if ispc==1
     html_a='<font size=5>';
     html_e='</font>';
 else
-    html_a='';
-    html_e='';
+    html_a='<font size=2>';
+    html_e='</font>';
 end
 
 mh2 = uimenu(mh,'Label',['<html><font color=green><u><b>*** Menu info ***</u></b><br>'...
