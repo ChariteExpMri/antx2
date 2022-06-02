@@ -636,7 +636,7 @@ end
 hb=uicontrol('style','pushbutton','units','norm','string','scripts','tag','scripts_pb');
 set(hb,'position',[0.3678 0.025209 0.07 0.08],'fontsize',8);
 set(hb,'callback',{@scripts_pb} );
-set(hb,'backgroundcolor',[   1 1 1]);
+set(hb,'backgroundcolor',[1 1 1],'foregroundcolor',[0 0 1]);
 set(hb,'tooltipstring',[ '<html><b>collection of scripts</b><br>'...
     'some scripts that might be usefull']);
 

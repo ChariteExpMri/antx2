@@ -1,5 +1,6 @@
 
 % this installs/updates ANTx2-TBX
+% selection is done via GUI
 
 
 function installfromgithub(varargin)

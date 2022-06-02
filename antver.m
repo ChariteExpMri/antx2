@@ -674,8 +674,18 @@
 % - there is also a general scripts-collection: #gw --> access via ANT-menu: Snips/scripts collection
 % #ba 01 Jun 2022 (14:39:14)
 % #k [DTIprep.m] #n -scripts prettified
+%
+% #ba 02 Jun 2022 (16:51:58)
+% #k [ant.m] #n was modified
+% -The menu of the ant-GUI is now sensitive to the pressed mouse-button:
+%   [left mouseclick ] to execute the function
+%   [right mouseclick] to display the underlying function in the CMD-Window with hyperlink to obtain the function's help
+%   [cmd]+[left mouseclick ] to obtain the help of the function
 % 
 % 
+% 
+
+
 
 %% ===============================================
 %----- EOF

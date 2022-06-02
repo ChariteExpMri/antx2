@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   01 Jun 2022 (14:39:14)  
+ &#x1F34E; last modification:   02 Jun 2022 (16:51:58)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,8 +7,16 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**02 Jun 2022 (16:51:58)**</ins>  
+   __[ant.m]__ was modified  
+  -The menu of the ant-GUI is now sensitive to the pressed mouse-button:  
+    __[left mouseclick ]__ to execute the function  
+    __[right mouseclick]__ to display the underlying function in the CMD-Window with hyperlink to obtain the function's help  
+    __[cmd]__+__[left mouseclick ]__ to obtain the help of the function  
+<!---->
   &#x1F535;   <ins>**01 Jun 2022 (14:39:14)**</ins>  
    __[DTIprep.m]__ -scripts prettified  
+   
 <!---->
   &#x1F535;   <ins>**31 May 2022 (21:32:35)**</ins>  
    __[scripts_gui.m]__ was modified  

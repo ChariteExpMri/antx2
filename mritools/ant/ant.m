@@ -5,7 +5,7 @@
 % FOR INFORMATION/HELP SEE TUTORIALS: https://chariteexpmri.github.io/antxdoc/
 % ANIMAL-TEMPLATES CAN BE FOUND HERE: https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
 % see also GITHUB-PROJECT: https://github.com/ChariteExpMri/antx2
-% 
+%
 % ==============================================
 %%   create project-file
 % ===============================================
@@ -16,20 +16,20 @@
 % ==============================================
 %%   load a project
 % ===============================================
-% 
+%
 %  -via [loadproj]-button, or
 %  -via cmd: antcb('load', 'yourprojectfile.m'); where 'yourprojectfile.m' is the created project-file (m-file)
-% 
+%
 % ==============================================
 %%  close GUI
 % ===============================================
 % antcb('close');
-% 
-% 
+%
+%
 % ==============================================
 %%   NO GUI OPTION
 % not finished project, mosts functions needs to be adapted
-% ...not done yet.. 
+% ...not done yet..
 % ===============================================
 % -CREATE A PROJECT-FILE WITHOUT GUI: HERE THE PROJECTFILE "proj2.m" IS CREATED USING A VOXELSIZE
 %  OF [.07 .07 .07] mm, and the ANIMAL-TEMPLATE "mouse_Allen2017HikishimaLR" is used, with species 'mouse'
@@ -38,10 +38,10 @@
 %  loadconfig(fullfile(pwd,'proj.m'));
 % -CHECK GLOBAL VARAIBLE "an"
 %  global an
-% 
-% 
-% 
-% 
+%
+%
+%
+%
 % other help: see antcb
 
 
@@ -170,7 +170,7 @@ h = uicontrol('style','text','units','normalized','position',[.3 .5 .2 .025],'ta
 %     'string','takeCases','fontsize',10,'value',0);
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 %% PBload
@@ -282,7 +282,7 @@ e=ind2rgb(e,map);
 set(h,'cdata',e);
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -498,15 +498,15 @@ set(findobj(gcf,'tag','lb3') ,'KeyPressFcn',@antkeys)
 
 settings=antsettings;
 
- hradio    =findobj(findobj(0,'tag','ant'),'style','radio');
- set(hradio,'fontsize',settings.fontsize-2);
- 
- hradiohelp=findobj(findobj(0,'tag','ant'),'tag','radioshowhelp');
- set(hradiohelp,'value', settings.show_instant_help);
- if get(hradiohelp,'value')==1
-     drawnow;
-     showfunctionhelp
- end
+hradio    =findobj(findobj(0,'tag','ant'),'style','radio');
+set(hradio,'fontsize',settings.fontsize-2);
+
+hradiohelp=findobj(findobj(0,'tag','ant'),'tag','radioshowhelp');
+set(hradiohelp,'value', settings.show_instant_help);
+if get(hradiohelp,'value')==1
+    drawnow;
+    showfunctionhelp
+end
 
 hprogress=findobj(gcf,'tag','radioshowHTMLprogress'); %HTML progress
 if ~isempty(hprogress)
@@ -521,8 +521,8 @@ end
 
 %% ========0add resize button for animal-LB]=======
 try
-     hf=findobj(0,'tag','ant');
-     hres=findobj(hf,'tag','lb3');
+    hf=findobj(0,'tag','ant');
+    hres=findobj(hf,'tag','lb3');
     addResizebutton(hf,hres,'mode','UR');
 end
 
@@ -537,18 +537,18 @@ if isunix
         [~,msg]=evalc('system(''elastix'')');
         if msg~=0
             setup_elastixlinux;
-%             warning on;
-%             warning('..ELASTIX is not installed') ;
-%             padinfo=fullfile(fileparts(which('ant.m')),'docs');
-%             info  ='readme_LINUX.txt';
-%             showinfo2('..for help please inspect ', fullfile(padinfo,info));
-%             disp('..use "setup_elastixlinux" to install ELASTIX and MRICRON');
+            %             warning on;
+            %             warning('..ELASTIX is not installed') ;
+            %             padinfo=fullfile(fileparts(which('ant.m')),'docs');
+            %             info  ='readme_LINUX.txt';
+            %             showinfo2('..for help please inspect ', fullfile(padinfo,info));
+            %             disp('..use "setup_elastixlinux" to install ELASTIX and MRICRON');
         end
     end
     
-
-end
     
+end
+
 %%============================================
 %============================================
 %============================================
@@ -722,8 +722,8 @@ end
 function cmenuCasesCB(h, e, cmenutask,par1)
 global an
 if isempty(an)
-  disp('no project loaded');
-  return
+    disp('no project loaded');
+    return
 end
 lb3=findobj(findobj(0,'tag','ant'),'tag','lb3');
 
@@ -769,8 +769,8 @@ switch cmenutask
         statusMsg(1,' check Registration via GUI ');
         checkRegist
         statusMsg(0);
-    %% ===============================================
-    
+        %% ===============================================
+        
     case 'checkRegistHTMLforw'
         statusMsg(1,' check Registration-HTML ');
         checkregistration();
@@ -787,13 +787,13 @@ switch cmenutask
         statusMsg(1,' check Registration-HTML ');
         checkregistration(1,-1);
         statusMsg(0);
-       
-     %% ===============================================    
-     case 'prune_mask'
+        
+        %% ===============================================
+    case 'prune_mask'
         statusMsg(1,' prune_mask ');
         
         
-       
+        
         for i=1:length(seldirs)
             f1=fullfile(seldirs{i},'_msk.nii');
             if exist(f1)==2
@@ -805,9 +805,9 @@ switch cmenutask
         
         
         
-        statusMsg(0);    
-     %% ===============================================
-     
+        statusMsg(0);
+        %% ===============================================
+        
     case 'Rdisplaykey3inv'
         va=get(lb3,'value');
         for i=1:length(va)
@@ -866,7 +866,7 @@ switch cmenutask
                 warning('"t2.nii" image not found not found..please select another image');
                 [t,sts] = spm_select(1,'image','select image (example "t2.nii") ',[],px{i},'.*.nii',1);
                 img=strtok(t,',');
-            end 
+            end
             %[~,name]=fileparts(px{i});
             %[id rotstring]=getorientation('ref',refimg,'img',img,'info', name);
             [~,name   ]=fileparts(px{i});
@@ -874,59 +874,59 @@ switch cmenutask
             infox=['select orientation with best match between [' name '] and [' nameref ']'];
             % [id rotstring]=getorientation('ref',refimg,'img',img,'info', name);
             [id rotstring]=getorientation('ref',refimg,'img',img,'info', infox,'mode',1,'wait',1,'disp',1);
-%             disp([ name ' rotTable-ID is [' num2str(id)  '] ..which is  "' rotstring  '"']);
+            %             disp([ name ' rotTable-ID is [' num2str(id)  '] ..which is  "' rotstring  '"']);
             
-
-          % ==============================================
-          %% show info
-          % ===============================================
-          global info1001
-          info1001=...
-            {
-              ' #wg  *** Orientation Type for Template Registration ***   '
-              ''
-              ' #wo      Option-2: ROTATION  TABLE ID      (Rec.) '
-              'To use the selected orientation type for template registration,'
-              'open the settings window by selecting the #b [gearwheel-icon] #n from the ANT'
-              'main window. '
-              'The last command line output was:'
-              [' #m  >>' name ' rotTable-ID is [' num2str(id)  '] ..which is  ``' rotstring  '``']
-              [ 'The value in the square-brackets ( here: #r ' num2str(id)  ' #n ) is the rotation-table-ID.'  ]
-              'Set the parameter #b [x.wa.orientationType] #n to this value.'
-              'Note that the value must be #k numeric. '
-              'Internally, this value refers to three rotation angles stored in a table.'
-              ''
-              ' #wo    Option-2: ROTATIONS defined as string-Arguemnt     '
-              [  ' Alternatively, you can also use the three rotations (here #r ''' rotstring ''' #n )']
-              ' as #k string-argument #n in #b [x.wa.orientationType].'
-              ''
-              [' #r ' repmat('=', [1 80])]
-              ' #r Don''t forget to save the settings before doing the template registration. '
-              [' #r ' repmat('=', [1 80])]
-              };
-             disp([[ name ' rotTable-ID is [' num2str(id)  '] ..which is  "' rotstring  '."   '] ...
-              ['<a href="matlab:global info1001; uhelp(info1001,0,''name'',''info'');clear info1001">' '[HELP]' '</a>' ]  ]);
-          
-          
-
-%             
-
-%           
-%            disp([
-%                 ['<a href="matlab: uhelp('' (strjoin(msgdo,char(10)))  ''',1,''name'',''info'');">' '[HELP]' '</a>'] ...
-%               ]);
-%           
-%           disp([
-%                 ['<a href="matlab: uhelp(''' 'mean.m'  ''',1,''name'',''info'');">' '[HELP]' '</a>'] ...
-%               ]);
-%           
-%                   
-
-          
-% ==============================================
-%%   
-% ===============================================
-
+            
+            % ==============================================
+            %% show info
+            % ===============================================
+            global info1001
+            info1001=...
+                {
+                ' #wg  *** Orientation Type for Template Registration ***   '
+                ''
+                ' #wo      Option-2: ROTATION  TABLE ID      (Rec.) '
+                'To use the selected orientation type for template registration,'
+                'open the settings window by selecting the #b [gearwheel-icon] #n from the ANT'
+                'main window. '
+                'The last command line output was:'
+                [' #m  >>' name ' rotTable-ID is [' num2str(id)  '] ..which is  ``' rotstring  '``']
+                [ 'The value in the square-brackets ( here: #r ' num2str(id)  ' #n ) is the rotation-table-ID.'  ]
+                'Set the parameter #b [x.wa.orientationType] #n to this value.'
+                'Note that the value must be #k numeric. '
+                'Internally, this value refers to three rotation angles stored in a table.'
+                ''
+                ' #wo    Option-2: ROTATIONS defined as string-Arguemnt     '
+                [  ' Alternatively, you can also use the three rotations (here #r ''' rotstring ''' #n )']
+                ' as #k string-argument #n in #b [x.wa.orientationType].'
+                ''
+                [' #r ' repmat('=', [1 80])]
+                ' #r Don''t forget to save the settings before doing the template registration. '
+                [' #r ' repmat('=', [1 80])]
+                };
+            disp([[ name ' rotTable-ID is [' num2str(id)  '] ..which is  "' rotstring  '."   '] ...
+                ['<a href="matlab:global info1001; uhelp(info1001,0,''name'',''info'');clear info1001">' '[HELP]' '</a>' ]  ]);
+            
+            
+            
+            %
+            
+            %
+            %            disp([
+            %                 ['<a href="matlab: uhelp('' (strjoin(msgdo,char(10)))  ''',1,''name'',''info'');">' '[HELP]' '</a>'] ...
+            %               ]);
+            %
+            %           disp([
+            %                 ['<a href="matlab: uhelp(''' 'mean.m'  ''',1,''name'',''info'');">' '[HELP]' '</a>'] ...
+            %               ]);
+            %
+            %
+            
+            
+            % ==============================================
+            %%
+            % ===============================================
+            
             
         end
     case 'getOrientationVia3points'
@@ -1050,8 +1050,8 @@ switch cmenutask
             return;
             
         end
-
-
+        
+        
         
         
     case 'dropout'
@@ -1217,11 +1217,9 @@ mh2 = uimenu(mh,'Label','convert image to SNR-image',                           
 % mh3 = uimenu(mh2,'Label',' check PATHS (project/study/data)',          'Callback',{@menubarCB, 'makeIncidenceMaps'});
 % mh2 = uimenu(mh,'Label',' generate ANO.nii in pseudocolors',    'Callback',{@menubarCB, 'makeANOpseudocolors'});
 
-
-%% last ROW
+%% ==========[extras row]=====================================
 mh = uimenu(f,'Label','Extras');
 mh2 = uimenu(mh,'Label','notes',                                                        'Callback',{@menubarCB, 'notes'});
-mh2 = uimenu(mh,'Label','keyboard shortcuts',                                           'Callback',{@menubarCB, 'keyboard'});
 
 mh2 = uimenu(mh,'Label','documentations (docs)',                                        'Callback',{@menubarCB, 'docs'});
 
@@ -1230,23 +1228,33 @@ mh2 = uimenu(mh,'Label','ant-settings',                                         
 mh2 = uimenu(mh,'Label','version',                                                 'Callback',{@menubarCB, 'version'},'separator','on');
 mh2 = uimenu(mh,'Label','contact',                                                 'Callback',{@menubarCB, 'contact'});
 % mh2 = uimenu(mh,'Label','troubleshoot',                                            'Callback',{@menubarCB, 'troubleshoot'});
- 
+
 mh2   = uimenu(mh,'Label','troubleshoot' );
 msub1 = uimenu(mh2,'Label','check ELASTIX installation',                          'Callback',{@menubarCB, 'check_ELASTIX_installation'});
 msub1 = uimenu(mh2,'Label','check path-names (project/datasets/ANTX-TBX)',         'Callback',{@menubarCB, 'check_pathnames'});
-
-
 
 mh2 = uimenu(mh,'Label','<html><font color="blue">visit ANTx2 repository (Github)',              'Callback',{@menubarCB, 'visitGITHUB'},'separator','on');
 mh2 = uimenu(mh,'Label','<html><font color="blue">visit ANTx2 Tutorials (Github-Pages)',         'Callback',{@menubarCB, 'visitGITHUBpages'},'separator','off');
 mh2 = uimenu(mh,'Label','<html><font color="green">get templates from googledrive',               'Callback',{@menubarCB, 'openGdrive'},'separator','off');
 mh2 = uimenu(mh,'Label','<html><font color="green">download templates',                           'Callback',{@menubarCB, 'donwloadTemplates'},'separator','off');
 
-
 mh2 = uimenu(mh,'Label','<html><b><font color="fuchsia">check for updates (Github)',                    'Callback',{@menubarCB, 'checkUpdateGithub'},'separator','on');
 
+%% ==========[info row]=====================================
+mh = uimenu(f,'Label','Info');
 
-%========================================================
+mh2 = uimenu(mh,'Label',['<html><font color=green><u><b>*** Menu info ***</u></b><br>'...
+    '<font size=5><b>[mouse click]</b></font><br>'...
+    '<font size=5><b>[left]</b>     - execute function</font><br>'...
+    '<font size=5><b>[right]</b>    - show function name in commandline</font><br>'...
+    '<font size=5><b>[cmd+left]</b> - show function help</font><br>'...
+    ]);
+mh2 = uimenu(mh,'Label','keyboard shortcuts',                                           'Callback',{@menubarCB, 'keyboard'},'separator','on');
+
+
+
+%% ===============================================
+
 %% JAVA MENU
 %
 drawnow;
@@ -1272,20 +1280,20 @@ for menuIdx = jMenuBar.getComponentCount:-1:1  %%automatically pull down menu
     
     %pause(.05);
     jMenu.doClick; % open the File menu
-%     pause(.01);
+    %     pause(.01);
     drawnow;
     
     jMenu.doClick; % close the menu
-     %pause(.01);
+    %pause(.01);
     drawnow;
     
-%     if 0%menuIdx==1
-%         drawnow
-%         %jMenu.doClick; % open the File menu
-%         pause(.05);
-%         set(hjMenu,'Visible',0)
-%     end
-     javax.swing.MenuSelectionManager.defaultManager().clearSelectedPath();
+    %     if 0%menuIdx==1
+    %         drawnow
+    %         %jMenu.doClick; % open the File menu
+    %         pause(.05);
+    %         set(hjMenu,'Visible',0)
+    %     end
+    javax.swing.MenuSelectionManager.defaultManager().clearSelectedPath();
 end
 
 %    jMenu.doClick; % close the menu
@@ -1348,10 +1356,10 @@ if 1
                 %make help
                 if ~isempty(strfind(class(hj),'MenuItem'))  %no separators in
                     try
-                      set(hj,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
+                        set(hj,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
                         % LEFT/RIGHT MOUSE_CLICK
-%                         hj=handle(hj, 'CallbackProperties');
-%                         set(hj,'MousePressedCallback', {@menuclick_cb,hm,hj});
+                        %                         hj=handle(hj, 'CallbackProperties');
+                        set(hj,'MousePressedCallback', {@menuclick_cb,hm,hj});
                     catch
                         hj2=handle(hj, 'CallbackProperties');
                         set(hj2,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
@@ -1361,14 +1369,31 @@ if 1
         end%j
     end
 end
-% % % % % % Right.click "menu" for help--> not implemented
-% % % % % % function menuclick_cb(e,e2,hm,hj)
-% % % % % % 'q'
-% % % % % % e2.getButton
-% % % % % % if double(e2.getButton)==3
-% % % % % %     'rightclick'
-% % % % % %     showfunctionhelp(e,e2,hm,hj);
-% % % % % % end
+% % % Right.click "menu" for help--> not implemented
+function menuclick_cb(e,e2,hm,hj)
+hf=findobj(0,'tag','ant');
+u=get(hf,'userdata');
+% u.ismenuinterupted=1;
+e2.getButton;
+if double(e2.getButton)==1   %     'left'
+    
+    u.mousekey='left';
+    %     u=get(hf,'userdata');     u.ismenuinterupted=0;     set(hf,'userdata',u);
+    %     %hgfeval(get(hm,'callback'));
+    %     cb=get(hm,'callback');
+    %     menubarCB([],[],cb{2},0);
+    %    menubarCB([],[],'klaus',0);
+    %     u=get(hf,'userdata');     u.ismenuinterupted=1;     set(hf,'userdata',u);
+elseif double(e2.getButton)==2 %'cmd'
+    u.mousekey='cmd';
+elseif double(e2.getButton)==3%     'rightclick
+    %     showfunctionhelp(e,e2,hm,hj);
+    u.mousekey='right';
+end
+set(hf,'userdata',u);
+
+
+return
 
 
 % function bla
@@ -1415,32 +1440,35 @@ end
 %     % strfind(class(jSave),'Separator')
 % end
 %========================================================
-function showfunctionhelp(h,e,hm,hj)
+function showfunctionhelp(h,e,hm,hj,isforce)
 
+if exist('isforce')==0
+    isforce=0;
+end
 
 % persistent atimer
 % persistent atime
 % if isempty(atime)
 %     atimer=tic+1000;
 % end
-% 
+%
 % thistime=toc(atimer);
-% 
+%
 % if thistime<atime+.2
 %   disp([ '------'  ]);
 %   pause(.2);
 % else
 %   disp(['++++++'  get(hm,'Label')]);
 % end
-% 
-% 
+%
+%
 %     atime=toc(atimer);
-%   
-% 
+%
+%
 % % atime
 % return
 
-% 
+%
 % persistent atime
 % if isempty(atime)
 %     atime=tic;
@@ -1463,16 +1491,22 @@ function showfunctionhelp(h,e,hm,hj)
 
 
 if ~isempty(strfind(get(hm,'label'),'obj'))
-%    keyboard 
+    %    keyboard
 end
 
 settings=antsettings;
 hradiohelp=findobj(findobj(0,'tag','ant'),'tag','radioshowhelp');
-if get(hradiohelp,'value')==0; return; end
+if isforce==0
+    if get(hradiohelp,'value')==0; return; end
+end
 % if settings.show_instant_help==0 ; return ; end
 
 try
-    lab=char(hj.getLabel);
+    try
+        lab=char(hj.getLabel);
+    catch
+        lab=get(hm,'Label');
+    end
     msg=[get(hm,'userdata') ];
     msg= [ ' ##m ' lab ' ' 10 msg ];
     msg=strsplit2(msg,char(10))';
@@ -1566,22 +1600,22 @@ else
         UHELP_OpenOnce_Flag0002 = 1;
     end
     
-%     if UHELP_OpenOnce_Flag0002==0
-%         'aa'
-%         return
-%     end
+    %     if UHELP_OpenOnce_Flag0002==0
+    %         'aa'
+    %         return
+    %     end
     
-%      UHELP_RunOnce_Flag0002=1; %now running
-
-%re-check
-% if isempty(helpfig)
-%     
-%     helpfig=findobj(0,'tag','uhelp');
-%     helpfig(helpfig==335);
-%     drawnow
-%     pause(.1);
-% end
-
+    %      UHELP_RunOnce_Flag0002=1; %now running
+    
+    %re-check
+    % if isempty(helpfig)
+    %
+    %     helpfig=findobj(0,'tag','uhelp');
+    %     helpfig(helpfig==335);
+    %     drawnow
+    %     pause(.1);
+    % end
+    
     
     if isempty(helpfig);
         
@@ -1600,15 +1634,15 @@ else
         set(helpfig,'numbertitle','off','name','HELP');
         global uhelp_properties
         if ~isempty(uhelp_properties)
-            try; 
+            try;
                 %ch=findobj(0,'tag','uhelp','-and','name','HELP');
                 %helpfig=ch(1);
-%                 figure(ch(1))
-                set(helpfig,'position',uhelp_properties.fgpos); 
+                %                 figure(ch(1))
+                set(helpfig,'position',uhelp_properties.fgpos);
             end
         end
         drawnow;
-      
+        
         %%reopen pulldown again
         if 1%isempty(helpfig)
             hf=findobj(0,'tag','ant');
@@ -1638,10 +1672,10 @@ else
                 end
             end%try
         end
-          clear UHELP_OpenOnce_Flag0002
+        clear UHELP_OpenOnce_Flag0002
     else
         
-%         tic;
+        %         tic;
         %       helpfig=uhelp(msg2);
         %       disp(toc);
         
@@ -1661,17 +1695,42 @@ else
         set(helpfig,'userdata',us);
         %       end
         drawnow;
-%         disp(toc);
+        %         disp(toc);
         
-       
         
-          clear UHELP_RunOnce_Flag0002;
+        
+        clear UHELP_RunOnce_Flag0002;
     end
     %              figure(335);
     %              figure(findobj(0,'tag','ant'));
     
 end
-%========================================================
+
+
+% ==============================================
+%%   cmd-help for function
+% ===============================================
+
+function showcmd(hlpfun,msg,ishyperlink)
+% hlpfun='xbruker2nifti.m';
+col='*[0 .5 0]';
+if ~isempty(strfind(hlpfun,'none'))
+  col='*[0.9294    0.6941    0.1255]';  
+end
+cprintf(col,['function: '  hlpfun   '\n']);
+if exist('msg')==1
+    disp(char(msg));
+end
+if exist('ishyperlink')==0
+    ishyperlink=1;
+end
+if ishyperlink==1;
+    disp(['#' ' [' hlpfun ']: <a href="matlab: help(''' hlpfun ''');">' 'help' '</a>' ...
+        ',<a href="matlab: uhelp(''' hlpfun ''');">' 'uhelp' '</a>'  ...
+        ',<a href="matlab: edit(''' hlpfun ''');">' 'edit' '</a>']);
+end
+%% ===============================================
+
 function hlpfun=menubarCB(h,e,task,showhelpOnly)
 
 hlpfun=[];
@@ -1679,6 +1738,31 @@ if exist('showhelpOnly')==0
     showhelpOnly=0;
 end
 
+%-------let mouse hover , otherwise block execution to let mouse-selectionType work
+% if showhelpOnly==0
+hf=findobj(0,'tag','ant');
+u=get(hf,'userdata');
+%     if isfield(u,'ismenuinterupted') && u.ismenuinterupted==1
+%         disp('do nothing')
+%         return
+%     end
+% end
+% u
+
+if isfield(u,'mousekey')==0
+    u.mousekey='left';
+    set(hf,'userdata',u);
+end
+
+if strcmp(u.mousekey,'cmd') && showhelpOnly==0
+    isforce=1;
+    showfunctionhelp([],[],h,1,isforce);
+    return
+end
+
+
+% rand
+% return
 
 % showhelp
 % return
@@ -1699,7 +1783,13 @@ if strcmp(task,'brukerImport')
         hlpfun='xbruker2nifti';
         return ;
     end
-    
+    if strcmp(u.mousekey,'right')
+        %% ===============================================
+        hlpfun='xbruker2nifti.m';
+        showcmd(hlpfun);
+        %% ===============================================
+        return
+    end
     %r=ante;     r.brukerimport();   % !! OLD
     statusMsg(1,' brukerImport');
     global an;
@@ -1711,6 +1801,13 @@ elseif strcmp(task,'coregister')
         hlpfun='xcoreg';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xcoreg.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
     statusMsg(1,' coregistering images');
     xcoreg(1);
@@ -1722,7 +1819,13 @@ elseif strcmp(task,'registerexvivo')
         hlpfun='xregisterexvivo';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xregisterexvivo.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' register exvivo to invivo images');
     xregisterexvivo(1);
     statusMsg(0);
@@ -1733,7 +1836,13 @@ elseif strcmp(task,'registerCT')
         hlpfun='xregisterCT';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xregisterCT.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' register CT image');
     xregisterCT(1);
     statusMsg(0);
@@ -1744,39 +1853,64 @@ elseif strcmp(task,'registermanually')
         hlpfun='xcoregmanu';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xcoregmanu.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' register images manually');
     xcoregmanu(1);
     statusMsg(0);
     
-        %________________________________________________
+    %________________________________________________
 elseif strcmp(task,'realignImages')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xrealign';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xrealign.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
     statusMsg(1,' realign Images');
     xrealign(1);
     statusMsg(0);
-        %________________________________________________
+    %________________________________________________
 elseif strcmp(task,'realignImagesMultimodal')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xrealign_elastix';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xrealign_elastix.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' realign Images');
     xrealign_elastix(1);
     statusMsg(0);
-                
+    
     %________________________________________________
 elseif strcmp(task,'coregister2D')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xregister2d';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xregister2d.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' coregistering slices [2d]');
     xregister2d(1);
     statusMsg(0);
@@ -1787,6 +1921,13 @@ elseif strcmp(task,'coregister2Dapply')
         hlpfun='xregister2dapply';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xregister2dapply.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
     statusMsg(1,' apply 2d-registration to other imaged');
     xregister2dapply(1);
@@ -1798,7 +1939,13 @@ elseif strcmp(task,'extractslice')
         hlpfun='xextractslice';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xextractslice.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' extract slices [2d]');
     xextractslice(1);
     statusMsg(0);
@@ -1811,7 +1958,13 @@ elseif strcmp(task,'xnewproject')
         hlpfun='xnewproject';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xnewproject.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xnewproject;
     %________________________________________________
 elseif strcmp(task,'copytemplates')
@@ -1819,7 +1972,13 @@ elseif strcmp(task,'copytemplates')
         hlpfun='xcreatetemplatefiles2';%{'depending'; '111'};
         return ;
     end
-     
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='antcb(''copytemplates'')';
+        showcmd(hlpfun,[ 'for help type: antcb(''copytemplates?'')'  ],0);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' copytemplates');
     antcb('copytemplates');
     statusMsg(0);
@@ -1832,7 +1991,13 @@ elseif strcmp(task,'dataimport')
         hlpfun='ximport';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='ximport.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     ximport(1);
     %________________________________________________
 elseif strcmp(task,'dataimport2')
@@ -1840,7 +2005,13 @@ elseif strcmp(task,'dataimport2')
         hlpfun='ximportnii_headerrplace';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='ximportnii_headerrplace.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     ximportnii_headerrplace(1);
     %________________________________________________
 elseif strcmp(task,'importAnalyzmask')
@@ -1848,7 +2019,13 @@ elseif strcmp(task,'importAnalyzmask')
         hlpfun='ximportAnalyzemask';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='ximportAnalyzemask.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     ximportAnalyzemask(1);
     %________________________________________________
 elseif strcmp(task,'dataimportdir2dir')
@@ -1856,7 +2033,13 @@ elseif strcmp(task,'dataimportdir2dir')
         hlpfun='ximportdir2dir';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='ximportdir2dir.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' dir-to-dir import');
     ximportdir2dir(1);
     statusMsg(0);
@@ -1866,7 +2049,13 @@ elseif strcmp(task,'distributefilesx')
         hlpfun='xdistributefiles';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xdistributefiles.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' distribute files');
     xdistributefiles(1);
     statusMsg(0);
@@ -1876,7 +2065,13 @@ elseif strcmp(task,'renamefile_simple')
         hlpfun='xrename';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xrename.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xrename(1);
     %________________________________________________
 elseif strcmp(task,'renamefile')
@@ -1884,7 +2079,13 @@ elseif strcmp(task,'renamefile')
         hlpfun='xrenamefile';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xrenamefile.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xrenamefile(1);
     %________________________________________________
 elseif strcmp(task,'renamefile2')
@@ -1892,7 +2093,13 @@ elseif strcmp(task,'renamefile2')
         hlpfun='xcopyrenameexpand';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xcopyrenameexpand.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xcopyrenameexpand(1);
     
     %________________________________________________
@@ -1901,8 +2108,15 @@ elseif strcmp(task,'calc0')
         hlpfun='xcalc';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xcalc.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xcalc(1);
+    
     %________________________________________________
 elseif strcmp(task,'manipulateheader')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
@@ -1911,6 +2125,13 @@ elseif strcmp(task,'manipulateheader')
         %helpfun='bla';%sprintf('manipulate imag header/resize image/copy header/set origin');
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xheadmanfiles.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
     try
         xheadmanfiles('dirs', antcb('getsubjects'));
@@ -1924,7 +2145,13 @@ elseif strcmp(task,'replaceheader')
         hlpfun='xreplaceheader';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xreplaceheader.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xreplaceheader(1);
     
     %________________________________________________
@@ -1933,7 +2160,13 @@ elseif strcmp(task,'deletefiles')
         hlpfun='xdeletefiles';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xdeletefiles.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xdeletefiles(1);
     %________________________________________________
     
@@ -1942,11 +2175,17 @@ elseif strcmp(task,'maskgenerate')
         hlpfun='xmaskgenerator';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xmaskgenerator.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' Mask-Generator');
     xmaskgenerator(1);
     statusMsg(0);
-
+    
     %________________________________________________
     
 elseif strcmp(task,'maskgenerateFromExcelfile')
@@ -1954,49 +2193,82 @@ elseif strcmp(task,'maskgenerateFromExcelfile')
         hlpfun='xexcel2atlas';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xexcel2atlas.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' generate mask from excelfile');
     xexcel2atlas(1);
     statusMsg(0);
-
+    
 elseif strcmp(task,'drawmask')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xdraw';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xdraw.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
     xdraw;
-%     statusMsg(1,' generate mask from excelfile');
-%     xexcel2atlas(1);
-%     statusMsg(0);    
+    %     statusMsg(1,' generate mask from excelfile');
+    %     xexcel2atlas(1);
+    %     statusMsg(0);
 elseif strcmp(task,'segmenttube')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xsegmenttube';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xsegmenttube.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,'segment tube');
     xsegmenttube;
-    statusMsg(0); 
+    statusMsg(0);
     
 elseif strcmp(task,'segmenttubeManu')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xsegmenttubeManu';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xsegmenttubeManu.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,'segment tube manu');
     xsegmenttubeManu;
-    statusMsg(0); 
+    statusMsg(0);
     
 elseif strcmp(task,'splittubedata')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xsplittubedata';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xsplittubedata.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
-  
     statusMsg(1,' split tube data');
     xsplittubedata;
-    statusMsg(0);  
+    statusMsg(0);
     
     
     %________________________________________________
@@ -2006,7 +2278,13 @@ elseif strcmp(task,'xconvertdicom2nifti')
         hlpfun='xdicom2nifti';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xdicom2nifti.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xdicom2nifti(1);
     
     
@@ -2017,7 +2295,13 @@ elseif strcmp(task,'xmergedirectories')
         hlpfun='xmergedirs';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xmergedirs.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xmergedirs(1);
     
     %________________________________________________
@@ -2027,16 +2311,28 @@ elseif strcmp(task,'export')
         hlpfun='xexport';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xexport.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xexport(1);
-%________________________________________________
+    %________________________________________________
     
 elseif strcmp(task,'export_fromanyfolder')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='exportfiles';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='exportfiles.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     exportfiles(1);
     
     %________________________________________________
@@ -2046,6 +2342,13 @@ elseif strcmp(task,'quit')
         hlpfun='..this will quit the Application';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='--none--';
+        showcmd(hlpfun,['..this will quit the Application'],0);
+        return
+    end
+    %% ===============================================
     
     hr=findobj(0,'tag','ant');
     set(hr,'closereq','closereq');
@@ -2059,6 +2362,13 @@ elseif strcmp(task,'folderConfigfile')
         hlpfun{end+1,1}=['templates stored in [templates]-subfolder'];
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='--none--';
+        showcmd(hlpfun,['..this will open the study-folder'],0);
+        return
+    end
+    %% ===============================================
     
     global an; if isempty(an); disp('no configfile loaded');return; end
     
@@ -2069,11 +2379,18 @@ elseif strcmp(task,'folderConfigfile')
     %________________________________________________
 elseif strcmp(task,'folderTemplate')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
-        hlpfun={'this function opens the Studie''s TEMPLATE-Folder  '};
+        hlpfun={'this function opens the study''s TEMPLATE-Folder  '};
         hlpfun{end+1,1}=['..containing the templates (Gm, WM,CSV, ALLEN-template, ALLEN-label-volume)'];
         hlpfun{end+1,1}=['..this folder with template-files is generated in the "warp"-routine of the 1st mouse '];
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='--none--';
+        showcmd(hlpfun,['..this will open the study''s TEMPLATE-Folder'],0);
+        return
+    end
+    %% ===============================================
     
     global an; if isempty(an); disp('first load a configfile ');return; end
     try
@@ -2090,7 +2407,13 @@ elseif strcmp(task,'preselectfolder')
         hlpfun='xselect';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xselect.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' pre-select mouse-folder');
     xselect(1);
     statusMsg(0);
@@ -2113,6 +2436,13 @@ elseif strcmp(task,'casefilematrix')
         
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='ante.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
     statusMsg(1,' generate case-by-file matrix');
     r=ante;
@@ -2124,6 +2454,13 @@ elseif strcmp(task,'overlayimageGui')
         hlpfun='gui_overlay';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='gui_overlay.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     gui_overlay;
     %________________________________________________
 elseif strcmp(task,'overlayimageGui2')
@@ -2131,7 +2468,13 @@ elseif strcmp(task,'overlayimageGui2')
         hlpfun='xoverlay';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xoverlay.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xoverlay;
     %________________________________________________
 elseif strcmp(task,'fastviewer')
@@ -2147,8 +2490,14 @@ elseif strcmp(task,'xatlasviewer')
         hlpfun='atlasviewer';
         return ;
     end
-    
-    atlasviewer();    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='atlasviewer.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    atlasviewer();
     
     %________________________________________________
 elseif strcmp(task,'x3dvolume')
@@ -2156,17 +2505,29 @@ elseif strcmp(task,'x3dvolume')
         hlpfun='xvol3d';
         return ;
     end
-    
-    xvol3d();  
-     %________________________________________________
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xvol3d.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    xvol3d();
+    %________________________________________________
 elseif strcmp(task,'call_show4d')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='show4d';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='show4d.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     global an
-    show4d( an.datpath);   
+    show4d( an.datpath);
     
     
     %________________________________________________
@@ -2175,7 +2536,13 @@ elseif strcmp(task,'call_xcheckreghtml')
         hlpfun='xcheckreghtml';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xcheckreghtml.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xcheckreghtml();
     %________________________________________________
     
@@ -2186,6 +2553,15 @@ elseif strcmp(task,'makeANOpseudocolors')
         hlpfun{end+1,1}=['this file [ANOpcol.nii] is stored in the templates-folder'];
         return ;
     end
+    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='--none--';
+        showcmd(hlpfun,['-[makeANOpseudocolors]...for older versions only (in newer versions this step is done automatically )'],0);
+        return
+    end
+    %% ===============================================
+    
     
     global an
     anofile            =fullfile(fileparts(an.datpath),'templates','ANO.nii');
@@ -2214,7 +2590,13 @@ elseif strcmp(task,'stat_2sampleTtest')
         hlpfun='xstat_2sampleTtest';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xstat_2sampleTtest.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xstat_2sampleTtest(1);
     
 elseif strcmp(task,'stat_anatomlabels')
@@ -2222,7 +2604,13 @@ elseif strcmp(task,'stat_anatomlabels')
         hlpfun='xstat_anatomlabels';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xstat_anatomlabels.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xstat_anatomlabels(1);
     
 elseif strcmp(task,'xstatlabels0')
@@ -2230,7 +2618,13 @@ elseif strcmp(task,'xstatlabels0')
         hlpfun='xstatlabels';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xstatlabels.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xstatlabels;
     
 elseif strcmp(task,'getparamterByMask')
@@ -2238,9 +2632,14 @@ elseif strcmp(task,'getparamterByMask')
         hlpfun='xgetparameter';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xgetparameter.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     xgetparameter();
-    
     
     
 elseif strcmp(task,'spm_statistic')
@@ -2256,22 +2655,41 @@ elseif strcmp(task,'dti_statistic')
         hlpfun='dtistat';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='dtistat.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     dtistat;
     
- elseif strcmp(task,'dti_prep_mrtrix')
+elseif strcmp(task,'dti_prep_mrtrix')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='DTIprep';
         return ;
     end
-    
-    DTIprep;   
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='DTIprep.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    DTIprep;
     %________________________________________________
 elseif strcmp(task,'flattenBrukerdatapath')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xbrukerflattdatastructure';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xbrukerflattdatastructure.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
     xbrukerflattdatastructure(1);
     %________________________________________________
@@ -2280,7 +2698,13 @@ elseif strcmp(task,'generateJacobian')
         hlpfun='xgenerateJacobian';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xgenerateJacobian.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,' generate Jacobian matrizes');
     xgenerateJacobian(1);
     statusMsg(0);
@@ -2292,7 +2716,13 @@ elseif strcmp(task,'scripts_call')
         hlpfun='scripts_collection';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='scripts_collection.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     statusMsg(1,'scripts colleciton');
     scripts_collection();
     statusMsg(0);
@@ -2302,26 +2732,47 @@ elseif strcmp(task,'getlesionvolume')
         hlpfun='xgetlesionvolume';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xgetlesionvolume.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
     statusMsg(1,' get corrected lesion volume');
     xgetlesionvolume;
-    statusMsg(0);    
+    statusMsg(0);
     %________________________________________________
 elseif strcmp(task,'makeMaps')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xcreateMaps';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xcreateMaps.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
     statusMsg(1,' create Maps');
     xcreateMaps;
     statusMsg(0);
-        %________________________________________________
+    %________________________________________________
 elseif strcmp(task,'convert2SNRimage')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xcalcSNRimage';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xcalcSNRimage.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
     statusMsg(1,' convert to SNR image');
     xcalcSNRimage;
@@ -2334,7 +2785,6 @@ elseif strcmp(task,'notes')
         hlpfun={' open/create a "note-file" associated with the study'};
         hlpfun{end+1,1}=['you can edit important information here (drop outs, code/batch snips, test-results..)'];
         hlpfun{end+1,1}=['[notes.txt] is stored in the studie''s MAIN-folder and can be edited via MATLAB-editor'];
-        
         %check if exist and not empty -file
         global an
         notesfile=fullfile(fileparts(an.datpath),'notes.txt');
@@ -2344,12 +2794,17 @@ elseif strcmp(task,'notes')
                 hlpfun=[hlpfun; adum.all];
             end
         end
-        
-        
-        
-        
         return ;
     end
+    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='--none--';
+        showcmd(hlpfun,[' open/create a "note-file" associated with the study'],0);
+        return
+    end
+    %% ===============================================
+    
     
     global an;
     if isempty(an),disp(' can''t make notes: no project loaded'); return;end
@@ -2376,7 +2831,13 @@ elseif strcmp(task,'docs')
         hlpfun='opens docs-folders with documentations (directory: ~/antx/mritools/ant/docs/) ';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='--none--';
+        showcmd(hlpfun,[' opens docs-folders with documentations (directory: ~/antx/mritools/ant/docs/)'],0);
+        return
+    end
+    %% ===============================================
     
     explorer(fullfile(fileparts(which('ant.m')),'docs'));
     
@@ -2387,7 +2848,13 @@ elseif strcmp(task,'dispmainfun')
         hlpfun='showfun';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='showfun.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     antcb('status',1,'show functions')
     showfun;
     antcb('status',0,'')
@@ -2395,9 +2862,15 @@ elseif strcmp(task,'dispmainfun')
 elseif strcmp(task,'keyboard')
     %     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
     hlpfun='antkeys';
-    %         return ;
-    %     end
-    %
+    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='--none--';
+        showcmd(hlpfun,' show keyboard-shortcuts for ANTx-GUI',0);
+        return
+    end
+    %% ===============================================
+    
     uhelp('antkeys');
     %     end
     %________________________________________________
@@ -2406,7 +2879,13 @@ elseif strcmp(task,'version')
         hlpfun='antver';
         return ;
     end
-    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='antver.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     antver;
     %________________________________________________
 elseif strcmp(task,'check_ELASTIX_installation')
@@ -2414,7 +2893,13 @@ elseif strcmp(task,'check_ELASTIX_installation')
         hlpfun='elastix_checkinstallation';
         return ;
     end
-       
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='elastix_checkinstallation.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
     elastix_checkinstallation;
     %________________________________________________
@@ -2423,15 +2908,28 @@ elseif strcmp(task,'check_pathnames')
         hlpfun='checkpath';
         return ;
     end
-       
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='checkpath.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     
-    checkpath;    
+    checkpath;
     %________________________________________________
 elseif strcmp(task,'antsettings')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='antsettings';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='--none--';
+        showcmd(hlpfun,'- change some settings ',0);
+        return
+    end
+    %% ===============================================
     
     edit antsettings
     %________________________________________________
@@ -2440,6 +2938,13 @@ elseif strcmp(task,'contact')
         hlpfun='antintro';
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='--none--';
+        showcmd(hlpfun,'- show contact information ',0);
+        return
+    end
+    %% ===============================================
     
     try; antintro(1);
     catch ;
@@ -2460,7 +2965,7 @@ elseif strcmp(task,'contact')
         cprintf(col,['philipp.boehm-sturm@charite.de\n']);
         cprintf(col,['**********   CONTACT     ******************\n']);
     end
-  elseif strcmp(task,'visitGITHUB') || strcmp(task,'visitGITHUBpages')
+elseif strcmp(task,'visitGITHUB') || strcmp(task,'visitGITHUBpages')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         if strcmp(task,'visitGITHUB')
             hlpfun={' ..visit ANTx2 Repositiory (GITHUB)'
@@ -2468,39 +2973,47 @@ elseif strcmp(task,'contact')
                 ''};
         else
             hlpfun={' ..visit ANTx2 Tutorials (GITHUB-pages)'
-                 'https://chariteexpmri.github.io/antxdoc/'
-                 'This webside contains tutorials (PDF-files).'};
+                'https://chariteexpmri.github.io/antxdoc/'
+                'This webside contains tutorials (PDF-files).'};
         end
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='--none--';
+        showcmd(hlpfun,' ..visit ANTx2 Repositiory (GITHUB)',0);
+        return
+    end
+    %% ===============================================
+    
     if strcmp(task,'visitGITHUB')
         statusMsg(1,' visiting GITHUB');
         github='https://github.com/ChariteExpMri/antx2';
     else
-       statusMsg(1,' visiting Tutorials'); 
-       github='https://chariteexpmri.github.io/antxdoc';
+        statusMsg(1,' visiting Tutorials');
+        github='https://chariteexpmri.github.io/antxdoc';
     end
     
     if ismac
         system(['open ' github]);
     elseif isunix
-       % system(['xdg-open ' github]);
+        % system(['xdg-open ' github]);
         
-         [r1 r2]= system(['xdg-open ' github]);
+        [r1 r2]= system(['xdg-open ' github]);
         if  ~isempty(strfind(r2,'no method available'))
             [r1 r2]= system(['who']);
             ulist=strsplit(r2,char(10))';
             lastuser=strtok(char(ulist(1)),' ');
-            [r1 r2]=system(['sudo -u ' lastuser ' xdg-open ' github '&']);   
+            [r1 r2]=system(['sudo -u ' lastuser ' xdg-open ' github '&']);
         end
         
     elseif ispc
         %system(['start ' github]);
-         web(github,'-browser');
-    
-    end   
+        web(github,'-browser');
+        
+    end
     statusMsg(0);
- elseif strcmp(task,'openGdrive')
+elseif strcmp(task,'openGdrive')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun={' get templates from googledrive'};
         hlpfun{end+1,1}=[' ..go to #b anttemplates folder: '];
@@ -2509,6 +3022,15 @@ elseif strcmp(task,'contact')
         hlpfun{end+1,1}=['  copy unzipped template folder to "anttemplates" dir'];
         return ;
     end
+    
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='--none--';
+        showcmd(hlpfun,' get templates from googledrive',0);
+        return
+    end
+    %% ===============================================
+    
     statusMsg(1,' visiting Gdrive');
     %gdrive='https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM';
     gdrive='https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9';
@@ -2530,21 +3052,27 @@ elseif strcmp(task,'contact')
         
     elseif ispc
         %system(['start ' gdrive]);
-         web(gdrive,'-browser');
+        web(gdrive,'-browser');
         
     end
     statusMsg(0);
     
- elseif strcmp(task,'donwloadTemplates')   
+elseif strcmp(task,'donwloadTemplates')
     
-     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
-         hlpfun='xdownloadtemplate';
-         return ;
-     end
-     
-     antcb('status',1,'downloading Templates');
-     xdownloadtemplate;
-     antcb('status',0,'')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xdownloadtemplate';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xdownloadtemplate.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    antcb('status',1,'downloading Templates');
+    xdownloadtemplate;
+    antcb('status',0,'')
     
 elseif strcmp(task,'checkUpdateGithub')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
@@ -2556,9 +3084,20 @@ elseif strcmp(task,'checkUpdateGithub')
         hlpfun=[hlpfun; strsplit(help(which('installfromgithub.m')),char(10))'];
         return ;
     end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='installfromgithub.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
     installfromgithub;
     
 end
+
+% hf=findobj(0,'tag','ant');
+% u=get(hf,'userdata');     u.ismenuinterupted=0;     set(hf,'userdata',u);
+% drawnow;
 
 
 %========================================================
@@ -2665,7 +3204,7 @@ end
 
 % hf=findobj(0,'tag','uhelp','-and','name','[anth] command history');
 % if ~isempty(hf)
-%     close(hf); 
+%     close(hf);
 % end
 % uhelp(his, 1, 'cursor' ,'end','lbpos',[0 0 .5 1] );
 uhelp(his, 1, 'cursor' ,'end','lbpos',[0 .05 1 .95] );
@@ -2675,9 +3214,9 @@ set(gcf,'NumberTitle','off','name','[anth] command history');
 h = uicontrol('style','pushbutton','units','normalized','position',[.95 .55 .05 .05],'tag','refreshhistory',...
     'string','refresh','fontsize',8,'fontweight','bold','tooltip','refreh history',...
     'callback',@refreshhistory);
- set(h,'position',[[0 0 .1 .04]],'units','pixels');
- 
-ht=findobj(gcf,'tag','txtline'); 
+set(h,'position',[[0 0 .1 .04]],'units','pixels');
+
+ht=findobj(gcf,'tag','txtline');
 unitsref=get(ht,'units');
 set(ht,'units','norm');
 posref=get(ht,'position');
@@ -2722,9 +3261,9 @@ try
     hl=hittest(gcf);
     if ~isempty(hl)
         try
-           if strcmp(get(hl,'style'),'listbox') && strcmp(get(hl,'tag'),'lb3')
-            return
-           end
+            if strcmp(get(hl,'style'),'listbox') && strcmp(get(hl,'tag'),'lb3')
+                return
+            end
         end
         robot = java.awt.Robot;
         robot.keyPress    (java.awt.event.KeyEvent.VK_ESCAPE);
@@ -2760,7 +3299,7 @@ elseif strcmp(task,'edit')
         edit(configfile)
     end
 elseif strcmp(task,'loadcommand')
-   global an
+    global an
     if isfield(an,'configfile')==0
         disp('no project file loaded');
         return
@@ -2771,7 +3310,7 @@ elseif strcmp(task,'loadcommand')
     if exist(configfile)
         disp('% LOAD THIS PROJECT:')
         disp(['antcb(''load'','''  configfile '''  )']);
-    end 
+    end
 end
 
 % ==============================================
@@ -2845,26 +3384,26 @@ function ant_cfm_ontext(e,e2,dispmode,sel, form)
 % check if project is loaded
 mdirs=antcb('getsubjects');
 if isempty(mdirs)
-   return 
+    return
 end
 
 if strcmp(sel,'all')
-     mdirs=antcb('getallsubjects');
+    mdirs=antcb('getallsubjects');
 else
-     mdirs=antcb('getsubjects');
+    mdirs=antcb('getsubjects');
 end
 
 if strcmp(dispmode,'win')
-   [w]=dispfiles('dir',mdirs,'show',0,'form',form); 
-   uhelp(w.m2,1,'name','CFM');
+    [w]=dispfiles('dir',mdirs,'show',0,'form',form);
+    uhelp(w.m2,1,'name','CFM');
 else
-   [w]=dispfiles('dir',mdirs,'show',1,'form',form); 
+    [w]=dispfiles('dir',mdirs,'show',1,'form',form);
     
 end
- disp('   <a href="matlab: help dispfiles;">help dispfiles</a>')
-% 
+disp('   <a href="matlab: help dispfiles;">help dispfiles</a>')
+%
 % keyboard
-% 
+%
 % if strcmp(dispmode,'win')
 %     if strcmp(sel,'all')
 %         [w]=dispfiles('show',0,'form',form);
@@ -2879,10 +3418,10 @@ end
 %     elseif animalmode==2
 %         mdirs=antcb('getsubjects');
 %         dispfiles('dir',mdirs);
-%         
+%
 %     end
 %     %disp('...for more info: help dispfiles');
 %     disp('   <a href="matlab: help dispfiles;">help dispfiles</a>')
 % end
-% 
+%
 

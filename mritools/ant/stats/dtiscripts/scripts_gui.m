@@ -1,22 +1,24 @@
 
 % #ko *** scripts-collection ***
 % #k THIS GUI CONTAINS SCRIPTS...YOU CAN MODIFY AND APPLY THE SCRIPTS...
-% - The upper listbox contains the list of scripts
-% - select on of the scripts from the above list to obtain the content of the script
+% - The upper listbox contains a list of script-files
+% - select on of the scripts from the above list to get the content of the script
 %   in the lower box
 % 
-% select #b [show script] #n to see the the content of the script in a new window
-% select #b [edit script] #n to open script in the editor
-%    - this is the way to costumize and run the script 
-% select #b [scripts summary] #n see summary (help) of all scripts
+% select #b [view script] #n to inspect the content of the script in the help-window
+% select #b [edit script] #n to open a copy of the script in the editor
+%    - this is the way to costumize to the user's puprose and run the script 
+% select #b [scripts summary] #n see obtain a summary (i.e. the help) from all scripts
 % select #b [close script] #n to close the scripts-collection
 %
-% clicke and drag #b [&#8615]-BTN #n to change the upper and lower listbox size ratios
+% clicke and drag #b [&#8615]-button #n to change the upper and lower listbox size ratios
 %
 % #m SHORTCUTS
 % [CTRL +/-] change the fontsize of the selected listbox
 % [1/2/3] change GUI-layout: [1]default [2] extended high, [3] extended high+width
-% [e] edit script (open copy of the script in editor)   
+% [e] edit selected script (open copy of the script in editor) 
+% [v] view content of selected script in the help window
+% [s] obtain a summary (i.e. the help) from all scripts 
 
 % show scripts-gui
 function scripts_gui(hf,varargin)
@@ -58,25 +60,21 @@ end
 %% ===============================================
 warning off
 
+
 % ==============================================
-%%
+%%   defaults and parse inputs
 % ===============================================
-if exist('hf') && ~isempty(hf)
-    figure(hf);
-else
-    hf=figure;
-    set(hf,'units','norm','menubar','none');
-end
-% ===============================================
+
 % ----INPUT PARAM
 % p0.text  ='Note';                         %text to display (cell-string or char)
 % p0.col   =[  0.8706    0.9216    0.9804]; %background color
-p0.fs    =25;                             %fontsize
-p0.pos       =[.4 0  1-.4 1 ]             ; % note-position
-p0.figpos   =''                           ; % figure-position
-p0.name  ='';                               % figure name
-p0.closefig=0                             ; %close figure when closebutton is pressed
-p0.scripts  ='empty';                   ; %list of scripts
+p0.fs          =25                           ;%fontsize
+p0.pos         =[.4 0  1-.4 1 ]              ;% note-position
+p0.figpos      =''                           ;% figure-position
+p0.name        =''                           ;% figure name
+p0.closefig    =0                            ;%close figure when closebutton is pressed
+p0.scripts     ='empty'                      ;%list of scripts
+p0.mInstance   =0                            ;%is multis Instance [0,1]; default: 0 (..single instance)
 
 % p0.state =0;                              %state: [0]normal,[1]warning,[2]error
 % p0.head  ='';                             %additional headline, only if state is [0]
@@ -104,6 +102,39 @@ else
 end
 
 
+% ==============================================
+%%  figure exist or new figure
+% ===============================================
+if exist('hf') && ~isempty(hf)
+    figure(hf);
+else
+    
+    
+    %% ======check for single or multinstance========
+    if p.mInstance==0 %multiinstance is disabled
+        hfigAll=get(0,'children');
+        for i=1:length(hfigAll)
+            if (isappdata(hfigAll(i),'scripts_gui'))==1
+                sx=getappdata(hfigAll(i),'scripts_gui');
+                if strcmp(sx.name,p.name) % based on identical fig-'name' the figure is close.. 
+                    close(hfigAll(i));
+                end
+            end
+        end
+    end
+    %setappdata(hf,'scripts_gui');
+    %% ===============================================
+    
+    hf=figure;
+    set(hf,'units','norm','menubar','none');
+end
+
+
+
+
+% ==============================================
+%%   units/position
+% ===============================================
 if ~isempty(p.figpos)
     f_units=get(hf,'units');
     if max(p.figpos)>1
@@ -115,11 +146,9 @@ if ~isempty(p.figpos)
     
     set(hf,'units',f_units);
 end
-
-
 % disp(p);return
 % ==============================================
-%%
+%%  name
 % ===============================================
 
 if ~isempty(p.name) && strcmp(hf.Type,'figure')
@@ -128,6 +157,12 @@ end
 
 
 scripts_process([],[],'close');
+
+
+%% ======set parameter in figure for checkeing single/multiinstance=========
+setappdata(hf,'scripts_gui',p);
+%% ===============================================
+
 
 h=uipanel('units','norm');
 % xpos=0.4;
@@ -175,7 +210,8 @@ set(hb,'tooltipstring',['script/function name']);
 c = uicontextmenu;
 hb.UIContextMenu = c;
 m1 = uimenu(c,'Label','show script','Callback',{@scripts_process, 'open'});
-m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">edit file (not prefered)','Callback',{@scripts_process, 'editOrigFile'});
+m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">edit file (not prefered)','Callback',{@scripts_process, 'editOrigFile'},'separator','on');
+m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">open file-folder (not prefered)','Callback',{@scripts_process, 'openOrigFileDir'});
 
 %  addResizebutton(hf,h,'mode','D','moo',1);
 
@@ -207,12 +243,12 @@ han=addNote(h,'text',msg,'pos',NotePos,'head','scripts/functions','mode','single
 
 %% =======[open script]========================================
 hb=uicontrol(h2,'style','pushbutton','units','norm','tag','scripts_open');
-set(hb,'string','show script');
+set(hb,'string','view script');
 % set(hb,'position',[-1.21e-16 0 0.25 0.06]); %fig-pos
 set(hb,'units','pixels','position',[0 0 100 24]); %pan-pos
 set(hb,'callback',{@scripts_process, 'open'} );
-set(hb,'tooltipstring',['<html><b>open scripts/function in HELP window</b><br> '...
-    'the script can be copied and modified']);
+set(hb,'tooltipstring',  ['<html><b>view script in HELP window</b><br>'...
+    '<font color=green>shortcut: [v] </font>']);
 set(hb,'foregroundcolor',[0 .5 0],'fontweight','bold');
 %% =======[edit script]========================================
 hb=uicontrol(h2,'style','pushbutton','units','norm','tag','scripts_edit');
@@ -220,8 +256,9 @@ set(hb,'string','edit script');
 % set(hb,'position',[[0.3     0 0.25 0.06]]); %fig-pos
 set(hb,'units','pixels','position',[100 0 100 24]); %pan-pos
 set(hb,'callback',{@scripts_process, 'edit'} );
-set(hb,'tooltipstring',['<html><b>open scripts/function in EDITOR</b><br> '...
-    'the script can be copied and modified']);
+set(hb,'tooltipstring', ['<html><b>open copy of script in the EDITOR</b><br>'...
+    'please costumize the script to your purpose<br>'...
+    '<font color=green>shortcut: [e] </font>']);
 set(hb,'foregroundcolor',[0 0 1],'fontweight','bold');
 
 %% =========[show scripts summary panel]======================================
@@ -231,7 +268,9 @@ set(hb,'string','scripts summary');
 % set(hb,'position',[[0.73 0 0.25 0.06]]); %fig-pos
 set(hb,'units','pixels','position',[200 0 100 24]); %pan-pos
 set(hb,'callback',{@scripts_process, 'scripts_summary'} );
-set(hb,'tooltipstring',['show summary of all scripts']);
+set(hb,'tooltipstring',...
+    ['<html><b>show summary of all scripts</b><br>'...
+    '<font color=green>shortcut: [s] </font>']);
 set(hb,'foregroundcolor',[1 0 .5],'fontweight','bold');
 %% =========[close script panel]======================================
 %%
@@ -645,7 +684,7 @@ elseif strcmp(task,'open')
         '-save script somewhere on your path'
         '-run script'};
    addNote(gcf,'text',msg,'pos',[0.5 .1  .44 .3],'head','Note','mode','single');
-elseif strcmp(task,'editOrigFile')
+elseif strcmp(task,'editOrigFile') || strcmp(task,'openOrigFileDir')
     pw=logindlg('Password','only');
     pw=num2str(pw);
     if strcmp(pw,'1')
@@ -654,7 +693,13 @@ elseif strcmp(task,'editOrigFile')
             cont={'--no scripts ---'} ;
             return
         end
+        if strcmp(task,'editOrigFile')
         edit(file);
+        elseif strcmp(task,'openOrigFileDir')
+          dir_origFile=fileparts(which(file));
+          disp(['[orig. scripts-folder]: ' dir_origFile]);
+          explorer(dir_origFile);
+        end
     end
 elseif strcmp(task,'edit')
     file=hn.String{hn.Value};
@@ -711,21 +756,23 @@ elseif arg==3
     set(gcf,'units',uni_f);
 end
 
-
+% ==============================================
+%%   key's
+% ===============================================
 function keys(e,e2)
 
-if strcmp(e2.Modifier,'control')==1
+if strcmp(e2.Modifier,'control')==1 %% using modifiers
     if strcmp(e2.Key,'l')
         figresizekeys(2);
     elseif strcmp(e2.Key,'n')
         figresizekeys(1);
     elseif strcmp(e2.Key,'e')
-        disp('editint original file!');
+        disp('edit original file!');
         scripts_process([],[],'editOrigFile');
     elseif strcmp(e2.Character,'+')==1 || strcmp(e2.Character,'-')==1
         hl=findobj(gcf,'tag','scripts_lbscriptName');
         fs=get(hl,'fontsize');
-        if strcmp(e2.Character,'+')==1;
+        if strcmp(e2.Character,'+')==1
             set(hl,'fontsize',fs+1);
         elseif strcmp(e2.Character,'-')==1;
             if fs>1
@@ -734,7 +781,7 @@ if strcmp(e2.Modifier,'control')==1
         end
         
     end
-else
+else    %% normal mode
      if strcmp(e2.Key,'2')
        figresizekeys(2);
     elseif strcmp(e2.Key,'1') 
@@ -744,13 +791,16 @@ else
     elseif strcmp(e2.Key,'e')
         disp('edit original file!');
         scripts_process([],[],'edit');
+     elseif strcmp(e2.Key,'s')  
+         scripts_process([],[],'scripts_summary');
+     elseif strcmp(e2.Key,'v')
+         scripts_process([],[],'open');
     end
 end
 
-
-
-
-
+% ==============================================
+%%   key's java-listbox
+% ===============================================
 function keys_pan(e,e2,pan2)
 
 if e2.getModifiers ==2   %[1]shift ,[2]ctrl, [8]alt
@@ -760,8 +810,6 @@ if e2.getModifiers ==2   %[1]shift ,[2]ctrl, [8]alt
         e2.getKeyChar
         e2.getKeyText(e2.getKeyCode())
     end
-    
-    
     if strcmp(e2.getKeyChar,'+')
         %'++'
         u=get(pan2,'userdata');
@@ -790,6 +838,10 @@ else
        figresizekeys(3);
       elseif strcmp(e2.getKeyText(e2.getKeyCode()),'E')
         scripts_process([],[],'edit');
+      elseif strcmp(e2.getKeyText(e2.getKeyCode()),'S')
+          scripts_process([],[],'scripts_summary');
+      elseif strcmp(e2.getKeyText(e2.getKeyCode()),'V')  
+          scripts_process([],[],'open');
     end 
 end
 
