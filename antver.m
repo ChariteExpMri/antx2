@@ -684,7 +684,7 @@
 % 
 % #ba 04 Jun 2022 (00:38:38)
 % #k [ant.m] #n was modified
-% - ANT-menu with optional tooltips for menu-items. Enable/disable tooltips via ANT-menu/INFO/"show menu items"
+% - ANT-menu with optional tooltips for menu-items. Enable/disable tooltips via ANT-menu: INFO/"show menu items"
 % -local ant-setttings enabled, this file can be stored in Matlab's userpath and will override default parameter
 % 
 % 
