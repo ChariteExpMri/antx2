@@ -67,7 +67,40 @@
 % #k
 % #k
 
-function ant
+function ant(varargin)
+
+% ==============================================
+%%   inputs
+% ===============================================
+
+if nargin>0
+    if mod(nargin,2)==1
+        p0=cell2struct(varargin(3:2:end),varargin(2:2:end),2);
+        p0.cmd=varargin{1};
+    else
+        p0=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+        p0.cmd=varargin{1};
+    end
+    
+    if strcmp(p0.cmd,'menubar_setTooltips')  % set tooltips (call: antcb('load_guiparameter'))
+        menubar_setTooltips(p0.value);
+    elseif strcmp(p0.cmd,'showfunctionhelp') % set functionHelp (call: antcb('load_guiparameter'))
+        showfunctionhelp();
+    end
+%     if strcmp(p0.cmd,'showcmd') 
+%         showcmd(arg)
+%     end
+    
+    
+    return
+end
+
+
+
+% ==============================================
+%%   
+% ===============================================
+
 
 % %tags:
 % lb1: functions
@@ -321,19 +354,26 @@ h = uicontrol('style','pushbutton','units','normalized','position',[.9 .55 .05 .
     'callback',@showCommandHistory);
 
 
-%% RADIOS
+%% RADIO-Help
 h = uicontrol('style','radiobutton','units','normalized','position',[.94 .61 .08 .05],'tag','radioshowhelp',...
     'string','hlp','fontsize',5,'fontweight','normal',...
     'callback',@radioshowhelp,'backgroundcolor',[1 1 1],...
     'tooltip',['show/hide help window when hovering over menu functions' char(10) ...
     '..press [esc]-button to close main menu when hovering over specif function ' char(10) ....
     '  this will preserve the information/help of the last mouse-over function in the help window ']);
+% ---contexmenu
+c = uicontextmenu;
+plotline.UIContextMenu = c;
+m1 = uimenu(c,'Label','enable menu tooltips','Callback',{@radioshowhelp_context,'enableTooltips'});%,...
+%     'tooltip',['enable tooltips when hovering over menu items' ]
+set(h,'UIContextMenu',c);
 
 
+%% RADIO-HTML progress-report
 h = uicontrol('style','radiobutton','units','normalized','position',[.94 .65 .08 .05],'tag','radioshowHTMLprogress',...
     'string','PR','fontsize',5,'fontweight','normal','tooltip','show/hide HTML progress report for initialization,coregistration, segmentation & warping',...
     'callback',@radioshowHTMLprogress,'backgroundcolor',[1 1 1],'value',1);
-
+% ---contexmenu
 c = uicontextmenu;
 plotline.UIContextMenu = c;
 m1 = uimenu(c,'Label','show HTML summary now','Callback',@showHTMLsummary);
@@ -387,44 +427,6 @@ set(h,'UIContextMenu',cmm);
 
 
 %% ===============================================
-
-
-
-% disp('try; evalc(''system(''TASKKILL /F /IM explorer.exe & explorer'')''); end;')
-
-% M<sub>i</sub>(f1,f2...fn)
-
-% set(gcf, 'HandleVisibility', 'off');
-
-%
-% %% TOOLTIP functions
-% lb3=findobj(findobj(0,'tag','ant'),'tag','lb1');
-% hfun_jScrollPane = java(findjobj(hfun));
-% hfun_jListbox     = hfun_jScrollPane.getViewport.getView;
-% tooltipscell=funtb(:,3);
-% set(hfun_jListbox, 'MouseMovedCallback', {@tooltip_lb1,hfun, tooltipscell });
-%
-% cmenuCases ;%CONTEXTMENU CASES
-%
-%
-% %% FUNCTIONS-listbox: Mouse-movement callback-->tooltip
-% function tooltip_lb1(jListbox, jEventData, hListbox,tooltipscell)
-% mousePos = java.awt.Point(jEventData.getX, jEventData.getY);
-% % hoverIndex = jListbox.locationToIndex(mousePos) + 1;
-% hoverIndex=get(mousePos,'Y');
-% fs=get(hListbox,'fontsize');
-% [hoverIndex   hoverIndex/fs];
-% est=fs*2;
-% re=rem(hoverIndex,est);
-% va=((hoverIndex-re)/est)+1;
-% %    t=[hoverIndex    va+1   ]
-% if     va>0 && va<=length(tooltipscell)
-%     listValues = get(hListbox,'string');
-%     hoverValue = listValues{va};
-%     msgStr = sprintf('<html>   <b>%s</b> %s </html>', hoverValue, tooltipscell{va} );
-%
-%     set(hListbox, 'Tooltip',msgStr);
-% end
 drawnow;
 cmenuCases ;%CONTEXTMENU CASES
 us.LastActivatedListbox=[]; us.testvar='###';
@@ -497,29 +499,32 @@ set(findobj(gcf,'tag','lb3') ,'KeyPressFcn',@antkeys)
 % ==============================================
 %%   settings from antsettings
 % ===============================================
+antcb('load_guiparameter');
 
-settings=antsettings;
-
-hradio    =findobj(findobj(0,'tag','ant'),'style','radio');
-set(hradio,'fontsize',settings.fontsize-2);
-
-hradiohelp=findobj(findobj(0,'tag','ant'),'tag','radioshowhelp');
-set(hradiohelp,'value', settings.show_instant_help);
-if get(hradiohelp,'value')==1
-    drawnow;
-    showfunctionhelp
-end
-
-hprogress=findobj(gcf,'tag','radioshowHTMLprogress'); %HTML progress
-if ~isempty(hprogress)
-    try; set(hprogress,'value',settings.show_HTMLprogressReport); end
-end
-
-if settings.show_intro==1
-    try
-        antintro
-    end
-end
+% settings=antsettings;
+% hf=findobj(0,'tag','ant');
+% hradio    =findobj(hf,'style','radio');
+% set(hradio,'fontsize',settings.fontsize-2);
+% 
+% hradiohelp=findobj(hf,'tag','radioshowhelp');
+% set(hradiohelp,'value', settings.show_instant_help);
+% if get(hradiohelp,'value')==1
+%     drawnow;
+%     showfunctionhelp
+% end
+% 
+% hprogress=findobj(hf,'tag','radioshowHTMLprogress'); %HTML progress
+% if ~isempty(hprogress)
+%     try; set(hprogress,'value',settings.show_HTMLprogressReport); end
+% end
+% 
+% if settings.show_intro==1
+%     try
+%         antintro
+%     end
+% end
+% % set tooltips
+% menubar_setTooltips(settings.enable_menutooltips);
 
 %% ========0add resize button for animal-LB]=======
 try
@@ -1096,28 +1101,61 @@ end
 %% menubar
 function setMenubar
 f=findobj(gcf,'tag','ant');
-%% FIRST ROW
+% ==============================================
+%%   ant-menu
+% ===============================================
+
+%    'userdata',[HSTART '#' HEND '#']);
+
+%% ==========[menu:MAIN]=====================================
+HSTART='<html><b>';
+HEND  ='</b><br>';
+
 mh = uimenu(f,'Label','Main');
-mh2 = uimenu(mh,'Label',' New Project',                          'Callback',{@menubarCB, 'xnewproject' },      'userdata',sprintf('create a new project for a new study ')       );
-mh2 = uimenu(mh,'Label',' Create Study Templates',               'Callback',{@menubarCB, 'copytemplates' },    'userdata',sprintf('...calling function.. ')  );
+mh2 = uimenu(mh,'Label',' New Project',                          'Callback',{@menubarCB, 'xnewproject' },    ...
+    'userdata',[HSTART 'create a new project for a new study ' HEND ' define processing parameter ']       );
+mh2 = uimenu(mh,'Label',' Create Study Templates',               'Callback',{@menubarCB, 'copytemplates' },  ...
+    'userdata',[HSTART 'copying template to study-templates folder ' HEND ' ...using defined voxel-size ']);
+mh2 = uimenu(mh,'Label',' Import Bruker data',                   'Callback',{@menubarCB, 'brukerImport'},'separator','on',    ...
+     'userdata',[HSTART 'import Bruker raw-date' HEND ' ..from various MR-sequences (2dseq/reco)']);
+mh2 = uimenu(mh,'Label',' Import DATA',                          'Callback',{@menubarCB, 'dataimport'  },  ...
+    'userdata',[HSTART 'import NIFTI-files from other external folder(s)' HEND '...to animal-folders of the study']);
+    mh2 = uimenu(mh,'Label',' Import NIFTI via header-replacement',  'Callback',{@menubarCB, 'dataimport2' },  ...
+         'userdata',[HSTART 'replace header of NIFTI-files ' HEND '..using the header of a reference-file']);
+mh2 = uimenu(mh,'Label',' Import ANALYZE (*.obj) files (masks)', 'Callback',{@menubarCB, 'importAnalyzmask' }, ...
+    'userdata',[HSTART 'import and convert ANALYZE-files' HEND ' (*.obj) files to NIFTI-files']);
+mh2 = uimenu(mh,'Label',' Import DATA via "Dir-to-Dir" correspondence',   'Callback',{@menubarCB, 'dataimportdir2dir'},    ...
+     'userdata',[HSTART 'import any data from external "name"-matching directories' HEND '..to internal mouse directories' HEND 'animal-names (folders) must match']);
+%     'userdata',sprintf('import any data from external "name"-matching directories to internal mouse directories \n prerequisite:  matching directory-name-tag')       );
+mh2 = uimenu(mh,'Label',' Distribute files (files from outside to selected mouse-folders)',   'Callback',{@menubarCB, 'distributefilesx'} , ...
+    'userdata',[HSTART 'import NIFTI-files from external source' HEND '..prerequisite: matching file-name-tag or directory-name-tag']);
+mh2 = uimenu(mh,'Label',' convert dicom to nifti',         'Callback',{@menubarCB, 'xconvertdicom2nifti' },'separator','on',  ...
+     'userdata',[HSTART 'convert DICOM-files to NIFTI-files' ]);
+mh2 = uimenu(mh,'Label',' merge directories',              'Callback',{@menubarCB, 'xmergedirectories' },  ...
+     'userdata',[HSTART 'merge the  contents of pairwise assigned directories' ]);
+mh2 = uimenu(mh,'Label',' export files (from ANT-project)',              'Callback',{@menubarCB, 'export'},'Separator','on', ...
+    'userdata',[HSTART 'EXPORT selected files from selected ANT-folders' HEND '.. an ANT-project must be loaded)']);
+mh2 = uimenu(mh,'Label',' export files (from any folder)',               'Callback',{@menubarCB, 'export_fromanyfolder'},'Separator','off', ...
+     'userdata',[HSTART 'EXPORT selected files from any folders' HEND ' .. no need to load an ANT-project ']);
+mh2 = uimenu(mh,'Label',' quit',                          'Callback',{@menubarCB, 'quit'},'Separator','on',...
+     'userdata',[HSTART ' close ANT-GUI' HEND ' .. same as antcb(''close'');']);
 
-mh2 = uimenu(mh,'Label',' Import Bruker data',                   'Callback',{@menubarCB, 'brukerImport'},      'userdata',sprintf('from various MR-sequences (2dseq/reco)')       ,'Separator','on');
-mh2 = uimenu(mh,'Label',' Import DATA',                          'Callback',{@menubarCB, 'dataimport'  },      'userdata',sprintf('import NIFTI-files from other external folder(s) \n other applications')       );
-mh2 = uimenu(mh,'Label',' Import NIFTI via header-replacement',  'Callback',{@menubarCB, 'dataimport2' },      'userdata',sprintf('replace header of NIFTI-files using the header of a reference-file')       );
-mh2 = uimenu(mh,'Label',' Import ANALYZE (*.obj) files (masks)', 'Callback',{@menubarCB, 'importAnalyzmask' }, 'userdata',sprintf(' ')       );
-mh2 = uimenu(mh,'Label',' Import DATA via "Dir-to-Dir" correspondence',   'Callback',{@menubarCB, 'dataimportdir2dir'},                    'userdata',sprintf('import any data from external "name"-matching directories to internal mouse directories \n prerequisite:  matching directory-name-tag')       );
-mh2 = uimenu(mh,'Label',' Distribute files (files from outside to selected mouse-folders)',   'Callback',{@menubarCB, 'distributefilesx'} , 'userdata',sprintf('import Nifit-files external source \n prerequisite:  matching matching file-name-tag or directory-name-tag ')       );
 
-
-
-mh2 = uimenu(mh,'Label',' convert dicom to nifti',         'Callback',{@menubarCB, 'xconvertdicom2nifti' },    'userdata',sprintf(' convert dicoms to nifti using MRICRON-tool (windows only) '),'Separator','on');
-mh2 = uimenu(mh,'Label',' merge directories',              'Callback',{@menubarCB, 'xmergedirectories' },      'userdata',sprintf(' merge the  contents of pairwise assigned directories  '    ),'Separator','off');
-
-
-mh2 = uimenu(mh,'Label',' export files (from ANT-project)',              'Callback',{@menubarCB, 'export'},'Separator','on',  'userdata',sprintf('EXPORT selected files from selected ANT-folders (ANT-project must be loaded) ')       );
-mh2 = uimenu(mh,'Label',' export files (from any folder)',               'Callback',{@menubarCB, 'export_fromanyfolder'},'Separator','off',  'userdata',sprintf('EXPORT selected files from any folders (ANTproject not needed to be loaded) ')       );
-
-mh2 = uimenu(mh,'Label',' quit',                          'Callback',{@menubarCB, 'quit'},'Separator','on');
+% toolt={};
+% toolt{end+1,1}='make a new project for this study ..specify paths';
+% toolt{end+1,1}='copy templates from reference path to study''s-template-folder';
+% toolt{end+1,1}='--';
+% toolt{end+1,1}='import Bruker-raw data';
+% toolt{end+1,1}='import external files to study''s animal-folders';
+% toolt{end+1,1}='import external NIFTI-files to study''s animal-folders';
+% toolt{end+1,1}='import & convert ANALYZE-files (*.obj)  (masks) to study''s animal-folders';
+% toolt{end+1,1}='Import external DATA from source with identical directories names (animal names)';
+% toolt{end+1,1}='--';
+% toolt{end+1,1}='convert DICOM-files to NIFTI-files';
+% toolt{end+1,1}='merge content of two folders';
+% toolt{end+1,1}='export files to another location..an ANT-project needs to be loaded';
+% toolt{end+1,1}='export files to another location..this works without loading an ANT-project';
+% toolt{end+1,1}='close ant-GUI';
 
 set(get(mh,'children'),'tag','mb');
 hmb=findobj(gcf,'tag','mb');
@@ -1126,123 +1164,174 @@ for i=1:length(cb)
     set(hmb(1),'buttondownfcn',cb{i});
 end
 
-%% 2nd ROW
+
+%% ==========[menu:TOOLS]=====================================
+%    'userdata',[HSTART '#' HEND '#']);
 mh = uimenu(f,'Label','Tools');
-mh2 = uimenu(mh,'Label',' coregister images',                                              'Callback',{@menubarCB, 'coregister'},         'userdata', '');
-mh2 = uimenu(mh,'Label',' register exvio to invivo',                                       'Callback',{@menubarCB, 'registerexvivo'},      'userdata', '');
-mh2 = uimenu(mh,'Label',' register CT image',                                              'Callback',{@menubarCB, 'registerCT'},          'userdata', '');
-mh2 = uimenu(mh,'Label',' register images manually',                                       'Callback',{@menubarCB, 'registermanually'},    'userdata', '');
+mh2 = uimenu(mh,'Label',' coregister images',                                              'Callback',{@menubarCB, 'coregister'},      ...
+    'userdata',[HSTART 'coregister images' HEND '.. a source image is registered to a target image' HEND '..other images can be applied']);
+mh2 = uimenu(mh,'Label',' register exvivo to invivo',                                       'Callback',{@menubarCB, 'registerexvivo'},   ...
+    'userdata',[HSTART 'an exvivo skull-stripped image is registered to an invivo image']);
+mh2 = uimenu(mh,'Label',' register CT image',                                              'Callback',{@menubarCB, 'registerCT'},      ...
+    'userdata',[HSTART ' register an CT-image to t2w-image ("t2.nii")']);
+mh2 = uimenu(mh,'Label',' register images manually',                                       'Callback',{@menubarCB, 'registermanually'},   ...
+    'userdata',[HSTART 'an image is registered to another image manually' HEND '..via GUI']);
+mh2 = uimenu(mh,'Label',' realign images (SPM, monomodal)'       , 'Callback',{@menubarCB, 'realignImages'}       ,'Separator','on'   ,...
+    'userdata',[HSTART 'use SPM to realign images' HEND  '...monomodal approach']);
+mh2 = uimenu(mh,'Label',' realign images (ELASTIX, multimodal)'  , 'Callback',{@menubarCB, 'realignImagesMultimodal'},...
+     'userdata',[HSTART 'use ELATSIX to realign images' HEND  '...multimpodal approach']);
 
-mh2 = uimenu(mh,'Label',' realign images (SPM, monomodal)'       , 'Callback',{@menubarCB, 'realignImages'}          ,'userdata','','Separator','on'  );
-mh2 = uimenu(mh,'Label',' realign images (ELASTIX, multimodal)'  , 'Callback',{@menubarCB, 'realignImagesMultimodal'},'userdata','','Separator','off'  );
+mh2 = uimenu(mh,'Label',' manipulate files (rename/copy/delete/extract/expand)',       'Callback',{@menubarCB, 'renamefile_simple'},'Separator','on',...
+     'userdata',[HSTART 'to rename/copy/delete/extract or expand NIFTI-FILES' HEND ' ..or make simple file-operations (masking/thresholding/change voxel-size)']);
+mh2 = uimenu(mh,'Label',' delete files',                                                   'Callback',{@menubarCB, 'deletefiles'},...
+    'userdata',[HSTART 'delete selected files' ]);
+mh2 = uimenu(mh,'Label',' manipulate header',                                              'Callback',{@menubarCB, 'manipulateheader'},'Separator','on',...
+     'userdata',[HSTART ' change the header of an image' HEND '...for instance by using a ref-image' HEND '..apply to other images']);
+mh2 = uimenu(mh,'Label',' replace header (older version)',                                 'Callback',{@menubarCB, 'replaceheader'},...
+     'userdata',[HSTART ' older version to replace the header of an image']);
+
+mh2 = uimenu(mh,'Label',' image calculator',                                               'Callback',{@menubarCB, 'calc0'},'Separator','on',...
+    'userdata',[HSTART 'make image calculations' HEND '..image-hresholding/masking/addition etc.' HEND '..create new image'  ]);
+mh2 = uimenu(mh,'Label',' Mask-Generator (GUI)',                                           'Callback',{@menubarCB, 'maskgenerate'},'Separator','on',...
+    'userdata',[HSTART 'generate mask(s)' HEND ' from NIFTI-file ("ANO.nii")']);
+mh2 = uimenu(mh,'Label',' make mask from Excelfile',                                       'Callback',{@menubarCB, 'maskgenerateFromExcelfile'},...
+    'userdata',[HSTART 'generate mask(s)' HEND ' from modified Excelfile of "ANO.xlsx"'  HEND '...see help of function']);
+mh2 = uimenu(mh,'Label',' draw mask',                                            'Callback',{@menubarCB, 'drawmask'},'Separator','on',...
+     'userdata',[HSTART 'manually draw a mask' ]);
+mh2 = uimenu(mh,'Label',' [1a] segment tube',                                     'Callback',{@menubarCB, 'segmenttube'},'Separator','on',...
+    'userdata',[HSTART 'automatic-mode: if an image contains several animals' HEND '..obtain masks for each animal ']);
+mh2 = uimenu(mh,'Label',' [1b] segment tube manually',                            'Callback',{@menubarCB, 'segmenttubeManu'},...
+    'userdata',[HSTART 'manual-mode: if an image contains several animals' HEND '..obtain masks for each animal ']);
+mh2 = uimenu(mh,'Label',' [2] split tube data',                                   'Callback',{@menubarCB, 'splittubedata'},...
+     'userdata',[HSTART 'if an image contains several animals' HEND '..split image into animal-specific images based on masks from segment-tube ']);
 
 
-% mh2 = uimenu(mh,'Label','<html><font color="black"> coregister slices 2D <font color="red"><i> *NEW*',                                           'Callback',{@menubarCB, 'coregister2D'});
-mh2 = uimenu(mh,'Label',' manipulate files (rename/copy/delete/extract/expand)',       'Callback',{@menubarCB, 'renamefile_simple'},'userdata','with this function, it is easy to rename/copy/delete/extract or expand NIFTI-FILES(VOLUMES)','Separator','on');
-mh2 = uimenu(mh,'Label',' delete files',                                                   'Callback',{@menubarCB, 'deletefiles'},'Separator','off');
-% mh2 = uimenu(mh,'Label',' copy and rename files',                                          'Callback',{@menubarCB, 'renamefile'});
-% mh2 = uimenu(mh,'Label',' copy/rename/expand files',                                       'Callback',{@menubarCB, 'renamefile2'});
-mh2 = uimenu(mh,'Label',' manipulate header',                                              'Callback',{@menubarCB, 'manipulateheader'},'Separator','on'  );
-mh2 = uimenu(mh,'Label',' replace header (older version)',                                 'Callback',{@menubarCB, 'replaceheader'},'Separator','off');
 
 
-
-
-mh2 = uimenu(mh,'Label',' image calculator',                                               'Callback',{@menubarCB, 'calc0'},'Separator','on');
-mh2 = uimenu(mh,'Label',' Mask-Generator (GUI)',                                           'Callback',{@menubarCB, 'maskgenerate'},'Separator','on');
-mh2 = uimenu(mh,'Label',' make mask from Excelfile',                                       'Callback',{@menubarCB, 'maskgenerateFromExcelfile'},'Separator','off');
-
-mh2 = uimenu(mh,'Label',' draw mask',                                            'Callback',{@menubarCB, 'drawmask'},'Separator','on');
-
-mh2 = uimenu(mh,'Label',' [1a] segment tube',                                     'Callback',{@menubarCB, 'segmenttube'},'Separator','on');
-mh2 = uimenu(mh,'Label',' [1b] segment tube manually',                            'Callback',{@menubarCB, 'segmenttubeManu'},'Separator','off');
-mh2 = uimenu(mh,'Label',' [2] split tube data',                                   'Callback',{@menubarCB, 'splittubedata'},'Separator','off');
-
-
-
+%% ==========[menu:2D]=====================================
 mh = uimenu(f,'Label','2D');
-mh2 = uimenu(mh,'Label','<html><font color="black"> extract slice        <font color="red"><i> *',                                           'Callback',{@menubarCB, 'extractslice'});
-mh2 = uimenu(mh,'Label','<html><font color="black"> coregister slices 2D <font color="red"><i> *',                                           'Callback',{@menubarCB, 'coregister2D'});
-mh2 = uimenu(mh,'Label','<html><font color="black"> apply 2d-registration to other images <font color="red"><i> *',                                           'Callback',{@menubarCB, 'coregister2Dapply'});
+mh2 = uimenu(mh,'Label','<html><font color="black"> extract slice        <font color="red"><i> *',                      'Callback',{@menubarCB, 'extractslice'},...
+    'userdata',[HSTART 'extract single slice from 3D/4D-volume' HEND '#']);
+mh2 = uimenu(mh,'Label','<html><font color="black"> coregister slices 2D <font color="red"><i> *',                      'Callback',{@menubarCB, 'coregister2D'},...
+    'userdata',[HSTART 'slicewise 2d-coregistration']);
+mh2 = uimenu(mh,'Label','<html><font color="black"> apply 2d-registration to other images <font color="red"><i> *',     'Callback',{@menubarCB, 'coregister2Dapply'},...
+    'userdata',[HSTART 'if other images needs to be registered as well' HEND '..apply this function']);
 
 
-
-% ---------------------
+%    'userdata',[HSTART '#' HEND '#']);
+%% ==========[menu:GRAPHICS]=====================================
 mh = uimenu(f,'Label','Graphics');
-mh2 = uimenu(mh,'Label',' show cases-file-matrix',                                         'Callback',{@menubarCB, 'casefilematrix'},'Separator','on');
-mh2 = uimenu(mh,'Label',' GUI overlay image',                                              'Callback',{@menubarCB, 'overlayimageGui'});
-mh2 = uimenu(mh,'Label',' GUI overlay image2',                                             'Callback',{@menubarCB, 'overlayimageGui2'});
-mh2 = uimenu(mh,'Label',' fastviewer',                                                     'Callback',{@menubarCB, 'fastviewer'});
+mh2 = uimenu(mh,'Label',' show cases-file-matrix',                                         'Callback',{@menubarCB, 'casefilematrix'},'Separator','on',...
+    'userdata',[HSTART 'case(animal)-file-matrix' HEND 'make table of animals x files' HEND '...usefull to check the existence of files'  HEND '..older version']);
+mh2 = uimenu(mh,'Label',' GUI overlay image',                                              'Callback',{@menubarCB, 'overlayimageGui'},...
+     'userdata',[HSTART 'overlay images' HEND 'old version...needs to be modified']);
+mh2 = uimenu(mh,'Label',' GUI overlay image2',                                             'Callback',{@menubarCB, 'overlayimageGui2'},...
+         'userdata',[HSTART 'overlay images' HEND 'really-old version...needs to be modified']);
+mh2 = uimenu(mh,'Label',' fastviewer',                                                     'Callback',{@menubarCB, 'fastviewer'},...
+        'userdata',[HSTART 'overlay images' HEND 'old version...needs to be modified']);
+mh2 = uimenu(mh,'Label',' Atlas viewer',                                                   'Callback',{@menubarCB, 'xatlasviewer'},'Separator','on',...
+     'userdata',[HSTART 'display an atlas (ANO.nii)' HEND '...inspect regions']);
+mh2 = uimenu(mh,'Label',' 3D-volume',                                                      'Callback',{@menubarCB, 'x3dvolume'},....
+     'userdata',[HSTART 'display volume in 3D ' HEND '...use to visualize: Regions, masks, incidenceMapsDTI, DTI-connections']);
 
-mh2 = uimenu(mh,'Label',' Atlas viewer',                                                   'Callback',{@menubarCB, 'xatlasviewer'},'Separator','on');
-mh2 = uimenu(mh,'Label',' 3D-volume',                                                      'Callback',{@menubarCB, 'x3dvolume'});
-
-
-mh2 = uimenu(mh,'Label','<html>check 4D-volume (realignment)</html>',        'Callback',{@menubarCB,  'call_show4d'},'Separator','on');
-mh2 = uimenu(mh,'Label','<html><b>generate HTML-file with overlays</html>',     'Callback',{@menubarCB,  'call_xcheckreghtml'},'Separator','on');
-
-% ---------------------
+mh2 = uimenu(mh,'Label','<html>check 4D-volume (realignment)</html>',        'Callback',{@menubarCB,  'call_show4d'},'Separator','on',...
+ 'userdata',[HSTART 'inspect 4D volume' ]);
+mh2 = uimenu(mh,'Label','<html><b>generate HTML-file with overlays</html>',     'Callback',{@menubarCB,  'call_xcheckreghtml'},'Separator','on',...
+ 'userdata',[HSTART 'use this function to do QA and sanity-checks', HEND ' HTML-files will be stored in the "checks"-folder' ]);
+%% ==========[menu:STUDY]=====================================
 mh = uimenu(f,'Label','Study');
-mh2 = uimenu(mh,'Label',' open studie''s configfile folder',                              'Callback',{@menubarCB, 'folderConfigfile'},'Separator','on');
-mh2 = uimenu(mh,'Label',' open studie''s template folder',                                'Callback',{@menubarCB, 'folderTemplate'});
-mh2 = uimenu(mh,'Label',' preselect mouse-folder',                                        'Callback',{@menubarCB, 'preselectfolder'},'Separator','on', 'userdata','->preselect mouse/mousefolder by id/name/containing nifti-files (or file combinationa) or textfile');
-% ---------------------
+mh2 = uimenu(mh,'Label',' open study folder',                              'Callback',{@menubarCB, 'folderConfigfile'},'Separator','on',...
+    'userdata',[HSTART 'open study folder in explorer ' ]);
+mh2 = uimenu(mh,'Label',' open study template folder',                                'Callback',{@menubarCB, 'folderTemplate'},...
+    'userdata',[HSTART 'open study template folder in explorer ' ]);
+mh2 = uimenu(mh,'Label',' preselect animal-folders',                                        'Callback',{@menubarCB, 'preselectfolder'},'Separator','on',...
+    'userdata',[HSTART 'preselect animal-folders' HEND '..via animal-index or-name, NIFTI-file or via text-file']);
 
-%% 3nd row
+%% ==========[menu:STATISTIC]=====================================
 mh = uimenu(f,'Label','Statistic');
-mh2 = uimenu(mh,'Label',' volume-based two-sample ttest (independent groups)',                      'Callback',{@menubarCB, 'stat_2sampleTtest'});
-mh2 = uimenu(mh,'Label',' label-based two-sample ttest (independent groups)',                      'Callback',{@menubarCB, 'stat_anatomlabels'});
+% mh2 = uimenu(mh,'Label','<html><font color=rgb(150,150,150)> voxelwise two-sample t-test (independent groups)',                      'Callback',{@menubarCB, 'stat_2sampleTtest'},...
+%     'userdata',[HSTART 'perform voxelwise two-sample t-test' HEND '..this is older.. ' HEND '...please use "label-based statistic"']);
+% 
+% 
+% mh2 = uimenu(mh,'Label',' label-based two-sample ttest (independent groups)',                      'Callback',{@menubarCB, 'stat_anatomlabels'});
 
-mh2 = uimenu(mh,'Label',' obtain parameter from masks',                                             'Callback',{@menubarCB, 'getparamterByMask'},'separator','on');
-mh2 = uimenu(mh,'Label',' label-based statistic',                                                  'Callback',{@menubarCB, 'xstatlabels0'},'separator','off');
+mh2 = uimenu(mh,'Label',' obtain parameter from masks',                                             'Callback',{@menubarCB, 'getparamterByMask'},'separator','on',...
+'userdata',[HSTART 'extract basic parameters of an image using a mask' HEND '..this produces an excelfile']);
+mh2 = uimenu(mh,'Label',' label-based statistic',                                                  'Callback',{@menubarCB, 'xstatlabels0'},'separator','off',...
+'userdata',[HSTART 'perform regionwise statistic ' HEND '..for an image across animals']);
 
-mh2 = uimenu(mh,'Label',' SPM-statistic',                                                          'Callback',{@menubarCB, 'spm_statistic'},'separator','on');
+mh2 = uimenu(mh,'Label',' SPM-statistic',                                                          'Callback',{@menubarCB, 'spm_statistic'},'separator','on',...
+'userdata',[HSTART 'perform voxelwise statistic ' HEND '..for an image across animals']);
 
-mh2 = uimenu(mh,'Label',' DTI-prep for mrtrix',                    'Callback',{@menubarCB, 'dti_prep_mrtrix'},'separator','on');
-mh2 = uimenu(mh,'Label',' DTI-statistic',                          'Callback',{@menubarCB, 'dti_statistic'},'separator','off');
+mh2 = uimenu(mh,'Label',' DTI-prep for mrtrix',                    'Callback',{@menubarCB, 'dti_prep_mrtrix'},'separator','on',...
+    'userdata',[HSTART 'prepare data for DTI-processing ' HEND '..using MRtrix-pipeline']);
 
-% ---------------------
+mh2 = uimenu(mh,'Label',' DTI-statistic',                          'Callback',{@menubarCB, 'dti_statistic'},'separator','off',...
+        'userdata',[HSTART 'perform statistic for DTI-fibre-tracts' HEND '..MRtrix-pipeline has to be run before...' ]);
 
-%% 4th row
+
+%% ==========[menu:SNIPS]=====================================
 mh = uimenu(f,'Label','Snips');
 % mh2 = uimenu(mh,'Label',' flatten bruker Data path for dataImport',                      'Callback',{@menubarCB, 'flattenBrukerdatapath'});
 % mh2 = uimenu(mh,'Label',' generate Jacobian Determinant',                                'Callback',{@menubarCB, 'generateJacobian'});
 
-mh2 = uimenu(mh,'Label','<html><font color="blue">scripts collection',                                  'Callback',{@menubarCB, 'scripts_call'});
+mh2 = uimenu(mh,'Label','<html><font color="blue">scripts collection',                                  'Callback',{@menubarCB, 'scripts_call'},...
+    'userdata',[HSTART 'show collection of scripts' HEND ' scripts can be modified and applied']);
 
-mh2 = uimenu(mh,'Label','get corrected lesion volume',                                  'Callback',{@menubarCB, 'getlesionvolume'});
-mh2 = uimenu(mh,'Label','create Maps (incidenceMaps/MeanImage etc)',                                           'Callback',{@menubarCB, 'makeMaps'});
+mh2 = uimenu(mh,'Label','get corrected lesion volume',                                  'Callback',{@menubarCB, 'getlesionvolume'},...
+ 'userdata',[HSTART 'obtain corrected lesion volume' HEND '..the output is an Excel-file']);
+mh2 = uimenu(mh,'Label','create Maps (incidenceMaps/MeanImage etc)',                                           'Callback',{@menubarCB, 'makeMaps'},...
+     'userdata',[HSTART 'function to create aggregated maps across animals' HEND '..create: Incidence-maps, mean/median-image']);
 
-mh2 = uimenu(mh,'Label','convert image to SNR-image',                                           'Callback',{@menubarCB, 'convert2SNRimage'});
+
+mh2 = uimenu(mh,'Label','convert image to SNR-image',                                           'Callback',{@menubarCB, 'convert2SNRimage'},...
+    'userdata',[HSTART 'calculate an SNR-image']);
 
 % mh2 = uimenu(mh,'Label',' DEBUG-functions'                                          );
 % mh3 = uimenu(mh2,'Label',' check PATHS (project/study/data)',          'Callback',{@menubarCB, 'makeIncidenceMaps'});
 % mh2 = uimenu(mh,'Label',' generate ANO.nii in pseudocolors',    'Callback',{@menubarCB, 'makeANOpseudocolors'});
-
-%% ==========[extras row]=====================================
+%  'userdata',[HSTART '#' HEND '#']);
+%% ==========[menu:EXTRAS]=====================================
 mh = uimenu(f,'Label','Extras');
-mh2 = uimenu(mh,'Label','notes',                                                        'Callback',{@menubarCB, 'notes'});
+mh2 = uimenu(mh,'Label','notes',                                                        'Callback',{@menubarCB, 'notes'},...
+     'userdata',[HSTART 'make a study-node' HEND '...save interesting/important notes in a file stored in the study-directory']);
+mh2 = uimenu(mh,'Label','<html><b>documentations (docs)',                                        'Callback',{@menubarCB, 'docs'},...
+     'userdata',[HSTART 'show documentation-folder' HEND '...this folder contains tutuorials']);
 
-mh2 = uimenu(mh,'Label','documentations (docs)',                                        'Callback',{@menubarCB, 'docs'});
+mh2 = uimenu(mh,'Label','display main functions',                                       'Callback',{@menubarCB, 'dispmainfun'},...
+     'userdata',[HSTART 'show main funtions in the CMD-window']);
+% mh2 = uimenu(mh,'Label','ant-settings',                                                 'Callback',{@menubarCB, 'antsettings'},'separator','on');
 
-mh2 = uimenu(mh,'Label','display main functions',                                       'Callback',{@menubarCB, 'dispmainfun'});
-mh2 = uimenu(mh,'Label','ant-settings',                                                 'Callback',{@menubarCB, 'antsettings'},'separator','on');
-mh2 = uimenu(mh,'Label','version',                                                 'Callback',{@menubarCB, 'version'},'separator','on');
-mh2 = uimenu(mh,'Label','contact',                                                 'Callback',{@menubarCB, 'contact'});
-% mh2 = uimenu(mh,'Label','troubleshoot',                                            'Callback',{@menubarCB, 'troubleshoot'});
+
+mh2 = uimenu(mh,'Label','<html><font color=rgb(150,150,0)>version',                                                 'Callback',{@menubarCB, 'version'},'separator','on',...
+    'userdata',[HSTART 'shows the ANTx2-version and latest changes']);
+mh2 = uimenu(mh,'Label','<html><font color=rgb(150,150,0)>contact',                                                 'Callback',{@menubarCB, 'contact'},...
+        'userdata',[HSTART '...how to contact us']);
+
 
 mh2   = uimenu(mh,'Label','troubleshoot' );
-msub1 = uimenu(mh2,'Label','check ELASTIX installation',                          'Callback',{@menubarCB, 'check_ELASTIX_installation'});
-msub1 = uimenu(mh2,'Label','check path-names (project/datasets/ANTX-TBX)',         'Callback',{@menubarCB, 'check_pathnames'});
+msub1 = uimenu(mh2,'Label','check ELASTIX installation',                           'Callback',{@menubarCB, 'check_ELASTIX_installation'},...
+    'userdata',[HSTART 'check if Elastix is installed on the machine' ]);
+msub1 = uimenu(mh2,'Label','check path-names (project/datasets/ANTX-TBX)',         'Callback',{@menubarCB, 'check_pathnames'},...
+    'userdata',[HSTART 'check if name & paths of the study and animal-names is fine for processing']);
 
-mh2 = uimenu(mh,'Label','<html><font color="blue">visit ANTx2 repository (Github)',              'Callback',{@menubarCB, 'visitGITHUB'},'separator','on');
-mh2 = uimenu(mh,'Label','<html><font color="blue">visit ANTx2 Tutorials (Github-Pages)',         'Callback',{@menubarCB, 'visitGITHUBpages'},'separator','off');
-mh2 = uimenu(mh,'Label','<html><font color="green">get templates from googledrive',               'Callback',{@menubarCB, 'openGdrive'},'separator','off');
-mh2 = uimenu(mh,'Label','<html><font color="green">download templates',                           'Callback',{@menubarCB, 'donwloadTemplates'},'separator','off');
+mh2 = uimenu(mh,'Label','<html><font color="blue">visit ANTx2 repository (Github)',              'Callback',{@menubarCB, 'visitGITHUB'},'separator','on',...
+    'userdata',[HSTART 'go to the ANTx2-Github repository']);
+mh2 = uimenu(mh,'Label','<html><font color="blue">visit ANTx2 Tutorials (Github-Pages)',         'Callback',{@menubarCB, 'visitGITHUBpages'},'separator','off',...
+     'userdata',[HSTART 'show the ANTx2 Tutorials (Github-Pages)']);
+mh2 = uimenu(mh,'Label','<html><font color="green">get templates from googledrive',               'Callback',{@menubarCB, 'openGdrive'},'separator','off',...
+    'userdata',[HSTART 'download an animal-template from googledrive' HEND '..google-drive will be opend in browser' HEND 'you than have to select and download a template manually']);
+mh2 = uimenu(mh,'Label','<html><font color="green">download templates',                           'Callback',{@menubarCB, 'donwloadTemplates'},'separator','off',...
+    'userdata',[HSTART 'download an animal-template from googledrive' HEND ...
+    ' ..more convenient way <font color=red>...but might not work in your department']);
+mh2 = uimenu(mh,'Label','<html><b><font color="fuchsia">check for updates (Github)',                    'Callback',{@menubarCB, 'checkUpdateGithub'},'separator','on',...
+    'userdata',[HSTART 'check for latest toolbox-updates via GUI' HEND ... 
+    'alternatives:' HEND ... 
+    '(1) hit "download"*-Button from the ANT-window (*"latest updates from Github)' HEND ... 
+    '(2) type: "updateantx(2)"']);
 
-mh2 = uimenu(mh,'Label','<html><b><font color="fuchsia">check for updates (Github)',                    'Callback',{@menubarCB, 'checkUpdateGithub'},'separator','on');
-
-%% ==========[info row]=====================================
+% <html><font color=rgb(150,150,150)>
+%% ==========[menu:INFO]=====================================
 mh = uimenu(f,'Label','Info');
 
 if ispc==1
@@ -1259,7 +1348,25 @@ mh2 = uimenu(mh,'Label',['<html><font color=green><u><b>*** Menu info ***</u></b
     [html_a '<b>[shift+left]</b> - show function help' html_e '<br>']...
     [html_a '<b>[right]</b>    - show function name in commandline'  html_e '<br>']...
     ]);
-mh2 = uimenu(mh,'Label','keyboard shortcuts',                                           'Callback',{@menubarCB, 'keyboard'},'separator','on');
+mh2 = uimenu(mh,'Label','keyboard shortcuts',                                           'Callback',{@menubarCB, 'keyboard'},'separator','on',...
+     'userdata',[HSTART 'show ANT-GUI shortcuts' ]);
+% mh2 = uimenu(mh,'Label','show menu tooltips','Callback',{@radioshowhelp_context,'enableTooltips'},'tag','menu_showMenuTooltips', 'checked','off');
+mh2 = uimenu(mh,'Label','show menu tooltips','Callback',{@menubarCB, 'menu_showMenuTooltips_cb'},...
+    'tag','menu_showMenuTooltips', 'checked','off',...
+   'userdata',[HSTART 'show tooltips when hovering over menu item' html_e 'click again to hide tooltips' ]);
+
+
+
+% --------------local settings------
+mh2 = uimenu(mh,'Label','<html><b>local ant-settings...',...
+         'userdata',[HSTART 'user-defined local settings']);
+mh3 = uimenu(mh2,'Label','create/open local ant-settings',    'Callback',{@menubarCB, 'localantsettings'},'separator','on',...
+    'userdata',[HSTART 'edit "localantsettings.m"-file' HEND '.. if not exist...create file "localantsettings.m"']);
+mh3 = uimenu(mh2,'Label','show path of local ant-settings',    'Callback',{@menubarCB, 'localantsettingsShowPath'},...
+    'userdata',[HSTART '.. show path where "localantsettings.m" is stored ']);
+mh3 = uimenu(mh2,'Label','delete local ant-settings',    'Callback',{@menubarCB, 'localantsettingsDelete'},...
+    'userdata',[HSTART '.. delete file "localantsettings.m"']);
+% ---------------------------------------
 
 
 
@@ -1339,46 +1446,211 @@ javax.swing.MenuSelectionManager.defaultManager().clearSelectedPath();
 
 %     jMenu.doClick; % open the File menu
 
+% ==============================================
+%%   backup
+% ===============================================
 
-%% MAKE TOOLTIP
-if 1
-    for menuIdx = 1:jMenuBar.getComponentCount  %%automatically pull down menu
-        jMenu = jMenuBar.getComponent(menuIdx-1);
-        for j=1:length(jMenu.getMenuComponents   )
-            
-            hj = jMenu.getMenuComponent(j-1);
-            try
-                lab=char(hj.getLabel);
-                drawnow
-                
-                hm= findobj( f, 'label',lab);
-                %  hj.setToolTipText([get(mj,'userdata') 13 ' ###']);
-                %['<html><pre><font face="courier new">' myDataStr2 '</font>']
-                
-                
-                %msg=[get(hm,'userdata') ];
-                %msg= ['<html><pre><font face="courier new">' ...
-                %    '<font color="blue"><b>' lab '</b></font>' 10 msg 10 ];
-                % 'This is a link to <a href="http://www.google.com">Google</a>.'...
-                %   ];
-                %hj.setToolTipText(msg);
-                
-                %make help
-                if ~isempty(strfind(class(hj),'MenuItem'))  %no separators in
-                    try
-                        set(hj,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
-                        % LEFT/RIGHT MOUSE_CLICK
-                        %                         hj=handle(hj, 'CallbackProperties');
-                        set(hj,'MousePressedCallback', {@menuclick_cb,hm,hj});
-                    catch
-                        hj2=handle(hj, 'CallbackProperties');
-                        set(hj2,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
-                    end
-                end
-            end
-        end%j
+% %% MAKE Helpwhen  HOVERING
+% if 1
+%     for menuIdx = 1:jMenuBar.getComponentCount  %%automatically pull down menu
+%         jMenu = jMenuBar.getComponent(menuIdx-1);
+%         for j=1:length(jMenu.getMenuComponents   )
+%             
+%             hj = jMenu.getMenuComponent(j-1);
+%             try
+%                 lab=char(hj.getLabel);
+%                 drawnow
+%                 
+%                 hm= findobj( f, 'label',lab);
+% 
+%                 if menuIdx==8
+%                     if j==4
+%                     lab
+%                     end
+%                 end
+%                 
+%                 
+%                 % ttoltip ---> see menubar_setTooltips
+%                 %    try
+%                 %        hj.setToolTipText(hm.UserData);
+%                 %    end
+% 
+%                 %make help
+%                 if ~isempty(strfind(class(hj),'MenuItem'))  %no separators in
+%                     try
+%                         set(hj,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
+%                         % LEFT/RIGHT MOUSE_CLICK
+%                         %                         hj=handle(hj, 'CallbackProperties');
+%                         set(hj,'MousePressedCallback', {@menuclick_cb,hm,hj});
+%                     catch
+%                         hj2=handle(hj, 'CallbackProperties');
+%                         set(hj2,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
+%                     end
+%                 end
+%             end
+%         end%j
+%     end
+% end
+
+
+% ==============================================
+%%  menu: set mouse click-selection 
+% ===============================================
+ss=menu_getTable();
+for i=1:size(ss,1)
+    hm=ss{i,4};
+    hj=ss{i,3};
+    if ~isempty(strfind(class(hj),'MenuItem'))  %no separators in
+        try
+            set(hj,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
+            % LEFT/RIGHT MOUSE_CLICK
+            %                         hj=handle(hj, 'CallbackProperties');
+            set(hj,'MousePressedCallback', {@menuclick_cb,hm,hj});
+        catch
+            hj2=handle(hj, 'CallbackProperties');
+            set(hj2,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
+        end
     end
 end
+
+function menubar_setTooltips(enableTT)
+%% JAVA MENU
+%% ===============================================
+
+hf=findobj(0,'tag','ant');
+ss=menu_getTable();
+% disp([{i get(hm,'name')}])
+for i=1:size(ss,1)
+    hm=ss{i,4};
+    hj=ss{i,3};
+    %disp({i get(hm,'label')});
+    if enableTT==1
+        try
+            hj.setToolTipText(hm.UserData);
+        end
+    else
+        hj.setToolTipText('');
+    end
+end
+%% ===============================================
+
+hm=findobj(hf,'tag','menu_showMenuTooltips');
+if enableTT==1
+    set(hm,'checked','on');
+else
+    set(hm,'checked','off');
+end
+
+
+% 
+% drawnow;
+% pause(.1);
+% hf=findobj(0,'tag','ant');
+% jFrame = get(gcf,'JavaFrame');
+% try     % R2008a and later
+%     jMenuBar = jFrame.fHG1Client.getMenuBar;
+% catch
+%     jMenuBar = jFrame.fHG2Client.getMenuBar;
+% end
+% drawnow;
+% for menuIdx = 1:jMenuBar.getComponentCount  %%automatically pull down menu
+%     jMenu = jMenuBar.getComponent(menuIdx-1);
+%     for j=1:length(jMenu.getMenuComponents   )
+%         
+%         hj = jMenu.getMenuComponent(j-1);
+%         try
+%             lab=char(hj.getLabel);
+%             if enableTT==1
+%                 hm= findobj( hf, 'label',lab);
+%                 try
+%                     hj.setToolTipText(hm.UserData);
+%                 end
+%             else
+%                 hj.setToolTipText('')
+%             end
+%         end
+%     end%j
+% end
+
+% hm=findobj(hf,'tag','menu_showMenuTooltips');
+% if enableTT==1
+%     set(hm,'checked','on');
+% else
+%     set(hm,'checked','off');
+% end
+
+
+
+function ss=menu_getTable()
+
+% ==============================================
+%%   
+% ===============================================
+
+% drawnow;
+% pause(.1);
+hf=findobj(0,'tag','ant');
+jFrame = get(hf,'JavaFrame');
+try     % R2008a and later
+    jMenuBar = jFrame.fHG1Client.getMenuBar;
+catch
+    jMenuBar = jFrame.fHG2Client.getMenuBar;
+end
+% drawnow
+ss={};
+for menuIdx = 1:jMenuBar.getComponentCount
+    jMenu = jMenuBar.getComponent(menuIdx-1);
+    for j=1:length(jMenu.getMenuComponents   );
+        hj = jMenu.getMenuComponent(j-1);
+%         drawnow
+        try;%strcmp(hj.getUIClassID,'MenuUI')==1
+            lab=char(hj.getLabel);
+%             drawnow
+            hm= findobj( hf, 'label',lab);
+            ss(end+1,:)={lab 1 hj hm};
+        end
+        
+%         hj.isTopLevelMenu
+%       hj.getUIClassID
+      if strcmp(hj.getUIClassID,'MenuUI')==1
+          if hj.getMenuComponentCount>0
+              for j2=1:double(hj.getMenuComponentCount)
+                  drawnow
+                  hj2 = hj.getMenuComponent(j2-1);
+                  if strcmp(hj2.getUIClassID,'SeparatorUI')==0
+                      lab2=char(hj2.getLabel);
+                      %                     drawnow
+                      hm2= findobj( hf, 'label',lab2);
+                      ss(end+1,:)={lab2 2 hj2 hm2 };
+                  end
+              end
+          end
+      end
+    end
+end
+% 'end'
+% size(ss)
+% ==============================================
+%%   
+% ===============================================
+
+
+
+
+function radioshowhelp_context(e,e2,task)
+hf=findobj(0,'tag','ant');
+if strcmp(task,'enableTooltips')
+  hm=findobj(hf,'tag','menu_showMenuTooltips');
+  if strcmp(get(hm,'checked'),'off') %enable TT now
+      set(hm,'checked','on');
+      menubar_setTooltips(1);
+  else                              %disable TT now
+      set(hm,'checked','off');
+      menubar_setTooltips(0);
+  end
+end
+    
+
 % % % Right.click "menu" for help--> not implemented
 function menuclick_cb(e,e2,hm,hj)
 hf=findobj(0,'tag','ant');
@@ -1387,12 +1659,8 @@ u=get(hf,'userdata');
 % disp('------------------------');
 % e2.getButton;
 % get(e2)
-
-
 if double(e2.getButton)==1   %     'left'
-    
     u.mousekey='left';
-    
     if get(e2,'ShiftDown')==1 %'cmd'
         u.mousekey='cmd';
     end
@@ -1504,7 +1772,8 @@ if ~isempty(strfind(get(hm,'label'),'obj'))
     %    keyboard
 end
 
-settings=antsettings;
+settings=make_localantsettingsFile('getsettings');
+% settings=antsettings;
 hradiohelp=findobj(findobj(0,'tag','ant'),'tag','radioshowhelp');
 if isforce==0
     if get(hradiohelp,'value')==0; return; end
@@ -1517,10 +1786,20 @@ try
     catch
         lab=get(hm,'Label');
     end
+    %% ===============================================
+    lab2= [ '  ##m ' lab ' ' repmat(' ',[1 100]) ];
     msg=[get(hm,'userdata') ];
-    msg= [ ' ##m ' lab ' ' 10 msg ];
-    msg=strsplit2(msg,char(10))';
-    
+    if isempty(msg)
+        msg=lab2;
+    else
+        msg=regexprep(msg,'<br>',char(10));
+        msg=strsplit2(msg,char(10))';
+        %msg=cellfun(@(a){['<html><p style="font-family:''Courier New''"> ' a]} ,msg );
+        msg=cellfun(@(a){[' #ka ' a repmat(' ',[1 70])]} ,msg );
+        msg=[lab2; msg ];
+    end
+   %uhelp(msg,1);
+    %% ===============================================
     
     cb=get(hm,'callback');
     task=cb{2};
@@ -1528,8 +1807,8 @@ try
     
     hlpfun=menubarCB([],[],task,  showhelp );
 catch
-    hlpfun='ant';
-    msg={''};
+    hlpfun='none';
+%     msg={''};
 end
 
 if isempty(hlpfun);
@@ -1543,6 +1822,10 @@ else
             a=strsplit2(a,char(10))';
             mT=[{[' #yk [' upper(hlpfun) '.m] ']}];%        __________________________________________________________________']}];
             msg2=[msg;mT; a];
+            help_isfun=1;
+        else
+            
+            msg2=msg;
             help_isfun=1;
         end
     end
@@ -1602,7 +1885,7 @@ else
     end
     
     
-    %———————————————————————————————————————————————
+%     %———————————————————————————————————————————————
     %%   listing to run callback only once
     %———————————————————————————————————————————————
     persistent UHELP_OpenOnce_Flag0002
@@ -2942,6 +3225,67 @@ elseif strcmp(task,'antsettings')
     %% ===============================================
     
     edit antsettings
+    
+elseif strcmp(task,'localantsettings')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='make_localantsettingsFile';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='make_localantsettingsFile.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    
+    make_localantsettingsFile() ;
+elseif strcmp(task,'localantsettingsShowPath')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='make_localantsettingsFile';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='make_localantsettingsFile.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    make_localantsettingsFile('showpath')  ;  
+    
+    
+elseif strcmp(task,'localantsettingsDelete')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='make_localantsettingsFile';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='make_localantsettingsFile.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    make_localantsettingsFile('delete')  ;     
+    
+    
+    
+    
+    elseif strcmp(task,'menu_showMenuTooltips_cb')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='blbla';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='--none--';
+        showcmd(hlpfun,'',0);
+        return
+    end
+    %% ===============================================   
+    radioshowhelp_context([],[],'enableTooltips');
+    
     %________________________________________________
 elseif strcmp(task,'contact')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here

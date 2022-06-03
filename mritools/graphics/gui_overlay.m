@@ -16,7 +16,7 @@ global an
 pars={...
 'file'   'x_t2.nii'                                                                                             's'
 % 'rfile' 'O:\harms1\harms3_lesionfill\templates\ANOpcol.nii'                 's'
-'rfile'  fullfile(fileparts(an.datpath),'templates','ANOpcol.nii')       's'
+'rfile'  fullfile(fileparts(an.datpath),'templates','ANO.nii')       's'
 'imswap'   '1'                                                                                               'd'
 'doresize'  '1'                                                                                               'd'
 'slice'   '100'                                                                                                'd'

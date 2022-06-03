@@ -161,10 +161,10 @@ s=1.5;%  shift=1.5
 xl=xlim;
 te=text(min(xl)+s+s,mean(ylim),max(zlim)+20,'ANT','HorizontalAlignment','left','FontSize',8,'tag','tver');
 set(te,'color',[0 .5 0],'fontsize',24,'fontweight','bold');
-set(te,'string','ANT^{v1}','ButtonDownFcn',@rotat);
+set(te,'string','ANTx2','ButtonDownFcn',@rotat);
 te=text(min(xl)+s+s,mean(ylim)+s,max(zlim)+20+s,'ANT','HorizontalAlignment','left','FontSize',8,'tag','tver');
 set(te,'color',[ 0.0275    0.6863    0.0275],'fontsize',24,'fontweight','bold');
-set(te,'string','ANT^{v1}','ButtonDownFcn',@rotat);
+set(te,'string','ANTx2','ButtonDownFcn',@rotat);
 
 % return
 

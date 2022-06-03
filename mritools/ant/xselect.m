@@ -108,6 +108,9 @@ end
 %%   now process
 %———————————————————————————————————————————————
 global an;
+if ischar(z.files) && ~isempty(ischar(z.files))
+    z.files=cellstr(z.files);
+end
 
 if ~isempty(char(z.textfile))
     li=preadfile(z.textfile); li=li.all;

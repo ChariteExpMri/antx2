@@ -682,6 +682,10 @@
 %  - [right mouseclick] to display the underlying function in the CMD-Window with hyperlink to obtain the function's help
 %  - [cmd]+[left mouseclick ] to obtain the help of the function
 % 
+% #ba 04 Jun 2022 (00:38:38)
+% #k [ant.m] #n was modified
+% - ANT-menu with optional tooltips for menu-items. Enable/disable tooltips via ANT-menu/INFO/"show menu items"
+% -local ant-setttings enabled, this file can be stored in Matlab's userpath and will override default parameter
 % 
 % 
 

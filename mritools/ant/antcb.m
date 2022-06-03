@@ -89,6 +89,12 @@ if strcmp(do,'studydir')  || strcmp(do,'studydir?')
     varargout{2}=o2; 
 end
 
+if strcmp(do,'load_guiparameter') ;
+    o1=load_guiparameter(input);
+    varargout{1}=o1;
+    return; 
+end
+
 if strcmp(do,'checkProjectfile') ;varargout=checkProjectfile;return; end
 
 
@@ -2389,5 +2395,75 @@ for x = 1:1:numel(a)
 end
 cd(originDir);
 
+% ==============================================
+%%   
+% ===============================================
 
+function out=load_guiparameter(argin)
+out={};
+settings=antsettings;
+
+
+p.forcedefault=0;
+if nargin>0
+    if isstruct(argin)
+        pin=argin;
+    else
+        pin=cell2struct(argin(2:2:end),argin(1:2:end),2);
+    end
+    p=catstruct(p,pin);
+end
+
+
+%% ===============use local settings================
+if p.forcedefault==0
+    f1=make_localantsettingsFile('findfile');
+    
+    if exist(f1)==2
+        thispa=pwd;
+        cd(fileparts(f1));
+        settings=localantsettings;
+        cd(thispa);
+    end
+end
+
+%% ===============================================
+
+
+try
+    
+    
+    hf=findobj(0,'tag','ant');
+    
+    hradio    =findobj(hf,'style','radio');
+    set(hradio,'fontsize',settings.fontsize-2);
+    
+    hradiohelp=findobj(hf,'tag','radioshowhelp');
+    set(hradiohelp,'value', settings.show_instant_help);
+    if get(hradiohelp,'value')==1
+        drawnow;
+        %showfunctionhelp
+        % ant('showfunctionhelp');
+    end
+    
+    hprogress=findobj(hf,'tag','radioshowHTMLprogress'); %HTML progress
+    if ~isempty(hprogress)
+        try; set(hprogress,'value',settings.show_HTMLprogressReport); end
+    end
+    
+    if settings.show_intro==1
+        try
+            antintro
+        end
+    end
+    % set tooltips
+    % menubar_setTooltips(settings.enable_menutooltips);
+    ant('menubar_setTooltips','value',settings.enable_menutooltips);
+    
+catch
+    disp('failed to load settings from "localantsettings.m"');
+    disp(['..please make a new "localantsettings.m"-file ']);
+    disp(' ...loading default settings...');
+    out=load_guiparameter(struct('forcedefault',1));
+end
 
