@@ -1,5 +1,5 @@
 
-function xmakebatch(z,p, callerfile,execCMD,mdirs)
+function varargout=xmakebatch(z,p, callerfile,execCMD,mdirs)
 
 % z: struct with parameter
 % p: cellarray parameter x 4 cols (parameterName parameterValue info selectionOption )
@@ -144,4 +144,6 @@ end
 v=[v; hh; {'                '}];
 assignin('base','anth',v);
 
-
+if nargout==1
+    varargout{1}=v;
+end

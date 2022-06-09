@@ -69,6 +69,7 @@
 
 function ant(varargin)
 
+warning off;
 % ==============================================
 %%   inputs
 % ===============================================
@@ -1254,6 +1255,9 @@ mh = uimenu(f,'Label','Statistic');
 % 
 % 
 % mh2 = uimenu(mh,'Label',' label-based two-sample ttest (independent groups)',                      'Callback',{@menubarCB, 'stat_anatomlabels'});
+
+mh2 = uimenu(mh,'Label',' new group assignment',                   'Callback',{@menubarCB, 'newgroupassignment'},'separator','on',...
+'userdata',[HSTART 'create new group assignments by merging/combining different groups' HEND '..this produces excelfile(s)']);
 
 mh2 = uimenu(mh,'Label',' obtain parameter from masks',                                             'Callback',{@menubarCB, 'getparamterByMask'},'separator','on',...
 'userdata',[HSTART 'extract basic parameters of an image using a mask' HEND '..this produces an excelfile']);
@@ -2919,6 +2923,22 @@ elseif strcmp(task,'xstatlabels0')
     end
     %% ===============================================
     xstatlabels;
+   
+    
+elseif strcmp(task,'newgroupassignment')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xnewgroupassignment';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xnewgroupassignment.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    xnewgroupassignment();
+    
     
 elseif strcmp(task,'getparamterByMask')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here

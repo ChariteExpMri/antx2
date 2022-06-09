@@ -146,5 +146,7 @@ wb.Close();
 exc.Quit();
 
 
-
+try;
+      xlsremovdefaultsheets(filename);
+end
 

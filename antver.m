@@ -687,7 +687,17 @@
 % - ANT-menu with optional tooltips for menu-items. Enable/disable tooltips via ANT-menu: INFO/"show menu items"
 % -local ant-setttings enabled, this file can be stored in Matlab's userpath and will override default parameter
 % 
+% #ba 09 Jun 2022 (16:36:28)
+% #k [xnewgroupassignment.m] #n new function
+% -create new group assignments by merging/combining different groups
+% -the resulting excel-files (new group-assignment files) can be used as group-definition for:
+%          [DTIstat.m] --> statistic of DTI-connectome/metric
+%          [xstat.m]   --> voxelwise statistic of images
+%          [xstatlabels.m] --> regionwise statistic of images
 % 
+% 
+% 
+
 
 
 
