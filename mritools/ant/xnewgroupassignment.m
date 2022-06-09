@@ -168,11 +168,11 @@
 %                [1] group-comparison (animals+counts) displayed in help-window
 %                    excelfiles are not written
 %       
-% #b [OK] #n - Process.. i.e create group-assignment files from items in lower listbox
+% #b [Proceed] #n - Process.. i.e create group-assignment files from items in lower listbox
 %              if [simulate] is [ ]: store group-assignment files as xls-files in the "outdir" folder
 %              if [simulate] is [x]: display content of group-assignment files
 % 
-% #b [Cancel] #n - abort process  
+% #b [Close] #n - close GUI 
 % 
 %               
 % 
@@ -526,17 +526,19 @@ m1 = uimenu(c,'Label','save group-comparisonList as txt-file','Callback',{@lb_fi
 set(hb,'uicontextmenu',c);
 
 % =========[ok-pb]======================================
-hb=uicontrol('style','pushbutton','string','OK','units','norm');
+hb=uicontrol('style','pushbutton','string','Proceed','units','norm');
 set(hb,'tooltipstring',['ok...move on..' ]);
 set(hb,'callback',{@ok_cb,1});
 set(hb,'position',[0.7913 0.008217 0.1 0.08],'backgroundcolor',[0.7569    0.8667    0.7765]);
 set(hb,'tooltipstring',['<html><b>OK..proceed</b><br>write new groupassignment-file(s)']);
 
 % =========[Cancel-pb]======================================
-hb=uicontrol('style','pushbutton','string','Cancel','units','norm');
+hb=uicontrol('style','pushbutton','string','Close','units','norm');
 set(hb,'tooltipstring',['cancel...close gui' ]);
 set(hb,'callback',{@ok_cb,0});
 set(hb,'position',[0.89476 0.008217 0.1 0.08]);
+set(hb,'tooltipstring',['<html><b>cancel</b><br>close gui']);
+
 
 % =========[help-pb]======================================
 hb=uicontrol('style','pushbutton','string','Help','units','norm');
@@ -933,7 +935,7 @@ if argin==1
     else
         s.processindex   =inf;
     end
-    close(hf);
+    %close(hf);
     process(s);
 end
 
