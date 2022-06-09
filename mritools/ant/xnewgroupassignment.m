@@ -649,6 +649,14 @@ hf=findobj(0,'tag','makeSubgroups');
 z.subgroupfile=f1;
 z=load_subgroupfile(z);
 
+hf=findobj(0,'tag','makeSubgroups');
+if ~isempty(hf)
+    u=get(hf,'userdata');
+    u.subgroupfile=z.subgroupfile
+    set(hf,'userdata',u);
+end
+
+
 hb=findobj(hf,'tag','lb_final');
 set(hb,'string',z.subgrouplist,'value',1);
 finalLB_countcomparisons;
