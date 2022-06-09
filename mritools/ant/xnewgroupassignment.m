@@ -652,7 +652,7 @@ z=load_subgroupfile(z);
 hf=findobj(0,'tag','makeSubgroups');
 if ~isempty(hf)
     u=get(hf,'userdata');
-    u.subgroupfile=z.subgroupfile
+    u.subgroupfile=z.subgroupfile;
     set(hf,'userdata',u);
 end
 
