@@ -695,6 +695,9 @@
 %          [xstat.m]   --> voxelwise statistic of images
 %          [xstatlabels.m] --> regionwise statistic of images
 % 
+% #ba 10 Jun 2022 (16:44:06)
+% #k [scripts_gui.m] #n modified
+% -switch between scripts-collections via context-menu of upper listbox
 % 
 % 
 

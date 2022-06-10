@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   09 Jun 2022 (16:36:28)  
+ &#x1F34E; last modification:   10 Jun 2022 (16:44:06)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**10 Jun 2022 (16:44:06)**</ins>  
+   __[scripts_gui.m]__ modified  
+  -switch between scripts-collections via context-menu of upper listbox  
+<!---->
   &#x1F535;   <ins>**09 Jun 2022 (16:36:28)**</ins>  
    __[xnewgroupassignment.m]__ new function  
   -create new group assignments by merging/combining different groups  
@@ -14,6 +18,7 @@
            __[DTIstat.m]__ --> statistic of DTI-connectome/metric  
            __[xstat.m]__   --> voxelwise statistic of images  
            __[xstatlabels.m]__ --> regionwise statistic of images  
+    
 <!---->
   &#x1F535;   <ins>**04 Jun 2022 (00:38:38)**</ins>  
    __[ant.m]__ was modified  

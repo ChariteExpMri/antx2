@@ -2,6 +2,7 @@
 % #ko *** scripts-collection ***
 % #k THIS GUI CONTAINS SCRIPTS...YOU CAN MODIFY AND APPLY THE SCRIPTS...
 % - The upper listbox contains a list of script-files
+%    #m use context menu #n to switch between script-collections
 % - select on of the scripts from the above list to get the content of the script
 %   in the lower box
 % 
@@ -11,7 +12,8 @@
 % select #b [scripts summary] #n see obtain a summary (i.e. the help) from all scripts
 % select #b [close script] #n to close the scripts-collection
 %
-% clicke and drag #b [&#8615]-button #n to change the upper and lower listbox size ratios
+% click and drag #b [&#8615]-button #n to change the upper and lower listbox size ratios
+%
 %
 % #m SHORTCUTS
 % [CTRL +/-] change the fontsize of the selected listbox
@@ -19,6 +21,7 @@
 % [e] edit selected script (open copy of the script in editor) 
 % [v] view content of selected script in the help window
 % [s] obtain a summary (i.e. the help) from all scripts 
+% [c] switch between script-collections (see context-menu of upper listbox)
 
 % show scripts-gui
 function scripts_gui(hf,varargin)
@@ -210,6 +213,12 @@ set(hb,'tooltipstring',['script/function name']);
 c = uicontextmenu;
 hb.UIContextMenu = c;
 m1 = uimenu(c,'Label','show script','Callback',{@scripts_process, 'open'});
+
+m1 = uimenu(c,'Label','<html>show <b>current</b> script collection','Callback',{@scripts_process,     'collection',1},'separator','on');
+m1 = uimenu(c,'Label','<html>show <b>general</b> script collection','Callback'  ,{@scripts_process,   'collection',2});
+m1 = uimenu(c,'Label','<html>show <b>statistic</b> script collection','Callback'  ,{@scripts_process, 'collection',3});
+
+
 m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">edit file (not prefered)','Callback',{@scripts_process, 'editOrigFile'},'separator','on');
 m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">open file-folder (not prefered)','Callback',{@scripts_process, 'openOrigFileDir'});
 
@@ -603,7 +612,7 @@ waitspin(0,'Done');
 
 %% ===============================================
 
-function scripts_process(e,e2,task)
+function scripts_process(e,e2,task,para)
 hn=findobj(gcf,'tag','scripts_lbscriptName');
 hh=findobj(gcf,'tag','scripts_panel');
 u=get(hh,'userdata');
@@ -717,8 +726,59 @@ elseif strcmp(task,'edit')
     editorApplication = editorService.getEditorApplication();
     editorApplication.newEditor(str);
     %% ===============================================
-    
+elseif strcmp(task,'collection') 
+        opencollection(para);   
 end
+
+function opencollection(task)
+
+% hb=findobj(gcf,'tag','scripts_panel');
+hb=findobj(gcf,'tag','scripts_lbscriptName');
+u=get(hb,'userdata');
+if isstruct(u)==0 || isfield(u,'origlist')==0
+    if isstruct(u)==0 
+        u=struct();
+    end
+    u.origlist    =get(hb,'string');
+    u.origfigname =get(gcf,'name');
+    u.numcol=1;
+    set(hb,'userdata',u);
+end
+u=get(hb,'userdata');
+if task==1
+    set(hb,'string',u.origlist,'value',1);
+    set(gcf,'name',u.origfigname);
+    u.numcol=1;
+elseif task==2
+    pax=fullfile(fileparts(which('ant.m')),'scripts');
+    [files] = spm_select('List',pax,'.*.m');
+     files=cellstr(files);
+     files(strcmp(files,'scripts_collection.m'))=[] ;%remove function
+    set(hb,'string',files,'value',1);
+    set(gcf,'name',['scripts: general']);
+    u.numcol=2;
+elseif task==3
+    pax=fullfile(fileparts(which('ant.m')),'stats','dtiscripts');
+     [files] = spm_select('List',pax,'.*.m');
+     files=cellstr(files);
+    set(hb,'string',files,'value',1);
+    set(gcf,'name',['scripts: stastistic']);
+    u.numcol=3;
+end
+set(hb,'userdata',u);
+
+
+function switch_collection(e,e2)
+% 'q'
+hb=findobj(gcf,'tag','scripts_lbscriptName');
+u=get(hb,'userdata');
+
+try ;    num=u.numcol;
+catch ;  num=1;
+end
+newnum=mod(num,3)+1;
+opencollection(newnum);
+
 
 function figresizekeys(arg)
 if arg==1
@@ -782,7 +842,7 @@ if strcmp(e2.Modifier,'control')==1 %% using modifiers
         
     end
 else    %% normal mode
-     if strcmp(e2.Key,'2')
+    if strcmp(e2.Key,'2')
        figresizekeys(2);
     elseif strcmp(e2.Key,'1') 
        figresizekeys(1);
@@ -795,6 +855,8 @@ else    %% normal mode
          scripts_process([],[],'scripts_summary');
      elseif strcmp(e2.Key,'v')
          scripts_process([],[],'open');
+     elseif strcmp(e2.Key,'c') %collection
+         switch_collection();
     end
 end
 
@@ -842,6 +904,11 @@ else
           scripts_process([],[],'scripts_summary');
       elseif strcmp(e2.getKeyText(e2.getKeyCode()),'V')  
           scripts_process([],[],'open');
-    end 
+    elseif strcmp(e2.getKeyText(e2.getKeyCode()),'C')
+        switch_collection();
+    end
 end
+
+
+
 

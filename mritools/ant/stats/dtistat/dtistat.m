@@ -5489,6 +5489,8 @@ figtitle='scripts: DTIstat';
 close(findobj(0,'name',figtitle));
 
 scripts={
+'STcript_b1_makeSubgroups.m'                            
+'STcript_b2_DTIstat.m'
 'STscript_subdivideGroups_pairwiseComparisons.m'
 'STscript_subdivideGroups_specific.m'
 'STscript_DTIstatistic_simple.m'
@@ -5512,160 +5514,160 @@ scripts_gui([],'figpos',[.3 .2 .4 .4], 'pos',[0 0 1 1],'name',figtitle,'closefig
 % ===============================================
 return
 
-
-scripts_process([],[],'close');
-
-h=uipanel('units','norm');
-xpos=0.4;
- set(h,'position',[xpos 0  1-xpos 1 ],'title','scripts','tag','scripts_panel');
-%set(h,'position',[xpos 0.1  1-xpos-.1 .5 ],'title','scripts','tag','scripts_panel');
-
-set(h,'ForegroundColor','b','fontweight','bold');
-
-% ###########################################################################################
-% ==============================================
-%%   script-names
-% ===============================================
-
-scripts={
-'STscript_subdivideGroups_pairwiseComparisons.m'
-'STscript_subdivideGroups_specific.m'
-'STscript_DTIstatistic_simple.m'
-'STscript_DTIstatistic_simple2.m'
-'STscript_DTIstatistic_diffDTImatrices.m'
-'STscript_DTIstatistic_diffDTImatrices_diffGroups.m'
-'STscript_export4vol3d_simple.m'
-'STscript_export4vol3d_manycalcs.m'
-% 'DTIscript_HPC_exportData_makeBatch.m' 
-% 'DTIscript_posthoc_makeHTML_QA.m'
-% 'DTIscript_posthoc_exportData4Statistic.m'
-};
-% ###########################################################################################
-
-%% ========[controls]=======================================
-
-hb=uicontrol(h,'style','listbox','units','norm','tag','scripts_lbscriptName');
-set(hb,'string',scripts);
-set(hb,'position',[0 0.7 1.2 0.3]);
-
-set(hb,'callback',{@scripts_process, 'scriptname'} );
-set(hb,'tooltipstring',['script/function name']);
-
-
-c = uicontextmenu;
-hb.UIContextMenu = c;
-m1 = uimenu(c,'Label','show script','Callback',{@scripts_process, 'open'});
-m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">edit file (not prefered)','Callback',{@scripts_process, 'editOrigFile'});
-
-%% ====[addNote]===========================================
-% hb=uicontrol(h,'style','text','units','norm','tag','scripts_TXTscriptHelp');
-% set(hb,'string',{'eeee'},'backgroundcolor','w');
-% set(hb,'position',[[0 0.1 1.01 0.45]]);
-% % set(hb,'callback',{@scripts_process, 'close'} );
-% set(hb,'tooltipstring',['script/function help']);
-NotePos=[xpos .085  1-xpos .58];
-NotePos=[ 0 .085  1 .62];
-msg='select <b>script/function</b> from <u>above</u> to obtain <font color="blue">help.<br>';
-han=addNote(h,'text',msg,'pos',NotePos,'head','scripts/functions','mode','single','fs',20,'IS',1);
-
-%% =======[open script]========================================
-hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_open');
-set(hb,'string','show script');
-set(hb,'position',[-1.21e-16 0.0056 0.25 0.06]);
-set(hb,'callback',{@scripts_process, 'open'} );
-set(hb,'tooltipstring',['<html><b>open scripts/function in HELP window</b><br> '...
-    'the script can be copied and modified']);
-%% =======[edit script]========================================
-hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_edit');
-set(hb,'string','edit script');
-set(hb,'position',[[0.3     0.0056 0.25 0.06]]);
-set(hb,'callback',{@scripts_process, 'edit'} );
-set(hb,'tooltipstring',['<html><b>open scripts/function in EDITOR</b><br> '...
-    'the script can be copied and modified']);
-
-%% =========[close script panel]======================================
-%% 
-hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_close');
-set(hb,'string','close panel');
-set(hb,'position',[[0.73 0.0056 0.25 0.06]]);
-% set(hb,'position',[[0.94 0.93 0.06 0.07]]);
-set(hb,'callback',{@scripts_process, 'close'} );
-set(hb,'tooltipstring',['close']);
-%% ==============[userdata]=================================
-u.NotePos=NotePos;
-u.han    =han;
-set(h,'userdata',u);
-
-
-addResizebutton(gcf,h,'mode','L','moo',0,'restore',0);
-
-
-
-function scripts_process(e,e2,task)
-hn=findobj(gcf,'tag','scripts_lbscriptName');
-hh=findobj(gcf,'tag','scripts_panel');
-u=get(hh,'userdata');
-
-
-if strcmp(task,'close')
-    delete(findobj(gcf,'tag','scripts_panel'));
-    addNote(gcf,'note','close') ;
-    addResizebutton('remove');
-elseif strcmp(task,'scriptname')
-    
-    file=hn.String{hn.Value};
-    hlp=help(file); 
-    hlp=strsplit(hlp,char(10));
-    hlp=[hlp repmat('<br>',[1 2])];
-    
-    
-    
-    NotePos=u.NotePos;
-    %NotePos=[0.5 .085  .5 .58];
-  
-    
-    
-    hs=addNote(u.han,'text',hlp);
-    if isempty(hs)
-        addNote(hh,'text',hlp,'pos',NotePos,'mode','single','fs',20,'IS',1);
-    end
-    
-    
-    
-elseif strcmp(task,'open')
-    %% OPEN SCRIPT IN MATLAB-EDITOR
-    file=hn.String{hn.Value};
-    
-    cont=preadfile(file); 
-    cont=cont.all;
-    uhelp(cont,1,'name',['script: "' file '"']);
-    h=findobj(gcf,'tag','scripts_lbscriptName');
-    
-    msg={'-copy script to Matlab editor'
-        '-change parameter accordingly'
-        '-save script somewhere on your path'
-        '-run script'};
-    addNote(gcf,'text',msg,'pos',[0.5 .1  .44 .3],'head','Note','mode','single');
-elseif strcmp(task,'editOrigFile')
-    pw=logindlg('Password','only');
-    pw=num2str(pw);
-    if strcmp(pw,'1')
-        file=hn.String{hn.Value};
-        edit(file);
-    end
-elseif strcmp(task,'edit')
-    file=hn.String{hn.Value};
-    
-    %% ===============================================
-    cont=preadfile(file); 
-    cont=cont.all;
-    
-    str = strjoin(cont,char(10));
-    editorService = com.mathworks.mlservices.MLEditorServices;
-    editorApplication = editorService.getEditorApplication();
-    editorApplication.newEditor(str);
-    %% ===============================================
-    
-end
+% 
+% scripts_process([],[],'close');
+% 
+% h=uipanel('units','norm');
+% xpos=0.4;
+%  set(h,'position',[xpos 0  1-xpos 1 ],'title','scripts','tag','scripts_panel');
+% %set(h,'position',[xpos 0.1  1-xpos-.1 .5 ],'title','scripts','tag','scripts_panel');
+% 
+% set(h,'ForegroundColor','b','fontweight','bold');
+% 
+% % ###########################################################################################
+% % ==============================================
+% %%   script-names
+% % ===============================================
+% 
+% scripts={
+% 'STscript_subdivideGroups_pairwiseComparisons.m'
+% 'STscript_subdivideGroups_specific.m'
+% 'STscript_DTIstatistic_simple.m'
+% 'STscript_DTIstatistic_simple2.m'
+% 'STscript_DTIstatistic_diffDTImatrices.m'
+% 'STscript_DTIstatistic_diffDTImatrices_diffGroups.m'
+% 'STscript_export4vol3d_simple.m'
+% 'STscript_export4vol3d_manycalcs.m'
+% % 'DTIscript_HPC_exportData_makeBatch.m' 
+% % 'DTIscript_posthoc_makeHTML_QA.m'
+% % 'DTIscript_posthoc_exportData4Statistic.m'
+% };
+% % ###########################################################################################
+% 
+% %% ========[controls]=======================================
+% 
+% hb=uicontrol(h,'style','listbox','units','norm','tag','scripts_lbscriptName');
+% set(hb,'string',scripts);
+% set(hb,'position',[0 0.7 1.2 0.3]);
+% 
+% set(hb,'callback',{@scripts_process, 'scriptname'} );
+% set(hb,'tooltipstring',['script/function name']);
+% 
+% 
+% c = uicontextmenu;
+% hb.UIContextMenu = c;
+% m1 = uimenu(c,'Label','show script','Callback',{@scripts_process, 'open'});
+% m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">edit file (not prefered)','Callback',{@scripts_process, 'editOrigFile'});
+% 
+% %% ====[addNote]===========================================
+% % hb=uicontrol(h,'style','text','units','norm','tag','scripts_TXTscriptHelp');
+% % set(hb,'string',{'eeee'},'backgroundcolor','w');
+% % set(hb,'position',[[0 0.1 1.01 0.45]]);
+% % % set(hb,'callback',{@scripts_process, 'close'} );
+% % set(hb,'tooltipstring',['script/function help']);
+% NotePos=[xpos .085  1-xpos .58];
+% NotePos=[ 0 .085  1 .62];
+% msg='select <b>script/function</b> from <u>above</u> to obtain <font color="blue">help.<br>';
+% han=addNote(h,'text',msg,'pos',NotePos,'head','scripts/functions','mode','single','fs',20,'IS',1);
+% 
+% %% =======[open script]========================================
+% hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_open');
+% set(hb,'string','show script');
+% set(hb,'position',[-1.21e-16 0.0056 0.25 0.06]);
+% set(hb,'callback',{@scripts_process, 'open'} );
+% set(hb,'tooltipstring',['<html><b>open scripts/function in HELP window</b><br> '...
+%     'the script can be copied and modified']);
+% %% =======[edit script]========================================
+% hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_edit');
+% set(hb,'string','edit script');
+% set(hb,'position',[[0.3     0.0056 0.25 0.06]]);
+% set(hb,'callback',{@scripts_process, 'edit'} );
+% set(hb,'tooltipstring',['<html><b>open scripts/function in EDITOR</b><br> '...
+%     'the script can be copied and modified']);
+% 
+% %% =========[close script panel]======================================
+% %% 
+% hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_close');
+% set(hb,'string','close panel');
+% set(hb,'position',[[0.73 0.0056 0.25 0.06]]);
+% % set(hb,'position',[[0.94 0.93 0.06 0.07]]);
+% set(hb,'callback',{@scripts_process, 'close'} );
+% set(hb,'tooltipstring',['close']);
+% %% ==============[userdata]=================================
+% u.NotePos=NotePos;
+% u.han    =han;
+% set(h,'userdata',u);
+% 
+% 
+% addResizebutton(gcf,h,'mode','L','moo',0,'restore',0);
+% 
+% 
+% 
+% function scripts_process(e,e2,task)
+% hn=findobj(gcf,'tag','scripts_lbscriptName');
+% hh=findobj(gcf,'tag','scripts_panel');
+% u=get(hh,'userdata');
+% 
+% 
+% if strcmp(task,'close')
+%     delete(findobj(gcf,'tag','scripts_panel'));
+%     addNote(gcf,'note','close') ;
+%     addResizebutton('remove');
+% elseif strcmp(task,'scriptname')
+%     
+%     file=hn.String{hn.Value};
+%     hlp=help(file); 
+%     hlp=strsplit(hlp,char(10));
+%     hlp=[hlp repmat('<br>',[1 2])];
+%     
+%     
+%     
+%     NotePos=u.NotePos;
+%     %NotePos=[0.5 .085  .5 .58];
+%   
+%     
+%     
+%     hs=addNote(u.han,'text',hlp);
+%     if isempty(hs)
+%         addNote(hh,'text',hlp,'pos',NotePos,'mode','single','fs',20,'IS',1);
+%     end
+%     
+%     
+%     
+% elseif strcmp(task,'open')
+%     %% OPEN SCRIPT IN MATLAB-EDITOR
+%     file=hn.String{hn.Value};
+%     
+%     cont=preadfile(file); 
+%     cont=cont.all;
+%     uhelp(cont,1,'name',['script: "' file '"']);
+%     h=findobj(gcf,'tag','scripts_lbscriptName');
+%     
+%     msg={'-copy script to Matlab editor'
+%         '-change parameter accordingly'
+%         '-save script somewhere on your path'
+%         '-run script'};
+%     addNote(gcf,'text',msg,'pos',[0.5 .1  .44 .3],'head','Note','mode','single');
+% elseif strcmp(task,'editOrigFile')
+%     pw=logindlg('Password','only');
+%     pw=num2str(pw);
+%     if strcmp(pw,'1')
+%         file=hn.String{hn.Value};
+%         edit(file);
+%     end
+% elseif strcmp(task,'edit')
+%     file=hn.String{hn.Value};
+%     
+%     %% ===============================================
+%     cont=preadfile(file); 
+%     cont=cont.all;
+%     
+%     str = strjoin(cont,char(10));
+%     editorService = com.mathworks.mlservices.MLEditorServices;
+%     editorApplication = editorService.getEditorApplication();
+%     editorApplication.newEditor(str);
+%     %% ===============================================
+%     
+% end
 
 
