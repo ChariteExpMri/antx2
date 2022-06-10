@@ -217,7 +217,15 @@
 %% #wb [3] COMMANDLINE
 %% #cb ============================================================
 % 
+% z.outdir:  -use a fullpath-folder name here if ANT-project is not loded
+%            -if z.outdir is a shortname and an ANT-project is not loaded 
+%             the output is saved in:  {pwd}/z.outdir
+%            -if z.outdir is a shortname and an ANT-project is loaded 
+%             the output is saved in:  ANTstudyPath/z.outdir
+% z.simulate  -set simulation to [2]  if there is no graphics support
+% 
 % xnewgroupassignment(0,z);  where z is a struct with optional input-arguments
+
 % 
 % 
 %% #g ____example-1: create files for the first two group-comparions from list _____
@@ -477,39 +485,39 @@ set(hb,'tooltipstring',['<html><b>submit and make a group-comparison</b><br>'...
 hb=uicontrol('style','pushbutton','string','clear','units','norm');
 set(hb,'tooltipstring',['clear Group1-list' ]);
 set(hb,'callback',{@xclear,1});
-set(hb,'position',[0.90928 0.94872 0.06 0.05],'backgroundcolor',[1 0 0]);
+set(hb,'position',[0.90928 0.94872 0.06 0.05],'backgroundcolor',[1 .6 .6]);
 set(hb,'fontsize',7);
 
 % =========[clear sg2]======================================
 hb=uicontrol('style','pushbutton','string','clear','units','norm');
 set(hb,'tooltipstring',['clear Group2-list' ]);
 set(hb,'callback',{@xclear,2});
-set(hb,'position',[0.90928 0.69762 0.06 0.05],'backgroundcolor',[1 0 0]);
+set(hb,'position',[0.90928 0.69762 0.06 0.05],'backgroundcolor',[1 .6 .6]);
 
 % =========[clear-item sg1]======================================
 hb=uicontrol('style','pushbutton','string','clear item','units','norm');
 set(hb,'tooltipstring',['clear selected item(s) from Group1-list' ],'fontsize',7);
 set(hb,'callback',{@xclear,3});
-set(hb,'position',[0.91109 0.83322 0.08 0.05],'backgroundcolor',[1 .8 .8]);
+set(hb,'position',[0.91109 0.83322 0.08 0.05],'backgroundcolor',[0.93 0.86 0.86]);
 
 % =========[clear-item sg2]======================================
 hb=uicontrol('style','pushbutton','string','clear item','units','norm');
 set(hb,'tooltipstring',['clear selected item(s) from Group2-list' ],'fontsize',7);
 set(hb,'callback',{@xclear,4});
-set(hb,'position',[0.90928 0.60222 0.08 0.05],'backgroundcolor',[1 .8 .8]);
+set(hb,'position',[0.90928 0.60222 0.08 0.05],'backgroundcolor',[0.93 0.86 0.86]);
 
 
 % =========[clear final]======================================
 hb=uicontrol('style','pushbutton','string','clear','units','norm');
 set(hb,'tooltipstring',['clear group-comparison list' ]);
 set(hb,'callback',{@xclear,5});
-set(hb,'position',[[0.0090027 0.067617 0.06 0.05]],'backgroundcolor',[1 0 0]);
+set(hb,'position',[[0.0090027 0.067617 0.06 0.05]],'backgroundcolor',[1 .6 .6]);
 
 % =========[clear-item final]======================================
 hb=uicontrol('style','pushbutton','string','clear item','units','norm');
 set(hb,'tooltipstring',['clear selected item(s) group-comparison list' ],'fontsize',7);
 set(hb,'callback',{@xclear,6});
-set(hb,'position',[[0.0090027 0.018117 0.08 0.05]],'backgroundcolor',[1 .8 .8]);
+set(hb,'position',[0.07253 0.067617 0.08 0.05],'backgroundcolor',[0.93 0.86 0.86]);
 
 % =========[final-listbox]======================================
 hb=uicontrol('style','listbox','string',{'empty'},'units','norm','tag','lb_final');
@@ -525,7 +533,7 @@ c = uicontextmenu;
 m1 = uimenu(c,'Label','save group-comparisonList as txt-file','Callback',{@lb_final_context,'saveTXT'});
 set(hb,'uicontextmenu',c);
 
-% =========[ok-pb]======================================
+% =========[proceed-pb]======================================
 hb=uicontrol('style','pushbutton','string','Proceed','units','norm');
 set(hb,'tooltipstring',['ok...move on..' ]);
 set(hb,'callback',{@ok_cb,1});
@@ -604,11 +612,12 @@ set(hb,'tooltipstring',['<html><b>simulate n</B><br>  [0]write comparisons<br>[1
 % =========[items selected/comparisons]======================================
 hb=uicontrol('style','text','string',['comparisons: 0/0'],'units','norm');
 set(hb,'tooltipstring',['number of group comparisons: selected/total' ],'fontsize',7);
-set(hb,'position',  [0.092496 0.064317 0.15 0.05] ,'backgroundcolor',[1 1 1],...
+set(hb,'position',  [0.24496 0.52632 0.18 0.05] ,'backgroundcolor',[1 1 1],...
     'foregroundcolor',[0 .5 0],'tag','tx_selected');
 hb.HorizontalAlignment='left';
 set(hb,'tooltipstring',['<html><b>number of group comparisons</b><br>'...'
     'selected/total' ]);
+uistack(hb,'bottom');
 
 %% ========= userdata ======================================
 set(hf,'userdata',u);
@@ -1158,12 +1167,24 @@ for i=index2process;
         index=pnum(i,2);
     end
     
-    [w1 uscore]=strtok(prefix,'_');
-    if isempty(uscore);
-        uscore='_';
+%     [w1 uscore]=strtok(prefix,'_');
+%     if isempty(uscore);
+%         uscore='_';
+%     end
+    uscore='_';
+    if isempty(prefix) && isempty(index);
+        uscore='';
+    elseif ~isempty(prefix) && isempty(index);
+        uscore='';
+     elseif ~isempty(prefix) && ~isempty(index);
+        uscore='__'; %double for better separation
     end
-    if isempty(prefix) && isempty(index); uscore='';end
-    namepre=[w1 index uscore];
+
+    %namepre=[w1 index uscore];
+    namepre=[prefix index uscore ];
+    
+    
+     
     
     %____outputdir_____________
     [maindir dirx ext]=fileparts(z.outdir);
