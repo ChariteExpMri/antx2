@@ -899,7 +899,9 @@ if strcmp(task,'getDTIfile')
     % __try sorting files via numeric values
     try
         [sortnames isort ]=sort(str2num(char(regexprep(name,'\D',''))));
+        if ~isempty(isort)
         name=name(isort);
+        end
     end
     
     d.DTIfileName=cellfun(@(a){[ a '.nii' ]},  name);
