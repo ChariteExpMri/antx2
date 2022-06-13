@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   10 Jun 2022 (16:44:06)  
+ &#x1F34E; last modification:   13 Jun 2022 (20:39:32)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,9 +7,16 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**13 Jun 2022 (20:39:32)**</ins>  
+  New tutorial &#x1F4D7;  __["getOrientation_via_3pointSelection.pptx"]__  
+  This tutorial shows how to determine the orientationType (for instance if method "examine orientation" failes)  
+  &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+  &#8618; access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/  
+<!---->
   &#x1F535;   <ins>**10 Jun 2022 (16:44:06)**</ins>  
    __[scripts_gui.m]__ modified  
   -switch between scripts-collections via context-menu of upper listbox  
+    
 <!---->
   &#x1F535;   <ins>**09 Jun 2022 (16:36:28)**</ins>  
    __[xnewgroupassignment.m]__ new function  

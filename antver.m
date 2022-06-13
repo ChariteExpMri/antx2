@@ -699,8 +699,14 @@
 % #k [scripts_gui.m] #n modified
 % -switch between scripts-collections via context-menu of upper listbox
 % 
+% #ba 13 Jun 2022 (20:39:32)
+% New tutorial #bw ["getOrientation_via_3pointSelection.pptx"]
+% This tutorial shows how to determine the orientationType (for instance if method "examine orientation" failes)
+% #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+% #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/
+%
 % 
-
+% 
 
 
 
