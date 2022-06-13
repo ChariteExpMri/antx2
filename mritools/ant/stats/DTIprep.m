@@ -2329,7 +2329,7 @@ for i=1:length(fn)
             set(findobj(hf,'tag','getbtable'),'backgroundcolor',[ 0.7490    0.7490         0]);
         end
     end
-    if strcmp(field,'btable')
+    if strcmp(field,'getDTIfile')
         if isempty(char(d.DTIfileName))
             set(findobj(hf,'tag','getDTIfile'),'backgroundcolor',[ 0.9373    0.8667    0.8667]);
         else
