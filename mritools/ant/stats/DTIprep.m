@@ -92,7 +92,6 @@
 %  'ANO_DTI.nii'         % % DTI-atlas, back-transformed to native space and transformed to DWI-space+renamed
 %  'ANO_DTI.txt'         % % DTI-labels lookup table,renamed
 %  'atlas_lut.txt'       % % DTI-labels lookup table (copy of 'ANO_DTI.txt'),renamed
-%  'c_t2.nii'            % % t2.nii registered to DWI-file space
 %  'rc_ix_AVGTmask.nii'  % % brain mask, back-transformed to native space and transformed+resliced to DWI-space
 %  'rc_mt2.nii'          % % bias-corected t2.nii,transformed+resliced to DWI-space
 %  'rc_t2.nii'           % % t2.nii,transformed+resliced to DWI-space
@@ -104,7 +103,6 @@
 %  'ANO_DTI.nii'         % % DTI-atlas, back-transformed to native space and transformed to DWI-space,renamed
 %  'ANO_DTI.txt'         % % DTI-labels lookup table,renamed
 %  'atlas_lut.txt'       % % DTI-labels lookup table (copy of 'ANO_DTI.txt'),renamed
-%  'c_t2.nii'            % % t2.nii registered to DWI-file space
 %  'rc_ix_AVGTmask.nii'  % % brain mask, back-transformed to native space and transformed+resliced to DWI-space
 %  'rc_mt2.nii'          % % bias-corected t2.nii,transformed+resliced to DWI-space
 %  'rc_t2.nii'           % % t2.nii,transformed+resliced to DWI-space
@@ -1198,7 +1196,6 @@ if strcmp(task,'renamefiles')
         ['rc_ix_' DTIatlas0 '.nii'     ]     'ANO_DTI.nii'          %'rc_ix_DTI_harms31mar20.nii'
         'rc_mt2.nii'                         ''
         'rc_t2.nii'                          ''
-        'c_t2.nii'                           ''
         [DTItemplateLUT0 '.txt'             ]    'atlas_lut.txt'
         [DTItemplateLUT0 '.txt'             ]    'ANO_DTI.txt'  %'atlas_lut.txt'
         };
@@ -1320,7 +1317,6 @@ if n_btables~=n_dwis
     % - rc_ix_example_atlas.nii
     % - rc_ mt2.nii
     % - rc_t2.nii
-    % - c_t2.nii
     % - atlas_lut.txt
     
     
@@ -1370,7 +1366,6 @@ if strcmp(task,'exportfiles')
         'rc_ix_AVGTmask.nii'
         'rc_mt2.nii'
         'rc_t2.nii'
-        'c_t2.nii'
         ...
         'atlas_lut.txt'
         'ANO_DTI.txt'  %'atlas_lut.txt'
@@ -1580,7 +1575,6 @@ ls3={
     'ANO_DTI.txt'         ms3
     'atlas_lut.txt'       ms3
     'dwi.nii'             ms3
-    'c_t2.nii'            ms3
     'rc_ix_AVGTmask.nii'  ms3
     'rc_t2.nii'           ms3
     'rc_mt2.nii'          ms3

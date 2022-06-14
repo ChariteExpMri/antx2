@@ -705,6 +705,9 @@
 % #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/
 %
+% #ba 14 Jun 2022 (14:20:14)
+% #k [DTIprep.m] #n modified
+% -'c_t2.nii' is not necessary for DTI-MRtrix-pipeline anymore
 % 
 % 
 
