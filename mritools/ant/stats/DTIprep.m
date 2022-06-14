@@ -1785,7 +1785,9 @@ if strcmp(task,'reorder_data')
     opt=struct('Resize','on','WindowStyle','normal','Interpreter','tex');
     
     answer  =inputdlg(prompt,name,numlines,defaultanswer,opt);
-    
+    if isempty(char(answer)) % cancel
+        return
+    end
     % ===============================================
     
     neworder1=str2num(num2str(answer{1}));
