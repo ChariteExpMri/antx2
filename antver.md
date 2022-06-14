@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   14 Jun 2022 (14:20:14)  
+ &#x1F34E; last modification:   15 Jun 2022 (00:42:12)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,9 +7,16 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**15 Jun 2022 (00:42:12)**</ins>  
+  New tutorial &#x1F4D7;  __["tutorial_prepareDTIpipeline.docx"]__  
+  This tutorial shows how to prepare the data for the DTI-MRtrix-pipeline  
+  &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
+  &#8618; access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/  
+<!---->
   &#x1F535;   <ins>**14 Jun 2022 (14:20:14)**</ins>  
    __[DTIprep.m]__ modified  
   -'c_t2.nii' is not necessary for DTI-MRtrix-pipeline anymore  
+    
 <!---->
   &#x1F535;   <ins>**13 Jun 2022 (20:39:32)**</ins>  
   New tutorial &#x1F4D7;  __["getOrientation_via_3pointSelection.pptx"]__  

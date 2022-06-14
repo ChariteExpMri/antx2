@@ -709,8 +709,13 @@
 % #k [DTIprep.m] #n modified
 % -'c_t2.nii' is not necessary for DTI-MRtrix-pipeline anymore
 % 
+% #ba 15 Jun 2022 (00:42:12)
+% New tutorial #bw ["tutorial_prepareDTIpipeline.docx"]
+% This tutorial shows how to prepare the data for the DTI-MRtrix-pipeline
+% #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+% #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/
 % 
-
+% 
 
 
 %% ===============================================
