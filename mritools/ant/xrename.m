@@ -823,11 +823,11 @@ for i=1:length(pa)      %PATH
                     end
                     
                     %% delete targetfile if exists
-                    if strcmp(thisvol,':')==1
+                    %if strcmp(thisvol,':')==1
                         if exist(s2)==2
                             delete(s2);
                         end
-                    end
+                    %end
                     
                     %% write volume
                     warning off;

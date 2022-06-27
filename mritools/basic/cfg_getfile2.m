@@ -688,7 +688,7 @@ persistent lastfiltertoken
 
 
 if isempty(lastfiltertoken)
-    regexplist={'.' '.*.nii' '.*xlsx|.*nii' '^startStr.*endStr$' '\.(doc|txt)$'   '^((?!notStr).)*$'};
+    regexplist={'.' '.*' '.*.nii' '.*xlsx|.*nii' '^startStr.*endStr$' '\.(doc|txt)$'   '^((?!notStr).)*$'};
     lastfiltertoken =[lastfiltertoken; regexplist];
 end
 
@@ -1882,8 +1882,8 @@ if 1
             set(findobj(gcf,'tag','msg'),'string','..cancelled');
             return; 
         end
-        filters=cell2str(ids2,'|^') ;
-        filters=['^' filters];
+        filters=cell2str(ids2,'|') ;
+        %filters=['^' filters];
         set(hflt,  'string',  filters );
         %            uhelp(flipud(files3(ix)))  ;
         %uhelp(files3) ;

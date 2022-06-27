@@ -488,6 +488,7 @@ if is4D==1 && z.convertDataType~=0
     
     dT=z.convertDataType;
     f2=fullfile(px, [ name num2str(dT) '.nii' ]);
+    f2=fullfile(px, [ 'r_' name  '.nii' ]);
     
     fprintf('..creating 4D-image with changed dataType..');
     V4 = spm_file_merge(fi,f2,dT);
@@ -635,6 +636,13 @@ else
         f5=fullfile(px,[strrep(z.outputname,'.nii','') '.nii']);
         movefile(f4,f5,'f');
         showinfo2(['alignedFile(4D)[' animal ']' ],f5);
+        
+        rpfile0=fullfile(px,['rp_' name2 '.txt']);
+        if exist(rpfile0)==2
+           rpfile=fullfile(px,[ strrep(z.outputname,'.nii','')  '_rp'  '.txt']);
+            movefile(rpfile0,rpfile,'f');
+        end
+        
     else
         showinfo2(['alignedFile(4D)[' animal ']' ],f4);
     end
@@ -644,16 +652,16 @@ end
 %%   cleanup
 % ===============================================
 
-if exist(mergedImage)==2
+% if exist(mergedImage)==2
     try; delete(mergedImage); end
    matfile=strrep(mergedImage,'.nii','.mat');
    if exist(matfile)==2
       try; delete(matfile); end 
    end
-end
+% end
 
 
-
+try; delete(stradd(f2,'r',1)); end
 
 
 

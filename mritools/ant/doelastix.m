@@ -463,9 +463,15 @@ for i=1:length(z.files)
     
     
     if v.dt(1)<=100%32
-        set_ix(z.trafofile,'FixedInternalImagePixelType','float');
-        set_ix(z.trafofile,'MovingInternalImagePixelType','float');
-        set_ix(z.trafofile,'ResultImagePixelType','float');
+        if v.dt(1)==16
+            set_ix(z.trafofile,'FixedInternalImagePixelType','short');
+            set_ix(z.trafofile,'MovingInternalImagePixelType','short');
+            set_ix(z.trafofile,'ResultImagePixelType','float');
+        else
+            set_ix(z.trafofile,'FixedInternalImagePixelType','float');
+            set_ix(z.trafofile,'MovingInternalImagePixelType','float');
+            set_ix(z.trafofile,'ResultImagePixelType','float');
+        end
     else
         set_ix(z.trafofile,'FixedInternalImagePixelType','short');
         set_ix(z.trafofile,'MovingInternalImagePixelType','short');
