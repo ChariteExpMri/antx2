@@ -259,7 +259,9 @@
 % #g DELETION-EXAMPLE
 %     xrename(1, 'vol5.nii' , '##' )
 %     xrename(0, 'blob3.nii' ,   'delete'  );
-%
+%     xrename(1,'^prc_*|^rc_*|^c_*','','del'); % with GUI-preselection: delete all NIFTs starting with "prc_"/"rc"/"c"
+%     xrename(0,'^prc_*|^rc_*|^c_*','','del'); % no GUI: delete all NIFTs starting with "prc_"/"rc"/"c"
+% 
 % #g EXTRACTION-EXAMPLE  "extract one volume"
 %    %[example-1]: extract 9th volume from [MSME-T2-map_20slices_1.nii] and save as [M.nii]
 %                  xrename(1, 'MSME-T2-map_20slices_1.nii' , 'M' ,9)  ;
@@ -497,7 +499,13 @@ end
 if showgui==0
     he=he2; tbout=v2.tb ;
 else
-    [he tbout]=renameGUI(v2,he2,s, showgui);
+    [he, tbout isOKpressed]=renameGUI(v2,he2,s, showgui);
+    
+%     isOKpressed
+%     return
+    if isOKpressed==0;% if cancel pressed...abort
+        return
+    end
 end
 
 % return
@@ -937,7 +945,8 @@ if ~isempty(he{1})
     for i=1:size(he,1)
         % wildcard
         if ~isempty(strfind( he{i,1},'*'))
-            id=regexpi2(v.tb(:,1), ['^' he{i,1}] );
+            %id=regexpi2(v.tb(:,1), ['^' he{i,1}] );
+            id=regexpi2(v.tb(:,1), [ he{i,1}] );
         else
             id=find(strcmp(v.tb(:,1), [ he{i,1}]));
         end
@@ -998,10 +1007,11 @@ he2=he;
 %________________________________________________
 %%  rename files
 %________________________________________________
-function [he tbout]=renameGUI(v,he,s, showgui)
+function [he tbout isOKpressed]=renameGUI(v,he,s, showgui)
 % keyboard
 tb= v.tb;
 tbh=v.tbh;
+isOKpressed=0;
 if 0
     if isempty(he)
         he=repmat({''},[ 1 3]) ;
@@ -1256,6 +1266,11 @@ try
     close(f);
 catch
     [he tbout]=deal({});
+end
+
+if u.isOK==1
+   isOKpressed=1; 
+
 end
 
 

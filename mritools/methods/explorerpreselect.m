@@ -8,10 +8,16 @@
 %% disp([' image: <a href="matlab: explorerpreselect(''' w ''')">' w '</a>']);
 %
 % EXAMPLE
-% explorerpreselect(which('mean.nii'))
+% explorerpreselect('mean.m')
+% explorerpreselect(which('mean.m'))
 % explorerpreselect(fullfile(pwd,'_sample2.nii'))
 
 function explorerpreselect(fi)
+
+[pas fis ext]=fileparts(fi);
+if isempty(pas)
+    fi=which([fis ext]);
+end
 
 if ispc
     system(['explorer.exe /select,"' fi '"']);

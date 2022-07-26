@@ -715,6 +715,13 @@
 % #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/
 % 
+% #ba 26 Jul 2022 (14:01:43)
+% #k [xrename.m] #n modified
+%  -delete multiple files via wildcards via xrename 
+% #k [explorerpreselect.m] #n modified
+% explorerpreselect('mean.m') --> open folder in file-explorer containing and highlighting the m-file ('mean.m') 
+% 
+% 
 % 
 
 
