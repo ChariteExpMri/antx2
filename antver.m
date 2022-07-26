@@ -719,7 +719,7 @@
 % #k [xrename.m] #n modified
 %  -delete multiple files via wildcards via xrename 
 % #k [explorerpreselect.m] #n modified
-% explorerpreselect('mean.m') --> open folder in file-explorer containing and highlighting the m-file ('mean.m') 
+%  -explorerpreselect('mean.m') --> open folder in file-explorer containing and highlighting the m-file ('mean.m') 
 % 
 % 
 % 

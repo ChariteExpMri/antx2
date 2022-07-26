@@ -11,7 +11,7 @@
    __[xrename.m]__ modified  
    -delete multiple files via wildcards via xrename   
    __[explorerpreselect.m]__ modified  
-  explorerpreselect('mean.m') --> open folder in file-explorer containing and highlighting the m-file ('mean.m')   
+   -explorerpreselect('mean.m') --> open folder in file-explorer containing and highlighting the m-file ('mean.m')   
 <!---->
   &#x1F535;   <ins>**15 Jun 2022 (00:42:12)**</ins>  
   New tutorial &#x1F4D7;  __["tutorial_prepareDTIpipeline.docx"]__  
