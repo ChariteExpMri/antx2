@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   26 Jul 2022 (14:01:43)  
+ &#x1F34E; last modification:   02 Sep 2022 (08:55:09)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,11 +7,16 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**02 Sep 2022 (08:55:09)**</ins>  
+   __[xexcel2atlas.m]__ modified    
+     -saveMasksSeparately: save output masks as separate NIFTIs  
+<!---->
   &#x1F535;   <ins>**26 Jul 2022 (14:01:43)**</ins>  
    __[xrename.m]__ modified  
    -delete multiple files via wildcards via xrename   
    __[explorerpreselect.m]__ modified  
    -explorerpreselect('mean.m') --> open folder in file-explorer containing and highlighting the m-file ('mean.m')   
+    
 <!---->
   &#x1F535;   <ins>**15 Jun 2022 (00:42:12)**</ins>  
   New tutorial &#x1F4D7;  __["tutorial_prepareDTIpipeline.docx"]__  

@@ -721,9 +721,11 @@
 % #k [explorerpreselect.m] #n modified
 %  -explorerpreselect('mean.m') --> open folder in file-explorer containing and highlighting the m-file ('mean.m') 
 % 
+% #ba 02 Sep 2022 (08:55:09)
+% #k [xexcel2atlas.m] #n modified  
+%    -saveMasksSeparately: save output masks as separate NIFTIs
 % 
 % 
-
 
 %% ===============================================
 %----- EOF

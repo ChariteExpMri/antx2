@@ -62,6 +62,12 @@
 %                                  
 % #k 'outputName'          The filename (string) of the output file #b (must be defined, default: 'dummyMask').
 % #k 'outputDir'           The output directory, #b must be selected, if empty the location of the "excelfile" is used.
+% 
+% #k 'saveMasksSeparately'   save output masks as separate NIFTIs; default: a single NIFTI-file 
+%                               (0) single NIFTI 
+%                               (1) multiple NIFTIs' {'b'}
+%                            -if (1) the output-masks will be stored in 'outputDir' with name "'mask_'+newID+.nii"
+% ___DEBUGGING OPTION___
 % #k 'saveSingleMasks'       For debugging purpose #b {0|1}: 
 %                          (1): additionally saves the input regions as separate masks, in a new subfolder 
 %                          (0): don't save single masks
@@ -152,8 +158,10 @@ p={...
     %     'hemisphere'   '(3) both united'    'HEMISPHERE: define mask & relation to hemisphere' {'(1) left','(2) right','(3) both united' '(4) both separated '}
     'outputName'  'dummyMask'      'filename (string) of the output file"'   ''
     'outputDir'   ''               'select outputdirectory, if empty output is stored where "excelfile" is located'   {'d'}
-    'saveSingleMasks'   0          'for debugging {0|1}: (1) saves also the input regions as separate masks (in new created subfolder)' {'b'}        
-    'singleMasksType'   3          'specify single mask value {1|2|3}: (1) binary,(2) new ID ,(3) both as separate outputs ("saveSingleMasks" must be "1")' {1,2,3}        
+    'saveMasksSeparately'  0        '{0|1} save output masks as separate NIFTIs, (0) single NIFTI (1) multiple NIFTIs' {'b'}
+    'inf7' '_DEBUGGING____' '' ''
+    'saveSingleMasks'   0          'for DEBUGGING {0|1}: (1) saves also the input-regions as separate masks (in new created subfolder)' {'b'}        
+    'singleMasksType'   3          'for INPUT-regions, specify single mask value {1|2|3}: (1) binary,(2) new ID ,(3) both as separate outputs ("saveSingleMasks" must be "1")' {1,2,3}        
     'LRstringPosition'   'prefix'  'position of the output label string denoting the LEFT/RIGHT hemishere {prefix|suffix}' {'prefix','suffix'}
     ...
     };
@@ -161,7 +169,7 @@ p=paramadd(p,x);%add/replace parameter
 %% show GUI
 if showgui==1
     hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
-    [m z]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .5 .8 .25 ],...
+    [m z]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .5 .8 .3 ],...
         'title','Make Atlas From Excelfile','info',hlp);
     if isempty(m);return; end
 else
@@ -618,6 +626,7 @@ for i=  1:size(tb5,1)
     
     if z.saveSingleMasks==1
        MaskName      =['msk_ID_' num2str(dum{u.inewID})  '_' strrep(dum{u.ioldlabel},' ','_') '.nii'];
+       MaskName      =regexprep(MaskName,{'\','/','&','?','%','@'},{'_'}); %remove specChars
        outdirPath    =fullfile(z.outputDir, [z.nameout '_singleMasks' ]);
        disp([ num2str(i) '  ' MaskName]);
        if exist(outdirPath)~=7 ; 
@@ -735,6 +744,24 @@ pause(.5);
 rsavenii(niftifile, ha,s2);
 showinfo2('new mask/atlas ',niftifile);
 
+
+% ==============================================
+%% optional: save as separated masks (nifti)
+% ===============================================
+
+if z.saveMasksSeparately==1
+    unim=unique(s2); unim(unim==0)=[];
+    for i=1:length(unim)
+        F2name=[ 'mask_' pnum( unim(i) ,3) '.nii'];
+        F2=fullfile( z.outputDir, F2name);
+        disp([ 'saving separate mask: "' F2name '"' ]);
+        s3=double(s2==unim(i));
+        rsavenii(F2, ha,s3,2);
+    end
+end
+
+
+%%----------------------------------
 %-----copy excelfile to output Directory
 [pa3 fi3 ext3]=fileparts(z.excelfile);
 file_XLS_inCopy=fullfile(z.outputDir,[strrep(fi3,'_input','') '__input' ext3]);
@@ -1148,7 +1175,7 @@ hrt1={'newID' 'origID'};
 uni_origat=unique(rt1(:,2));
 oID       =cell2mat(e(:,v.iID));
 icol2extract=[v.iregion v.iID  ];%v.inewID 
-if isfield(v,'newRegionName')==1
+if isfield(v,'newRegionName')==1 && v.newRegionName~=0
     icol2extract=[icol2extract  v.newRegionName ];
 end
 
@@ -1164,7 +1191,7 @@ end
 % uhelp( plog([],[ hrt2; rt2] ),1);
 
 hrt2={'newID_Nifti' 'origID_Nifti' 'origLabel_xls' 'origID_xls'};
-if isfield(v,'newRegionName')==1
+if isfield(v,'newRegionName')==1 && v.newRegionName~=0
   hrt2=[hrt2 'proposedRegionName']  ;
 end
 
@@ -1204,7 +1231,7 @@ for i=1:length(ID_orig)
 end
 vc1=[v.iregion v.iID v.inewID];
 vc2=[];
-if isfield(v,'newRegionName')==1
+if isfield(v,'newRegionName')==1 && v.newRegionName~=0
     vc2=[vc2 v.newRegionName ]   ;
 end
 vc2=[vc2 v.ichild];
