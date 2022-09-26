@@ -27,8 +27,13 @@
 % antcb('selectimageviagui', mypath, 'single');  %select an image from upperDatapath via gui
 % antcb('selectimageviagui', mypath, 'multi');   %select several images from upperDatapath via gui
 %
-
-
+% 
+% -----------------
+% antcb('cwcol',[1 .94 .87]);           % change command-window background color
+% antcb('cwcol');                       % ..selection via color-palette
+% antcb('cwname','klaus works here');   % define command-window title
+% antcb('cwname');                      % ..selection via command window input
+% 
 % antcb('versionupdate'), 
 
 
@@ -281,6 +286,44 @@ if strcmp(do, 'load');
     antcb('update'); %update subkects
     %     fprintf('[done]\n');
     
+    %% =========special characters in study path =========
+    
+    studypath=fileparts(an.datpath);
+    %   studypath='ddd > ?';
+    tes={
+        '\s'  'space-character (" ")'
+        '<'   'less than (<)-character'
+        '>'   'greater than (>)-character'
+        '"'   'double quote (")-character'
+        '\|'  'vertical bar or pipe (|)-character'
+        '\?'  'question mark (?)-character'
+        '\*'  'asterisk (*)-character'
+        };
+    ispecchar=regexpi2(studypath, tes(:,1));
+    if ~isempty(ispecchar)
+        if usejava('desktop')
+            ms=[{'SPECIAL CHARACTERS found in the STUDY-path: '   }
+                ['...found: "' strjoin(tes(ispecchar,2),'", "') '"'  ' in path: ["' studypath  '"]' ]
+                'PLEASE REMOVE SPECIAL CHARACTERS FROM PATH..otherwise data processing will not work!'
+                '..i.e close the ANT-project+GUI'
+                '.. change matlab path to another directory'
+                '..manually change study-path'
+                'also change the datapath (x.datpath) in the project-file  '
+                '..reload project'
+                ];
+            %         warndlg(ms,'WARNING');
+            warning on;
+            warning(strjoin(ms,char(10)));
+             warning off
+        else
+            warning on;
+            warning(strjoin(ms,char(10)));
+             warning off
+        end   
+    end
+   
+    
+    %% ===============================================
     
     return
 end
@@ -472,6 +515,44 @@ if strcmp(do,'status');
     status(input)
 end
 
+%% ============change command window color (several matlab-sessions open) =================
+if strcmp(do,'cwcol');
+    if length(input2)>1 && isnumeric(input2{2}) && length(input2{2})==3
+        col=input2{2};
+    else
+        col=uisetcolor;
+    end
+    
+    cmdWinDoc = com.mathworks.mde.cmdwin.CmdWinDocument.getInstance;
+    listeners = cmdWinDoc.getDocumentListeners;
+    %js = listeners(5);  % or listeners(4) or listeners(5), depending on Matlab release
+    for i=1:length(listeners)
+        js = listeners(i); 
+        try
+        if strcmp(js.getAccessibleName,'Command Window')
+            % Note: a safer way would be to loop on listeners until finding a JTextArea instance, since it is not assured to be the 3rd item in the listeners array.
+            % Now you can set the colors (which apply immediately) using several alternative ways:
+            
+            % js.setBackground(java.awt.Color.yellow);
+            js.setBackground(java.awt.Color(col(1),col(2),col(3)));
+        end
+        end
+    end
+    return
+end
+if strcmp(do,'cwname');
+    if length(input2)>1 && ischar(input2{2})
+        cwname=input2{2};
+    else
+%         clear input;
+%         drawnow; rehash path;
+%         cwname=inputdlg('enter new comand window name: ');
+        cwname=inputCMD('enter new comand window name: ');
+        
+    end
+    com.mathworks.mlservices.MatlabDesktopServices.getDesktop.getMainFrame.setTitle(cwname);
+    return
+end
 %====================================================================================================
 %%                                                                                  RUN-MOUSE FIRST    : OLD
 %====================================================================================================
@@ -2467,3 +2548,7 @@ catch
     out=load_guiparameter(struct('forcedefault',1));
 end
 
+
+
+function  o=inputCMD(msg)
+o=input(msg,'s');

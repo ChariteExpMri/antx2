@@ -4897,6 +4897,7 @@ b       =b(2:end,:);
 %---HEMI
 fhemi=z.hemi; %fullfile(fileparts(fAno),'AVGThemi.nii');
 [hm m]=rgetnii(fhemi);
+m=round(m); %force 0,1 or 2;
 
 %---CONTRAST TO SAVE
 npw=length(us.pw);

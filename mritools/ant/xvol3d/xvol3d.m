@@ -765,7 +765,7 @@ set(hb,'callback',{@showarrows},'tag','showarrows','fontsize',8,'backgroundcolor
 
 %% __________________________________________________________________________________________________
 %BRAIN
-hb=uicontrol(hs,'style','edit','units','norm','string','0.01');
+hb=uicontrol(hs,'style','edit','units','norm','string','0.2');
 set(hb,'position',[0    0.1 .15 .04],'tooltipstring','brain alpha/transparency');
 set(hb,'callback',{@brainparam,'alpha'},'fontsize',8,'tag','brainalpha');
 
@@ -1334,7 +1334,12 @@ function setLight(e,e2, param);
 hs=findobj(0, 'tag','winselection');
 hr=findobj(hs, 'tag','rblight');
 if isempty(hs) ; return; end
-if exist('param') && strcmp(param,'updateRadio')
+
+% if ishandle(e)==1
+%     if e.value===1; param.updateRadio=1; end
+% end
+
+if exist('param')==1 && strcmp(param,'updateRadio')
     hl=findobj(findobj(0,'tag','xvol3d'),'type','light');
     if isempty(hl);      set(hr,'value',0) ;
     else;                set(hr,'value',1) ;
@@ -2327,7 +2332,7 @@ axis tight;
 daspect([1,1,1]);
 % colormap(gray(100));
 % camlight;
-setLight('on');
+setLight([],[],'on');
 lighting gouraud;
 set(p1,'FaceAlpha',.05);
 hold on;
@@ -2345,7 +2350,15 @@ setappdata(p1,'center', [mean(xlim) mean(ylim) mean(zlim)]);
 setappdata(p1,'lims', [xlim; ylim; zlim]);
 
 MAKEARROW;
+
+% light
+hl=findobj(findobj(0,'tag','winselection'),'tag','rblight');
+set(hl,'value',1);
+setLight(hl);
+
 fprintf('..done\n');
+
+
 
 
 function MAKEARROW(par)

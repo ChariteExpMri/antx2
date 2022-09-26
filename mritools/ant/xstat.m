@@ -3757,8 +3757,8 @@ c(end+1,:)={'img' NIIfiles{1}};
 c(end+1,:)={'con' ['__' num2str(p.con) '__']};
 c(end+1,:)={'mcp' num2str(p.mcp)};
 c(end+1,:)={'TR'  num2str(p.TR)};
-c(end+1,:)={'k'   [ 'k' num2str(p.k) ]};
-
+% c(end+1,:)={'k'   [ 'k' num2str(p.k) ]};
+c(end+1,:)={'k'   [ 'k' num2str( xSPM.k ) ]};
 cj=strjoin(reshape(c(:,2),[size(c,1) 1]),'');
 nametag=regexprep(cj,{'\s+','<' '>','.nii'},{'#','_LT_' '_GT_',''});
 

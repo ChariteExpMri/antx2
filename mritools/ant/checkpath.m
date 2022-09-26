@@ -44,7 +44,7 @@ end
 % uhelp( plog([],[ tb],0, 'Paths','al=1' ),0);
 
 % ==============================================
-%  check paths (spaces)
+%%  check paths (spaces)
 % ===============================================
 tes={
     '\s'  'space-character (" ")'
@@ -65,7 +65,7 @@ for i=1:size(tb,1)
         if ~isempty(is)
             isOK(j)=0;
             chk(i,1)=...
-                {[chk{i,1} '' tes{j,2}  ' found; ' ]};
+                {[chk{i,1} '' tes{j,2}  ' found*; ' ]};
         end
     end
     
@@ -78,6 +78,15 @@ for i=1:size(tb,1)
     end
     
 end
+%% ===============================================
 
-uhelp( plog([],[ tb chk],0, {' #wb Check paths names';...
-    ' special characters in path-names such as spaces,"<",">",double quote,vertical bar, question mark and asterisk are not allowed'},'al=1' ),0);
+tb2=[ tb chk];
+m=plog([],[ tb chk],0, {' #wb Check paths names';...
+    ' special characters in path-names such as spaces,"<",">",double quote,vertical bar, question mark and asterisk are not allowed'},'al=1' );
+% m(end+1,1)={'<html><h1 style="color:red;font-size:15px;"> *If found please remove the special characters from the respective path(s).  '}
+m(end+1,1)={' #r  *If found please remove the special characters from the respective path(s).  '};
+uhelp(m,'1','name','check paths');
+%% ===============================================
+
+% uhelp( plog([],[ tb chk],0, {' #wb Check paths names';...
+%     ' special characters in path-names such as spaces,"<",">",double quote,vertical bar, question mark and asterisk are not allowed'},'al=1' ),0);
