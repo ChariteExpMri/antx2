@@ -263,7 +263,7 @@ end
 %% ===============================================
 
 % Select row and col numbers
-for i=1:length(is)
+for i=1%:length(is)
     row = is(i);
     col = icol;
     % Select cell programmatically
