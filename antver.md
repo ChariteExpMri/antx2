@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   02 Sep 2022 (08:55:09)  
+ &#x1F34E; last modification:   27 Sep 2022 (13:51:29)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**27 Sep 2022 (13:51:29)**</ins>  
+   __[anthistory.m]__ modified  
+   a project can be found via "find"-button  
+<!---->
   &#x1F535;   <ins>**02 Sep 2022 (08:55:09)**</ins>  
    __[xexcel2atlas.m]__ modified    
      -saveMasksSeparately: save output masks as separate NIFTIs  

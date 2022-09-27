@@ -302,14 +302,16 @@ if strcmp(do, 'load');
     ispecchar=regexpi2(studypath, tes(:,1));
     if ~isempty(ispecchar)
         if usejava('desktop')
-            ms=[{'SPECIAL CHARACTERS found in the STUDY-path: '   }
+            ms=[{''}
+                '=============================================='
+                'SPECIAL CHARACTERS found in the STUDY-PATH !!!'  
+                '=============================================='
                 ['...found: "' strjoin(tes(ispecchar,2),'", "') '"'  ' in path: ["' studypath  '"]' ]
                 'PLEASE REMOVE SPECIAL CHARACTERS FROM PATH..otherwise data processing will not work!'
-                '..i.e close the ANT-project+GUI'
-                '.. change matlab path to another directory'
-                '..manually change study-path'
-                'also change the datapath (x.datpath) in the project-file  '
+                'SOLUTION: close the ANT-project+GUI & change matlab path to another directory'
+                '..change the name of the study-path & also change the datapath (x.datpath) in the project-file  '
                 '..reload project'
+                '=============================================='
                 ];
             %         warndlg(ms,'WARNING');
             warning on;

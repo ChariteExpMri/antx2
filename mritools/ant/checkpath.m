@@ -16,6 +16,7 @@ end
 % ===============================================
 
 tb={};
+try; tb(end+1,:)={'study-path     '  fileparts(an.datpath)}; end
 try; tb(end+1,:)={'path configfile'  an.configfile}; end
 try; tb(end+1,:)={'path template'    an.templatepath}; end
 try; tb(end+1,:)={'path original template'   an.wa.refpath}; end
@@ -80,12 +81,23 @@ for i=1:size(tb,1)
 end
 %% ===============================================
 
+ifailed=setdiff(1:length(chk),regexpi2(chk,'OK'));
+if isempty(ifailed)
+    ms=[' #g RESULT: all paths are fine!'];
+else
+    ms=[' #r RESULT: please check the "STATUS" of the paths in table'];
+end
+
 tb2=[ tb chk];
-m=plog([],[ tb chk],0, {' #wb Check paths names';...
-    ' special characters in path-names such as spaces,"<",">",double quote,vertical bar, question mark and asterisk are not allowed'},'al=1' );
+htb2={'Path'   'PathName'     'Status';...
+      '===== ' '=========='   '======'};
+m=plog([],[ htb2 ;[tb chk]],0, {' #wb Check path-names';...
+    ' special characters in path-names such as spaces,"<",">",double quote,vertical bar, question mark and asterisk are not allowed';...
+    ms},'al=1' );
 % m(end+1,1)={'<html><h1 style="color:red;font-size:15px;"> *If found please remove the special characters from the respective path(s).  '}
 m(end+1,1)={' #r  *If found please remove the special characters from the respective path(s).  '};
-uhelp(m,'1','name','check paths');
+m(end+1,1)={ms};
+uhelp(m,0,'name',['check paths [' mfilename '.m]']);
 %% ===============================================
 
 % uhelp( plog([],[ tb chk],0, {' #wb Check paths names';...

@@ -1,50 +1,51 @@
 
 % #ok load a project from history, i.a. from a list of previous studies
-% each time a project-file is loaded a history-table is updated and saved in: 
-%      "userpath/antx2_userdef/userdef.mat" which is 
+% each time a project-file is loaded a history-table is updated and saved in:
+%      "userpath/antx2_userdef/userdef.mat" which is
 % or: #r <u> fullfile(userpath,'antx2_userdef','userdef.mat');
 %
-% 
+%
 % ==============================================
-% #ko   *** [1]  LOAD A STUDY FROM HISTORY  ***  
+% #ko   *** [1]  LOAD A STUDY FROM HISTORY  ***
 % ==============================================
-% -click #b [GREEN BOOK] #n -button (open STUDY-HISTORY) of the ANT GUI to open the 
+% -click #b [GREEN BOOK] #n -button (open STUDY-HISTORY) of the ANT GUI to open the
 %  "anthistory"-GUI.
 %   (1) select one of the chronologically ordered entrances of the table
-%    -each entrance denotes: 
+%    -each entrance denotes:
 %            * the time when a project was loaded
 %            * the study path
 %            * the loaded project file (aka config-file)
 %            * the user
-%    -once selected, the lower text field contains the information of the 
+%    -once selected, the lower text field contains the information of the
 %     selected study
-%    -background colors denote the same studies i.e. identical projects 
-%   (2) hit #b [load] #n to change the directory to the selected project and load 
+%    -background colors denote the same studies i.e. identical projects
+%   (2) hit #b [load] #n to change the directory to the selected project and load
 %       the project
 % ____________________________________________________________
 %%   [ other GUI controls]
-% #b [openDir]        #n : open directory of selected study in explorer 
-% #b [shring GUI]     #n : shrinks the window's horizontal size by 50% 
+% #b [openDir]        #n : open directory of selected study in explorer
+% #b [shring GUI]     #n : shrinks the window's horizontal size by 50%
 % #b [stay open]      #n : forces the GUI to stay open when [load]-button is pressed
 % #m [unique Studies] #n : [x] show single studies only, [ ] show entire history
+% #b [find]           #n : find study via string-search (cell will be highlighted)
 % 
 % #b [load]       #n : load a selected project
 %                -The project must be selected from the table and must appear
 %                 in the lower gray text box
 % #b [close]      #n : close the GUI
 % #b [help]       #n : get this help
-% #r [delete]     #n : Delete entiry history. 
+% #r [delete]     #n : Delete entiry history.
 %                #r Important: This will delete the history without any "undo"-option
 %                -in this step "fullfile(userpath,'antx2_userdef', 'userdef.mat')" is deleted
-%  
-%  #g USE TABLE's CONTEXT MENU to: 
+%
+%  #g USE TABLE's CONTEXT MENU to:
 %   -delete current session from history
 %   -delete study (all entrances of the study) from history
 %   -keep chronologically last 3 entrances from a study and delete the rest from history
 %   -open study directory
 %   -show config file of the stury in editor
-% 
-% 
+%
+%
 % ==============================================
 % #ko *** [2] COMMANDLINE OPTIONS  ***
 % ===============================================
@@ -52,23 +53,15 @@
 % anthistory('update'); % % update the current project to history
 % anthistory('delete'); % % delete the entiry history
 % anthistory('path');   % % shows filename&path of the history
-% 
-% 
-% 
+%
+%
+%
 % ==============================================
 % #ko *** [3] SHORTCUTS  ***
 % ===============================================
 % #b [space]  #n :  enlarge/shrink window (toggle)
-% 
-% 
-
-
-
-
-
-
-
-
+%
+%
 
 
 
@@ -76,17 +69,19 @@
 function anthistory(task)
 
 %===================================================================================================
-
+warning off;
 p.upa=fullfile(userpath,'antx2_userdef');
 p.fhist=fullfile(p.upa, 'userdef.mat' );
 
-
+if exist('task')==0
+    task='select';
+end
 
 %===================================================================================================
 if strcmp(task,'path')
     
     showinfo2('History-DIR :' ,p.upa  ,[],[], [ '>> ' p.upa '' ]);
-%     showinfo2('History-FILE:' ,p.fhist,[],[], [ '>> ' p.fhist '' ]);
+    %     showinfo2('History-FILE:' ,p.fhist,[],[], [ '>> ' p.fhist '' ]);
     %cprintf([0 .5 1], ['History-FILE: ' strrep(p.fhist,[filesep],[filesep filesep])  '\n']);
     if exist(p.fhist)==2
         disp(['History-FILE: ' '<a href="matlab: explorerpreselect(''' p.fhist ''')">' p.fhist '</a>']);
@@ -137,7 +132,7 @@ mkdir(upa);
 
 global an
 
-pa        =fileparts(an.datpath); 
+pa        =fileparts(an.datpath);
 timx      =datestr(now);
 
 [pac namec extc]=fileparts(an.configfile);
@@ -185,6 +180,8 @@ save(fhist,'h');
 
 % uhelp(plog([],[h.hhistory;h.history ],0))
 
+
+
 % ==============================================
 %%   select
 % ===============================================
@@ -200,10 +197,10 @@ load(p.fhist);
 %%   defaults
 % ===============================================
 setpixunits=1;
-doshrinkGui=0;
+doshrinkGui=1;
 showuniquestudies=1;
 % ==============================================
-%%   
+%%
 % ===============================================
 
 figpos=[ 0.1139    0.2044    0.8014    0.5711];
@@ -214,6 +211,7 @@ hf=figure('visible','off','units','norm','menubar','none','color','w','tag','ant
 % set(hf,'position',[0.3937    0.4011    0.3542    0.1544])
 set(hf,'position',figpos);
 set(gcf,'WindowKeyPressFcn',@keys);
+% set(gcf,'WindowButtonDownFcn',@windowclick);
 
 % Column names and column format
 % Define the data
@@ -233,7 +231,7 @@ set(gcf,'WindowKeyPressFcn',@keys);
 
 
 columnname    = h.hhistory ;%{'SELECT'  'ICON'  'shortMessage' 'longMessage                                       '};
-columnformat  = repmat({'char'},[1 length(h.hhistory)]); %{'logical' 'char'  'char' 
+columnformat  = repmat({'char'},[1 length(h.hhistory)]); %{'logical' 'char'  'char'
 ColumnEditable= repmat(false,[1 length(h.hhistory)]);
 
 
@@ -282,12 +280,12 @@ ColumnEditable= repmat(false,[1 length(h.hhistory)]);
 
 
 % Create the uitable
-t = uitable('Data', d,... 
-            'ColumnName', columnname,...
-            'ColumnFormat', columnformat,...
-            'ColumnEditable', ColumnEditable,...
-            'RowName',[],...
-            'tag','table');
+t = uitable('Data', d,...
+    'ColumnName', columnname,...
+    'ColumnFormat', columnformat,...
+    'ColumnEditable', ColumnEditable,...
+    'RowName',[],...
+    'tag','table');
 
 
 % Set width and height
@@ -297,7 +295,7 @@ t.Position(4) = t.Extent(4);
 jScroll = findjobj(t);
 jTable = jScroll.getViewport.getView;
 jTable.setAutoResizeMode(jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-% 
+%
 % jscrollpane = javaObjectEDT(findjobj(ht));
 % viewport    = javaObjectEDT(jscrollpane.getViewport);
 % jtable      = javaObjectEDT( viewport.getView );
@@ -327,6 +325,7 @@ u.t=t;
 u.coltab=coltab;
 u.figpos=figpos;
 
+u.istablesort=0; %sort table...this does not work currently
 u.jTable=jTable;
 u.txtmsgDefault='<empty> no study selected from table';
 set(gcf,'userdata',u)
@@ -350,7 +349,7 @@ end
 hb=uicontrol('style','checkbox','units','norm','tag','ck_stayopen','string','stay open');
 set(hb,'position',[0.12997 0.069145 0.07 0.03]);%,'callback',{@proc,1});
 set(hb,'tooltipstring',[...
-%     'GUI remains open after a project-file is loaded' char(10) ...
+    %     'GUI remains open after a project-file is loaded' char(10) ...
     '[x] GUI remains open when [OK]-button is clicked' char(10)...
     '[ ] GUI closes when [OK]-button is clicked' char(10)...
     ]);
@@ -358,7 +357,7 @@ set(hb,'value',0,'backgroundcolor','w') ;%,'enable','off');
 if setpixunits==1
     set(hb,'units','pixel');
 end
- 
+
 % ==============================================
 %%   CHECK: shrink GUI
 % ===============================================
@@ -366,7 +365,7 @@ hb=uicontrol('style','checkbox','units','norm','tag','shrinkGUI','string','shrin
 set(hb,'callback',@shrinkGUI);
 set(hb,'position',[0.058044 0.069145 0.07 0.03]);%,'callback',{@proc,1});
 set(hb,'tooltipstring',[...
-%     'GUI remains open after a project-file is loaded' char(10) ...
+    %     'GUI remains open after a project-file is loaded' char(10) ...
     '[x] shrink GUI window to half horizontal size' char(10)...
     '[ ] restore orig. GUI window size' char(10)...
     ]);
@@ -381,12 +380,25 @@ hb=uicontrol('style','checkbox','units','norm','tag','uniqueStudies','string','u
 set(hb,'callback',@shrinkGUI);
 set(hb,'position',[0.2 0.069145 0.08 0.03]);%,'callback',{@proc,1});
 set(hb,'tooltipstring',[...
-%     'GUI remains open after a project-file is loaded' char(10) ...
+    %     'GUI remains open after a project-file is loaded' char(10) ...
     '[x] show unique studies only' char(10)...
     '[ ] show entire history' char(10)...
     ]);
 set(hb,'value',0,'backgroundcolor',[ 1.0000    0.9451    0.651]) ;
 set(hb,'callback',{@uniquestudies});
+if setpixunits==1
+    set(hb,'units','pixel');
+end
+
+% ==============================================
+%%   find string: unique studies
+% ===============================================
+hb=uicontrol('Style','pushbutton','units','norm', 'Position',[.65 .03 .1 .02],'tag','finderwindow');
+set(hb,'string','find','callback',{@sub_findstring,2},'fontsize',8);
+set(hb,'position',[0.28 0.069145 0.04 0.03]);
+set(hb,'tooltipstring',[...
+    'search string' char(10) ...
+    ]);
 if setpixunits==1
     set(hb,'units','pixel');
 end
@@ -435,7 +447,8 @@ if setpixunits==1
     set(hb,'units','pixel');
 end
 
-% 
+
+%
 % % ----------------PARAMS
 contextmenu_create(); %  contextMenu
 
@@ -446,8 +459,8 @@ if doshrinkGui==1
     shrinkGUI();
 end
 if showuniquestudies==1
-   set(findobj(hf,'tag','uniqueStudies'),'value',1);
-   uniquestudies();
+    set(findobj(hf,'tag','uniqueStudies'),'value',1);
+    uniquestudies();
 end
 % set(gcf,'CloseRequestFcn',[]); %forced to be closed ..>> "closereq"
 
@@ -463,13 +476,13 @@ end
 %% ===============================================
 %% ADJUST TABLE-COLUMN-width
 %https://de.mathworks.com/matlabcentral/answers/98616-is-there-an-option-for-the-uitable-object-which-allows-the-width-of-the-columns-to-adjust-according
-if 1
+if u.istablesort==1
     unit_t=get(t,'units');
     set(t,'units','pixel');
     tablew = t.Position(3); %get with of the uitable
-     maxLen = max(cellfun(@length,d0),[],1); % Calculate the with of the data in cell C.
-     
-     f =1.2+( tablew/sum(maxLen)); % Normalize it to the with of the table
+    maxLen = max(cellfun(@length,d0),[],1); % Calculate the with of the data in cell C.
+    
+    f =1.2+( tablew/sum(maxLen)); % Normalize it to the with of the table
     cellMaxLen = num2cell(maxLen*f);
     set(t, 'ColumnWidth', cellMaxLen);
     set(t,'units',unit_t);
@@ -490,34 +503,84 @@ end
 set(hf,'visible','on');
 %% ===============================================
 
-% 'a'
 
 % ==============================================
-%%   
+%%   sort option for table
+% ===============================================
+if u.istablesort==1
+    ht=findobj(gcf,'tag','table');
+    jscrollpane = findjobj(ht);
+    jtable = jscrollpane.getViewport.getView;
+    % Now turn the JIDE sorting on
+    jtable.setSortable(true);		% or: set(jtable,'Sortable','on');
+    jtable.setAutoResort(true);
+    jtable.setMultiColumnSortable(true);
+    jtable.setPreserveSelectionsAfterSorting(true);
+end
+
+function [ms bgcol]=getselection
+hf=findobj(0,'tag','anthistory');
+u=get(hf,'userdata');
+if u.istablesort==1
+    row=e.rowAtPoint(e2.getPoint());
+    col=e.columnAtPoint(e2.getPoint());
+    
+    ms0={};
+    for j=1:length(u.hd)
+        ms0{j,1}=  u.jTable.getValueAt(row , j-1);
+    end
+    ms0 = regexprep(ms0, {'<.*?>','&nbsp;','\s+$'}, '' );
+    ms=ms0;
+    sn=u.jTable.getValueAt(row , j-1); %get color
+    i1=min(strfind(sn,'=rgb('));
+    i2=strfind(sn,')');  i2=i2(i2>i1);
+    bgcol=str2num(regexprep(sn(i1:i2),{'=rgb','(' ')'},''))./255;
+    ms=ms0;
+else
+    row=e.rowAtPoint(e2.getPoint())+1;
+    col=e.columnAtPoint(e2.getPoint())+1;
+    ms=u.d(row,:)';
+    bgcol=u.coltab(row,:);
+end
+% ==============================================
+%%
 % ===============================================
 function cellclicked(e,e2)
 ix=e2.Indices;
 hf=findobj(0,'tag','anthistory');
-
+u=get(hf,'userdata');
 % ix(1)
 try
-    u=get(hf,'userdata');
+    
     if isempty(u.t.Data{ix(1),1})
         set(findobj(hf,'tag','ed_sel'),'string',u.txtmsgDefault,'backgroundcolor',[.9 .9 .9]);
         return
     end
     
-    ms=u.d(ix(1),:)';
+    if u.istablesort==1
+        ms0={};
+        for j=1:length(u.hd)
+            ms0{j,1}=  u.jTable.getValueAt(ix(1)-1 , j-1);
+        end
+        ms0 = regexprep(ms0, {'<.*?>','&nbsp;','\s+$'}, '' );
+        ms=ms0;
+        sn=u.jTable.getValueAt(ix(1)-1 , j-1); %get color
+        i1=min(strfind(sn,'=rgb('));
+        i2=strfind(sn,')');  i2=i2(i2>i1);
+        bgcol=str2num(regexprep(sn(i1:i2),{'=rgb','(' ')'},''))./255;
+    else
+        ms=u.d(ix(1),:)';
+        bgcol=[u.coltab(ix(1),:)];
+    end
+    
+    
     msiz=size(char(u.hd),2);
     ms2=cellfun(@(a,b){['[' a ']'  repmat(' ' ,[1 msiz+5-length(a) ])  b ]}, u.hd' ,ms );
     
     he=findobj(gcf,'tag','ed_sel');
-    
-    
-    
     set(he,'string',ms2);
     set(he,'fontname','Courier','fontsize',8);
-    set(he,'backgroundcolor',[u.coltab(ix(1),:)],'enable','on');
+    set(he,'backgroundcolor',bgcol,'enable','on');
     
     u.clicked=ms;
     set(hf,'userdata',u);
@@ -529,8 +592,8 @@ end
 
 function proc(e,e2,arg)
 
-if arg==3; 
-    delete(findobj(0,'tag','anthistory')); 
+if arg==3;
+    delete(findobj(0,'tag','anthistory'));
     return
 elseif arg==2; %PATH
     hf=findobj(0,'tag','anthistory');
@@ -548,7 +611,7 @@ elseif arg==2; %PATH
         
     end
     
-elseif arg==1; 
+elseif arg==1;
     hf=findobj(0,'tag','anthistory');
     u=get(hf,'userdata');
     hs=findobj(hf,'tag','ck_stayopen');
@@ -573,7 +636,7 @@ elseif arg==1;
             return
             
         end
-    end 
+    end
 end
 
 
@@ -602,29 +665,47 @@ button = questdlg('DO you really want to remove the history! ','');
 if ~strcmp(button,'Yes'); return; end
 istest=0;
 if istest==0
-   try; delete(u.p.fhist); end
+    try; delete(u.p.fhist); end
     
 else
-  try;  movefile(u.p.fhist,fullfile(u.p.upa,'_antx2_userdef.mat'),'f') ; end
+    try;  movefile(u.p.fhist,fullfile(u.p.upa,'_antx2_userdef.mat'),'f') ; end
 end
 u.t.Data=repmat({''},[1 size(u.t.Data,2)]);
 msgbox('history removed!');
- set(findobj(hf,'tag','ed_sel'),'string',u.txtmsgDefault,'backgroundcolor',[.9 .9 .9]);
- 
- 
- 
+set(findobj(hf,'tag','ed_sel'),'string',u.txtmsgDefault,'backgroundcolor',[.9 .9 .9]);
+
+
+
+
 function mousemovedTable(e,e2)
 hf=findobj(0,'tag','anthistory');
 u=get(hf,'userdata');
-
-e2.getPoint;
-% jtable=e;
-% index = jtable.convertColumnIndexToModel(e2.columnAtPoint(e2.getPoint())) + 1
-row=e.rowAtPoint(e2.getPoint())+1;
-col=e.columnAtPoint(e2.getPoint())+1;
-
-try
-    ms=u.d(row,:)';
+if 1
+    e2.getPoint;
+    % jtable=e;
+    % index = jtable.convertColumnIndexToModel(e2.columnAtPoint(e2.getPoint())) + 1
+    if u.istablesort==1
+        row=e.rowAtPoint(e2.getPoint());
+        col=e.columnAtPoint(e2.getPoint());
+        
+        ms0={};
+        for j=1:length(u.hd)
+            ms0{j,1}=  u.jTable.getValueAt(row , j-1);
+        end
+        ms0 = regexprep(ms0, {'<.*?>','&nbsp;','\s+$'}, '' );
+        ms=ms0;
+        %         sn=u.jTable.getValueAt(row , j-1); %get color
+        %         i1=min(strfind(sn,'=rgb('));
+        %         i2=strfind(sn,')');  i2=i2(i2>i1);
+        %         bgcol=str2num(regexprep(sn(i1:i2),{'=rgb','(' ')'},''))./255;
+        ms=ms0;
+    else
+        row=e.rowAtPoint(e2.getPoint())+1;
+        col=e.columnAtPoint(e2.getPoint())+1;
+        ms=u.d(row,:)';
+    end
+    
+    
     msiz=size(char(u.hd),2);
     ms2=cellfun(@(a,b){['[' a ']'  repmat(' ' ,[1 msiz+2-length(a) ])  b '<br>' ]}, u.hd' ,ms );
     ms2=strrep(ms2, ' ', '&nbsp;' );
@@ -636,7 +717,7 @@ end
 
 function removefromhistory(e,e2)
 % ==============================================
-%%   
+%%
 % ===============================================
 
 hf=findobj(0,'tag','anthistory');
@@ -680,7 +761,7 @@ set(u.t,'UIContextMenu',c);
 
 function uniquestudies(e,e2)
 %% ==============================================
-%%   
+%%
 % ===============================================
 hf=findobj(0,'tag','anthistory');
 u=get(hf,'userdata');
@@ -705,10 +786,10 @@ if isunique==1 %SHOW UNIQUE FILES ONLY
     u.t.Data=u.t.Data(iuni,:);
     set(findobj(hf,'tag','deleteHistory'),'enable','off');
     %set(u.t ,'UIContextMenu',[]);
-else 
+else
     set(findobj(hf,'tag','deleteHistory'),'enable','on');
     contextmenu_create(); %  contextMenu
-
+    
     load(u.p.fhist);
     [d d0  coltab]=table2html(h);
     %u.hd    =hd;
@@ -729,9 +810,9 @@ isunique=get(hb,'value');
 
 isel=u.jTable.getSelectedRows+1;
 if isempty(isel); msgbox('select something'); return; end
-    
 
-if strcmp(task,'deleteStudy') ||  strcmp(task,'keepNewest3') 
+
+if strcmp(task,'deleteStudy') ||  strcmp(task,'keepNewest3')
     
     
     
@@ -746,12 +827,12 @@ if strcmp(task,'deleteStudy') ||  strcmp(task,'keepNewest3')
         dstr=cellfun(@(b,c,d){[ b c d]}, d0(:,2),d0(:,3),d0(:,4) );
         
         ixremove=find(strcmp(dstr,selstr));
-        if strcmp(task,'keepNewest3') 
+        if strcmp(task,'keepNewest3')
             %if length(ixremove)>3
-              ixremove= ixremove(4:end);
-%             else
-%                 
-%             end
+            ixremove= ixremove(4:end);
+            %             else
+            %
+            %             end
         end
         
         
@@ -780,7 +861,7 @@ elseif strcmp(task,'openStudyDir')
         if exist(u.d{isel(i),2})==7
             explorer(u.d{isel(i),2});
         else
-          msg_missingPath(u.d{isel(i),2});
+            msg_missingPath(u.d{isel(i),2});
         end
     end
 elseif strcmp(task,'showConfigfile')
@@ -799,7 +880,7 @@ end
 %% ===============================================
 %% MISSING PATH
 %% ===============================================
-    function msg_missingPath(path)
+function msg_missingPath(path)
 %% ===============================================
 opts.WindowStyle='replace';
 opts.Interpreter='tex';
@@ -840,7 +921,7 @@ if exist(configfile)~=2 ;    def{2}= 'missing'  ; end
 opts.WindowStyle='replace';
 opts.Interpreter='tex';
 msg={[...
-     '\color{black} \bf Study-path: \rm\color{magenta} "'  strrep(strrep(path,filesep,[filesep filesep ]),'_', '\_')   '"' '\color{black} '  def{1} '.' ...
+    '\color{black} \bf Study-path: \rm\color{magenta} "'  strrep(strrep(path,filesep,[filesep filesep ]),'_', '\_')   '"' '\color{black} '  def{1} '.' ...
     char(10) '\color{black} \bf Configfile: \rm\color{blue}    "'  strrep(strrep(configfile,filesep,[filesep filesep ]),'_', '\_')   '"' '\color{black} ' def{2} '.' ...
     char(10) ' - presumably renamed or deleted over time'  ...
     char(10) ' - process terminated! '] ...
@@ -848,16 +929,16 @@ msg={[...
 titl='Warning: MIssing input';
 warndlg(msg,titl,opts);
 
-%% ===============================================        
+%% ===============================================
 %% ===============================================
 
 function [d d0  coltab]=table2html(h)
-    
-[~, pfiles ext ]=fileparts2(h.history(:,3)); 
+
+[~, pfiles ext ]=fileparts2(h.history(:,3));
 h.history(:,3)=[cellfun(@(a,b){[ a b ]}, pfiles, ext) ];
-    
+
 d0=h.history;
- d=h.history;
+d=h.history;
 coltab=zeros(size(d,1),3);
 if 1
     unipath=unique(d(:,2));
@@ -874,14 +955,14 @@ if 1
         % --M2-----
         %dum=['<html><table border=0 width=1400 bgcolor=rgb(' sprintf('%d,%d,%d',(col(i,:)*255)) ')><TR><TD>' unipath{i}  '</TD></TR> </table>'  ]
         %dpa(is)={dum};
-        % --M3-----       
+        % --M3-----
         dum=cellfun(@(a){[...
             '<html><table border=0 width=1400 bgcolor=rgb(' sprintf('%d,%d,%d',(col(i,:)*255)) ')><TR><TD>'   ...
             a ...
             '</TD></TR> </table>'...
             ]},   d(is,:));
         d(is,:)=dum;
-        coltab(is,:) =  repmat(col(i,:),[ length(is)  1]); %colortable 
+        coltab(is,:) =  repmat(col(i,:),[ length(is)  1]); %colortable
     end
 end
 
@@ -897,29 +978,30 @@ hf=findobj(0,'tag','anthistory');
 
 if strcmp(e2.Key,'space')
     hb=findobj(gcf,'tag','shrinkGUI');
-   val= get(hb,'value');
-   set(hb,'value',~val);
-   hgfeval(get( hb ,'callback'),[]);
+    val= get(hb,'value');
+    set(hb,'value',~val);
+    hgfeval(get( hb ,'callback'),[]);
 end
 
-
+% function windowclick(e,e2)
+% 'a'
 
 % % ==============================================
 % %%   fig-shortcuts: shift
 % % ===============================================
-% 
+%
 % if strcmp(e2.Modifier,'shift')
 %     hp3 =findobj(gcf,'tag','panel3'); %panel3
 %     %disp('shift-not defined');
 %     if  strcmp(e2.Key,'leftarrow')                        %slider contour -L
-%         
+%
 %         hvis=findobj(hp3,'tag','thresh_visible'); %visible
 %         if get(hvis,'value')==1
 %             slid_thresh_set(-.01);
 %         end
 %     elseif strcmp(e2.Key,'rightarrow')                     %slider contour -R
-%         
-%         hvis=findobj(hp3,'tag','thresh_visible'); 
+%
+%         hvis=findobj(hp3,'tag','thresh_visible');
 %         if get(hvis,'value')==1
 %             slid_thresh_set(+.01);
 %         end
@@ -928,8 +1010,8 @@ end
 %         set(hc,'value', ~get(hc,'value'));
 %        slid_thresh();
 %     end
-%     
-%     
+%
+%
 %     return
 % end
 

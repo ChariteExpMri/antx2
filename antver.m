@@ -724,6 +724,10 @@
 % #ba 02 Sep 2022 (08:55:09)
 % #k [xexcel2atlas.m] #n modified  
 %    -saveMasksSeparately: save output masks as separate NIFTIs
+% #ba 27 Sep 2022 (13:51:29)
+% #k [anthistory.m] #n modified
+%  a project can be found via "find"-button
+% 
 % 
 % 
 
