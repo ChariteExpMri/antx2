@@ -727,7 +727,13 @@
 % #ba 27 Sep 2022 (13:51:29)
 % #k [anthistory.m] #n modified
 %  a project can be found via "find"-button
-% 
+% % #ba 28 Sep 2022 (13:15:27)
+% #k [xQAregistration.m] #n new
+%  calculate registration-based quality metric (standard-space comparison)
+% -this procedure evaluates the animal registration quality to standard space
+% -the [gm]-approach: the gray-matter compartement is warped to standard-space and compared with 
+%  the gray matter image of the template (metrics: correlation or mutual information)
+% -the resulting report is saved as HTML-file or excel-file
 % 
 % 
 

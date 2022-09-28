@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   27 Sep 2022 (13:51:29)  
+ &#x1F34E; last modification:   % 28 Sep 2022 (13:15:27)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,14 @@
     
     
 ------------------  
+  % &#x1F535;   <ins>**28 Sep 2022 (13:15:27)**</ins>  
+   __[xQAregistration.m]__ new  
+   calculate registration-based quality metric (standard-space comparison)  
+  -this procedure evaluates the animal registration quality to standard space  
+  -the __[gm]__-approach: the gray-matter compartement is warped to standard-space and compared with   
+   the gray matter image of the template (metrics: correlation or mutual information)  
+  -the resulting report is saved as HTML-file or excel-file  
+<!---->
   &#x1F535;   <ins>**27 Sep 2022 (13:51:29)**</ins>  
    __[anthistory.m]__ modified  
    a project can be found via "find"-button  

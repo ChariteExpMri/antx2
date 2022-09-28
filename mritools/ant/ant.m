@@ -1237,8 +1237,14 @@ mh2 = uimenu(mh,'Label',' 3D-volume',                                           
 
 mh2 = uimenu(mh,'Label','<html>check 4D-volume (realignment)</html>',        'Callback',{@menubarCB,  'call_show4d'},'Separator','on',...
  'userdata',[HSTART 'inspect 4D volume' ]);
-mh2 = uimenu(mh,'Label','<html><b>generate HTML-file with overlays</html>',     'Callback',{@menubarCB,  'call_xcheckreghtml'},'Separator','on',...
+
+
+mh2 = uimenu(mh,'Label','<html><font color=blue>QA: generate HTML-file with overlays</html>',     'Callback',{@menubarCB,  'call_xcheckreghtml'},'Separator','on',...
  'userdata',[HSTART 'use this function to do QA and sanity-checks', HEND ' HTML-files will be stored in the "checks"-folder' ]);
+
+mh2 = uimenu(mh,'Label','<html><font color=blue>QA: obtain registration metric </html>',     'Callback',{@menubarCB,  'call_xQAregistration'},'Separator','off',...
+ 'userdata',[HSTART 'use this function to obtain a QA-metric for registration', HEND ' HTML-files will be stored in the "checks"-folder' ]);
+
 %% ==========[menu:STUDY]=====================================
 mh = uimenu(f,'Label','Study');
 mh2 = uimenu(mh,'Label',' open study folder',                              'Callback',{@menubarCB, 'folderConfigfile'},'Separator','on',...
@@ -1318,6 +1324,13 @@ msub1 = uimenu(mh2,'Label','check ELASTIX installation',                        
     'userdata',[HSTART 'check if Elastix is installed on the machine' ]);
 msub1 = uimenu(mh2,'Label','check path-names (project/datasets/ANTX-TBX)',         'Callback',{@menubarCB, 'check_pathnames'},...
     'userdata',[HSTART 'check if name & paths of the study and animal-names is fine for processing']);
+
+mh2   = uimenu(mh,'Label','aux' );
+msub1 = uimenu(mh2,'Label','change command-window color',                           'Callback',{@menubarCB, 'call_cwcol'},...
+    'userdata',[HSTART 'change color of command window' ]);
+msub1 = uimenu(mh2,'Label','change command-window title',                           'Callback',{@menubarCB, 'call_cwtitle'},...
+    'userdata',[HSTART 'change command-window title' ]);
+
 
 mh2 = uimenu(mh,'Label','<html><font color="blue">visit ANTx2 repository (Github)',              'Callback',{@menubarCB, 'visitGITHUB'},'separator','on',...
     'userdata',[HSTART 'go to the ANTx2-Github repository']);
@@ -2840,8 +2853,25 @@ elseif strcmp(task,'call_xcheckreghtml')
         return
     end
     %% ===============================================
+    statusMsg(1,'check-registration');
     xcheckreghtml();
+    statusMsg(0);
     %________________________________________________
+elseif strcmp(task,'call_xQAregistration')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xQAregistration';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xQAregistration.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    statusMsg(1,'QA-registration');
+    xQAregistration();
+    statusMsg(0);
     
 elseif strcmp(task,'makeANOpseudocolors')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
@@ -3230,6 +3260,37 @@ elseif strcmp(task,'check_pathnames')
     %% ===============================================
     
     checkpath;
+    
+    
+ elseif strcmp(task,'call_cwcol')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='no info';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='no info';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    antcb('cwcol');
+  elseif strcmp(task,'call_cwtitle')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='no info';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='no info';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    antcb('cwname'); 
+    
+    
+    
     %________________________________________________
 elseif strcmp(task,'antsettings')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
