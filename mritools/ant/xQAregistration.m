@@ -34,6 +34,14 @@
 % report_addDate   +add date and time to the filename of the report
 %                 {[0] NO; [1] yes} 
 %                 default: 1
+% #ga ___ GRAPHIC_____________________ 
+% Explanation of the plot:
+%   -blue dot: the metric-value of each animal   
+%   -gray dot: the metric-value of each animal, here the animals image (example: the animal's gray matter image) 
+%    in standard-space is shifted by one voxel in anterior-posterior and left-right directions to obtain 
+%    a subjective measure for deviation
+%   -horizontal magenta line displays the 2 SD deviation of the metric across animals
+%   -outliers: missing data are displayed with a metric of 0 (these data are not involved in the 2 SD calculation) 
 % 
 % #ga ___ EXAMPLE_____________________                                                     
 % % ==================================================================================================                                                                     
@@ -274,8 +282,8 @@ for i=1:length(mdirs)
         %% ============shifted version===================================
         
         if v.shiftedmetric_show==1
-            a3=imtranslate(a,[ 0 1]);
-%             a3=imtranslate(a,[1 1]);
+            % a3=imtranslate(a,[ 0 1]);
+            a3=imtranslate(a,[1 1]);
             if v.metric==1
                 p.m2(n,1)       =corr(a3(:),b2);
             elseif v.metric==2
