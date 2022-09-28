@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   % 28 Sep 2022 (13:15:27)  
+ &#x1F34E; last modification:   28 Sep 2022 (13:15:27)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,7 +7,7 @@
     
     
 ------------------  
-  % &#x1F535;   <ins>**28 Sep 2022 (13:15:27)**</ins>  
+  &#x1F535;   <ins>**28 Sep 2022 (13:15:27)**</ins>  
    __[xQAregistration.m]__ new  
    calculate registration-based quality metric (standard-space comparison)  
   -this procedure evaluates the animal registration quality to standard space  
