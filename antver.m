@@ -734,6 +734,7 @@
 % -the [gm]-approach: the gray-matter compartement is warped to standard-space and compared with 
 %  the gray matter image of the template (metrics: correlation or mutual information)
 % -the resulting report is saved as HTML-file or excel-file
+% #gw --> access via ANT-menu: GRAPHICS/QA:obtain registration metric
 % 
 % 
 

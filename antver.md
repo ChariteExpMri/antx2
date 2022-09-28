@@ -14,6 +14,7 @@
   -the __[gm]__-approach: the gray-matter compartement is warped to standard-space and compared with   
    the gray matter image of the template (metrics: correlation or mutual information)  
   -the resulting report is saved as HTML-file or excel-file  
+  &#8618; access via ANT-menu: GRAPHICS/QA:obtain registration metric  
 <!---->
   &#x1F535;   <ins>**27 Sep 2022 (13:51:29)**</ins>  
    __[anthistory.m]__ modified  
