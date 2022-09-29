@@ -109,6 +109,7 @@ end
 % lb3: mice cases
 
 warning off; close all
+antcb('figlet');
 %%
 % in spm.m
 % comment line-345-  :% spm_figure('close',allchild(0));                           fprintf('.');

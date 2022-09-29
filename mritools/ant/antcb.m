@@ -15,26 +15,26 @@
 % antcb('quit')/antcb('close')     % close gui
 % antcb('watchfile');              % make list of watching files, for HELP type antcb('watchfile?');
 % antcb('selectdirs')              % SELECT MOUSE DIRECTORIES in ANT-GUI
-%                                  %   HELP: antcb('selectdirs?') 
+%                                  %   HELP: antcb('selectdirs?')
 % antcb('copytemplates')           % copy templates from reference to studies template folder
-%                                  %   HELP: antcb('copytemplates?')   
+%                                  %   HELP: antcb('copytemplates?')
 % [tb tbh v]=antcb('getuniquefiles',pa)  ;% get table (tb)+header(tbh) of all unique file over mouseDirs (pa),
 %                                   [v] is a struct with tb and tbh
 % antcb('getsubdirs', x.datapath);  % get subdirs of a directory
-% antcb('studydir')               ;%obtain current ANT-study-directory' 
-%                                 ..for help: antcb('studydir?'); 
+% antcb('studydir')               ;%obtain current ANT-study-directory'
+%                                 ..for help: antcb('studydir?');
 %
 % antcb('selectimageviagui', mypath, 'single');  %select an image from upperDatapath via gui
 % antcb('selectimageviagui', mypath, 'multi');   %select several images from upperDatapath via gui
 %
-% 
+%
 % -----------------
 % antcb('cwcol',[1 .94 .87]);           % change command-window background color
 % antcb('cwcol');                       % ..selection via color-palette
 % antcb('cwname','klaus works here');   % define command-window title
 % antcb('cwname');                      % ..selection via command window input
-% 
-% antcb('versionupdate'), 
+%
+% antcb('versionupdate'),
 
 
 %====================================================================================================
@@ -86,22 +86,23 @@ if strcmp(do,'selectdirs')  ;   varargout=selectdirs(input2,nargout);  end
 if strcmp(do,'selectdirs?') ;   varargout=selectdirs('?');    end
 if strcmp(do,'helpfun') ;       helpfun(input2{2});    end
 
-if strcmp(do,'studydir')  || strcmp(do,'studydir?')  
-    [o1 o2 ]=studydir(input2); 
-%     if ~isempty(o1);         varargout{1}=o1;    end
-%     if ~isempty(o2);         varargout{2}=o2;    end
-    varargout{1}=o1; 
-    varargout{2}=o2; 
+if strcmp(do,'studydir')  || strcmp(do,'studydir?')
+    [o1 o2 ]=studydir(input2);
+    %     if ~isempty(o1);         varargout{1}=o1;    end
+    %     if ~isempty(o2);         varargout{2}=o2;    end
+    varargout{1}=o1;
+    varargout{2}=o2;
 end
 
 if strcmp(do,'load_guiparameter') ;
     o1=load_guiparameter(input);
     varargout{1}=o1;
-    return; 
+    return;
 end
 
 if strcmp(do,'checkProjectfile') ;varargout=checkProjectfile;return; end
 
+if strcmp(do,'figlet') ;figlet;return; end
 
 if strcmp(do,'copytemplates'  )  ;   copytemplates(input2);  end
 if strcmp(do, 'copytemplates?')  ;   copytemplates('?')  ; end
@@ -220,68 +221,68 @@ if strcmp(do, 'load');
     
     antcb('updateParameterLB');
     
-% %     try; an=rmfield(an,'ls'); end
-% %     an.ls =struct2list(an); %   ls=fn_structdisp(x);
-% %     an.ls(regexpi2(an.ls,'^\s*an.inf\d'))=[];
-% %     iproject=min(regexpi2(an.ls,'project.*='));
-% %     if iproject==1
-% %         an.ls=[{''}; an.ls];%move project to 2nd line
-% %         iproject=2;
-% %     end
-% %     %        colergen = @(color,text) ['<html><b><font color='  color '  bgcolor="black" size="+2">' text '</html>'  ];
-% %     colergen = @(color,text) ['<html><b><font color='  color '   >' text '</html>'  ];
-% %     
-% %     %  colergen = @(color,text) ['<html><table border=0 width=1000 bgcolor=',color,'><TR><TD><pre>',text,'</pre></TD></TR> </table></html>'];
-% %     % % colergen = @(color,text) ['<html><table border=0 width=1400 bgcolor=',color,'><TR><TD>',text,'</TD></TR> </table></html>'];
-% %     %  dum=colergen('#ffcccc',   x.ls{iproject}(lims(1):lims(2))    )
-% %     %  x.ls{iproject}=   strrep(  x.ls{iproject},  x.ls{iproject}(lims(1):lims(2))   , dum)
-% %     
-% %     an.ls{iproject}=colergen('#007700',   an.ls{iproject} );
-% %     %  dum=colergen('#ffcccc',   x.ls{iproject}(lims(1):lims(2))    )
-% %     %  x.ls{iproject}=   strrep(  x.ls{iproject},  x.ls{iproject}(lims(1):lims(2))   , dum)
-% %     
-% %     set(findobj(0,'tag','ant'),'name' ,['[ant2]' ' ' projectdir ' (' fi '.m)']);
-% %     
-% %     
-% %     if ~isempty(an.ls{1})
-% %         an.ls=[{''} ;an.ls];
-% %     end
-% %     try
-% %         msg=makenicer2(an.ls);
-% %     catch
-% %         msg=an.ls;
-% %     end
-% %     
-% %     hlb2=findobj(0,'tag','lb2');
-% %     set(hlb2,'string',msg,'FontName','courier');
-% %     
-% %     % ==============================================
-% %     %%
-% %     % ===============================================
-% % 
-% %     tip=regexprep(msg,{'<html>' '</html>'},'');
-% %     %         tip=cellfun(@(a){['<html><pre>' a '</pre>','</html>' ]},  tip)
-% %     %     tip=cellfun(@(a){['<html><pre>' a '</pre>','</html>' ]},  tip)
-% %     tip{iproject+1}=[ '</b><font color=#000000   >' tip{iproject+1}];
-% %     tip= cellfun(@(a){[ a '<br>' ]},  tip);
-% %     tip2=['<html><pre>' strjoin(tip,' ') '</pre></html>'];
-% %     set(hlb2,'tooltipstring',tip2);
-% %     
+    % %     try; an=rmfield(an,'ls'); end
+    % %     an.ls =struct2list(an); %   ls=fn_structdisp(x);
+    % %     an.ls(regexpi2(an.ls,'^\s*an.inf\d'))=[];
+    % %     iproject=min(regexpi2(an.ls,'project.*='));
+    % %     if iproject==1
+    % %         an.ls=[{''}; an.ls];%move project to 2nd line
+    % %         iproject=2;
+    % %     end
+    % %     %        colergen = @(color,text) ['<html><b><font color='  color '  bgcolor="black" size="+2">' text '</html>'  ];
+    % %     colergen = @(color,text) ['<html><b><font color='  color '   >' text '</html>'  ];
+    % %
+    % %     %  colergen = @(color,text) ['<html><table border=0 width=1000 bgcolor=',color,'><TR><TD><pre>',text,'</pre></TD></TR> </table></html>'];
+    % %     % % colergen = @(color,text) ['<html><table border=0 width=1400 bgcolor=',color,'><TR><TD>',text,'</TD></TR> </table></html>'];
+    % %     %  dum=colergen('#ffcccc',   x.ls{iproject}(lims(1):lims(2))    )
+    % %     %  x.ls{iproject}=   strrep(  x.ls{iproject},  x.ls{iproject}(lims(1):lims(2))   , dum)
+    % %
+    % %     an.ls{iproject}=colergen('#007700',   an.ls{iproject} );
+    % %     %  dum=colergen('#ffcccc',   x.ls{iproject}(lims(1):lims(2))    )
+    % %     %  x.ls{iproject}=   strrep(  x.ls{iproject},  x.ls{iproject}(lims(1):lims(2))   , dum)
+    % %
+    % %     set(findobj(0,'tag','ant'),'name' ,['[ant2]' ' ' projectdir ' (' fi '.m)']);
+    % %
+    % %
+    % %     if ~isempty(an.ls{1})
+    % %         an.ls=[{''} ;an.ls];
+    % %     end
+    % %     try
+    % %         msg=makenicer2(an.ls);
+    % %     catch
+    % %         msg=an.ls;
+    % %     end
+    % %
+    % %     hlb2=findobj(0,'tag','lb2');
+    % %     set(hlb2,'string',msg,'FontName','courier');
+    % %
+    % %     % ==============================================
+    % %     %%
+    % %     % ===============================================
+    % %
+    % %     tip=regexprep(msg,{'<html>' '</html>'},'');
+    % %     %         tip=cellfun(@(a){['<html><pre>' a '</pre>','</html>' ]},  tip)
+    % %     %     tip=cellfun(@(a){['<html><pre>' a '</pre>','</html>' ]},  tip)
+    % %     tip{iproject+1}=[ '</b><font color=#000000   >' tip{iproject+1}];
+    % %     tip= cellfun(@(a){[ a '<br>' ]},  tip);
+    % %     tip2=['<html><pre>' strjoin(tip,' ') '</pre></html>'];
+    % %     set(hlb2,'tooltipstring',tip2);
+    % %
     % ==============================================
     %% sanity check
-    % =============================================== 
+    % ===============================================
     % remove ending fileseps
-   try; an.datpath         =regexprep(an.datpath     ,['\' filesep '$'],''); end
-   try; an.templatepath    =regexprep(an.templatepath,['\' filesep '$'],''); end
+    try; an.datpath         =regexprep(an.datpath     ,['\' filesep '$'],''); end
+    try; an.templatepath    =regexprep(an.templatepath,['\' filesep '$'],''); end
     
-   % ==============================================
-   %%  history
-   % ===============================================
-   anthistory('update');
-   
-   % ==============================================
-   %%
-   % ===============================================
+    % ==============================================
+    %%  history
+    % ===============================================
+    anthistory('update');
+    
+    % ==============================================
+    %%
+    % ===============================================
     
     antcb('update'); %update subkects
     %     fprintf('[done]\n');
@@ -304,7 +305,7 @@ if strcmp(do, 'load');
         if usejava('desktop')
             ms=[{''}
                 '=============================================='
-                'SPECIAL CHARACTERS found in the STUDY-PATH !!!'  
+                'SPECIAL CHARACTERS found in the STUDY-PATH !!!'
                 '=============================================='
                 ['...found: "' strjoin(tes(ispecchar,2),'", "') '"'  ' in path: ["' studypath  '"]' ]
                 'PLEASE REMOVE SPECIAL CHARACTERS FROM PATH..otherwise data processing will not work!'
@@ -316,14 +317,14 @@ if strcmp(do, 'load');
             %         warndlg(ms,'WARNING');
             warning on;
             warning(strjoin(ms,char(10)));
-             warning off
+            warning off
         else
             warning on;
             warning(strjoin(ms,char(10)));
-             warning off
-        end   
+            warning off
+        end
     end
-   
+    
     
     %% ===============================================
     
@@ -334,8 +335,8 @@ end
 if strcmp(do, 'updateParameterLB');
     global an
     
-     [rest projname]=fileparts(an.configfile);
-      [rest projectdir]=fileparts(rest);
+    [rest projname]=fileparts(an.configfile);
+    [rest projectdir]=fileparts(rest);
     
     try; an  = rmfield(an,'ls'); end
     an.ls    =struct2list(an); %   ls=fn_structdisp(x);
@@ -369,20 +370,20 @@ if strcmp(do, 'updateParameterLB');
         tip2 = ['<html><pre>' strjoin(tip,' ') '</pre></html>'];
         set(hlb2,'tooltipstring',tip2);
     end
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 end
 
 if strcmp(do, 'settings');
@@ -437,7 +438,7 @@ if strcmp(do, 'settings');
             return
         end
     elseif ichoice==1 ;%overwrite
-       configfile= [strrep(configfile,'.m','') '.m'];
+        configfile= [strrep(configfile,'.m','') '.m'];
         pwrite2file(configfile,m);
     end
     
@@ -529,15 +530,15 @@ if strcmp(do,'cwcol');
     listeners = cmdWinDoc.getDocumentListeners;
     %js = listeners(5);  % or listeners(4) or listeners(5), depending on Matlab release
     for i=1:length(listeners)
-        js = listeners(i); 
+        js = listeners(i);
         try
-        if strcmp(js.getAccessibleName,'Command Window')
-            % Note: a safer way would be to loop on listeners until finding a JTextArea instance, since it is not assured to be the 3rd item in the listeners array.
-            % Now you can set the colors (which apply immediately) using several alternative ways:
-            
-            % js.setBackground(java.awt.Color.yellow);
-            js.setBackground(java.awt.Color(col(1),col(2),col(3)));
-        end
+            if strcmp(js.getAccessibleName,'Command Window')
+                % Note: a safer way would be to loop on listeners until finding a JTextArea instance, since it is not assured to be the 3rd item in the listeners array.
+                % Now you can set the colors (which apply immediately) using several alternative ways:
+                
+                % js.setBackground(java.awt.Color.yellow);
+                js.setBackground(java.awt.Color(col(1),col(2),col(3)));
+            end
         end
     end
     return
@@ -546,9 +547,9 @@ if strcmp(do,'cwname');
     if length(input2)>1 && ischar(input2{2})
         cwname=input2{2};
     else
-%         clear input;
-%         drawnow; rehash path;
-%         cwname=inputdlg('enter new comand window name: ');
+        %         clear input;
+        %         drawnow; rehash path;
+        %         cwname=inputdlg('enter new comand window name: ');
         cwname=inputCMD('enter new comand window name: ');
         
     end
@@ -681,7 +682,7 @@ if strcmp(do, 'run2') || strcmp(do, 'run');
     end
     
     
-     
+    
     
     
     
@@ -702,7 +703,7 @@ if strcmp(do, 'run2') || strcmp(do, 'run');
     %% ================================
     
     
-  
+    
     if strcmp(do, 'run');
         %disp('_____________________________________________');
         %% perform all tasks within a Mouse first
@@ -917,8 +918,8 @@ if strcmp(do, 'run2') || strcmp(do, 'run');
     
     
     %% HTML-overview-one page for all animals (HTML-refresh at the end)
-     HTMLprocsteps(HTMLpath,struct('refresh',1,'show',0));
-     
+    HTMLprocsteps(HTMLpath,struct('refresh',1,'show',0));
+    
     %update ANT-gui
     antcb('status',0);
 end
@@ -928,7 +929,7 @@ end
 %====================================================================================================
 if strcmp(do, 'version');
     
-   
+    
     
     gitpath=fileparts(which('antlink.m'));
     w=git([' -C ' gitpath ' log -1 --pretty="format:%ci"']);
@@ -961,7 +962,7 @@ end
 if strcmp(do, 'update')
     fig=findobj(0,'tag','ant');
     global an
-    if isempty(an) 
+    if isempty(an)
         if ~isempty(findobj(0,'tag','ant'))
             disp('no project loaded');
         end
@@ -1092,7 +1093,7 @@ if strcmp(do, 'update')
             end
         end
         
-
+        
         
         
         
@@ -1140,7 +1141,7 @@ if strcmp(do, 'update')
         %     symbol='&#9787'; %SMILEY
         symbol='&#9632';%square
         for i=1:size(dirsid,1)
-           
+            
             
             %% listbox-animal identifier --------------------------------
             dum=[ dirsidHTML{i} cb(i,:)];
@@ -1187,7 +1188,7 @@ if strcmp(do, 'update')
         preseldirs=dirx(1);
     else
         try
-        preseldirs=an.mdirs(lb.Value);
+            preseldirs=an.mdirs(lb.Value);
         catch
             
         end
@@ -1224,7 +1225,7 @@ if strcmp(do, 'update')
         set(lb,'string', dirsid);%,'userdata',dirx);
         %         set(lb,'fontsize',12);
         if max(get(lb,'value'))>size(dirsid,1)       %prevent invisble LBstate
-           set(lb,'value',size(dirsid,1)) 
+            set(lb,'value',size(dirsid,1))
         end
         set(lb,'fontname','courier');
         an.mdirs=dirx;
@@ -1316,17 +1317,17 @@ if strcmp(sorter,'progress_down') || strcmp(sorter,'progress_up')
     else
         [~, isort ]=sort(len,'ascend');
     end
-elseif strcmp(sorter,'statusMsg_up') || strcmp(sorter,'statusMsg_down')    
+elseif strcmp(sorter,'statusMsg_up') || strcmp(sorter,'statusMsg_down')
     issue=regexprep(li3,{'#\d\d\d\d','.*&'},{''});
-      [~,isort ]=sort(issue);
+    [~,isort ]=sort(issue);
     if strcmp(sorter,'statusMsg_down')
-         
+        
     else
-       isort=flipud(isort);
+        isort=flipud(isort);
     end
-elseif strcmp(sorter,'lengthName_up') || strcmp(sorter,'lengthName_down') 
+elseif strcmp(sorter,'lengthName_up') || strcmp(sorter,'lengthName_down')
     len=cell2mat(cellfun(@(a){[ length(a)]} ,mdirs));
-     if strcmp(sorter,'lengthName_down')
+    if strcmp(sorter,'lengthName_down')
         [~, isort ]=sort(len,'ascend');
     else
         [~, isort ]=sort(len,'descend');
@@ -1557,8 +1558,8 @@ if isfield(an,'mdirs')
 else
     [dirs] = spm_select('FPList',an.datpath,'dir');
     if ~isempty(dirs)
-       an.mdirs=cellstr(dirs) ;
-       paths=an.mdirs(va);
+        an.mdirs=cellstr(dirs) ;
+        paths=an.mdirs(va);
     end
 end
 % elseif isempty(findobj(0,'tag','ant')) && isfield(an,'sel')
@@ -1967,25 +1968,25 @@ end
 % antcb('selectdirs','all');                          ;%(same as above )select all directories
 % antcb('selectdirs','none');                         ;%select no animal folder (deselect all)
 % antcb('selectdirs',[1 2]);                          ;%select directories 1 and 2 (selected by index)
-% 
+%
 %% select dirs containing or not containing specific files
 % 1st arg: 'selectdirs'
 % 2nd arg: 'file'
 % 3rd arg: one or more filenames; as cell for multiple files to search, otherwise char
-% 4rd arg: optional, the operator  
+% 4rd arg: optional, the operator
 %         'and'    (or '&')     all files must exist in folder
 %         'or'     (or '|')     one of the files must exist in folder
-%         'andnot' (or '~&')    all files must not exist in folder       
+%         'andnot' (or '~&')    all files must not exist in folder
 %         'or'     (or '~|')    one of the files must not exist in folder
 % --------------------
 % antcb('selectdirs','file',{'t2.nii'});          % select all dirs containing the file"t2.nii"
 % antcb('selectdirs','file',{'x_t2.nii'},'not');  % select all dirs not containing the file"x_t2.nii
-% 
+%
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'and');   %select all dirs containing both 't2.nii' and 'x_t2.nii'
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'&');     %same as previous line
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'andnot');%select all dirs not containing both 't2.nii' and 'x_t2.nii'
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'~&');    %same as previous line
-% 
+%
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'or');  %select all dirs containing either 't2.nii' or 'x_t2.nii'
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'|');   %same as previous line
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'ornot'); %select all dirs not containing either 't2.nii' or 'x_t2.nii'
@@ -1993,9 +1994,9 @@ end
 %
 %% example: select only those animals tha contain all of the following files: 'NI_b100.nii','NI_b900.nii','NI_b1600.nii' and 'NI_b2500.nii'
 % antcb('selectdirs','file',{'NI_b100.nii' 'NI_b900.nii' 'NI_b1600.nii' 'NI_b2500.nii'},'and');
-% 
-% 
-% by ANIMAL-NAME 
+%
+%
+% by ANIMAL-NAME
 % antcb('selectdirs',{'MMRE_age_20w_mouse5_cage6_13122017'}); %select this directory
 % antcb('selectdirs',{'MMRE_age_20w_mouse5_cage6_13122017'
 %                     'MMRE_age_20w_mouse5_cage6_13122017'}); %select several directories by list
@@ -2007,18 +2008,18 @@ end
 % 4th out-arg: list of selected animals {cell}, Matlab-style with curlies
 % example: select the 1st two animals and obtain output variab\s
 % [r1 r2 r3 r4]=antcb('selectdirs',[1 2])
-% r1 = 
+% r1 =
 %     'F:\data5\nogui\dat\1001_a1'
 %     'F:\data5\nogui\dat\1001_a2'
-% r2 = 
+% r2 =
 %     '1001_a1'
 %     '1001_a2'
-% r3 = 
+% r3 =
 %     '{'
 %     '  'F:\data5\nogui\dat\1001_a1''
 %     '  'F:\data5\nogui\dat\1001_a2''
 %     '};'
-% r4 = 
+% r4 =
 %     '{'
 %     '  '1001_a1''
 %     '  '1001_a2''
@@ -2071,10 +2072,10 @@ elseif isnumeric(input{1})
     end
     iselect=isect;
     set(lb3,'value',iselect);
-% elseif ~isempty(strfind(char(input{1}),'.nii') )
+    % elseif ~isempty(strfind(char(input{1}),'.nii') )
 elseif strcmp(input{1},'file')
     %% =================find file(s) in folder ===========
-  
+    
     if ischar(input{2})
         files={input{2}};
     else
@@ -2084,13 +2085,13 @@ elseif strcmp(input{1},'file')
     for i=1:length(fp)
         for j=1:length(files)
             if exist(fullfile(fp{i},files{j}))==2
-               isexist(i,j)=1; 
+                isexist(i,j)=1;
             end
         end
     end
     t_and=sum(isexist,2)==size(isexist,2);
     t_or =any(isexist,2);
-     
+    
     t_andnot= sum(isexist,2)==0;
     t_ornot= sum(isexist,2)<size(isexist,2);
     
@@ -2102,18 +2103,18 @@ elseif strcmp(input{1},'file')
     
     iselect=[];
     if strcmp(oper,'and')        || strcmp(oper,'&')
-      iselect=find(t_and);
+        iselect=find(t_and);
     elseif strcmp(oper,'or')     || strcmp(oper,'|')
-     iselect=find(t_or);
+        iselect=find(t_or);
     elseif strcmp(oper,'andnot') || strcmp(oper,'~&') || strcmp(oper,'not')
-      iselect=find(t_andnot);
+        iselect=find(t_andnot);
     elseif strcmp(oper,'ornot')  || strcmp(oper,'~|')
-     iselect=find(t_ornot);
+        iselect=find(t_ornot);
     end
-     
+    
     %disp(sel)
     set(lb3,'value',iselect);
-   
+    
     %% ===============================================
     
 else
@@ -2150,10 +2151,10 @@ else
             if exist(fi{i})==2;  is(i)=1;end
         end
         
-        if     strcmp(input{2}, 'find');  
+        if     strcmp(input{2}, 'find');
             iselect=find(is==1);
             set(lb3,'value',iselect)     ;
-        elseif strcmp(input{2}, 'not' );   
+        elseif strcmp(input{2}, 'not' );
             iselect=find(is==0);
             set(lb3,'value',iselect)     ;
         end
@@ -2220,7 +2221,7 @@ function out=checkProjectfile;
 %            inf34: '%TRANSFORMED VOLUMES '
 %     templatepath: 'O:\ant_generateTemplates\atlas_DTIatlasMouse\ant_dti2�'
 %       configfile: 'O:\ant_generateTemplates\atlas_DTIatlasMouse\ant_dti2�'
-% 
+%
 %           BiasFieldCor: 0
 %            fastSegment: 1
 %         orientRefimage: 2
@@ -2240,9 +2241,9 @@ function out=checkProjectfile;
 %                    ano: 'C:\MATLAB\antx\mritools\ant\templateBerlin_hres�'
 %                    avg: 'C:\MATLAB\antx\mritools\ant\templateBerlin_hres�'
 %                    fib: 'C:\MATLAB\antx\mritools\ant\templateBerlin_hres�'
-%                
-                   
-                   
+%
+
+
 out(1)={1};  %update
 
 global an
@@ -2299,18 +2300,18 @@ if  refpath_ok==0
     % system('start https://drive.google.com/drive/folders/0B9o4cT_le3AhSFJRdUx3eXlyUWM')
     % lb=findobj(gcf,'tag','txt')
     % wt = textwrap(lb,get(lb,'string'))
-% set(lb,'string',wt)
-% ==============================================
+    % set(lb,'string',wt)
+    % ==============================================
     
     
 end
 
 % if do_msg==1
-    
-    
-    
-    
- 
+
+
+
+
+
 
 return
 
@@ -2325,14 +2326,14 @@ end
 % ## copytemplates (anker)
 % ================================================================================
 % COPY files from reference templates to studie's template folder
-%    
+%
 %     - the respective NIFTIs will be resampled to the voxel size defined in the project-file ("proj*.m")
-%     - following files will be created: 
-%                   ANO.xlsx      AVGTmask.nii  _b2white.nii  
-%                   AVGT.nii      FIBT.nii      _b3csf.nii    
-%                   ANO.nii  AVGThemi.nii  _b1grey.nii   
-% call: 
-% antcb('copytemplates');               % copy nonexisting files to template folder (default) 
+%     - following files will be created:
+%                   ANO.xlsx      AVGTmask.nii  _b2white.nii
+%                   AVGT.nii      FIBT.nii      _b3csf.nii
+%                   ANO.nii  AVGThemi.nii  _b1grey.nii
+% call:
+% antcb('copytemplates');               % copy nonexisting files to template folder (default)
 % antcb('copytemplates','overwrite,1);  % force to overwrite existing files
 % ================================================================================
 % ## copytemplates (anker)
@@ -2381,7 +2382,7 @@ if strcmp(argin{1}, 'studydir?')
     % ..sinfo: is a struct with some information
     % __OBTAIN INFO FOR ANOTHER DIRECTORY__
     %[sdir sinfo]=antcb('studydir','sdir','F:\data5\klaus','info'); %obtain info for another directory
-    %     
+    %
     % ## studydir (anker)
     antcb('helpfun', 'studydir');
     return
@@ -2401,7 +2402,7 @@ end
 o1=sdir;
 if exist(sdir)~=7
     o1='folder not found ';
-     disp(['folder not found: "' sdir '"!']);
+    disp(['folder not found: "' sdir '"!']);
     return
 end
 %% ===============================================
@@ -2448,8 +2449,8 @@ function [out nfiles] = DirSize(dirIn)
 %DirSize Determine the size of a directory in bytes.
 %   bytes = DirSize(dirIn) Recursively searches the directory indicated by
 %   the string dirIn and all of its subdirectories, summing up the file
-%   sizes as it goes.  
-%   
+%   sizes as it goes.
+%
 %   Example:
 %   ________
 %       DirSize(pwd)./(1024*1024)  %Returns size of the current directory
@@ -2463,11 +2464,11 @@ out = 0;
 nfiles=sum(~[a.isdir]);
 for x = 1:1:numel(a)
     %Check to make sure that this part of 'a' is an actual file or
-    %subdirectory.  
+    %subdirectory.
     if ~strcmp(a(x).name,'.')&&~strcmp(a(x).name,'..')
         %Add up the sizes.
         out = out + a(x).bytes;
-        if a(x).isdir 
+        if a(x).isdir
             %Ooooooh, recursive!  Fancy!
             [outmb outn] =DirSize([dirIn '\' a(x).name]);
             out=out+outmb;
@@ -2479,7 +2480,7 @@ end
 cd(originDir);
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 function out=load_guiparameter(argin)
@@ -2554,3 +2555,90 @@ end
 
 function  o=inputCMD(msg)
 o=input(msg,'s');
+
+function figlet
+v=randi(7,1,1);
+if v==1
+    o=...
+        {
+        '      _/       _///     _//_/// _//////                    '
+        '     _/ //     _/ _//   _//     _//               _// _/   '
+        '    _/  _//    _// _//  _//     _//    _//   _// _/     _//'
+        '   _//   _//   _//  _// _//     _//      _/ _//       _//  '
+        '  _////// _//  _//   _/ _//     _//       _/        _//    '
+        ' _//       _// _//    _/ //     _//     _/  _//   _//      '
+        '_//         _//_//      _//     _//    _//   _// _//////// '
+        };
+elseif v==2
+    o=...
+        {
+        '  ___   _   _ _____     _____ '
+        ' / _ \ | \ | |_   _|   / __  \'
+        '/ /_\ \|  \| | | |_  __`. / / '
+        '|  _  || . ` | | \ \/ /  / /  '
+        '| | | || |\  | | |>  < ./ /___'
+        '\_| |_/\_| \_/ \_/_/\_\\_____/'
+        };
+elseif v==3
+    o=...
+        {
+        '      ___           ___           ___           ___     '
+        '     /\  \         /\__\         /\  \         |\__\    '
+        '    /::\  \       /::|  |        \:\  \        |:|  |   '
+        '   /:/\:\  \     /:|:|  |         \:\  \       |:|  |   '
+        '  /::\~\:\  \   /:/|:|  |__       /::\  \      |:|__|__ '
+        ' /:/\:\ \:\__\ /:/ |:| /\__\     /:/\:\__\ ____/::::\__\'
+        ' \/__\:\/:/  / \/__|:|/:/  /    /:/  \/__/ \::::/~~/~   '
+        '      \::/  /      |:/:/  /    /:/  /       ~~|:|~~|    '
+        '      /:/  /       |::/  /     \/__/          |:|  |    '
+        '     /:/  /        /:/  /                     |:|  |    '
+        '     \/__/         \/__/                       \|__| '
+        };
+    
+elseif v==4
+    o=...
+        {
+        '   _        __  _____       ____  '
+        '  /_\    /\ \ \/__   \__  _|___ \ '
+        ' //_\\  /  \/ /  / /\/\ \/ / __) |'
+        '/  _  \/ /\  /  / /    >  < / __/ '
+        '\_/ \_/\_\ \/   \/    /_/\_\_____|'
+        };
+elseif v==5
+    o=...
+        {
+        '       ___ _  '
+        ' /\ |\ ||   ) '
+        '/--\| \||></_ '
+        '              '
+        };
+elseif v==6
+    o=...
+        {
+        '+-+-+-+-+-+'
+        '|A|N|T|x|2|'
+        '+-+-+-+-+-+'
+        };
+elseif v==7
+    o=...
+        {
+        ' _______ _______ _______         ______ '
+        '|   _   |    |  |_     _|.--.--.|__    |'
+        '|       |       | |   |  |_   _||    __|'
+        '|___|___|__|____| |___|  |__.__||______|'
+        '                                        '
+        };
+    
+end
+
+
+
+disp(char(o));
+
+
+
+
+
+
+
+
