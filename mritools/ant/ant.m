@@ -3293,11 +3293,11 @@ elseif strcmp(task,'call_cwtitle')
      %% ===============================================
 elseif strcmp(task,'call_WinServerID')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
-        hlpfun='no info';
+        hlpfun='sessid.m';
         return ;
     end
     if strcmp(u.mousekey,'right')
-        hlpfun='no info';
+        hlpfun='sessid.m';
         showcmd(hlpfun);
         return
     end
@@ -3305,11 +3305,11 @@ elseif strcmp(task,'call_WinServerID')
     
  elseif strcmp(task,'call_changeWinServer')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
-        hlpfun='no info';
+        hlpfun='sessid.m';
         return ;
     end
     if strcmp(u.mousekey,'right')
-        hlpfun='no info';
+        hlpfun='sessid.m';
         showcmd(hlpfun);
         return
     end
