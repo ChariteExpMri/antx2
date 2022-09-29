@@ -1331,6 +1331,11 @@ msub1 = uimenu(mh2,'Label','change command-window color',                       
 msub1 = uimenu(mh2,'Label','change command-window title',                           'Callback',{@menubarCB, 'call_cwtitle'},...
     'userdata',[HSTART 'change command-window title' ]);
 
+msub1 = uimenu(mh2,'Label','what is my Win-ServerSession-ID?',      'Callback',{@menubarCB, 'call_WinServerID'},...
+    'userdata',[HSTART 'change Windows-ServerSession via session-ID' ],'separator','on');
+msub1 = uimenu(mh2,'Label','change Win-ServerSession',      'Callback',{@menubarCB, 'call_changeWinServer'},...
+    'userdata',[HSTART 'change Windows-ServerSession via session-ID' ],'separator','off');
+
 
 mh2 = uimenu(mh,'Label','<html><font color="blue">visit ANTx2 repository (Github)',              'Callback',{@menubarCB, 'visitGITHUB'},'separator','on',...
     'userdata',[HSTART 'go to the ANTx2-Github repository']);
@@ -3261,35 +3266,55 @@ elseif strcmp(task,'check_pathnames')
     
     checkpath;
     
-    
- elseif strcmp(task,'call_cwcol')
+    %% ==============================[cmd]===========
+elseif strcmp(task,'call_cwcol')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='no info';
         return ;
     end
-    %% ==============================[cmd]===========
     if strcmp(u.mousekey,'right')
         hlpfun='no info';
         showcmd(hlpfun);
         return
     end
-    %% ===============================================
     antcb('cwcol');
-  elseif strcmp(task,'call_cwtitle')
+    %% ===============================================
+elseif strcmp(task,'call_cwtitle')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='no info';
         return ;
     end
-    %% ==============================[cmd]===========
     if strcmp(u.mousekey,'right')
         hlpfun='no info';
         showcmd(hlpfun);
         return
     end
-    %% ===============================================
-    antcb('cwname'); 
+    antcb('cwname');
+     %% ===============================================
+elseif strcmp(task,'call_WinServerID')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='no info';
+        return ;
+    end
+    if strcmp(u.mousekey,'right')
+        hlpfun='no info';
+        showcmd(hlpfun);
+        return
+    end
+    sessid; 
     
-    
+ elseif strcmp(task,'call_changeWinServer')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='no info';
+        return ;
+    end
+    if strcmp(u.mousekey,'right')
+        hlpfun='no info';
+        showcmd(hlpfun);
+        return
+    end
+    gotoID= input('Enter Winserver-ID to connect to: ','s');
+    sessid(str2num(gotoID));    
     
     %________________________________________________
 elseif strcmp(task,'antsettings')

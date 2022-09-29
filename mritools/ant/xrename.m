@@ -7,8 +7,10 @@
 % #b - extract/exand 4d file
 % #b - mathematical operation (masking, roi extraction, combining images) ..see below
 % #b - set voxel resolution
+% #b - change dataType
 % #b - scale image by voxel factor
 % #b - threshold image
+% 
 % % __________________________________________________________________________________________________________________
 % - select one/several images TO RENAME/DELETE/EXTRACT/EXPAND/COPY volumes,aka. files
 % - dirs:  works on preselected dirs (not all dirs), i..e mouse-folders in [ANT] have to be selected before
@@ -128,6 +130,12 @@
 % #r Don't forget to specify an output filename in the 2nd-column, otherwise the input file is overwritten!
 % #g CMD:  example: threshold image ('INPUT.nii'), values <0.7 set to 0, file stored as 'OUTPUT.nii'
 %     xrename(1, 'c2t2.nii' , 'zzz' , 'tr: i<.7=0');  % 1st arg indcates that GUI is poping up when executed
+%% #by Change data type (dt:)
+% change datytype and save as new file
+% example: change 't2_64.nii' to dataType 16 ('float32', see help of spm_type) and save as 't2_16.nii'
+% z=[];                                                                                                                                                                  
+% z.files =  { 't2_64.nii' 	't2_16.nii' 	'dt:16' };                                                                                                                          
+% xrename(0,z.files(:,1),z.files(:,2),z.files(:,3));
 %__________________________________________________________________________________________________________________
 %
 %% #by MATHEMATICAL OPERATIONS (ma:)
@@ -616,6 +624,32 @@ for i=1:length(pa)      %PATH
                     % ==============================================
                     %%
                     % ===============================================
+                elseif strfind(volnum{j},'dt:'); %vox factor
+                    % ==============================================
+                    %% change dataType
+                    % ===============================================
+                    try
+                        code=volnum{j};
+                        datType=str2num(regexprep(code,'dt:' ,''));
+                        
+                        
+                        [ha a ]=rgetnii(s1);
+                        delete(s2);
+                        rsavenii(s2,ha,a,datType)
+                        
+                        if isDesktop==1
+                            disp(['New IMG with altered dataType: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
+                                ]);
+                        else
+                            disp(['New IMG with altered dataType: ' s2  ]);
+                        end
+                        
+                    catch
+                        disp('problem to change dataType');
+                        continue
+                    end
+  
+                    
                 elseif strfind(volnum{j},'vr:'); %vox factor
                     % ==============================================
                     %% voxel resolution

@@ -47,6 +47,8 @@
 % 
 % x.prefixDirName          adds mouse Dir/folder name as prefix to the new filename,
 %                          default: ''
+% x.suffixDirName          adds mouse Dir/folder name as suffix to the new filename,
+%                          default: ''
 % x.renameString           new file name (without extention), this works if only one file is
 %                          copied per directory
 %                          default: ''
@@ -193,6 +195,7 @@ para={...
     'HPCclusterStructure'   0          '[0]no; [1]HPC-cluster-structure: data-dir contains subdirs dat001,dat002.,and each of this subdir contains one animal-folder with data ' 'b'
     %'animalsubdirs'         1          '[0,1]: [1] preserve SUBFOLDERS WITHIN ANIMAL FOLDERS in either output name or folder hierarchy or [0] do not preserve' 'b'
     'prefixDirName'         0          'adds mouse Dir/folder name as prefix to the new filename'      'b'
+    'suffixDirName'         0          'adds mouse Dir/folder name as suffix to the new filename'      'b'
     'renameString'         ''          'replace file name with new file name (no file extention), !NOTE: files might be overwritten (same output name)'  {'mask' 'raw' 'test'}
     'addString'            ''          'add string as suffix to the output file name'                                                            ''
     
@@ -387,9 +390,12 @@ for i=1:length(z.files)
         filename=[fip z.addString ext];
     end
     
-    %% add subdir as prefix to filename
+    %% add subdir as [prefix] to filename
     if z.prefixDirName==1
         filename=[ subdir '_' filename];
+    end
+    if z.suffixDirName==1 %[add subdir as suffix]
+        filename=stradd(filename,['_' subdir],2);
     end
     
     %%   HPCclusterStructure
