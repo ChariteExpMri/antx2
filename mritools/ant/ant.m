@@ -109,7 +109,11 @@ end
 % lb3: mice cases
 
 warning off; close all
-antcb('figlet');
+persistent showfiglet
+if isempty(showfiglet)
+    antcb('figlet');
+    showfiglet=1;
+end
 disp(antcb('version'));
 %%
 % in spm.m
