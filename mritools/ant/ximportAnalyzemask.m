@@ -257,13 +257,19 @@ for i=1:size(tb,1)
     %———————————————————————————————————————————————
     %% reorient
     %———————————————————————————————————————————————
-    reorType=[0 0];
-    if isfield(z,'reorienttype' ); if ~isempty(char(z.reorienttype ))  ; reorType(1)=1; end;end
-    if isfield(z,'reorienttype2'); if ~isempty(char(z.reorienttype2))  ; reorType(2)=1; end;end
-    
-    if sum(reorType)==2
-        error('..no reorientType defined,.. set either "reorienttype" or "reorienttype2"');
+    reorType=[0];
+    if isnumeric(z.reorienttype2) && z.reorienttype2==0
+        reorType=1;
+    else
+        reorType=2;
     end
+
+%     reorType=[0 0];
+%     if isfield(z,'reorienttype' ); if ~isempty(char(z.reorienttype ))  ; reorType(1)=1; end;end
+%     if isfield(z,'reorienttype2'); if ~isempty(char(z.reorienttype2))  ; reorType(2)=1; end;end
+%     if sum(reorType)==2
+%         error('..no reorientType defined,.. set either "reorienttype" or "reorienttype2"');
+%     end
     
     if reorType(1)==1
         v=a;
