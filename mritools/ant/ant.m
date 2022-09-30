@@ -110,6 +110,7 @@ end
 
 warning off; close all
 antcb('figlet');
+disp(antcb('version'));
 %%
 % in spm.m
 % comment line-345-  :% spm_figure('close',allchild(0));                           fprintf('.');
@@ -416,7 +417,8 @@ set(h,'units','pixels');
 posi=get(h,'position');
 set(h,'position',[posi(1:2) 14 14]);
 set(h,'units','norm');
-icon=fullfile(antpath,'icons','Download_16.png');
+% icon=fullfile(antpath,'icons','Download_16.png');
+icon=fullfile(antpath,'icons','download16x16.png');
 [e map]=imread(icon)  ;
 set(h,'cdata',e);
 

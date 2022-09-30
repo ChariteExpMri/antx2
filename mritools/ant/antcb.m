@@ -935,14 +935,15 @@ if strcmp(do, 'version');
     w=git([' -C ' gitpath ' log -1 --pretty="format:%ci"']);
     if isempty(strfind(w,'fatal'))
         [w1 w2]=strtok(w,'+');
-        dateLU=['ANTx2 v: ' w1 ];
+        %dateLU=['ANTx2 v: ' w1 ];
     else
         vstring=strsplit(help('antver'),char(10))';
         idate=max(regexpi2(vstring,' \w\w\w 20\d\d (\d\d'));
-        dateLU=['ANTx2  vers.' char(regexprep(vstring(idate), {' (.*'  '  #\w\w ' },{''}))];
-        
+        %dateLU=['ANTx2  vers.' char(regexprep(vstring(idate), {' (.*'  '  #\w\w ' },{''}))];
+        w1=datestr(char(regexprep(vstring(idate), {  '(' ')' '#\w\w ' },{''})),'yyyy-mm-dd HH:MM:SS');
+        %dateLU=['ANTx2 v: ' w1 ];
     end
-    
+    dateLU=['ANTx2-v:' w1 ];
     varargout{1}=dateLU;
     
     return
@@ -2626,12 +2627,13 @@ elseif v==7
         '|   _   |    |  |_     _|.--.--.|__    |'
         '|       |       | |   |  |_   _||    __|'
         '|___|___|__|____| |___|  |__.__||______|'
-        '                                        '
         };
     
 end
 
-
+% w=antcb('version');
+% % o{end}=[o{end} w  ];
+% o{end+1}=[w  ];
 
 disp(char(o));
 
