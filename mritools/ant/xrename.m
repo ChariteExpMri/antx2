@@ -10,7 +10,8 @@
 % #b - change dataType
 % #b - scale image by voxel factor
 % #b - threshold image
-% 
+% #b - change header
+%
 % % __________________________________________________________________________________________________________________
 % - select one/several images TO RENAME/DELETE/EXTRACT/EXPAND/COPY volumes,aka. files
 % - dirs:  works on preselected dirs (not all dirs), i..e mouse-folders in [ANT] have to be selected before
@@ -133,8 +134,8 @@
 %% #by Change data type (dt:)
 % change datytype and save as new file
 % example: change 't2_64.nii' to dataType 16 ('float32', see help of spm_type) and save as 't2_16.nii'
-% z=[];                                                                                                                                                                  
-% z.files =  { 't2_64.nii' 	't2_16.nii' 	'dt:16' };                                                                                                                          
+% z=[];
+% z.files =  { 't2_64.nii' 	't2_16.nii' 	'dt:16' };
 % xrename(0,z.files(:,1),z.files(:,2),z.files(:,3));
 %__________________________________________________________________________________________________________________
 %
@@ -185,6 +186,59 @@
 % #g change voxel resolution of 'AVGT.nii' to [.1 .1 .1] and save as 'test33.nii'
 % z.files={ 'AVGT.nii' 	'test33.nii' 	'vr: .1' };
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
+%__________________________________________________________________________________________________________________
+%% #by change header (ch:)
+% change header using eather a reference file or a transformation-matrix or header of selected-file
+% story as a new file (new name as specified in column-2 /2nd input argument ...or empty to change the original file!!!)
+% - if no reference file or transformation-matrix is given, you can change: 
+%         the dataType, make dimensional flips or add a header-description
+% - dimensional flips : flip left/right; up/down and/or anterior/posterior
+% - description       : add a header description (string)
+% - datatype          : change data type of the NIFTI-image
+% #m WORKING WITH THE GUI: 
+% #b FIRST SELECT THE IMAGE (COLUMN-1), THAN use CONTEXTMENU/CHANGE HEADER
+% 
+% #m COMMAND LINE EXAMPLES: 
+%% =====[change header example-1]==========================================
+%% replace header of "mag.nii" using header of local image ("05_epi_mrexp2.nii"), write description "QR3"
+%% and save as "test2.nii". 
+%% IMPORTANT: "05_epi_mrexp2.nii" must be located in the respective animal folder
+%   z=[];                                                                                           
+%   z.files =  { 'mag.nii' 	'test2.nii' 	'ch:image:05_epi_mrexp2.nii;descrip:QR3' };                    
+%   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
+%% =====[change header example-2]==========================================
+%% replace header of "mag.nii" using header of external image ("F:\data5\nogui\misc\_refIMG.nii"), 
+%% flip dimensions dim-1 and dim-2, write description "flipped", change datatType to 64
+%% and save as "test2.nii". 
+%% IMPORTANT: "_refIMG.nii" is not located in the animal-directory, therefore the replaced header is identical
+%% for the 'mag.nii'-images of all selected animals 
+%   z=[];                                                                                                                   
+%   z.files =  { 'mag.nii' 	'test2.nii' 	'ch:image:F:\data5\nogui\misc\_refIMG.nii;flipdim:[1 2];dt:[64];descrip:flipped' };
+%   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3)); 
+%% =====[change header example-3]==========================================
+%% replace header of "mag.nii" using transformation matrix 'mat'; , change datatType to 64
+%% and save as "test2.nii"
+%   z=[];                                                                                                                   
+%   z.files =  { 'mag.nii' 	'test2.nii' 	'ch:mat:[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1];dt:64' };                                      
+%   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
+%% =====[change header example-4]==========================================
+%% flip dimension dim-2 of image 'mag.nii' and save as "test2.nii". 
+%   z=[];                                                                                                                   
+%   z.files =  { 'mag.nii' 	'test2.nii' 	'ch:flipdim:[2]' };
+%   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3)); 
+%% =====[change header example-5]==========================================
+%% flip dimension dim-2 of image 'mag.nii' and save as "test2.nii". 
+%   z=[];                                                                                                                   
+%   z.files =  { 'mag.nii' 	'test2.nii' 	'ch:flipdim:[2]' };
+%   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3)); 
+%% =====[change header example-6]==========================================
+%% replace header of "t2_copy.nii" using transformation matrix 'mat', save changes in original image
+%% IMPORTANT: here the header of the original image is changed (2nd arg is empty)
+%   z=[];                                                                                                                   
+%   z.files =  { 't2_copy.nii' 	'' 	'ch:mat:[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1];' };                                      
+%   xrename(0,z.files(:,1),z.files(:,2),z.files(:,3)); 
+% 
+% 
 %__________________________________________________________________________________________________________________
 %% #by voxel scaling (vf:)
 % change voxel scaling of an image via  the [TASK]-column
@@ -269,7 +323,7 @@
 %     xrename(0, 'blob3.nii' ,   'delete'  );
 %     xrename(1,'^prc_*|^rc_*|^c_*','','del'); % with GUI-preselection: delete all NIFTs starting with "prc_"/"rc"/"c"
 %     xrename(0,'^prc_*|^rc_*|^c_*','','del'); % no GUI: delete all NIFTs starting with "prc_"/"rc"/"c"
-% 
+%
 % #g EXTRACTION-EXAMPLE  "extract one volume"
 %    %[example-1]: extract 9th volume from [MSME-T2-map_20slices_1.nii] and save as [M.nii]
 %                  xrename(1, 'MSME-T2-map_20slices_1.nii' , 'M' ,9)  ;
@@ -298,13 +352,13 @@
 % %             expand all volumes from c_nan2neu_2.nii starting from 3rd vol  --> x2_003.nii/x2_004.nii...x2_"last volume as number".nii
 %    xrename(1, {'msme2neu_1.nii' 'c_nan2neu_2.nii'}, {'x1' 'x2'} ,{'3s' '[3:end s]'})
 %
-% 
+%
 % ==============================================
 %%    wildcards
 % ===============================================
 % xrename(1,{'^.*.doc'},{},{'del'});  %delete all doc-files
 % xrename(1,{'^.*.doc'},{'newdoc.doc'},{':'}); %make copy of all docfiles...call it 'newdoc.doc'
-% 
+%
 % ==============================================
 %%    optional pairwise inputs
 % ===============================================
@@ -314,8 +368,8 @@
 %       xrename(1,{},{},{},'flt','.*.txt');
 %       xrename(1,{},{},{},'flt','.*.xlsx|.*xls');
 %    ! please use no file-filter if you have a preselection of files!
-% 
-% 
+%
+%
 % __________________________________________________________________________________________________________________
 %
 %% #yg BATCH EXAMPLE-II   [xrename.m]
@@ -426,8 +480,8 @@ if exist('extractnum')
         extractnum=regexprep(regexprep(extractnum,'NaN',''),'\s+',' ');
         if size(he,1) == size(extractnum,1)
             he(:,3)=extractnum;
-%         else
-%             error('extractnum be of same size as fi & finew');
+            %         else
+            %             error('extractnum be of same size as fi & finew');
         end
         
         
@@ -467,8 +521,8 @@ if ~isempty(he)
     if length(uniext)==1 && isempty(uniext{1})
         
     else
-    s.flt=strjoin(uniext,'|');
-    end    
+        s.flt=strjoin(uniext,'|');
+    end
 end
 v=getuniquefiles(pa,'flt',s.flt);
 
@@ -509,8 +563,8 @@ if showgui==0
 else
     [he, tbout isOKpressed]=renameGUI(v2,he2,s, showgui);
     
-%     isOKpressed
-%     return
+    %     isOKpressed
+    %     return
     if isOKpressed==0;% if cancel pressed...abort
         return
     end
@@ -624,7 +678,7 @@ for i=1:length(pa)      %PATH
                     % ==============================================
                     %%
                     % ===============================================
-                elseif strfind(volnum{j},'dt:'); %vox factor
+                elseif strfind(volnum{j},'dt:')==1; %vox factor
                     % ==============================================
                     %% change dataType
                     % ===============================================
@@ -648,7 +702,176 @@ for i=1:length(pa)      %PATH
                         disp('problem to change dataType');
                         continue
                     end
-  
+                elseif strfind(volnum{j},'ch:')==1; %vox factor
+                    % ==============================================
+                    %% change header (ch)
+                    % ===============================================
+                    try
+                        %% ===============================================
+                        code=volnum{j};
+                        code=regexprep(code,'ch:' ,'');
+                        if isempty(regexpi(code,'mat:\s*['))
+                            t1=strsplit(code,';')';
+                        else
+                            i1=regexpi(code,'mat:\s*[');
+                            i2s=regexpi(code,']');
+                            i2=i2s(min(i2s>i1));
+                            code2=code(i1:i2);
+                            code=strrep(code,code2,'');
+                            t1=strsplit(code,';')';
+                        end
+                        
+                        [k1 k2]=strtok(t1,':');
+                        k1=regexprep(k1,'\s+' ,'');
+                        k2=regexprep(k2,{'^\s+' '^:' '\s+$'}, {''});
+                        idel=find(cellfun(@isempty,k1));
+                        k1(idel)=[];
+                        k2(idel)=[];
+                        
+                        if ~isempty(k1)
+                            x=cell2struct(k2,k1);
+                        else
+                            x=struct();
+                        end
+                        if exist('code2')==1
+                           x.mat= str2num(regexprep(code2,'mat:',''));
+                        end
+                        
+                        
+                        %x.image='';
+                        % x.mat='304 04';
+                        if isfield(x,'mat'); 
+                            if ischar(x.mat);   x.mat=str2num(x.mat); end
+                            if isempty(x.mat)
+                                x=rmfield(x,'mat');
+                            end
+                        end
+                        if isfield(x,'image');
+                            [IMGpa IMGname IMGext]=fileparts(x.image);
+                            if isempty(IMGpa) %local animal path
+                               x.image=fullfile(fileparts(s1), [IMGname IMGext]);
+                            end
+                            
+                            
+                            if exist(x.image)~=2
+                                x=rmfield(x,'image');
+                            end
+                        end
+                        x.usedMethod=0;
+                        if isfield(x,'image')==1
+                            x.usedMethod=1;
+                        elseif isfield(x,'mat')==1
+                            x.usedMethod=2;
+                        else
+                            x.usedMethod=0;
+                        end
+                        %% ===============================================
+                        if x.usedMethod==1
+                            href=spm_vol(x.image);
+                            href=href(1);
+                            matN=href.mat;
+                        elseif x.usedMethod==2
+                            matN=x.mat;
+                        else
+                            hv=spm_vol(s1);
+                            matN=hv.mat;
+                        end
+                        
+                        if isfield(x,'flipdim')
+                            try; x.flipdim=str2num(x.flipdim); end
+                            if isempty(x.flipdim);
+                                x=rmfield(x,'flipdim');
+                            end
+                        end
+                        
+                        [hb b]=rgetnii(s1);                 %get file
+                      
+                        [pas2 names2 exts2]=fileparts(s2);  % specal case:overwrite file
+                        if isempty(names2)
+                            s2=s1;
+                            msgImg='same IMG';
+                        else
+                            msgImg='new IMG';
+                        end
+                        
+                        if strcmp(s1,s2)==0
+                            try; delete(s2);end
+                            %copyfile(s1,s2,'f');
+                        end
+                        
+ 
+                        %hb.mat=M2;                      
+                        for jj=1:length(hb)
+                            hb(jj).mat=matN;                    % CHANGE MAT
+                        end
+                        dt=hb(1).dt(1);
+                        if isfield(x,'dt')                      % CHANGE DATAtYPE
+                            dt=str2num(x.dt);
+                        end
+                        if isfield(x,'descrip')                 % CHANGE DESCRIPTION
+                            for jj=1:length(hb)
+                                hb(jj).descrip=char(x.descrip);
+                            end
+                        end
+                        
+                        
+                        
+                         rsavenii( s2 , hb, b,dt);
+                         
+                         
+                        if isfield(x,'flipdim')           %FLIP-DIMENSION
+                            try; x.flipdim=str2num(x.flipdim); end
+                            if length(x.flipdim)<=3
+                                flipvec=ones(1,3);
+                                flipvec(x.flipdim)=-1;
+                                zv=zeros(1,12);
+                                zv(7:9)=flipvec;
+                                flipmat=spm_matrix(zv);
+                                hs2=spm_vol(s2);
+                                if length(hs2)==1
+                                    rsavenii( s2 , hb, b,dt);
+                                    M2=hs2(1).mat*flipmat;
+                                    spm_get_space(s2,M2);
+                                else
+                                    hb2=hb;
+                                    for jj=1:length(hb)
+                                        hb2(jj).mat=hs2(1).mat*flipmat;
+                                    end
+                                    rsavenii( s2 , hb2, b,dt);
+                                end
+                            end
+                        end
+                       
+                        %% =========check/debug======================================
+                        
+                        if 0
+%                             rclosemricron
+%                             rmricron([],s1);
+                            rmricron([],s2);
+                        end
+                                       
+                        if x.usedMethod==0 && length(fieldnames(x))==1
+                            msgHDR='(file copied only)';
+                        else
+                            msgHDR='(changed header)';
+                        end
+                        
+                        
+                        %% ===============================================
+                        
+                        if isDesktop==1
+                            disp([msgImg ' ' msgHDR ': <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
+                                ]);
+                        else
+                            disp([msgImg ' ' msgHDR ': ' s2  ]);
+                        end
+                        showinfo2('show file' ,s2);
+                        
+                        try; delete(regexprep(s2,'.nii$','.mat')); end
+                    catch
+                        disp('problem to change header');
+                        continue
+                    end
                     
                 elseif strfind(volnum{j},'vr:'); %vox factor
                     % ==============================================
@@ -866,9 +1089,9 @@ for i=1:length(pa)      %PATH
                     
                     %% delete targetfile if exists
                     %if strcmp(thisvol,':')==1
-                        if exist(s2)==2
-                            delete(s2);
-                        end
+                    if exist(s2)==2
+                        delete(s2);
+                    end
                     %end
                     
                     %% write volume
@@ -924,11 +1147,11 @@ for i=1:length(pa)      %PATH
                     else
                         % NOT A NIFTI_____
                         copyfile( s1,s2, 'f');
-                         if isDesktop==1
-                             disp(['created: file: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
-                         else
-                             disp(['created: file: ' s2  ]);
-                         end
+                        if isDesktop==1
+                            disp(['created: file: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'  ]);
+                        else
+                            disp(['created: file: ' s2  ]);
+                        end
                     end
                     
                     
@@ -1008,7 +1231,7 @@ end
 %     v2.tbh=v.tbh;
 %     v2.tb =tbout;
 %     he2=he;
-%     
+%
 %     return
 % end
 
@@ -1155,8 +1378,8 @@ if isFig==0
     set(jtable,'MousemovedCallback',@mousemovedTable);
     
     set(jtable,'MouseClickedCallback',@mouseclickedTable);
-      
-
+    
+    
     h={' '};
     h0={};
     h0{end+1,1}=[' '];
@@ -1199,11 +1422,11 @@ if isFig==0
     if isfield(s,'flt')
         is=find(strcmp(options,s.flt));
         if ~isempty(is)
-          options=  options([is setdiff(1:length(options),is)]);
+            options=  options([is setdiff(1:length(options),is)]);
         else
             options=[s.flt options];
         end
-          
+        
     end
     
     position = [10,100,90,20];  % pixels
@@ -1221,8 +1444,8 @@ if isFig==0
     %% filefilter-txt
     hv=uicontrol('style','text','units','pixels','position',[0 0 10 10 ],...
         'string','file-filter','backgroundcolor','w');
-   set(hv,'position',[250 20 130 18],'horizontalalignment','left');
-
+    set(hv,'position',[250 20 130 18],'horizontalalignment','left');
+    
     
     %% ===============================================
     
@@ -1277,10 +1500,10 @@ try
     %tb=get(f,'userdata');
     %% cancel
     if u.isOK==0;%isnumeric(tb)
-            he=[];
-            tbout=tb;
-            close(f);
-            return;
+        he=[];
+        tbout=tb;
+        close(f);
+        return;
     end
     
     %%
@@ -1303,8 +1526,8 @@ catch
 end
 
 if u.isOK==1
-   isOKpressed=1; 
-
+    isOKpressed=1;
+    
 end
 
 
@@ -1312,10 +1535,10 @@ function isOK(e,e2,task)
 u=get(gcf,'userdata');
 if task==1
     u.isOK=1;
-   set(gcf,'userdata',u);
+    set(gcf,'userdata',u);
 end
 uiresume(gcf);
-    
+
 
 
 
@@ -1356,6 +1579,10 @@ hs = uimenu(cmenu,'label','rename file'           ,         'Callback',{@hcontex
 hs = uimenu(cmenu,'label','clear all fields'      ,         'Callback',{@hcontext, 'clearfields'},'separator','on');
 
 hs = uimenu(cmenu,'label','delete file'           ,         'Callback',{@hcontext, 'deleteFile'},'separator','on');
+
+
+hs = uimenu(cmenu,'label','<html><font color=blue>replace header'           ,      'Callback',{@hcontext, 'replaceHeader'},'separator','on');
+
 
 hs = uimenu(cmenu,'label','<html><font color=green>  show file info'           ,         'Callback',{@hcontext, 'showimageinfo'},'separator','on');
 
@@ -1401,10 +1628,14 @@ end
 
 function hcontext(e,e2,task)
 us=get(gcf,'userdata');
-if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'rename') ||...
-        strcmp(task,'deleteFile') ||  strcmp(task,'enter2and3_extended') ||  strcmp(task,'clearfields')
+if ~strcmp(task,'showimageinfo')
+    % if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'rename') ||...
+    %         strcmp(task,'deleteFile') ||  strcmp(task,'enter2and3_extended') ||  strcmp(task,'clearfields')
     e=us.hj;
     selrows=get(e,'SelectedRows');
+    if isempty(selrows)
+        disp(' first select one/several rows before using the context menu');
+    end
     
     
     if strcmp(task,'enter2and3')
@@ -1523,6 +1754,61 @@ if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'renam
     elseif strcmp(task,'clearfields')
         out={'',''};
         selrows=[1:size(us.tb,1)]-1;
+    elseif strcmp(task,'replaceHeader')
+        %% ===============================================
+        
+        q={...
+            'inf1'   'click [BULB]-icon for help' '' ''
+            'image'    '' 'use header of this image: either as fullpath name or the patheless name of a file located in the animal directory' 'f'
+            'mat'      [] 'ALTERNATIVE TO "imageSource": use this transformation-matrix instead (if "mat" is used, keep "image" empty) ' {'1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1'}
+            'flipdim'  [] 'flip dimensions by index {1,2,3}: {1} Left/Right, {2} up/down and/or {3} anterior/posterior ... for the respective dimension: example [1 2]: flips L/R and up/down  dimension  ' {'' '1 2' '2' '1' '1 2 3'  }'
+            'dt'       [] 'change dataType of the stored image; (empty: preserve orig. dataType)'  { [] 2      4      8   16   64}
+            'descrip'  '' 'add arbitrary description {string} in the description-field of the header'  {'' '..test any text can be provided here' 't2w-image'} 
+            };
+        
+        hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
+        
+        [m z z2]=paramgui(q,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.3 .34 .5 .16 ],...
+            'title','***CHANGE NIFTI-HEADER***','info',{@uhelp,[ mfilename '.m'],1,'goto','change header (ch:)'});
+        if isempty(m); return; end
+        fn=fieldnames(z);
+        z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
+        %% ===============================================
+        z.image=char(z.image);
+        fn=fieldnames(z);
+        t1={};
+        for j=1:length(fn)
+            dx=(getfield(z,fn{j}));
+            
+            if ~isempty(dx)
+             if isnumeric(dx)
+                 if size(dx,1)==1
+                dx=['[' num2str(dx)  ']'];
+                 else
+                     dx=strjoin(cellstr(num2str(dx)),';');
+                     dx=['[' (dx)  ']'];
+                 end
+                dx=regexprep(dx,'\s+' ,' '); 
+            end   
+                
+                
+            t1(end+1,1)={ [fn{j} ':'  dx ]};
+            end
+        end
+        if isempty(t1)
+            return
+        end
+        t2=[ 'ch:' strjoin(t1,';')];
+        out{2}=t2;
+        
+        
+        %% ===============================================
+        
+        
+        
+        %% ===============================================
+        
+        
     end
     
     
@@ -1535,7 +1821,9 @@ if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'renam
     jtable=e;
     
     for i=1:length(selrows)
-        jtable.setValueAt(java.lang.String(out{1}), selrows(i), 1); % to insert this value in cell (1,1)
+        if ~isempty(out{1})
+            jtable.setValueAt(java.lang.String(out{1}), selrows(i), 1); % to insert this value in cell (1,1)
+        end
     end
     if length(out)==2
         for i=1:length(selrows)
@@ -1543,7 +1831,8 @@ if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'renam
         end
     end
     
-elseif strcmp(task,'showimageinfo')
+else
+    % elseif strcmp(task,'showimageinfo')
     e=us.hj;
     iselrows=get(e,'SelectedRows')+1;
     files=us.tb(iselrows,1);
@@ -1626,7 +1915,7 @@ for i=1:size(filelist,1)
                 t=[t; '      date:     ' k.date ];
                 t=[t; '  size(KB):     ' num2str(k.bytes/1000) ];
                 
-                  o=[o; t];
+                o=[o; t];
                 
                 %% ===============================================
                 

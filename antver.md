@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   28 Sep 2022 (13:15:27)  
+ &#x1F34E; last modification:   11 Oct 2022 (14:01:29)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,12 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**11 Oct 2022 (14:01:29)**</ins>  
+  __[xrename.m]__ modified  
+  xrename now allows to modify the header of a NIFTI-file via 'ch:'-tag in the 3rd column  
+  header-modifications: use heade from another file, change dataType, add dimensional flips, add header descrition  
+  see help of xrename  
+<!---->
   &#x1F535;   <ins>**28 Sep 2022 (13:15:27)**</ins>  
    __[xQAregistration.m]__ new  
    calculate registration-based quality metric (standard-space comparison)  
@@ -15,6 +21,7 @@
    the gray matter image of the template (metrics: correlation or mutual information)  
   -the resulting report is saved as HTML-file or excel-file  
   &#8618; access via ANT-menu: GRAPHICS/QA:obtain registration metric  
+    
 <!---->
   &#x1F535;   <ins>**27 Sep 2022 (13:51:29)**</ins>  
    __[anthistory.m]__ modified  

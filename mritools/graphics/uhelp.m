@@ -42,6 +42,7 @@
 % 'fontsize': value              -set listbox fontsize
 % 'name'    : (string)           - name of the figure (appears in the upper window frame)
 % 'bgcolor' : [R G B]/matlab-color-string - background color; example ..'bgcolor','r'.. or 'bgcolor',[1 .9 .9]...
+% 'goto'    : scroll to/set listboxtop to specific index ; either numeric or a string/phrase 1st found in the text    
 %
 % EXAMPLES
 % uhelp(his, 1, 'cursor' ,'end','lbpos',[0 .025 1 .95] );
@@ -626,6 +627,9 @@ txtline([],[]);
 varargout{1}=hfig;
 
 
+
+
+
 % ==============================================
 %%   some other input args
 % ===============================================
@@ -634,10 +638,28 @@ if isfield(parasin,'name');             set(gcf,'name',parasin.name,'NumberTitle
 if isfield(parasin,'backgroundcolor');  set(tx,'backgroundcolor', parasin.backgroundcolor);end
 if isfield(parasin,'bgcolor');          set(tx,'backgroundcolor', parasin.bgcolor);end
 
+if isfield(parasin,'goto');            
+  if isnumeric(parasin.goto)
+      drawnow;
+      set(lb1,'ListboxTop',parasin.goto);
+  else
+      idx=find(~cellfun(@isempty,strfind(lb1.String,parasin.goto)));
+      
+      if ~isempty(idx)
+          if idx~=1; idx=idx-1; end
+            drawnow;
+          set(lb1,'ListboxTop',idx)
+      end
+  end
+
+end
+
 
 if nargout==0
     varargout={};
 end
+
+
 
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 %% •••••••••••••••••••••••••••••  SUBFUNS      •••••••••••••••••••••••••••••••••••••••••••••••••••••••

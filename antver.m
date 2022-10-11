@@ -736,7 +736,16 @@
 % -the resulting report is saved as HTML-file or excel-file
 % #gw --> access via ANT-menu: GRAPHICS/QA:obtain registration metric
 % 
+% #ba 11 Oct 2022 (14:01:29)
+% [xrename.m] #n modified
+% xrename now allows to modify the header of a NIFTI-file via 'ch:'-tag in the 3rd column
+% header-modifications: use heade from another file, change dataType, add dimensional flips, add header descrition
+% see help of xrename
 % 
+% 
+% 
+% 
+
 
 %% ===============================================
 %----- EOF

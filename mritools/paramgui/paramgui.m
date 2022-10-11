@@ -1411,7 +1411,11 @@ try
         hgfeval(info);
     elseif strfind(char(info{1}),'uhelp');
         %     hgfeval(info);
-        uhelp(info{2});
+        if length(info)==2
+            uhelp(info{2});
+        else
+            feval(info{1},info{2:end});
+        end
     else
         %     uhelp(info(:),1,'position',[.75 .5 .25 .4]);
         uhelp(info(:),1);
