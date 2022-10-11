@@ -739,7 +739,7 @@
 % #ba 11 Oct 2022 (14:01:29)
 % [xrename.m] #n modified
 % xrename now allows to modify the header of a NIFTI-file via 'ch:'-tag in the 3rd column
-% header-modifications: use heade from another file, change dataType, add dimensional flips, add header descrition
+% header-modifications: use header of another file, change data type, dimensional flips, add header descrition
 % see help of xrename
 % 
 % 
