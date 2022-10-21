@@ -274,7 +274,91 @@ v.newRegionName   =z.columnNewRegionName; %new regionName
 if ischar(v.newRegionName) % implied none
     v.newRegionName=0;
 end
+
+if 1
+    % ==============================================
+    %%   load atlas
+    % ===============================================
+    [pax fis ext]=fileparts(z.atlas);
+    z.atlasXLS=fullfile(pax,[fis '.xlsx']);
     
+    [~,~,at0]=xlsread(z.atlasXLS);
+    at0(strcmp(cellfun(@(a){[num2str(a)]} ,at0(:,1) ),'NaN')==1,:)=[];
+    at0(:,strcmp(cellfun(@(a){[num2str(a)]} ,at0(1,:) ),'NaN')==1)=[];
+    
+    v.inf1='__origATLAS___';
+    v.hat=at0(1,:);
+    v.at= at0(2:end,:);
+    % ==============================================
+    %%  [1] make adjusted sheet for inputSheet
+    % ===============================================
+    
+    idcol=cell2mat(e(:,v.inewID));
+    ix_id=find(~isnan(idcol)) ;
+    
+    
+    % e(ix_id(:),[ v.iregion v.inewID v.ihemisphereType]);
+    if v.newRegionName~=0
+        t1= e(ix_id(:),[ v.iregion v.inewID v.ihemisphereType   v.newRegionName]);
+    else
+        t1= e(ix_id(:),[ v.iregion v.inewID v.ihemisphereType                  ]);
+    end
+    
+    % find new ID in atlas
+    hat=v.hat;
+    at =v.at;
+%     icolHex=find(strcmp(v.hat,'colHex'));
+%     hat(icolHex)=[];
+%     at(:,icolHex)=[];
+    
+    hat([6:7])={'newID' 'hemisphereType'};
+    if v.newRegionName~=0
+        hat([8])={'newRegionName'};
+    end
+    
+    for i=1:size(t1,1)
+        ix= find(strcmp(v.at(:,1),  t1{i,1}));
+        if v.newRegionName~=0
+            at(ix,[6:8] ) =t1(i,[2 3 4]);
+        else
+            at(ix,[6:7] ) =t1(i,[2 3]);
+        end
+    end
+    % ==============================================
+    %%
+    % ===============================================
+    
+    e =at;
+    he=hat;
+    
+    
+    % ==============================================
+    %%   [2]
+    % ===============================================
+    
+    %recode column-idices ---------------------:
+    % v.ichild=
+    v.iID               =4;
+    v.ichild            =5;
+    v.inewID            =6;
+    v.ihemisphereType   =7;
+    if v.newRegionName~=0
+        v.newRegionName =8;
+    end
+    
+    
+    
+    % ==============================================
+    %%   insert "at" into "e"
+    % ===============================================
+%     e=at;
+    
+end
+
+% ==============================================
+%%   
+% ===============================================
+
 
 %========================= check typos
 fx=e(:,v.inewID );
@@ -287,8 +371,9 @@ e(:,v.inewID )=fx;
 
 fx=e(:,v.ihemisphereType );
 fx=cellfun(@(a){ [num2str(a)]}, fx);
-fx(cellfun(@isempty, fx))={'NaN'};
-fx=regexprep(fx,{'^\s+$' },{'NaN'});
+fx(cellfun(@isempty, fx))={'4'};% if empty automatically code bilaterally-separated
+% fx(cellfun(@isempty, fx))={'NaN'};
+% fx=regexprep(fx,{'^\s+$' },{'NaN'});
 fx=cellfun(@(a){ [str2num(a)]}, fx);
 e(:,v.ihemisphereType )=fx;
 
@@ -925,9 +1010,9 @@ TBreduced=tb2;
 %
 % end
 if isexcel==1
-    pwrite2excel(fileout,{4 'INPUT' },hTBreduced,[],sortrows( TBreduced,z.columnNewID ));
+    pwrite2excel(fileout,{4 'INPUT' },hTBreduced,[],sortrows( TBreduced,v.inewID ));
 else
-    sub_write2excel_nopc(fileout,'INPUT',hTBreduced,sortrows( TBreduced,z.columnNewID ));
+    sub_write2excel_nopc(fileout,'INPUT',hTBreduced,sortrows( TBreduced,v.inewID ));
 end
     
 % ==============================================
@@ -1157,7 +1242,7 @@ end
 % ===============================================
 [hr r]=rgetnii(niftifile);
 unir=unique(r); unir(unir==0)=[];
-length(unir)
+% length(unir)
 % ==============================================
 %%   
 % ===============================================

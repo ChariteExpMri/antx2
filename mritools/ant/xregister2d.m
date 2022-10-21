@@ -20,6 +20,18 @@
 % x.rigid       - do    rigid transformation <boolean> [1] yes, [0] no    (default: 1)
 % x.affine      - do   affine transformation <boolean> [1] yes, [0] no    (default: 1)
 % x.bspline     - do b-spline transformation <boolean> [1] yes, [0] no    (default: 1)
+% _________[OPTIONS TO IMPROVE TIMING & ACCURACY]_________________________________
+% slicemode          :use all 2D-slices or only slices with brain tissue:
+%                      ["all"] use all slices 
+%                      ["fast" only slices with brain tissue used, all other slices will be replaced by the original image                  
+%                    -default: "all"
+% fast_brainPerSlice_thresh  [for slicemode "fast" only]: threshold (percent) of brain voxels per slice, 
+%                            slices with less brain voxels will not be warped but replaced by the original slice
+%                            here the idea is to save time
+%                         -default: 2   (2 percent of voxels are brain tissue)
+% skullstrip_refIMG       [0,1] perform warping on the skullstripped reference image   
+%                         if [1] the reference image is skullstripped --> this might result in better warping quality
+%                         -default: 0
 % __________________________________________
 % x.InterpOrder       -  'InterpolationOrder: [0]nearest neighbor, [1]trilinear interpolation, [3]cubic' {0 1 3}(default: 0)
 % x.xyresolution      - xy-slice-resolution  "ref" from refIMG, "source" from sourceIMG (default: 'ref')
@@ -136,29 +148,50 @@ p={...
     'inf77'     '====================================================================================================='        '' ''
     %     'renameIMG'     ''       '(optional) rename-string for the new file, otherwise the prefix "p"+sourceIMG-name is used'  {@renamefiles,[],[]}
     'prefix'        'p'       'this prefix is used for the output file >>[prefix+"name of applyIMG"]'   {@renamefiles,[],[]}
-    
+    'pfileSet'       2        'set of parameterfiles {1,2}, [1] default; [2] experimental (faster)'  {1,2}
     'rigid'          0        'do rigid transformation'    'b'
-    'affine'         1        'do affine transformation'   'b'
+    'affine'         0        'do affine transformation'   'b'
     'bspline'        1        'do b-spline transformation' 'b'
+    'inf71'     '===========[OPTIONS TO IMPROVE TIMING & ACCURACY]=========================================================================================='        '' ''
+
+    'slicemode'                'all'  '["all"] all slices or ["fast"] only brain related slices'  {'all' 'fast'}
+    'fast_brainPerSlice_thresh'   2    '[slicemode "fast" only]: threshold (percent) of brain voxels per slice, slices with less brain voxels will not be warped but replaced with the original slice   '   {1 2 5}
+    'skullstrip_refIMG'           0    'perform warpin on the skullstripped reference image'     {'b'}
+   
     'inf8'     '====================================================================================================='        '' ''
     'InterpOrder'         0    'InterpolationOrder: [0]nearest neighbor, [1]trilinear interpolation, [3]cubic' {0 1 3}
     'xyresolution'      'ref'  'Final XY-resolution: "ref" from refIMG, "source" from sourceIMG'   {'ref'  'source'}
     'preserveIntensity'   0    'preserve intensity: [0] no, [1] preserve min-max-range [2] preserve mean+SD' {0 1 2}
     'sliceAssign'     'auto' 'Slice-to-slice assigment of refIMG & sourceIMG: "auto" use image information; otherwise specify as pairwise vector/matrix such as [15 1] or [15 1; 16 2]  ' {'auto'; '1 15'}
     'reslice2refIMG'      1    'force to match dimensions of refImage'  'b'
-    'createMask'          1    'create binary MaskImage  [ used slices contain "1"-elements; filename: "newfilename+_mask"]'  'b'
+    'createMask'          0    'create binary MaskImage  [ used slices contain "1"-elements; filename: "newfilename+_mask"]'  'b'
     'isparallel'          0    'parallel processing over animals: [0]no,[1]yes' 'b'
     'verbose'             2    'verbosity level in command window: [0]no info,[1]some info,[2] more info in CMD-window' {0:2}
-    'inf9'     '====================================================================================================='        '' ''
+    'inf10'     '====================================================================================================='        '' ''
     'cleanup'         1        'remove unnecessary data' 'b'
     'keepFolder'      1        'keeps local 2d-elastix folder' 'b'
     
     };
+
+%% ======test alternative settings=================
+x2=x;
+x2.inf0              = '*** SLICEWISE TRANSFORM-2D APPROACH: [setting MRE-1]      ****     ';
+x2.slicemode         ='fast';
+x2.skullstrip_refIMG =1;
+x2.pfileSet          =2;
+x2.createMask        =0;
+x2.reslice2refIMG    =0;
+
+p_as={'default setting'       paramadd(p,x )
+      'MRE-1 setting'         paramadd(p,x2)};
+
+%% ===============================================
+
 p=paramadd(p,x);%add/replace parameter
 %% show GUI
 if showgui==1
-    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .5 .42 ],...
-        'title',mfilename,'info',{@uhelp, 'xregister2d.m'});
+    [m z z2 z3]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .25 .6 .5 ],...
+        'title',mfilename,'info',{@uhelp, 'xregister2d.m'}, 'settings',p_as );
     if isempty(m); return; end
     fn=fieldnames(z);
     z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
@@ -208,6 +241,11 @@ if isempty(g.prefix)
 end
 g.applyIMGnew= stradd(g.applyIMG,g.prefix,1);
 
+% ==============================================
+%%  for skullstrip-approach ---determine species
+% ===============================================
+global an
+g.species=an.wa.species;
 
 
 % ==============================================
@@ -233,12 +271,7 @@ end
 
 
 
-% ==============================================
-%%   batch
-% ===============================================
-% try
-%     makebatch(z,p);
-% end
+
 % ==============================================
 %%   end...message
 % ===============================================
@@ -259,8 +292,23 @@ ref = fullfile(pa,char(g.refIMG));
 sou = fullfile(pa,char(g.sourceIMG));
 app = stradd(g.applyIMG,[pa filesep],1);
 
-if exist(ref)~=2  ; return;     end
-if exist(sou)~=2  ; return;     end
+% ==============================================
+%%   skullstrip approach of the reference image
+% ===============================================
+if g.skullstrip_refIMG==1
+    disp('skullstripping target-image');
+    newref=fullfile(fileparts(ref),'target2D_skullstripped.nii' );
+    skullstrip_pcnn3d(ref, newref,  'skullstrip', struct('species',g.species)   );
+    ref=newref;
+end
+
+
+% ==============================================
+%%   
+% ===============================================
+
+if exist(ref)~=2  ; disp(['refIMG does not exist: ' ref]) ;return;     end
+if exist(sou)~=2  ; disp(['sourceIMG does not exist: ' ref]) ;return;     end
 appexist=ones(size(app,1),1);
 for i=1:size(app)
     if exist(app{i})~=2  ; appexist(i)=0;    end
@@ -274,10 +322,17 @@ app=app(find(appexist==1));
 %% COPY PARAMETERFILES
 % felastix2d='C:\Users\skoch\Desktop\parafiles2D'
 felastix2d=fullfile(fileparts(fileparts(which('ant.m'))),['elastix' ],'paramfiles','paramfiles2D');
-pfile00={...
-    fullfile(felastix2d,'Par0034rigid_2D.txt'   )
-    fullfile(felastix2d,'Par0034affine_2D.txt'  )
-    fullfile(felastix2d,'Par0034bspline_2D.txt' )};
+if g.pfileSet==1
+    pfile00={...
+        fullfile(felastix2d,'Par0034rigid_2D.txt'   )
+        fullfile(felastix2d,'Par0034affine_2D.txt'  )
+        fullfile(felastix2d,'Par0034bspline_2D.txt' )};
+elseif g.pfileSet==2
+    pfile00={...
+        fullfile(felastix2d,'Par0034rigid_2D.txt'   )
+        fullfile(felastix2d,'Par0034affine_2D.txt'  )
+        fullfile(felastix2d,'Par0034bsplineFast_2D.txt' )};
+end
 pfile0=strrep(pfile00,felastix2d,pa);
 copyfilem(pfile00,pfile0);
 
@@ -289,13 +344,27 @@ set_ix(pfile0{3},'ResultImageFormat','nii');
 %% use this pfile
 pfile=pfile0(find([g.rigid g.affine g.bspline]==1));
 
+
+% ==============================================
+%%   change number of resolutions
+% ===============================================
+if 0
+    numResolutions=2 ; %default: 4
+    numrIterations=500 ; %default: 1000
+    
+    for i=1:length(pfile)
+        set_ix(pfile{i},'NumberOfResolutions'      ,numResolutions);
+        set_ix(pfile{i},'MaximumNumberOfIterations',numrIterations);
+    end
+end
+
 % ==============================================
 %%
 % ===============================================
 
 %% LOAD IMAGES
 [ha a ]=rgetnii(ref);
-[hb b] =rgetnii(sou);
+[hb b ] =rgetnii(sou);
 
 
 %% DEFINE SIZE
@@ -341,168 +410,198 @@ end
 
 
 
+
+% ==============================================
+%%   faster version
+% ===============================================
+if strcmp(g.slicemode,'fast')
+    
+    o= reshape(otsu(b(:),2), hb.dim );
+    o=o>=2;
+    vc=squeeze(sum(sum(o,1),2)); %num vox with high intensities
+    nvox_plane=size(o,1)*size(o,2);
+    perc=vc./nvox_plane*100;
+    ikeep=perc>g.fast_brainPerSlice_thresh ;
+    nvalid=sum(ikeep);
+    
+    
+    doreg=[snum(:,2) ikeep]; % source sliceIDx x [0/1] to register
+     cprintf([0 0 1],['SLICEMODE: "fast", ' num2str(nvalid) ' slices to register' '\n']);
+else
+    doreg=[snum(:,2) ones(size(snum(:,2)))]; % source sliceIDx x [0/1] to register
+    cprintf([0 0 1],['SLICEMODE: "all", ' num2str(size(b,3)) ' slices to register' '\n']);
+end
+
+% ==============================================
+%%
+% ===============================================
+
 mdir=pa;
 [~, animalname]=fileparts(mdir);
 
 %% warp slicewise
 % offset=[];
 xd=[];
+%for i=24
 for i=1:size(snum,1)
+    a2=a(:,:,snum(i,1)); %target
+    b2=b(:,:,snum(i,2)); %source
     
-    a2=a(:,:,snum(i,1));
-    b2=b(:,:,snum(i,2));
-    
-    
-    ha2=ha;
-    ha2.dim=[ha.dim(1:2) 1];
-    ha2.mat=[...
-        ha.mat([1:2],:)
-        ha.mat([3:4],:)];
-    %ha2.mat(3,3)=1;
-    ftarget=fullfile(mdir,'target2D.nii');
-    rsavenii(ftarget,ha2,a2);
-    
-    hb2=hb;
-    hb2.dim=[hb.dim(1:2) 1];
-    hb2.mat=[...
-        hb.mat([1:2],:)
-        ha.mat([3:4],:)];
-    %hb2.mat(3,3)=1;
-    fsource=fullfile(mdir,'source2D.nii');
-    rsavenii(fsource,hb2,b2);
-    
-    %% reslice 2D
-    rreslice2target(fsource, ftarget, fsource, g.InterpOrder    ,hb.dt);   % # hb.dt
-    
-    if ~isempty(pfile)
-        % ==============================================
-        %%   RUN ELASTIX
-        % ===============================================
-        if g.verbose>0
-            try
-                cprintf([.8 0 1], ['_____[2D-REG: SLICE-' num2str(i) ' of "'  animalname '"]_______\n']);
-                cprintf([.8 0 1], [' ..running ELASTIX in [' strrep(mdir,[fileparts(mdir) filesep],'') ']'     [', Slice[' num2str(snum(i,2)) '] onto >> slice[' num2str(snum(i,1)) '] ..PLEASE WAIT...\n']]);
-            end
-        end
-        if g.verbose>1
-            disp(['  -Trafo-files         : ' strjoin(strrep(pfile,[mdir filesep],', '),'  ')]);
-            disp(['  -Ref & Source files : ' ['' strrep(ref,[(mdir) filesep],'') ', ' strrep(sou,[(mdir) filesep],'') ''] ]);
-            disp(['  -Applied files      : ' strjoin(strrep(app,[mdir filesep],', '),' ')]);
-        end
+    if doreg(i,2)==1 %register
         
+        ha2=ha;
+        ha2.dim=[ha.dim(1:2) 1];
+        ha2.mat=[...
+            ha.mat([1:2],:)
+            ha.mat([3:4],:)];
+        %ha2.mat(3,3)=1;
+        ftarget=fullfile(mdir,'target2D.nii');
+        rsavenii(ftarget,ha2,a2);
         
-        %% MAKE DIR
-        % pfiles={'Par0034rigid.txt' 'Par0034affine.txt' 'Par0034bspline.txt'}
-        outdir=fullfile(mdir,'ELX2d',['i' pnum(i,3) '_slice' num2str(snum(i,1)) '-' num2str(snum(i,2)) ]);
-        mkdir(outdir);
-        
-        fix = ftarget;
-        mov = fsource;
-        
-        %% RUN ELASTIX
-        %   [rmovs,tfile] = run_elastix(fix,mov,outdir,pfile, [],[],[],[],[]);
-        [infox1,rmovs,tfile] =evalc('run_elastix(fix,mov,outdir,pfile, [],[],[],[],[])');
-        %   [infox1,rmovs,tfile] =evalc('run_elastix(fix,movtpm,outdir,pfile, [],[],[],[],[])');
-        
-        wfiles=cellstr(rmovs);
-        tfile=cellstr(tfile);
-        
-        % ==============================================
-        %%      RUN TRANSFORMIX
-        % ===============================================
-        try
-            if g.verbose>0
-                cprintf([0 .5 1], [' ..running TRANSFORMIX in [' strrep(mdir,[fileparts(mdir) filesep],'') ']' [' : slice[' num2str(snum(i,2)) '] onto >> slice[' num2str(snum(i,1)) '] ..PLEASE WAIT...\n']]);
-            end
-        end
-        set_ix(tfile{end},'FinalBSplineInterpolationOrder' ,g.InterpOrder);      % INTERPOLATION
-    end
-    
-    
-    
-    %% FOR EACH VOLUME
-    for j=1:size(app,1)
-        
-        
-        
-        
-        [hc c]=rgetnii(app{j});
-        c2=c(:,:,snum(i,2));
-        
-        
-        
-        hc2=hc;
-        hc2.dim=[hc.dim(1:2) 1];
-        hc2.mat=[...
+        hb2=hb;
+        hb2.dim=[hb.dim(1:2) 1];
+        hb2.mat=[...
             hb.mat([1:2],:)
             ha.mat([3:4],:)];
         %hb2.mat(3,3)=1;
-        fapply=fullfile(mdir,'apply2D.nii');
-        rsavenii(fapply,hc2,c2);
+        fsource=fullfile(mdir,'source2D.nii');
+        rsavenii(fsource,hb2,b2);
         
         %% reslice 2D
-        rreslice2target(fapply, ftarget, fapply,g.InterpOrder,hc.dt);   % # hb.dt
-        
+        rreslice2target(fsource, ftarget, fsource, g.InterpOrder    ,hb.dt);   % # hb.dt
         
         if ~isempty(pfile)
-            [infox,wim,wps] = evalc('run_transformix(fapply,[],tfile{end},outdir,'''')');
-        else
-            wim = fapply;
+            % ==============================================
+            %%   RUN ELASTIX
+            % ===============================================
+            if g.verbose>0
+                try
+                    cprintf([.8 0 1], ['_____[2D-REG: SLICE-' num2str(i) ' of "'  animalname '"]_______\n']);
+                    cprintf([.8 0 1], [' ..running ELASTIX in [' strrep(mdir,[fileparts(mdir) filesep],'') ']'     [', Slice[' num2str(snum(i,2)) '] onto >> slice[' num2str(snum(i,1)) '] ..PLEASE WAIT...\n']]);
+                end
+            end
+            if g.verbose>1
+                disp(['  -Trafo-files         : ' strjoin(strrep(pfile,[mdir filesep],', '),'  ')]);
+                disp(['  -Ref & Source files : ' ['' strrep(ref,[(mdir) filesep],'') ', ' strrep(sou,[(mdir) filesep],'') ''] ]);
+                disp(['  -Applied files      : ' strjoin(strrep(app,[mdir filesep],', '),' ')]);
+            end
+            
+            
+            %% MAKE DIR
+            % pfiles={'Par0034rigid.txt' 'Par0034affine.txt' 'Par0034bspline.txt'}
+            outdir=fullfile(mdir,'ELX2d',['i' pnum(i,3) '_slice' num2str(snum(i,1)) '-' num2str(snum(i,2)) ]);
+            mkdir(outdir);
+            
+            fix = ftarget;
+            mov = fsource;
+            
+            %% RUN ELASTIX
+            %   [rmovs,tfile] = run_elastix(fix,mov,outdir,pfile, [],[],[],[],[]);
+            [infox1,rmovs,tfile] =evalc('run_elastix(fix,mov,outdir,pfile, [],[],[],[],[])');
+            %   [infox1,rmovs,tfile] =evalc('run_elastix(fix,movtpm,outdir,pfile, [],[],[],[],[])');
+            
+            wfiles=cellstr(rmovs);
+            tfile=cellstr(tfile);
+            
+            % ==============================================
+            %%      RUN TRANSFORMIX
+            % ===============================================
+            try
+                if g.verbose>0
+                    cprintf([0 .5 1], [' ..running TRANSFORMIX in [' strrep(mdir,[fileparts(mdir) filesep],'') ']' [' : slice[' num2str(snum(i,2)) '] onto >> slice[' num2str(snum(i,1)) '] ..PLEASE WAIT...\n']]);
+                end
+            end
+            set_ix(tfile{end},'FinalBSplineInterpolationOrder' ,g.InterpOrder);      % INTERPOLATION
         end
+    else  % do-not-REGISTER (doreg)
         
+    end%doreg
+    
+    %% FOR EACH VOLUME
+    for j=1:size(app,1)
+        [hc c]=rgetnii(app{j});
+        c2=c(:,:,snum(i,2));
         
-        %      if strcmp(g.xyresolution,'source')==1                                    % ORIG-RESOLUTION
-        %         set_ix(tfile{end},'Size'     ,hb.dim(1:2));
-        %         set_ix(tfile{end},'Spacing'  ,[hb.mat(1,1) hb.mat(2,2)]);
-        %     end
-        
-        % ==============================================
-        %%   GET VOLUME
-        % ===============================================
-        
-        %[hd d]=rgetnii(wfiles{end});
-        [hd d]=rgetnii(wim);
-        
-        %         if 1 %% APPLY
-        %             [hv v]=rgetnii(fapply);
-        %             v2=v(:,:,snum(i,2));
-        %         end
-        
-        %% INTENSITY SCALE TO ORIGIN
-        if g.preserveIntensity==1
-            mima1=[min(c2(:)) max(c2(:)) ];
-            mima2=[min(d(:))  max(d(:)) ];
+        if doreg(i,2)==1 %registe
             
-            dx=d-min(d(:));
-            dx=dx./max(dx(:));
-            dx=dx.*(mima1(2)-mima1(1))+mima1(1);
-            %d2(:,:,i)=dx;  %for each slice
-            xd(:,:,i,j)=dx;
             
-            %             [mean(c2(:))  std(c2(:)) min(c2(:)) max(c2(:))]
-            %             [mean(dx(:))  std(dx(:)) min(dx(:)) max(dx(:))]
+            hc2=hc;
+            hc2.dim=[hc.dim(1:2) 1];
+            hc2.mat=[...
+                hb.mat([1:2],:)
+                ha.mat([3:4],:)];
+            %hb2.mat(3,3)=1;
+            fapply=fullfile(mdir,'apply2D.nii');
+            rsavenii(fapply,hc2,c2);
             
-        elseif g.preserveIntensity==2
-            disp('preserveINtensTYPE-2')
-            ms1=[mean(c2(:))  ];
-            ms2=[mean( d(:))  ];
+            %% reslice 2D
+            rreslice2target(fapply, ftarget, fapply,g.InterpOrder,hc.dt);   % # hb.dt
             
-            w1=c2-ms1(1);
-            w2= d-ms2(1);
-            w2=(w2.*std(w1(:))/std(w2(:))  ) ;
-            w2=w2+ms1(1);
-            xd(:,:,i,j)=w2;
             
-            %             [mean(c2(:))  std(c2(:)) min(c2(:)) max(c2(:))]
-            %             [mean(w2(:))  std(w2(:)) min(w2(:)) max(w2(:))]
+            if ~isempty(pfile)
+                [infox,wim,wps] = evalc('run_transformix(fapply,[],tfile{end},outdir,'''')');
+            else
+                wim = fapply;
+            end
             
-        else
-            %d2(:,:,i)=d;  %for each slice
-            xd(:,:,i,j)=d;
-        end
+            
+            %      if strcmp(g.xyresolution,'source')==1                                    % ORIG-RESOLUTION
+            %         set_ix(tfile{end},'Size'     ,hb.dim(1:2));
+            %         set_ix(tfile{end},'Spacing'  ,[hb.mat(1,1) hb.mat(2,2)]);
+            %     end
+            
+            
+            
+            % ==============================================
+            %%   GET VOLUME
+            % ===============================================
+            
+            %[hd d]=rgetnii(wfiles{end});
+            [hd d]=rgetnii(wim);
+            
+            %         if 1 %% APPLY
+            %             [hv v]=rgetnii(fapply);
+            %             v2=v(:,:,snum(i,2));
+            %         end
+            
+            %% INTENSITY SCALE TO ORIGIN
+            if g.preserveIntensity==1
+                mima1=[min(c2(:)) max(c2(:)) ];
+                mima2=[min(d(:))  max(d(:)) ];
+                
+                dx=d-min(d(:));
+                dx=dx./max(dx(:));
+                dx=dx.*(mima1(2)-mima1(1))+mima1(1);
+                %d2(:,:,i)=dx;  %for each slice
+                xd(:,:,i,j)=dx;
+                
+                %             [mean(c2(:))  std(c2(:)) min(c2(:)) max(c2(:))]
+                %             [mean(dx(:))  std(dx(:)) min(dx(:)) max(dx(:))]
+                
+            elseif g.preserveIntensity==2
+                disp('preserveINtensTYPE-2')
+                ms1=[mean(c2(:))  ];
+                ms2=[mean( d(:))  ];
+                
+                w1=c2-ms1(1);
+                w2= d-ms2(1);
+                w2=(w2.*std(w1(:))/std(w2(:))  ) ;
+                w2=w2+ms1(1);
+                xd(:,:,i,j)=w2;
+                
+                %             [mean(c2(:))  std(c2(:)) min(c2(:)) max(c2(:))]
+                %             [mean(w2(:))  std(w2(:)) min(w2(:)) max(w2(:))]
+                
+            else
+                %d2(:,:,i)=d;  %for each slice
+                xd(:,:,i,j)=d;
+            end
+            
+        else  % do-not-REGISTER (doreg)
+            xd(:,:,i,j)=c2;
+        end%doreg
         
-        
-    end %EACH VOLUME
+    end %FOR EACH VOLUME
     
 end
 

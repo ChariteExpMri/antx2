@@ -17,7 +17,7 @@
 % showinfo2('..reoriented',fi2,g1,1,'');
 
 
-function showinfo2(msg,im1,im2,colorstr,msg2)
+function varargout=showinfo2(msg,im1,im2,colorstr,msg2)
 
 isdekstop=usejava('desktop');
 
@@ -39,17 +39,24 @@ if strcmp(ext,'.nii')==0 ;%~isempty(regexp(im1,'.xls|.xlsx'))
     name=[fi ext];
     if isdekstop==1
         if ispc
-            disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
+            mg=([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
                 ' or <a href="matlab: system(''start ' im1 ''');">' 'open' '</a>' ' '  msg2 ]);
         elseif ismac
-            disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
+            mg=([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
                 ' or <a href="matlab: system(''open ' im1 ''');">' 'open' '</a>' ' '  msg2  ]);
         elseif isunix
-            disp([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
+            mg=([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
                 ' or <a href="matlab: system(''xdg-open ' im1 ''');">' 'open' '</a>'  ' '  msg2 ]);
         end
     else
-        disp([msg '[' name ']:' im1 ',' msg2 ]);
+        mg=([msg '[' name ']:' im1 ',' msg2 ]);
+    end
+    
+    if nargout==0
+        disp(mg);
+    else
+        varargout{1}=mg;
+        
     end
     
     

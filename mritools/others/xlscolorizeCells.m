@@ -271,11 +271,13 @@ end
 if iscell(rgb);
     rgb=  cell2mat(rgb)
 end
-if max(rgb(:))>1
-    error('color value-range must be between 0 and 1 !');
-end
+% if max(rgb(:))>1
+%     error('color value-range must be between 0 and 1 !');
+% end
+
 xcol=[];
 for i=1:size(rgb,1)
+    rgb(find(rgb>1))=1;
     rgb2=round(rgb(i,:).*255);
     rgb2(rgb2<0)=0;
     rgb2(rgb2>255)=255;

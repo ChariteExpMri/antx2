@@ -240,7 +240,7 @@ end
 % ==============================================
 %%   
 % ===============================================
-
+caller=dbstack;
 
 
 pause(.1)
@@ -332,6 +332,11 @@ v.info  ='';
 v.close =0;
 
 v.cb1string ='';
+try
+v.callerfunction=caller(2).file; %callerfunction
+catch
+  v.callerfunction='';  
+end
 % v.cb1string ='SAVE Settings';
 % v.pb2callback=@pb1callback;
 
@@ -793,7 +798,19 @@ set(gcf,'position',[posfig]); drawnow;
 us.origfigposition=get(gcf,'position');
 set(gcf,'userdata',us);  
 
-
+%% other settings Button
+if isfield(v,'settings')
+    try
+%     set(gcf,'visible','on')
+    pm=uicontrol('style','pushbutton',  'value',0,     'tag','pbsettings',    'string','sets','units','normalized',...
+        'position',[.12 -.005 .02 .045],'fontsize',7);
+    set(pm,'position',[.3 -.005 .025 .04]);
+    set(pm,'units','pixels','callback',@pbsettings_call,...
+        'TooltipString',['select another parameter set'],'backgroundcolor',[1 .94 .87]);%[.01 .93 .1 .04]
+    catch
+       disp('could not load other settings') ;
+    end
+end
 
 %% MORE-BUTTON
 pm=uicontrol('style','togglebutton',  'value',0,     'tag','pbmore',    'string',':','units','normalized',...
@@ -930,6 +947,163 @@ if us.v.close==1
 end
 
 
+function pbsettings_listbox_execute(e,e2)
+
+pm=findobj(gcf,'tag','pbsettings_listbox');
+val=get(pm,'value');
+% val
+drawnow;
+
+us=get(gcf,'userdata');
+csets=us.v.settings;
+cset=csets{val,2};
+% us.jCodePane.setText
+
+b3=cell2paramlist(cset);
+us.jCodePane.setText(b3);
+% delete(findobj(gcf,'tag','pbsettings_listbox'));
+set(pm,'visible','off');
+
+function pbsettings_listbox_open()
+
+%% ===============================================
+pm=findobj(gcf,'tag','pbsettings_listbox');
+if isempty(pm)
+    % delete(findobj(gcf,'tag','pbsettings_listbox'));
+    pm=uicontrol('style','listbox',  'value',1,     'tag','pbsettings_listbox','units','normalized',...
+        'position',[.12 -.005 .015 .045],'fontsize',7,...
+        'tooltipstring','select a parameterset here');
+end
+    us=get(gcf,'userdata');
+    set(pm,'string',us.v.settings(:,1));
+    %set(pm,'position',[.3 .1 .2 .13]);
+    hp=findobj(gcf,'tag','pbsettings');
+    butpos=get(hp,'position');
+    set(pm,'units','pixels');
+    set(pm,'position',[butpos(1) 16 150 50]);
+    set(pm,'callback',@pbsettings_listbox_execute);
+    set(pm,'visible','on');
+
+
+%% ===============================================
+
+
+
+function pbsettings_call(e,e2)
+pbsettings_listbox_open()
+
+
+return
+% us=get(gcf,'userdata');
+% csets=us.v.settings;
+% cset=csets{2,2};
+% % us.jCodePane.setText
+% 
+% b3=cell2paramlist(cset)
+% us.jCodePane.setText(b3);
+
+function b3=cell2paramlist(dat)
+
+
+qw=dat;
+
+% qw={...
+%    'hemisphere' 'both'
+%    'resolution' [.4 .4 .1]
+%    }
+
+% qw=preadfile2('cell2line.m')
+
+
+
+if size(qw,2)>1
+    %     x=cell2struct(qw(:,2),qw(:,1),1 );
+    x=[];
+    for i=1:size(qw,1)
+        eval(['x.' qw{i,1} '= qw{' num2str(i) ',2};']);
+        %         if   isnumeric(getfield(x, qw{i,1} )) & isempty(getfield(x, qw{i,1} ))
+        %             x=setfield(x, qw{i,1}, '[]' );
+        %
+        %         end
+    end
+    qw2=struct2list(x);
+end
+
+%% bring inf-information in correct order
+qq=qw2;
+ix=regexpi2(qw(:,1), '^inf\d');
+ix2=ix+1;
+if ~isempty(ix)
+    for i=1:length(ix)
+        
+        i1=regexpi2(qq,['^x.' qw{ix(i),1} '\s*=']);
+        i2= regexpi2(qq,['^x.' qw{ix2(i),1} '\s*=']);
+        
+        infs=qq(i1);
+        te=qq;
+        te=strrep(te,infs,'<empty>');
+        %qq=[te(1:i1-1) ; infs; te(i2:end) ];
+        %         pause
+        
+        qq=[te(1:i2-1) ; infs; te(i2:end) ];
+        qq(strcmp(qq,'<empty>'))=[];
+        [size(qw2) size(qq)];
+    end
+    qw2=qq;
+end
+
+
+
+
+
+
+if size(qw,2)>2
+    idinfo=regexpi2(qw2(:,1),'^\w');
+    info=repmat({''},size(qw2,1), 1);
+    info(idinfo)= cellfun(@(a) {[ '% '  a]},qw(:,3));
+    qw3=cellfun(@(a,b) {[a char(9)  b]}, qw2,info);
+elseif size(qw,2)==2
+    qw3=qw2;
+else
+    qw3=qw;
+end
+
+
+
+
+
+%% replace inf-information
+id=regexpi2(qw3,'^x.inf\d');
+for i=1:length(id)
+    dum=qw3{id(i)};
+    dum(1:regexpi(dum,'='))=[];
+    dum=regexprep(dum,{'''', ';' },{'' ' '});
+    
+    if strcmp(dum(1),'%')
+        dum=[ char(10)  '% ' strrep(dum,'%' ,'')];
+    else
+        if isempty(regexprep(dum,{'%' '\s*'},''))
+            dum='       ';
+        else
+            dum=[  '% ' strrep(dum,'%' ,'')];
+        end
+    end
+    qw3{id(i)}=dum;
+end
+
+qw3=makennicer(qw3);
+%qw3=makenicer2(qw3);
+
+b=qw3;
+b=[b;{'';''} ];
+b2=cell2line(b,1,'@999@');
+b3=regexprep(b2,'@999@',char(10));
+b3=[b3 ' ' char(9) ];
+
+b3=makenicer2(b3);
+
+
+
 function morepanel(e,e2)
 
 hb=findobj(gcf,'tag','pbmore');
@@ -939,7 +1113,6 @@ if get(hb,'value')==1
     hm = uimenu(m,'label','Help paramgui');
     set(hm,'callback',@paramguihelp);
     
-    
     hm = uimenu(m,'label','Shortcuts Paramgui [ctrl+s]');
     set(hm,'callback',@paramguishortcuts);
     
@@ -947,10 +1120,14 @@ if get(hb,'value')==1
      hm = uimenu(m,'label','History (get list of previous Paramgui-calls) [ctrl+h]');
     set(hm,'callback',@paramguihistory);
     
-    hm = uimenu(m,'label','Preferences [ctrl+p]');
+    
+    hm = uimenu(m,'label','copy parameter & function to clipboard  [alt+h]');
+     set(hm,'callback',@parameter_to_Batch);
+    
+    hm = uimenu(m,'label','<html><font color=gray>Preferences [ctrl+p]');
     set(hm,'foregroundcolor',[0.4706    0.6706    0.1882],'callback',@preferences_win);
     
-    
+  
     
 else
     delete(findobj(gcf,'tag','moremenu'));
@@ -964,13 +1141,19 @@ function paramguishortcuts(e,e2)
 % #Wo PARAMGUI SHORTCUTS
 % #g [ctrl+p] or [cmd+p]  #n open preferences 
 % #b WINDOW-SIZE
-% #g [ctrl+upp]     #n original windows position/size 
+% #g [ctrl+up]     #n original windows position/size 
 % #g [ctrl+right]   #n window width fits content (width adapted to line with max characters)
 % #g [ctrl+down]    #n window height fits content (height adapted to number of lines)
 % #g [ctrl+left]    #n previous window position & size
+
+% #r BATCH
+% #b [alt+c]        #n copy parameter and calling function to clipboard (copy this batch)
+ 
+
 % #r EXECUTION
 % #g [F1]   #n  simulates "Run"/"START" button 
 % #g [F3]   #n  simulates click onto cursor-located button 
+
 
 % #b OTHER
 % #g [ctrl+M]   #n  show/hide menu
@@ -993,7 +1176,7 @@ idx=[min(regexpi2(ms,'% anker_shortcuts_on')) min(regexpi2(ms,'% anker_shortcuts
 ms2=ms(idx(1)+1:idx(2)-1);
 ms3=regexprep(ms2,'^%','','once');
 
-uhelp(ms3,1);
+uhelp(ms3,0,'name','paramgui-shortcuts');
 %uhelp(ms3);
 
 %% end
@@ -1390,9 +1573,6 @@ function figkey(h,e)
 % end
 
 
-
-
-
 function showhelp(h,e,info)
 
 ico=get(h,'CData');
@@ -1477,6 +1657,42 @@ try
     %drawnow;
 end
 
+function parameter_to_Batch(e,e2)
+us=get(gcf,'userdata');
+
+filename='';
+if exist(us.v.info{2})==2
+    [~, filename]=fileparts(us.v.info{2});
+end
+if ~isempty(us.v.callerfunction)
+    [~, filename]=fileparts(us.v.callerfunction);
+end
+
+
+if ~isempty(filename) %exist(us.v.info{2})==2
+    %% ===============================================
+    txt=char(us.jCodePane.getText);
+    
+    w0=['%% ' repmat('=',[1 100]) ']'];
+    w1=strsplit(txt,char(10))';
+    if isempty(regexprep(w1{end},'\s+',''))%delete last line if empty
+       w1(end)=[]; 
+    end
+    w1=regexprep(w1,'^x.','z.');
+    is=min(regexpi2(w1,'^z.'));
+    [w1(1:is-1); 'z=[];'; w1(is:end)]; %insert emoty struct
+    
+    w2=[filename '(1,z);	% RUN'];
+    cp=[w0; w1;w2];
+    cp=strjoin(cp,char(10));
+    clipboard('copy',cp);
+    hs=addNote(gcf,'text','<b>parameter send to clipboard','fs',30,'col',[1 1 0],'pos',[[.3 .8 .3 .2]]);
+    %% ===============================================
+    
+end
+
+
+
 function mouseReleased(e,e2)
 highlightSelectedIcon();
 
@@ -1497,7 +1713,15 @@ modifiersDescription = char(eventData.getKeyModifiersText(modifiers));  % ==> 'A
 
 e=eventData;
 
-% e
+% if strcmp(e.getKeyChar,'c') && e.isAltDown
+%     parameter2clipboard();
+% end
+if strcmp(e.getKeyChar,'c') && e.isAltDown
+    parameter_to_Batch(1);
+end
+
+
+
 % arror-scroll
 if get(e,'KeyCode') ==40 || get(e,'KeyCode') ==38 % [40]down-arrow,[38]up-arrow
     % 'down'
@@ -1539,8 +1763,15 @@ end
 
 
 %% show shortcuts
+% '-----'
+% e.isControlDown
+% get(e,'ControlDown')==1
+% strcmp(e.getKeyChar,'s')
+% e.getKeyChar
+% if strcmp(e.getKeyChar,'s')  && e.isControlDown
 if get(e,'ControlDown')==1 && get(e,'KeyCode') ==83 % 's' 
     paramguishortcuts();
+    
 end
 %% show history
 if get(e,'ControlDown')==1 && get(e,'KeyCode') ==72 % 'm' 
@@ -1671,6 +1902,27 @@ if  get(eventData,'KeyCode')==112
         hgfeval(get(hp,'callback'));
     end
 end
+
+% ==============================================
+%%   
+% ===============================================
+
+% if get(e,'AltDown')==1
+%     hb=findobj(gcf,'tag','pb1');
+%     if strcmp(get(hb,'string'),'RUN')
+%         set(hb,'string','to clipboard','fontsize',7,'backgroundcolor',[1 .8 0]);
+%         set(hb,'tooltipstring','pass parameter to clipboard');
+%     else
+%         set(hb,'string','RUN','fontsize',8,'backgroundcolor',[1 1 1]);
+%         set(hb,'tooltipstring','run function'); 
+%         
+%     end
+% end
+
+% ==============================================
+%%   
+% ===============================================
+
 
 
 function pbhist(he,e,task)

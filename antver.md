@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   11 Oct 2022 (14:01:29)  
+ &#x1F34E; last modification:   % 21 Oct 2022 (17:03:10)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,11 +7,28 @@
     
     
 ------------------  
+  % &#x1F535;   <ins>**21 Oct 2022 (17:03:10)**</ins>  
+   __[xmakeRGBatlas.m]__ new  
+  function to convert an NIFTI-ATLAS to 4D-RGB-NIFTI file. This RGB-Atlas can be displayed for instance   
+  via "MRIcroGL" (https://www.nitrc.org/projects/mricrogl). Specifically for the Allen Brain atlas,   
+  the RGB-Atlas will depict the brain regions in the orignal Allen Colors similar to http://atlas.brain-map.org/atlas#atlas=1   
+<!---->
+  % &#x1F535;   <ins>**21 Oct 2022 (14:21:05)**</ins>  
+  task: generate DTI-atlas. A specific DTI-atlas can be gernated (with fewer regions)  
+  for this a modifed ANO-excelfile is saved and can be manually edited to include (include+merge) regions  
+  which should occur in the new DTI-atlas. In a second step this modifed ANO-excelfile can be used to generate   
+  a new DTI-atlas   
+  &#8618; access via ANT-MENU: atlas/masks / generate DTI-atlas / __[1]__ save Atlas-file (excel-file) to manually include regions  
+  &#8618; access via ANT-MENU: atlas/masks / generate DTI-atlas / __[2]__ generate DTI-atlas using the modified excel-file  
+    
+<!---->
   &#x1F535;   <ins>**11 Oct 2022 (14:01:29)**</ins>  
   __[xrename.m]__ modified  
   xrename now allows to modify the header of a NIFTI-file via 'ch:'-tag in the 3rd column  
   header-modifications: use header of another file, change data type, dimensional flips, add header descrition  
   see help of xrename  
+    
+    
 <!---->
   &#x1F535;   <ins>**28 Sep 2022 (13:15:27)**</ins>  
    __[xQAregistration.m]__ new  

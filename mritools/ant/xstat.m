@@ -2198,7 +2198,8 @@ end
 % ===============================================
 if isdir(file)
     pa=file;
-    fi=[ nametag];
+    %fi=[ nametag];
+    fi=[ regexprep(nametag,{'#' '[' ']'},{'_','',''})  ];
 else
     [pa fi ext]=fileparts(file);
 end

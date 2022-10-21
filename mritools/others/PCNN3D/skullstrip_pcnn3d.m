@@ -1,6 +1,6 @@
 
-function skullstrip_pcnn3d(t2file, fileout,  mode,params   )
-
+function sfile=skullstrip_pcnn3d(t2file, fileout,  mode,params   )
+sfile=[];
 % params:  params.species {'mouse', 'rat'}; if not specified, mouse is used
 
 
@@ -155,4 +155,4 @@ end
 rsavenii(fileout,ha,m);
 close(gcf);
 
-
+sfile=fileout;

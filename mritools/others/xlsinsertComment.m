@@ -55,8 +55,9 @@ try
     % Add the comment to the cell.
     theCell.AddComment(myComment);
     
-    
-    
+    v=theCell.Comment;
+    try; v.Shape.TextFrame.Characters.Font.Name='Courier New'; end
+    %try; v.Shape.TextFrame.Characters.Font.Size = 10; end
     
   end
   

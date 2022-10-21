@@ -360,9 +360,9 @@ p=paramadd(p,x);%add/replace parameter
 
 % %% show GUI
 if showgui==1
-    hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
+    %hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
     [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .8 .6 ],...
-        'title','***COREGISTRATION***','info',hlp);
+        'title',['***COREGISTRATION***' '[' mfilename '.m]'],'info',{@uhelp, 'xcoreg.m'});
     if isempty(m); return; end
     fn=fieldnames(z);
     z=rmfield(z,fn(regexpi2(fn,'^inf\d')));

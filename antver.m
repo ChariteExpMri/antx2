@@ -743,9 +743,22 @@
 % see help of xrename
 % 
 % 
+% % #ba 21 Oct 2022 (14:21:05)
+% task: generate DTI-atlas. A specific DTI-atlas can be gernated (with fewer regions)
+% for this a modifed ANO-excelfile is saved and can be manually edited to include (include+merge) regions
+% which should occur in the new DTI-atlas. In a second step this modifed ANO-excelfile can be used to generate 
+% a new DTI-atlas 
+% #gw --> access via ANT-MENU: atlas/masks / generate DTI-atlas / [1] save Atlas-file (excel-file) to manually include regions
+% #gw --> access via ANT-MENU: atlas/masks / generate DTI-atlas / [2] generate DTI-atlas using the modified excel-file
+% 
+% % #ba 21 Oct 2022 (17:03:10)
+% #k [xmakeRGBatlas.m] #n new
+% function to convert an NIFTI-ATLAS to 4D-RGB-NIFTI file. This RGB-Atlas can be displayed for instance 
+% via "MRIcroGL" (https://www.nitrc.org/projects/mricrogl). Specifically for the Allen Brain atlas, 
+% the RGB-Atlas will depict the brain regions in the orignal Allen Colors similar to http://atlas.brain-map.org/atlas#atlas=1 
 % 
 % 
-
+% 
 
 %% ===============================================
 %----- EOF

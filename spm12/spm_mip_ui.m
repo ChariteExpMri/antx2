@@ -470,7 +470,7 @@ switch lower(varargin{1}), case 'display'
         %------------------------------------------------------------------
         if isempty(MD.XYZ), loc='dntmv'; end
         switch lower(loc), case 'dntmv'
-            spm('alert!','No suprathreshold voxels to jump to!',mfilename,0);
+            %spm('alert!','No suprathreshold voxels to jump to!',mfilename,0);
             varargout = {oxyz, 0};
             return
             case 'nrvox'

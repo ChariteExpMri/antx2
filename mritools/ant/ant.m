@@ -670,15 +670,22 @@ uimenu('Parent',ContextMenu, 'Label','   *clipboard selected folders ',         
 uimenu('Parent',ContextMenu, 'Label','   clipboard selected fullpaths-folders as MATLAB-CELL',   'callback', {@cmenuCasesCB,'copyfullpathascell' },'Separator','off');
 uimenu('Parent',ContextMenu, 'Label','   clipboard selected folders as MATLAB-CELL',             'callback', {@cmenuCasesCB,'copypathascell' },    'Separator','off');
 
+%% ======================================= INFO ========
+hc3=uimenu('Parent',ContextMenu, 'Label','<html><b>INFO' ,'ForegroundColor',[ 0    0.4471    0.7412], 'Separator','on');
+uimenu('Parent',hc3, 'Label','general info',  'callback', {@cmenuCasesCB,'generalinfo' } ,'ForegroundColor',[0 .5 0], 'Separator','on');
+uimenu('Parent',hc3, 'Label','<html><k>show last modified files of selected animals'  , 'callback', {@cmenuCasesCB,'lastMOdFileAnimal_call' }          ,'ForegroundColor',[0 0 1  ],'Separator','off');
+uimenu('Parent',hc3, 'Label','<html><k>info of animal folders'  , 'callback', {@cmenuCasesCB,'animalfoldersinfo_call' }          ,'ForegroundColor',[0 0 1  ],'Separator','off');
+
 %% ===============================================
 
-hc3=uimenu('Parent',ContextMenu, 'Label','<html><b>specific tools' ,'ForegroundColor',[ 0.8706    0.4902         0]);
+hc3=uimenu('Parent',ContextMenu, 'Label','<html><b>specific tools' ,'ForegroundColor',[ 0.8706    0.4902         0],'Separator','on');
 uimenu('Parent',hc3, 'Label','<html><b>prune mask ("_msk.nii")'  , 'callback', {@cmenuCasesCB,'prune_mask' }          ,'ForegroundColor',[0 0 1  ],'Separator','on');
+
 %% ===============================================
+
 
 
 % uimenu('Parent',ContextMenu, 'Label','exclude case (include prev. excluded case)', 'callback', {@cmenuCasesCB,'dropout' } ,'ForegroundColor',[1 0 0], 'Separator','on');
-uimenu('Parent',ContextMenu, 'Label','general info',  'callback', {@cmenuCasesCB,'generalinfo' } ,'ForegroundColor',[0 .5 0], 'Separator','on');
 uimenu('Parent',ContextMenu, 'Label','export folder', 'callback', {@cmenuCasesCB,'copyfolders' } ,'ForegroundColor',[1 .0 0], 'Separator','on');
 
 uimenu('Parent',ContextMenu, 'Label','watch files', 'callback', {@cmenuCasesCB,'watchfile' } ,'ForegroundColor',[0 .0 0], 'Separator','on');
@@ -817,12 +824,58 @@ switch cmenutask
                 disp(['not found: ' f1]);
             end
         end
-        
-        
-        
         statusMsg(0);
         %% ===============================================
+    case 'lastMOdFileAnimal_call'
+        %% ===============================================
         
+        statusMsg(1,' lastModfile ');
+        for i=1:length(seldirs)
+            d1=fullfile(seldirs{i});
+            
+            cprintf('*[0 0 1]',['-----------------------------------------------\n']);
+            showinfo2('animal:', d1);
+            cprintf('*[0 0 1]',['-----------------------------------------------\n']);
+            
+            
+            lastmodified(d1,10,'.nii')
+        end
+        statusMsg(0);
+           %% ===============================================
+    case 'animalfoldersinfo_call'
+        %% ===============================================
+        
+        statusMsg(1,' animalDir-info ');
+        nf2=0;
+        mb2=0;
+        [~,animals]=fileparts2(seldirs);
+        space=size(char(animals),2);
+        cprintf('*[0 0 1]',['----FOLDER-INFO------------------------------------------------------------------------\n']);
+        for i=1:length(seldirs)
+            d1=fullfile(seldirs{i});
+            [~, animal]=fileparts(d1);
+            v=rdir(fullfile(d1,'**\*'));
+            mb=sum([v.bytes])/(1024*1024);
+            nf=sum(find([v.isdir]==0));
+            %hlink=showinfo2('', d1);
+            hlink=[ '<a href="matlab: explorer(''' d1 ''');">' animal '</a>'];
+            fprintf(['[animal] %s' repmat(' ',[1 space-length(animal) ])  ' [files]%6.0d ,[Size] %8.2fMB\n'],hlink,nf,mb);
+            
+            %             cprintf('*[0 0 1]',['-----------------------------------------------\n']);
+            %             showinfo2('animal:', d1);
+            %             cprintf('*[0 0 1]',['-----------------------------------------------\n']);
+            
+            mb2=mb2+mb;
+            nf2=nf2+nf;
+            %rl=lastmodified(d1,1,'.nii')
+        end
+        cprintf('*[0 0 1]',['----TOTAL------------------------------------------------------------------------\n']);
+        ms=[ num2str(length(seldirs))];
+        fprintf(['[#animals] %s' repmat(' ',[1 space-length(ms)-2])  ' [files]%6.0d ,[Size] %8.2fMB (%0.2fGB)\n'],ms,nf2,mb2,mb2/1000);
+        
+                
+        statusMsg(0);
+        %% ===============================================     
     case 'Rdisplaykey3inv'
         va=get(lb3,'value');
         for i=1:length(va)
@@ -1200,12 +1253,12 @@ mh2 = uimenu(mh,'Label',' replace header (older version)',                      
 
 mh2 = uimenu(mh,'Label',' image calculator',                                               'Callback',{@menubarCB, 'calc0'},'Separator','on',...
     'userdata',[HSTART 'make image calculations' HEND '..image-hresholding/masking/addition etc.' HEND '..create new image'  ]);
-mh2 = uimenu(mh,'Label',' Mask-Generator (GUI)',                                           'Callback',{@menubarCB, 'maskgenerate'},'Separator','on',...
-    'userdata',[HSTART 'generate mask(s)' HEND ' from NIFTI-file ("ANO.nii")']);
-mh2 = uimenu(mh,'Label',' make mask from Excelfile',                                       'Callback',{@menubarCB, 'maskgenerateFromExcelfile'},...
-    'userdata',[HSTART 'generate mask(s)' HEND ' from modified Excelfile of "ANO.xlsx"'  HEND '...see help of function']);
-mh2 = uimenu(mh,'Label',' draw mask',                                            'Callback',{@menubarCB, 'drawmask'},'Separator','on',...
-     'userdata',[HSTART 'manually draw a mask' ]);
+% mh2 = uimenu(mh,'Label',' Mask-Generator (GUI)',                                           'Callback',{@menubarCB, 'maskgenerate'},'Separator','on',...
+%     'userdata',[HSTART 'generate mask(s)' HEND ' from NIFTI-file ("ANO.nii")']);
+% mh2 = uimenu(mh,'Label',' make mask from Excelfile',                                       'Callback',{@menubarCB, 'maskgenerateFromExcelfile'},...
+%     'userdata',[HSTART 'generate mask(s)' HEND ' from modified Excelfile of "ANO.xlsx"'  HEND '...see help of function']);
+% mh2 = uimenu(mh,'Label',' draw mask',                                            'Callback',{@menubarCB, 'drawmask'},'Separator','on',...
+%      'userdata',[HSTART 'manually draw a mask' ]);
 mh2 = uimenu(mh,'Label',' [1a] segment tube',                                     'Callback',{@menubarCB, 'segmenttube'},'Separator','on',...
     'userdata',[HSTART 'automatic-mode: if an image contains several animals' HEND '..obtain masks for each animal ']);
 mh2 = uimenu(mh,'Label',' [1b] segment tube manually',                            'Callback',{@menubarCB, 'segmenttubeManu'},...
@@ -1224,6 +1277,30 @@ mh2 = uimenu(mh,'Label','<html><font color="black"> coregister slices 2D <font c
     'userdata',[HSTART 'slicewise 2d-coregistration']);
 mh2 = uimenu(mh,'Label','<html><font color="black"> apply 2d-registration to other images <font color="red"><i> *',     'Callback',{@menubarCB, 'coregister2Dapply'},...
     'userdata',[HSTART 'if other images needs to be registered as well' HEND '..apply this function']);
+
+%% ==========[menu:Allas & mask]=====================================
+mh = uimenu(f,'Label','atlas/masks');
+
+mh2 = uimenu(mh,'Label',' Mask-Generator (GUI)',                                           'Callback',{@menubarCB, 'maskgenerate'},'Separator','on',...
+    'userdata',[HSTART 'generate mask(s)' HEND ' from NIFTI-file ("ANO.nii")']);
+
+mh2 = uimenu(mh,'Label',' draw mask',                  'Callback',{@menubarCB, 'drawmask'},'Separator','on',...
+     'userdata',[HSTART 'manually draw a mask' ]);
+
+ mh2 = uimenu(mh,'Label',' create RGB-NIFTI-atlas',    'Callback',{@menubarCB, 'call_createRGBatlas'},'Separator','on',...
+     'userdata',[HSTART 'create RGB-NIFTI file from NIFTI-Atlas-file' ]);
+
+ 
+ 
+mh2 = uimenu(mh,'Label','generate DTI-atlas','separator','on');
+mh3 = uimenu(mh2,'Label','<html><font color="blue">[1] save Atlas-file (excel-file) to manually include regions',                                       'Callback',{@menubarCB, 'call_DTIatlas_createBlanko'},...
+    'userdata',[HSTART 'save a modified version of the "ANO.xlsx"-file' HEND 'This version can be used to include/aggregate regions' HEND '...see help of function'],'Separator','on');
+mh3 = uimenu(mh2,'Label','<html><font color="blue">[2] generate DTI-atlas using the modified excel-file',                                       'Callback',{@menubarCB, 'maskgenerateFromExcelfile'},...
+    'userdata',[HSTART 'generate mask(s)' HEND ' from modified Excelfile of "ANO.xlsx"'  HEND '...see help of function']);
+
+
+
+
 
 
 %    'userdata',[HSTART '#' HEND '#']);
@@ -1260,6 +1337,9 @@ mh2 = uimenu(mh,'Label',' open study template folder',                          
     'userdata',[HSTART 'open study template folder in explorer ' ]);
 mh2 = uimenu(mh,'Label',' preselect animal-folders',                                        'Callback',{@menubarCB, 'preselectfolder'},'Separator','on',...
     'userdata',[HSTART 'preselect animal-folders' HEND '..via animal-index or-name, NIFTI-file or via text-file']);
+mh2 = uimenu(mh,'Label','<html><font color=blue> display last 10 modified files',                                        'Callback',{@menubarCB, 'displayLastModfiles_call'},'Separator','on',...
+    'userdata',[HSTART 'display last 10 modified files' HEND '..across study in comand window']);
+
 
 %% ==========[menu:STATISTIC]=====================================
 mh = uimenu(f,'Label','Statistic');
@@ -2509,6 +2589,21 @@ elseif strcmp(task,'maskgenerate')
     statusMsg(0);
     
     %________________________________________________
+elseif strcmp(task,'call_DTIatlas_createBlanko')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xcreateANOblanko';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xcreateANOblanko.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    statusMsg(1,' save mod.RegionFile');
+    xcreateANOblanko(1);
+    statusMsg(0);
     
 elseif strcmp(task,'maskgenerateFromExcelfile')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
@@ -2543,6 +2638,24 @@ elseif strcmp(task,'drawmask')
     %     statusMsg(1,' generate mask from excelfile');
     %     xexcel2atlas(1);
     %     statusMsg(0);
+ elseif strcmp(task,'call_createRGBatlas')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xmakeRGBatlas';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xmakeRGBatlas.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    
+ 
+    statusMsg(1,' create RGB-atlas');
+    xmakeRGBatlas(1);
+    statusMsg(0);
+    
 elseif strcmp(task,'segmenttube')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xsegmenttube';
@@ -2738,6 +2851,25 @@ elseif strcmp(task,'preselectfolder')
     %% ===============================================
     statusMsg(1,' pre-select mouse-folder');
     xselect(1);
+    statusMsg(0);
+elseif strcmp(task,'displayLastModfiles_call')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        global an
+        hlpfun={'show last modified files'
+               ['disp(lastmodified(fullfile(''' an.datpath '''),10,''.nii''));']};
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='lastmodified.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    statusMsg(1,' show lastMOdFiles');
+    global an
+     disp('...wait...');
+     lastmodified(fullfile(an.datpath),10,'.nii');
     statusMsg(0);
     %________________________________________________
 elseif strcmp(task,'casefilematrix')
