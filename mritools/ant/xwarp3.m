@@ -210,6 +210,7 @@ if find(s.task==1)
         t2=fullfile(s.pa,'t2.nii');
         [ha a]=rgetnii(t2);
         ha=rmfield(ha,'private');
+        a(isnan(a))=0; %replace  NAN-values by "0"
         rsavenii(t2,ha,a );
     end
     %disp('---post_removePrivate');

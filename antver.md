@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   21 Oct 2022 (17:03:10)  
+ &#x1F34E; last modification:   21 Oct 2022 (17:24:01)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,11 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**21 Oct 2022 (17:24:01)** </ins>  
+   __[xwarp3.m]__ modified  
+  image "t2.nii" stucked during coregistration to template-space due to potential NAN-values  
+  NAN-values are now replaces by "0"-values in the initialization-step  
+<!---->
   &#x1F535;   <ins>**21 Oct 2022 (17:03:10)**</ins>  
    __[xmakeRGBatlas.m]__ new  
   function to convert an NIFTI-ATLAS to 4D-RGB-NIFTI file. This RGB-Atlas can be displayed for instance   

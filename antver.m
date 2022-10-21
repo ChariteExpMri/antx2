@@ -756,6 +756,10 @@
 % function to convert an NIFTI-ATLAS to 4D-RGB-NIFTI file. This RGB-Atlas can be displayed for instance 
 % via "MRIcroGL" (https://www.nitrc.org/projects/mricrogl). Specifically for the Allen Brain atlas, 
 % the RGB-Atlas will depict the brain regions in the orignal Allen Colors similar to http://atlas.brain-map.org/atlas#atlas=1 
+% #ba 21 Oct 2022 (17:24:01) 
+% #k [xwarp3.m] #n modified
+% image "t2.nii" stucked during coregistration to template-space due to potential NAN-values
+% NAN-values are now replaces by "0"-values in the initialization-step
 % 
 % 
 % 
