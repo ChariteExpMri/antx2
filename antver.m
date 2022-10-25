@@ -761,6 +761,14 @@
 % image "t2.nii" stucked during coregistration to template-space due to potential NAN-values
 % NAN-values are now replaces by "0"-values in the initialization-step
 % 
+% #ba 25 Oct 2022 (17:09:33)
+% #k [xvol3d.m] #n modified 
+% If the plot is finished, parameter settings can paste to clipboard 
+% #gw --> access via xvol3d-MENU: props/"copy properties to clipboard"
+% the property-list can be pasted into editor, (modified) and re-executed via xvol3d('loadprop',p); where p is the parameter-set
+%
+% 
+% 
 % 
 % 
 

@@ -762,7 +762,7 @@ hb=uicontrol('style','popupmenu','units','norm','string',maplist,'value',1);
 set(hb,'position',[.91 .87 .09 .13],'tag','linkcolormap','backgroundcolor','w');
 set(hb,'tooltipstring','colormap of connections','fontsize',6,'fontweight','bold',...
     'callback',{@select,'linkcolormap'},'fontname','Courier');%
-set(hb,'position',[0.8100    0.8360    0.15    0.100]);
+set(hb,'position',[0.8100    0.8360    0.17    0.100]);
 % ==============================================
 %%   intensity to connectionThickness
 % ===============================================
@@ -1116,6 +1116,7 @@ list=repmat({''},[length(maps) 1]);
 Nspaces=2;%size(char(maps),1)+3;
 for j=1:length(maps)
     cmapname=maps{j};
+    
     map=sub_intensimg('getcolor',cmapname);
     %eval(['map=' cmapname ';']);
     ilin=round(linspace(1,size(map,1),7));
@@ -1131,7 +1132,7 @@ for j=1:length(maps)
     v1=cellfun(@(a){[ '<span style="font-size: 30%;color:' '#' a ';font-weight:bold">&#9632;</span>']} ,maphex);
     %     ts=['<span style="font-size: 100%;color:black;font-weight:bold">' cmapname '</span>'];
     v1=cellfun(@(a){['<FONT color=#' a ' >&#9632;' ]} ,maphex);
-    ts=[ '<FONT color=black>'  repmat('&nbsp;', [1 1]) cmapname];
+    ts=[ '<FONT color=black>'  repmat('&nbsp;', [1 1]) cmapname '[' num2str(j) ']'];
     % ts=[ '<FONT color=black>'  repmat('&nbsp;', [1 Nspaces-length(cmapname)]) cmapname];
     v2=['<html> '   strjoin(v1,'') ts];
     list{j,1}=v2;
@@ -1317,6 +1318,7 @@ va=get(hc,'value');  li=get(hc,'string');
 cmapStr=(li{va});
 % cmap=regexprep(cmapStr,{'&nbsp;&nbsp;.*' '<html>' '<FONT.*' '\s*'},'')
 cmap=regexprep(cmapStr,{'.*&nbsp;' '\s*'},'');
+cmap=regexprep(cmap,'[\d+\]','') ;%remove index
 cmap=sub_intensimg('getcolor',cmap);
 if get(findobj(ht,'tag','linkintensity'),'value')==1 % LINK inteinsity
     intens=str2num(char(d(:,regexpi2(cname,'cs'))));

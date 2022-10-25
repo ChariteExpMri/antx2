@@ -168,7 +168,9 @@
 %
 % #by ___ load property-file __
 % xvol3d('loadprop','props_complete3.prop'); %load property-file
-% 
+% #by ___ load properies __
+% [1] to generate a parameter-list use xvol3d-MENU: props/"copy properties to clipboard"
+% [2] paste into editor, (modify) and rerun: xvol3d('loadprop',p); where p is the parameter-set
 %
 % #wg *** Related Functions ****
 % sub_plotconnections
@@ -851,33 +853,42 @@ f2= uimenu(f,'Label','convert regions with scores to "load selection" file ','Ca
 
 f = uimenu('Label','props');
 f2= uimenu(f,'Label','<html><font color=red>INFO: <font color=green>[props]: use import to generate a previous plot based on an previously exported property file');
-f2= uimenu(f,'Label','import prop-file (to re-rerun code) ','Callback',@prop_import_call);
-f2= uimenu(f,'Label','export prop-file (to later re-rerun code) ','Callback',@prop_export_call);
+
+f2= uimenu(f,'Label','<html><font color=blue> copy properties to clipboard (to rerun) ','Callback',@prop_toClipboard_call,'separator','on');
+f2= uimenu(f,'Label','<html><font color=gray>import prop-file (to re-rerun code) ..not recommended use "clipboard" instead ','Callback',@prop_import_call);
+f2= uimenu(f,'Label','<html><font color=gray>export prop-file (to later re-rerun code) ..not recommended use "clipboard" instead ','Callback',@prop_export_call);
+
+
 
 f = uimenu('Label','scripts');
 f2= uimenu(f,'Label','<html><font color=red>INFO: <font color=green>[props]: see collection of scripts (can be modified and executed)');
 f2= uimenu(f,'Label','show scripts','Callback',@scripts_swow_call);
 
 
-
+function prop_toClipboard_call(e,e2)
+prop_export('Send2clipboard');
 
 function prop_export_call(e,e2)
 prop_export();
 
 function prop_export(propfile)
+isclipboard=0;
 % ==============================================
 %%   export prop
 % ===============================================
 % ==============================================
 %%   UI-open
 % ===============================================
-
-if exist('propfile')==0
-    [ fi pa]=uiputfile(fullfile(pwd,'*.prop'),'save property-file (*.prop)');
-    if isnumeric(fi); return;end
-    propfile=fullfile(pa,fi);
-    [pa name ext]=fileparts(propfile);
-    propfile=fullfile(pa,[name '.prop']);
+if strcmp(propfile,'Send2clipboard')==1   % SEND TO CLIPBOARD
+   isclipboard=1;
+else
+    if exist('propfile')==0
+        [ fi pa]=uiputfile(fullfile(pwd,'*.prop'),'save property-file (*.prop)');
+        if isnumeric(fi); return;end
+        propfile=fullfile(pa,fi);
+        [pa name ext]=fileparts(propfile);
+        propfile=fullfile(pa,[name '.prop']);
+    end
 end
 
 % ==============================================
@@ -889,6 +900,10 @@ h2=findobj(0,'tag','xvol3d');
 u2=get(h2,'userdata');
 
 %%  =======[general]========================================
+if isempty(u2)
+   disp('...no parameters exist/nothing done ...nothing to commit! ');
+    return
+end
 
 g=[];
 g.info_______=' *** GENERAL PARAMETER ***';
@@ -928,7 +943,7 @@ vmain=struct2list(p);
 
 head={...
     '%% ==============================================='
-    '%%   main-gui properties                         '
+    '%%   [xvol3] main-gui properties                         '
     '%% ==============================================='
     };
 vmain=[head; vmain; {' '}];
@@ -988,21 +1003,22 @@ if ~isempty(h3)
     
     hcmap=findobj(h3,'tag','linkcolormap');
     v.win.linkcolormap                   =get(hcmap,'value');
-    v.win.notused_linkcolormapString      =hcmap.String{hcmap.Value};
+    %v.win.notused_linkcolormapString      =hcmap.String{hcmap.Value};
     con=v;
     
     vcon=struct2list(con);
     head={...
-        '%% ==============================================='
-        '%%            connections properties              '
-        '%% ==============================================='
+        '% ==============================================='
+        '%   [xvol3]   connections properties              '
+        '% ==============================================='
         };
     vcon=[head; vcon; {' '}];
     
 end
 
 %% ==========[glue cells]===========================
-v=[vgen; vmain];
+% v=[vgen; vmain];
+v=[ vmain];
 if exist('vcon')==1
     v=[v; vcon];
 end
@@ -1011,8 +1027,21 @@ end
 %% ==========[save prop]=====================================
 
 
-if 1
+if isclipboard==1
+    %% ===============================================
     
+    v2=[v(1:3); 'close all;  %close all figures'  ; 'p=[];'  ; v(4:end)];
+    v2=regexprep(v2,'^gen.'  ,'p.gen.');
+    v2=regexprep(v2,'^main.' ,'p.main.');
+    v2=regexprep(v2,'^con.'  ,'p.con.');
+    v2(end,1)={'%-----load xvol3-properties-----------------------'};
+    v2(end+1,1)={'xvol3d(''loadprop'',p); % load properties'};
+    %% ===============================================
+    
+    
+    mat2clip(v2);
+    disp('...copied to clipboard');
+else
   pwrite2file(propfile,v) ;
   showinfo2('new propfile',propfile);
 end
@@ -1044,24 +1073,36 @@ cprintf([0 .5 0],[ '...loading property-file \n']);
 % ==============================================
 %%   UI-open
 % ===============================================
-
-if exist('propfile')==0
-    [ fi pa]=uigetfile(fullfile(pwd,'*.prop'),'select property-file (*.prop)');
-    if isnumeric(fi); return;end
-    propfile=fullfile(pa,fi);
-end
-% ==============================================
-%%  load prop-file
-% ===============================================
-% clc;clear; cf
-% propfile=fullfile(pwd,'props_main2.');
-if exist(propfile)==2
-    v3=preadfile(propfile);
-    v3=v3.all;
-    eval(strjoin(v3,char(10)));
-else
-    if isfield(par,'p'),   p   =par.p  ; end
+if isstruct(propfile)
+    %     fn=fieldnames(propfile)
+    %    propfile =
+    %          gen: [1x1 struct]
+    %     main: [1x1 struct]
+    %      con: [1x1 struct]
+    
+    par=propfile;
+     p   =par  ;
     if isfield(par,'con'), con =par.con; end
+    
+else
+    if exist('propfile')==0
+        [ fi pa]=uigetfile(fullfile(pwd,'*.prop'),'select property-file (*.prop)');
+        if isnumeric(fi); return;end
+        propfile=fullfile(pa,fi);
+    end
+    % ==============================================
+    %%  load prop-file
+    % ===============================================
+    % clc;clear; cf
+    % propfile=fullfile(pwd,'props_main2.');
+    if exist(propfile)==2
+        v3=preadfile(propfile);
+        v3=v3.all;
+        eval(strjoin(v3,char(10)));
+    else
+        if isfield(par,'p'),   p   =par.p  ; end
+        if isfield(par,'con'), con =par.con; end
+    end
 end
 
 % ==============================================
@@ -3635,6 +3676,7 @@ scripts={...
     'vol3dscript_loadConnections.m'
     'vol3dscript_loadMask_loadConnections.m'
     'vol3dscript_saveImage.m'
+    'vol3dscript_loadParameter'
     %'STscript_export4vol3d_simple.m'
     %'STscript_export4vol3d_manycalcs.m'};
 %scripts={'ddf.m' 'mean.m' 'mm.m' 'snip_testNote.m'
