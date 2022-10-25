@@ -9,9 +9,9 @@
 ------------------  
   &#x1F535;   <ins>**25 Oct 2022 (17:09:33)**</ins>  
    __[xvol3d.m]__ modified   
-  If the plot is finished, parameter settings can paste to clipboard   
+  If a plot is generated via __[xvol3d.m]__ the corresponding parameter settings can pasted to clipboard   
   &#8618; access via xvol3d-MENU: props/"copy properties to clipboard"  
-  the property-list can be pasted into editor, (modified) and re-executed via xvol3d('loadprop',p); where p is the parameter-set  
+  The property-list can be pasted into the editor, modified, saved and re-executed via xvol3d('loadprop',p); where p is the parameter-set  
 <!---->
   &#x1F535;   <ins>**21 Oct 2022 (17:24:01)** </ins>  
    __[xwarp3.m]__ modified  

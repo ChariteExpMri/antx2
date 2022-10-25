@@ -763,9 +763,9 @@
 % 
 % #ba 25 Oct 2022 (17:09:33)
 % #k [xvol3d.m] #n modified 
-% If the plot is finished, parameter settings can paste to clipboard 
+% If a plot is generated via [xvol3d.m] the corresponding parameter settings can pasted to clipboard 
 % #gw --> access via xvol3d-MENU: props/"copy properties to clipboard"
-% the property-list can be pasted into editor, (modified) and re-executed via xvol3d('loadprop',p); where p is the parameter-set
+% The property-list can be pasted into the editor, modified, saved and re-executed via xvol3d('loadprop',p); where p is the parameter-set
 %
 % 
 % 
