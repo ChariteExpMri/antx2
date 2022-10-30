@@ -257,12 +257,19 @@ assignin('base','anth',v);
 %———————————————————————————————————————————————
 
 function tb=zurodnen(pa2imp , pa)
+
+% ==============================================
+%%   
+% ===============================================
+% ======external dirs [fpDirs, animalDirs ] =========================================
+
 tb={};
 for i=1:size(pa2imp,1)
     [pas fis ext]=fileparts(pa2imp{i});
     tb(i,:)={pas fis ext};
 end
 
+% ======antx-dirs [fpDirs, animalDirs ] =========================================
 
 tb2={};
 for i=1:size(pa,1);
@@ -270,10 +277,16 @@ for i=1:size(pa,1);
     tb2(i,:)={pas fis };
 end
 
+% ==============================================
+%%   
+% ===============================================
 tb3={};
 for i=1:size(tb,1)
     
-    [ix,d]=strnearest([   tb{i,2}  ],tb2(:,2)) ;
+    r=fpat(  tb{i,2}  ,tb2(:,2)) 
+    
+    
+    
     dum=tb(i,1:3);
     n=1;
     dum2={};
@@ -283,6 +296,33 @@ for i=1:size(tb,1)
     end
     tb3=[tb3; dum2];
 end
+
+
+
+
+% ==============================================
+%%   old and buggy version
+% ===============================================
+if 0
+    tb3={};
+    for i=1:size(tb,1)
+        
+        [ix,d]=strnearest([   tb{i,2}  ],tb2(:,2)) ;
+        dum=tb(i,1:3);
+        n=1;
+        dum2={};
+        for j=1:length(ix)
+            dum2(j,:)=[dum  fullfile(tb2{ix(j),1},tb2{ix(j),2})   {num2str(n)}];
+            n=n+1;
+        end
+        tb3=[tb3; dum2];
+    end
+end
+
+% ==============================================
+%%   
+% ===============================================
+
 
 hlp={};
 hlp{end+1,1}=' #yg CHECK FOLDER-TO-FOLDER CORRESPONDENCE';

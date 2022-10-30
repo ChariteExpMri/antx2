@@ -42,6 +42,7 @@ function [colormap]=cbrewer(ctype, cname, ncol, interp_method)
 % ------------------------------
 % 18.09.2015  Minor fixes, fixed a bug where the 'spectral' color table did not appear in the preview
 
+warning off;
 
 % load colorbrewer data
 load('colorbrewer.mat')

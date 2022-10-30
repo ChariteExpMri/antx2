@@ -768,9 +768,14 @@
 % The property-list can be pasted into the editor, modified, saved and re-executed via xvol3d('loadprop',p); where p is the parameter-set
 %
 % 
+% #ba 30 Oct 2022 (23:17:02)
+% #k [xexcel2atlas.m] #n modified
+% removes any other characters in the new-ID column, hemispheric type 4 (both hemisphere, splitted) is used when not specified
 % 
 % 
 % 
+
+
 
 %% ===============================================
 %----- EOF

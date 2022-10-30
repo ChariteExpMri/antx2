@@ -293,8 +293,11 @@ if 1
     %%  [1] make adjusted sheet for inputSheet
     % ===============================================
     
-    idcol=cell2mat(e(:,v.inewID));
-    ix_id=find(~isnan(idcol)) ;
+    idcol=cellfun(@(a){[num2str(a)]} ,e(:,v.inewID) );
+    ix_id=regexpi2(idcol,'\d+');
+    
+%     idcol=cell2mat(e(:,v.inewID));
+%     ix_id=find(~isnan(idcol)) ;
     
     
     % e(ix_id(:),[ v.iregion v.inewID v.ihemisphereType]);
@@ -492,18 +495,24 @@ end
 %%  %check hemitype
 % ===============================================
 ihemitype_ck=find(strcmp(htb4,'HemiType'));
-sumHemitypeNan=sum(isnan(cell2mat(tb4(:,ihemitype_ck))));
-if sumHemitypeNan~=0
-    
-    
-    uhelp( plog([],[  htb4(:,[2 6 7 8]); tb4(:,[2 6 7 8])],0,' #r HEMISPHERE-TYPE not defined ("NAN")...change excelfile'),1);
-    
-    h = errordlg(...
-        ['HemisphereType(1,2,3,4) not defined for some regions in excelfile...see help window ',...
-        'HemisphereType-ERROR' char(10) ' ...process terminated..']);
-    
-    return
-end
+tb4(:,ihemitype_ck)=cellfun(@(a){[num2str(a)]} ,tb4(:,ihemitype_ck) );
+
+tb4(:,ihemitype_ck)=regexprep(tb4(:,ihemitype_ck),'NaN','4'); %replace by bilateral hemicode
+
+tb4(:,ihemitype_ck)=cellfun(@(a){[str2num(a)]} ,tb4(:,ihemitype_ck) );
+
+% sumHemitypeNan=sum(isnan(cell2mat(tb4(:,ihemitype_ck))));
+% if sumHemitypeNan~=0
+%     
+%     
+%     uhelp( plog([],[  htb4(:,[2 6 7 8]); tb4(:,[2 6 7 8])],0,' #r HEMISPHERE-TYPE not defined ("NAN")...change excelfile'),1);
+%     
+%     h = errordlg(...
+%         ['HemisphereType(1,2,3,4) not defined for some regions in excelfile...see help window ',...
+%         'HemisphereType-ERROR' char(10) ' ...process terminated..']);
+%     
+%     return
+% end
 % ==============================================
 %%   
 % ===============================================

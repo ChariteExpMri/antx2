@@ -280,7 +280,7 @@ end
 % end
 
 %% remove spaces
-if 1
+if 0
     for i=1:M;%add spacer and middleOrientation
         wr=char(e(:,i));
         spacidx=find(   sum(double(wr)==double(' '),1)==size(wr,1)   ==0);
