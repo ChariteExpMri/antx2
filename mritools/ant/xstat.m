@@ -2470,6 +2470,7 @@ else
         [pa fi ext]=fileparts(file);
     end
     %[~,fi,~]=fileparts(fi);
+    fi=regexprep(fi,{'#',':' '\s+'},'_') ; % issue with writing
     fiout=fullfile(pa,[s.prefix fi '.nii']);
 end
 

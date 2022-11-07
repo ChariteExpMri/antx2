@@ -772,6 +772,9 @@
 % #k [xexcel2atlas.m] #n modified
 % removes any other characters in the new-ID column, hemispheric type 4 (both hemisphere, splitted) is used when not specified
 % 
+% #ba 07 Nov 2022 (15:07:39)
+% #k [xstat.m] #n removed bug when writing the NIFTI-file (issue with special characters)
+% 
 % 
 % 
 
