@@ -779,11 +779,11 @@
 % #ba 08 Nov 2022 (11:46:42)
 % #k [antcb.m] #n added option to select/obtain list of animals by status-message
 % example:
-% -select all animals with status-tag "charge2"
-%  antcb('selectdirs','status','charge2');
-% -select all animals with status-tag "charge1" or "charge2"
-%  antcb('selectdirs','status',{'charge1' 'charge2'});
-% --> see help via: antcb('selectdirs?')
+% - select all animals with status-tag "charge2":
+%   antcb('selectdirs','status','charge2');
+% - select all animals with status-tag "charge1" or "charge2":
+%   antcb('selectdirs','status',{'charge1' 'charge2'});
+% --> for further help type: antcb('selectdirs?')
 % 
 % 
 % 

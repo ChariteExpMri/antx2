@@ -10,11 +10,11 @@
   &#x1F535;   <ins>**08 Nov 2022 (11:46:42)**</ins>  
    __[antcb.m]__ added option to select/obtain list of animals by status-message  
   example:  
-  -select all animals with status-tag "charge2"  
-   antcb('selectdirs','status','charge2');  
-  -select all animals with status-tag "charge1" or "charge2"  
-   antcb('selectdirs','status',{'charge1' 'charge2'});  
-  --> see help via: antcb('selectdirs?')  
+  - select all animals with status-tag "charge2":  
+    antcb('selectdirs','status','charge2');  
+  - select all animals with status-tag "charge1" or "charge2":  
+    antcb('selectdirs','status',{'charge1' 'charge2'});  
+  --> for further help type: antcb('selectdirs?')  
 <!---->
   &#x1F535;   <ins>**07 Nov 2022 (15:07:39)**</ins>  
    __[xstat.m]__ removed bug when writing the NIFTI-file (issue with special characters)  
