@@ -1979,7 +1979,7 @@ end
 %         'or'     (or '|')     one of the files must exist in folder
 %         'andnot' (or '~&')    all files must not exist in folder
 %         'or'     (or '~|')    one of the files must not exist in folder
-% --------------------
+% -----------[ SLECT DIRS BY FILENAMES]-------
 % antcb('selectdirs','file',{'t2.nii'});          % select all dirs containing the file"t2.nii"
 % antcb('selectdirs','file',{'x_t2.nii'},'not');  % select all dirs not containing the file"x_t2.nii
 %
@@ -1993,10 +1993,21 @@ end
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'ornot'); %select all dirs not containing either 't2.nii' or 'x_t2.nii'
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'~|');    %same as previous line
 %
+% -----------[ SLECT DIRS BY STATUS-MESSAGE]----------------------------------------------------
+% note status has be be set in advance!
+%% select all animals with status-tag "charge1"
+%  antcb('selectdirs','status','charge1');
+%% select all animals with status-tag "charge2"
+%  antcb('selectdirs','status','charge2');
+%% select all animals with status-tag "charge1" or "charge2"
+% antcb('selectdirs','status',{'charge1' 'charge2'});
+% same as with explicit 'or'-operator
+% antcb('selectdirs','status',{'charge1' 'charge2'},'or');
+% 
 %% example: select only those animals tha contain all of the following files: 'NI_b100.nii','NI_b900.nii','NI_b1600.nii' and 'NI_b2500.nii'
 % antcb('selectdirs','file',{'NI_b100.nii' 'NI_b900.nii' 'NI_b1600.nii' 'NI_b2500.nii'},'and');
 %
-%
+% -----------[OTHER EXAMPLES] ----------------------------------------------------
 % by ANIMAL-NAME
 % antcb('selectdirs',{'MMRE_age_20w_mouse5_cage6_13122017'}); %select this directory
 % antcb('selectdirs',{'MMRE_age_20w_mouse5_cage6_13122017'
@@ -2074,19 +2085,44 @@ elseif isnumeric(input{1})
     iselect=isect;
     set(lb3,'value',iselect);
     % elseif ~isempty(strfind(char(input{1}),'.nii') )
-elseif strcmp(input{1},'file')
+elseif strcmp(input{1},'file') || strcmp(input{1},'status')
     %% =================find file(s) in folder ===========
-    
-    if ischar(input{2})
-        files={input{2}};
+    if strcmp(input{1},'status')
+        hb=findobj(findobj(0,'tag','ant'),'tag','lb3');
+        lis=get(hb,'string');
+        lisstatus=(regexprep( lis, {'<.*?>','.*;'}, '' ));
+        %searchtok=input{2};
+        if ischar(input{2})
+            searchtok={input{2}};
+        else
+            searchtok=input{2};
+        end
+        
+        %isexist=zeros(size(fp,1), 1);
+        %isexist=strcmp(lisstatus, searchtok);
+
+        isexist=zeros(size(fp,1), length(searchtok));
+        for i=1:length(fp)
+            for j=1:length(searchtok)
+                if strcmp(lisstatus{i},searchtok{j})==1
+                    isexist(i,j)=1;
+                end
+            end
+        end
+        
+       
     else
-        files=input{2};
-    end
-    isexist=zeros(size(fp,1), length(files));
-    for i=1:length(fp)
-        for j=1:length(files)
-            if exist(fullfile(fp{i},files{j}))==2
-                isexist(i,j)=1;
+        if ischar(input{2})
+            files={input{2}};
+        else
+            files=input{2};
+        end
+        isexist=zeros(size(fp,1), length(files));
+        for i=1:length(fp)
+            for j=1:length(files)
+                if exist(fullfile(fp{i},files{j}))==2
+                    isexist(i,j)=1;
+                end
             end
         end
     end
@@ -2099,7 +2135,11 @@ elseif strcmp(input{1},'file')
     try
         oper=input{3};
     catch
-        oper='and';
+        if strcmp(input{1},'status')
+            oper='or';
+        else
+            oper='and';
+        end
     end
     
     iselect=[];
