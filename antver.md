@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   08 Nov 2022 (11:46:42)  
+ &#x1F34E; last modification:   11 Nov 2022 (08:24:03)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**11 Nov 2022 (08:24:03)**</ins>  
+   __[ximportdir2dir.m]__ function revised  
+  - revised selection of directory-assignments   
+<!---->
   &#x1F535;   <ins>**08 Nov 2022 (11:46:42)**</ins>  
    __[antcb.m]__ added option to select/obtain list of animals by status-message  
   example:  
@@ -16,8 +20,6 @@
     antcb('selectdirs','status',{'charge1' 'charge2'});  
   --> for further help type: antcb('selectdirs?')  
     
-   __[ximportdir2dir.m]__ function revised  
-  - revised selection of directory-assignments   
 <!---->
   &#x1F535;   <ins>**07 Nov 2022 (15:07:39)**</ins>  
    __[xstat.m]__ removed bug when writing the NIFTI-file (issue with special characters)  

@@ -785,6 +785,7 @@
 %   antcb('selectdirs','status',{'charge1' 'charge2'});
 % --> for further help type: antcb('selectdirs?')
 % 
+% #ba 11 Nov 2022 (08:24:03)
 % #k [ximportdir2dir.m] #n function revised
 % - revised selection of directory-assignments 
 % 
