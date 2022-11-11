@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   11 Nov 2022 (08:24:03)  
+ &#x1F34E; last modification:   11 Nov 2022 (17:10:28)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,14 +7,16 @@
     
     
 ------------------  
-  &#x1F535;   <ins>**11 Nov 2022 (08:24:03)**</ins>  
-   __[ximportdir2dir.m]__ function revised  
-  - revised selection of directory-assignments   
-    
+  &#x1F535;   <ins>**11 Nov 2022 (17:10:28)**</ins>  
    __[xstat.m]__ changed  
   added function to posthoc create/repair the MIP-file/change Atlas for reporting table  
   - see xstat-MENU: misc/create MIP,change Atlas  
   - or programmatically, type :  xstat('repairMIP?')  to obtain help  
+<!---->
+  &#x1F535;   <ins>**11 Nov 2022 (08:24:03)**</ins>  
+   __[ximportdir2dir.m]__ function revised  
+  - revised selection of directory-assignments   
+    
 <!---->
   &#x1F535;   <ins>**08 Nov 2022 (11:46:42)**</ins>  
    __[antcb.m]__ added option to select/obtain list of animals by status-message  

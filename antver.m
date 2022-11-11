@@ -789,10 +789,15 @@
 % #k [ximportdir2dir.m] #n function revised
 % - revised selection of directory-assignments 
 % 
+% #ba 11 Nov 2022 (17:10:28)
 % #k [xstat.m] #n changed
 % added function to posthoc create/repair the MIP-file/change Atlas for reporting table
 % - see xstat-MENU: misc/create MIP,change Atlas
 % - or programmatically, type :  xstat('repairMIP?')  to obtain help
+% 
+% 
+% 
+
 
 %% ===============================================
 %----- EOF
