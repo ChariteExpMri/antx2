@@ -11,7 +11,7 @@
    __[ximportdir2dir.m]__ function revised  
   - revised selection of directory-assignments   
     
-   __[ximportdir2dir.m]__ changed  
+   __[xstat.m]__ changed  
   added function to posthoc create/repair the MIP-file/change Atlas for reporting table  
   - see xstat-MENU: misc/create MIP,change Atlas  
   - or programmatically, type :  xstat('repairMIP?')  to obtain help  
