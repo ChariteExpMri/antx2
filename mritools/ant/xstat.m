@@ -260,6 +260,19 @@
 %  xstat('savevolume',pwd,struct('prefix','myPrefix_'));
 %% save thresholded volume as "myPrefix_dum3.nii"
 %  xstat('savevolume',fullfile(pwd,'dum3.nii'),struct('prefix','myPrefix_'))
+%
+% #wb *** REPAIR MIP-FILE / CHANGE POSTHOC-ATLAS ***
+% #m see <b> xstat-MENU: misc/create MIP,change Atlas
+% type :  xstat('repairMIP?')          to obtain help
+% 
+% 
+% 
+% 
+
+
+% ==============================================
+%%   
+% ===============================================
 
 
 %% ________________________________________________________________________________________________
@@ -275,6 +288,15 @@ if nargin>0
     % xstat('loadspm','O:\data2\x03_yildirim\fullfac_fakedata_4')
     % xstat('report','results_FDR')
     if ~isnumeric(showgui)
+        if strcmp(showgui, 'repairMIP');
+            if exist('x')~=1; x=1       ; end
+            if exist('s')~=1; s=struct(); end
+            repairMIP(x,s);
+        end
+        if strcmp(showgui, 'repairMIP?');
+             repairMIP_help();         
+        end
+        
         if strcmp(showgui, 'report');
             if nargin==1; x=[];end
             [fiout g]=report(x,s) ;
@@ -524,6 +546,10 @@ set(gcf,'tag','vvstat','menubar','none','units','norm','name','xstat','NumberTit
 set(gcf,'position',[0.7049    0.4189    0.1503    0.4667]    ); %figure
 
 
+hu = uimenu(gcf,'Label','misc');
+
+h1 = uimenu(hu,'Label','create MIP,change Atlas', 'Callback',{@miscTask,'repairMIP'});
+
 % ==============================================
 %%   help
 % ===============================================
@@ -698,7 +724,9 @@ set(h2, 'position',[.7 .6 .3 .02],'fontsize',6,'backgroundcolor','w');
 h2=uicontrol('style','listbox','units','norm') ;      %other contrasts
 set(h2, 'string','-','callback',@loadothercontrast,'tag','loadothercontrast');
 set(h2, 'position',[.56 .2 .48 .4],'fontsize',5);
-set(h2,'tooltipstring','show the other contrasts');
+set(h2,'tooltipstring',['<html><b>contrast-list</b><br>' ...
+    'select a contrast here to display this contrast <br>' ...
+    'if the list is empty..just click here to update the contrast-list']);
 
 
 
@@ -795,6 +823,15 @@ set(h2,'tooltipstring',['<html><b>collection of scripts</b><br>' ...
     '-scripts can be costumized and applied']);
 
 
+% h2=uicontrol('style','pushbutton','units','norm') ;      
+% set(h2, 'string','scripts','callback',@scripts_call);
+% set(h2, 'position',[0.33241 0.15116 0.2 0.045],'fontsize',7,'foregroundcolor',[0 0 1]);
+% set(h2,'BackgroundColor',[0.9608    0.9765    0.9922])
+% set(h2,'tooltipstring',['<html><b>collection of scripts</b><br>' ...
+%     'open scripts-gui with collection of scripts<br>'...
+%     '-scripts can be costumized and applied']);
+
+
 % ==============================================
 %%   close
 % ===============================================
@@ -849,10 +886,75 @@ end
 
 
 
+function miscTask(e,e2,task)
+
+if strcmp(task, 'repairMIP')
+    repairMIP(1);
+end
+function repairMIP_help()
+g={ '=================================='
+    '    repair MIP/change ATLAS (xstat)      '
+    '=================================='
+    'The  SPM-analysis-folder must contain the following two files: "xstatMIP.mat" and "xstatParameter.mat" '
+    'For this the some parameter have to be specified (AVGT,ANO,SPM-anylsis-folder).'
+    '___ GUI_____________________________'
+    '_to repair/ posthoc create those files via GUI use : '
+    'xstat(''repairMIP'')'
+    '___ NO GUI_____________________________'
+    'or without GUI using the followng parameters'
+    'z=[];'
+    'z.AVGT  =''F:\data6\voxwise\templates\AVGT.nii''; % your AVGT-file'
+    'z.ANO   =''F:\data6\voxwise\templates\ANO.nii'';  % your ANO-file (ATLAS)'
+    'z.SPMdir=''F:\data6\voxwise\voxw_test2'';         % your SPM_analysis-folder'
+    'xstat(''repairMIP'',0,z); % silent mode'
+    ''
+    
+    };
+
+
+disp(char(g));
 
 
 
 
+function repairMIP(show,x)
+
+if exist('x')~=1; x=struct(); end
+%% ===============================================
+p={
+    'AVGT'     '' 'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
+    'ANO'      '' 'select the ATLAS-file (path of "ANO.nii")' 'f'
+    'SPMdir'   '' 'path of SPM.mat-folder' 'd';
+    };
+p=paramadd(p,x);%add/replace parameter
+if show==1
+    [m z a paras]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],...
+        'figpos',[0.2000    0.4278    0.4944    0.2233],...
+        'title',['create repair MIP/ATLAS']);
+    if isempty(m); return; end
+    fn=fieldnames(z);
+    z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
+    if isempty(m); disp('--canceled');return; end
+else
+    z=param2struct(p);
+end
+
+    
+    %% =======[save 'xstatParameter.mat' ]========================================
+
+    par=z;
+    SPMdir=par.SPMdir;
+    F1=fullfile(SPMdir,'xstatParameter.mat');
+    
+    save(F1,'par');
+    showinfo2('..created/repaired PARMETER: ',F1,[],1,[' -->[' F1 ']']);
+    %% ==========[create MIP-file ]=====================================
+    mipfile=fullfile(SPMdir,'xstatMIP.mat');
+    makeMIP(par.AVGT,'show',0,'save', mipfile);
+    
+    %% ===============================================
+    
+    
 
 %———————————————————————————————————————————————
 %%   subs
@@ -896,8 +998,8 @@ loadothercontrast('initialize',[]);
 %%   readexcel
 %———————————————————————————————————————————————
 
-function readexcel(xtype)
-
+function chkOK=readexcel(xtype)
+chkOK=0;
 s=get(gcf,'userdata');
 wkdir=pwd;
 
@@ -924,7 +1026,7 @@ if strcmp(xtype,'twosamplettest')
         'ANO'  '' 'select the ATLAS-file (path of "ANO.nii")' 'f'
         'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
         'grp_comparison' '1vs2' 'groups to compare, use EXCELgroupnames(example: "GroupNameString1vsGroupNameString2") or alphabet. order (example: "1vs2"), or ' {'1vs2' '1vs3' '2vs3'  };
-        'mask'          'local' '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' {'d' 'f' 'local'};
+        'mask'          'local' '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' {'f'};
         'smoothing'       1       '<optional>smooth data' 'b'
         'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
         'output_dir'   'test_10' 'path for output/statistic' 'd';
@@ -1027,10 +1129,12 @@ if showgui==1
         [m x a paras]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .6 .35 ],...
             'info',hlp,'title',[mfilename '.m']);
         if isempty(m);
-            error('__process terminated___________________');
+            disp('...process terminated by user...');
+            return
         end
     catch
-        error('process canceled');
+        disp('...process aborted..issues...');
+        return
     end
     xvv.paramguilist=m;
     fn=fieldnames(x);
@@ -1357,8 +1461,38 @@ mipfile=fullfile(outdir,'xstatMIP.mat');
 makeMIP(x.AVGT,'show',0,'save', mipfile);
 
 
+chkOK=1; % make OK-check
 
 
+
+function repair_xstatParameter
+% b.par
+% ans = 
+%          excelfile: 'F:\data6\voxwise\groupassignment.xlsx'
+%        sheetnumber: 1
+%        mouseID_col: 1
+%          group_col: 2
+%           data_dir: 'F:\data6\voxwise\dat'
+%         inputimage: 'vimg.nii'
+%               AVGT: 'F:\data6\voxwise\templates\AVGT.nii'
+%                ANO: 'F:\data6\voxwise\templates\ANO.nii'
+%     grp_comparison: '1vs2'
+%               mask: 'F:\data6\voxwise\templates\AVGThemi.nii'
+%          smoothing: 1
+%     smoothing_fwhm: [0.2800 0.2800 0.2800]
+%         output_dir: 'voxw_test2'
+%       showSPMbatch: 1
+
+%% === test : mandatory inputs============================================
+
+par.ANO='F:\data6\voxwise\templates\ANO.nii';
+par.AVGT= 'F:\data6\voxwise\templates\AVGT.nii';
+
+F1=fullfile('F:\data6\voxwise\voxw_test2', 'xstatParameter.mat');
+save(F1,'par');
+showinfo2('..created/repaired',F1,[],1,[' -->[' F1 ']']);
+
+%% ===============================================
 
 
 function pref=getprefs
@@ -3217,13 +3351,16 @@ function twosampleTest(e,e2,varargin)
 global xvv
 xvv.xtype='twosamplettest';
 warning off;
-readexcel(xvv.xtype);
+isOK=readexcel(xvv.xtype);
+if isOK==0; return; end
+
 fmakebatch(mfilename );
 
 % disp('fun: twosampleTest');
 % return;%*
 % -------------------------
 spmsetup;
+cprintf('*[0 0 1]',['.. please wait....' '\n']);
 
 hfig=findobj(0,'tag','vvstat');
 s=get(hfig,'userdata');
@@ -3400,11 +3537,17 @@ end
 %..........................................
 idmb=spm_jobman('interactive',mb);
 matlabbatch=mb;
-save(fullfile(outdir,'job'),'matlabbatch'); %SAVE BATCH
+fjob=fullfile(outdir,'job.mat');
+showinfo2('batch saved as',fjob,[],1,[' -->[' fjob ']']);
+save(fjob,'matlabbatch'); %SAVE BATCH
+
 drawnow;
 
 if xvv.x.showSPMbatch==0
     spm_jobman('run',mb);
+else
+   cprintf('*[0.9294    0.6941    0.1255]',['.. batch is shown in SPM BATCH-EDITOR....' '\n']);
+   cprintf('*[0 .5 0]',['.. hit "RUN BATCH"-ICON of APM BATCH-EDITOR to start the batch!' '\n']);
 end
 
 try ;    cd(s.workpath); end
@@ -3414,7 +3557,9 @@ try ;    cd(s.workpath); end
 
 
 
-
+if xvv.x.showSPMbatch==0
+    xstat('loadspm',fullfile(pwd,'SPM.mat'));
+end
 
 
 %———————————————————————————————————————————————
