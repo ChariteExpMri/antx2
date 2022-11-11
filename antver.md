@@ -15,6 +15,9 @@
   - select all animals with status-tag "charge1" or "charge2":  
     antcb('selectdirs','status',{'charge1' 'charge2'});  
   --> for further help type: antcb('selectdirs?')  
+    
+   __[ximportdir2dir.m]__ function revised  
+  - revised selection of directory-assignments   
 <!---->
   &#x1F535;   <ins>**07 Nov 2022 (15:07:39)**</ins>  
    __[xstat.m]__ removed bug when writing the NIFTI-file (issue with special characters)  

@@ -1338,7 +1338,7 @@ elseif strcmp(sorter,'default')
 end
 mdirsS=mdirs(isort);
 liS   =li(isort);
-
+sel=1;
 try
     selC=zeros(size(mdirsS,1) ,1); % find selected files
     for i=1:length(preseldirs)
