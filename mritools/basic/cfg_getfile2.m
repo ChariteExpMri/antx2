@@ -1953,6 +1953,9 @@ end
 
 %=======================================================================
 function sel=select_rec1(cdir,filt)
+if strcmp(cdir(end),filesep)==1
+    cdir(end)=[];
+end
 sel={};
 [t,d] = listfiles(cdir,filt);
 if ~isempty(t)
