@@ -1260,7 +1260,7 @@ if n_btables~=n_dwis
                     [ha a]=rgetnii(fx1);
                     hb=ha;
                     hb.dt=[8 0];
-                    rsavenii(fx2,  hb,a);
+                    rsavenii(fx2,  hb,a,64);
                     
                     %[hc c]=rgetnii(fx2);
                     %find(abs(unique(c(:))==unique(a(:))==0))
