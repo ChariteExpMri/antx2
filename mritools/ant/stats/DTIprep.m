@@ -1259,7 +1259,7 @@ if n_btables~=n_dwis
                     %keyboard
                     [ha a]=rgetnii(fx1);
                     hb=ha;
-                    hb.dt=[8 0];
+                    %hb.dt=[8 0];
                     rsavenii(fx2,  hb,a,64);
                     
                     %[hc c]=rgetnii(fx2);
