@@ -57,6 +57,10 @@ try
     
     v=theCell.Comment;
     try; v.Shape.TextFrame.Characters.Font.Name='Courier New'; end
+    
+    %___autoSize comment
+    try; v.Shape.TextFrame.AutoSize=true; end
+    
     %try; v.Shape.TextFrame.Characters.Font.Size = 10; end
     
   end

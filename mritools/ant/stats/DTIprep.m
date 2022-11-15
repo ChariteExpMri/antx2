@@ -1264,6 +1264,10 @@ if n_btables~=n_dwis
                     
                     %[hc c]=rgetnii(fx2);
                     %find(abs(unique(c(:))==unique(a(:))==0))
+                elseif strcmp(files{j,2}, 'atlas_lut.txt') || strcmp(files{j,2}, 'ANO_DTI.txt')
+                    lut=preadfile(fx1); lut=lut.all;
+                    lut=regexprep(lut,'['''']',''); %remove apostrophe as in Ammon's_horn (produces an error in DTI-pipeline)
+                    pwrite2file(fx2,lut)
                 else
                     if strcmp(fx1,fx2)==0
                         copyfile(fx1,fx2,'f');
