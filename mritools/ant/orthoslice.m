@@ -32,6 +32,7 @@
 % orthoslice({'AVGTmask.nii','s.nii'},'mode','ovl','alpha',1);
 % orthoslice({'AVGT.nii','s.nii'},'mode','mask');
 % orthoslice({'AVGT.nii','s.nii'},'mode','ovl','alpha',.5);
+% orthoslice({lab.template,'thresh_svimg__control_LT_mani__FWE0.05k1.nii'},'mode','ovl','alpha',.5,'blobthresh',0);
 
 
 function [varargout]=orthoslice(f, varargin )
@@ -51,6 +52,8 @@ if nargin==0
    % orthoslice({'AVGTmask.nii','s.nii'},'mode','ovl','alpha',1);
    % orthoslice({'AVGT.nii','s.nii'},'mode','mask');
    % orthoslice({'AVGT.nii','s.nii'},'mode','ovl','alpha',.5);
+   %orthoslice({lab.template,'thresh_svimg__control_LT_mani__FWE0.05k1.nii'},'mode','ovl','alpha',.5,'blobthresh',0);
+
     return
 end
 

@@ -329,6 +329,14 @@ if nargin>0
             varargout{1}=fiout;
             varargout{2}=g;
         end
+        if strcmp(showgui, 'extractdata');
+            fiout=[]; g=[];
+           % x.dummi1=1;
+           x.dummi=1;
+           [fiout g]= extractdata(x);
+           varargout{1}=fiout;
+           varargout{2}=g;
+        end
         return
     end
 end
@@ -547,8 +555,21 @@ set(gcf,'position',[0.7049    0.4189    0.1503    0.4667]    ); %figure
 
 
 hu = uimenu(gcf,'Label','misc');
-
 h1 = uimenu(hu,'Label','create MIP,change Atlas', 'Callback',{@miscTask,'repairMIP'});
+
+
+hu = uimenu(gcf,'Label','posthoc');
+h1 = uimenu(hu,'Label','<html>create summary of <font color=blue>current<font color=black> contrast',        ...
+    'Callback',{@posthoc,'summary_thiscontrast'});
+h1 = uimenu(hu,'Label','<html>create summary <font color=fuchsia>all<font color=black> contrasts',            ...
+    'Callback',{@posthoc,'summary_allcontrasts'});
+h1 = uimenu(hu,'Label','<html>create summary & export tables of <font color=blue>current<font color=black> contrast',...
+    'Callback',{@posthoc,'summary_thiscontrastFull'},'separator','on');
+h1 = uimenu(hu,'Label','<html>create summary & export tables <font color=fuchsia>all<font color=black> contrasts', ...
+    'Callback',{@posthoc,'summary_allcontrastsFull'});
+h1 = uimenu(hu,'Label','<html><font color=red>all methods<font color=black> summary & export tables <font color=red>all<font color=black> contrasts', ...
+    'Callback',{@posthoc,'summary_allcontrastsallMethods'});
+
 
 % ==============================================
 %%   help
@@ -573,7 +594,7 @@ set(h2,'tooltipstring','help for this gui');
 % ===============================================
 h2=uicontrol('style','text','units','norm');            % SETUP  -TXT
 set(h2, 'string','Setup');
-set(h2, 'position',[.01 .8 .8 .05]);
+set(h2, 'position',[0.008982 0.95348 0.8 0.05]);
 set(h2,'tooltipstring','read groups from excelfile','backgroundcolor','w','fontweight','bold',...
     'HorizontalAlignment','left');
 
@@ -585,38 +606,39 @@ set(h2,'tooltipstring','read groups from excelfile','backgroundcolor','w','fontw
 
 h2=uicontrol('style','pushbutton','units','norm') ;     %INDEpSTAT
 set(h2,'string', 'indepStat','callback',@twosampleTest);
-set(h2,'position',[0 .75 .3 .05]);
+set(h2,'position',[0 0.9249 .3 .05]);
 set(h2,'tooltipstring','independent/2-sample t-test');
 
 h2=uicontrol('style','pushbutton','units','norm')   ;   %DEPSTAT
 set(h2,'string', 'depStat','callback', @pairedsampleTest);
-set(h2,'position',[.3 .75 .3 .05]);
+set(h2,'position',[.3 0.9249 .3 .05]);
 set(h2,'tooltipstring','dependend/paired t-test');
 
+h2=uicontrol('style','pushbutton','units','norm')   ;  %USERDEFINED
+set(h2,'string', 'userdefined','callback',@userdefined);
+set(h2,'position',[.6 .9249 .3 .05]);
+set(h2,'tooltipstring','build your own analysis');
 
 h2=uicontrol('style','pushbutton','units','norm')   ;   %onewayanova
 set(h2,'string', '1way-ANOVA','callback', @onewayanova);
-set(h2,'position',[0 .7 .3 .05]);
+set(h2,'position',[0 .875 .3 .05]);
 set(h2,'tooltipstring','one-way-anova','fontsize',6);
 
 
 
 h2=uicontrol('style','pushbutton','units','norm')   ;   %fullfactorial
 set(h2,'string', 'fullfactorial','callback', @fullfactorial);
-set(h2,'position',[0.3 .7 .3 .05]);
+set(h2,'position',[0.3 .875 .3 .05]);
 set(h2,'tooltipstring','fullfactorial','fontsize',7);
 
 
 h2=uicontrol('style','pushbutton','units','norm')   ;   %multiple regression
 set(h2,'string', 'm. regression','callback', @multipleregression);
-set(h2,'position',[0.6 .7 .3 .05]);
+set(h2,'position',[0.6 .875 .3 .05]);
 set(h2,'tooltipstring','multiple regression','fontsize',7);
 
 
-h2=uicontrol('style','pushbutton','units','norm')   ;  %USERDEFINED
-set(h2,'string', 'userdefined','callback',@userdefined);
-set(h2,'position',[.6 .75 .3 .05]);
-set(h2,'tooltipstring','build your own analysis');
+
 
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 %% view results
@@ -719,11 +741,11 @@ set(h2,'tooltipstring','load the 1st contrast with standard parameters');
 
 h2=uicontrol('style','text','units','norm');            %other contrasts -TXT
 set(h2, 'string','contrasts','ButtonDownFcn',@loadothercontrastini);
-set(h2, 'position',[.7 .6 .3 .02],'fontsize',6,'backgroundcolor','w');
+set(h2, 'position',[0.56343 0.275 0.48 0.4],'fontsize',6,'backgroundcolor','w');
 
 h2=uicontrol('style','listbox','units','norm') ;      %other contrasts
 set(h2, 'string','-','callback',@loadothercontrast,'tag','loadothercontrast');
-set(h2, 'position',[.56 .2 .48 .4],'fontsize',5);
+set(h2, 'position',[0.56343 0.25115 0.48 0.4],'fontsize',5);
 set(h2,'tooltipstring',['<html><b>contrast-list</b><br>' ...
     'select a contrast here to display this contrast <br>' ...
     'if the list is empty..just click here to update the contrast-list']);
@@ -747,6 +769,12 @@ h2=uicontrol('style','pushbutton','units','norm') ;      %show table
 set(h2, 'string','show table','callback',@showTable,'tag','showTable');
 set(h2, 'position',[0    .35 .28 .05]);
 set(h2,'tooltipstring',' show statistical table');
+
+%% ———————— show table-in CMD-WIN———————————————————————————————————————
+h2=uicontrol('style','pushbutton','units','norm') ;      %show table
+set(h2, 'string','table-2-CMD','callback',@showTable_CMD,'tag','showTable_CMD');
+set(h2, 'position',[-0.00025874 0.31543 0.28 0.03],'fontsize',7);
+set(h2,'tooltipstring',' show statistical table in command window');
 
 %% ———————— clusters distance ———————————————————————————————————————
 ttip=['cluster distance ' char(10) 'minimum distance between clusters [mm]'];
@@ -773,17 +801,24 @@ h2=uicontrol('style','edit','units','norm') ;      %number of cluster EDIT
 set(h2, 'position',[0.29 .355 .1 .03]);
 set(h2,'tooltipstring','number of maxima per cluster','tag','nmaxclust');
 
-%% ———————— export table txt ———————————————————————————————————————
-h2=uicontrol('style','pushbutton','units','norm') ;      %export table
-set(h2, 'string','export txt','callback',@exporttable);
-set(h2, 'position',[0   .3 .28 .05]);
-set(h2,'tooltipstring','save statistical table as txt-file','fontsize',7);
 
 %% ———————— export table excel ———————————————————————————————————————
 h2=uicontrol('style','pushbutton','units','norm') ;      %export table
 set(h2, 'string','export xlsx','callback',@exporttableXLS);
 set(h2, 'position',[0   .25 .28 .05]);
 set(h2,'tooltipstring','save statistical table as Excel-file','fontsize',7);
+
+%% ———————— export table txt ———————————————————————————————————————
+h2=uicontrol('style','pushbutton','units','norm') ;      %export table
+set(h2, 'string','export txt','callback',@exporttable);
+set(h2, 'position',[0.28158 0.25 0.28 0.05]);
+set(h2,'tooltipstring','save statistical table as txt-file','fontsize',7);
+
+%% ———————— extract data ———————————————————————————————————————
+h2=uicontrol('style','pushbutton','units','norm') ;      %export table
+set(h2, 'string','extract data','callback',@extractData_call);
+set(h2, 'position',[0 0.14878 0.28 0.05]);
+set(h2,'tooltipstring','extract animal''s -peak data and store as Excel-file','fontsize',7);
 
 %% ———————— save vol———————————————————————————————————————
 h2=uicontrol('style','pushbutton','units','norm') ;      %save volume table
@@ -797,11 +832,17 @@ set(h2, 'string','show MRicron','callback',@show_mricron);
 set(h2, 'position',[0.28 .2 .28 .05]);
 set(h2,'tooltipstring','show previously saved thresholded volume overlayed in MRICRON','fontsize',7);
 
-%% =======snip batch ========================================
+%% ———————— show vol in extraFigure ———————————————————————————————————————
+h2=uicontrol('style','pushbutton','units','norm') ;      %show volume MRICRON
+set(h2, 'string','show VolOrtho','callback',@show_vol_extrafigure);
+set(h2, 'position',[0.56343 0.2 0.28 0.05]);
+set(h2,'tooltipstring','show previously saved thresholded volume in another figure','fontsize',6);
+
+%% ======= code posthoc ========================================
 
 h2=uicontrol('style','pushbutton','units','norm') ;      %show volume MRICRON
 set(h2, 'string','code posthoc','callback',@code_posthoc);
-set(h2, 'position',[0 .15 .32 .045],'fontsize',7);
+set(h2, 'position',[0 0.058305 0.32 0.045],'fontsize',7);
 set(h2,'tooltipstring',[...
     'code-snippet to create post-hoc summary' char(10) ....
     ' - create powerpoint-file with table volume view ' char(10)...
@@ -811,12 +852,12 @@ set(h2,'tooltipstring',[...
 set(h2,'BackgroundColor',[0.9608    0.9765    0.9922],'foregroundcolor',[0 0 1]);
 
 % % ==============================================
-% %%   scripts
+%%   scripts
 % % ===============================================
 
 h2=uicontrol('style','pushbutton','units','norm') ;      
 set(h2, 'string','scripts','callback',@scripts_call);
-set(h2, 'position',[0.33241 0.15116 0.2 0.045],'fontsize',7,'foregroundcolor',[0 0 1]);
+set(h2, 'position',[0.32317 0.058305 0.2 0.045],'fontsize',7,'foregroundcolor',[0 0 1]);
 set(h2,'BackgroundColor',[0.9608    0.9765    0.9922])
 set(h2,'tooltipstring',['<html><b>collection of scripts</b><br>' ...
     'open scripts-gui with collection of scripts<br>'...
@@ -959,6 +1000,310 @@ end
 %———————————————————————————————————————————————
 %%   subs
 %———————————————————————————————————————————————
+
+function posthoc(e,e2,task)
+
+if strcmp(task,'summary_allcontrasts')
+    summary_contrast('all');
+elseif strcmp(task,'summary_thiscontrast')
+    summary_contrast('this');
+elseif strcmp(task,'summary_allcontrastsFull')
+    summary_contrast('all_full');
+elseif strcmp(task,'summary_thiscontrastFull')
+    summary_contrast('this_full');
+elseif strcmp(task,'summary_allcontrastsallMethods')
+    summary_contrastAllMethods('summary_allcontrastsallMethods');    
+end
+
+
+
+function summary_contrastAllMethods(task)
+% ===============================================
+task='all'
+waitspin(1,'wait...');
+
+
+
+
+% =========== [which con] ====================================
+
+hf=findobj(0,'tag','vvstat');
+ht=findobj(hf,'tag','loadothercontrast');
+cons=1:length(get(ht,'string'));
+% if strcmp(task,'this') || strcmp(task,'this_full')
+%     cons=ht.Value;
+%     constr=['con' num2str(cons) '__' regexprep(ps.con,{'<' '>'},{'_LT_' '_GT_'}) '_'];
+%     outfileName=[ strrep(ps.img,'.nii','') '_' constr '_' ps.mcp num2str(ps.TR) 'k' num2str(ps.k) ];
+% % outfileName
+%     % svimg__control_LT_mani__FWE0.05k1
+% elseif strcmp(task,'all') || strcmp(task,'all_full')
+%     cons=1:length(get(ht,'string'));
+%     constr=['conAll'];
+%     outfileName=[ strrep(ps.img,'.nii','') '_' constr '_' ps.mcp num2str(ps.TR) 'k' num2str(ps.k) ];   
+% end
+
+
+
+
+% =========== [which con] ====================================
+xSPM = evalin('base','xSPM');
+SPM  = evalin('base','SPM');
+spmdir=SPM.swd;
+currdir=pwd;
+cd(spmdir);
+[~,spmdirsShort]=fileparts(spmdir); % shortNames of the SPM-dirs..used for PPT-file-names
+outdir=fullfile(fileparts(spmdir), ['res_' spmdirsShort] );
+if exist(outdir)~=7
+    mkdir(outdir); % make outdir-folder
+end
+% ==============================================
+% #b   outdir-PPT
+% ===============================================
+PPTFILEprefix='sum_';
+outfileName='qqq'
+thisDir=char(spmdirsShort);
+% PPTFILE=fullfile(outdir,[PPTFILEprefix '_' thisDir  '_' constr '.pptx'   ]);
+PPTFILE=fullfile(outdir,[PPTFILEprefix '_' outfileName '.pptx'   ]);
+
+
+%%   =====LOAD SPMmat==========================================
+cd(spmdir);  
+if 1
+    outdirData=fullfile(outdir,'data');
+    if exist(outdirData)~=7
+        mkdir(outdirData);
+    end
+end
+
+% #b =====loop over the two directional contrasts (x larger y, x smaller y)=============
+for i=1:length(cons)
+    
+    con=cons(i);
+    if i==1
+        DOC='new';  % for each SPM-DIR, if contrast is 1--> create "new" PPTfile
+    else
+        DOC='add';   % add PPT-slide to existing PPT-file
+    end
+    
+    
+    if mod(con,2)==1 % alterate PPT-backgroundcolor for each contrast
+        bgcol=[1 1 1]; % PPT-bgColor
+    else
+        bgcol=[0.8941    0.9412    0.9020];
+    end
+    
+    
+    [p2 nametag2]=getparameter();% get mainParameter
+    p2.TR=str2num(p2.TR);
+    p2.k=str2num(p2.k);
+    p2.nmaxclust=str2num(p2.nmaxclust);
+    
+    PPTFILE=fullfile(outdir,['NONE_' outfileName '.pptx'   ]);
+    
+    xstat('set',struct('MCP','none','thresh',0.001,'clk',1,'con',con,'show',0)); % set PARAMETER
+    xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  )); % save stat. table in PPT
+    xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+    xstat('savevolume',outdir); % save tresholded volume
+    xstat('export',outdir);     % save stat. table as excelfile
+    
+    
+%     % #m [1] SUMMARY: uncorrected, at p=0.001, clusterSize k=1 -------
+%     xstat('set',struct('MCP',ps.mcp,'thresh',ps.TR,'clk',ps.k,'con',con,'show',0)); % set PARAMETER
+%     xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  )); % save stat. table in PPT
+%     xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+%     if isfull==1
+%         
+%         [p2 nametag2]=getparameter();% get mainParameter
+%         p2.TR=str2num(p2.TR);
+%         p2.k=str2num(p2.k);
+%         p2.nmaxclust=str2num(p2.nmaxclust);
+% 
+% 
+%         constr2=['con' num2str(con) '__' regexprep(p2.con,{'<' '>'},{'_LT_' '_GT_'}) '_'];
+%         outfileName2=[ strrep(p2.img,'.nii','') '_' constr2 '_' p2.mcp num2str(p2.TR) 'k' num2str(p2.k) ];
+%     
+%         
+%         F1=fullfile(outdirData,[ outfileName2 '.nii'   ]);
+%         %F1=fullfile(outdirData,[ regexprep(outfileName,{'\.' },{'d'}) '.nii'   ]);
+%         xstat('savevolume',F1); % save tresholded volume
+%         F2=fullfile(outdirData,[ outfileName2 '.xlsx'   ]);
+%         xstat('export',F2);     % save stat. table as excelfile
+%     end
+    
+    
+    if 0
+        xstat('set',struct('MCP','none','thresh',0.001,'clk',1,'con',con,'show',0)); % set PARAMETER
+        xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  )); % save stat. table in PPT
+        xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+        xstat('savevolume',outdir); % save tresholded volume
+        xstat('export',outdir);     % save stat. table as excelfile
+        
+        % #m [2] SUMMARY: Peak-cluster with estimated clusterSize -------
+        clustersize = cp_cluster_Pthresh(xSPM, 0.001); %estimate clusterSize
+        xstat('set',struct('MCP','none','thresh',0.001,'clk',clustersize,'con',con,'show',0)); % set PARAMETER
+        xstat('report',PPTFILE,struct('doc','add','con',con,'bgcol',bgcol    )); % save stat. table in PPT
+        xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  ));% save volume in PPT
+        xstat('savevolume',outdir); % save tresholded volume
+        xstat('export',outdir);     % save stat. table as excelfile
+        
+        % #m [3] SUMMARY: FWE_CORRECTION, at p=0.05,  clusterSize k=1 -------
+        xstat('set',struct('MCP','FWE','thresh',0.05,'clk',1,'con',con,'show',0)); % set PARAMETER
+        xstat('report',PPTFILE,struct('doc','add','con',con,'bgcol',bgcol    )); % save stat. table in PPT
+        xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+        xstat('savevolume',outdir); % save tresholded volume
+        xstat('export',outdir);     % save stat. table as excelfile
+    end
+    
+end
+cd(currdir);
+waitspin(0,'Done');
+
+
+
+
+
+
+
+
+
+
+
+function summary_contrast(task)
+%% ===============================================
+% ==============================================
+% #b   get parameter
+% ===============================================
+[ps nametag]=getparameter();% get mainParameter
+ps.TR=str2num(ps.TR);
+ps.k=str2num(ps.k);
+ps.nmaxclust=str2num(ps.nmaxclust);
+
+
+waitspin(1,'wait...');
+
+% =========== [which con] ====================================
+
+hf=findobj(0,'tag','vvstat');
+ht=findobj(hf,'tag','loadothercontrast');
+if strcmp(task,'this') || strcmp(task,'this_full')
+    cons=ht.Value;
+    constr=['con' num2str(cons) '__' regexprep(ps.con,{'<' '>'},{'_LT_' '_GT_'}) '_'];
+    outfileName=[ strrep(ps.img,'.nii','') '_' constr '_' ps.mcp num2str(ps.TR) 'k' num2str(ps.k) ];
+% outfileName
+    % svimg__control_LT_mani__FWE0.05k1
+elseif strcmp(task,'all') || strcmp(task,'all_full')
+    cons=1:length(get(ht,'string'));
+    constr=['conAll'];
+    outfileName=[ strrep(ps.img,'.nii','') '_' constr '_' ps.mcp num2str(ps.TR) 'k' num2str(ps.k) ];   
+end
+
+
+
+
+% =========== [which con] ====================================
+xSPM = evalin('base','xSPM');
+SPM  = evalin('base','SPM');
+spmdir=SPM.swd;
+currdir=pwd;
+cd(spmdir);
+[~,spmdirsShort]=fileparts(spmdir); % shortNames of the SPM-dirs..used for PPT-file-names
+outdir=fullfile(fileparts(spmdir), ['res_' spmdirsShort] );
+if exist(outdir)~=7
+    mkdir(outdir); % make outdir-folder
+end
+% ==============================================
+% #b   outdir-PPT
+% ===============================================
+PPTFILEprefix='sum_';
+thisDir=char(spmdirsShort);
+% PPTFILE=fullfile(outdir,[PPTFILEprefix '_' thisDir  '_' constr '.pptx'   ]);
+PPTFILE=fullfile(outdir,[PPTFILEprefix '_' outfileName '.pptx'   ]);
+
+
+%%   =====LOAD SPMmat==========================================
+cd(spmdir);
+% cf; xstat('loadspm',fullfile(pwd,'SPM.mat'));
+
+isfull=0;
+if ~isempty(strfind(task,'_full'))
+    isfull=1;
+end  
+    
+if isfull==1
+    outdirData=fullfile(outdir,'data');
+    if exist(outdirData)~=7
+        mkdir(outdirData);
+    end
+end
+
+% #b =====loop over the two directional contrasts (x larger y, x smaller y)=============
+for i=1:length(cons)
+    
+    con=cons(i);
+    if i==1
+        DOC='new';  % for each SPM-DIR, if contrast is 1--> create "new" PPTfile
+    else
+        DOC='add';   % add PPT-slide to existing PPT-file
+    end
+    
+    
+    if mod(con,2)==1 % alterate PPT-backgroundcolor for each contrast
+        bgcol=[1 1 1]; % PPT-bgColor
+    else
+        bgcol=[0.8941    0.9412    0.9020];
+    end
+    
+    % #m [1] SUMMARY: uncorrected, at p=0.001, clusterSize k=1 -------
+    xstat('set',struct('MCP',ps.mcp,'thresh',ps.TR,'clk',ps.k,'con',con,'show',0)); % set PARAMETER
+    xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  )); % save stat. table in PPT
+    xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+    if isfull==1
+        
+        [p2 nametag2]=getparameter();% get mainParameter
+        p2.TR=str2num(p2.TR);
+        p2.k=str2num(p2.k);
+        p2.nmaxclust=str2num(p2.nmaxclust);
+
+
+        constr2=['con' num2str(con) '__' regexprep(p2.con,{'<' '>'},{'_LT_' '_GT_'}) '_'];
+        outfileName2=[ strrep(p2.img,'.nii','') '_' constr2 '_' p2.mcp num2str(p2.TR) 'k' num2str(p2.k) ];
+    
+        
+        F1=fullfile(outdirData,[ outfileName2 '.nii'   ]);
+        %F1=fullfile(outdirData,[ regexprep(outfileName,{'\.' },{'d'}) '.nii'   ]);
+        xstat('savevolume',F1); % save tresholded volume
+        F2=fullfile(outdirData,[ outfileName2 '.xlsx'   ]);
+        xstat('export',F2);     % save stat. table as excelfile
+    end
+    
+    
+    if 0
+        xstat('set',struct('MCP','none','thresh',0.001,'clk',1,'con',con,'show',0)); % set PARAMETER
+        xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  )); % save stat. table in PPT
+        xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+        xstat('savevolume',outdir); % save tresholded volume
+        xstat('export',outdir);     % save stat. table as excelfile
+        
+        % #m [2] SUMMARY: Peak-cluster with estimated clusterSize -------
+        clustersize = cp_cluster_Pthresh(xSPM, 0.001); %estimate clusterSize
+        xstat('set',struct('MCP','none','thresh',0.001,'clk',clustersize,'con',con,'show',0)); % set PARAMETER
+        xstat('report',PPTFILE,struct('doc','add','con',con,'bgcol',bgcol    )); % save stat. table in PPT
+        xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  ));% save volume in PPT
+        xstat('savevolume',outdir); % save tresholded volume
+        xstat('export',outdir);     % save stat. table as excelfile
+        
+        % #m [3] SUMMARY: FWE_CORRECTION, at p=0.05,  clusterSize k=1 -------
+        xstat('set',struct('MCP','FWE','thresh',0.05,'clk',1,'con',con,'show',0)); % set PARAMETER
+        xstat('report',PPTFILE,struct('doc','add','con',con,'bgcol',bgcol    )); % save stat. table in PPT
+        xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+        xstat('savevolume',outdir); % save tresholded volume
+        xstat('export',outdir);     % save stat. table as excelfile
+    end
+    
+end
+cd(currdir);
+waitspin(0,'Done');
+
 
 
 function scripts_call(e,e2)
@@ -1580,7 +1925,6 @@ end
 % ===============================================
 
 
-'##'
 
 
 if 0
@@ -1691,13 +2035,16 @@ function loadSPMmatnoInput(e,e2,spmfile)
 global lab; %remove previous cluster
 try; lab=rmfield(lab,'clusterregions'); end
 
-spmsetup(spmfile);
+% spmsetup(spmfile);
 
 if exist('spmfile')==0
     [files,dirs] = spm_select(1,'mat','select [SPM.mat]',[],pwd,'SPM.mat');
+    spmfile=files;
 else
     files=spmfile;
 end
+
+spmsetup(spmfile);
 
 if isempty(files); return; end
 
@@ -1960,7 +2307,191 @@ else
     
 end
 
+function extractData_call(e,e2)
 
+extractdata(struct('dummi',1));
+
+function  [fiout g]=extractdata(e)
+if 0
+    [f1 f2]=xstat('extractdata'); %GUI-input
+    [f1 f2]=xstat('extractdata',struct('path',pwd));
+      [f1 f2]=xstat('extractdata',struct('path',pwd,'filename','extract_this.xlsx'));
+end
+
+cprintf('*[.6 .6 .6]',[ '..Extracting data ...wait...' ]);
+[fiout g]=deal([]);
+%% ====== [get data -1]=========================================
+showTable();
+TabDat=evalin('base','TabDat');
+global lab
+region=lab.clusterregions(:)';
+t=TabDat.dat;
+cords=zeros(3,size(t,1));
+if isempty(t); 
+    disp('...no results ...no data extraction possible...');
+    return;
+end
+%% ===============check if original groupassignment-file exist================================
+xSPM=evalin('base','xSPM');
+SPM  = evalin('base','SPM');
+par_file=fullfile(xSPM.swd, 'xstatParameter.mat');
+if exist(par_file)==2
+    par=load(par_file); par=par.par;
+    if isfield(par,'excelfile')
+        try
+        [~,~,a]=xlsread(par.excelfile,par.sheetnumber);
+        a=a(:,[par.mouseID_col par.group_col]);
+        a=xlsprunesheet(a);
+        ha=a(1,:);
+        a=a(2:end,:);
+        
+        %a=a([2 1 5 4 3 6:end],:), %check resort
+        
+        
+        files={SPM.xY.VY(:).fname}; files=files(:);
+        [~,animal]=fileparts2(fileparts2(files));
+        
+      [c1 c2] = ismember([a],animal);
+      group_resorted=a(c2(:,1),:);
+        catch
+            group_resorted=[];
+        end
+    end
+end
+
+
+%% ============[filename]===================================
+
+
+[p nametag]=getparameter();% get mainParameter
+finame=[ nametag '_NPC' p.nmaxclust '_data' '.xlsx'];
+fpfile=fullfile(pwd,finame);
+% [fi pa]=uiputfile(fpfile,'save table as textfile');
+
+if isfield(e,'path')~=1
+    [fi pa]=uiputfile(fpfile,'save extrated data as excelfile');
+    if isnumeric(fi); return; end
+    [~,fi,~]=fileparts(fi);
+    fiout=fullfile(pa,[fi '.xlsx']);
+else
+   
+   if exist(e.path)~=7; mkdir(e.path); end
+   
+   if isfield(e,'filename')==1
+      [~,fi,~]=fileparts(e.filename);
+      fiout=fullfile(e.path,[fi '.xlsx']);
+   else
+      fiout=fullfile(e.path,finame) ; 
+   end
+end
+
+f2=fiout;
+
+% return
+
+
+
+
+%% ====== [filename to save ]=========================================
+
+% paout0=pwd;
+% if isfield(e,'file')==1
+%     [paout fi ext]=fileparts(e.file);
+%     if isempty(paout)
+%         paout=paout0;
+%     end
+%     f2=fullfile(paout,[ fi '.xlsx' ]);
+% else
+%     % GUI here!!!!
+%     [fis pas]=uiputfile(fullfile(pwd,'*.xlsx'),' filename to save the extracted data');
+%     if isnumeric(fis); disp('..aborted...'); return; end
+%     f2=fullfile(pas,fis);
+%     %f2=fullfile(pwd,'test.xlsx');
+% end
+
+
+%% ====== [extract data -1]=========================================
+
+xyz_str={};
+animal={};
+for i=1:size(t,1)
+    cords(i,:)=t{i,12};
+    [d u]=spm_extractData(cords(i,:));
+    if ~isempty(d)
+        animal=u.animal;
+    end
+    if i==1
+        d2=zeros(size(d,1), size(t,1) );
+    end
+    d2(:,i)=d;
+    xyz_str{1,i}=['[' regexprep(num2str(cords(i,:)),'\s+',',') ']'];
+end
+
+if ~isempty(group_resorted)
+    group=  group_resorted(:,2);
+else
+    group=   repmat({''},[length(animal) 1]);
+end
+
+b  =[ animal group num2cell(d2) ];
+hb1 =['animal' 'group'  region  ];
+hb2 =[{''}     {''}  xyz_str  ];
+
+
+%% ====== [save data ]=========================================
+sheetname='extractdata';
+pwrite2excel(f2,{1 sheetname},hb1,hb2,b);
+
+% colorize
+if ~isempty(group_resorted)
+    try
+        warning off;
+        unigroup=unique(group);
+        col=cbrewer('qual','Pastel1',max([length(unigroup) 3 ]));
+        for i=1:length(unigroup)
+            ix=find(strcmp(group,unigroup{i}))+2;
+            xlscolorizeCells(f2,sheetname,['[' num2str(ix(:)') '],[2]'],col(i,:) );
+        end
+    end
+end
+cprintf('*[.6 .6 .6]',[ 'DONE!' ' \n']);
+showinfo2(' data extracted',f2);
+
+
+fiout=f2;
+g.hb1=hb1;
+g.hb2=hb2;
+g.b=b;
+
+%% ===============================================
+function showTable_CMD(e,e2)
+
+hgraph=findobj(0,'tag','Graphics');
+htable=findobj(hgraph,'tag','SPMList');
+if isempty(htable)
+    showTable();
+end
+%% ===============================================
+global temp_out
+[p nametag]=getparameter();% get mainParameter
+% tb=maketable;
+[tb s info]=maketable;
+% s=cell2struct(s(:,2),s(:,1));
+if ~isempty(regexpi2(tb,'no suprathreshold clusters found'))
+    tb(cell2mat(cellfun(@(a){isempty(a)} ,tb )))=[];
+    cprintf('*[1 0 1]',[ ' [' p.con '] Result: no suprathreshold clusters found' ' \n']);
+    temp_out.con=p.con;
+    temp_out.tb =tb;
+    disp('<a href="matlab:global temp_out; disp(char(temp_out.tb));clear temp_out;">show information</a>')
+  
+   
+else
+  cprintf('*[0 .5 0]',[ ' [' p.con '] Result: ' ' \n']);
+  disp(char(tb));
+end
+
+ %% ===============================================
+ 
 
 function showTable(e,e2)
 % TabDat = spm_list('List',xSPM,hReg);
@@ -2138,6 +2669,15 @@ cprintf([0 .5 0],[get(e,'string') ' \n']);
 hMIPax = findobj('tag','hMIPax');
 
 spm_mip_ui('SetCoords',get(gcbo,'UserData'),hMIPax);
+% %% ========show table in CMD-win =======================================
+% if 0
+%     TabDat=evalin('base','TabDat');
+%     global lab
+%     
+%     tb=maketable;
+%     disp(char(tb));
+%     
+% end
 
 
 %% ===============================================
@@ -2467,7 +3007,7 @@ info=add;
 %---------
 
 if isempty(r.dat)
-    disp(['no suprathreshold clusters found - nothing saved']);
+   % disp(['no suprathreshold clusters found - nothing saved']);
     %tb=[];
     tbnumeric=[fieldnames(p) struct2cell(p) ];
     tbnumeric(end+1,:)={'Result' 'no suprathreshold clusters found'} ;
@@ -2512,8 +3052,15 @@ tb=[lin; r2(1:2);lin; r2(3:end);lin; add];
 %[2] numeric table for excel-export ------------
 tbnumeric=[he;dat];
 
+function show_vol_extrafigure(e,e2)
+global lab
+f1=lab.template ;%'o:\antx\mritools\ant\templateBerlin_hres\sAVGT.nii'
+[fi pa]=uigetfile('*.nii','select NIFTI to overlay');
+if isnumeric(fi); return ; end
+f2=fullfile(pa,fi);
 
-
+% orthoslice({lab.template,'thresh_svimg__control_LT_mani__FWE0.05k1.nii'},'mode','ovl','alpha',.5,'blobthresh',0);
+orthoslice({lab.template,f2},'mode','ovl','alpha',.5,'blobthresh',0);
 
 function show_mricron(e,e2)
 global lab
@@ -3891,11 +4438,12 @@ nifiles=SPM.xY.P;
 [pani fini exni]=fileparts2(nifiles);
 [~,  subdir ]  =fileparts2(pani);
 NIIfiles=cellfun(@(a,b){[ a b ]}, fini,exni);
-p.img=NIIfiles{1};
-p.con=xSPM.title;
-p.mcp=get(findobj(hg,'tag','mcp'),'string');
-p.TR = num2str(get(findobj(hg,'tag','thresh'),'string')) ;
-p.k  = num2str(get(findobj(hg,'tag','clustersize'),'string'));
+p.img       =NIIfiles{1};
+p.con       =xSPM.title;
+p.mcp       =get(findobj(hg,'tag','mcp'),'string');
+p.TR        = num2str(get(findobj(hg,'tag','thresh'),'string')) ;
+p.k         = num2str(get(findobj(hg,'tag','clustersize'),'string'));
+p.nmaxclust = num2str(get(findobj(hg,'tag','nmaxclust'),'string'));
 
 % ===========[nametag: file-name suggestion ]====================================
 %
@@ -4091,8 +4639,8 @@ end
 
 
 newFile = exportToPPTX('saveandclose',pptfile);
-fprintf('New file has been saved: <a href="matlab:open(''%s'')">%s</a>\n',newFile,newFile);
-
+% fprintf('New file has been saved: <a href="matlab:open(''%s'')">%s</a>\n',newFile,newFile);
+showinfo2('summary saved ',newFile);
 
 cd(currDir);
 %% =========out======================================

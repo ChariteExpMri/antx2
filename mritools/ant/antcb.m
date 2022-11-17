@@ -2085,7 +2085,7 @@ elseif isnumeric(input{1})
     iselect=isect;
     set(lb3,'value',iselect);
     % elseif ~isempty(strfind(char(input{1}),'.nii') )
-elseif strcmp(input{1},'file') || strcmp(input{1},'status')
+elseif all(strcmp(input{1},'file')) || all(strcmp(input{1},'status'))
     %% =================find file(s) in folder ===========
     if strcmp(input{1},'status')
         hb=findobj(findobj(0,'tag','ant'),'tag','lb3');
@@ -2159,6 +2159,10 @@ elseif strcmp(input{1},'file') || strcmp(input{1},'status')
     %% ===============================================
     
 else
+    % short-SEARCH FOR ANIMAL-FOLDERS ... such as:
+    %antcb('selectdirs',{'animalName2','animalName2'})
+    %antcb('selectdirs',[1 2])
+    %--------------------------------------------------
     if ischar(input{1})==1
         input{1}=cellstr(input{1});
     end
