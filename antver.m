@@ -795,6 +795,12 @@
 % - see xstat-MENU: misc/create MIP,change Atlas
 % - or programmatically, type :  xstat('repairMIP?')  to obtain help
 % 
+% #ba 15 Jun 2022 (00:42:12) 
+% New tutorial #bw ["tutorial_voxwiseStatistic_independentTest.docx"]
+% This tutorial shows how to perform Voxelwise statistic for two independent groups
+% #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
+% #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/
+% 
 % 
 % 
 
