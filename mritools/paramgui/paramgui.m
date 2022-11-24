@@ -3227,7 +3227,7 @@ if strcmp(us.dat{idx,4},'col')
     set(r,'CaretUpdateCallback',@showIcon);
 elseif strcmp(us.dat{idx,4},'f')
     dum=us.dat{idx,2};
-    if exist(dum)==7
+    if exist(dum)==7 && ~isempty(fileparts(dum))
         prepwd=(dum) ;
     elseif exist(dum)==2
         prepwd=fileparts(dum) ;

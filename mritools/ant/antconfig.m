@@ -129,6 +129,25 @@ end
 
 
 [pant r]=   antpath;
+%% __datapath__
+datapath=fullfile(pwd,'dat');
+spaceInPath=strfind(datapath,' ');
+if ~isempty(spaceInPath)
+    %clc;
+    cprintf('*[1 0 1]','___ ERROR ___\n');
+    msg=[ 'Space-characters in study-path not allowd: '  ];
+    cprintf('*[1 0 1]',msg); fprintf([ strrep(datapath,[filesep],[filesep filesep]) '\n' ]);
+    msg2=[' space(s) found (n=' num2str(length(spaceInPath)) '): ' ];
+    msg2=[repmat(' ',[1 length(msg)-length(msg2)])  msg2];
+    msgspacepos=repmat(' ',[1 length(datapath)]);
+    msgspacepos(spaceInPath)='^';
+    
+   cprintf(' [0 0 0]',[msg2 ]);  cprintf('*[1 0 0]',[ msgspacepos '\n' ]);
+   cprintf('*[.75 .75 0]',['Please remove spaces from studypath and try again! [process aborted]' '\n'   ]);
+   return
+
+end
+%% ===============================================
 
 
 p={...
