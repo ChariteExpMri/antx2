@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   15 Jun 2022 (00:42:12)  
+ &#x1F34E; last modification:   30 Nov 2022 (00:00:04)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,11 +7,16 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**30 Nov 2022 (00:00:04)**</ins>  
+   __[xexcel2atlas.m]__ modified  
+  - a HTML-file is additionally created to verify the regions of the new atlas  
+<!---->
   &#x1F535;   <ins>**15 Jun 2022 (00:42:12)** </ins>  
   New tutorial &#x1F4D7;  __["tutorial_voxwiseStatistic_independentTest.docx"]__  
   This tutorial shows how to perform Voxelwise statistic for two independent groups  
   &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
   &#8618; access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/  
+    
 <!---->
   &#x1F535;   <ins>**11 Nov 2022 (17:10:28)**</ins>  
    __[xstat.m]__ changed  

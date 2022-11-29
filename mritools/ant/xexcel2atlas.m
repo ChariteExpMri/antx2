@@ -63,10 +63,9 @@
 % #k 'outputName'          The filename (string) of the output file #b (must be defined, default: 'dummyMask').
 % #k 'outputDir'           The output directory, #b must be selected, if empty the location of the "excelfile" is used.
 % 
-% #k 'saveMasksSeparately'   save output masks as separate NIFTIs; default: a single NIFTI-file 
-%                               (0) single NIFTI 
-%                               (1) multiple NIFTIs' {'b'}
-%                            -if (1) the output-masks will be stored in 'outputDir' with name "'mask_'+newID+.nii"
+% #k  makeHTML            % % create HTML-file to check regions, {0,1}; default: [1],                                                                                                                              
+% 
+% 
 % ___DEBUGGING OPTION___
 % #k 'saveSingleMasks'       For debugging purpose #b {0|1}: 
 %                          (1): additionally saves the input regions as separate masks, in a new subfolder 
@@ -76,9 +75,12 @@
 %                         (2) mask contains the new ID    (inmask=newID, outmask=0)
 %                         (3) both,  (1) binary mask and (2) newID masks will be separately generated
 %                     #r "saveSingleMasks" must be set to "1"' to apply "singleMasksType"
-% #k 'LRstringPosition'   Position of the output label substring denoting the LEFT/RIGHT hemishere #b {prefix|suffix}:
-%                     'prefix'  : example:  "L_caudoputamen"/  "R_caudoputamen"
-%                     'suffix'  : example:  "caudoputamen_L"/  "caudoputamen_R"
+% #k 'saveMasksSeparately'   save output masks as separate NIFTIs; default: a single NIFTI-file 
+%                               (0) single NIFTI 
+%                               (1) multiple NIFTIs' {'b'}
+%                            -if (1) the output-masks will be stored in 'outputDir' with name "'mask_'+newID+.nii"
+% 
+% 
 % ___________________________________________________________________________________________________
 %% #ko RUN: 
 % xexcel2atlas(1) or  xexcel2atlas    ... open PARAMETER_GUI 
@@ -86,18 +88,21 @@
 % xexcel2atlas(1,z)             ...WITH-GUI z is the predefined struct 
 % 
 %% #ko BATCH EXAMPLE
-% z=[];                                                                                                                                                                                                                            
-% z.atlas               = { 'f:\data1\AtlasGenerator\templates\ANO.nii' };     % % select ATLAS (must be a NIFTI-file, such as "ANO.nii" in template folder)                                                                       
-% z.excelfile           = { 'f:\data1\AtlasGenerator\WU_newAtlas.xlsx' };      % % select modified ANO.xlsx file (corresponding, but modified EXCELFILE of the "atlas")                                                            
-% z.columnNewID         = [2];                                                 % % which column in "excelfile" contains the new IDs (column index)                                                                                 
-% z.columnHemispherType = [3];                                                 % % which column in "excelfile" contains the hemisphere Type (column index)                                                                         
-% z.hemisphereIDstyle   = 'successive';                                        % % for hemispeheric separation, define right hemispheric ID-offset {successive|gap100|gap1000|gap2000} or a numeric value                          
-% z.outputName          = 'dummyMask';                                         % % filename (string) of the output file"                                                                                                           
-% z.outputDir           = 'F:\data1\AtlasGenerator';                           % % select outputdirectory, if empty output is stored where "excelfile" is located                                                                  
-% z.saveSingleMasks     = [1];                                                 % % for debugging {0|1}: (1) saves also the input regions as separate masks (in new created subfolder)                                              
-% z.singleMasksType     = [3];                                                 % % specify single mask value {1|2|3}: (1) binary,(2) new ID ,(3) both as separate outputs ("saveSingleMasks" must be "1")                          
-% z.LRstringPosition    = 'prefix';                                            % % position of the output label string denoting the LEFT/RIGHT hemishere {prefix|suffix}                                                           
-% xexcel2atlas(1,z);    
+% z=[];                                                                                                                                                                                                                                                                 
+% z.atlas               = 'F:\data6\atlas_schmitz\templates\ANO.nii';                                 % % select ATLAS (must be a NIFTI-file, such as "ANO.nii" in template folder)                                                                                     
+% z.excelfile           = 'F:\data6\atlas_schmitz\schmitz_atlas_revisionAndHTML\INPUT_test.xlsx';     % % select modified ANO.xlsx file (corresponding, but modified EXCELFILE of the "atlas")                                                                          
+% z.columnNewID         = [6];                                                                        % % excelfile column containing the new IDs (column index)                                                                                                        
+% z.columnHemispherType = [7];                                                                        % % excelfile column containing the hemisphere Type (column index)                                                                                                
+% z.columnNewRegionName = 'none';                                                                     % % (optional)excelfile column containing new Region names (use "none" or column index)                                                                           
+% z.hemisphereIDstyle   = 'successive';                                                               % % for hemispeheric separation, define right hemispheric ID-offset {successive|gap100|gap1000|gap2000} or a numeric value                                        
+% z.outputName          = 'testAtlas';                                                                % % filename (string) of the output file"                                                                                                                         
+% z.outputDir           = 'F:\data6\atlas_schmitz\schmitz_atlas_revisionAndHTML\testAtlas';           % % select outputdirectory, if empty output is stored where "excelfile" is located                                                                                
+% z.makeHTML            = [1];                                                                        % % create HTML-file to check regions                                                                                                                             
+% z.saveMasksSeparately = [0];                                                                        % % {0|1} save output masks as separate NIFTIs, (0) single NIFTI (1) multiple NIFTIs                                                                              
+% z.saveSingleMasks     = [0];                                                                        % % for DEBUGGING {0|1}: (1) saves also the input-regions as separate masks (in new created subfolder)                                                            
+% z.singleMasksType     = [3];                                                                        % % for INPUT-regions, specify single mask value {1|2|3}: (1) binary,(2) new ID ,(3) both as separate outputs ("saveSingleMasks" must be "1")                     
+% xexcel2atlas(1,z);                                                                                                                                                                                                                                                    
+%                        
 %% #ko BATCH EXAMPLE with predefined new Region Names (see help of columnNewRegionName)
 % z=[];                                                                                                                                                                                                                                      
 % z.atlas               = 'F:\data3\groeschel_audio_atlasfusion\templates\ANO.nii';                                % % select ATLAS (must be a NIFTI-file, such as "ANO.nii" in template folder)                                             
@@ -112,6 +117,11 @@
 % z.singleMasksType     = [3];                                                                                     % % specify single mask value {1|2|3}: (1) binary,(2) new ID ,(3) both as separate outputs ("saveSingleMasks" must be "1")
 % z.LRstringPosition    = 'prefix';                                                                                % % position of the output label string denoting the LEFT/RIGHT hemishere {prefix|suffix}                                 
 % xexcel2atlas(1,z);
+
+
+% #k 'LRstringPosition'   Position of the output label substring denoting the LEFT/RIGHT hemishere #b {prefix|suffix}:
+%                     'prefix'  : example:  "L_caudoputamen"/  "R_caudoputamen"
+%                     'suffix'  : example:  "caudoputamen_L"/  "caudoputamen_R"
 
 function xexcel2atlas(showgui, x)
 
@@ -144,8 +154,7 @@ if exist('x')      ~=1;    x=[];      end
 if isempty(x);             showgui=1; end
 
 p={...
-    'inf1'      'Make Atlas From Excelfile        '         '' ''
-    'inf2'      ['[' mfilename '.m]']                         '' ''
+    'inf2'      ['Make Atlas From Excelfile [' mfilename '.m]']                         '' ''
     'inf3'     '==================================='        '' ''
     'atlas'       ''      'select ATLAS (must be a NIFTI-file, such as "ANO.nii" in template folder)'   {  @selectatlas}
     'excelfile'   ''      'select modified ANO.xlsx file (corresponding, but modified EXCELFILE of the "atlas")'   {  @selectexcelfile}
@@ -158,12 +167,16 @@ p={...
     %     'hemisphere'   '(3) both united'    'HEMISPHERE: define mask & relation to hemisphere' {'(1) left','(2) right','(3) both united' '(4) both separated '}
     'outputName'  'dummyMask'      'filename (string) of the output file"'   ''
     'outputDir'   ''               'select outputdirectory, if empty output is stored where "excelfile" is located'   {'d'}
+    'makeHTML'          1           'create HTML-file to check regions'  {'b'}
+    'inf7' '  ' '' ''
+    'inf71' '_DEBUGGING____' '' ''
     'saveMasksSeparately'  0        '{0|1} save output masks as separate NIFTIs, (0) single NIFTI (1) multiple NIFTIs' {'b'}
-    'inf7' '_DEBUGGING____' '' ''
+
     'saveSingleMasks'   0          'for DEBUGGING {0|1}: (1) saves also the input-regions as separate masks (in new created subfolder)' {'b'}        
     'singleMasksType'   3          'for INPUT-regions, specify single mask value {1|2|3}: (1) binary,(2) new ID ,(3) both as separate outputs ("saveSingleMasks" must be "1")' {1,2,3}        
-    'LRstringPosition'   'prefix'  'position of the output label string denoting the LEFT/RIGHT hemishere {prefix|suffix}' {'prefix','suffix'}
-    ...
+    %'LRstringPosition'   'prefix'  'position of the output label string denoting the LEFT/RIGHT hemishere {prefix|suffix}' {'prefix','suffix'}
+    
+      ...
     };
 p=paramadd(p,x);%add/replace parameter
 %% show GUI
@@ -176,15 +189,22 @@ else
     z=param2struct(p);
 end
 
-
 %===========================================
-%%   process
+%%   batch
 %===========================================
 cprintf([1 0 1],['wait... '    '\n' ]);
 xmakebatch(z,p, mfilename)
 
+% ==============================================
+%%   hidden variables
+% ===============================================
+
+ z.LRstringPosition='prefix';%  'position of the output label string denoting the LEFT/RIGHT hemishere {prefix|suffix}' {'prefix','suffix'}
+%===========================================
+%%   process
+%===========================================
 process(z);
-cprintf([1 0 1],['done... '    '\n' ]);
+cprintf('*[1 0 1]',['Done!'    '\n' ]);
 
 
 
@@ -358,10 +378,10 @@ if 1
     
 end
 
+
 % ==============================================
 %%   
 % ===============================================
-
 
 %========================= check typos
 fx=e(:,v.inewID );
@@ -381,14 +401,50 @@ fx=cellfun(@(a){ [str2num(a)]}, fx);
 e(:,v.ihemisphereType )=fx;
 
 %========================
-
-%% get NEW IDS
+% ==============================================
+%%   get NEW IDS
+% =============================================== 
 newIDCOL=e(:,v.inewID);
 newIDCOL=cellfun(@(a){ [num2str(a)]},newIDCOL); %convert to string (no 'NAN')
 newIDCOL=cellfun(@(a){ [str2num(a)]},newIDCOL); %convert to numeric
 newIDCOL=cell2mat(newIDCOL);
 
 uni=unique(newIDCOL); uni(isnan(uni))=[]; %NEW IDS
+
+% ==============================================
+%%   check that NEW-IDS are in succcessive order when "hemisphereIDstyle" is successive
+% ===============================================
+v.is_recodeNewID=0;
+v.recodeNewID   =[];
+if strcmp(z.hemisphereIDstyle,'successive')  %check if new IDS are not successive
+    missingIDS=setdiff(1:max(uni),uni);
+    if ~isempty(missingIDS)
+        
+        cprintf('*[1 0 1]',[ 'new IDs are not in successive order..the following IDs are missing:' '\n' ]);
+        cprintf('[1 0 1]',[ 'missing ID(s): ' regexprep(num2str(missingIDS(:)'),'\s+',',') '\n' ]);
+        cprintf('*[1 0 1]',[ '!!! New IDs will be re-assigned to appear in successive order!' '\n' ]);
+        
+        uniRecode      =[1:length(uni)]';
+        newIDCOLRecode=nan([size(newIDCOL,1) 1]);
+        for i=1:length(uni)
+            newIDCOLRecode(find(newIDCOL==uni(i)))=uniRecode(i);
+        end
+        
+        %---update all vars
+        v.is_recodeNewID =1;
+        v.recodeNewID    =[uni      uniRecode];
+        v.recodeNewID_hdr={'your-regionID' 'new-recoded-regionID'};
+        
+        uni           = uniRecode;
+        newIDCOL      = newIDCOLRecode;
+        e(:,v.inewID) = num2cell(newIDCOLRecode);
+        
+    end %missingIDS
+end
+
+
+
+
 
 % ==============================================
 %%   make table, 
@@ -939,6 +995,19 @@ end
 fileout=fullfile( z.outputDir, [ z.nameout '_INFO.txt']);
 pwrite2file(fileout ,txt );
 
+
+% ==============================================
+%%   prepare MSG if new IDS were recoded
+% ===============================================
+
+if v.is_recodeNewID==1 % insert comment that newIDS were recoded
+    MSG_recodeID={};
+    MSG_recodeID{end+1,1}=[ 'IMPORTANT: newIDS were recoded, because of non-successive order! ' ];
+    tmp=plog([],[v.recodeNewID_hdr; num2cell(v.recodeNewID)],0,'e','al=1;plotlines=0' );
+    MSG_recodeID=[MSG_recodeID; tmp];
+    %MSG_recodeID
+    %xlsinsertComment(fileout2,MSG_recodeID, 1,  2,7,  [0.8706 0.4902 0]);
+end
 % ==============================================
 %%   determine exceltype
 % ===============================================
@@ -992,6 +1061,11 @@ hTB5 =[hxx(  [1:2 imyRegionName   ])         'volume' ];
 
 if isexcel==1
     pwrite2excel(fileout,{2 'NEW_IDS' },hTB5,[],TB5);
+    
+    if v.is_recodeNewID==1 % insert comment that newIDS were recoded
+        xlsinsertComment(fileout,MSG_recodeID, 2,  2,7,  [0.9922    0.9176    0.7961]);
+    end
+    
 else
     sub_write2excel_nopc(fileout,'NEW_IDS',hTB5,TB5);
 end
@@ -1069,6 +1143,13 @@ try;
 end
 if isexcel==1
     pwrite2excel(fileout2,{1 'atlas' },hg,[],g);
+    
+    
+    
+    if v.is_recodeNewID==1 % insert comment that newIDS were recoded
+        xlsinsertComment(fileout2,MSG_recodeID, 1,  2,7,  [0.8706 0.4902 0]);
+    end
+    
 else
     sub_write2excel_nopc(fileout2,'atlas',hg,g);
     cprintf([1 0 1],['WARNING\n']);
@@ -1226,7 +1307,17 @@ if ~isempty([(inovolorig(:)) ;(inovolnew(:))])
       msg_regname         ={'using "MyRegionName"-column: no'} ;
     end
     
-    msg=[[lg3; msg_regname;  lg0; lgm; lgm2]];
+    % recoded newID because of nonsuccessiveIDS found:
+    MSG_recodeID={};
+    if v.is_recodeNewID==1
+        MSG_recodeID{end+1,1}=[ ' #m IMPORTANT: newIDS were recoded, because of non-successive order! ' ];
+        tmp=plog([],[v.recodeNewID_hdr; num2cell(v.recodeNewID)],0,'e','al=1;plotlines=0' );
+        MSG_recodeID=[MSG_recodeID; tmp];
+        %MSG_recodeID
+    end
+    
+    
+    msg=[[lg3; msg_regname;  lg0; lgm; lgm2; MSG_recodeID]];
     
     %     h=warndlg(msg);
     uhelp(plog([],[msg],'style=1'),1);
@@ -1350,6 +1441,222 @@ else
     sub_write2excel_nopc(fileout,'Back_reconstr2',her,er);
 end
 
+
+% ==============================================
+%%   make HTML-file  
+% ===============================================
+if z.makeHTML==1
+    
+    cprintf('*[.6 .6 .6]',[ 'create HTML-file to check regions...wait' '\n' ]);
+    f1=fullfile(paAno,'AVGT.nii');
+    if exist(f1)==2;
+        [hav av]=rgetnii(f1);
+    else
+        av=m;
+    end
+    %% ===============================================
+    
+    fileout_html=fullfile( z.outputDir, [  'info.html']);
+    
+    html_subdir='htmlsub';
+    html_FPsubdir =fullfile( z.outputDir, [ html_subdir ]);
+    if exist(html_FPsubdir)~=7
+        mkdir(html_FPsubdir)
+    end
+    try; delete(fileout_html); end
+    %q=cell2table([hxx; xx])
+    % hxx,xx
+    space='&nbsp;';
+    sp1=repmat(space,[1 1]);
+    sp3=repmat(space,[1 3]);
+    tab4='&emsp;';
+    
+    htmlpre =['<html>'];
+    htmlpost=['</html>'];
+    
+    % 
+    o={};
+    o(end+1,:)={['<font color=blue><h1 margin-bottom: 0;>' z.nameout '</h1> </font> ']};
+     o(end+1,:)={['<pre style="font-family:consolas;color:191970;font-size:13px;line-height:0.5;">']};
+    o(end+1,:)={['<font color=gray>  input-file: <font color=blue>' z.excelfile  '</font><br> ']};
+    o(end+1,:)={['<font color=gray>  output-dir: <font color=blue>' z.outputDir  '</font><br> ']};
+    o(end+1,:)={['<font color=gray>  date:       <font color=blue>' datestr(now)        '</font><br> ']};
+    o(end+1,:)={['</pre> ']};
+   
+    atID=cell2mat(at(:,4)); % IDatlas
+    IDbefore=-10000;
+    for i=1:size(xx,1)% length(unique(cell2mat(xx(:,1))))
+        if xx{i,1}~=IDbefore
+            ir=find(cell2mat(xx(:,1))==xx{i,1}); %rows of table with same newID
+            o(end+1,:)={['<br>']};
+            o(end+1,:)={['<h2>']};
+            o(end+1,:)={['<font size=-2>NEW-ID</font> <b><mark style="background-color: lime;">[' num2str(xx{i,1}) ']</mark></b>']};
+            o(end+1,:)={[', <font color=blue><font size=-1>new name: </font><b><u>' '<mark>' xx{i,2} '</mark>' '</b></u></font>' ]};
+            yourlabel=xx{i,10};
+            if isempty(yourlabel);yourlabel=' -not specified-' ;end
+            o(end+1,:)={[', <font color=green><font size=-1>your name: </font>' yourlabel '</font>' ]};
+            o(end+1,:)={['</h2>']};
+            %         o(end+1,:)={['<pre>']};
+            for j=1:length(ir)
+                oldlabel   =[xx{ir(j),3} ];
+                oldlabelID   =[ '[ID:  <b>'  sp1 num2str(xx{ir(j),9})  '</b>' ']'];
+                oldlabel_vol =[ '[vol: <b>'  sp1 num2str(xx{ir(j),11}) '</b> mm&#xb2;' ']'];
+                
+                o(end+1,:)={['<br>']};
+                o(end+1,:)={[sp3 '<font color=gray>  origin:  </font>'   ]};
+                o(end+1,:)={['   <font color=magenta>  <b>'  oldlabel   '</b>' sp1 oldlabelID ' </font>'   ]};
+                if xx{ir(j),11}>0
+                    o(end+1,:)={[ tab4 tab4 '<font color=gray>    '  oldlabel_vol ' </font>'   ]};
+                else
+                    o(end+1,:)={[ tab4 tab4 '<font color=gray><mark style="background-color: fuchsia;">    '  oldlabel_vol ' </font></mark> '   ]};
+                end
+                %'<pre style="white-space:pre;font-family:consolas;color:191970;' 
+         % ===============================================
+         
+                %-----slices  [a,m,s2]
+                idold=xx{ir(j),9};
+                idnew=xx{ir(j),1};
+                q=tb6(find(cell2mat(tb6(:,8))==idold),:);
+                if xx{ir(j),8}==4
+                    if ~isempty(regexpi2( xx(ir(j),2),'^L '))
+                        % d=(a==idold).*(m==1);
+                        ids=unique([ idold q{regexpi2( q(:,1),'^L '),13}(:)']);
+                        d=ismember(a,ids).*(m==1);
+                    elseif ~isempty(regexpi2( xx(ir(j),2),'^R '))
+                        %d=(a==idold).*(m==2);
+                        ids=unique([ idold q{regexpi2( q(:,1),'^R '),13}(:)']);
+                        d=ismember(a,ids).*(m==2);
+                    end
+                elseif xx{ir(j),8}==3
+                    %d=(a==idold);
+                    try
+                        ids=unique([ idold q{regexpi2( q(:,1),'^L '),13}(:)']);
+                    catch
+                        try
+                            ids=unique([ idold q{regexpi2( q(:,1),'^R '),13}(:)']);
+                        catch
+                            ids=unique([ idold q{1,13}(:)']);
+                        end
+                    end
+                    
+                    d=ismember(a,ids);
+                    
+                    
+                elseif xx{ir(j),8}==1
+                    %d=(a==idold).*(m==1);
+                    ids=unique([ idold q{regexpi2( q(:,1),'^L '),13}(:)']);
+                    d=ismember(a,ids).*(m==1);
+                elseif xx{ir(j),8}==2
+                    % d=(a==idold).*(m==2);
+                    d=(a==idold).*(m==2);
+                    ids=unique([ idold q{regexpi2( q(:,1),'^R '),13}(:)']);
+                    d=ismember(a,ids).*(m==2);
+                end
+                
+                o(end+1,:)={[ tab4 tab4 '<font color=gray>    '  '[#IDs/children: '  num2str(length(ids)) ']' ' </font>'   ]};
+                
+                %disp([i length(ids)]);
+                
+                dn = double(s2==idnew); %new cluster
+                islice=find(sum(sum(dn,1),3)~=0);
+                
+                nslice=min([length(islice), 8]);
+                slicenum=round(linspace(islice(1),islice(end),nslice  ));
+                
+                bg00 =flipdim(permute(av(:,slicenum,:),[ 3 1 2]),1);
+                fg0  =flipdim(permute(dn(:,slicenum,:),[ 3 1 2]),1);
+                mx0  =flipdim(permute(d(:,slicenum,:),[ 3 1 2]),1);
+                
+                
+                [bg0 sbsiz]=montageout(permute(bg00,[1 2 4 3]),'Size',[1 nslice]);
+                fg1        =montageout(permute(fg0 ,[1 2 4 3]),'Size',[1 nslice]);
+                mx0        =montageout(permute(mx0 ,[1 2 4 3]),'Size',[1 nslice]);
+                
+                bg0   =round(255*mat2gray(bg0));
+                bg1   =repmat(bg0,[1 1 3]);
+                mx1 = boundarymask(mx0); %mask of old-ID
+                %[~,mx1 ]=bwboundaries(mx0);
+                
+                
+                colnewReg=round([0.4667    0.6745    0.1882]*255);
+                %cololdReg=round([0.9294    0.6941    0.1255]*255);
+                cololdReg=round([1 0 1 ]*255);
+                ic1=find(fg1==1);
+                ic2=find(mx1==1);
+                for jj=1:3
+                    q=bg1(:,:,jj);
+                    q(ic1)=colnewReg(jj);
+                    q(ic2)=cololdReg(jj);
+                    bg1(:,:,jj)=q;
+                end
+                %fg,image(uint8(bg1))
+                
+                
+                figname   =['img[' num2str(i) '-' num2str(j) ']_newID-' num2str(idnew) '_oldID-' num2str(idold) '.png'];
+                %figname='klaus.jpg'
+                fignameFP =fullfile(html_FPsubdir,[  figname  ]);
+                imwrite(uint8(bg1),fignameFP);
+                % ===[IMAGE]============================================
+                o(end+1,:)={['<br>']};
+                %o(end+1,:)={[sp3 sp3 sp3 sp3 '<img src="' html_subdir '/' figname '">']};
+                %                  o(end+1,:)={['<img src="/' html_FPsubdir '/' figname '">']}
+                % ===[IDS]============================================
+                if length(ids)==1
+                   o(end+1,:)={[sp3 sp3 sp3 sp3 '<img src="' html_subdir '/' figname '">']};
+                else
+                    tbsub={};
+                    for jj=1:length(ids)
+                        iid=find(atID==ids(jj));
+                        if ~isempty(iid)
+                            tbsub{end+1,1}= ['                 [' num2str(at{iid,4}) '] '  at{iid,1}];
+                        end
+                    end
+                    if size(tbsub,1)>1
+                        if mod(size(tbsub,1),2)==1
+                            tbsub{end+1,1}= ['                '];
+                        end
+                        tbsub=cellfun(@(a,b){[a repmat( ' ' ,[1 (size(char(tbsub),2)-length(a))] ) b]} ,tbsub(1:size(tbsub)./2),tbsub(size(tbsub)./2+1:end) );
+                    end
+                    
+                    o(end+1,:)={['<pre style="white-space:pre;font-family:consolas;color:191970;' ...
+                        'font-size:12px;line-height:0.9;">']};
+                    o(end+1,:)={[sp3 sp3 '<img src="' html_subdir '/' figname '">']};
+                    o(end+1,:)={['<font color=gray>']};
+                    if size(tbsub,1)>1
+                        o=[o; tbsub];
+                    end
+                    o(end+1,:)={['</font>']};
+                    o(end+1,:)={['</pre> ']};
+                end
+                %-------
+                
+                
+                
+            end
+            %         o(end+1,:)={['</pre>']};
+            IDbefore=xx{i,1};
+        end
+        
+    end
+    
+    if v.is_recodeNewID==1
+        msg=plog([],[v.recodeNewID_hdr; num2cell(v.recodeNewID)],0,'e','al=1;plotlines=0' );
+        o(end+1,:)={['<pre>']};
+        o(end+1,:)={['<br>']};
+        o=[o; [ '<h2><mark>' 'IMPORTANT: NEW IDS WHERE RECODED: '  '</mark></h2>'] ;msg];
+        missID=setdiff([1: max(v.recodeNewID(:,1))],v.recodeNewID(:,1));
+        o(end+1,:)={['<br><mark>REASON: missing ID(s):</mark> '  regexprep(num2str(missID(:)'),'\s*',',')   ]};
+        o(end+1,:)={['</pre>']};
+    end
+    
+    o=[o;'<br><br><br><br>'];
+    
+%     o(end+1,:)={['<img src="' html_subdir '\' figname '">']}
+    htmlcode=[htmlpre;o; htmlpost ];
+    pwrite2file(fileout_html,htmlcode);
+    showinfo2('HTML-file',fileout_html);
+    
+end
 % ==============================================
 %%   end here
 % ===============================================

@@ -801,6 +801,9 @@
 % #gw --> access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs
 % #gw --> access via ANT-menu: &#8658; EXTRAS/visit ANTx Tutorials (Github-Pages) https://chariteexpmri.github.io/antxdoc/
 % 
+% #ba 30 Nov 2022 (00:00:04)
+% #k [xexcel2atlas.m] #n modified
+% - a HTML-file is additionally created to verify the regions of the new atlas
 % 
 % 
 

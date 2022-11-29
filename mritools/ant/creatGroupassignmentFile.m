@@ -72,7 +72,8 @@ if exist('x')~=1;        x=[]; end
 p={...    
     'groupfile'      'groupassignment.xlsx'   'name of the groupassignment-file (excelfile)' ''
     'outdir'          outir                   'output-directory: default "group"-dir in current study-dir' 'd' 
-    'addTimeStamp'    0                        'add timestamp as suffix to the groupfile-name'                             'b'
+    'stat'           'unpaired'               'statistical group-scenario (unpaired|paired)'  {'unpaired' 'paired'}
+    'addTimeStamp'    0                       'add timestamp as suffix to the groupfile-name'                             'b'
     };
 
 
@@ -142,14 +143,18 @@ try;  delete(f1); end
 pwrite2excel(f1,{1 'group'},hb,{},b);
 
 
-
- xlsinsertComment(f1,...
-     {...
+cm={...
      'group-column: please specify which animal belongs to which group'
-     'as string (prefered) or numeric value'
-     'avoid any spaces!!!'
-     'example: "control" for "control"-animals; "ABC" for animals from "ABC-group" '},...
-     1, 2, 2);
+     'use strings as group-names'
+     'use underscores (avoid spaces) & avoid special characters'
+     'example: "control" for "control"-animals; "ABC" for animals from "ABC-group" '}
+ xlsinsertComment(f1,cm, 1, 2, 2);
+ 
+ if strcmp(z.stat,'unpaired')
+     cm2={...
+         'statistical scenario: unpaired, i.e. independent groups'};
+     xlsinsertComment(f1,cm2, 1, 8, 2);
+ end
  
  
 %  showinfo2('new group-file ',f1);
