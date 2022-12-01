@@ -805,6 +805,13 @@
 % #k [xexcel2atlas.m] #n modified
 % - a HTML-file is additionally created to verify the regions of the new atlas
 % 
+% #ba 01 Dec 2022 (13:53:56)
+% #k [CTgetbrain_approach2.m] #n modified
+% CT-segmentaton failed in some cases, ...hopefully solved now
+% function is part of [xregisterCT.m] to rgister a CT-image to t2.nii
+% 
+% 
+% 
 % 
 
 

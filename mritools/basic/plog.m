@@ -254,7 +254,7 @@ for i=1:N %CODE DECIMALS AND DISTANCES
                 if str2num(w)==e{i,j}
                     e{i,j}=w;
                 else
-                    e{i,j}=  [   sprintf(['%#',num2str(ff),'.',num2str(dec),'g '],e{i,j}) ];
+                    e{i,j}=  [   sprintf(['%#',num2str(ff),'.',num2str(dec),'f '],e{i,j}) ];
                 end
                 
                 if dec==0

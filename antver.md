@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   30 Nov 2022 (00:00:04)  
+ &#x1F34E; last modification:   01 Dec 2022 (13:53:56)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,9 +7,15 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**01 Dec 2022 (13:53:56)**</ins>  
+   __[CTgetbrain_approach2.m]__ modified  
+  CT-segmentaton failed in some cases, ...hopefully solved now  
+  function is part of __[xregisterCT.m]__ to rgister a CT-image to t2.nii  
+<!---->
   &#x1F535;   <ins>**30 Nov 2022 (00:00:04)**</ins>  
    __[xexcel2atlas.m]__ modified  
   - a HTML-file is additionally created to verify the regions of the new atlas  
+    
 <!---->
   &#x1F535;   <ins>**15 Jun 2022 (00:42:12)** </ins>  
   New tutorial &#x1F4D7;  __["tutorial_voxwiseStatistic_independentTest.docx"]__  

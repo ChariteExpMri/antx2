@@ -1515,19 +1515,21 @@ elseif strcmp(xtype,'pairedttest')
     p={
         'inf1'     '%  PAIRED-SAMPLE-TTEST'  '' ''
         'excelfile' ''   '[Excelfile]: this file contains two columns with mouseIDs (names) for timepoint T1 and T2, respectively' 'f'
-        'sheetnumber'    1  'this sheet contains columns with mouseIDs and group assignment' ''
-        'mouseID_colT1'  1  'column number with the MouseIDs for T1' ''
-        'mouseID_colT2'  1  'column number with the MouseIDs for T2' ''
-        'data_dir'       '' 'data directory (upper directory) contains dirs with mice data' 'd'
-        'inputimage'     '' 'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
+        'sheetnumber'    1           'this sheet contains columns with mouseIDs and group assignment' ''
+        'mouseID_col'    1           'column number with the MouseIDs' ''
+        'group_col'      2           'column number with group assignment  (used when comparing groups, "regress_col" must be empty)' ''
+         %'mouseID_colT1'  1  'column number with the MouseIDs for T1' ''
+         %'mouseID_colT2'  1  'column number with the MouseIDs for T2' ''
+        'data_dir'       v.data_dir  'data directory (upper directory) contains dirs with mice data' 'd'
+        'inputimage'     ''          'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
         'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
-        'AVGT' '' 'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
-        'ANO'  '' 'select the ATLAS-file (path of "ANO.nii")' 'f'
+        'AVGT'           v.AVGT   'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
+        'ANO'            v.ANO     'select the ATLAS-file (path of "ANO.nii")' 'f'
         'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
-        'mask'          'local' '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' {'d' 'f' 'local'};
+        'mask'           v.mask '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' 'f';
         'smoothing'       1       '<optional>smooth data' 'b'
         'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
-        'output_dir'   'test_11' 'path for output/statistic' 'd';
+        'output_dir'      v.output_dir 'path for output/statistic' 'd';
         'showSPMbatch'   1      '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
         
         };
@@ -1750,16 +1752,21 @@ if strcmp(xtype,'twosamplettest')
     d(:,2)=cellfun(@(a){[num2str(a)]},d(:,2));
     s.d=d;
 elseif strcmp(xtype,'pairedttest')
-    d=a(2:end,[ x.mouseID_colT1 x.mouseID_colT2 ]);
+    d=a(2:end,[ x.mouseID_col x.group_col ]);
     d(:,1)=cellfun(@(a){[num2str(a)]},d(:,1));
     d(:,2)=cellfun(@(a){[num2str(a)]},d(:,2));
-    
-    itvec=([1:size(d,1)]');
-    tvec=[cellfun(@(a){[ 'T1-' num2str(a) ]},num2cell(itvec))
-        cellfun(@(a){[ 'T2-' num2str(a) ]},num2cell(itvec))];
-    
-    d=[[d(:,1); d(:,2)]   tvec ];
     s.d=d;
+    
+%     d=a(2:end,[ x.mouseID_colT1 x.mouseID_colT2 ]);
+%     d(:,1)=cellfun(@(a){[num2str(a)]},d(:,1));
+%     d(:,2)=cellfun(@(a){[num2str(a)]},d(:,2));
+%     
+%     itvec=([1:size(d,1)]');
+%     tvec=[cellfun(@(a){[ 'T1-' num2str(a) ]},num2cell(itvec))
+%         cellfun(@(a){[ 'T2-' num2str(a) ]},num2cell(itvec))];
+%     
+%     d=[[d(:,1); d(:,2)]   tvec ];
+%     s.d=d;
     
 elseif strcmp(xtype,'regression')
     d=a(2:end,[ x.mouseID_col x.regress_col ]);
@@ -1863,27 +1870,33 @@ if  strcmp(xtype,'twosamplettest')
         s= setfield(s,['grp_' num2str(i)],nifiles );
     end
 elseif  strcmp(xtype,'pairedttest')
-    s.classes={'T1' 'T2'};
-    is=find(cellfun('isempty',regexpi(s.d(:,2),'^T1'))==0);
-    pairids=str2num(cell2mat(regexprep(s.d(is,2),'T1-','')));
     
-    ifind=@(a) find(~cellfun('isempty',a));
-    
-    s.grp_1={};
-    s.grp_2={};
-    nok=1;
-    for i=1:length(pairids)
-        t1=ifind(regexpi(s.d(:,2),['^T1-'  num2str(pairids(i)) '$']));
-        t2=ifind(regexpi(s.d(:,2),['^T2-'  num2str(pairids(i)) '$']));
-        
-        if  sum([isempty(t2) isempty(t1)]) ==0  % matching string found
-            if  sum([ s.d{t1,3} s.d{t2,3}])  ==2   % files exist
-                s.grp_1{nok,1} = s.d{t1,4};
-                s.grp_2{nok,1} = s.d{t2,4};
-                nok=nok+1;
-            end
-        end
+    s.classes=unique(s.d(:,2))';
+    for i=1:length(s.classes)
+        nifiles=s.d(  find(strcmp(s.d(:,2),s.classes{  i  })) ,4);
+        s= setfield(s,['grp_' num2str(i)],nifiles );
     end
+    
+    
+%     s.classes={'T1' 'T2'};
+%     is=find(cellfun('isempty',regexpi(s.d(:,2),'^T1'))==0);
+%     pairids=str2num(cell2mat(regexprep(s.d(is,2),'T1-','')));
+%     ifind=@(a) find(~cellfun('isempty',a));
+%     s.grp_1={};
+%     s.grp_2={};
+%     nok=1;
+%     for i=1:length(pairids)
+%         t1=ifind(regexpi(s.d(:,2),['^T1-'  num2str(pairids(i)) '$']));
+%         t2=ifind(regexpi(s.d(:,2),['^T2-'  num2str(pairids(i)) '$']));
+%         
+%         if  sum([isempty(t2) isempty(t1)]) ==0  % matching string found
+%             if  sum([ s.d{t1,3} s.d{t2,3}])  ==2   % files exist
+%                 s.grp_1{nok,1} = s.d{t1,4};
+%                 s.grp_2{nok,1} = s.d{t2,4};
+%                 nok=nok+1;
+%             end
+%         end
+%     end
     
     
 elseif  strcmp(xtype,'regression')
@@ -3407,10 +3420,12 @@ spm_jobman;
 %———————————————————————————————————————————————
 
 function pairedsampleTest(e,e2,varargin)
-warning off;
 global xvv
 xvv.xtype='pairedttest';
-readexcel(xvv.xtype);
+warning off;
+isOK=readexcel(xvv.xtype);
+if isOK==0; return; end
+
 fmakebatch(mfilename );
 
 % disp('fun: pairedsampleTest');
@@ -3427,12 +3442,13 @@ try ;     cd(s.workpath); end
 
 
 outdir   =  s.output_dir   ;
-rmdir(outdir,'s');
+% rmdir(outdir,'s');
 mkdir(outdir);
 
 mask     =  s.mask         ;
 g1       =  s.grp_1        ;
 g2       =  s.grp_2        ;
+groupLabels=s.classes      ;%group-names
 
 mb={};
 for i=1:size(g1,1)
@@ -3484,7 +3500,7 @@ mb{2}.spm.stats.fmri_est.spmmat(1).sname = 'Factorial design specification: SPM.
 mb{2}.spm.stats.fmri_est.spmmat(1).src_exbranch = substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1});
 mb{2}.spm.stats.fmri_est.spmmat(1).src_output = substruct('.','spmmat');
 mb{2}.spm.stats.fmri_est.method.Classical = 1;
-
+% ===============================================
 mb{3}.spm.stats.con.spmmat(1) = cfg_dep;
 mb{3}.spm.stats.con.spmmat(1).tname = 'Select SPM.mat';
 mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(1).name = 'filter';
@@ -3494,14 +3510,16 @@ mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(2).value = 'e';
 mb{3}.spm.stats.con.spmmat(1).sname = 'Model estimation: SPM.mat File';
 mb{3}.spm.stats.con.spmmat(1).src_exbranch = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
 mb{3}.spm.stats.con.spmmat(1).src_output = substruct('.','spmmat');
-mb{3}.spm.stats.con.consess{1}.tcon.name = '1>2';
-mb{3}.spm.stats.con.consess{1}.tcon.convec = [1 -1];
+
+mb{3}.spm.stats.con.consess{1}.tcon.name    = [ groupLabels{1} '>'  groupLabels{2}]  ;%'1>2';
+mb{3}.spm.stats.con.consess{1}.tcon.convec  = [1 -1];
 mb{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
-mb{3}.spm.stats.con.consess{2}.tcon.name = '1<2';
-mb{3}.spm.stats.con.consess{2}.tcon.convec = [-1 1];
+
+mb{3}.spm.stats.con.consess{2}.tcon.name    = [ groupLabels{1} '<'  groupLabels{2}] ;%'1<2';
+mb{3}.spm.stats.con.consess{2}.tcon.convec  = [-1 1];
 mb{3}.spm.stats.con.consess{2}.tcon.sessrep = 'none';
 mb{3}.spm.stats.con.delete = 0;
-
+% ===============================================
 mb{4}.spm.stats.results.spmmat(1) = cfg_dep;
 mb{4}.spm.stats.results.spmmat(1).tname = 'Select SPM.mat';
 mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(1).name = 'filter';
@@ -3511,18 +3529,20 @@ mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(2).value = 'e';
 mb{4}.spm.stats.results.spmmat(1).sname = 'Contrast Manager: SPM.mat File';
 mb{4}.spm.stats.results.spmmat(1).src_exbranch = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
 mb{4}.spm.stats.results.spmmat(1).src_output = substruct('.','spmmat');
-mb{4}.spm.stats.results.conspec(1).titlestr = '1>2';
-mb{4}.spm.stats.results.conspec(1).contrasts = 1;
-mb{4}.spm.stats.results.conspec(1).threshdesc = 'FWE';
-mb{4}.spm.stats.results.conspec(1).thresh = 0.05;
-mb{4}.spm.stats.results.conspec(1).extent = 0;
-mb{4}.spm.stats.results.conspec(1).mask = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
-mb{4}.spm.stats.results.conspec(2).titlestr = '1<2';
-mb{4}.spm.stats.results.conspec(2).contrasts = 2;
-mb{4}.spm.stats.results.conspec(2).threshdesc = 'FWE';
-mb{4}.spm.stats.results.conspec(2).thresh = 0.05;
-mb{4}.spm.stats.results.conspec(2).extent = 0;
-mb{4}.spm.stats.results.conspec(2).mask = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
+
+mb{4}.spm.stats.results.conspec(1).titlestr    = [ groupLabels{1} '>'  groupLabels{2}] ;%'1>2';
+mb{4}.spm.stats.results.conspec(1).contrasts   = 1;
+mb{4}.spm.stats.results.conspec(1).threshdesc  = 'FWE';
+mb{4}.spm.stats.results.conspec(1).thresh      = 0.05;
+mb{4}.spm.stats.results.conspec(1).extent      = 0;
+mb{4}.spm.stats.results.conspec(1).mask        = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
+
+mb{4}.spm.stats.results.conspec(2).titlestr    = [ groupLabels{1} '<'  groupLabels{2}];% '1<2';
+mb{4}.spm.stats.results.conspec(2).contrasts   = 2;
+mb{4}.spm.stats.results.conspec(2).threshdesc  = 'FWE';
+mb{4}.spm.stats.results.conspec(2).thresh      = 0.05;
+mb{4}.spm.stats.results.conspec(2).extent      = 0;
+mb{4}.spm.stats.results.conspec(2).mask        = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
 mb{4}.spm.stats.results.units = 1;
 mb{4}.spm.stats.results.print = false;
 
@@ -3567,23 +3587,30 @@ end
 %..........................................
 idmb=spm_jobman('interactive',mb);
 matlabbatch=mb;
-save(fullfile(s.output_dir,'job'),'matlabbatch'); %SAVE BATCH
+fjob=fullfile(outdir,'job.mat');
+showinfo2('batch saved as',fjob,[],1,[' -->[' fjob ']']);
+save(fjob,'matlabbatch'); %SAVE BATCH
 drawnow;
 
 if xvv.x.showSPMbatch==0
     spm_jobman('run',mb);
-end
-
-
-try ;    cd(s.workpath); end
-
-
-
-if 0
-    %get batch from grui
-    [ee mb]=spm_jobman('harvest',idmb)
+else
+    cprintf('*[0.9294    0.6941    0.1255]',['.. batch is shown in SPM BATCH-EDITOR....' '\n']);
+    cprintf('*[0 .5 0]',['.. hit "RUN BATCH"-ICON of APM BATCH-EDITOR to start the batch!' '\n']);
     
 end
+
+try ; cd(s.workpath); end
+if xvv.x.showSPMbatch==0
+    xstat('loadspm',fullfile(outdir,'SPM.mat'));
+end
+
+
+% if 0
+%     %get batch from grui
+%     [ee mb]=spm_jobman('harvest',idmb)
+%     
+% end
 
 
 %———————————————————————————————————————————————

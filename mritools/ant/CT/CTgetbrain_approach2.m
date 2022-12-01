@@ -34,11 +34,64 @@ si=size(a);
 %———————————————————————————————————————————————
 fprintf(['..otsu-ct (get proper cluster)']);
 
-v=otsu(a(:),5);
-v=reshape(v,size(a));
-v(v==1)=0;
-v(v==2)=0;
-v(v==3)=0;
+% new_____
+if 0
+    %  v=otsu(a(:),6);
+    v=otsu(a(:),5);
+    v=reshape(v,size(a));
+    v(v==1)=0;
+    v(v==2)=0;
+    % v(v==3)=0;
+end
+
+%% ===============================================
+% mask (stampout outer parts)
+ms=otsu(mode(a  ,3),2)==2;
+ms=imclose(ms,ones(10));
+ms=imfill(ms,'holes');
+[bx n]=bwlabeln(ms>0);
+uni=unique(bx); uni(uni==0)=[];
+[c ]=histc(bx(:),uni);
+tb=([uni(:) c]);
+% tb=sortrows([uni(:) c],-2);
+
+tb(:,3)=tb(:,2)/numel(ms)*100;%percent of image
+
+% must be closest to the center of the image
+cent=round(size(ms)/2);%center
+for i=1:size(tb,1)
+    cx=[];
+    [cx(:,1) cx(:,2)]=find(bx==tb(i,1));
+    tb(i,4)=mean(sum((cx-repmat(cent,[size(cx,1) 1])).^2,2));
+end
+%htb: {'ID' 'npixel' 'percPix/image' 'distFromCenter'}
+
+ilarge=find(tb(:,3)>1) ;
+isel=ilarge(find( tb(ilarge,4)== min(tb(ilarge,4))));
+
+ms=bx==tb(isel,1);
+%dilate mask
+ms=imdilate(ms,ones(20));
+a2=a.*repmat(ms,[1 1 ha.dim(3)]);
+
+%,make otsu
+v=reshape(otsu(a2(:),6), [ha.dim] );
+%,remove first clusters otsu
+v=v>3;
+
+%  montage2(v)
+
+%% ===============================================
+
+% old_____
+if 0
+    v=otsu(a(:),5);
+    v=reshape(v,size(a));
+    v(v==1)=0;
+    v(v==2)=0;
+    v(v==3)=0;
+end
+% _________
 
 
 [bx n]=bwlabeln(v>0);
@@ -50,7 +103,7 @@ tb=sortrows([uni(:) c],2);
 
 
 
-%% --which cluster--------------
+% --which cluster--------------
 voxsi=abs(det(ha.mat(1:3,1:3)));
 
 % BBboxwithin=.5;
@@ -102,6 +155,9 @@ end
 iclust=tb3(vecnearest2(tb3(:,4),z.bonebrainvolume),1);
 v2=bx==tb(iclust,1); %take largest cluster
 
+
+montage2(v2)
+length(find(v2(:)>0))
 %———————————————————————————————————————————————
 %%   old
 %———————————————————————————————————————————————

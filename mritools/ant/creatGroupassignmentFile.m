@@ -143,17 +143,31 @@ try;  delete(f1); end
 pwrite2excel(f1,{1 'group'},hb,{},b);
 
 
+col=[0.7569    0.8667    0.7765  
+     0.9255    0.8392    0.8392];
+
 cm={...
      'group-column: please specify which animal belongs to which group'
      'use strings as group-names'
      'use underscores (avoid spaces) & avoid special characters'
-     'example: "control" for "control"-animals; "ABC" for animals from "ABC-group" '}
- xlsinsertComment(f1,cm, 1, 2, 2);
+     'example: "control" for "control"-animals; "ABC" for animals from "ABC-group" '};
+ xlsinsertComment(f1,cm, 1, 2, 3);
  
  if strcmp(z.stat,'unpaired')
      cm2={...
-         'statistical scenario: unpaired, i.e. independent groups'};
-     xlsinsertComment(f1,cm2, 1, 8, 2);
+         'STATISTICAL SCENARIO: unpaired/independent groups'};
+     xlsinsertComment(f1,cm2, 1, 8, 3,col(1,:));
+ elseif strcmp(z.stat,'paired')
+     cm2={...
+         'STATISTICAL SCENARIO: paired/dependent groups'
+         'IMPORTANT: for pairwise tests it is assumed that:' 
+         'the 1st animal of group-1 corresponds to the 1st animal of group-2 (i.e is the same animal)'
+         'the 2nd animal of group-1 corresponds to the 2nd animal of group-2 (i.e is the same animal)'
+         'the 3rd animal of group-1 corresponds to the 3rd animal of group-2 (i.e is the same animal)'
+         'etc...'
+         'PLEASE CHECK THE CORRESPONDENCE OF The Animals!!! '
+         'group-1 and group-2 must have the same length'};
+     xlsinsertComment(f1,cm2, 1, 8, 3,col(2,:));
  end
  
  
