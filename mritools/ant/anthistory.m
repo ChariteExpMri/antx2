@@ -278,10 +278,18 @@ ColumnEditable= repmat(false,[1 length(h.hhistory)]);
 
 % uitable('Data',{'<html><table border=0 width=400 bgcolor=#FF0000><TR><TD>Hello</TD></TR> </table>' })
 
+columnname2=columnname;
+try
+%     lentime=size(char(h.history(:,1)),2);
+%     columnname2{1}=['time' repmat('_', [1 lentime-length('time')]-18 )];
+    
+    lenpath=size(char(h.history(:,2)),2);
+    columnname2{2}=['studyPath' repmat(' ', [1 lenpath-length('studyPath')] )];
+end
 
 % Create the uitable
 t = uitable('Data', d,...
-    'ColumnName', columnname,...
+    'ColumnName', columnname2,...
     'ColumnFormat', columnformat,...
     'ColumnEditable', ColumnEditable,...
     'RowName',[],...

@@ -1524,13 +1524,13 @@ elseif strcmp(xtype,'pairedttest')
         'inputimage'     ''          'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
         'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
         'AVGT'           v.AVGT   'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
-        'ANO'            v.ANO     'select the ATLAS-file (path of "ANO.nii")' 'f'
+        'ANO'            v.ANO    'select the ATLAS-file (path of "ANO.nii")' 'f'
         'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
-        'mask'           v.mask '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' 'f';
+        'mask'           v.mask   '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' 'f';
         'smoothing'       1       '<optional>smooth data' 'b'
         'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
-        'output_dir'      v.output_dir 'path for output/statistic' 'd';
-        'showSPMbatch'   1      '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
+        'output_dir'      v.output_dir      'path for output/statistic' 'd';
+        'showSPMbatch'   1                  '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
         
         };
     
@@ -1538,20 +1538,20 @@ elseif strcmp(xtype,'regression')
     p={
         'inf1'     '%  multiple regression'  '' ''
         'excelfile' ''   '[Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values' 'mf'
-        'sheetnumber'    1  'this sheet contains columns with mouseIDs and regression values' ''
-        'mouseID_col'    1  'column number with the MouseIDs' ''
-        'regress_col'    2  'column number with regression values (used for multiple regression,"group_col" must be empty)' ''
-        'data_dir'       '' 'data directory (upper directory) contains dirs with mice data' 'd'
-        'inputimage'     '' 'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
+        'sheetnumber'    1           'this sheet contains columns with mouseIDs and regression values' ''
+        'mouseID_col'    1           'column number with the MouseIDs' ''
+        'regress_col'    2           'column number with regression values (used for multiple regression,"group_col" must be empty)' ''
+        'data_dir'       v.data_dir  'data directory (upper directory) contains dirs with mice data' 'd'
+        'inputimage'     ''          'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
         'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
-        'AVGT' '' 'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
-        'ANO'  '' 'select the ATLAS-file (path of "ANO.nii")' 'f'
+        'AVGT'           v.AVGT   'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
+        'ANO'            v.ANO    'select the ATLAS-file (path of "ANO.nii")' 'f'
         'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
-        'mask'          'local' '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' {'d' 'f' 'local'};
+        'mask'           v.mask   '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' 'f';
         'smoothing'       1       '<optional>smooth data' 'b'
         'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
-        'output_dir'   'test_13' 'path for output/statistic' 'd';
-        'showSPMbatch'   1      '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
+        'output_dir'      v.output_dir      'path for output/statistic' 'd';
+        'showSPMbatch'    1                 '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
         
         };
 elseif strcmp(xtype,'onewayanova')
@@ -1772,6 +1772,12 @@ elseif strcmp(xtype,'regression')
     d=a(2:end,[ x.mouseID_col x.regress_col ]);
     d(:,1)=cellfun(@(a){[num2str(a)]},d(:,1));
     s.d=d;
+    s.regressNames=a(1,x.regress_col);
+    
+    r=cell2mat(cellfun(@(a){[str2num(num2str(a))]} ,a(2:end,[ x.regress_col ]) ));
+    s.regvars     =r;
+ 
+    
 elseif strcmp(xtype,'onewayanova')
     d=a(2:end,[ x.mouseID_col x.group_col ]);
     d(:,1)=cellfun(@(a){[num2str(a)]},d(:,1));
@@ -1831,6 +1837,30 @@ if strcmp(xtype,'fullfactorial')
     end
     
     s.dh =   ['excelID' s.dfactornames he(x.regress_col)  'existNifti' 'niftiPath'] ;
+elseif strcmp(xtype,'regression') 
+    ncol=size(s.d,2);
+    for i=1:size(s.d,1)
+        ix=find(~cellfun('isempty',  strfind(files,[filesep  s.d{i,1}  filesep  ])  )  );% regexpi(files,s.d(i,1))));
+        if length(ix)>1 ; error(['ix: more nifti-files found than expected']); end
+        if ~isempty(ix)
+            s.d(i,ncol+1)={1};
+            s.d(i,ncol+2)=files(ix);
+        else
+            s.d(i,ncol+1)={0};
+        end
+    end  
+    
+%     for i=1:size(s.d,1)
+%         ix=find(~cellfun('isempty',  strfind(files,[filesep  s.d{i,1}  filesep  ])  )  );% regexpi(files,s.d(i,1))));
+%         if length(ix)>1 ; error(['ix: more nifti-files found than expected']); end
+%         if ~isempty(ix)
+%             s.d(i,3)={1};
+%             s.d(i,4)=files(ix);
+%         else
+%             s.d(i,3)={0};
+%         end
+%     end
+     
     
 else
     for i=1:size(s.d,1)
@@ -1854,6 +1884,12 @@ elseif strcmp(xtype,'pairedttest')
     s.dh={'excelID' 'timepoint'      'existNifti' 'niftiPath'};
 elseif strcmp(xtype,'regression')
     s.dh={'excelID' 'regressval'     'existNifti' 'niftiPath'};
+    
+    reglabel=cellfun(@(a){['regrvec' num2str(a)]} ,num2cell(1:length(x.regress_col)) );
+    
+    s.dh=...
+    ['excelID'   reglabel  'existNifti' 'niftiPath'];
+    
 elseif strcmp(xtype,'onewayanova')
     s.dh=[{'excelID' 'regressval'     'existNifti' 'niftiPath'} he(x.regress_col) ];
 end
@@ -1901,7 +1937,7 @@ elseif  strcmp(xtype,'pairedttest')
     
 elseif  strcmp(xtype,'regression')
     s.dh={'excelID' 'grp' 'regressval' 'niftiPath'};
-    s.grp_1=s.d(find(cell2mat(s.d(:,3))==1),4);
+%     s.grp_1=s.d(find(cell2mat(s.d(:,3))==1),4);
     
 elseif  strcmp(xtype,'onewayanova')
     %     s.classes=unique(s.d(:,2))';
@@ -1933,6 +1969,18 @@ if ~isempty(char(x.output_dir))
         s.output_dir=outdir;
     end
 end
+
+try
+    if exist(fullfile(s.output_dir,'SPM.mat'))==2 %remove existing folder...if it contains SPM.mat
+        if strcmp(pwd,s.output_dir)==1
+            cd('..')
+            s.workpath=pwd;
+        end
+        rmdir(s.output_dir,'s');
+        mkdir(outdir);
+    end
+end
+
 set(gcf,'userdata',s);
 
 
@@ -4357,41 +4405,55 @@ end
 %———————————————————————————————————————————————
 function multipleregression(e,e2,varargin)
 global xvv
-xvv.xtype  = 'regression';
+xvv.xtype='regression';
 warning off;
-readexcel(xvv.xtype);
-fmakebatch(mfilename );
+isOK=readexcel(xvv.xtype);
+if isOK==0; return; end
 
+fmakebatch(mfilename );
 
 % disp('fun: multipleregression');
 % return;%*
 % -------------------------
 
-
 spmsetup;
+cprintf('*[0 0 1]',['.. please wait....' '\n']);
+
 hfig=findobj(0,'tag','vvstat');
 s=get(hfig,'userdata');
 try ;     cd(s.workpath); end
 
+%% ===============================================
 
-g1        = s.grp_1;
-
+% g1        = s.grp_1;
+g1        = s.d(:,end);
 outdir    = s.output_dir;
-rmdir(outdir,'s');
+% rmdir(outdir,'s');
 mkdir(outdir);
 
-regressvec= cell2mat(s.d(:,2));
-mask      = s.mask;
+% regressvec= cell2mat(s.d(:,2));
+regressMat  = s.regvars; %cell2mat(s.d(:,2:end-2));
+regressName = s.regressNames;
+mask          = s.mask;
+% 
+% matlabbatch{2}.spm.stats.factorial_design.des.mreg.mcov(1).c = '<UNDEFINED>';
+% matlabbatch{2}.spm.stats.factorial_design.des.mreg.mcov(1).cname = 'mycovar';
+% matlabbatch{2}.spm.stats.factorial_design.des.mreg.mcov(1).iCC = 1;
+% matlabbatch{2}.spm.stats.factorial_design.des.mreg.mcov(2).c = '<UNDEFINED>';
+% matlabbatch{2}.spm.stats.factorial_design.des.mreg.mcov(2).cname = 'mycovar';
+% matlabbatch{2}.spm.stats.factorial_design.des.mreg.mcov(2).iCC = 1;
 
-
-
+clear mb
 mb{1}.spm.stats.factorial_design.dir ={outdir};% {'O:\data\voxelwise_Maritzen4tool\regress_1'};
 %%
 mb{1}.spm.stats.factorial_design.des.mreg.scans = g1;
-mb{1}.spm.stats.factorial_design.des.mreg.mcov.c = regressvec;
-%%
-mb{1}.spm.stats.factorial_design.des.mreg.mcov.cname = 'mycovar';
-mb{1}.spm.stats.factorial_design.des.mreg.mcov.iCC = 1;
+
+for i=1:size(regressMat,2)
+    mb{1}.spm.stats.factorial_design.des.mreg.mcov(i).c      = regressMat(:,i);
+    mb{1}.spm.stats.factorial_design.des.mreg.mcov(i).cname  = regressName{i} ;%['mycovar' num2str(i)];
+    mb{1}.spm.stats.factorial_design.des.mreg.mcov(i).iCC    = 1;
+end
+
 mb{1}.spm.stats.factorial_design.des.mreg.incint = 1;
 mb{1}.spm.stats.factorial_design.cov = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {});
 mb{1}.spm.stats.factorial_design.masking.tm.tm_none = 1;
@@ -4421,12 +4483,25 @@ mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(2).value = 'e';
 mb{3}.spm.stats.con.spmmat(1).sname = 'Model estimation: SPM.mat File';
 mb{3}.spm.stats.con.spmmat(1).src_exbranch = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
 mb{3}.spm.stats.con.spmmat(1).src_output = substruct('.','spmmat');
-mb{3}.spm.stats.con.consess{1}.tcon.name = 'pos';
-mb{3}.spm.stats.con.consess{1}.tcon.convec = [0 1];
-mb{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
-mb{3}.spm.stats.con.consess{2}.tcon.name = 'neg';
-mb{3}.spm.stats.con.consess{2}.tcon.convec = [0 -1];
-mb{3}.spm.stats.con.consess{2}.tcon.sessrep = 'none';
+
+nc=0;
+for i=1:size(regressMat,2)
+   %----pos relationship
+    nc=nc+1;
+    cvec=zeros(1,i+1);  cvec(end)=[1];
+    mb{3}.spm.stats.con.consess{nc}.tcon.name    = [ regressName{i} '_pos' ];%'posLinRelation';
+    mb{3}.spm.stats.con.consess{nc}.tcon.convec  = cvec;%[0 1];
+    mb{3}.spm.stats.con.consess{nc}.tcon.sessrep = 'none';
+    %----neg relationship
+    nc=nc+1;
+    cvec=zeros(1,i+1);  cvec(end)=[-1];
+    mb{3}.spm.stats.con.consess{nc}.tcon.name     = [ regressName{i} '_neg' ] ;%'negLinRelation';
+    mb{3}.spm.stats.con.consess{nc}.tcon.convec   = cvec;%[0 -1];
+    mb{3}.spm.stats.con.consess{nc}.tcon.sessrep  = 'none';
+    
+end
+
+
 mb{3}.spm.stats.con.delete = 0;
 
 mb{4}.spm.stats.results.spmmat(1) = cfg_dep;
@@ -4446,6 +4521,7 @@ mb{4}.spm.stats.results.conspec.extent = 0;
 mb{4}.spm.stats.results.conspec.mask = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
 mb{4}.spm.stats.results.units = 1;
 mb{4}.spm.stats.results.print = false;
+%% ===============================================
 
 
 %%  smoothing
@@ -4485,20 +4561,26 @@ end
 %..........................................
 idmb=spm_jobman('interactive',mb);
 matlabbatch=mb;
-save(fullfile(s.output_dir,'job'),'matlabbatch'); %SAVE BATCH
+fjob=fullfile(outdir,'job.mat');
+showinfo2('batch saved as',fjob,[],1,[' -->[' fjob ']']);
+save(fjob,'matlabbatch'); %SAVE BATCH
 drawnow;
 
 if xvv.x.showSPMbatch==0
     spm_jobman('run',mb);
+else
+   cprintf('*[0.9294    0.6941    0.1255]',['.. batch is shown in SPM BATCH-EDITOR....' '\n']);
+   cprintf('*[0 .5 0]',['.. hit "RUN BATCH"-ICON of APM BATCH-EDITOR to start the batch!' '\n']);
 end
 
 try ;    cd(s.workpath); end
 
 
-% global xvv
-% % xmakebatch(z,p, mfilename);
-% % hgfeval(get(gco,'ButtonDownFcn'),gco)
-
+try ;    cd(s.workpath); end
+% hgfeval(get(gco,'ButtonDownFcn'),gco)
+if xvv.x.showSPMbatch==0
+    xstat('loadspm',fullfile(outdir,'SPM.mat'));
+end
 
 
 

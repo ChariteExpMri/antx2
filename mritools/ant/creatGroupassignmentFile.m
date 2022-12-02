@@ -72,7 +72,7 @@ if exist('x')~=1;        x=[]; end
 p={...    
     'groupfile'      'groupassignment.xlsx'   'name of the groupassignment-file (excelfile)' ''
     'outdir'          outir                   'output-directory: default "group"-dir in current study-dir' 'd' 
-    'stat'           'unpaired'               'statistical group-scenario (unpaired|paired)'  {'unpaired' 'paired'}
+    'stat'           'unpaired'               'statistical group-scenario (unpaired|paired|regression)'  {'unpaired' 'paired' 'regression'}
     'addTimeStamp'    0                       'add timestamp as suffix to the groupfile-name'                             'b'
     };
 
@@ -107,7 +107,7 @@ end
 % ==============================================
 %%   proc
 % ===============================================
-cprintf('*[0 .5 0]',['.. create group-assignment file ...wait' '\n']);
+cprintf('*[0 .5 0]',['.. create group-assignment file (type: ' z.stat ') ...wait' '\n']);
 f1=proc(z,pa);
 cprintf('*[0 .5 0]',['Done!' '\n']);
 
@@ -134,6 +134,9 @@ f1=fullfile(paout,fileshort);
 %----animal-table
 [pax, animals]=fileparts2(pa);
 hb={'animal' 'group'};
+if strcmp(z.stat,'regression')
+    hb={'animal' 'regresssionValues'};
+end
 b=[animals repmat({''},[length(animals) 1])];
 
 
@@ -143,31 +146,49 @@ try;  delete(f1); end
 pwrite2excel(f1,{1 'group'},hb,{},b);
 
 
-col=[0.7569    0.8667    0.7765  
-     0.9255    0.8392    0.8392];
-
-cm={...
-     'group-column: please specify which animal belongs to which group'
-     'use strings as group-names'
-     'use underscores (avoid spaces) & avoid special characters'
-     'example: "control" for "control"-animals; "ABC" for animals from "ABC-group" '};
- xlsinsertComment(f1,cm, 1, 2, 3);
- 
- if strcmp(z.stat,'unpaired')
-     cm2={...
-         'STATISTICAL SCENARIO: unpaired/independent groups'};
-     xlsinsertComment(f1,cm2, 1, 8, 3,col(1,:));
- elseif strcmp(z.stat,'paired')
-     cm2={...
-         'STATISTICAL SCENARIO: paired/dependent groups'
-         'IMPORTANT: for pairwise tests it is assumed that:' 
-         'the 1st animal of group-1 corresponds to the 1st animal of group-2 (i.e is the same animal)'
-         'the 2nd animal of group-1 corresponds to the 2nd animal of group-2 (i.e is the same animal)'
-         'the 3rd animal of group-1 corresponds to the 3rd animal of group-2 (i.e is the same animal)'
-         'etc...'
-         'PLEASE CHECK THE CORRESPONDENCE OF The Animals!!! '
-         'group-1 and group-2 must have the same length'};
-     xlsinsertComment(f1,cm2, 1, 8, 3,col(2,:));
+col=[0.7569    0.8667    0.7765  %unpaired
+     0.9255    0.8392    0.8392  %paired
+     0.7294    0.8314    0.9569];%blue-regression
+ if strcmp(z.stat,'regression')
+     
+      cm2={...
+             'STATISTICAL SCENARIO: regression'
+             'please add the values in the "regresssionValues"-column'
+             '___ For voxelwise statistic ___:'
+             '"HEADER": please give the "regresssionValues"-header a usefull name'
+             'use underscores (avoid spaces) & avoid special characters'
+             'FOR MULTIPLE REGRESSION: JUST ADD ADDITIONAL COLUMNS RIGHT TO THE "regresssionValues"-column'
+             '                       : DONT FORGET TO rename the header of the addiontla regression-columns'
+             '  example: to insert three regression-variables (age,temperature, weight):'
+             '  the header might look as follows (4 columns)'
+             '            "animal"  "age" "bodyTemperature" "bodyWeight" '
+             };
+         xlsinsertComment(f1,cm2, 1, 2, 3,col(3,:));
+     
+ else
+     cm={...
+         'group-column: please specify which animal belongs to which group'
+         'use strings as group-names'
+         'use underscores (avoid spaces) & avoid special characters'
+         'example: "control" for "control"-animals; "ABC" for animals from "ABC-group" '};
+     xlsinsertComment(f1,cm, 1, 2, 3);
+     
+     if strcmp(z.stat,'unpaired')
+         cm2={...
+             'STATISTICAL SCENARIO: unpaired/independent groups'};
+         xlsinsertComment(f1,cm2, 1, 8, 3,col(1,:));
+     elseif strcmp(z.stat,'paired')
+         cm2={...
+             'STATISTICAL SCENARIO: paired/dependent groups'
+             'IMPORTANT: for pairwise tests it is assumed that:'
+             'the 1st animal of group-1 corresponds to the 1st animal of group-2 (i.e is the same animal)'
+             'the 2nd animal of group-1 corresponds to the 2nd animal of group-2 (i.e is the same animal)'
+             'the 3rd animal of group-1 corresponds to the 3rd animal of group-2 (i.e is the same animal)'
+             'etc...'
+             'PLEASE CHECK THE CORRESPONDENCE OF The Animals!!! '
+             'group-1 and group-2 must have the same length'};
+         xlsinsertComment(f1,cm2, 1, 8, 3,col(2,:));
+     end
  end
  
  

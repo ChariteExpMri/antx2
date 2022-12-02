@@ -1733,9 +1733,26 @@ if source==2
     % ==============================================
     %%   label
     % ===============================================
-    t=readtable(char(labelfile));
-    t=table2cell(t);
     
+     try
+        t=readtable(char(labelfile));
+        t=table2cell(t);
+    catch
+        t0=preadfile(char(labelfile));
+        t0=t0.all;
+        
+        tt={};
+        for i=1:size(t0,1)
+            temp=  strsplit(t0{i});
+            tt(i, 1:length(temp))=temp;
+        end
+        %remove header-row
+        if strcmp(tt{1},'#')==1 || ~isempty(strfind(t0{1},'Labelname'))
+            tt(1,:)=[];
+        end
+        t=tt(:,1:6);
+    end
+
     
     
     % ==============================================
