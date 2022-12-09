@@ -8,12 +8,13 @@
 %    model a column for group assignment/columns of factors or covariate/regression values
 % #r Excel file example : see ~\antx\mritools\ant\docs\xstat-statistic-example.xlsx
 % - select the statistic you want to perform (currently implemented):
-%   'pairedttest'       :AIM:  comparing two timepoints or two different parameters from the same mouse across mice (* pre vs post treatment)
-%   'twosamplettest'    :AIM:  comparing two independet groups   (* disease group vs control group)
-%   'regression'        :AIM:  voxelwise regression (data from one group) with a vector (* age or performance)
-%   'onewayanova'       :AIM:  comparing two or more independet groups (* control vs. sham vs. disease)
-%                       - onewayanova allows one/more additional covariates (* age, gender..) to add to the model
-%   'fullfactorial'     :AIM:  Anova with several factors (between and or within).
+%   'pairedttest'       : comparing two timepoints or two different parameters from the same mouse across mice (* pre vs post treatment)
+%   'twosamplettest'    : comparing two independet groups   (* disease group vs control group)
+%   'regression'        : voxelwise regression (data from one group) with a vector (* age or performance)
+%   'onewayanova'       : comparing two or more independet groups (* control vs. sham vs. disease)
+%                         onewayanova allows one/more additional covariates (* age, gender..) to add to the model
+%   'onewayanova_within': comparing a group over time , example (time1, time2, time3)
+%   'fullfactorial'     : Anova with several factors, default: between (between and or within).
 %   'userdefined'       :define one of the following designs from SPM (see <spm-->[batch]-->>spm/stats/Factorial design specification)
 %       One-sample t-test, Two-sample t-test, Paired t-test, Multiple regression, One-way ANOVA,
 %       One-way ANOVA - within subject, Full factorial, Flexible factorial
@@ -39,105 +40,141 @@
 %% ===============================================
 % % #g TWO-SAMPLE-T-TEST
 %% ===============================================
-% z=[];
-% z.stattype       = 'twosamplettest';                                                  % % STATISTICAL TEST
-% z.excelfile      = 'O:\data\voxelwise_Maritzen4tool\xstat_statistic_example.xlsx';     % % [Excelfile]: this file contains a column with mouseIDs (names) and a column assigning the group
-% z.sheetnumber    = [1];                                                               % % this sheet contains columns with mouseIDs and group assignment
-% z.mouseID_col    = [1];                                                               % % column number with the MouseIDs
-% z.group_col      = [2];                                                               % % column number with group assignment  (used when comparing groups, "regress_col" must be empty)
-% z.data_dir       = 'O:\data\voxelwise_Maritzen4tool\dat';                             % % data directory (upper directory) contains dirs with mice data
-% z.inputimage     = 'JD.nii';                                                          % % image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-% z.grp_comparison = '1vs2';                                                            % % groups to compare
-% z.mask           = 'O:\data\voxelwise_Maritzen4tool\templates\AVGTmask.nii';          % % <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
-% z.output_dir     = 's1_2sampleTtest';                                                          % % path for output/statistic
-% z.showSPMbatch   = [1];                                                               % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
-% xstat(0,z);
-%
+% z=[];                                                                                                                                                                                                                           
+% z.stattype       = 'twosamplettest';                                    % % STATISTICAL TEST                                                                                                                                    
+% z.excelfile      = 'F:\data6\voxwise\group\groupassignment_covars.xlsx';     % % [Excel-file]: file containing columns with animal-IDs and group/regressionValue and optional covariates                                             
+% z.sheetnumber    = [1];                                                 % % sheet-index containing the data (default: 1)                                                                                                        
+% z.mouseID_col    = [1];                                                 % % column-index containing the animal-IDs (default: 1)                                                                                                 
+% z.group_col      = [2];                                                 % % column-index containing  the group assignment (default: 2)                                                                                          
+% z.regress_col    = [];                                                  % % <optional>  column-index/indices containing covariates (otherwise: empty)                                                                           
+% z.data_dir       = 'F:\data6\voxwise\dat';                              % % main data directory (upper directory) containing the animal-dirs (default: the "dat"-dir of the study)                                              
+% z.inputimage     = 'vimg.nii';                                          % % name of the NIFTI-image to analyze ("data_dir" has to bee defined before using the icon)                                                            
+% z.AVGT           = 'F:\data6\voxwise\templates\AVGT.nii';               % % [TEMPLATE-file]: select the TEMPLATE (default: fullpath-name of "AVGT.nii" from the templates-dir)                                                  
+% z.ANO            = 'F:\data6\voxwise\templates\ANO.nii';                % % [ATLAS-file]: select the ATLAS (default: fullpath-name of "ANO.nii" from the templates-dir)                                                         
+% z.mask           = 'F:\data6\voxwise\templates\AVGThemi.nii';           % % [MASK-file]: select the brain-maskfile (default: fullpath-name of "AVGTmask.nii" from the templates-dir)                                            
+% z.output_dir     = 'voxtest1_NOcovars';                                 % % path of the output-directory (SPM-statistic with SPM.mat and images)                                                                                
+% z.smoothing      = [1];                                                 % % <optional>smooth data, [0|1]; if [1] the NIFTI is smoothed & stored with prefix "s" in the animal-dir, the smoothed image is than used for analysis 
+% z.smoothing_fwhm = [0.28  0.28  0.28];                                  % % smoothing width (FWHM); example: tripple of the voxsize of the inputimage                                                                           
+% z.showSPMwindows = [0];                                                 % % hide|show SPM-WINDOWS, [0|1]; if [0] SPM-windows are hidden                                                                                         
+% z.showSPMbatch   = [1];                                                 % % hide|show SPM-batch, [0|1]; usefull for evaluation and postprocessing                                                                               
+% z.runSPMbatch    = [1];                                                 % % run SPM-batch, [0|1]; if [0] you have to start the SPM-batch by yourself,i.e hit the green triangle, [1] batch runs automatically                   
+% z.showResults    = [1];                                                 % % show results; [0|1]; if [1] voxelwise results will be shown afterwards                                                                              
+% xstat(0,z);   
 %% ===============================================
 % % #g  PAIRED T-TEST
 %% ===============================================
-% z=[];
-% z.stattype      = 'pairedttest';                                                     % % STATISTICAL TEST
-% z.excelfile     = 'O:\data\voxelwise_Maritzen4tool\xstat_statistic_example.xlsx';     % % [Excelfile]: this file contains two columns with mouseIDs (names) for timepoint T1 and T2, respectively
-% z.sheetnumber   = [2];                                                               % % this sheet contains columns with mouseIDs and group assignment
-% z.mouseID_colT1 = [1];                                                               % % column number with the MouseIDs for T1
-% z.mouseID_colT2 = [2];                                                               % % column number with the MouseIDs for T2
-% z.data_dir      = 'O:\data\voxelwise_Maritzen4tool\dat';                             % % data directory (upper directory) contains dirs with mice data
-% z.inputimage    = 'JD.nii';                                                          % % image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-% z.mask          = 'O:\data\voxelwise_Maritzen4tool\templates\AVGTmask.nii';          % % <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
-% z.output_dir    = 's2_pairedTtest';                                                          % % path for output/statistic
-% z.showSPMbatch  = [1];                                                               % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
-% xstat(0,z);
-%
+% z=[];                                                                                                                                                                                                                                           
+% z.stattype       = 'pairedttest';                                                       % % STATISTICAL TEST                                                                                                                                    
+% z.excelfile      = 'F:\data6\voxtestPairedTtest\group\groupassignment_covars.xlsx';     % % [Excel-file]: file containing columns with animal-IDs and group/regressionValue and optional covariates                                             
+% z.sheetnumber    = [1];                                                                 % % sheet-index containing the data (default: 1)                                                                                                        
+% z.mouseID_col    = [1];                                                                 % % column-index containing the animal-IDs (default: 1)                                                                                                 
+% z.group_col      = [2];                                                                 % % column-index containing  the group assignment (default: 2)                                                                                          
+% z.regress_col    = [];                                                                  % % <optional>  column-index/indices containing covariates (otherwise: empty)                                                                           
+% z.data_dir       = 'F:\data6\voxtestPairedTtest\dat';                                   % % main data directory (upper directory) containing the animal-dirs (default: the "dat"-dir of the study)                                              
+% z.inputimage     = 'vimg.nii';                                                          % % name of the NIFTI-image to analyze ("data_dir" has to bee defined before using the icon)                                                            
+% z.AVGT           = 'F:\data6\voxtestPairedTtest\templates\AVGT.nii';                    % % [TEMPLATE-file]: select the TEMPLATE (default: fullpath-name of "AVGT.nii" from the templates-dir)                                                  
+% z.ANO            = 'F:\data6\voxtestPairedTtest\templates\ANO.nii';                     % % [ATLAS-file]: select the ATLAS (default: fullpath-name of "ANO.nii" from the templates-dir)                                                         
+% z.mask           = 'F:\data6\voxtestPairedTtest\templates\AVGTmask.nii';                % % [MASK-file]: select the brain-maskfile (default: fullpath-name of "AVGTmask.nii" from the templates-dir)                                            
+% z.output_dir     = 'voxtest1_NOcovars';                                                 % % path of the output-directory (SPM-statistic with SPM.mat and images)                                                                                
+% z.smoothing      = [1];                                                 % % <optional>smooth data, [0|1]; if [1] the NIFTI is smoothed & stored with prefix "s" in the animal-dir, the smoothed image is than used for analysis 
+% z.smoothing_fwhm = [0.28  0.28  0.28];                                  % % smoothing width (FWHM); example: tripple of the voxsize of the inputimage                                                                           
+% z.showSPMwindows = [0];                                                 % % hide|show SPM-WINDOWS, [0|1]; if [0] SPM-windows are hidden                                                                                         
+% z.showSPMbatch   = [1];                                                 % % hide|show SPM-batch, [0|1]; usefull for evaluation and postprocessing                                                                               
+% z.runSPMbatch    = [1];                                                 % % run SPM-batch, [0|1]; if [0] you have to start the SPM-batch by yourself,i.e hit the green triangle, [1] batch runs automatically                   
+% z.showResults    = [1];                                                 % % show results; [0|1]; if [1] voxelwise results will be shown afterwards                                                                              
+% xstat(0,z);  
 %% ===============================================
 % % #g       ONE-WAY-ANOVA
-% % #b info :   2 groups, no additional covariates (same as TWO-SAMPLE-T-TEST)
 %% ===============================================
-% z=[];
-% z.stattype     = 'onewayanova';                                                     % % STATISTICAL TEST
-% z.excelfile    = 'O:\data\voxelwise_Maritzen4tool\xstat_statistic_example.xlsx';     % % [Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values
-% z.sheetnumber  = [3];                                                               % % this sheet contains columns with mouseIDs and regression values
-% z.mouseID_col  = [1];                                                               % % column number with the MouseIDs
-% z.group_col    = [2];                                                               % % column number with group assignment  (used when comparing groups)
-% z.regress_col  = [];                                                                % % <optional> column number(s) with regression values,otherwise empty (examples: age+gender --> regression columns are 4&5)
-% z.data_dir     = 'O:\data\voxelwise_Maritzen4tool\dat';                             % % data directory (upper directory) contains dirs with mice data
-% z.inputimage   = 'JD.nii';                                                          % % image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-% z.mask         = 'O:\data\voxelwise_Maritzen4tool\templates\AVGTmask.nii';          % % <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
-% z.output_dir   = 's3_1wANOVA';                                                   % % path for output/statistic
-% z.showSPMbatch = [1];                                                               % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
-% xstat(0,z);
-%
+% z=[];                                                                                                                                                                                                                                                    
+% z.stattype       = 'onewayanova';                                                                % % STATISTICAL TEST                                                                                                                                    
+% z.excelfile      = 'F:\data6\voxwise_1wayANOVA\group\groupassignment_1wayANOVA_covars.xlsx';     % % [Excel-file]: file containing columns with animal-IDs and group/regressionValue and optional covariates                                             
+% z.sheetnumber    = [1];                                                                          % % sheet-index containing the data (default: 1)                                                                                                        
+% z.mouseID_col    = [1];                                                                          % % column-index containing the animal-IDs (default: 1)                                                                                                 
+% z.group_col      = [2];                                                                          % % column-index containing  the group assignment (default: 2)                                                                                          
+% z.regress_col    = [];                                                                           % % <optional>  column-index/indices containing covariates (otherwise: empty)                                                                           
+% z.data_dir       = 'F:\data6\voxwise_1wayANOVA\dat';                                             % % main data directory (upper directory) containing the animal-dirs (default: the "dat"-dir of the study)                                              
+% z.inputimage     = 'vimg.nii';                                                                   % % name of the NIFTI-image to analyze ("data_dir" has to bee defined before using the icon)                                                            
+% z.AVGT           = 'F:\data6\voxwise_1wayANOVA\templates\AVGT.nii';                              % % [TEMPLATE-file]: select the TEMPLATE (default: fullpath-name of "AVGT.nii" from the templates-dir)                                                  
+% z.ANO            = 'F:\data6\voxwise_1wayANOVA\templates\ANO.nii';                               % % [ATLAS-file]: select the ATLAS (default: fullpath-name of "ANO.nii" from the templates-dir)                                                         
+% z.mask           = 'F:\data6\voxwise_1wayANOVA\templates\AVGTmask.nii';                          % % [MASK-file]: select the brain-maskfile (default: fullpath-name of "AVGTmask.nii" from the templates-dir)                                            
+% z.output_dir     = 'voxtest1_nocovars';                                                          % % path of the output-directory (SPM-statistic with SPM.mat and images)                                                                                
+% z.smoothing      = [1];                                                 % % <optional>smooth data, [0|1]; if [1] the NIFTI is smoothed & stored with prefix "s" in the animal-dir, the smoothed image is than used for analysis 
+% z.smoothing_fwhm = [0.28  0.28  0.28];                                  % % smoothing width (FWHM); example: tripple of the voxsize of the inputimage                                                                           
+% z.showSPMwindows = [0];                                                 % % hide|show SPM-WINDOWS, [0|1]; if [0] SPM-windows are hidden                                                                                         
+% z.showSPMbatch   = [1];                                                 % % hide|show SPM-batch, [0|1]; usefull for evaluation and postprocessing                                                                               
+% z.runSPMbatch    = [1];                                                 % % run SPM-batch, [0|1]; if [0] you have to start the SPM-batch by yourself,i.e hit the green triangle, [1] batch runs automatically                   
+% z.showResults    = [1];                                                 % % show results; [0|1]; if [1] voxelwise results will be shown afterwards                                                                              
+% xstat(0,z); 
 %% ===============================================
-% % #g       ONE-WAY-ANOVA
-% % #b info :   3 groups, 2 additional covariates
+% % #g       within ONE-WAY-ANOVA WITH COVARIATES
 %% ===============================================
-% z=[];
-% z.stattype     = 'onewayanova';                                                     % % STATISTICAL TEST
-% z.excelfile    = 'O:\data\voxelwise_Maritzen4tool\xstat_statistic_example.xlsx';     % % [Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values
-% z.sheetnumber  = [4];                                                               % % this sheet contains columns with mouseIDs and regression values
-% z.mouseID_col  = [1];                                                               % % column number with the MouseIDs
-% z.group_col    = [2];                                                               % % column number with group assignment  (used when comparing groups)
-% z.regress_col  = [3 4];                                                            % % <optional> column number(s) with regression values,otherwise empty (examples: age+gender --> regression columns are [4 5])
-% z.data_dir     = 'O:\data\voxelwise_Maritzen4tool\dat';                             % % data directory (upper directory) contains dirs with mice data
-% z.inputimage   = 'JD.nii';                                                          % % image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-% z.mask         = 'O:\data\voxelwise_Maritzen4tool\templates\AVGTmask.nii';          % % <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
-% z.output_dir   = 's4_1wANOVAregress';                                                          % % path for output/statistic
-% z.showSPMbatch = [1];                                                               % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
-% xstat(0,z);
-%
+% z=[];                                                                                                                                                                                                                                                    
+% z.stattype       = 'onewayanova_within';                                                         % % STATISTICAL TEST                                                                                                                                    
+% z.excelfile      = 'F:\data6\voxwise_1wayANOVA\group\groupassignment_1wayANOVA_covars.xlsx';     % % [Excel-file]: file containing columns with animal-IDs and group/regressionValue and optional covariates                                             
+% z.sheetnumber    = [1];                                                                          % % sheet-index containing the data (default: 1)                                                                                                        
+% z.mouseID_col    = [1];                                                                          % % column-index containing the animal-IDs (default: 1)                                                                                                 
+% z.group_col      = [2];                                                                          % % column-index containing  the group assignment (default: 2)                                                                                          
+% z.regress_col    = [3  4];                                                                       % % <optional>  column-index/indices containing covariates (otherwise: empty)                                                                           
+% z.data_dir       = 'F:\data6\voxwise_1wayANOVA\dat';                                             % % main data directory (upper directory) containing the animal-dirs (default: the "dat"-dir of the study)                                              
+% z.inputimage     = 'vimg.nii';                                                                   % % name of the NIFTI-image to analyze ("data_dir" has to bee defined before using the icon)                                                            
+% z.AVGT           = 'F:\data6\voxwise_1wayANOVA\templates\AVGT.nii';                              % % [TEMPLATE-file]: select the TEMPLATE (default: fullpath-name of "AVGT.nii" from the templates-dir)                                                  
+% z.ANO            = 'F:\data6\voxwise_1wayANOVA\templates\ANO.nii';                               % % [ATLAS-file]: select the ATLAS (default: fullpath-name of "ANO.nii" from the templates-dir)                                                         
+% z.mask           = 'F:\data6\voxwise_1wayANOVA\templates\AVGTmask.nii';                          % % [MASK-file]: select the brain-maskfile (default: fullpath-name of "AVGTmask.nii" from the templates-dir)                                            
+% z.output_dir     = 'voxtest2_within_covars';                                                     % % path of the output-directory (SPM-statistic with SPM.mat and images)                                                                                
+% z.smoothing      = [1];                                                 % % <optional>smooth data, [0|1]; if [1] the NIFTI is smoothed & stored with prefix "s" in the animal-dir, the smoothed image is than used for analysis 
+% z.smoothing_fwhm = [0.28  0.28  0.28];                                  % % smoothing width (FWHM); example: tripple of the voxsize of the inputimage                                                                           
+% z.showSPMwindows = [0];                                                 % % hide|show SPM-WINDOWS, [0|1]; if [0] SPM-windows are hidden                                                                                         
+% z.showSPMbatch   = [1];                                                 % % hide|show SPM-batch, [0|1]; usefull for evaluation and postprocessing                                                                               
+% z.runSPMbatch    = [1];                                                 % % run SPM-batch, [0|1]; if [0] you have to start the SPM-batch by yourself,i.e hit the green triangle, [1] batch runs automatically                   
+% z.showResults    = [1];                                                 % % show results; [0|1]; if [1] voxelwise results will be shown afterwards                                                                              
+% xstat(0,z);  
 %% ===============================================
-% % #g  REGRESSION
+% % #g  MULTIPLE REGRESSION   (WITH TWO REGRESSION-SCORES)
 %% ===============================================
-% z=[];
-% z.stattype     = 'regression';                                                      % % STATISTICAL TEST
-% z.excelfile    = 'O:\data\voxelwise_Maritzen4tool\xstat_statistic_example.xlsx';     % % [Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values
-% z.sheetnumber  = [5];                                                               % % this sheet contains columns with mouseIDs and regression values
-% z.mouseID_col  = [1];                                                               % % column number with the MouseIDs
-% z.regress_col  = [2];                                                               % % column number with regression values (used for multiple regression,"group_col" must be empty)
-% z.data_dir     = 'O:\data\voxelwise_Maritzen4tool\dat';                             % % data directory (upper directory) contains dirs with mice data
-% z.inputimage   = 'JD.nii';                                                          % % image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-% z.mask         = 'O:\data\voxelwise_Maritzen4tool\templates\AVGTmask.nii';          % % <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
-% z.output_dir   = 's5_regress';                                                          % % path for output/statistic
-% z.showSPMbatch = [1];                                                               % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
-% xstat(0,z);
+% z=[];                                                                                                                                                                                                                                          
+% z.stattype       = 'regression';                                                       % % STATISTICAL TEST                                                                                                                                    
+% z.excelfile      = 'F:\data6\voxwise_regression\group\groupassignment_multi.xlsx';     % % [Excel-file]: file containing columns with animal-IDs and group/regressionValue and optional covariates                                             
+% z.sheetnumber    = [1];                                                                % % sheet-index containing the data (default: 1)                                                                                                        
+% z.mouseID_col    = [1];                                                                % % column-index containing the animal-IDs (default: 1)                                                                                                 
+% z.regress_col    = [2  3];                                                             % % <optional>  column-index/indices containing covariates (otherwise: empty)                                                                           
+% z.data_dir       = 'F:\data6\voxwise_regression\dat';                                  % % main data directory (upper directory) containing the animal-dirs (default: the "dat"-dir of the study)                                              
+% z.inputimage     = 'vimg.nii';                                                         % % name of the NIFTI-image to analyze ("data_dir" has to bee defined before using the icon)                                                            
+% z.AVGT           = 'F:\data6\voxwise_regression\templates\AVGT.nii';                   % % [TEMPLATE-file]: select the TEMPLATE (default: fullpath-name of "AVGT.nii" from the templates-dir)                                                  
+% z.ANO            = 'F:\data6\voxwise_regression\templates\ANO.nii';                    % % [ATLAS-file]: select the ATLAS (default: fullpath-name of "ANO.nii" from the templates-dir)                                                         
+% z.mask           = 'F:\data6\voxwise_regression\templates\AVGTmask.nii';               % % [MASK-file]: select the brain-maskfile (default: fullpath-name of "AVGTmask.nii" from the templates-dir)                                            
+% z.output_dir     = 'voxtest1_mutli';                                                   % % path of the output-directory (SPM-statistic with SPM.mat and images)                                                                                
+% z.smoothing      = [1];                                                 % % <optional>smooth data, [0|1]; if [1] the NIFTI is smoothed & stored with prefix "s" in the animal-dir, the smoothed image is than used for analysis 
+% z.smoothing_fwhm = [0.28  0.28  0.28];                                  % % smoothing width (FWHM); example: tripple of the voxsize of the inputimage                                                                           
+% z.showSPMwindows = [0];                                                 % % hide|show SPM-WINDOWS, [0|1]; if [0] SPM-windows are hidden                                                                                         
+% z.showSPMbatch   = [1];                                                 % % hide|show SPM-batch, [0|1]; usefull for evaluation and postprocessing                                                                               
+% z.runSPMbatch    = [1];                                                 % % run SPM-batch, [0|1]; if [0] you have to start the SPM-batch by yourself,i.e hit the green triangle, [1] batch runs automatically                   
+% z.showResults    = [1];                                                 % % show results; [0|1]; if [1] voxelwise results will be shown afterwards                                                                              
+% xstat(0,z);          
 %% ===============================================
-% % #g  FULLFACTTORIAL ANOVA
+% % #g  FULLFACTTORIAL ANOVA with 2 covariates
 %% ===============================================
-% z=[];
-% z.stattype=      'fullfactorial';                                                     % % STATISTICAL TEST
-% z.excelfile=      'O:\data2\x03_yildirim\voxstatGroups_2x2.xlsx';	                    % % [Excelfile]: this file contains a column with mouseIDs (names) and columns containing the factors and optional a regression column
-% z.sheetnumber=    [1];                                                                % % this sheet contains columns with mouseIDs, factors and regression values
-% z.mouseID_col=    [1];                                                                % % column number with the MouseIDs
-% z.group_col=      [3 4];                                                              % % columns containing the factors (example: column-3 is factor-A and column-4 is factor-B)
-% z.regress_col=    [];                                                                 % % <optional> this column number addresses regression values,otherwise empty
-% z.data_dir=       'O:\data2\x03_yildirim\dat';                                        % % data directory (upper directory) contains dirs with mice data
-% z.inputimage=     'JD_fake.nii';                                                      % % NIFTI image name, from which the statistic is derived (datapath has to bee defined before using the icon)
-% z.mask=           'local';                                                            % % <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
-% z.smoothing=      [0];                                                                % % <optional>smooth data
-% z.smoothing_fwhm=[0.28  0.28  0.28];                                                  % % smoothing width (FWHM)
-% z.output_dir=     'fullfac_fakedata_5';                                               % % path for output/statistic
-% z.showSPMbatch=   [0];                                                                % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
-% xstat(0,z)
+% z=[];                                                                                                                                                                                                                                                        
+% z.stattype       = 'fullfactorial';                                                                % % STATISTICAL TEST                                                                                                                                      
+% z.excelfile      = 'F:\data6\voxwise_fullfactorial\group\groupassignment_fullfac_covars.xlsx';     % % [Excel-file]: file containing columns with animal-IDs and group/regressionValue and optional covariates                                               
+% z.sheetnumber    = [1];                                                                            % % sheet-index containing the data (default: 1)                                                                                                          
+% z.mouseID_col    = [1];                                                                            % % column-index containing the animal-IDs (default: 1)                                                                                                   
+% z.group_col      = [2  3];                                                                         % % column-index containing  the group assignment (default: 2)                                                                                            
+% z.regress_col    = [4  5];                                                                         % % <optional>  column-index/indices containing covariates (otherwise: empty)                                                                             
+% z.data_dir       = 'F:\data6\voxwise_fullfactorial\dat';                                           % % main data directory (upper directory) containing the animal-dirs (default: the "dat"-dir of the study)                                                
+% z.inputimage     = 'vimg.nii';                                                                     % % name of the NIFTI-image to analyze ("data_dir" has to bee defined before using the icon)                                                              
+% z.AVGT           = 'F:\data6\voxwise_fullfactorial\templates\AVGT.nii';                            % % [TEMPLATE-file]: select the TEMPLATE (default: fullpath-name of "AVGT.nii" from the templates-dir)                                                    
+% z.ANO            = 'F:\data6\voxwise_fullfactorial\templates\ANO.nii';                             % % [ATLAS-file]: select the ATLAS (default: fullpath-name of "ANO.nii" from the templates-dir)                                                           
+% z.mask           = 'F:\data6\voxwise_fullfactorial\templates\AVGTmask.nii';                        % % [MASK-file]: select the brain-maskfile (default: fullpath-name of "AVGTmask.nii" from the templates-dir)                                              
+% z.output_dir     = 'voxtest1_covars';                                                              % % path of the output-directory (SPM-statistic with SPM.mat and images)                                                                                  
+% z.smoothing      = [1];                                                 % % <optional>smooth data, [0|1]; if [1] the NIFTI is smoothed & stored with prefix "s" in the animal-dir, the smoothed image is than used for analysis 
+% z.smoothing_fwhm = [0.28  0.28  0.28];                                  % % smoothing width (FWHM); example: tripple of the voxsize of the inputimage                                                                           
+% z.showSPMwindows = [0];                                                 % % hide|show SPM-WINDOWS, [0|1]; if [0] SPM-windows are hidden                                                                                         
+% z.showSPMbatch   = [1];                                                 % % hide|show SPM-batch, [0|1]; usefull for evaluation and postprocessing                                                                               
+% z.runSPMbatch    = [1];                                                 % % run SPM-batch, [0|1]; if [0] you have to start the SPM-batch by yourself,i.e hit the green triangle, [1] batch runs automatically                   
+% z.showResults    = [1];                                                 % % show results; [0|1]; if [1] voxelwise results will be shown afterwards                                                                              
+% xstat(0,z);                                                                                                                                                                                                                                             
+%             
 % ______________________________________________________________________________________________
 %% #ky batch:
 % #g RE-USE BATCH: see 'anth' [..anthistory] variable in workspace
@@ -283,7 +320,7 @@
 % xstat('export' ,fullfile(pwd,'result_123.xlsx'));   %save table as Excelfile with userdefined path/name
 %% ________________________________________________________________________________________________
 % [make full report]: make powerpoint file, save results as excelfile and NIFTI-file
-% xstat('fullreport'); % write fullreport, all methods(uncor, cluster-based, FWE), for all contrast,  write xls-files and nifti-files
+% xstat('fullreport');     %SIMPLEST,  write fullreport, all methods(uncor, cluster-based, FWE), for all contrast,  write xls-files and nifti-files
 % xstat('fullreport',struct('method',[1 2 3],'xls',0,'nifti',0)); % all methods,for all contrast, do not save xls-file/NIfti-file
 % xstat('fullreport',struct('method',[3],'con',[1],'xls',0,'nifti',0)) ;% FWE only for contrast-1, no nifti, no xls-file written
 % xstat('fullreport',struct('method',[3],'con',[1],'xls',1,'nifti',1)) % same but write xls-file and nifti-file
@@ -368,6 +405,30 @@ if nargin>0
            varargout{1}=fiout;
            varargout{2}=g;
         end
+        %-------------------------internal: obtain group-file +data ---------------
+        if strcmp(showgui, 'obtainGroupfile');
+            isOK=readexcel(x);
+            varargout{1}=isOK;
+            % runcmd: isOK=xstat('obtainGroupfile','twosamplettest');
+        end
+        %-------------------------internal: %make batch for statistical models -------
+        if strcmp(showgui, 'makeBatch');  
+            fmakebatch('xstat' );
+            % runcmd: xstat('makeBatch')
+        end
+        %-------------------------internal: setUP SPM -------
+        if strcmp(showgui, 'spmsetup');
+            if exist('x')~=1
+                spmsetup;
+            else
+                if exist('s')==1
+                    visualmode=s;
+                    spmsetup(x,visualmode)
+                end
+            end
+            % runcmd: isOK=xstat('obtainGroupfile','twosamplettest');
+        end
+        
         if strcmp(showgui, 'fullreport');
             fiout=[]; g=[];
             if exist('x')~=1;         x.dummi=1;         end
@@ -387,10 +448,18 @@ end
 % gg=   struct([]);
 
 
-types={'regression' 'pairedttest' 'twosamplettest' 'onewayanova' 'fullfactorial'};
+types={'regression' 'pairedttest' 'twosamplettest' 'onewayanova' 'fullfactorial' 'onewayanova_within'};
+
+global xvv;
+fs=7;
+try
+   fs=xvv.fs; 
+end
+
 clear global xvv;
 global xvv;
 xvv={};
+xvv.fs=fs;
 
 
 %———————————————————————————————————————————————
@@ -434,7 +503,7 @@ if 0
     z.group_col      = [2];                                                               % % column number with group assignment  (used when comparing groups, "regress_col" must be empty)
     z.data_dir       = 'O:\data\voxelwise_Maritzen4tool\dat';                             % % data directory (upper directory) contains dirs with mice data
     z.inputimage     = 'JD.nii';                                                          % % image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-    z.grp_comparison = '1vs2';                                                            % % groups to compare
+%     z.grp_comparison = '1vs2';                                                            % % groups to compare
     z.mask           = 'O:\data\voxelwise_Maritzen4tool\templates\AVGTmask.nii';          % % <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
     z.output_dir     = 'tests2';                                                           % % path for output/statistic
     z.showSPMbatch   = [0];                                                               % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
@@ -553,7 +622,7 @@ if 0
     x.group_col=      [2];	% column number with group assignment
     x.data_dir=       'O:\data\voxelwise_Maritzen4tool\dat';	% data directory (upper directory) contains dirs with mice data
     x.inputimage=     { 'JD.nii' };	% image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-    x.grp_comparison='1vs2'	;% groups to compare
+%     x.grp_comparison='1vs2'	;% groups to compare
     x.output_dir=     'res_3';	% path for
     xstat(showgui,x)
     
@@ -599,8 +668,9 @@ set(gcf,'position',[0.7049    0.4189    0.1503    0.4667]    ); %figure
 % ===============================================
 
 hu = uimenu(gcf,'Label','misc');
-h1 = uimenu(hu,'Label','create MIP,change Atlas', 'Callback',{@miscTask,'repairMIP'});
-
+h1 = uimenu(hu,'Label','find cluster-size threshold at p=0.001', 'Callback',{@miscTask,'findClusterTresh,p0.001'});
+h1 = uimenu(hu,'Label','find cluster-size threshold, at userdefined  p-value', 'Callback',{@miscTask,'findClusterTresh,user'});
+h1 = uimenu(hu,'Label','create MIP,change Atlas', 'Callback',{@miscTask,'repairMIP'},'separator','on');
 
 hu = uimenu(gcf,'Label','posthoc');
 h1 = uimenu(hu,'Label','<html>create summary of <font color=blue>current<font color=black> contrast',        ...
@@ -658,30 +728,34 @@ set(h2,'string', 'depStat','callback', @pairedsampleTest);
 set(h2,'position',[.3 0.9249 .3 .05]);
 set(h2,'tooltipstring','dependend/paired t-test');
 
-h2=uicontrol('style','pushbutton','units','norm')   ;  %USERDEFINED
-set(h2,'string', 'userdefined','callback',@userdefined);
-set(h2,'position',[.6 .9249 .3 .05]);
-set(h2,'tooltipstring','build your own analysis');
+
 
 h2=uicontrol('style','pushbutton','units','norm')   ;   %onewayanova
-set(h2,'string', '1way-ANOVA','callback', @onewayanova);
+set(h2,'string', '1xANOVA','callback', @onewayanova);
 set(h2,'position',[0 .875 .3 .05]);
-set(h2,'tooltipstring','one-way-anova','fontsize',6);
+set(h2,'tooltipstring','one-way-anova','fontsize',7);
 
+h2=uicontrol('style','pushbutton','units','norm')   ;   %onewayanova-within
+set(h2,'string', '1xANOVA-within','callback', @onewayanova_within);
+set(h2,'position',[0.3 0.875 0.3 0.05]);
+set(h2,'tooltipstring','one-way-anova within subjects','fontsize',7);
 
 
 h2=uicontrol('style','pushbutton','units','norm')   ;   %fullfactorial
 set(h2,'string', 'fullfactorial','callback', @fullfactorial);
-set(h2,'position',[0.3 .875 .3 .05]);
-set(h2,'tooltipstring','fullfactorial','fontsize',7);
+set(h2,'position',[0.0043616 0.82492 .3 .05]);
+set(h2,'tooltipstring','fullfactorial','fontsize',6);
 
 
 h2=uicontrol('style','pushbutton','units','norm')   ;   %multiple regression
 set(h2,'string', 'm. regression','callback', @multipleregression);
-set(h2,'position',[0.6 .875 .3 .05]);
+set(h2,'position',[0.6 .925 .3 .05]);
 set(h2,'tooltipstring','multiple regression','fontsize',7);
 
-
+h2=uicontrol('style','pushbutton','units','norm')   ;  %USERDEFINED
+set(h2,'string', 'userdefined','callback',@userdefined);
+set(h2,'position',[[0.60039 0.82492 0.3 0.05]]);
+set(h2,'tooltipstring','build your own analysis');
 % ==============================================
 %%   view results GUI
 % ===============================================
@@ -791,12 +865,23 @@ set(h2, 'string','contrasts','ButtonDownFcn',@loadothercontrastini);
 set(h2, 'position',[0.55881 0.645 .2 0.03],'fontsize',6,'backgroundcolor','w',...
     'horizontalalignment','left');
 
+
 h2=uicontrol('style','listbox','units','norm') ;      %other contrasts
 set(h2, 'string','-','callback',@loadothercontrast,'tag','loadothercontrast');
 set(h2, 'position',[0.56343 0.25115 0.48 0.4],'fontsize',5);
 set(h2,'tooltipstring',['<html><b>contrast-list</b><br>' ...
     'select a contrast here to display this contrast <br>' ...
-    'if the list is empty..just click here to update the contrast-list']);
+    'if the list is empty..just click here to update the contrast-list<br>'...
+    '<b>shortcut [+/-] to change fontsize</b>']);
+set(h2,'KeyPressFcn',@KeyPress);
+set(findobj(0,'tag','vvstat'),'KeyPressFcn',@KeyPress);
+
+
+try
+global xvv
+% xvv.fs=7;
+set(h2,'fontsize',xvv.fs);
+end
 
 %% ———————— recreate———————————————————————————————————
 h2=uicontrol('style','pushbutton','units','norm') ;      %show sections
@@ -968,9 +1053,10 @@ if isfield(xvv.x,'stattype')
         pairedsampleTest;
     elseif strcmp(xvv.x.stattype, 'twosamplettest')
         twosampleTest;
-        
     elseif strcmp(xvv.x.stattype, 'onewayanova')
         onewayanova;
+    elseif strcmp(xvv.x.stattype, 'onewayanova_within')
+        onewayanova_within;
     elseif strcmp(xvv.x.stattype, 'fullfactorial')
         fullfactorial;
     end
@@ -984,7 +1070,20 @@ function miscTask(e,e2,task)
 
 if strcmp(task, 'repairMIP')
     repairMIP(1);
+elseif strcmp(task, 'findClusterTresh,p0.001') || strcmp(task, 'findClusterTresh,user')
+    try
+        xSPM = evalin('base','xSPM');
+        if ~isempty(strfind(task, 'user'))
+            p=str2num(input('cluster-threshold, PLEASE ENTER DESIRED P-THRESHOLD: ','s')) ;
+        else
+            p=0.001;
+        end
+        
+        clustersize=cp_cluster_Pthresh(xSPM, p);
+    end
 end
+
+
 function repairMIP_help()
 g={ '=================================='
     '    repair MIP/change ATLAS (xstat)      '
@@ -1490,113 +1589,60 @@ end
 %———————————————————————————————————————————————
 %%   parmaeter
 %—————————————————————————————
+% stat test                    first comment in GUI
+stattests={...
+    'twosamplettest'     '% TWO-SAMPLE-TTEST'
+    'pairedttest'        '% PAIRED-SAMPLE-TTEST'
+    'regression'         '% multiple regression' 
+    'onewayanova'        '% ONE-WAY-ANOVA' 
+    'onewayanova_within' '% within-ONE-WAY-ANOVA' 
+    'fullfactorial'      '% fullfactorial ANOVA'
+    };
 
-if strcmp(xtype,'twosamplettest')
-    p={
-        'inf1'     '%  TWO-SAMPLE-TTEST'  '' ''
-        'excelfile' ''          '[Excelfile]: this file contains a column with mouseIDs (names) and a column assigning the group' 'f'
-        'sheetnumber'     1      'this sheet contains columns with mouseIDs and group assignment' ''
-        'mouseID_col'     1      'column number with the MouseIDs' ''
-        'group_col'       2      'column number with group assignment  (used when comparing groups, "regress_col" must be empty)' ''
-        'data_dir'        v.data_dir     'data directory (upper directory) contains dirs with mice data' 'd'
-        'inputimage'      ''     'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
-        'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
-        'AVGT'            v.AVGT 'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
-        'ANO'             v.ANO   'select the ATLAS-file (path of "ANO.nii")' 'f'
-        'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
-        'grp_comparison' '1vs2' 'groups to compare, use EXCELgroupnames(example: "GroupNameString1vsGroupNameString2") or alphabet. order (example: "1vs2"), or ' {'1vs2' '1vs3' '2vs3'  };
-        'mask'            v.mask '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' 'f';
-        'smoothing'       1       '<optional>smooth data' 'b'
-        'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
-        'output_dir'      v.output_dir 'path for output/statistic' 'd';
-        'showSPMbatch'   1      '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
-        };
-elseif strcmp(xtype,'pairedttest')
-    p={
-        'inf1'     '%  PAIRED-SAMPLE-TTEST'  '' ''
-        'excelfile' ''   '[Excelfile]: this file contains two columns with mouseIDs (names) for timepoint T1 and T2, respectively' 'f'
-        'sheetnumber'    1           'this sheet contains columns with mouseIDs and group assignment' ''
-        'mouseID_col'    1           'column number with the MouseIDs' ''
-        'group_col'      2           'column number with group assignment  (used when comparing groups, "regress_col" must be empty)' ''
-         %'mouseID_colT1'  1  'column number with the MouseIDs for T1' ''
-         %'mouseID_colT2'  1  'column number with the MouseIDs for T2' ''
-        'data_dir'       v.data_dir  'data directory (upper directory) contains dirs with mice data' 'd'
-        'inputimage'     ''          'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
-        'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
-        'AVGT'           v.AVGT   'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
-        'ANO'            v.ANO    'select the ATLAS-file (path of "ANO.nii")' 'f'
-        'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
-        'mask'           v.mask   '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' 'f';
-        'smoothing'       1       '<optional>smooth data' 'b'
-        'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
-        'output_dir'      v.output_dir      'path for output/statistic' 'd';
-        'showSPMbatch'   1                  '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
-        
-        };
+
+p={
+    'inf1'            '% ##'  '' ''
+    'excelfile'       ''     '[Excel-file]: file containing columns with animal-IDs and group/regressionValue and optional covariates' 'f'
+    'sheetnumber'     1      'sheet-index containing the data (default: 1)' ''
+    'mouseID_col'     1      'column-index containing the animal-IDs (default: 1)' ''
+    'group_col'       2      'column-index containing  the group assignment (default: 2)' ''
+    'regress_col'     []     '<optional>  column-index/indices containing covariates (otherwise: empty)' ''
     
-elseif strcmp(xtype,'regression')
-    p={
-        'inf1'     '%  multiple regression'  '' ''
-        'excelfile' ''   '[Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values' 'mf'
-        'sheetnumber'    1           'this sheet contains columns with mouseIDs and regression values' ''
-        'mouseID_col'    1           'column number with the MouseIDs' ''
-        'regress_col'    2           'column number with regression values (used for multiple regression,"group_col" must be empty)' ''
-        'data_dir'       v.data_dir  'data directory (upper directory) contains dirs with mice data' 'd'
-        'inputimage'     ''          'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
-        'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
-        'AVGT'           v.AVGT   'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
-        'ANO'            v.ANO    'select the ATLAS-file (path of "ANO.nii")' 'f'
-        'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
-        'mask'           v.mask   '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' 'f';
-        'smoothing'       1       '<optional>smooth data' 'b'
-        'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
-        'output_dir'      v.output_dir      'path for output/statistic' 'd';
-        'showSPMbatch'    1                 '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
-        
-        };
-elseif strcmp(xtype,'onewayanova')
-    p={
-        'inf1'     '%  ONE-WAY-ANOVA'  '' ''
-        'excelfile' ''   '[Excelfile]: this file contains a column with mouseIDs (names) and a column with regression values' 'f'
-        'sheetnumber'    2  'this sheet contains columns with mouseIDs and regression values' ''
-        'mouseID_col'    1  'column number with the MouseIDs' ''
-        'group_col'      3   'column number with group assignment  (used when comparing groups)' ''
-        'regress_col'    []  '<optional> column number(s) with regression values,otherwise empty (examples: age+gender --> regression columns are [4 5])' ''
-        'data_dir'       '' 'data directory (upper directory) contains dirs with mice data' 'd'
-        'inputimage'     '' 'image name (nifti) to run the statistic (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
-        'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
-        'AVGT' '' 'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
-        'ANO'  '' 'select the ATLAS-file (path of "ANO.nii")' 'f'
-        'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
-        'mask'          'local' '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' {'d' 'f' 'local'};
-        'smoothing'       1       '<optional>smooth data' 'b'
-        'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
-        'output_dir'   'test_13' 'path for output/statistic' 'd';
-        'showSPMbatch'   1      '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
-        };
-elseif strcmp(xtype,'fullfactorial')
-    p={
-        'inf1'     '%  fullfactorial ANOVA'  '' ''
-        'excelfile'      ''     '[Excelfile]: this file contains a column with mouseIDs (names) and columns containing the factors' 'f'
-        'sheetnumber'    1      'this sheet contains columns with mouseIDs, factors and regression values' ''
-        'mouseID_col'    1      'column number with the MouseIDs' ''
-        'group_col'      [4 5]  'columns containing the factors (example: column-4 is factor-A and column-5 is factor-B)' ''
-        'regress_col'    []     '<optional>  column number addressing regression values,otherwise empty' ''
-        'data_dir'       ''     'data directory (upper directory) contains dirs with mice data' 'd'
-        'inputimage'     ''     'NIFTI image name, from which the statistic is made (datapath has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
-        'inf2'     '_____ TEMPLATE & ATLAS ________________________'  '' ''
-        'AVGT' '' 'select the TEMPLATE-file (path of "AVGT.nii")' 'f'
-        'ANO'  '' 'select the ATLAS-file (path of "ANO.nii")' 'f'
-        'inf3'     '_____ OTHER PARAMETER ________________________'  '' ''
-        'mask'          'local' '<optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder] ' {'d' 'f' 'local'};
-        'smoothing'       1       '<optional>smooth data' 'b'
-        'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM)'  ''
-        'output_dir'   'test_13' 'path for output/statistic' 'd';
-        'showSPMbatch'   1      '[0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically ' 'b';
-        };
+    'inf2a'           ''  '' ''
+    'inf2'     '_____ DataDIR & NIFTI ________________________'  '' ''
+    'data_dir'        v.data_dir     'main data directory (upper directory) containing the animal-dirs (default: the "dat"-dir of the study)' 'd'
+    'inputimage'      ''             'name of the NIFTI-image to analyze ("data_dir" has to bee defined before using the icon)'  {@antcb,'selectimageviagui', 'data_dir' ,'single'}
     
+    'inf3a'           ''  '' ''
+    'inf3'     '_____ TEMPLATE/ATLAS/MASK & OUTPUT ________________________'  '' ''
+    'AVGT'            v.AVGT         '[TEMPLATE-file]: select the TEMPLATE (default: fullpath-name of "AVGT.nii" from the templates-dir)' 'f'
+    'ANO'             v.AVGT         '[ATLAS-file]: select the ATLAS (default: fullpath-name of "ANO.nii" from the templates-dir)' 'f'
+    'mask'            v.mask         '[MASK-file]: select the brain-maskfile (default: fullpath-name of "AVGTmask.nii" from the templates-dir)' 'f'
+    'output_dir'      v.output_dir   'path of the output-directory (SPM-statistic with SPM.mat and images)' 'd';
+    'inf4a'           ''  '' ''
+    'inf4'     '_____ OTHER PARAMETER ________________________'  '' ''
+    'smoothing'       1                 '<optional>smooth data, [0|1]; if [1] the NIFTI is smoothed & stored with prefix "s" in the animal-dir, the smoothed image is than used for analysis ' 'b'
+    'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM); example: tripple of the voxsize of the inputimage '  ''
+    'showSPMwindows'  1                  'hide|show SPM-WINDOWS, [0|1]; if [0] SPM-windows are hidden' 'b';
+    'showSPMbatch'    1                  'hide|show SPM-batch, [0|1]; usefull for evaluation and postprocessing' 'b';
+    'runSPMbatch'     1                  'run SPM-batch, [0|1]; if [0] you have to start the SPM-batch by yourself,i.e hit the green triangle, [1] batch runs automatically ' 'b';
+    'showResults'     1                  'show results; [0|1]; if [1] voxelwise results will be shown afterwards' 'b'; 
+    };
+
+istat=strcmp(stattests(:,1),xtype);
+if isempty(istat)
+   cprintf('*[0 0 1]',['Available statistical models: ' '\n']);
+   disp(stattests(:,1));
+   error('undefined statistical model!');
+end
+p{1,2}= [ strrep( stattests{istat,2} ,'%','% DESIGN:')  ' (' stattests{istat,1} ')']    ;% replace comment in 1st row
+if strcmp(xtype, 'regression'); %remove "group_col"
+    p(strcmp(p(:,1),'group_col'),:)=[];
 end
 
+% ==============================================
+%%   
+% ===============================================
 
 
 global xvv
@@ -1607,7 +1653,7 @@ if showgui==1
     hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
     
     try
-        [m x a paras]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .6 .35 ],...
+        [m x a paras]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .6 .45 ],...
             'info',hlp,'title',[mfilename '.m']);
         if isempty(m);
             disp('...process terminated by user...');
@@ -1626,43 +1672,6 @@ else
 end
 
 global vxx
-% vxx.p=p;
-
-
-% %% ed
-%
-% eval(m);
-%
-% keyboard;
-%
-% if 0
-%     p=paramadd(p,x);%add/replace parameter
-%     %     [m z]=paramgui(p,'uiwait',0,'close',0,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .7 .5 ],'title','PARAMETERS: LABELING');
-%     % %% show GUI
-%     if showgui==1
-%         hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
-%         [m z a params]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .8 .6 ],...
-%             'title','SETTINGS','pb1string','OK','info',hlp);
-%         fn=fieldnames(z);
-%         z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
-%     else
-%         z=param2struct(p);
-%     end
-% end
-
-
-if 0
-    %% EXAMPLE: PAIRED TTEST
-    x.excelfile=     { 'O:\data\voxelwise_Maritzen4tool\Maritzen_Animal_groups.xlsx' };	% [Excelfile]: this file contains two columns with mouseIDs (names) for timepoint T1 and T2, respectively
-    x.sheetnumber=   [1];	% this sheet contains columns with mouseIDs and group assignment
-    x.mouseID_colT1= [8];	% column number with the MouseIDs for T1
-    x.mouseID_colT2= [9];	% column number with the MouseIDs for T2
-    x.data_dir=      'O:\data\voxelwise_Maritzen4tool\dat';	% data directory (upper directory) contains dirs with mice data
-    x.inputimage=    'JD.nii';	% image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-    x.mask=          'local';	% <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
-    x.output_dir=    'test_2';	% path for output/statistic
-end
-
 
 %———————————————————————————————————————————————
 %%   working with 'x'
@@ -1735,16 +1744,156 @@ end
 %———————————————————————————————————————————————
 %%   read excel
 %———————————————————————————————————————————————
-[~,~,a]=xlsread(x.excelfile, x.sheetnumber);
 
+if exist(x.excelfile)~=2
+    cprintf('*[1 0 .5]',['ERROR: group-assignmment-file does not exist ' '\n']);
+    error(['misSING FILE: ' char(x.excelfile)]);
+end
+
+[~,sheets]=xlsfinfo(x.excelfile);
+try
+    sheets(x.sheetnumber)
+catch
+    cprintf('*[1 0 .5]',['ERROR: sheet-index does not exist ' '\n']);
+    error(['wrong sheet-index: ' num2str(x.sheetnumber)]);
+end
+
+[~,~,a]=xlsread(x.excelfile, x.sheetnumber);
 if numel(a)==1
     msgbox(['error: sheet-' num2str(x.sheetnumber) ' has only 1-element' char(10) ...
         'most likely the sheet-index is not correct']) ;
     error('abbort: sheet is empty');
 end
+% =========remove non-existend-folders======================================
+ack=cellfun(@(a){[num2str(a)]} ,a(2:end,x.mouseID_col));
+ackFP=stradd(ack,[x.data_dir filesep]);
+imissdir=find(existn(ackFP)~=7);
+if ~isempty(imissdir)
+     cprintf('*[1 0 .5]',['The following animal-folders where not found' '\n']);
+    disp(ack(imissdir));
+    cprintf('*[1 0 .5]',['..animals where excluded form analysis' '\n']);
+    a(imissdir+1,:)=[];
+end
+% =========remove covars that do not fit ()======================================
+try
+    if ~isempty(x.regress_col)
+        try
+            covs=a(2:end,x.regress_col);
+            
+            is_noNumeric=cell2mat(cellfun(@(a){[~isnumeric(a)]} ,covs));
+            is_NAN      =cell2mat(cellfun(@(a){[strcmp(num2str(a),'NaN')]} ,covs));
+            ix_notOK    =find(sum(is_noNumeric+is_NAN,2));
+            
+            if ~isempty(ix_notOK)
+                cprintf('*[1 0 .5]',['non-numeric values or NaN or spaces for covars/regressValues found!' '\n']);
+                cprintf('*[1 0 .5]',['excel-rows: '  regexprep(num2str(ix_notOK'),'\s+',',') '\n']);
+                disp(covs(ix_notOK,:));
+                
+                cprintf('*[1 0 .5]',['..please remove those values from group-assignment file!!!!' '\n']);
+                error('abbort: covars/regression values ...not numeric or contain NANs/spaces');
+            end
+            
+        catch
+            cprintf('*[1 0 .5]',['index/indices of regress_col does not match ' '\n']);
+            error(['wrong regress_col-index/indices: ' num2str(x.regress_col)]);
+        end
+    end
+end
+% ===============================================
 
 
 he=a(1,:); %header
+%% ===============================================
+% ==============================================
+%%   newer version 
+% ===============================================
+s.m.x_info='_inputStruct___';
+s.m.x=x;
+s.m.a_info='_groupfile___';
+s.m.a=a;
+s.m.s_info='_fields___';
+if isfield(x,'group_col')
+    s.m.d       =cellfun(@(a){num2str(a)},a(2:end,[ x.mouseID_col x.group_col ])   );
+    s.m.dh      =a(1,[ x.mouseID_col x.group_col ]) ;
+else
+    s.m.d       =cellfun(@(a){num2str(a)},a(2:end,[ x.mouseID_col x.regress_col ])   );
+    s.m.dh      =a(1,[ x.mouseID_col x.regress_col ]) ;
+end
+% s.m.d(:,2)  =regexprep(s.m.d(:,2),{'\^|\.|\s|,|;|#|\d^|/|\'},{''});
+s.m.d=regexprep(s.m.d,{'\^|\.|\s|,|;|#|\d^|/|\'},{''});
+
+s.m.isCovar =0;
+if isfield(x,'regress_col')
+    if ~isempty(x.regress_col)
+        s.m.covar     =a(2:end,x.regress_col);
+        s.m.covar     =cellfun(@(a){[str2num(num2str(a))]} ,s.m.covar);
+        s.m.covarName =a(1,x.regress_col);
+        s.m.isCovar   =1;
+    end
+end
+
+[files,~] = spm_select('FPListRec',x.data_dir,['^' x.inputimage '$']);  files=cellstr(files);
+if isempty(x.inputimage)
+    msgbox('no image selected!!');
+    error('image must be selected');
+end
+s.m.files={};
+% s.m.filesExist=[];
+s.m.misses={};
+s.m.missesIDX=[];
+for i=1:size(s.m.d,1)
+    ix=find(~cellfun('isempty',  strfind(files,[filesep  s.m.d{i,1}  filesep  ])  )  );% regexpi(files,s.d(i,1))));
+    if length(ix)>1 ; error(['ix: more nifti-files found than expected']); end
+    if ~isempty(ix)
+        %s.m.filesExist(i,1) = 1;
+        s.m.files(i,1)      = files(ix);
+    else
+        %s.m.filesExist(i,1)    = 0;
+        s.m.misses{end+1,1}    = s.m.d{i,1};
+        s.m.missesIDX(end+1,1) = i;
+    end
+end
+
+if ~isempty(s.m.missesIDX)
+    cprintf('*[1 0 .5]',['IMPORTANT: the inputfile "' x.inputimage '" does not exist for: ' '\n']);
+    msgmiss=cellfun(@(a,b){[ '[' (num2str(a))  '] ' b ]} ,num2cell(s.m.missesIDX),s.m.misses);
+    disp(char(msgmiss));
+    cprintf('*[1 0 .5]',['..animals where excluded form analysis' '\n']);
+end
+
+
+% ====[remove not existing cases]=====================================
+if ~isempty(s.m.missesIDX)
+    if strcmp(xtype,'pairedttest')
+        %remove groupwise
+        misspair=[];
+        for i=1:length(s.m.missesIDX)
+            thisgrp=s.m.d(s.m.missesIDX(i),2);
+            iv=strcmp(s.m.d(:,2),thisgrp);
+            ivother=find(iv==0);
+            misspair(i,:)=[ s.m.missesIDX(i) ivother(s.m.missesIDX(i) )];
+        end
+        misspairvec=misspair(:);
+        s.m.files(  misspairvec  ) = [];
+        s.m.d(      misspairvec,: ) = [];
+        if s.m.isCovar==1
+            s.m.covar(   misspairvec, :) = [];
+        end
+        
+    else
+        s.m.files(  s.m.missesIDX   ) = [];
+        s.m.d(      s.m.missesIDX,: ) = [];
+        if s.m.isCovar==1
+            s.m.covar(   s.m.missesIDX, :) = [];
+        end
+    end
+
+end
+% =======UPDATE========================================
+
+
+s.d=s.m.d;
+%% ===============================================
 
 if strcmp(xtype,'twosamplettest')
     d=a(2:end,[ x.mouseID_col x.group_col ]);
@@ -2046,7 +2195,11 @@ pref.mcp          = 'FWE' ;
 
 
 
-function spmsetup(spmfile)
+function spmsetup(spmfile,visualmode)
+
+if exist('visualmode')~=1
+    visualmode=1;
+end
 
 if sum([~isempty(findobj(0,'tag','Graphics'))
         ~isempty(findobj(0,'tag','Interactive'))
@@ -2063,7 +2216,15 @@ if sum([~isempty(findobj(0,'tag','Graphics'))
     try; us=get(hf,'userdata'); end
     global xvv
     xvv_bk=xvv;
-    spm fmri
+    
+    if visualmode==1
+        spm fmri
+    else
+        disp('..silent mode...');
+        spm('defaults', 'fmri');
+        spm_jobman('initcfg');
+        spm_get_defaults('cmdline',true);
+    end
     hf=findobj(0,'tag','vvstat');
     if isempty(hf)
         try
@@ -3444,1144 +3605,45 @@ fileout=fiout;
 g.bgimg=lab.template;
 
 
-
-
-
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%———————————————————————————————————————————————
-%%              MODELS
-%———————————————————————————————————————————————
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-
-
-
+% ==============================================
+%%     MODELS
+% ===============================================
 %———————————————————————————————————————————————
 %%   userdefined
 %———————————————————————————————————————————————
-
 function userdefined(e,e2)
 spmsetup ;
 spm_jobman;
-
 %———————————————————————————————————————————————
 %%   paired-sample ttest
 %———————————————————————————————————————————————
-
 function pairedsampleTest(e,e2,varargin)
-global xvv
-xvv.xtype='pairedttest';
-warning off;
-isOK=readexcel(xvv.xtype);
-if isOK==0; return; end
-
-fmakebatch(mfilename );
-
-% disp('fun: pairedsampleTest');
-% return;%*
-% -------------------------
-spmsetup;
-
-hfig=findobj(0,'tag','vvstat');
-s=get(hfig,'userdata');
-try ;     cd(s.workpath); end
-%---------------------------------
-
-% set(  findobj(0,'tag','vvstat') ,'userdata',s)
-
-
-outdir   =  s.output_dir   ;
-% rmdir(outdir,'s');
-mkdir(outdir);
-
-mask     =  s.mask         ;
-g1       =  s.grp_1        ;
-g2       =  s.grp_2        ;
-groupLabels=s.classes      ;%group-names
-
-mb={};
-for i=1:size(g1,1)
-    dv={[g1{i} ,',1']; [g2{i} ,',1'] };
-    %disp([i]);     disp(char(dv));
-    mb{1}.spm.stats.factorial_design.des.pt.pair(i).scans =dv;
-    
-end
-
-mb{1}.spm.stats.factorial_design.dir ={outdir}  ;% {'O:\data\voxelwise_Maritzen4tool\test_1'};
-
-
-% mb{1}.spm.stats.factorial_design.des.pt.pair(1).scans = {
-%                                                                   'O:\data\voxelwise_Maritzen4tool\bla.nii,1'
-%                                                                   'O:\data\voxelwise_Maritzen4tool\bla2.nii,1'
-%                                                                   };
-% mb{1}.spm.stats.factorial_design.des.pt.pair(2).scans = {
-%                                                                   'O:\data\voxelwise_Maritzen4tool\bla.nii,1'
-%                                                                   'O:\data\voxelwise_Maritzen4tool\bla2.nii,1'
-%                                                                   };
-% mb{1}.spm.stats.factorial_design.des.pt.pair(3).scans = {
-%                                                                   'O:\data\voxelwise_Maritzen4tool\bla.nii,1'
-%                                                                   'O:\data\voxelwise_Maritzen4tool\bla2.nii,1'
-%                                                                   };
-% mb{1}.spm.stats.factorial_design.des.pt.pair(4).scans = {
-%                                                                   'O:\data\voxelwise_Maritzen4tool\bla.nii,1'
-%                                                                   'O:\data\voxelwise_Maritzen4tool\bla2.nii,1'
-%                                                                   };
-% mb{1}.spm.stats.factorial_design.des.pt.pair(5).scans = {
-%                                                                   'O:\data\voxelwise_Maritzen4tool\bla.nii,1'
-%                                                                   'O:\data\voxelwise_Maritzen4tool\bla2.nii,1'
-%                                                                   };
-mb{1}.spm.stats.factorial_design.des.pt.gmsca = 0;
-mb{1}.spm.stats.factorial_design.des.pt.ancova = 0;
-mb{1}.spm.stats.factorial_design.cov = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {});
-mb{1}.spm.stats.factorial_design.masking.tm.tm_none = 1;
-mb{1}.spm.stats.factorial_design.masking.im = 1;
-mb{1}.spm.stats.factorial_design.masking.em =  {mask};  % {'O:\data\voxelwise_Maritzen4tool\templates\AVGTmask.nii'};
-mb{1}.spm.stats.factorial_design.globalc.g_omit = 1;
-mb{1}.spm.stats.factorial_design.globalm.gmsca.gmsca_no = 1;
-mb{1}.spm.stats.factorial_design.globalm.glonorm = 1;
-mb{2}.spm.stats.fmri_est.spmmat(1) = cfg_dep;
-mb{2}.spm.stats.fmri_est.spmmat(1).tname = 'Select SPM.mat';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{2}.spm.stats.fmri_est.spmmat(1).sname = 'Factorial design specification: SPM.mat File';
-mb{2}.spm.stats.fmri_est.spmmat(1).src_exbranch = substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{2}.spm.stats.fmri_est.spmmat(1).src_output = substruct('.','spmmat');
-mb{2}.spm.stats.fmri_est.method.Classical = 1;
-% ===============================================
-mb{3}.spm.stats.con.spmmat(1) = cfg_dep;
-mb{3}.spm.stats.con.spmmat(1).tname = 'Select SPM.mat';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{3}.spm.stats.con.spmmat(1).sname = 'Model estimation: SPM.mat File';
-mb{3}.spm.stats.con.spmmat(1).src_exbranch = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{3}.spm.stats.con.spmmat(1).src_output = substruct('.','spmmat');
-
-mb{3}.spm.stats.con.consess{1}.tcon.name    = [ groupLabels{1} '>'  groupLabels{2}]  ;%'1>2';
-mb{3}.spm.stats.con.consess{1}.tcon.convec  = [1 -1];
-mb{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
-
-mb{3}.spm.stats.con.consess{2}.tcon.name    = [ groupLabels{1} '<'  groupLabels{2}] ;%'1<2';
-mb{3}.spm.stats.con.consess{2}.tcon.convec  = [-1 1];
-mb{3}.spm.stats.con.consess{2}.tcon.sessrep = 'none';
-mb{3}.spm.stats.con.delete = 0;
-% ===============================================
-mb{4}.spm.stats.results.spmmat(1) = cfg_dep;
-mb{4}.spm.stats.results.spmmat(1).tname = 'Select SPM.mat';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{4}.spm.stats.results.spmmat(1).sname = 'Contrast Manager: SPM.mat File';
-mb{4}.spm.stats.results.spmmat(1).src_exbranch = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{4}.spm.stats.results.spmmat(1).src_output = substruct('.','spmmat');
-
-mb{4}.spm.stats.results.conspec(1).titlestr    = [ groupLabels{1} '>'  groupLabels{2}] ;%'1>2';
-mb{4}.spm.stats.results.conspec(1).contrasts   = 1;
-mb{4}.spm.stats.results.conspec(1).threshdesc  = 'FWE';
-mb{4}.spm.stats.results.conspec(1).thresh      = 0.05;
-mb{4}.spm.stats.results.conspec(1).extent      = 0;
-mb{4}.spm.stats.results.conspec(1).mask        = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
-
-mb{4}.spm.stats.results.conspec(2).titlestr    = [ groupLabels{1} '<'  groupLabels{2}];% '1<2';
-mb{4}.spm.stats.results.conspec(2).contrasts   = 2;
-mb{4}.spm.stats.results.conspec(2).threshdesc  = 'FWE';
-mb{4}.spm.stats.results.conspec(2).thresh      = 0.05;
-mb{4}.spm.stats.results.conspec(2).extent      = 0;
-mb{4}.spm.stats.results.conspec(2).mask        = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
-mb{4}.spm.stats.results.units = 1;
-mb{4}.spm.stats.results.print = false;
-
-
-
-%% smoothing
-% change [1] Data Smoothing [2]data for factDesignSpecif. [3] dependency-order
-if s.smoothing==1
-    try
-        smoothfwhm=str2num(s.smoothing_fwhm);
-    catch
-        smoothfwhm=        (s.smoothing_fwhm);
-    end
-    ms={};
-    ms{1}.spm.spatial.smooth.data = [g1;g2];
-    ms{1}.spm.spatial.smooth.fwhm = smoothfwhm ;% [0.28 0.28 0.28];
-    ms{1}.spm.spatial.smooth.dtype = 0;
-    ms{1}.spm.spatial.smooth.im = 0;
-    ms{1}.spm.spatial.smooth.prefix = 's';
-    
-    
-    %change inputfiles to smoothed images
-    mb{1}.spm.stats.factorial_design.des.t2.scans1 = stradd(g1,'s',1);
-    mb{1}.spm.stats.factorial_design.des.t2.scans2 = stradd(g2,'s',1);
-    
-    for i=1:size(g1,1)
-        %dv={[g1{i} ,',1']; [g2{i} ,',1'] };
-        dv={[stradd(g1{i},'s',1) ,',1']; [stradd(g2{i},'s',1) ,',1'] };
-        %disp([i]);     disp(char(dv));
-        mb{1}.spm.stats.factorial_design.des.pt.pair(i).scans =dv;
-    end
-    
-    
-    mb=  [ms mb ]  ;% add smoothing job
-    %% UPDATE dependency-order
-    mb{3}.spm.stats.fmri_est.spmmat(1).src_exbranch   = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{4}.spm.stats.con.spmmat(1).src_exbranch        = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{5}.spm.stats.results.spmmat(1).src_exbranch    = substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    
-end
-
-%..........................................
-idmb=spm_jobman('interactive',mb);
-matlabbatch=mb;
-fjob=fullfile(outdir,'job.mat');
-showinfo2('batch saved as',fjob,[],1,[' -->[' fjob ']']);
-save(fjob,'matlabbatch'); %SAVE BATCH
-drawnow;
-
-if xvv.x.showSPMbatch==0
-    spm_jobman('run',mb);
-else
-    cprintf('*[0.9294    0.6941    0.1255]',['.. batch is shown in SPM BATCH-EDITOR....' '\n']);
-    cprintf('*[0 .5 0]',['.. hit "RUN BATCH"-ICON of APM BATCH-EDITOR to start the batch!' '\n']);
-    
-end
-
-try ; cd(s.workpath); end
-if xvv.x.showSPMbatch==0
-    xstat('loadspm',fullfile(outdir,'SPM.mat'));
-end
-
-
-% if 0
-%     %get batch from grui
-%     [ee mb]=spm_jobman('harvest',idmb)
-%     
-% end
-
-
+voxstat_pairedsampleTest();
 %———————————————————————————————————————————————
 %%   onewayanova
 %———————————————————————————————————————————————
-
 function onewayanova(e,e2,varargin)
-warning off;
-global xvv
-xvv.xtype='onewayanova';
-readexcel(xvv.xtype);
-fmakebatch(mfilename );
-
-disp('fun: onewayanova');
-% return;%*
-% -------------------------
-spmsetup;
-hfig=findobj(0,'tag','vvstat');
-s=get(hfig,'userdata');
-try ;     cd(s.workpath); end
-
-
+voxstat_onewayANOVA();
 %———————————————————————————————————————————————
-%  get niftis and regressors
+%%   onewayanova-within
 %———————————————————————————————————————————————
-x=xvv.x;
-grps=unique(s.d(:,2),'stable');
-niftis    ={};
-regresvals=[];
-for i=1:length(grps)
-    ix=find(strcmp(s.d(:,2),grps{i}));
-    %niftis{i,1}=s.d(ix,4)
-    niftis{i,1}=cellfun(@(a){[ a ',1']},s.d(ix,4));
-    if ~isempty(x.regress_col)
-        regresvals=[regresvals;  cell2mat(s.d(ix,5:5+length(x.regress_col)-1)) ];
-    end
-end
-regressnames=s.regressname;
-
-%———————————————————————————————————————————————
-%   get other parans
-%———————————————————————————————————————————————
-outdir    = s.output_dir;
-rmdir(outdir,'s');
-mkdir(outdir);
-
-mask      = s.mask;
-
-%———————————————————————————————————————————————
-%  batch
-%———————————————————————————————————————————————
-mb={};
-mb{1}.spm.stats.factorial_design.dir = {outdir};
-
-for i=1:length(grps)
-    mb{1}.spm.stats.factorial_design.des.anova.icell(i,1).scans =   niftis{i};
-end
-
-% mb{1}.spm.stats.factorial_design.des.anova.icell(1).scans = {
-%                                                                       'O:\data\voxelwise_Maritzen4tool\dat\20161215TM_M6590_neu\JD.nii'
-%                                                                       'O:\data\voxelwise_Maritzen4tool\dat\20161215TM_M6591\JD.nii'
-%                                                                       'O:\data\voxelwise_Maritzen4tool\dat\20170112TM_M6615\JD.nii'
-%                                                                       'O:\data\voxelwise_Maritzen4tool\dat\20170112TM_M6617\JD.nii'
-%                                                                       };
-% mb{1}.spm.stats.factorial_design.des.anova.icell(2).scans = {
-%                                                                       'O:\data\voxelwise_Maritzen4tool\dat\20170112TM_M7065\JD.nii'
-%                                                                       'O:\data\voxelwise_Maritzen4tool\dat\20170112TM_M7067\JD.nii'
-%                                                                       'O:\data\voxelwise_Maritzen4tool\dat\20170113TM_M7068\JD.nii'
-%                                                                       'O:\data\voxelwise_Maritzen4tool\dat\20170113TM_M7070\JD.nii'
-%                                                                       };
-% mb{1}.spm.stats.factorial_design.des.anova.icell(3).scans = {
-%                                                                       'O:\data\voxelwise_Maritzen4tool\dat\20170113TM_M7334\JD.nii'
-%                                                                       'O:\data\voxelwise_Maritzen4tool\dat\20170113TM_M7338\JD.nii'
-%                                                                       'O:\data\voxelwise_Maritzen4tool\dat\20170223TM_M9513\JD.nii'
-%                                                                       'O:\data\voxelwise_Maritzen4tool\dat\20170223TM_M9515\JD.nii'
-%                                                                       };
-mb{1}.spm.stats.factorial_design.des.anova.dept = 0;
-mb{1}.spm.stats.factorial_design.des.anova.variance = 1;
-mb{1}.spm.stats.factorial_design.des.anova.gmsca = 0;
-mb{1}.spm.stats.factorial_design.des.anova.ancova = 0;
-%%
-%% without covariates
-if isempty(x.regress_col)
-    mb{1}.spm.stats.factorial_design.cov = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {});
-else
-    %% WITH covariates
-    for i=1:size(x.regress_col,2)
-        mb{1}.spm.stats.factorial_design.cov(i).c       = regresvals(:,i);
-        mb{1}.spm.stats.factorial_design.cov(i).cname   = regressnames{i};
-        mb{1}.spm.stats.factorial_design.cov(i).iCFI    = 1;
-        mb{1}.spm.stats.factorial_design.cov(i).iCC     = 1;
-    end
-    
-    
-end
-
-% mb{1}.spm.stats.factorial_design.cov(1).c = [1
-%                                                       2
-%                                                       3
-%                                                       4
-%                                                       5
-%                                                       6
-%                                                       7
-%                                                       8
-%                                                       9
-%                                                       10
-%                                                       11
-%                                                       12];
-% %%
-% mb{1}.spm.stats.factorial_design.cov(1).cname = 'blob1';
-% mb{1}.spm.stats.factorial_design.cov(1).iCFI = 1;
-% mb{1}.spm.stats.factorial_design.cov(1).iCC = 1;
-% %%
-% mb{1}.spm.stats.factorial_design.cov(2).c = [1
-%                                                       2
-%                                                       1
-%                                                       2
-%                                                       3
-%                                                       2
-%                                                       1
-%                                                       3
-%                                                       4
-%                                                       3
-%                                                       4
-%                                                       1];
-% %%
-% mb{1}.spm.stats.factorial_design.cov(2).cname = 'blob2';
-% mb{1}.spm.stats.factorial_design.cov(2).iCFI = 1;
-% mb{1}.spm.stats.factorial_design.cov(2).iCC = 1;
-
-mb{1}.spm.stats.factorial_design.masking.tm.tm_none = 1;
-mb{1}.spm.stats.factorial_design.masking.im = 1;
-mb{1}.spm.stats.factorial_design.masking.em = {mask};
-mb{1}.spm.stats.factorial_design.globalc.g_omit = 1;
-mb{1}.spm.stats.factorial_design.globalm.gmsca.gmsca_no = 1;
-mb{1}.spm.stats.factorial_design.globalm.glonorm = 1;
-
-mb{2}.spm.stats.fmri_est.spmmat(1) = cfg_dep;
-mb{2}.spm.stats.fmri_est.spmmat(1).tname = 'Select SPM.mat';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{2}.spm.stats.fmri_est.spmmat(1).sname = 'Factorial design specification: SPM.mat File';
-mb{2}.spm.stats.fmri_est.spmmat(1).src_exbranch = substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{2}.spm.stats.fmri_est.spmmat(1).src_output = substruct('.','spmmat');
-mb{2}.spm.stats.fmri_est.method.Classical = 1;
-
-mb{3}.spm.stats.con.spmmat(1) = cfg_dep;
-mb{3}.spm.stats.con.spmmat(1).tname = 'Select SPM.mat';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{3}.spm.stats.con.spmmat(1).sname = 'Model estimation: SPM.mat File';
-mb{3}.spm.stats.con.spmmat(1).src_exbranch = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{3}.spm.stats.con.spmmat(1).src_output = substruct('.','spmmat');
-
-
-
-% v=allcomb(grps,grps);
-%———————————————————————————————————————————————
-%  contrasts
-%———————————————————————————————————————————————
-v=nchoosek([1:length(grps)],2);
-pat={'>'   1 -1
-    '<'   -1 1 };
-cons={};
-for i=1:size(v,1)
-    n=1;
-    dzero=zeros(1,10);
-    dzero([v(i,1)  v(i,2)] ) =  [pat{n,2}  pat{n,3}];
-    cons(end+1,:)=  {[grps{v(i,1)} pat{n,1}  grps{v(i,2)}  ]   dzero(1:v(i,2))   };
-    
-    n=2;
-    dzero=zeros(1,10);
-    dzero([v(i,1)  v(i,2)] ) =  [pat{n,2}  pat{n,3}];
-    cons(end+1,:)=  {[grps{v(i,1)} pat{n,1}  grps{v(i,2)}  ]   dzero(1:v(i,2))   };
-end
-
-for i=1:size(cons,1)
-    mb{3}.spm.stats.con.consess{i}.tcon.name    = cons{i,1}   ;%'a1>a2';
-    mb{3}.spm.stats.con.consess{i}.tcon.convec  = cons{i,2}   ;%[1 -1];
-    mb{3}.spm.stats.con.consess{i}.tcon.sessrep = 'none';
-end
-
-
-% % % mb{3}.spm.stats.con.consess{1}.tcon.name = 'a1>a2';
-% % % mb{3}.spm.stats.con.consess{1}.tcon.convec = [1 -1];
-% % % mb{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
-% % %
-% % % mb{3}.spm.stats.con.consess{2}.tcon.name = 'a1<a2';
-% % % mb{3}.spm.stats.con.consess{2}.tcon.convec = [-1 1];
-% % % mb{3}.spm.stats.con.consess{2}.tcon.sessrep = 'none';
-
-mb{3}.spm.stats.con.delete = 0;
-
-
-
-mb{4}.spm.stats.results.spmmat(1) = cfg_dep;
-mb{4}.spm.stats.results.spmmat(1).tname = 'Select SPM.mat';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{4}.spm.stats.results.spmmat(1).sname = 'Contrast Manager: SPM.mat File';
-mb{4}.spm.stats.results.spmmat(1).src_exbranch = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{4}.spm.stats.results.spmmat(1).src_output = substruct('.','spmmat');
-mb{4}.spm.stats.results.conspec(1).titlestr = '';
-mb{4}.spm.stats.results.conspec(1).contrasts = 1;
-mb{4}.spm.stats.results.conspec(1).threshdesc = 'FWE';
-mb{4}.spm.stats.results.conspec(1).thresh = 0.05;
-mb{4}.spm.stats.results.conspec(1).extent = 0;
-mb{4}.spm.stats.results.conspec(1).mask = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
-
-
-% mb{4}.spm.stats.results.conspec(2).titlestr = '';
-% mb{4}.spm.stats.results.conspec(2).contrasts = 2;
-% mb{4}.spm.stats.results.conspec(2).threshdesc = 'FWE';
-% mb{4}.spm.stats.results.conspec(2).thresh = 0.05;
-% mb{4}.spm.stats.results.conspec(2).extent = 0;
-% mb{4}.spm.stats.results.conspec(2).mask = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
-mb{4}.spm.stats.results.units = 1;
-mb{4}.spm.stats.results.print = false;
-
-
-%%  smoothing
-if s.smoothing==1
-    % change [1] Data Smoothing [2]data for factDesignSpecif. [3] dependency-order
-    try
-        smoothfwhm=str2num(s.smoothing_fwhm);
-    catch
-        smoothfwhm=        (s.smoothing_fwhm);
-    end
-    
-    nifti_all={};
-    for i=1:length(grps)
-        nifti_all=[nifti_all;  niftis{i} ] ;
-    end
-    
-    
-    
-    
-    ms={};
-    ms{1}.spm.spatial.smooth.data = [nifti_all];
-    ms{1}.spm.spatial.smooth.fwhm = smoothfwhm ;% [0.28 0.28 0.28];
-    ms{1}.spm.spatial.smooth.dtype = 0;
-    ms{1}.spm.spatial.smooth.im = 0;
-    ms{1}.spm.spatial.smooth.prefix = 's';
-    
-    
-    %change inputfiles to smoothed images
-    for i=1:length(grps)
-        mb{1}.spm.stats.factorial_design.des.anova.icell(i,1).scans = stradd( niftis{i},'s',1);
-    end
-    
-    
-    
-    mb=  [ms mb ]  ;% add smoothing job
-    %% UPDATE dependency-order
-    mb{3}.spm.stats.fmri_est.spmmat(1).src_exbranch   = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{4}.spm.stats.con.spmmat(1).src_exbranch        = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{5}.spm.stats.results.spmmat(1).src_exbranch    = substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    
-end
-
-
-%..........................................
-idmb=spm_jobman('interactive',mb);
-matlabbatch=mb;
-save(fullfile(s.output_dir,'job'),'matlabbatch'); %SAVE BATCH
-drawnow;
-if xvv.x.showSPMbatch==0
-    spm_jobman('run',mb);
-end
-try ;    cd(s.workpath); end
-
-
-
-
-
-
+function onewayanova_within(e,e2,varargin)
+voxstat_onewayANOVAwithin();
 %———————————————————————————————————————————————
 %%   fullfactorial
 %———————————————————————————————————————————————
-
 function fullfactorial(e,e2,varargin)
-warning off;
-global xvv
-xvv.xtype='fullfactorial';
-readexcel(xvv.xtype);
-fmakebatch(mfilename );
-
-disp(['fun: ' xvv.xtype]);
-% return;%*
-% -------------------------
-spmsetup;
-hfig=findobj(0,'tag','vvstat');
-s=get(hfig,'userdata');
-try ;     cd(s.workpath); end
-
-
-%———————————————————————————————————————————————
-%  get niftis and regressors
-%———————————————————————————————————————————————
-x=xvv.x;
-
-% REMOVE MISSING DATA
-ivalid=find(cell2mat(s.d(:,end-1)));
-nonvalid=find(cell2mat(s.d(:,end-1))==0);
-if ~isempty(nonvalid)
-    disp('### files not found :');
-    disp(char(cellfun(@(a) {[ ' not found... ' a]},s.d(nonvalid,end))));
-end
-s.d=s.d(ivalid,:);
-
-levels    =s.d(:,2:length(s.dfactornames)+1);
-%% ---convert to numeric
-levelsnumeric=cell(size(levels,1),size(levels,2));
-levelsstring =levels;
-for i=1:size(levels,2)
-   uniL=unique(levels(:,i));
-   numL=cellfun(@(a){[num2str(a)]},num2cell([1:length(uniL)]'));
-   uniLS=cellfun(@(a){['^' a '$']},uniL);
-   levelsnumeric(:,i)=regexprep(levels(:,i),uniLS,numL);
-end
-% levels    =cell2mat(cellfun(@(a){[str2num(a)]},levels));
-levels    =cell2mat(cellfun(@(a){[str2num(a)]},levelsnumeric));
-%% ----
-
-
-
-regressors=[];
-if ~isempty(s.regressname)
-    regressors=s.d(:,length(s.dfactornames)+2: length(s.dfactornames)+2 +length(s.regressname)-1);
-    regressors=regressors(:,1) ;
-end
-comb=unique(levels,'rows');
-
-
-scans  ={};
-lev    ={};
-nlev   =max(comb);
-covars =[];
-factors=s.dfactornames;
-for i=1:size(comb,1)
-    ix=find(sum(abs(levels-repmat(comb(i,:),[size(levels,1) 1])),2)==0);
-    scans{i,1}=s.d(ix,end);                   % # NIFTIS
-    lev{i,1}  =comb(i,:)  ;                   % # LEVEL
-    if ~isempty(s.regressname)
-        covars=[covars; [regressors(ix,:)] ]; %  # RGRESSORS
-        regressname=s.regressname{1};
-    end
-end
-
-if ~isempty(covars);     covars=cell2mat(covars);          end
-
-
-%———————————————————————————————————————————————
-%   get other params
-%———————————————————————————————————————————————
-outdir    = s.output_dir;
-if 0
-    try; rmdir(outdir,'s'); end
-end
-try;mkdir(outdir);end
-mask      = s.mask;
-
-%———————————————————————————————————————————————
-%%  batch
-%———————————————————————————————————————————————
-mb={};
-mb{1}.spm.stats.factorial_design.dir ={outdir}                ;% {'O:\data2\x03_yildirim\v00_fullfactorial_test\'};
-
-for i=1:length(factors) %FACTOR
-    mb{1}.spm.stats.factorial_design.des.fd.fact(i).name =        factors{i} ;% 'desease';
-    mb{1}.spm.stats.factorial_design.des.fd.fact(i).levels =      nlev(i);
-    mb{1}.spm.stats.factorial_design.des.fd.fact(i).dept = 0;
-    mb{1}.spm.stats.factorial_design.des.fd.fact(i).variance = 1;
-    mb{1}.spm.stats.factorial_design.des.fd.fact(i).gmsca = 0;
-    mb{1}.spm.stats.factorial_design.des.fd.fact(i).ancova = 0;
-end
-
-for i=1:size(lev,1)  % SCANS for each COMBI
-    mb{1}.spm.stats.factorial_design.des.fd.icell(i).scans =       scans{i};      % # SCANS
-    mb{1}.spm.stats.factorial_design.des.fd.icell(i).levels =      lev{i}  ; % # FACT-COMBI  ([2  1])
-end
-
-% mb{1}.spm.stats.factorial_design.cov = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {});
-mb{1}.spm.stats.factorial_design.masking.tm.tm_none = 1;
-mb{1}.spm.stats.factorial_design.masking.im         = 1;
-mb{1}.spm.stats.factorial_design.masking.em         = {mask};
-
-mb{1}.spm.stats.factorial_design.globalc.g_omit         = 1;
-mb{1}.spm.stats.factorial_design.globalm.gmsca.gmsca_no = 1;
-mb{1}.spm.stats.factorial_design.globalm.glonorm        = 1;
-
-if ~isempty(covars)           %COVARIANCE
-    mb{1}.spm.stats.factorial_design.cov.c      = covars ;
-    mb{1}.spm.stats.factorial_design.cov.cname  = regressname ;
-    mb{1}.spm.stats.factorial_design.cov.iCFI   = 1;
-    mb{1}.spm.stats.factorial_design.cov.iCC    = 1;
-else
-    mb{1}.spm.stats.factorial_design.cov = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {});
-    
-end
-
-mb{2}.spm.stats.fmri_est.spmmat(1) = cfg_dep;
-mb{2}.spm.stats.fmri_est.spmmat(1).tname = 'Select SPM.mat';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{2}.spm.stats.fmri_est.spmmat(1).sname = 'Factorial design specification: SPM.mat File';
-mb{2}.spm.stats.fmri_est.spmmat(1).src_exbranch = substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{2}.spm.stats.fmri_est.spmmat(1).src_output = substruct('.','spmmat');
-mb{2}.spm.stats.fmri_est.method.Classical = 1;
-
-mb{3}.spm.stats.con.spmmat(1) = cfg_dep;
-mb{3}.spm.stats.con.spmmat(1).tname = 'Select SPM.mat';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{3}.spm.stats.con.spmmat(1).sname = 'Model estimation: SPM.mat File';
-mb{3}.spm.stats.con.spmmat(1).src_exbranch = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{3}.spm.stats.con.spmmat(1).src_output = substruct('.','spmmat');
-mb{3}.spm.stats.con.delete = 0;
-
-if length(factors)>=2
-    mb{3}.spm.stats.con.consess{1}.tcon.name    = ['negative effect of ' factors{1}];
-    mb{3}.spm.stats.con.consess{1}.tcon.convec  = [-ones(1,nlev(1)) ones(1,prod(nlev(2:end)))] ;% [-1 -1 1 1];
-    mb{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
-    
-    mb{3}.spm.stats.con.consess{2}.tcon.name    =['negative effect of ' factors{2}];;
-    mb{3}.spm.stats.con.consess{2}.tcon.convec  = [-1 1 -1 1];
-    mb{3}.spm.stats.con.consess{2}.tcon.sessrep = 'none';
-    
-    mb{3}.spm.stats.con.consess{3}.tcon.name    = ['negative Interaction: ' factors{1} ' x ' factors{2}];
-    mb{3}.spm.stats.con.consess{3}.tcon.convec  = [-1 1 1 -1];
-    mb{3}.spm.stats.con.consess{3}.tcon.sessrep = 'none';
-    mb{3}.spm.stats.con.delete = 0;
-end
-
-
-mb{4}.spm.stats.results.spmmat(1) = cfg_dep;
-mb{4}.spm.stats.results.spmmat(1).tname = 'Select SPM.mat';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{4}.spm.stats.results.spmmat(1).sname = 'Contrast Manager: SPM.mat File';
-mb{4}.spm.stats.results.spmmat(1).src_exbranch = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{4}.spm.stats.results.spmmat(1).src_output = substruct('.','spmmat');
-mb{4}.spm.stats.results.conspec(1).titlestr = '';
-mb{4}.spm.stats.results.conspec(1).contrasts = 1;
-mb{4}.spm.stats.results.conspec(1).threshdesc = 'FWE';
-mb{4}.spm.stats.results.conspec(1).thresh = 0.05;
-mb{4}.spm.stats.results.conspec(1).extent = 0;
-mb{4}.spm.stats.results.conspec(1).mask = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
-% mb{4}.spm.stats.results.conspec(2).titlestr = '';
-% mb{4}.spm.stats.results.conspec(2).contrasts = 2;
-% mb{4}.spm.stats.results.conspec(2).threshdesc = 'FWE';
-% mb{4}.spm.stats.results.conspec(2).thresh = 0.05;
-% mb{4}.spm.stats.results.conspec(2).extent = 0;
-% mb{4}.spm.stats.results.conspec(2).mask = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
-mb{4}.spm.stats.results.units = 1;
-mb{4}.spm.stats.results.print = false;
-
-
-%%  smoothing
-if s.smoothing==1
-    % change [1] Data Smoothing [2]data for factDesignSpecif. [3] dependency-order
-    try ;        smoothfwhm=str2num(s.smoothing_fwhm);
-    catch;       smoothfwhm=        (s.smoothing_fwhm);
-    end
-    
-    nifti_all={};
-    for i=1:size(scans,1)
-        nifti_all=[nifti_all;  scans{i} ] ;
-    end
-    
-    ms={};
-    ms{1}.spm.spatial.smooth.data = [nifti_all];
-    ms{1}.spm.spatial.smooth.fwhm = smoothfwhm ;% [0.28 0.28 0.28];
-    ms{1}.spm.spatial.smooth.dtype = 0;
-    ms{1}.spm.spatial.smooth.im = 0;
-    ms{1}.spm.spatial.smooth.prefix = 's';
-    
-    %change inputfiles to smoothed images
-    for i=1:size(scans,1)
-        mb{1}.spm.stats.factorial_design.des.fd.icell(i).scans =      stradd( scans{i},'s',1);
-    end
-    
-    mb=  [ms mb ]  ;% add smoothing job
-    %% UPDATE dependency-order
-    mb{3}.spm.stats.fmri_est.spmmat(1).src_exbranch   = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{4}.spm.stats.con.spmmat(1).src_exbranch        = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{5}.spm.stats.results.spmmat(1).src_exbranch    = substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1});
-end
-
-
-%..........................................
-idmb=spm_jobman('interactive',mb);
-matlabbatch=mb;
-save(fullfile(s.output_dir,'job'),'matlabbatch'); %SAVE BATCH
-drawnow;
-if xvv.x.showSPMbatch==0
-    spm_jobman('run',mb);
-end
-try ;    cd(s.workpath); end
-
-
-
-
-
-
-
-
-
-
-
+voxstat_multifactorial();
 %———————————————————————————————————————————————
 %%   twosampleTest
 %———————————————————————————————————————————————
-
 function twosampleTest(e,e2,varargin)
-global xvv
-xvv.xtype='twosamplettest';
-warning off;
-isOK=readexcel(xvv.xtype);
-if isOK==0; return; end
-
-fmakebatch(mfilename );
-
-% disp('fun: twosampleTest');
-% return;%*
-% -------------------------
-spmsetup;
-cprintf('*[0 0 1]',['.. please wait....' '\n']);
-
-hfig=findobj(0,'tag','vvstat');
-s=get(hfig,'userdata');
-try ;     cd(s.workpath); end
-
-if isfield(s,'grp_comparison') && ~isempty(s.grp_comparison)
-    groups=str2num(strrep(s.grp_comparison,'vs' ,' '));
-    if isempty(groups) % explicit GROUP-name comparison , example 'AvsB' instead of '1vs2'
-        gstr=strsplit(strrep(s.grp_comparison,' ','') ,'vs') ;
-        groups=[ find(strcmp(s.classes,gstr{1}))  find(strcmp(s.classes,gstr{2}))];
-    end
-    
-    g1=getfield(s,['grp_' num2str(groups(1))] );
-    g2=getfield(s,['grp_' num2str(groups(2))] );
-    g1(cellfun(@isempty, g1))=[]; %remove nonfinding dataSets from list
-    g2(cellfun(@isempty, g2))=[];
-    if isempty(g1{1})==1;        g1={}; end
-    if isempty(g2{1})==1;        g2={}; end
-    groupLabels=[s.classes(groups(1)) s.classes(groups(2))];
-    
-    
-else
-    
-    groupLabels=[s.classes(1) s.classes(2)];
-    
-end
-
-outdir=s.output_dir;
-try; delete(fullfile(outdir,'SPM.mat'));end
-try; delete(fullfile(outdir,'*.nii'));end
-% try; rmdir(outdir,'s'); end
-mkdir(outdir);
-
-%
-%remove xls-indicated subjects that have no data (path or volume)
-g1=g1(~cellfun('isempty',g1));
-g2=g2(~cellfun('isempty',g2));
-
-
-
-
-
-
-
-mb{1}.spm.stats.factorial_design.dir ={outdir};% {'O:\data\voxelwise_Maritzen4tool\_test_results1\'};
-%
-mb{1}.spm.stats.factorial_design.des.t2.scans1 = g1;
-% {
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20161215TM_M6590_neu\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170112TM_M6615\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170112TM_M7067\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170113TM_M7070\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170113TM_M7334\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170223TM_M9513\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170223TM_M9533\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170223TM_M9534\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170223TM_M9535\JD.nii'
-%                                                            };
-%
-%
-mb{1}.spm.stats.factorial_design.des.t2.scans2 = g2;
-% {
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20161215TM_M6591\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170112TM_M6617\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170112TM_M7065\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170113TM_M7068\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170113TM_M7338\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170223TM_M9515\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170224TM_M9536_echte\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170224TM_M9536\JD.nii'
-%                                                            'O:\data\voxelwise_Maritzen4tool\dat\20170224TM_M9539\JD.nii'
-%                                                            };
-%
-mb{1}.spm.stats.factorial_design.des.t2.dept = 0;
-mb{1}.spm.stats.factorial_design.des.t2.variance = 1;
-mb{1}.spm.stats.factorial_design.des.t2.gmsca = 0;
-mb{1}.spm.stats.factorial_design.des.t2.ancova = 0;
-mb{1}.spm.stats.factorial_design.cov = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {});
-mb{1}.spm.stats.factorial_design.masking.tm.tm_none = 1;
-mb{1}.spm.stats.factorial_design.masking.im = 1;
-mb{1}.spm.stats.factorial_design.masking.em = {s.mask};% {'O:\data\voxelwise_Maritzen4tool\templates\AVGTmask.nii,1'};
-mb{1}.spm.stats.factorial_design.globalc.g_omit = 1;
-mb{1}.spm.stats.factorial_design.globalm.gmsca.gmsca_no = 1;
-mb{1}.spm.stats.factorial_design.globalm.glonorm = 1;
-
-mb{2}.spm.stats.fmri_est.spmmat(1) = cfg_dep;
-mb{2}.spm.stats.fmri_est.spmmat(1).tname = 'Select SPM.mat';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{2}.spm.stats.fmri_est.spmmat(1).sname = 'Factorial design specification: SPM.mat File';
-mb{2}.spm.stats.fmri_est.spmmat(1).src_exbranch = substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{2}.spm.stats.fmri_est.spmmat(1).src_output = substruct('.','spmmat');
-mb{2}.spm.stats.fmri_est.method.Classical = 1;
-
-mb{3}.spm.stats.con.spmmat(1) = cfg_dep;
-mb{3}.spm.stats.con.spmmat(1).tname = 'Select SPM.mat';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{3}.spm.stats.con.spmmat(1).sname = 'Model estimation: SPM.mat File';
-mb{3}.spm.stats.con.spmmat(1).src_exbranch = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{3}.spm.stats.con.spmmat(1).src_output = substruct('.','spmmat');
-mb{3}.spm.stats.con.consess{1}.tcon.name = [ groupLabels{1} '>'  groupLabels{2}]  ;% ### 'grp1>grp2';
-% mb{3}.spm.stats.con.consess{1}.tcon.name = [ s.classes{1} '>'   s.classes{2}]  ;% ### 'grp1>grp2';
-mb{3}.spm.stats.con.consess{1}.tcon.convec = [1 -1];
-mb{3}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
-mb{3}.spm.stats.con.consess{2}.tcon.name = [ groupLabels{1} '<'   groupLabels{2}]  ;% ### 'grp1<grp2';
-% mb{3}.spm.stats.con.consess{2}.tcon.name = [ s.classes{1} '<'   s.classes{2}]  ;% ### 'grp1<grp2';
-mb{3}.spm.stats.con.consess{2}.tcon.convec = [-1 1];
-mb{3}.spm.stats.con.consess{2}.tcon.sessrep = 'none';
-mb{3}.spm.stats.con.delete = 0;
-
-mb{4}.spm.stats.results.spmmat(1) = cfg_dep;
-mb{4}.spm.stats.results.spmmat(1).tname = 'Select SPM.mat';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{4}.spm.stats.results.spmmat(1).sname = 'Contrast Manager: SPM.mat File';
-mb{4}.spm.stats.results.spmmat(1).src_exbranch = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{4}.spm.stats.results.spmmat(1).src_output = substruct('.','spmmat');
-mb{4}.spm.stats.results.conspec(1).titlestr =[ groupLabels{1} '>'   groupLabels{2}] ;%### 'grp1>grp2';
-% mb{4}.spm.stats.results.conspec(1).titlestr =[ s.classes{1} '>'   s.classes{2}] ;%### 'grp1>grp2';
-mb{4}.spm.stats.results.conspec(1).contrasts = 1;
-mb{4}.spm.stats.results.conspec(1).threshdesc = 'FWE';
-mb{4}.spm.stats.results.conspec(1).thresh = 0.05;
-mb{4}.spm.stats.results.conspec(1).extent = 0;
-mb{4}.spm.stats.results.conspec(1).mask = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
-
-mb{4}.spm.stats.results.conspec(2).titlestr =[ groupLabels{1} '<'   groupLabels{2}];% ### 'grp1<grp2';
-% mb{4}.spm.stats.results.conspec(2).titlestr =[ s.classes{1} '<'   s.classes{2}];% ### 'grp1<grp2';
-mb{4}.spm.stats.results.conspec(2).contrasts = 2;
-mb{4}.spm.stats.results.conspec(2).threshdesc = 'FWE';
-mb{4}.spm.stats.results.conspec(2).thresh = 0.05;
-mb{4}.spm.stats.results.conspec(2).extent = 0;
-mb{4}.spm.stats.results.conspec(2).mask = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
-mb{4}.spm.stats.results.units = 1;
-mb{4}.spm.stats.results.print = false;
-
-
-%% smoothing
-% change [1] Data Smoothing [2]data for factDesignSpecif. [3] dependency-order
-if s.smoothing==1
-    try
-        smoothfwhm=str2num(s.smoothing_fwhm);
-    catch
-        smoothfwhm=        (s.smoothing_fwhm);
-    end
-    ms={};
-    ms{1}.spm.spatial.smooth.data = [g1;g2];
-    ms{1}.spm.spatial.smooth.fwhm = smoothfwhm ;% [0.28 0.28 0.28];
-    ms{1}.spm.spatial.smooth.dtype = 0;
-    ms{1}.spm.spatial.smooth.im = 0;
-    ms{1}.spm.spatial.smooth.prefix = 's';
-    
-    
-    %change inputfiles to smoothed images
-    mb{1}.spm.stats.factorial_design.des.t2.scans1 = stradd(g1,'s',1);
-    mb{1}.spm.stats.factorial_design.des.t2.scans2 = stradd(g2,'s',1);
-    
-    mb=  [ms mb ]  ;% add smoothing job
-    %% UPDATE dependency-order
-    mb{3}.spm.stats.fmri_est.spmmat(1).src_exbranch   = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{4}.spm.stats.con.spmmat(1).src_exbranch        = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{5}.spm.stats.results.spmmat(1).src_exbranch    = substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1});
-end
-
-
-
-
-%..........................................
-idmb=spm_jobman('interactive',mb);
-matlabbatch=mb;
-fjob=fullfile(outdir,'job.mat');
-showinfo2('batch saved as',fjob,[],1,[' -->[' fjob ']']);
-save(fjob,'matlabbatch'); %SAVE BATCH
-
-drawnow;
-
-if xvv.x.showSPMbatch==0
-    spm_jobman('run',mb);
-else
-   cprintf('*[0.9294    0.6941    0.1255]',['.. batch is shown in SPM BATCH-EDITOR....' '\n']);
-   cprintf('*[0 .5 0]',['.. hit "RUN BATCH"-ICON of APM BATCH-EDITOR to start the batch!' '\n']);
-end
-
-try ;    cd(s.workpath); end
-
-
-% hgfeval(get(gco,'ButtonDownFcn'),gco)
-
-
-
-if xvv.x.showSPMbatch==0
-    xstat('loadspm',fullfile(outdir,'SPM.mat'));
-end
-
-
+voxstat_twosampleTest();
 %———————————————————————————————————————————————
 %%  %% multiple regression
 %———————————————————————————————————————————————
 function multipleregression(e,e2,varargin)
-global xvv
-xvv.xtype='regression';
-warning off;
-isOK=readexcel(xvv.xtype);
-if isOK==0; return; end
-
-fmakebatch(mfilename );
-
-% disp('fun: multipleregression');
-% return;%*
-% -------------------------
-
-spmsetup;
-cprintf('*[0 0 1]',['.. please wait....' '\n']);
-
-hfig=findobj(0,'tag','vvstat');
-s=get(hfig,'userdata');
-try ;     cd(s.workpath); end
-
-%% ===============================================
-
-% g1        = s.grp_1;
-g1        = s.d(:,end);
-outdir    = s.output_dir;
-% rmdir(outdir,'s');
-mkdir(outdir);
-
-% regressvec= cell2mat(s.d(:,2));
-regressMat  = s.regvars; %cell2mat(s.d(:,2:end-2));
-regressName = s.regressNames;
-mask          = s.mask;
-% 
-% matlabbatch{2}.spm.stats.factorial_design.des.mreg.mcov(1).c = '<UNDEFINED>';
-% matlabbatch{2}.spm.stats.factorial_design.des.mreg.mcov(1).cname = 'mycovar';
-% matlabbatch{2}.spm.stats.factorial_design.des.mreg.mcov(1).iCC = 1;
-% matlabbatch{2}.spm.stats.factorial_design.des.mreg.mcov(2).c = '<UNDEFINED>';
-% matlabbatch{2}.spm.stats.factorial_design.des.mreg.mcov(2).cname = 'mycovar';
-% matlabbatch{2}.spm.stats.factorial_design.des.mreg.mcov(2).iCC = 1;
-
-clear mb
-mb{1}.spm.stats.factorial_design.dir ={outdir};% {'O:\data\voxelwise_Maritzen4tool\regress_1'};
-%%
-mb{1}.spm.stats.factorial_design.des.mreg.scans = g1;
-
-for i=1:size(regressMat,2)
-    mb{1}.spm.stats.factorial_design.des.mreg.mcov(i).c      = regressMat(:,i);
-    mb{1}.spm.stats.factorial_design.des.mreg.mcov(i).cname  = regressName{i} ;%['mycovar' num2str(i)];
-    mb{1}.spm.stats.factorial_design.des.mreg.mcov(i).iCC    = 1;
-end
-
-mb{1}.spm.stats.factorial_design.des.mreg.incint = 1;
-mb{1}.spm.stats.factorial_design.cov = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {});
-mb{1}.spm.stats.factorial_design.masking.tm.tm_none = 1;
-mb{1}.spm.stats.factorial_design.masking.im = 1;
-mb{1}.spm.stats.factorial_design.masking.em ={mask};% {'O:\data\voxelwise_Maritzen4tool\templates\AVGTmask.nii'};
-mb{1}.spm.stats.factorial_design.globalc.g_omit = 1;
-mb{1}.spm.stats.factorial_design.globalm.gmsca.gmsca_no = 1;
-mb{1}.spm.stats.factorial_design.globalm.glonorm = 1;
-
-mb{2}.spm.stats.fmri_est.spmmat(1) = cfg_dep;
-mb{2}.spm.stats.fmri_est.spmmat(1).tname = 'Select SPM.mat';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{2}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{2}.spm.stats.fmri_est.spmmat(1).sname = 'Factorial design specification: SPM.mat File';
-mb{2}.spm.stats.fmri_est.spmmat(1).src_exbranch = substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{2}.spm.stats.fmri_est.spmmat(1).src_output = substruct('.','spmmat');
-mb{2}.spm.stats.fmri_est.method.Classical = 1;
-
-mb{3}.spm.stats.con.spmmat(1) = cfg_dep;
-mb{3}.spm.stats.con.spmmat(1).tname = 'Select SPM.mat';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{3}.spm.stats.con.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{3}.spm.stats.con.spmmat(1).sname = 'Model estimation: SPM.mat File';
-mb{3}.spm.stats.con.spmmat(1).src_exbranch = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{3}.spm.stats.con.spmmat(1).src_output = substruct('.','spmmat');
-
-nc=0;
-for i=1:size(regressMat,2)
-   %----pos relationship
-    nc=nc+1;
-    cvec=zeros(1,i+1);  cvec(end)=[1];
-    mb{3}.spm.stats.con.consess{nc}.tcon.name    = [ regressName{i} '_pos' ];%'posLinRelation';
-    mb{3}.spm.stats.con.consess{nc}.tcon.convec  = cvec;%[0 1];
-    mb{3}.spm.stats.con.consess{nc}.tcon.sessrep = 'none';
-    %----neg relationship
-    nc=nc+1;
-    cvec=zeros(1,i+1);  cvec(end)=[-1];
-    mb{3}.spm.stats.con.consess{nc}.tcon.name     = [ regressName{i} '_neg' ] ;%'negLinRelation';
-    mb{3}.spm.stats.con.consess{nc}.tcon.convec   = cvec;%[0 -1];
-    mb{3}.spm.stats.con.consess{nc}.tcon.sessrep  = 'none';
-    
-end
-
-
-mb{3}.spm.stats.con.delete = 0;
-
-mb{4}.spm.stats.results.spmmat(1) = cfg_dep;
-mb{4}.spm.stats.results.spmmat(1).tname = 'Select SPM.mat';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(1).name = 'filter';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(1).value = 'mat';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(2).name = 'strtype';
-mb{4}.spm.stats.results.spmmat(1).tgt_spec{1}(2).value = 'e';
-mb{4}.spm.stats.results.spmmat(1).sname = 'Contrast Manager: SPM.mat File';
-mb{4}.spm.stats.results.spmmat(1).src_exbranch = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-mb{4}.spm.stats.results.spmmat(1).src_output = substruct('.','spmmat');
-mb{4}.spm.stats.results.conspec.titlestr = 'xdff';
-mb{4}.spm.stats.results.conspec.contrasts = 1;
-mb{4}.spm.stats.results.conspec.threshdesc = 'FWE';
-mb{4}.spm.stats.results.conspec.thresh = 0.05;
-mb{4}.spm.stats.results.conspec.extent = 0;
-mb{4}.spm.stats.results.conspec.mask = struct('contrasts', {}, 'thresh', {}, 'mtype', {});
-mb{4}.spm.stats.results.units = 1;
-mb{4}.spm.stats.results.print = false;
-%% ===============================================
-
-
-%%  smoothing
-if s.smoothing==1
-    % change [1] Data Smoothing [2]data for factDesignSpecif. [3] dependency-order
-    try
-        smoothfwhm=str2num(s.smoothing_fwhm);
-    catch
-        smoothfwhm=        (s.smoothing_fwhm);
-    end
-    ms={};
-    ms{1}.spm.spatial.smooth.data = [g1];
-    ms{1}.spm.spatial.smooth.fwhm = smoothfwhm ;% [0.28 0.28 0.28];
-    ms{1}.spm.spatial.smooth.dtype = 0;
-    ms{1}.spm.spatial.smooth.im = 0;
-    ms{1}.spm.spatial.smooth.prefix = 's';
-    
-    
-    %change inputfiles to smoothed images
-    mb{1}.spm.stats.factorial_design.des.mreg.scans = stradd(g1,'s',1);
-    
-    
-    mb=  [ms mb ]  ;% add smoothing job
-    %% UPDATE dependency-order
-    mb{3}.spm.stats.fmri_est.spmmat(1).src_exbranch   = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{4}.spm.stats.con.spmmat(1).src_exbranch        = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    mb{5}.spm.stats.results.spmmat(1).src_exbranch    = substruct('.','val', '{}',{4}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    
-    %     mb{2}.spm.stats.fmri_est.spmmat(1).src_exbranch   = substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    %     mb{3}.spm.stats.con.spmmat(1).src_exbranch        = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    %     mb{4}.spm.stats.results.spmmat(1).src_exbranch    = substruct('.','val', '{}',{3}, '.','val', '{}',{1}, '.','val', '{}',{1});
-    
-end
-
-
-
-%..........................................
-idmb=spm_jobman('interactive',mb);
-matlabbatch=mb;
-fjob=fullfile(outdir,'job.mat');
-showinfo2('batch saved as',fjob,[],1,[' -->[' fjob ']']);
-save(fjob,'matlabbatch'); %SAVE BATCH
-drawnow;
-
-if xvv.x.showSPMbatch==0
-    spm_jobman('run',mb);
-else
-   cprintf('*[0.9294    0.6941    0.1255]',['.. batch is shown in SPM BATCH-EDITOR....' '\n']);
-   cprintf('*[0 .5 0]',['.. hit "RUN BATCH"-ICON of APM BATCH-EDITOR to start the batch!' '\n']);
-end
-
-try ;    cd(s.workpath); end
-
-
-try ;    cd(s.workpath); end
-% hgfeval(get(gco,'ButtonDownFcn'),gco)
-if xvv.x.showSPMbatch==0
-    xstat('loadspm',fullfile(outdir,'SPM.mat'));
-end
-
+voxstat_regression();
 
 
 function fmakebatch(callingfile )
@@ -4726,6 +3788,26 @@ if ishandle(e)
 end
 
 
+function KeyPress(e,e2)
+hf=findobj(0,'tag','vvstat');
+if strcmp(e2.Character,'+') | strcmp(e2.Character,'-')
+    hb=findobj(hf,'tag','loadothercontrast');
+    fs=hb.FontSize;
+    if strcmp(e2.Character,'+')
+        fs=fs+1;
+    else
+        fs=fs-1; 
+    end
+    if fs>1
+        hb.FontSize=fs;
+        global xvv;
+        xvv.fs=fs;
+    end
+    
+    
+end
+
+
 function loadspm(file)
 
 
@@ -4785,6 +3867,7 @@ ht=findobj(hg,'tag','loadothercontrast');
 
 nifiles=SPM.xY.P;
 [pani fini exni]=fileparts2(nifiles);
+exni=strrep(exni,',1','');
 [~,  subdir ]  =fileparts2(pani);
 NIIfiles=cellfun(@(a,b){[ a b ]}, fini,exni);
 p.img       =NIIfiles{1};
@@ -5054,7 +4137,7 @@ if 0
     x.group_col=      [2];	% column number with group assignment  (used when comparing groups, "regress_col" must be empty)
     x.data_dir=       'O:\data\voxelwise_Maritzen4tool\dat';	% data directory (upper directory) contains dirs with mice data
     x.inputimage=     'JD.nii';	% image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-    x.grp_comparison='1vs2';	% groups to compare
+%     x.grp_comparison='1vs2';	% groups to compare
     x.mask=           'local';	% <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
     x.output_dir=     'test2';	% path for output/statistic
     x.showSPMbatch=   [0];	% [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically

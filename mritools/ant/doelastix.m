@@ -317,6 +317,9 @@ switch task
         
         if strcmp(z.params.source,'intern');    % ## USE FILENAMES FROM DAT-FOLDER
             z.files=cellstr(z.files);
+                % ==============================================
+                %%  # USING FILENAMES WITHOUT FULLPATH
+                % ===============================================
             if  isempty(fileparts(z.files{1}))  %% ## USING FILENAMES WITHOUT FULLPATH
                 mdirs={};
                 if isempty(z.path)
@@ -334,9 +337,59 @@ switch task
                 z2=z;
                 z2.path=[];
                 z2.files=list;
-                out=trafo(z2);
-            else               %% CONVENTIONAL FULLPATH-NAME IMAGES
-                out=trafo(z) ;
+                
+               %% ====RUNNING-SEQUENTIAL ===========================================
+               doParallel=0;
+               if isfield(z.params,'isparallel')==1 && z.params.isparallel==1
+                       doParallel=1;
+               end   
+               if doParallel==0;
+                   out=trafo(z2);
+                   %% ====RUNNING-PARALLEL===========================================
+               elseif   doParallel==1
+                   disp('RUNNING IN PARALLEL');
+                   parforfiles=z2.files;
+                   parforout={};
+                   parfor i=1:length(parforfiles)
+                       z3=z2;
+                       z3.files=parforfiles(i);
+                       out=trafo(z3);
+                       parforout=[parforout; out];
+                       %disp('---PARFORLOOP-test--------')
+                       %disp(z3.files)
+                   end
+                   out=parforout;
+               end
+                %% ===============================================
+            else  
+                % ==============================================
+                %%  CONVENTIONAL FULLPATH-NAME IMAGES
+                % ===============================================
+
+                %% ====RUNNING-SEQUENTIAL ===========================================
+                doParallel=0;
+                if isfield(z.params,'isparallel')==1 && z.params.isparallel==1
+                    doParallel=1;
+                end
+                if doParallel==0;
+                    out=trafo(z) ;
+                    %% ====RUNNING-PARALLEL===========================================
+                elseif doParallel==1
+                    disp('RUNNING IN PARALLEL');
+                    parforfiles=z.files;
+                    parforout={};
+                    z3=z;
+                    parfor i=1:length(parforfiles)
+                        z3=z;
+                        z3.files=parforfiles(i);
+                        out=trafo(z3);
+                        parforout=[parforout; out];
+                        %disp('---PARFORLOOP-test--------')
+                        %disp(z3.files)
+                    end
+                    out=parforout;
+                end
+                %% ===============================================
             end
             
             
@@ -416,8 +469,12 @@ end
 % makebatchTrafo(z)
 
 %% apply for each file
+
 for i=1:length(z.files)
+    try
     filename=z.files{i};
+%     chk=struct();  %check struct
+%     chk.isexist_file=exist(filename)==2;
     
     %% use local path
     if z.getPathInEachLoop==1;
@@ -433,8 +490,8 @@ for i=1:length(z.files)
         if exist(Mpath)==2
             load(Mpath);
             z.M=M;
-        else
-            keyboard
+            %         else
+            %             keyboard
         end
     end
     
@@ -522,16 +579,24 @@ for i=1:length(z.files)
         set_ix(z.trafofile,'FinalBSplineInterpolationOrder',    z.interp(i));        
     end
     
-    
-    if length(v0)==1
-        for jvol=1:length(v0)
-            transformVolume(  filename,i, jvol, v0, z);
+    if isfield(z.params, 'isparallel') && z.params.isparallel==1
+        trafoFile={};
+        for jvol=1:length(v0)      % do not use parfor here because it is than used on the upper fct-level
+            trafoFile{jvol,1} =transformVolume(  filename,i, jvol, v0, z);
         end %4d
     else
-        parfor jvol=1:length(v0)
-            transformVolume(  filename,i, jvol, v0, z);
-        end %4d
+        trafoFile={};
+        if length(v0)==1
+            for jvol=1:length(v0)
+               trafoFile{jvol,1}=transformVolume(  filename,i, jvol, v0, z);
+            end %4d
+        else
+            parfor jvol=1:length(v0)
+              trafoFile{jvol,1}=transformVolume(  filename,i, jvol, v0, z);
+            end %4d
+        end
     end
+    
     
     
     
@@ -552,7 +617,8 @@ for i=1:length(z.files)
     end
     
     for jvol=1:length(v0) %4D-data
-        warpedfile=fullfile(z.path,[z.folder],[ 'trans_' pnum(jvol,4)], 'elx___tobewarped.nii');
+        %warpedfile=fullfile(z.path,[z.folder],[ 'trans_' pnum(jvol,4)], 'elx___tobewarped.nii');
+        warpedfile=trafoFile{jvol};
         [hd4 d4dum]=rgetnii(warpedfile);
         if jvol==1 %allocmem
             d4= zeros([size(d4dum) length(v0)]);
@@ -563,7 +629,8 @@ for i=1:length(z.files)
     rsavenii(fileout,hd4,d4,v.dt);
     %clean-UP
     for jvol=1:length(v0) %4D-data
-        warpfolder=fullfile(z.path,[z.folder],[ 'trans_' pnum(jvol,4)]);
+        %warpfolder=fullfile(z.path,[z.folder],[ 'trans_' pnum(jvol,4)]);
+        warpfolder=fileparts(trafoFile{jvol});
         try;
             rmdir(warpfolder,'s');
         end
@@ -588,6 +655,38 @@ for i=1:length(z.files)
         end
     end
     out{i,1}=fileout;
+    
+    catch ME
+        %out{i,1}=['ERROR' ];
+        
+        ERmsg='';
+        if exist(filename)==0
+            [E.pa E.fi E.ext]=fileparts(filename);
+            [~, E.animal]=fileparts(E.pa);
+            ERmsg_add=['[#FAILED] missing File [' E.fi E.ext '] in [' E.animal ']'];
+            ERmsg=[ERmsg ERmsg_add];
+            disp(ERmsg_add);
+        elseif isempty(z.trafofile)==1
+            ERmsg_add=['[#FAILED] missing ELASTIX-Transformation-files'];
+            ERmsg=[ERmsg ERmsg_add];
+            disp(ERmsg_add);
+        elseif ischar(z.M)  %must be the reorientationMatrix
+            ERmsg_add=['[#FAILED] "reorient.mat" not found'];
+            ERmsg=[ERmsg ERmsg_add];
+            disp(ERmsg_add);
+        else
+            [E.pa E.fi E.ext]=fileparts(filename);
+            [~, E.animal]=fileparts(E.pa);
+            ERmsg_add=['[#FAILED] unknown ERROR(' mfilename '.m)  [' E.fi E.ext '] in [' E.animal ']'];
+            ERmsg=[ERmsg ERmsg_add];
+            disp(ERmsg_add);
+            disp(getReport(ME));
+        end
+        out{i,1}=ERmsg;% ['ERROR' ];
+        
+%         rethrow(ME);
+%         disp(getReport(ME));
+    end%try
 end% files
 %clean up
 try; delete(tempfile0);end
@@ -604,8 +703,8 @@ try; delete(fullfile(z.path,'transformix.log'));end
 %% ################################################################################
 % transform volume, inner loop (3d/4d)--parfor
 %% ################################################################################
-function transformVolume(  filename,i, jvol, v0, z)
-
+function fileout=transformVolume(  filename,i, jvol, v0, z)
+fileout='';
 
 
 
@@ -621,7 +720,14 @@ function transformVolume(  filename,i, jvol, v0, z)
 %     tpath=z.path;
 % else
 try; rmdir(tpath,'s'); end
-tpath=fullfile(z.path, z.folder, ['trans_' pnum(jvol,4)] );
+% tpath=fullfile(z.path, z.folder, ['trans_' pnum(jvol,4)] );
+
+if  isfield(z.params,'isparallel') &&  z.params.isparallel==1111
+    tpath=fullfile(z.path, z.folder, ['trans_' pnum(jvol,4)] );
+else
+    tpath=fullfile(z.path, z.folder, ['trans_' datestr(now,'MM-SS_FFF') '_RN' num2str(randi(100000,1,1)) '_' pnum(jvol,4)] );
+end
+
 mkdir(tpath);
 tempfile0=fullfile(tpath, ['__tobewarped'  '.nii'] );% WE WORK ON THIS
 delete(tempfile0);

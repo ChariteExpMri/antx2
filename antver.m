@@ -810,9 +810,19 @@
 % CT-segmentaton failed in some cases, ...hopefully solved now
 % function is part of [xregisterCT.m] to rgister a CT-image to t2.nii
 % 
+% #ba 09 Dec 2022 (09:21:47)
+% #k [createGroupassignmentFile.m] #n modified
+% The function create a group-assignment file (usefull for voxelwise statistic).
+% with statistical models: 'unpaired', 'paired', 'regression', '1xANOVA', '1xANOVAwithin''fullfactorialANOVA'  
+% 
+% #k [xstat.m] #n modified and all models (with covaraiates) were simulated and checked
+% tutorial needs to be updated and extended for the other statistical models
 % 
 % 
 % 
+
+
+
 
 
 %% ===============================================

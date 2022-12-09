@@ -92,27 +92,29 @@ for i=1:length(images) % loop over each image
         contrastName=regexprep(contrastName,'^gc_',''); %remove prefix 'gc_'
         
         outdir=fullfile(pastudy,outdirMain,[ 'v' pnum(N,2) '_#' imageName '#_' contrastName ]); %final outputdirectory
-        mkdir(outdir); %create directory
-        
+        mkdir(outdir); %create directory 
         
         cprintf([0 .5 1],[ '..RUNNING VOXWISE STATISTIC for "' imageNameExt '" [' contrastName '] \n']);
         z=[];
-        z.stattype       = 'twosamplettest';                                      % % STATISTICAL TEST
-        z.excelfile      = thisgroupfile;                                         % % [Excelfile]: this file contains a column with mouseIDs (names) and a column assigning the group
-        z.sheetnumber    = [1];                                                   % % this sheet contains columns with mouseIDs and group assignment
-        z.mouseID_col    = [1];                                                   % % column number with the MouseIDs
-        z.group_col      = [2];                                                   % % column number with group assignment  (used when comparing groups, "regress_col" must be empty)
-        z.data_dir       = fullfile(pastudy,'dat');                               % % data directory (upper directory) contains dirs with mice data
-        z.inputimage     = imageNameExt;                                             % % image name (nifti) to run the statistic (datapath has to bee defined before using the icon)
-        z.AVGT           = fullfile(pastudy,'templates',        'AVGT.nii');      % % select the TEMPLATE-file (path of "AVGT.nii")
-        z.ANO            = fullfile(pastudy,'PTSDatlas_01dec20','PTSDatlas.nii'); % % select the ATLAS-file (path of "ANO.nii")
-        z.grp_comparison = '1vs2';                                                % % groups to compare, use EXCELgroupnames(example: "GroupNameString1vsGroupNameString2") or alphabet. order (example: "1vs2"), or
-        z.mask           = fullfile(pastudy,'templates','AVGTmask.nii');          % % <optional> use brainmask [select a mask or type "local" to use the AVGTmask.nii from the templates folder]
-        z.smoothing      = [0];                                                   % % <optional>smooth data
-        z.smoothing_fwhm = [0.28  0.28  0.28];                                    % % smoothing width (FWHM)
-        z.output_dir     = outdir;                                                % % path for output/statistic
-        z.showSPMbatch   = [0];                                                   % % [0|1] hide|show pipeline in SPM batch window, if [1] you have to run the code by yourself ( hit the green driangle), [0] piples runs automatically
-        xstat(0,z); % % run voxel-wise statistic (1st arg, [0/1] no GUI/GUI)
+        z.stattype       = 'twosamplettest';                                    % % STATISTICAL TEST
+        z.excelfile      = thisgroupfile;                                       % % [Excel-file]: file containing columns with animal-IDs and group/regressionValue and optional covariates
+        z.sheetnumber    = [1];                                                 % % sheet-index containing the data (default: 1)
+        z.mouseID_col    = [1];                                                 % % column-index containing the animal-IDs (default: 1)
+        z.group_col      = [2];                                                 % % column-index containing  the group assignment (default: 2)
+        z.regress_col    = [];                                                  % % <optional>  column-index/indices containing covariates (otherwise: empty)
+        z.data_dir       = fullfile(pastudy,'dat');                             % % main data directory (upper directory) containing the animal-dirs (default: the "dat"-dir of the study)
+        z.inputimage     = imageNameExt                                            % % name of the NIFTI-image to analyze ("data_dir" has to bee defined before using the icon)
+        z.AVGT           = fullfile(pastudy,'templates',  'AVGT.nii');            % % [TEMPLATE-file]: select the TEMPLATE (default: fullpath-name of "AVGT.nii" from the templates-dir)
+        z.ANO            = fullfile(pastudy,'PTSDatlas_01dec20','PTSDatlas.nii'); % % [ATLAS-file]: select the ATLAS (default: fullpath-name of "ANO.nii" from the templates-dir)
+        z.mask           = fullfile(pastudy,'templates',  'AVGThemi.nii');      % % [MASK-file]: select the brain-maskfile (default: fullpath-name of "AVGTmask.nii" from the templates-dir)
+        z.output_dir     = outdir;                                              % % path of the output-directory (SPM-statistic with SPM.mat and images)
+        z.smoothing      = [0];                                                 % % <optional>smooth data, [0|1]; if [1] the NIFTI is smoothed & stored with prefix "s" in the animal-dir, the smoothed image is than used for analysis
+        z.smoothing_fwhm = [0.28  0.28  0.28];                                  % % smoothing width (FWHM); example: tripple of the voxsize of the inputimage
+        z.showSPMwindows = [0];                                                 % % hide|show SPM-WINDOWS, [0|1]; if [0] SPM-windows are hidden
+        z.showSPMbatch   = [0];                                                 % % hide|show SPM-batch, [0|1]; usefull for evaluation and postprocessing
+        z.runSPMbatch    = [1];                                                 % % run SPM-batch, [0|1]; if [0] you have to start the SPM-batch by yourself,i.e hit the green triangle, [1] batch runs automatically
+        z.showResults    = [1];                                                 % % show results; [0|1]; if [1] voxelwise results will be shown afterwards
+        xstat(0,z);
         
         N=N+1 ;%UPDATE N-COUNTER
     end %groupfiles

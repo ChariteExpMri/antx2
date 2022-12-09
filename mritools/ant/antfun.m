@@ -136,7 +136,10 @@ if strcmp(task,  'deformELASTIX' )
    
     
     pars.source     =s.source;
-  
+    if isfield(s,'isparallel') && s.isparallel==1  %PARALLEL-PROC
+         pars.isparallel=1;
+    end
+    try; s= rmfield(s,'isparallel');end
     
     if any(find(isnan([s.imgSize])==0))
         pars.imgSize=s.imgSize;

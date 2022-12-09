@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   01 Dec 2022 (13:53:56)  
+ &#x1F34E; last modification:   09 Dec 2022 (09:21:47)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,10 +7,19 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**09 Dec 2022 (09:21:47)**</ins>  
+   __[createGroupassignmentFile.m]__ modified  
+  The function create a group-assignment file (usefull for voxelwise statistic).  
+  with statistical models: 'unpaired', 'paired', 'regression', '1xANOVA', '1xANOVAwithin''fullfactorialANOVA'    
+    
+   __[xstat.m]__ modified and all models (with covaraiates) were simulated and checked  
+  tutorial needs to be updated and extended for the other statistical models  
+<!---->
   &#x1F535;   <ins>**01 Dec 2022 (13:53:56)**</ins>  
    __[CTgetbrain_approach2.m]__ modified  
   CT-segmentaton failed in some cases, ...hopefully solved now  
   function is part of __[xregisterCT.m]__ to rgister a CT-image to t2.nii  
+    
 <!---->
   &#x1F535;   <ins>**30 Nov 2022 (00:00:04)**</ins>  
    __[xexcel2atlas.m]__ modified  

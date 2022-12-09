@@ -403,16 +403,34 @@ if numel(already)>=n(1) && numel(already)<=n(2),
     set(dne,'Enable','on');
 end;
 
-% Filter Button
+
+
+% clear Filter Button
 uicontrol(fg,...
     'Style','pushbutton',...
     'units','normalized',...
-    'Position',posinpanel([0.51 .5 0.1 .45],pcntp),...
+    'Position',posinpanel([0.51 .5 0.05 .45],pcntp),...
     bf,...
     'ForegroundColor',col3,...
     'BackgroundColor',col1,...
     'Callback',@clearfilt,...
-    'String','Filt');
+    'tag', 'clearfilt',...
+    'String','clFlt',...
+    'tooltipstr', 'clear filter'); %clear filter
+
+% clear Filter Button
+uicontrol(fg,...
+    'Style','radio',...
+    'units','normalized',...
+    'Position',posinpanel([0.51 .5 0.05 .45],pcntp),...
+     bf,...
+    'ForegroundColor',col3,...
+    'BackgroundColor',get(fg,'Color'),...
+    'tag', 'searchsubdirs',...
+    'String','sub',...
+    'value',0,...
+    'tooltipstr', 'search in all sub-dirs [0]no,[1]yes'); %clear filter
+
 
 % Filter
 uicontrol(fg,...
@@ -603,7 +621,7 @@ for i=1:length(ch)
 end
 
 %%larger selection range
-hh=findobj(gcf,'string','Filt');
+hh=findobj(gcf,'tag','clearfilt');
 pos=get(hh,'position');
 set(hh,'position',[.01 .32 .1 .02]);
 
@@ -627,16 +645,16 @@ hdirs=findobj(gcf,'tag','dirs');  set(hdirs,'position',[0.0200    0.37    0.4700
 hhelp=findobj(gcf,'string','?');   set(hhelp,'position',[  0.0100    0.325    0.0316    0.0394],'visible','off');
 
 
-hed=findobj(gcf,'string','Ed');    set(hed,'position',[  0.00    0.325    0.0316    0.0394]);
+hed=findobj(gcf,'string','Ed');         set(hed,'position', [  0.00    0.325    0.0316    0.0394]);
 
 
-hrec=findobj(gcf,'string','Rec'); set(hrec,'position',[  0.1434    0.325    0.0316    0.0394]);
-hre=findobj(gcf,'string','Filt');    set(hre,'position',  [  0.175     0.325   0.05    0.0394]);
-hre=findobj(gcf,'tag','regexp'); set(hre,'position', [ 0.22 0.31    0.2    0.033]);
-hre=findobj(gcf,'string','Done'); set(hre,'position',[   0.42      0.325    0.1    0.0394],'backgroundcolor',[0 .6 0]);
+hrec=findobj(gcf,'string','Rec');       set(hrec,'position', [  0.1434    0.325    0.0316    0.0394]);
+hre=findobj(gcf,'tag','clearfilt');     set(hre,'position' , [0.18947 0.35086 0.03 0.02]);
+hre=findobj(gcf,'tag','regexp');        set(hre,'position' , [ 0.22 0.31    0.2    0.033]);
+hre=findobj(gcf,'string','Done');       set(hre,'position' , [   0.42      0.325    0.1    0.0394],'backgroundcolor',[0 .6 0]);
 
-hmsg=findobj(gcf,'tag','msg');   set(hmsg,'position',[0 .25 1 .075])
-
+hmsg=findobj(gcf,'tag','msg');           set(hmsg,'position', [0 .25 1 .075])
+hre=findobj(gcf,'tag','searchsubdirs');  set(hre,'position', [0.17803 0.32662 0.05 0.02]);
 
 %% get rec. all filenames-Button
 p=uicontrol('style','pushbutton','units','normalized',...
@@ -688,7 +706,7 @@ persistent lastfiltertoken
 
 
 if isempty(lastfiltertoken)
-    regexplist={'.' '.*' '.*.nii' '.*xlsx|.*nii' '^startStr.*endStr$' '\.(doc|txt)$'   '^((?!notStr).)*$'};
+    regexplist={'.*.nii'  '.' '.*'  '.*xlsx|.*nii' '^startStr.*endStr$' '\.(doc|txt)$'   '^((?!notStr).)*$'};
     lastfiltertoken =[lastfiltertoken; regexplist];
 end
 
@@ -1077,7 +1095,11 @@ end
 
 %=======================================================================
 function clearfilt(ob,varargin)
-set(sib(ob,'regexp'),'String','.*');
+
+hh=findobj(gcf,'tag','regexphistory');
+flt=hh.String{hh.Value};
+% set(sib(ob,'regexp'),'String','.*.nii');
+set(sib(ob,'regexp'),'String',flt);
 update(ob);
 return;
 end
@@ -1882,7 +1904,8 @@ if 1
             set(findobj(gcf,'tag','msg'),'string','..cancelled');
             return; 
         end
-        filters=cell2str(ids2,'|') ;
+        %filters=cell2str(ids2,'|') ;
+        filters=['^' cell2str(ids2,'$|^') '&'];
         %filters=['^' filters];
         set(hflt,  'string',  filters );
         %            uhelp(flipud(files3(ix)))  ;
@@ -1920,6 +1943,15 @@ try
                     selx=[  selx   ; select_rec1(  glob_guiselect.recpaths{i}            ,filt)    ];
                 end
                 sel=selx;
+                
+                hh=findobj(gcf,'tag','searchsubdirs' ); %
+                if hh.Value==0
+                    % only upper directories
+                    upperDir=fileparts2(selx);
+                    ismatch=ismember(upperDir,glob_guiselect.recpaths);
+                    sel=selx(ismatch);
+                end
+                
             end
             set(gcbf,'Pointer','watch');
         else

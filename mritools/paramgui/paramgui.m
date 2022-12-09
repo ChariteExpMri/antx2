@@ -3415,7 +3415,13 @@ elseif   isfunmode==1
         
         return
     end
-    if isempty(list); list={''};end
+    if isempty(list); 
+        list={''};
+    elseif ischar(list)   
+        if strcmp(list,'<empty>')
+          list='';  
+        end
+    end
     
     eval([tb{1}  'list;' ]);
     ls =struct2list(x);
@@ -4875,6 +4881,7 @@ for i=1:length(lin)
             if strcmp(lino(curlon-1),' ')
                 lino=regexprep(lino,'\s{','{','once');
                 lino=regexprep(lino,'{\s*','{','once');
+                lino=regexprep(lino,'\s*}','}','once'); % remove space before 1st closing curly 
             end
         end
         

@@ -3103,17 +3103,17 @@ elseif strcmp(task,'xstatlabels0')
     
  elseif strcmp(task,'makegroupassignmentFile')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
-        hlpfun='creatGroupassignmentFile';
+        hlpfun='createGroupassignmentFile';
         return ;
     end  
       %% ==============================[cmd]===========
     if strcmp(u.mousekey,'right')
-        hlpfun='creatGroupassignmentFile.m';
+        hlpfun='createGroupassignmentFile.m';
         showcmd(hlpfun);
         return
     end
     %% ===============================================
-    creatGroupassignmentFile();
+    createGroupassignmentFile();
 elseif strcmp(task,'newgroupassignment')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xnewgroupassignment';

@@ -66,7 +66,8 @@ while go_on
 end
 K_thresh = nK(2);
 
-fprintf('\n Minimum #voxel (p_corr<%1.3f) : %d\n\n',p_val,K_thresh);
+% fprintf('\n Minimum #voxel (p_corr<%1.3f) : %d\n\n',p_val,K_thresh);
+fprintf(['\n Minimum #voxel (p_corr<' num2str(p_val) ') : %d\n\n'],K_thresh);
 
 % k_ii = 174;
 % K = k_ii*V2R;

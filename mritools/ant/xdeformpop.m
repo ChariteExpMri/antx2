@@ -220,6 +220,7 @@ if exist('direction')==1  && ~isempty(direction)   ;  p0.direction  =direction; 
 if exist('resolution')==1 && ~isempty(resolution)  ;  p0.resolution =resolution;  else gui(2)=1;    end
 if exist('interpx')==1    && ~isempty(interpx)     ;  p0.interp     =interpx;     else gui(3)=1;    end
 if exist('source')==1     && ~isempty(source)      ;  p0.source     =source;      else gui(4)=1;    end
+% if exist('isparallel')==1 && ~isempty(isparallel)  ;  p0.isparallel =0     ;      else gui(4)=1;    end
 
 
 
@@ -253,6 +254,7 @@ p={...
     'imgSize'         p0.imgSize           'IMAGE SIZE: target image size: default input: [NAN]; see help for further information' ,''
     'imgOrigin'       p0.imgOrigin         'IMAGE ORIGIN: target image ORIGIN: default input: [NAN]; see help for further information' ,''
     'fileNameSuffix'  p0.suffix             '<optional> add additional suffix to the fileName of the resulting image' ''
+    'isparallel'      0                     'parallel processing for lot of files; {0|1};  '  'b'
     };
 
 
@@ -279,7 +281,7 @@ s=rmfield(s,{'interpolation','imgSource'});
 s.interpx =z.interpolation;
 s.source  =z.imgSource;
 s.files   =maskfi;
-
+% s.bla     ='123'   
 % s
 
 
