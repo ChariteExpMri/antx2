@@ -257,6 +257,10 @@ end
 
 prefix={'x_' 'ix_'};
 folder={'elastixForward' 'elastixBackward'};
+force2overwrite=1; %force to overwrite
+if isstruct(params) && isfield(params,'force2overwrite') && params.force2overwrite==0
+    force2overwrite=0;
+end
 
 switch task
     %% —————————————————————————————————— CALCULATION  ————————————————————————————————————————————————
@@ -317,6 +321,12 @@ switch task
         
         if strcmp(z.params.source,'intern');    % ## USE FILENAMES FROM DAT-FOLDER
             z.files=cellstr(z.files);
+            
+           
+
+            
+            
+            
                 % ==============================================
                 %%  # USING FILENAMES WITHOUT FULLPATH
                 % ===============================================
@@ -337,6 +347,23 @@ switch task
                 z2=z;
                 z2.path=[];
                 z2.files=list;
+                
+                % ==============================================
+                %%   force/unforce ...do not if file does exist
+                % ===============================================
+                if force2overwrite==0
+                    zBackup=z2;
+                    isexistWarpedFile=existn(stradd(cellstr(z2.files),z.prefix,1))==2;
+                    z2.files(isexistWarpedFile)=[];
+                    disp('.."force2overwrite is disabled');
+                    if isempty(z2.files)
+                        disp(['force2overwrite is disabled (set to [0])... all images allready transformed ']);
+                        makebatchTrafo(zBackup);
+                        return
+                    end
+                end
+                
+                
                 
                %% ====RUNNING-SEQUENTIAL ===========================================
                doParallel=0;
@@ -366,6 +393,21 @@ switch task
                 %%  CONVENTIONAL FULLPATH-NAME IMAGES
                 % ===============================================
 
+                % ==============================================
+                %%   force/unforce ...do not if file does exist
+                % ===============================================
+                if force2overwrite==0
+                    zBackup=z;
+                    isexistWarpedFile=existn(stradd(cellstr(z.files),z.prefix,1))==2;
+                    z.files(isexistWarpedFile)=[];
+                    disp('.."force2overwrite is disabled');
+                    if isempty(z.files)
+                        disp(['force2overwrite is disabled (set to [0])... all images allready transformed ']);
+                        makebatchTrafo(zBackup);
+                        return
+                    end
+                end
+                
                 %% ====RUNNING-SEQUENTIAL ===========================================
                 doParallel=0;
                 if isfield(z.params,'isparallel')==1 && z.params.isparallel==1
@@ -1062,9 +1104,14 @@ else
     end
 end
 
+
+
 % params
 if ~isempty(s.params)
     p=s.params;
+    if isfield(p,'force2overwrite') && p.force2overwrite==1
+        p=rmfield(p,'force2overwrite');
+    end
     dum=(struct2list2(p,'pp'));
     lg=[lg;dum];
     paramsStr=',pp';

@@ -1905,7 +1905,7 @@ if 1
             return; 
         end
         %filters=cell2str(ids2,'|') ;
-        filters=['^' cell2str(ids2,'$|^') '&'];
+        filters=['^' cell2str(ids2,'$|^') '$'];
         %filters=['^' filters];
         set(hflt,  'string',  filters );
         %            uhelp(flipud(files3(ix)))  ;

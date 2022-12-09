@@ -151,7 +151,12 @@ if strcmp(task,  'deformELASTIX' )
     
      if ~isempty(s.fileNameSuffix)
         pars.fileNameSuffix=s.fileNameSuffix;
-    end
+     end
+    
+     if isfield(s,'force2overwrite') && s.force2overwrite==0
+         pars.force2overwrite=0;
+     end
+     
     %--------
     
     if ~isempty(s) && ~isempty(s.files)

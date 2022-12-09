@@ -251,10 +251,11 @@ p={...
     'inf2'      ''  '' ''
     'inf3'      '___ SPECIFIC OPTIONS ___'  '' ''
     
-    'imgSize'         p0.imgSize           'IMAGE SIZE: target image size: default input: [NAN]; see help for further information' ,''
-    'imgOrigin'       p0.imgOrigin         'IMAGE ORIGIN: target image ORIGIN: default input: [NAN]; see help for further information' ,''
-    'fileNameSuffix'  p0.suffix             '<optional> add additional suffix to the fileName of the resulting image' ''
-    'isparallel'      0                     'parallel processing for lot of files; {0|1};  '  'b'
+    'imgSize'          p0.imgSize           'IMAGE SIZE: target image size: default input: [NAN]; see help for further information' ,''
+    'imgOrigin'        p0.imgOrigin         'IMAGE ORIGIN: target image ORIGIN: default input: [NAN]; see help for further information' ,''
+    'fileNameSuffix'   p0.suffix             '<optional> add additional suffix to the fileName of the resulting image' ''
+    'isparallel'       0                     'parallel processing for lot of files; {0|1};  default:0'  'b'
+    'force2overwrite'  1                     'force to overwrite existing file; {0|1}; default:1  '  'b'
     };
 
 
@@ -284,7 +285,9 @@ s.files   =maskfi;
 % s.bla     ='123'   
 % s
 
-
+if isfield(z,'force2overwrite') && z.force2overwrite==0
+    s.force2overwrite=0;
+end
 
 
 
