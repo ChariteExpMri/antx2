@@ -1604,8 +1604,8 @@ p={
     'inf1'            '% ##'  '' ''
     'excelfile'       ''     '[Excel-file]: file containing columns with animal-IDs and group/regressionValue and optional covariates' 'f'
     'sheetnumber'     1      'sheet-index containing the data (default: 1)' ''
-    'mouseID_col'     1      'column-index containing the animal-IDs (default: 1)' ''
-    'group_col'       2      'column-index containing  the group assignment (default: 2)' ''
+    'mouseID_col'     1      'column-index containing animal-IDs (default: 1)' ''
+    'group_col'       2      'column-index with group assignment, for fullfactorial-design several columns has to be assigned (default: 2)' ''
     'regress_col'     []     '<optional>  column-index/indices containing covariates (otherwise: empty)' ''
     
     'inf2a'           ''  '' ''
@@ -1616,7 +1616,7 @@ p={
     'inf3a'           ''  '' ''
     'inf3'     '_____ TEMPLATE/ATLAS/MASK & OUTPUT ________________________'  '' ''
     'AVGT'            v.AVGT         '[TEMPLATE-file]: select the TEMPLATE (default: fullpath-name of "AVGT.nii" from the templates-dir)' 'f'
-    'ANO'             v.AVGT         '[ATLAS-file]: select the ATLAS (default: fullpath-name of "ANO.nii" from the templates-dir)' 'f'
+    'ANO'             v.ANO         '[ATLAS-file]: select the ATLAS (default: fullpath-name of "ANO.nii" from the templates-dir)' 'f'
     'mask'            v.mask         '[MASK-file]: select the brain-maskfile (default: fullpath-name of "AVGTmask.nii" from the templates-dir)' 'f'
     'output_dir'      v.output_dir   'path of the output-directory (SPM-statistic with SPM.mat and images)' 'd';
     'inf4a'           ''  '' ''
@@ -1752,7 +1752,7 @@ end
 
 [~,sheets]=xlsfinfo(x.excelfile);
 try
-    sheets(x.sheetnumber)
+    sheets(x.sheetnumber);
 catch
     cprintf('*[1 0 .5]',['ERROR: sheet-index does not exist ' '\n']);
     error(['wrong sheet-index: ' num2str(x.sheetnumber)]);
