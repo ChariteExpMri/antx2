@@ -621,6 +621,11 @@ for i=1:length(z.files)
         set_ix(z.trafofile,'FinalBSplineInterpolationOrder',    z.interp(i));        
     end
     
+    
+    try; rm_ix2(z.trafofile,'FixedInternalImagePixelType');    end
+    try; rm_ix2(z.trafofile,'MovingInternalImagePixelType');   end
+    
+    
     if isfield(z.params, 'isparallel') && z.params.isparallel==1
         trafoFile={};
         for jvol=1:length(v0)      % do not use parfor here because it is than used on the upper fct-level
