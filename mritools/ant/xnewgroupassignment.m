@@ -1,12 +1,12 @@
 
 % #lk xnewgroupassignment.m
-% create new group assignments by merging/combining different groups  
-% the output are new group-assignment-file(s) ..(EXCELFILES!) 
+% create new group assignments by merging/combining different groups
+% the output are new group-assignment-file(s) ..(EXCELFILES!)
 % -the resulting excel-files (new group-assignment files) can be used as group-definition for:
 %  [DTIstat.m] --> statistic of DTI-connectome/metric
 %  [xstat.m]   --> voxelwise statistic of images
 %  [xstatlabels.m] --> regionwise statistic of images
-% 
+%
 %% #ma ___MANDATORY_INPUT____
 % Excelfile containing the animals and group-assignment in the 1st-SHEET
 % arbitrary sheetname of the 1st sheet
@@ -15,7 +15,7 @@
 % 2nd column: group to which group belong the animal
 %-------------------------------------------------------------------------------
 % #g __EXAMPLE group-assignmen-file (EXCELFILE,SHEET-1)
-% MRI-ID	                   group                    
+% MRI-ID	                   group
 % 20210831CH_Exp7_010009	   30minMCAO_dMCAO
 % 20210831CH_Exp7_010011	   30minMCAO_dMCAO
 % 20210831CH_Exp7_010012	   30minMCAO_dMCAO
@@ -43,56 +43,56 @@
 % 20211217CH_Exp8_010207	   30minMCAO_dMCAO
 % ...
 %-------------------------------------------------------------------------------
-% #g This example contains 4 DIFFERENT GROUPS {30minMCAO_dMCAO,30minMCAO_sham,sham_dMCAO sham_sham} 
+% #g This example contains 4 DIFFERENT GROUPS {30minMCAO_dMCAO,30minMCAO_sham,sham_dMCAO sham_sham}
 %
 %% #ba __NEW GROUP COMPARISONS___
 % The idea here is to create new group-comparisons by merging/joining groups:
 % The #r " vs. "  (space+vs.+space) #n is used to split group-1 (left) from group-2 (right)
 % Use #r round brackets "(" ")" and &-symbol #n when merging several subgroups into one group
-% 
+%
 % #g __SUBGROUP-EXAMPLES based on the EXAMPLE-group-assignmen-file:
-% 30minMCAO_dMCAO vs. 30minMCAO_sham                  
+% 30minMCAO_dMCAO vs. 30minMCAO_sham
 % 30minMCAO_dMCAO vs. sham_dMCAO
 % 30minMCAO_dMCAO vs. sham_sham
 % 30minMCAO_sham vs. sham_sham
 % 30minMCAO_sham vs. sham_dMCAO
 % sham_dMCAO vs. sham_sham
-% (30minMCAO_dMCAO & 30minMCAO_sham) vs. sham_dMCAO 
-% (30minMCAO_dMCAO & 30minMCAO_sham) vs. sham_sham 
-% (30minMCAO_dMCAO & sham_dMCAO) vs. sham_sham       
+% (30minMCAO_dMCAO & 30minMCAO_sham) vs. sham_dMCAO
+% (30minMCAO_dMCAO & 30minMCAO_sham) vs. sham_sham
+% (30minMCAO_dMCAO & sham_dMCAO) vs. sham_sham
 % (30minMCAO_dMCAO & sham_dMCAO) vs. 30minMCAO_sham
 % (30minMCAO_sham & sham_dMCAO) vs sham_sham
 % (30minMCAO_sham & sham_dMCAO) vs 30minMCAO_dMCAO
 % (30minMCAO_dMCAO & 30minMCAO_sham) vs. (sham_dMCAO & sham_sham)
 % (30minMCAO_dMCAO & sham_dMCAO) vs. (30minMCAO_sham & sham_sham)
-% (30minMCAO_dMCAO & 30minMCAO_sham & sham_dMCAO) vs. sham_sham      
-% 
+% (30minMCAO_dMCAO & 30minMCAO_sham & sham_dMCAO) vs. sham_sham
+%
 % #g __example description_
-% "30minMCAO_dMCAO vs. 30minMCAO_sham"  
+% "30minMCAO_dMCAO vs. 30minMCAO_sham"
 % #g  --> compare 30minMCAO_dMCAO against 30minMCAO_sham
-% "(30minMCAO_dMCAO & 30minMCAO_sham & sham_dMCAO) vs. sham_sham"       
-% #g  --> compare group-1 consisting of "30minMCAO_dMCAO" and "30minMCAO_sham" and "sham_dMCAO" 
+% "(30minMCAO_dMCAO & 30minMCAO_sham & sham_dMCAO) vs. sham_sham"
+% #g  --> compare group-1 consisting of "30minMCAO_dMCAO" and "30minMCAO_sham" and "sham_dMCAO"
 % #g      against  group-2 ("sham_sham")
-% 
-% 
+%
+%
 % -The group-comparison can be stored as txt-file or excelfile (1st sheet, 1st column, header is assumed)
 %  and load into the GUI
-% 
+%
 %% #cb ============================================================
-%% #wb [1] WORKING WITH THE GUI ...no inputs                      
+%% #wb [1] WORKING WITH THE GUI ...no inputs
 %% #cb ============================================================
 % #b [load groupfile] #n : Load the group-assignment file ...#m see mandatory input
 %                 -this is the first step
-% 
+%
 % The left listbox displays the available groups (as specified in the group-assignment file)
 % Select one/more groups from the left listbox and hit #b [add SG1]-button #n to assing these
 % groups to subgroup-1. Do the same for other groups to add these groups to subgroup-2 via
 % the #b [add SG1]-button #n
 % this step can be sone sequentially.
-% 
+%
 % #b [clear] #n      : clear list of subgroup-1 or subgroup-2
 % #b [clear item] #n : clear selected item(s) in list of subgroup-1 or subgroup-2
-% 
+%
 % #g EXAMPLE
 % First we assign subgroup-1:
 % "30minMCAO_dMCAO" was selected from left listbox --> than [add SG1]-button clicked
@@ -102,14 +102,14 @@
 % "sham_dMCAO" was selected from left listbox --> than [add SG2]-button clicked
 % "sham_sham" was selected from left listbox --> than [add SG2]-button clicked
 % the listbox for subgroup-2 now contains two items:  "sham_dMCAO" and "sham_sham"
-% 
+%
 % #b [submit] #n      : submit comparison (subgroup-1 vs subgroup-2) to lower listbox
-%           
+%
 % #g for our example the lower listbox now contains: "(30minMCAO_dMCAO & 30minMCAO_sham) vs. (sham_dMCAO & sham_sham)"
 %
 % we can now create new group-comparisons by joining other groups for subgroup-1 and subgroup-2
 % and pressing the submit-button
-% 
+%
 % #b [load groupcomparison] #n : - if we already have such a list #r (see __NEW GROUP COMPARISONS___ above)
 %                        this list can be loaded.
 %                      -The list must be stored as:
@@ -120,41 +120,41 @@
 %                            -header is assumed
 %                          #r txt-file (*.txt or *.dat)
 %                          -each row is a comparison
-%           
+%
 % #m PLEASE AVOID SPACES IN THE GROUPNAMES
 % #g example: a textfile "group-comparisons.txt" contains the following list of comparisons
 % 30minMCAO_sham vs. sham_dMCAO
 % sham_dMCAO vs. sham_sham
-% (30minMCAO_dMCAO & 30minMCAO_sham) vs. sham_dMCAO 
-% (30minMCAO_dMCAO & 30minMCAO_sham) vs. sham_sham 
-% (30minMCAO_dMCAO & sham_dMCAO) vs. sham_sham       
+% (30minMCAO_dMCAO & 30minMCAO_sham) vs. sham_dMCAO
+% (30minMCAO_dMCAO & 30minMCAO_sham) vs. sham_sham
+% (30minMCAO_dMCAO & sham_dMCAO) vs. sham_sham
 % (30minMCAO_dMCAO & sham_dMCAO) vs. 30minMCAO_sham
 % (30minMCAO_sham & sham_dMCAO) vs sham_sham
 % (30minMCAO_sham & sham_dMCAO) vs 30minMCAO_dMCAO
 % (30minMCAO_dMCAO & 30minMCAO_sham) vs. (sham_dMCAO & sham_sham)
 % (30minMCAO_dMCAO & sham_dMCAO) vs. (30minMCAO_sham & sham_sham)
 % (30minMCAO_dMCAO & 30minMCAO_sham & sham_dMCAO) vs. sham_sham
-% 
+%
 % -if loaded the group comparisons appear in the lower listbox
 % -use #b [clear] or [clear item] #n next to the lower listbox to clear the list or clear selected item(s)
-% 
+%
 % Use context-menu of the lower listbox (group-comparison list) to save the group-comparison list
 %  as text-file. This text-file can be than used to re-load the group-comparisons:
 %             - via #b [load groupcomparison] #n  or
 %             - file-assigned to field: "z.subgroupfile"
-% 
+%
 % #b [outdir] #n -(editfield) name of the output-directory (shortname!) where the new group-assignment
 %                 files will be stored
 %                -default name "group"
-%                -if a project is loaded the base-path is the studypath..thus the outputidrectory is: 
+%                -if a project is loaded the base-path is the studypath..thus the outputidrectory is:
 %                   .../mystudy/group
-%                -if no project is loaded the base-path is pwd..thus the outputidrectory is: 
+%                -if no project is loaded the base-path is pwd..thus the outputidrectory is:
 %                       .../{pwd}/group
-% 
+%
 % #b [prefix] #n  -(editfield) add prefix to the filename of the new group-assignment files
 %                 -default: 'gr_'
 %                 -prefix is recommended as this is easier to select the files for later analysis
-% 
+%
 % #b [prefix index] #n -(radio) add ascending index after prefix to the filename of the new group-assignment files
 %                      -this is usefull if you have more than one group-comparison in the list
 %                 -default: [x]
@@ -162,33 +162,33 @@
 %                           [x] all comparisons in lower listbox or
 %                           [ ] current selected items
 %                 -default: [x]
-%                 
+%
 % #b [simulate] #n -just simulate ..i.e do not write results, but show results
 %                [0] excelfiles will be written
 %                [1] group-comparison (animals+counts) displayed in help-window
 %                    excelfiles are not written
-%       
+%
 % #b [Proceed] #n - Process.. i.e create group-assignment files from items in lower listbox
 %              if [simulate] is [ ]: store group-assignment files as xls-files in the "outdir" folder
 %              if [simulate] is [x]: display content of group-assignment files
-% 
-% #b [Close] #n - close GUI 
-% 
-%               
-% 
-% 
+%
+% #b [Close] #n - close GUI
+%
+%
+%
+%
 %% #cb ============================================================
-%% #wb [2] WORKING WITH THE GUI ...with inputs                      
+%% #wb [2] WORKING WITH THE GUI ...with inputs
 %% #cb ============================================================
-% 
+%
 % xnewgroupassignment(1,z);  where z is a struct with optional input-arguments
-% 
+%
 %% #g ____example-1 _____
 % z=[];
 % z.groupfile                = fullfile(pwd,'2021_Exp7_Exp8_Reinfarkte_groups.xlsx'); % % group-assignment file to load
-% xnewgroupassignment(1,z);          ; % %  open GUI with sessings, all other changes then via GUI 
-% 
-% 
+% xnewgroupassignment(1,z);          ; % %  open GUI with sessings, all other changes then via GUI
+%
+%
 %% #g ____example-2 _____
 % z=[];
 % z.groupfile    = fullfile(pwd,'2021_Exp7_Exp8_Reinfarkte_groups.xlsx'); % % group-assignment file to load
@@ -198,36 +198,36 @@
 % z.prefixindex  = 1           ; % % yes, use index in filename-prefix
 % z.processindex = 2           ; % % indices of comparisons to process: ['all' or inf] or vecor/index
 % z.simulate     = 0           ; % % simulate: [1] yes; [0] no write data
-% xnewgroupassignment(1,z);    ; % % open GUI with settings --> only need is to hit [OK]-button 
-% 
+% xnewgroupassignment(1,z);    ; % % open GUI with settings --> only need is to hit [OK]-button
+%
 %% #g ____example-3: group-comparison list is defined on the fly (subgrouplist), files for allcomparisons created
-% z=[];                                                                                                                                                                                                                                
-% z.groupfile    = 'F:\data5\makeSubgroups\2021_Exp7_Exp8_Reinfarkte_groups.xlsx';          % % group-assignment file (excel)                                                                                                          
-% z.outdir       = 'group';                                                                 % % output-directory (shortname)                                                                                                           
-% z.prefix       = 'gr_';                                                                   % % filename-prefix of the new group-comparison file                                                                                       
-% z.prefixindex  = [1];                                                                     % % use numeric index infilename-prefix of the new group-comparison file                                                                   
+% z=[];
+% z.groupfile    = 'F:\data5\makeSubgroups\2021_Exp7_Exp8_Reinfarkte_groups.xlsx';          % % group-assignment file (excel)
+% z.outdir       = 'group';                                                                 % % output-directory (shortname)
+% z.prefix       = 'gr_';                                                                   % % filename-prefix of the new group-comparison file
+% z.prefixindex  = [1];                                                                     % % use numeric index infilename-prefix of the new group-comparison file
 % z.processindex = [Inf];                                                                   % % index to from group-comparison list to process; us [inf, 'all'] to process all otherwise use a vector of indices such as [1] or [1:3 5]
-% z.simulate     = [0];                                                                     % % simulate output: [1] simulate only, show data in window; [0] write data                                                                
-% z.subgrouplist = { '30minMCAO_dMCAO vs. 30minMCAO_sham'                                   % % list of group comparisons                                                                                                              
-%                  '30minMCAO_dMCAO vs. sham_dMCAO'                                                                                                                                                                                    
-%                  '(30minMCAO_dMCAO & 30minMCAO_sham) vs. (sham_dMCAO & sham_sham)' };                                                                                                                                                
-% xnewgroupassignment(1,z); 
-% 
+% z.simulate     = [0];                                                                     % % simulate output: [1] simulate only, show data in window; [0] write data
+% z.subgrouplist = { '30minMCAO_dMCAO vs. 30minMCAO_sham'                                   % % list of group comparisons
+%                  '30minMCAO_dMCAO vs. sham_dMCAO'
+%                  '(30minMCAO_dMCAO & 30minMCAO_sham) vs. (sham_dMCAO & sham_sham)' };
+% xnewgroupassignment(1,z);
+%
 %% #cb ============================================================
 %% #wb [3] COMMANDLINE
 %% #cb ============================================================
-% 
+%
 % z.outdir:  -use a fullpath-folder name here if ANT-project is not loded
-%            -if z.outdir is a shortname and an ANT-project is not loaded 
+%            -if z.outdir is a shortname and an ANT-project is not loaded
 %             the output is saved in:  {pwd}/z.outdir
-%            -if z.outdir is a shortname and an ANT-project is loaded 
+%            -if z.outdir is a shortname and an ANT-project is loaded
 %             the output is saved in:  ANTstudyPath/z.outdir
 % z.simulate  -set simulation to [2]  if there is no graphics support
-% 
+%
 % xnewgroupassignment(0,z);  where z is a struct with optional input-arguments
 
-% 
-% 
+%
+%
 %% #g ____example-1: create files for the first two group-comparions from list _____
 % z=[];
 % z.groupfile    = fullfile(pwd,'2021_Exp7_Exp8_Reinfarkte_groups.xlsx'); % % group-assignment file to load
@@ -237,8 +237,8 @@
 % z.prefixindex  = 1           ; % %  yes, use index in filename
 % z.processindex = [1 2]       ; % %  indices of comparisons to process: ['all' or inf] or vecor/index
 % z.simulate     = 0           ; % %  simulate: [1] yes; [0] no write data
-% xnewgroupassignment(0,z);    ; % %  without GUI  
-% 
+% xnewgroupassignment(0,z);    ; % %  without GUI
+%
 %% #g ____example-2: create files for the  all group-comparions from list _____
 % z=[];
 % z.groupfile    = fullfile(pwd,'2021_Exp7_Exp8_Reinfarkte_groups.xlsx'); % % group-assignment file to load
@@ -248,20 +248,20 @@
 % z.prefixindex  = 1           ; % %  yes, use index in filename
 % z.processindex = inf         ; % %  indices of comparisons to process: ['all' or inf] or vecor/index
 % z.simulate     = 0           ; % %  simulate: [1] yes; [0] no write data
-% xnewgroupassignment(0,z);    ; % %  without GUI  
-% 
+% xnewgroupassignment(0,z);    ; % %  without GUI
+%
 %% #g ____example-3: group-comparison list is defined on the fly (subgrouplist), files for allcomparisons created
-% z=[];                                                                                                                                                                                                                                
-% z.groupfile    = 'F:\data5\makeSubgroups\2021_Exp7_Exp8_Reinfarkte_groups.xlsx';          % % group-assignment file (excel)                                                                                                          
-% z.outdir       = 'group';                                                                 % % output-directory (shortname)                                                                                                           
-% z.prefix       = 'gr_';                                                                   % % filename-prefix of the new group-comparison file                                                                                       
-% z.prefixindex  = [1];                                                                     % % use numeric index infilename-prefix of the new group-comparison file                                                                   
+% z=[];
+% z.groupfile    = 'F:\data5\makeSubgroups\2021_Exp7_Exp8_Reinfarkte_groups.xlsx';          % % group-assignment file (excel)
+% z.outdir       = 'group';                                                                 % % output-directory (shortname)
+% z.prefix       = 'gr_';                                                                   % % filename-prefix of the new group-comparison file
+% z.prefixindex  = [1];                                                                     % % use numeric index infilename-prefix of the new group-comparison file
 % z.processindex = [Inf];                                                                   % % index to from group-comparison list to process; us [inf, 'all'] to process all otherwise use a vector of indices such as [1] or [1:3 5]
-% z.simulate     = [0];                                                                     % % simulate output: [1] simulate only, show data in window; [0] write data                                                                
-% z.subgrouplist = { '30minMCAO_dMCAO vs. 30minMCAO_sham'                                   % % list of group comparisons                                                                                                              
-%                  '30minMCAO_dMCAO vs. sham_dMCAO'                                                                                                                                                                                    
-%                  '(30minMCAO_dMCAO & 30minMCAO_sham) vs. (sham_dMCAO & sham_sham)' };                                                                                                                                                
-% xnewgroupassignment(0,z); 
+% z.simulate     = [0];                                                                     % % simulate output: [1] simulate only, show data in window; [0] write data
+% z.subgrouplist = { '30minMCAO_dMCAO vs. 30minMCAO_sham'                                   % % list of group comparisons
+%                  '30minMCAO_dMCAO vs. sham_dMCAO'
+%                  '(30minMCAO_dMCAO & 30minMCAO_sham) vs. (sham_dMCAO & sham_sham)' };
+% xnewgroupassignment(0,z);
 
 
 
@@ -277,8 +277,8 @@ if 0
     z.groupfile=fullfile(pwd,'2021_Exp7_Exp8_Reinfarkte_groups.xlsx');
     z.prefix='gr_';
     z.outdir='group'
-%     z.subgroupfile='F:\data5\makeSubgroups\subgroupList.xlsx';
-%     z.subgroupfile=fullfile(pwd,'groupcomparisons.txt');
+    %     z.subgroupfile='F:\data5\makeSubgroups\subgroupList.xlsx';
+    %     z.subgroupfile=fullfile(pwd,'groupcomparisons.txt');
     z.prefixindex=1;
     z.processindex=2 % [all or inf] or vecor/index
     z.simulate=0;
@@ -304,7 +304,7 @@ p.prefixindex=1;
 p.prefix     ='gr_';
 p.outdir     ='group';
 p.processindex=inf;
-p.simulate    =0;
+p.simulate    =1;
 % ----internal-
 p.iswait      =0;  %  [1] busy state..wait for clickint [ok/cancel],  [0]no wait-state
 p.isdesktop   = usejava('desktop');
@@ -316,9 +316,18 @@ else
 end
 
 
+% ==============================================
+%%   default parameters
+% ===============================================
+
+u.grouptype   ='simple';
+% u.grouptype   ='factorial';
+u.sheetIdx    =1;
+u.col_animal  =1;
+u.col_group   =2;
+u.keepRowInfo =1;
+
 %% ===============================================
-
-
 
 u.dummy=1;
 if isGui==1
@@ -390,7 +399,7 @@ set(hf,'userdata',u);
 finalLB_countcomparisons();
 %% =====wait gui==========================================
 if z.iswait==1
-   uiwait(gcf); 
+    uiwait(gcf);
 end
 
 function makefig(u);
@@ -408,14 +417,40 @@ hf=figure('color','w','tag','makeSubgroups','name',[mfilename '.m' ],'menubar','
     'numbertitle','off');
 
 % =========[load groupfile]======================================
-hp=uicontrol('style','pushbutton','string','load groupfile','units','norm');
-set(hp,'position',[[0.0090027 0.94542 0.15 0.05]]);
-set(hp,'callback',{@loadgroupassignment_cb,[]});
+hp=uicontrol('style','pushbutton','string','load group','units','norm');
+set(hp,'position',[[-0.0018877 0.95202 0.12 0.05]]);
+set(hp,'callback',{@loadgroupassignment_cb,[]},'tag','loadgroupassignment_cb');
 set(hp,'fontweight','bold');
 set(hp,'tooltipstring',['<html><b>load group-assignment file (excel)</b><br>'...
     ' excelfile contains: <br>'...
     '   column-1: animal-IDS <br>'...
-    '   column-2: group-names ' ]);
+    ' if grouptype is "simple":  column-2: group-names <br>'...
+    ' if grouptype is "factorial":  user has to specify the columns of the factors']);
+% ==============================================
+%%   pulldown group-assignment-File
+% ===============================================
+% groupfileTypes={'simple' 'factorial'};
+groupfileTypes={'simple' };
+hp=uicontrol('style','pop','string',groupfileTypes,'units','norm');
+set(hp,'position',[[0.12698 0.96192 0.15 0.05]]);
+set(hp,'tag','groupfileType');
+
+set(hp,'fontweight','bold');
+set(hp,'tooltipstring',['<html><b>ltype of group-assignment file (excelfile)</b><br>'...
+    '<b><u>"simple"::</b></u><br>'...
+    '   column-1: animal-IDS;'...
+    '   column-2: group-names <br>'...
+    '<b><u>"factorial":</b></u><br>'...
+    '   column-1: animal-IDS; <br>'...
+    '   user has to specify the columns of the factors (factorA & B) '...
+    ]);
+
+ix=find(strcmp(groupfileTypes,u.grouptype));
+if ~isempty(ix)
+    hp.Value=ix;
+end
+
+
 
 
 % =========[load groupcomparisons]======================================
@@ -552,7 +587,7 @@ set(hb,'tooltipstring',['<html><b>cancel</b><br>close gui']);
 hb=uicontrol('style','pushbutton','string','Help','units','norm');
 set(hb,'tooltipstring',['get some Help' ]);
 set(hb,'callback',{@xhelp,[]});
-set(hb,'position',[0.1651 0.94542 0.06 0.05],'backgroundcolor',[1 1 0]);
+set(hb,'position',[[0.0071877 0.008217 0.06 0.05]],'backgroundcolor',[1 1 0]);
 
 % =========[outdir]======================================
 hb=uicontrol('style','text','string','outdir','units','norm');
@@ -625,20 +660,20 @@ set(hf,'userdata',u);
 
 function lb_final_context(e,e2,task)
 if strcmp(task,'saveTXT');
-  hf=findobj(0,'tag','makeSubgroups');
-  hb=findobj(hf,'tag','lb_final');
-  li=get(hb,'string');
-  li(strcmp(li,'empty'))=[];
-  if isempty(li)
-      msgbox('group comparison list is empty');
-      return
-  end
-  
-  [fi pa]= uiputfile(fullfile(pwd,'*.txt'),'save comparison-list as *.txt-file');
-  f2=fullfile(pa,fi);
-  
-  pwrite2file(f2,li)
-  showinfo2('group-comparison list saved',f2); 
+    hf=findobj(0,'tag','makeSubgroups');
+    hb=findobj(hf,'tag','lb_final');
+    li=get(hb,'string');
+    li(strcmp(li,'empty'))=[];
+    if isempty(li)
+        msgbox('group comparison list is empty');
+        return
+    end
+    
+    [fi pa]= uiputfile(fullfile(pwd,'*.txt'),'save comparison-list as *.txt-file');
+    f2=fullfile(pa,fi);
+    
+    pwrite2file(f2,li)
+    showinfo2('group-comparison list saved',f2);
 end
 
 
@@ -693,10 +728,45 @@ a=regexprep(a,{'^\s+' '\s+$'},''); %remove spaces add begin & end
 z.subgrouplist=a(:,1);
 
 %% ===============================================
-
 function loadgroupassignment_cb(e,e2,groupfile)
 hf=findobj(0,'tag','makeSubgroups');
+hp=findobj(hf,'tag','groupfileType');
 
+if strcmp(hp.String(hp.Value),'simple')
+    loadgroupassignment_simple_cb(e,e2,groupfile);
+elseif strcmp(hp.String(hp.Value),'factorial')
+    loadgroupassignment_factorial_cb(e,e2,groupfile);
+end
+%% ===============================================
+function  loadgroupassignment_factorial_cb(e,e2,groupfile);
+hf=findobj(0,'tag','makeSubgroups');
+% isUI=1;
+% if exist('groupfile')==1 && exist(groupfile)==2
+%     isUI=0;
+% end
+% if isUI==1
+%     [fi pa]=uigetfile(fullfile(pwd,'*.xlsx;*.xls'),'load grouassignment file') ;
+%     f1=fullfile(pa,fi);
+% else
+%     f1=groupfile;
+% end
+u=get(hf,'userdata');
+% u.groupfile=f1;
+u.grouptype='factorial';  
+
+set(hf,'userdata',u);
+
+[ha a u]=read_groupfile(u);
+
+%======[read excel-file]=========================================
+hb=findobj(hf,'tag','lb_groups');
+set(hb,'string',u.grouplabels);
+set(hb,'enable','on');
+set(hf,'userdata',u);
+
+%% ===============================================
+function loadgroupassignment_simple_cb(e,e2,groupfile)
+hf=findobj(0,'tag','makeSubgroups');
 isUI=1;
 if exist('groupfile')==1 && exist(groupfile)==2
     isUI=0;
@@ -709,47 +779,155 @@ else
     f1=groupfile;
 end
 u=get(hf,'userdata');
+u.grouptype='simple';
 u.groupfile=f1;
+if ~isfield(u,'grouptype');    u.grouptype='simple';    end
 set(hf,'userdata',u);
 
 
-[ha a grouplabels]=read_groupfile(u);
+[ha a u]=read_groupfile(u);
+set(hf,'userdata',u);
 %======[read excel-file]=========================================
-
-% [~,~,a0]=xlsread(f1);
-% ha=a0(1,:);
-% a =a0(2:end,:);
-% a=cellfun(@(a){[num2str(a)]} ,a ); %to string
-% idelrow=find(sum([strcmp(a(:,1),'NaN') strcmp(a(:,2),'NaN')],2)>0);
-% a(idelrow,:)=[];%remove empty cells
-% grouplabels=unique(a(:,2))
-
 hb=findobj(hf,'tag','lb_groups');
-set(hb,'string',grouplabels);
+set(hb,'string',u.grouplabels);
 set(hb,'enable','on');
 
 
-function [ha a grouplabels]=read_groupfile(u);
-% [~,~,a0]=xlsread(f1);
-% [pa fi ext]=fileparts(u.groupfile);
-% if strcmp(ext,'.xlsx') || strcmp(ext,'.xls')
+function [ha a u]=read_groupfile(u);
+if ~isfield(u,'grouptype');    u.grouptype='simple';    end
+
+if strcmp(u.grouptype,'simple')
+    if ~isfield(u,'sheetIdx');     u.sheetIdx=1;    end
+    if ~isfield(u,'col_animal');   u.col_animal=1;  end
+    if ~isfield(u,'col_group');    u.col_group=2;   end
+    if ~isfield(u,'keepRowInfo');  u.keepRowInfo=1; end
+else
+    %% ________________________________________________________________________________________________
+    %%  PARAMETER-gui
+    %% ________________________________________________________________________________________________
+    if exist('x')~=1;        x=[]; end
+    showgui=1;
+    
+    p={...
+        'groupfile'      ''      'group-assignment file'  'f' 
+        'sheetIdx'         [1]   'sheet number'            {1 2 3 4}
+        'col_animal'       [1]   'column index with ANIMAL-IDs'   {1,2,3,4}
+        'col_group'        [2]   'column index/indices with groups/factors'   {2,'2 3','2 3 4'}
+        'keepRowInfo'      [1]   'keep row Information'            'b'
+        'grouptype'       u.grouptype  'type of groupfile'     {'factorial'}
+        };
+    
+    
+    p=paramadd(p,x);%add/replace parameter
+    %     [m z]=paramgui(p,'uiwait',0,'close',0,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .7 .5 ],'title','PARAMETERS: LABELING');
+    
+    % %% show GUI
+    if showgui==1
+        %hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
+        [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .5 .2 ],...
+            'title',['make subgroups']);
+        if isempty(m); return; end
+        fn=fieldnames(z);
+        z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
+    else
+        z=param2struct(p);
+    end
+    
+    %% ===============================================
+    
+    
+    
+    
+end
+
+
+if strcmp(u.grouptype,'simple')
+    [~,~,a0]=xlsread(u.groupfile,u.sheetIdx);
+    ha=a0(1,:);
+    a =a0(2:end,:);
+    a=cellfun(@(a){[num2str(a)]} ,a ); %to string
+    idelrow=find(sum([strcmp(a(:,u.col_animal),'NaN') strcmp(a(:,u.col_group),'NaN')],2)>0);
+    a(idelrow,:)=[];%remove empty cells
+    u.grouplabels=unique(a(:,u.col_group));
+    u.factors=ha(u.col_group);
+elseif strcmp(u.grouptype,'factorial')
+    u=catstruct(u,z);
     [~,~,a0]=xlsread(u.groupfile);
     ha=a0(1,:);
     a =a0(2:end,:);
     a=cellfun(@(a){[num2str(a)]} ,a ); %to string
-    idelrow=find(sum([strcmp(a(:,1),'NaN') strcmp(a(:,2),'NaN')],2)>0);
+    idelrow=find(sum([strcmp(a(:,u.col_animal),'NaN') strcmp(a(:,u.col_group),'NaN')],2)>0);
     a(idelrow,:)=[];%remove empty cells
-% elseif strcmp(ext,'.txt') || strcmp(ext,'.dat')
-%     a=preadfile(u.groupfile);
-%     a=a.all;
-%     iuse=regexpi2(a,' VS. | VS ');
     
+    %grouplabels=unique(a(:,2));
     
+    u.factors=ha(u.col_group);
+    %% ===============================================
+    q=struct();
+    q.factors=u.factors
+    q.nfactors=length(q.factors)
+    %---get levels
     
-% end
+    ft=a(:,u.col_group);
+    ft=regexprep(ft,'[^a-zA-Z0-9_]',''); %remove special characters
+    
+    levelnames={};
+    for i=1:size(ft,2)
+        levelnames{1,i}=unique(ft(:,i),'stable');
+    end
+    if q.nfactors==1
+        combs=levelnames{1};
+    elseif q.nfactors==2
+        combs=allcomb(levelnames{1},levelnames{2});
+    elseif q.nfactors==3   ;
+        combs=allcomb(levelnames{1},levelnames{2},levelnames{3});
+    else
+        error('more than 3 factors currently not supported');
+    end
+    
+    % check existence of these combinations
+    combname={};
+    ivalid=[];
+    for i=1:size(combs,1)
+        thiscomb=combs(i,:);
+        if length(thiscomb)==1
+            ix=find(strcmp(ft(:,1),thiscomb(1)));
+        elseif length(thiscomb)==2
+            ix=find(strcmp(ft(:,1),thiscomb(1)) & strcmp(ft(:,2),thiscomb(2)));
+        elseif length(thiscomb)==3
+            ix=find(strcmp(ft(:,1),thiscomb(1)) & strcmp(ft(:,2),thiscomb(2)) & strcmp(ft(:,3),thiscomb(3)));
+        end
+        if ~isempty(ix)
+            if length(thiscomb)==1
+                combname(end+1,:)= {['[' strjoin(ft(ix(1),:), '][') ']']};%ft(ix(1),1)
+            else
+                combname(end+1,:) ={['[' strjoin(ft(ix(1),:), '][') ']']};% {strjoin(ft(ix(1),:), '-')};
+            end
+            ivalid(i,1)=i;
+        end
+    end
+    combs=combs(ivalid,:);
+    levelnames={};
+    for i=1:size(combs,2)
+        levelnames{1,i}=unique(combs(:,i),'stable');
+    end
+    
+    u.grouplabels=combname;
+        
+    %% ===============================================
+    
+%     grouplabels={};
+%     for i=1:length(u.factors)
+%         uni=unique(a(:,u.col_group(i)));
+%         grouplabels=[ grouplabels; stradd(uni,[u.factors{i} '#' ],1)];
+%     end
+%     u.grouplabels=grouplabels;
+    %% ===============================================
+        
+end
 
-grouplabels=unique(a(:,2));
-
+u.a  =a;
+u.ha =ha;
 
 
 
@@ -898,7 +1076,7 @@ if argin==1
     hf=findobj(0,'tag','makeSubgroups');
     u=get(hf,'userdata');
     if isfield(u,'groupfile')==0
-       
+        
         msgbox('group-file not loaded');
         return
     else
@@ -911,8 +1089,8 @@ if argin==1
     s.subgrouplist(strcmp(s.subgrouplist,'empty'))=[];
     
     if isempty(s.subgrouplist)
-         msgbox('list of group comparisons is empty');
-         return
+        msgbox('list of group comparisons is empty');
+        return
     end
     %% ===============================================
     % ---check if other contrast where added than use list otherwise use file
@@ -931,8 +1109,8 @@ if argin==1
             %             disp(L1s);
         end
         if isempty(L1s) && length(L1)==length(L2) %identical ...thus using the file
-           s=rmfield(s,'subgrouplist');
-           s.subgroupfile=u.subgroupfile;
+            s=rmfield(s,'subgrouplist');
+            s.subgroupfile=u.subgroupfile;
         end
         
     end
@@ -976,15 +1154,15 @@ try;z2=rmfield(z2,'isGui'); end
 isGUI=z.isGui;
 % ===============================================
 p={...
- 'groupfile' '' 'group-assignment file (excel)'
- 'subgroupfile' '' 'file containing a list of group-comparisons (*.txt or excelfile)'
- 'subgrouplist' '' 'list of group comparisons'
- 'outdir'    '' 'output-directory (shortname)'
- 'prefix' '' 'filename-prefix of the new group-comparison file'
- 'prefixindex' ''  'use numeric index infilename-prefix of the new group-comparison file '
- 'processindex' '' 'index to from group-comparison list to process; us [inf, ''all''] to process all otherwise use a vector of indices such as [1] or [1:3 5]'
- 'simulate' ''  'simulate output: [1] simulate only, show data in window; [0] write data'
- };
+    'groupfile' '' 'group-assignment file (excel)'
+    'subgroupfile' '' 'file containing a list of group-comparisons (*.txt or excelfile)'
+    'subgrouplist' '' 'list of group comparisons'
+    'outdir'    '' 'output-directory (shortname)'
+    'prefix' '' 'filename-prefix of the new group-comparison file'
+    'prefixindex' ''  'use numeric index infilename-prefix of the new group-comparison file '
+    'processindex' '' 'index to from group-comparison list to process; us [inf, ''all''] to process all otherwise use a vector of indices such as [1] or [1:3 5]'
+    'simulate' ''  'simulate output: [1] simulate only, show data in window; [0] write data'
+    };
 
 v=xmakebatch(z2,p, mfilename,[mfilename '(' num2str(isGUI) ',z);' ]);
 % char(v)
@@ -1000,14 +1178,18 @@ hf=findobj(0,'tag','makeSubgroups');
 %% ======[spinner]=========================================
 if ~isempty(hf)
     figure(hf)
-    waitspin(1,'BUSY','','position',[75 4  30 30],'color',[1 .5 0]);
+%     waitspin(1,'BUSY','','position',[75 4  30 30],'color',[1 .5 0]);
+disp('wait spin is off l-1176');
 end
 %% ===============================================
-[ha a grouplabels]=read_groupfile(z);
+% u=get(hf,'userdata');
+% ha=u.ha;
+% a =u.a;
+
+ [ha a u]=read_groupfile(z);
 %% ===============================================
 if isfield(z,'subgroupfile') && isempty(char(z.subgroupfile))==0 && exist(z.subgroupfile)==2
     z=load_subgroupfile(z);
-    
 end
 
 z.subgrouplist=cellstr( z.subgrouplist);
@@ -1026,11 +1208,15 @@ end
 %% ===[check]============================================
 
 % newlabel='combine'
-newlabel=1;
-groups=unique(a(:,2));
-groups=flipud(groups);
-groupID=cellfun(@(a){['g' num2str(a)]} ,num2cell([1:length(groups)]') );
-
+if strcmp(u.grouptype,'simple')
+    newlabel=1;
+    groups=unique(a(:,2));
+    groups=flipud(groups);
+    groupID=cellfun(@(a){['g' num2str(a)]} ,num2cell([1:length(groups)]') );
+elseif strcmp(u.grouptype,'factorial')
+    
+    
+end
 
 
 index2process=z.processindex; %which index to process
@@ -1167,24 +1353,24 @@ for i=index2process;
         index=pnum(i,2);
     end
     
-%     [w1 uscore]=strtok(prefix,'_');
-%     if isempty(uscore);
-%         uscore='_';
-%     end
+    %     [w1 uscore]=strtok(prefix,'_');
+    %     if isempty(uscore);
+    %         uscore='_';
+    %     end
     uscore='_';
     if isempty(prefix) && isempty(index);
         uscore='';
     elseif ~isempty(prefix) && isempty(index);
         uscore='';
-     elseif ~isempty(prefix) && ~isempty(index);
+    elseif ~isempty(prefix) && ~isempty(index);
         uscore='__'; %double for better separation
     end
-
+    
     %namepre=[w1 index uscore];
     namepre=[prefix index uscore ];
     
     
-     
+    
     
     %____outputdir_____________
     [maindir dirx ext]=fileparts(z.outdir);
@@ -1258,7 +1444,7 @@ cprintf('*[0 .5 1]',[ 'DONE!\n']);
 
 if ~isempty(hf)
     figure(hf)
-    waitspin(0,'Done');
+ try;    waitspin(0,'Done'); end
 end
 
 %% ===show simulation============================================

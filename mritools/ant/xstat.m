@@ -1276,7 +1276,7 @@ if ~isempty(find(p.method==2))
         nametag2=strrep(nametag2,'none','CLUST');
         paramtag=strrep(paramtag,'none','CLUST');
         PPTFILE=fullfile(outdir,['sum_CLUST_'  paramtag '.pptx'   ]);
-        
+        paramtag=[paramtag(1:max(strfind(paramtag,'k'))-1) '' ]; %remove clusterSize..as this might change over contrasts
         xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  )); % save stat. table in PPT
         xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
         
@@ -1326,7 +1326,7 @@ if ~isempty(find(p.method==3))
 end
 
 cd(currdir);
-waitspin(0,'Done');
+try; waitspin(0,'Done'); end
 cprintf('*[1 0 1]',[ 'DONE!' '\n' ]);  
 return
     
