@@ -818,9 +818,12 @@
 % #k [xstat.m] #n modified and all models (with covaraiates) were simulated and checked
 % tutorial needs to be updated and extended for the other statistical models
 % 
+% #ba 13 Dec 2022 (13:04:03)
+% minor bugs removed in #k [xstat.m] #n  
 % 
 % 
-
+% 
+% 
 
 
 

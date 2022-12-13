@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   09 Dec 2022 (09:21:47)  
+ &#x1F34E; last modification:   13 Dec 2022 (13:04:03)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**13 Dec 2022 (13:04:03)**</ins>  
+  minor bugs removed in  __[xstat.m]__    
+<!---->
   &#x1F535;   <ins>**09 Dec 2022 (09:21:47)**</ins>  
    __[createGroupassignmentFile.m]__ modified  
   The function create a group-assignment file (usefull for voxelwise statistic).  
@@ -14,6 +17,7 @@
     
    __[xstat.m]__ modified and all models (with covaraiates) were simulated and checked  
   tutorial needs to be updated and extended for the other statistical models  
+    
 <!---->
   &#x1F535;   <ins>**01 Dec 2022 (13:53:56)**</ins>  
    __[CTgetbrain_approach2.m]__ modified  
