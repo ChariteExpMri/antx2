@@ -71,17 +71,72 @@ isel=ilarge(find( tb(ilarge,4)== min(tb(ilarge,4))));
 
 ms=bx==tb(isel,1);
 %dilate mask
-ms=imdilate(ms,ones(20));
+% ms=imdilate(ms,ones(20));
+ms=imdilate(ms,ones(50));
 a2=a.*repmat(ms,[1 1 ha.dim(3)]);
 
-%,make otsu
-v=reshape(otsu(a2(:),6), [ha.dim] );
-%,remove first clusters otsu
-v=v>3;
 
+
+% ==============================================
+%%   prep fun
+% ===============================================
+% otsu & classThreshold  & thresh-ratio over half-slices
+q.a2 =a2;
+q.ha =ha;
+q.pa =pa;
+
+ratioTrhesh=0.25;
+to=[ ...
+    6 3
+    6 2
+    5 3  
+    5 2
+    7 2
+    7 3
+    8 2
+    8 3
+    8 4
+];
+
+% q.a2= ordfilt3D(a2,5);
+
+for i=1:size(to,1)
+    [ck lg out]=bonefun(z,q,to(i,:),ratioTrhesh);
+    disp(i);
+    %cprintf('*[1 0 .5]',[ num2str(ck) '\n']);
+    if ck==1
+        break
+    end
+    if ck==-1
+        cprintf('*[0    0.7490    0.7490]',['..reiterate-' num2str(i+1) ]);
+    end
+end
+
+%  keyboard
+%% ===============================================
+function [ck lg out]=bonefun(z,q,to,ratioTrhesh)
+lg=''; %error-log
+ck=-1; % if [1] than ok
+out=[];
+
+a2 =q.a2;
+ha =q.ha;
+pa =q.pa;
+otclass    =to(1);
+otthresh   =to(2);
+
+% ==============================================
+%%   otsu
+% ===============================================
+% v=reshape(otsu(a2(:),5), [ha.dim] );
+%,remove first clusters otsu
+% v=v>3; %orig
+ % v=v>2; %
+%  v=v>3; %orig
 %  montage2(v)
 
-%% ===============================================
+v=reshape(otsu(a2(:),otclass), [ha.dim] );
+v=v>otthresh; %
 
 % old_____
 if 0
@@ -105,35 +160,6 @@ tb=sortrows([uni(:) c],2);
 
 % --which cluster--------------
 voxsi=abs(det(ha.mat(1:3,1:3)));
-
-% BBboxwithin=.5;
-% sid=size(a);
-% bboxin=zeros(sid);
-% fillind=round((sid-(sid*BBboxwithin))/2);
-% bboxin(...
-%     fillind(1):end-fillind(1)+1,...
-%     fillind(2):end-fillind(2)+1,...
-%     fillind(3):end-fillind(3)+1)=1;
-% montage2(bboxin+double(bx==tb(end-1,1)));
-% montage2(bboxin+double(bx==tb(end,1)));
-
-% tc=bx==tb(end-2,1); disp(round([sum(bboxin(tc)) sum(tc(:)==1)  sum(bboxin(tc))/sum(tc(:)==1)*100  ]))
-% tc=bx==tb(end-1,1); disp(round([sum(bboxin(tc)) sum(tc(:)==1)  sum(bboxin(tc))/sum(tc(:)==1)*100  ]))
-% tc=bx==tb(end  ,1); disp(round([sum(bboxin(tc)) sum(tc(:)==1)  sum(bboxin(tc))/sum(tc(:)==1)*100  ]))
-
-% 
-% tc=bx==tb(end  ,1);
-% rv=squeeze(sum(tc,1)>0); fg;imagesc(rv); sum(rv(:)==1)/numel(rv)*100
-% rv=squeeze(sum(tc,2)>0); fg;imagesc(rv); sum(rv(:)==1)/numel(rv)*100
-% rv=squeeze(sum(tc,3)>0); fg;imagesc(rv); sum(rv(:)==1)/numel(rv)*100
-% 
-% tc=bx==tb(end-1  ,1);
-% rv=squeeze(sum(tc,1)>0); fg;imagesc(rv); sum(rv(:)==1)/numel(rv)*100
-% rv=squeeze(sum(tc,2)>0); fg;imagesc(rv); sum(rv(:)==1)/numel(rv)*100
-% rv=squeeze(sum(tc,3)>0); fg;imagesc(rv); sum(rv(:)==1)/numel(rv)*100
-
-% rv=squeeze(sum(tc,1)>0);
-
 tb3=[];
 for j=0:3
     tc=bx==tb(end-j   ,1);
@@ -146,18 +172,33 @@ for j=0:3
     vol3=[round(round(sum(pi*((sum(rv1,1)/2).^2)))*voxsi)
           round(round(sum(pi*((sum(rv2,1)/2).^2)))*voxsi)
           round(round(sum(pi*((sum(rv3,1)/2).^2)))*voxsi)];
-    
     tb3(j+1,:)=round([ size(tb,1)-j vol perc median(vol3) ] );
 end
-%tb3:header: clusterNUM bonebrainvolRectangle percVolInImage bonebrainvolElipsoidal
-% here we use bonebrainvolElipsoidal
-% iclust=tb3(vecnearest2(tb3(:,4),1500),1);
+% -----BONEBRAIN-VOLUME
 iclust=tb3(vecnearest2(tb3(:,4),z.bonebrainvolume),1);
 v2=bx==tb(iclust,1); %take largest cluster
 
 
-montage2(v2)
-length(find(v2(:)>0))
+
+
+
+sumvox    = squeeze(sum(sum(v2,1),2));
+nvoxsplit = [sum(sumvox(1:round(length(sumvox)/2)));
+             sum(sumvox(round(length(sumvox)/2):end))];
+splitperc = nvoxsplit./sum(nvoxsplit)*100;
+ratio     = min(nvoxsplit)/max(nvoxsplit);
+
+if 0  %debug
+    montage2(v2)
+    length(find(v2(:)>0))
+    fg,plot(squeeze(sum(sum(v2,1),2)))
+end
+
+if ratio<ratioTrhesh
+    lg=[' ratio-Thresh not reached: ' num2str(ratio)];
+    return
+end
+
 %———————————————————————————————————————————————
 %%   old
 %———————————————————————————————————————————————
@@ -233,7 +274,8 @@ for i=1:size(v4,3)
     rx=imcomplement(rr+bwmorph(rr,'remove'));
     v4(:,:,i)=rx;
 end
-
+if sum(v4(:)>0)==0 ; 
+    lg='v4 empty';    return;end
 %———————————————————————————————————————————————
 %%   watershed
 %———————————————————————————————————————————————
@@ -263,6 +305,7 @@ for i=1:size(v4,3)
     u4=bw3;
     v5(:,:,i)=u4;
 end
+if sum(v5(:)>0)==0 ;   lg='v5 empty';    return; end
 
 %% remove image edge cluster
 fprintf(['..remove edge cluster']);
@@ -281,6 +324,7 @@ for i=1:size(v5,3)
     end
     v6(:,:,i)=bs;
 end
+if sum(v6(:)>0)==0 ;    lg='v6 empty';   return; end
 
 %%  get cluster sizes
 fprintf(['..get cluster sizes']);
@@ -290,7 +334,7 @@ for i=1:size(v6,3)
     %disp(i);
     
     bw=v6(:,:,i);
-    [bx n]=bwlabeln(bw);
+    [bx n]=bwlabeln(bw,26);
     v7(:,:,i)=bx;
     
     uni=unique(bx); uni(uni==0)=[];
@@ -301,6 +345,7 @@ for i=1:size(v6,3)
     cl=[cl;tb];
 end
 
+if sum(v7(:)>0)==0 ;  lg='v7 empty';     return; end
 %———————————————————————————————————————————————
 %%  find connected clusters
 %———————————————————————————————————————————————
@@ -386,8 +431,10 @@ for i=1:size(t,1)
         v8(:,:,i2)=b3;
     end% krit
 end
-
-
+if sum(v8(:)>0)==0 ;   lg='v8 empty';    return; end
+if 0
+    montage2(v8); title(to);
+end
 %———————————————————————————————————————————————
 %% clean brain boundaries
 %———————————————————————————————————————————————
@@ -402,7 +449,7 @@ for i=1:size(v8,3)
     v9(:,:,i)=r2;
     
 end
-
+if sum(v9(:)>0)==0 ;   lg='v9 empty';    return; end
  
 
 %———————————————————————————————————————————————
@@ -421,6 +468,7 @@ if z.dilate~=0
 else
     v10=v9;
 end
+if sum(v10(:)>0)==0 ;   lg='v10 empty';    return; end
 
 % ERODE--> increases brain in ALLENSPACE
 % v10=imerode(v9,strel('disk',4));
@@ -471,4 +519,5 @@ rsavenii(fix,[hb],uint8(b>50),[2 0]);
 out.fix=fix;
 out.mov=mov;
 
+ck=+1;
 % ############################# END APPROACH HERE #######################################################

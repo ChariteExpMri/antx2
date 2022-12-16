@@ -821,6 +821,10 @@
 % #ba 13 Dec 2022 (13:04:03)
 % minor bugs removed in #k [xstat.m] #n  
 % 
+% #ba 16 Dec 2022 (02:33:06)
+% #k [CTgetbrain_approach2.m] #n modified 
+% CT-registration was check using 6 datasets
+% 
 % 
 % 
 % 

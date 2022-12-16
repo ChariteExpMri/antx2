@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   13 Dec 2022 (13:04:03)  
+ &#x1F34E; last modification:   16 Dec 2022 (02:33:06)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,8 +7,13 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**16 Dec 2022 (02:33:06)**</ins>  
+   __[CTgetbrain_approach2.m]__ modified   
+  CT-registration was check using 6 datasets  
+<!---->
   &#x1F535;   <ins>**13 Dec 2022 (13:04:03)**</ins>  
   minor bugs removed in  __[xstat.m]__    
+    
 <!---->
   &#x1F535;   <ins>**09 Dec 2022 (09:21:47)**</ins>  
    __[createGroupassignmentFile.m]__ modified  
