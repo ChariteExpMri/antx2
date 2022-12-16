@@ -1352,7 +1352,10 @@ mh2 = uimenu(mh,'Label',' create group assignment file ',                   'Cal
 'userdata',[HSTART 'create group assignment (excel-file) ' HEND '..the group-column has to be specified afterwards']);
 
 
-mh2 = uimenu(mh,'Label',' new group assignment',                   'Callback',{@menubarCB, 'newgroupassignment'},'separator','off',...
+% mh2 = uimenu(mh,'Label',' new group assignment',                   'Callback',{@menubarCB, 'newgroupassignment'},'separator','off',...
+% 'userdata',[HSTART 'create new group assignments by merging/combining different groups' HEND '..this produces excelfile(s)']);
+
+mh2 = uimenu(mh,'Label',' new group assignment ',                   'Callback',{@menubarCB, 'makegroupassignmentFileFactorial'},'separator','on',...
 'userdata',[HSTART 'create new group assignments by merging/combining different groups' HEND '..this produces excelfile(s)']);
 
 mh2 = uimenu(mh,'Label',' obtain parameter from masks',                                             'Callback',{@menubarCB, 'getparamterByMask'},'separator','on',...
@@ -3114,6 +3117,19 @@ elseif strcmp(task,'xstatlabels0')
     end
     %% ===============================================
     createGroupassignmentFile();
+elseif strcmp(task,'makegroupassignmentFileFactorial')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xgroupassigfactorial';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xgroupassigfactorial.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    xgroupassigfactorial();
 elseif strcmp(task,'newgroupassignment')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xnewgroupassignment';

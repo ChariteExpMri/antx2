@@ -1509,6 +1509,7 @@ waitspin(0,'Done');
 function scripts_call(e,e2)
 
 scripts={...
+    'VWscript_DWIimages_and_results.m'
     'VWscript_twosampleStat_simple.m'
     'VWscript_MakeSummary_simple.m'
     'VWscript_twosampleStat_severalimages.m'

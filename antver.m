@@ -825,6 +825,11 @@
 % #k [CTgetbrain_approach2.m] #n modified 
 % CT-registration was checked using 6 datasets
 % 
+% #ba 16 Dec 2022 (13:41:00)
+% #k [xgroupassigfactorial.m] #n new
+% assign new group-comparisons, create essential group-comparisons or manually via GUI
+% input: excelfile with animal-ids and columns specifying the group-assignment for
+% 1/2/3-factorial design. The output are excel-files with new group-comparisons
 % 
 % 
 % 
