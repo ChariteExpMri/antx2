@@ -11,7 +11,7 @@
    __[VWscript_DWIimages_and_results.m]__ new script  
    script to make summary of voxelwise statistic FOR SEVERAL IMAGES  
   &#8618; access via ANT-menu: &#8658; STATISTIC/SPM-STATISTIC  .. via "scripts"-button  
-  &#8618; or "xstat" --> "scripts"-button  
+  &#8618; or type "xstat" --> "scripts"-button  
 <!---->
   &#x1F535;   <ins>**16 Dec 2022 (13:41:00)**</ins>  
    __[xgroupassigfactorial.m]__ new  

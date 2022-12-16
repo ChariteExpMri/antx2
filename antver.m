@@ -836,7 +836,7 @@
 % #k [VWscript_DWIimages_and_results.m] #n new script
 %  script to make summary of voxelwise statistic FOR SEVERAL IMAGES
 % #gw --> access via ANT-menu: &#8658; STATISTIC/SPM-STATISTIC  .. via "scripts"-button
-% #gw --> or "xstat" --> "scripts"-button
+% #gw --> or type "xstat" --> "scripts"-button
 % 
 % 
 % 
