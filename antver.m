@@ -830,6 +830,13 @@
 % assign new group-comparisons, create essential group-comparisons or manually via GUI
 % input: excelfile with animal-ids and columns specifying the group-assignment for
 % 1/2/3-factorial design. The output are excel-files with new group-comparisons
+% #gw --> access via ANT-menu: &#8658; STATISTIC/NEW GROUP ASSIGNMENT 
+% 
+% #ba 16 Dec 2022 (14:09:43)
+% #k [VWscript_DWIimages_and_results.m] #n new script
+%  script to make summary of voxelwise statistic FOR SEVERAL IMAGES
+% #gw --> access via ANT-menu: &#8658; STATISTIC/SPM-STATISTIC  .. via "scripts"-button
+% #gw --> or "xstat" --> "scripts"-button
 % 
 % 
 % 

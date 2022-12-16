@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   16 Dec 2022 (13:41:00)  
+ &#x1F34E; last modification:   16 Dec 2022 (14:09:43)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,11 +7,19 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**16 Dec 2022 (14:09:43)**</ins>  
+   __[VWscript_DWIimages_and_results.m]__ new script  
+   script to make summary of voxelwise statistic FOR SEVERAL IMAGES  
+  &#8618; access via ANT-menu: &#8658; STATISTIC/SPM-STATISTIC  .. via "scripts"-button  
+  &#8618; or "xstat" --> "scripts"-button  
+<!---->
   &#x1F535;   <ins>**16 Dec 2022 (13:41:00)**</ins>  
    __[xgroupassigfactorial.m]__ new  
   assign new group-comparisons, create essential group-comparisons or manually via GUI  
   input: excelfile with animal-ids and columns specifying the group-assignment for  
   1/2/3-factorial design. The output are excel-files with new group-comparisons  
+  &#8618; access via ANT-menu: &#8658; STATISTIC/NEW GROUP ASSIGNMENT   
+    
 <!---->
   &#x1F535;   <ins>**16 Dec 2022 (02:33:06)**</ins>  
    __[CTgetbrain_approach2.m]__ modified   
