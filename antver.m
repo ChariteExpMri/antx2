@@ -823,7 +823,7 @@
 % 
 % #ba 16 Dec 2022 (02:33:06)
 % #k [CTgetbrain_approach2.m] #n modified 
-% CT-registration was check using 6 datasets
+% CT-registration was checked using 6 datasets
 % 
 % 
 % 

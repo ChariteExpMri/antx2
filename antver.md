@@ -9,7 +9,7 @@
 ------------------  
   &#x1F535;   <ins>**16 Dec 2022 (02:33:06)**</ins>  
    __[CTgetbrain_approach2.m]__ modified   
-  CT-registration was check using 6 datasets  
+  CT-registration was checked using 6 datasets  
 <!---->
   &#x1F535;   <ins>**13 Dec 2022 (13:04:03)**</ins>  
   minor bugs removed in  __[xstat.m]__    
