@@ -182,7 +182,9 @@
 %% #ok *** PROGRAMMABEL POST-HOC CHANGES *** 
 % 
 %% #ko Programmatically load a SPM-stiastic
-% xstat('loadspm',fullfile(pwd,'SPM.mat'));
+% xstat('loadspm',fullfile(pwd,'SPM.mat')); %if pwd is path to SPM-folder
+% or
+% xstat('loadspm',pwd);                     %if pwd is path to SPM-folder
 % 
 %% #ko Programmatically set parameter and show result
 % the example below sets the following parameter
