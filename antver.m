@@ -838,11 +838,17 @@
 % #gw --> access via ANT-menu: &#8658; STATISTIC/SPM-STATISTIC  .. via "scripts"-button
 % #gw --> or type "xstat" --> "scripts"-button
 % 
-% 
+% #ba 03 Jan 2023 (23:21:17)
 % #k [xgroupassigfactorial.m] #n modified
 % make specific group-comparisons via textfile
+% modifed files: 
+% #k [paramgui.m] #n --> selection of multiple folders possible (via 'md')
+% #k [xstat.m] #n    --> append constrasts to multifactorial design via text-file ..see help of xaddContrasts.m
+% #k [xaddContrasts.m] #n new file to append new contrasts to SPM-multifactorial design
 % 
-
+% 
+% 
+% 
 
 
 %% ===============================================

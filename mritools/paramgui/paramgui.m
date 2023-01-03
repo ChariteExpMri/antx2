@@ -36,14 +36,14 @@
 %                   paragraph )
 %   <information>   :<optional> information that appears as comment
 %   <type&definition>    :<optional>
-%                 'f'   : file  -->icon to open a gui to select a file
-%                 'mf'  : multifile-->icon to open a gui and select multiple files
-%                 'd'   : directory-->icon to open a gui and select a path
+%                 'f'   : file           -->icon to open a gui to select a file
+%                 'mf'  : multi-file     -->icon to open a gui and select multiple files
+%                 'd'   : directory      -->icon to open a gui and select a path
+%                 'md'  : multi-directory-->icon to open a gui and select multiple paths
 %                 {'mon' 'tue' 'wed'} : icon to open a pulldown to select
 %                 from cell {1 2 'tue' 'wed'} :  same
-%                  'b'   : icon to
-%                 alterate the boolean value 'col' : icon to open
-%                 color-picker
+%                  'b'   : boolean  -->icon to  alterate [0|1] the boolean value 
+%                 'col' : color    -->icon to open a color-picker GUI
 %% OUTPUT
 %   m1: cellstring with parameters (and comments)
 %   m2: struct with parameters (without comments)
@@ -2975,7 +2975,7 @@ try
         %     icon = fullfile(matlabroot,'/toolbox/matlab/icons/file_open.png'); %file_open.png');
         icon =which('file.gif');
         tooltip='GET MULTIPLE FILES';
-    elseif strcmp(us.dat{idx,4},'d')
+    elseif strcmp(us.dat{idx,4},'d') || strcmp(us.dat{idx,4},'md')
         %     icon = fullfile(matlabroot,'/toolbox/matlab/icons/dir.gif');%foldericon.gif');
         icon=which('dir.gif');
         tooltip='GET DIRECTORY';
@@ -3067,7 +3067,7 @@ try
         %icon =which('file.gif');
         icon = fullfile(matlabroot,'/toolbox/matlab/icons/book_mat.gif');
         tooltip='GET MULTIPLE FILES';
-    elseif strcmp(us.dat{idx,4},'d')
+    elseif strcmp(us.dat{idx,4},'d')|| strcmp(us.dat{idx,4},'md')
         %     icon = fullfile(matlabroot,'/toolbox/matlab/icons/dir.gif');%foldericon.gif');
         %icon=which('dir.gif');
         icon = fullfile(matlabroot,'/toolbox/matlab/icons/file_open.png');
@@ -3299,7 +3299,7 @@ elseif strcmp(us.dat{idx,4},'mf')
     ls(1)=   { [ ls{1}  char(9)  tb{3} ]};
     n=ls;
     
-elseif strcmp(us.dat{idx,4},'d')
+elseif all(strcmp(us.dat{idx,4},'d')) || all(strcmp(us.dat{idx,4},'md'))
     dum=us.dat{idx,2};
     if exist(dum)==7
         prepwd=fileparts(dum) ;
@@ -3309,18 +3309,42 @@ elseif strcmp(us.dat{idx,4},'d')
         prepwd=pwd;
     end
     
+    if strcmp(us.dat{idx,4},'md')
+        toks='folder(s)';
+    else
+        toks='folder';
+    end
     try
         ivar=find(strcmp(us.dat(:,1),varname)) ;
         %msg={ ['Select multi-files ' '[variable: "x.' us.dat{ivar,1} '"]   ..info: "' us.dat{ivar,3},'"'],['']}';
-        msg={ ['[type] Select folder  *  [var] x.' us.dat{ivar,1} '  *  [info] "' us.dat{ivar,3},'"'],['']}';
+        msg={ ['[type] Select ' toks '  *  [var] x.' us.dat{ivar,1} '  *  [info] "' us.dat{ivar,3},'"'],['']}';
     catch
-        msg={ ['Select folder '   ]}';
+        msg={ ['Select ' toks ' '   ]}';
     end
     
-    [pa]=uigetdir('*.*',strjoin(msg,char(10)));
+    if strcmp(us.dat{idx,4},'d')
+        [pa]=uigetdir('*.*',strjoin(msg,char(10)));
+    elseif strcmp(us.dat{idx,4},'md')
+        %[t,sts] = spm_select(n,typ,mesg,sel,wd,filt,frames)
+        [t,sts] = spm_select(inf,'dir',msg,[],prepwd);
+        if isempty(t);
+            pa=0;
+        else
+            pa=cellstr(t);
+        end
+    end
+    
     if isnumeric(pa); return; end
     newtag=pa;
-    n=[tb{1} [ '''' newtag '''' ';' char(9) ] tb{3}];
+    if strcmp(us.dat{idx,4},'d')
+        n=[tb{1} [ '''' newtag '''' ';' char(9) ] tb{3}];
+    elseif strcmp(us.dat{idx,4},'md')
+        fi2=newtag;%cellfun(@(fi) {[pa filesep fi]}, fi(:));
+        eval([tb{1}  'fi2;' ]);
+        ls =struct2list(x);
+        ls(1)=   { [ ls{1}  char(9)  tb{3} ]};
+        n=ls;
+    end
     
 elseif strcmp(us.dat{idx,4},'b')
     %     chk=0;
@@ -3443,7 +3467,7 @@ if strcmp(class(us.dat{idx,4}),'function_handle')
     return
 end
 
-if strcmp(us.dat{idx,4},'mf')  | isfunmode==1  %% ICON-SELECTED DATA
+if strcmp(us.dat{idx,4},'mf') || strcmp(us.dat{idx,4},'md')  || isfunmode==1  %% ICON-SELECTED DATA
     
     
     %%###

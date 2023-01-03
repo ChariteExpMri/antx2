@@ -743,8 +743,14 @@ set(h2,'tooltipstring','one-way-anova within subjects','fontsize',7);
 
 h2=uicontrol('style','pushbutton','units','norm')   ;   %fullfactorial
 set(h2,'string', 'fullfactorial','callback', @fullfactorial);
-set(h2,'position',[0.0043616 0.82492 .3 .05]);
-set(h2,'tooltipstring','fullfactorial','fontsize',6);
+set(h2,'position',[-0.00025874 0.80825 0.3 0.05]);
+set(h2,'tooltipstring','fullfactorial','fontsize',7);
+
+h2=uicontrol('style','pushbutton','units','norm')   ;   %fullfactorial
+set(h2,'string', 'add contrasts','callback', @addcontrast);
+set(h2,'position',[0.0043616 0.77492 0.3 0.03]);
+set(h2,'tooltipstring','<html>for fullfactorial design only: <br> add additional contrasts from textfile',...
+    'fontsize',7,'foregroundcolor',[0 .5 1]);
 
 
 h2=uicontrol('style','pushbutton','units','norm')   ;   %multiple regression
@@ -862,8 +868,8 @@ set(h2,'foregroundcolor','b');
 
 h2=uicontrol('style','text','units','norm');            %other contrasts -TXT
 set(h2, 'string','contrasts','ButtonDownFcn',@loadothercontrastini);
-set(h2, 'position',[0.55881 0.645 .2 0.03],'fontsize',6,'backgroundcolor','w',...
-    'horizontalalignment','left');
+set(h2, 'position',[0.55881 0.645 .3 0.03],'fontsize',6,'backgroundcolor','w',...
+    'horizontalalignment','left','tag','contraststring','foregroundcolor','m','fontweight','bold');
 
 
 h2=uicontrol('style','listbox','units','norm') ;      %other contrasts
@@ -3674,6 +3680,19 @@ end
 spmfile=fullfile(xSPM.swd,'SPM.mat');
 loadspm(spmfile);
 
+
+function updateContrastindex
+%% ===============================================
+
+hf=findobj(0,'tag','vvstat');
+ht=findobj(hf,'tag','contraststring');
+
+hl=findobj(hf,'tag','loadothercontrast');
+
+s=['contrast:' num2str(hl.Value) '/' num2str(length(hl.String))];
+set(ht,'string',s);
+%% ===============================================
+
 function loadothercontrast(e,e2,varargin)
 
 
@@ -3706,7 +3725,7 @@ if ischar(e) && strcmp(e,'initialize')
     catch
         set(ht,'string',['SPM.mat: <not specified>']);
     end
-    
+    updateContrastindex();
     return
 end
 
@@ -3781,12 +3800,16 @@ if ishandle(e)
     %BACK TO GUI
     drawnow;
     figure(hfig);
+    updateContrastindex();
     %     thiscon=find(~cellfun('isempty',strfind(u.cons,xSPM.title)));
     %     cons=u.cons;
     %     cons{thiscon}=['<html><font color="green"><b>' u.cons{thiscon} '</font>'];
     %     % web('text://<font color="green">This is some text!</font>')
     %     set(findobj(0,'tag','loadothercontrast'),'string',[cons],'value',thiscon);
 end
+
+function addcontrast(e,e2)
+xaddContrasts();
 
 
 function KeyPress(e,e2)

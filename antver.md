@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   16 Dec 2022 (14:09:43)  
+ &#x1F34E; last modification:   03 Jan 2023 (23:21:17)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,15 +7,20 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**03 Jan 2023 (23:21:17)**</ins>  
+   __[xgroupassigfactorial.m]__ modified  
+  make specific group-comparisons via textfile  
+  modifed files:   
+   __[paramgui.m]__ --> selection of multiple folders possible (via 'md')  
+   __[xstat.m]__    --> append constrasts to multifactorial design via text-file ..see help of xaddContrasts.m  
+   __[xaddContrasts.m]__ new file to append new contrasts to SPM-multifactorial design  
+<!---->
   &#x1F535;   <ins>**16 Dec 2022 (14:09:43)**</ins>  
    __[VWscript_DWIimages_and_results.m]__ new script  
    script to make summary of voxelwise statistic FOR SEVERAL IMAGES  
   &#8618; access via ANT-menu: &#8658; STATISTIC/SPM-STATISTIC  .. via "scripts"-button  
   &#8618; or type "xstat" --> "scripts"-button  
     
-    
-   __[xgroupassigfactorial.m]__ modified  
-  make specific group-comparisons via textfile  
 <!---->
   &#x1F535;   <ins>**16 Dec 2022 (13:41:00)**</ins>  
    __[xgroupassigfactorial.m]__ new  
