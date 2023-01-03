@@ -23,7 +23,11 @@
 % 'compType'        -group comparison type
 %                    ["all"]: make all essenial comparisons,
 %                    ["gui"]: specify comparisons via GIU
+%                    ["file"]: specify from textfile ..see info below
 %                     default: "gui"
+% 'compFile'         only if "compType" is "file": select a textfile containing specific comparisons
+%                    this textfile can contain several comparisons.. see help below
+% 
 % 'simulate'         simulate output: 
 %                    [1] just display the output (do not write excel-files) 
 %                    [0] write Excelfiles
@@ -38,7 +42,7 @@
 %% ===============================================================================
 %% example: input excel-file with 1 factor ("day") with 4 levels
 %% ===============================================================================
-
+% 
 %     'animal'                              'day'
 %     '20200930MG_LAERMRT_MGR000023'        '7d' 
 %     '20200930MG_LAERMRT_MGR000028'        '7d' 
@@ -107,11 +111,7 @@
 %     '20220405MG_LAERMR…'    '7d'     'Ctrl'     'am'
 %     '20220405MG_LAERMR…'    '7d'     'Ctrl'     'bm'
 %      ...
- % ==============================================
-%%   
-% ===============================================
-
-    
+%   
 % ==============================================
 %%   1-factor: create essential group-comparisons
 % ===============================================
@@ -196,6 +196,67 @@
 % z.outputprefix = 'ga_';                                                                         % % prefix of resulting excelfile(s)                                                             
 % z.addcounter   = [1];                                                                           % % add a counter to the filename-prefix                                                         
 % xgroupassigfactorial(1,z);  
+%===================================================================================================
+%% #wb CALL A TEXTFILE WITH DEFINED COMPARISONS 
+% if 'compType' is set to 'file', user has to specify a prepared textfile (*.txt).
+% This textfile can contain one or several comparisons. 
+% Each comparison contains the specifier "g1=" and "g2=" for the two groups, respectively. 
+% Use curly brackets '{}' to define the groups. The factors must be in brackets '[]'
+% optional: use the specifier "name" to assign a name for this comparison
+%        The name must contain the string "vs." in the string such as "Ctrl vs. All115dB".
+%        Avoid special characters!
+%% EXAMPLE: The textfile contain the following 3 comparisons 
+%% explanation for the first comparison:the optional name of the comparison is "All Ctrl vs. All 115dB"
+%% group-1 (g1) is defined by curly brackets and contains the subgroups: 7d-control animal,1d-control animal,
+%% 56d-control animal and 84d-control animal
+%% group-2 (g2) is defined by curly brackets and contains the subgroups: 7d-115dB animal,1d-115dB animal,
+%% 56d-115dB animal and 84d-115dB animal
+% 
+%             name:All Ctrl vs. All 115dB
+%             g1={      [7d] [Ctrl]             
+%                       [1d] [Ctrl] 
+%                       [56d][Ctrl] 
+%                       [84d][Ctrl] }
+%             g2={      [7d] [115dB]       
+%                       [1d] [115dB] 
+%                       [56d][115dB] 
+%                       [84d][115dB]}
+%             =============================================================================
+%             name:All Ctrl vs. All 90dB
+%             g1={      [7d]  [Ctrl]             
+%                       [1d]  [Ctrl] 
+%                       [56d] [Ctrl] 
+%                       [84d] [Ctrl] }
+%             g2={      [7d]  [90dB]      
+%                       [1d]  [90dB] 
+%                       [56d] [90dB] 
+%                       [84d] [90dB] }
+%             =============================================================================
+%             name:All 115dB vs. All 90dB
+%             g1={      [7d] [115dB]             
+%                       [1d] [115dB] 
+%                       [56d][115dB] 
+%                       [84d][115dB] }
+%             g2={      [7d] [90dB]      
+%                       [1d] [90dB] 
+%                       [56d][90dB] 
+%                       [84d][90dB]  }
+%             =============================================================================
+%% #wb RUN BATCH WITH COMPARISONS DEFINED IN A TEXTFILE
+% z=[];                                                                                                                                                                                                
+% z.groupfile    = 'F:\data6\victor\_test_groupsplit\groupassignmentFactorial_2factors.xlsx';     % % group-assignment file (Excel-file)                                                               
+% z.sheetIdx     = [1];                                                                           % % sheet number with animal-IDs and group-assignment/factors                                        
+% z.col_animal   = [1];                                                                           % % column index with ANIMAL-IDs                                                                     
+% z.col_group    = [2  3];                                                                        % % column index/indices with groups/factors                                                         
+% z.keepRowType  = [3];                                                                           % % keep row Information: [1]no [2]keep old factors [3]keep all [4]keep all except of old factors    
+% z.compType     = 'file';                                                                        % % group comparison type ["all"]: make all essenial comparisons,["gui"]: specify comparisons via GIU
+% z.compFile     = 'F:\data6\victor\_test_groupsplit\victor_specContrasts___test.txt';            % % only if "compType" is "file": select textfile with comparisons here (see help)                   
+% z.simulate     = [0];                                                                           % % simulate output: [1]just show output, don't write file; [1] write excelfiles                     
+% z.outputprefix = 'test_';                                                                       % % prefix of resulting excelfile(s)                                                                 
+% z.addcounter   = [1];                                                                           % % add a numeric counter to the filename-prefix                                                     
+% xgroupassigfactorial(1,z);                                                                                                                                                                           
+%                             
+% 
 
 
 function xgroupassigfactorial(showgui,x)
@@ -213,7 +274,8 @@ p={...
     'col_animal'       [1]      'column index with ANIMAL-IDs'                                           {1,2,3,4}
     'col_group'        [2]      'column index/indices with groups/factors'                               {2,'2 3','2 3 4'}
     'keepRowType'      [3]      'keep row Information: [1]no [2]keep old factors [3]keep all [4]keep all except of old factors'             {1 2 3 4}
-    'compType'         'all'    'group comparison type ["all"]: make all essenial comparisons,["gui"]: specify comparisons via GIU'         {'all' 'gui'}
+    'compType'         'all'    'group comparison type ["all"]: make all essenial comparisons,["gui"]: specify comparisons via GIU'         {'all' 'gui' 'file'}
+    'compFile'         ''       'only if "compType" is "file": select textfile with comparisons here (see help)' 'f'
     'simulate'         [0]      'simulate output: [1]just show output, don''t write file; [1] write excelfiles '                            'b'
     'outputprefix'     'ga_'    'prefix of resulting excelfile(s)'                                      {'ga_' 'subgroups_' 'comps_'}
     'addcounter'       [1]      'add a numeric counter to the filename-prefix'                          'b'
@@ -370,7 +432,9 @@ z.ha =ha;
 if strcmp(z.compType,'all')
    [w]=getGroupComb_essential(z,q);
 elseif strcmp(lower(z.compType),'gui')
-   [w]=getGroupComb_viaGUI(z,q); 
+     [w]=getGroupComb_viaGUI(z,q); 
+elseif strcmp(lower(z.compType),'file')  
+     [w]=getGroupComb_viaGUI(z,q); 
 end
 
 if isempty(w);
@@ -552,7 +616,12 @@ w=[];
 %%   specific GUI
 % ===============================================
 groupcombs=q.groupcombs;
-o=specificgroupsGUI(groupcombs,struct('iswait',1));
+labels={};
+if strcmp(z.compType,'file')
+    [o labels compnamesFile]=readcomparisonsfromfile(z);
+else
+    o=specificgroupsGUI(groupcombs,struct('iswait',1));
+end
 if isempty(o)
    return 
 end
@@ -562,24 +631,23 @@ spec=o;
 % ===============================================
 
 %% ============test ===================================
-
-if 0
-    spec={};
-    if 1 % Tests
-        if length(z.col_group)==1
-            spec(1,:)={q.groupcombs(1:2) q.groupcombs(3:4)};
-            spec(2,:)={q.groupcombs(4) q.groupcombs(1:3)};
-        elseif length(z.col_group)==2
-            spec(1,:)={q.groupcombs(1:3) q.groupcombs(4:6)};
-            spec(1,:)={q.groupcombs(1:3) q.groupcombs(7:end)};
-            
-        elseif   length(z.col_group)==3
-            spec(1,:)={q.groupcombs(1:3) q.groupcombs(7:8)};
-            spec(2,:)={q.groupcombs(9) q.groupcombs(7:8)};
-        end
-    end
-    
-end
+% % % if 0
+% % %     spec={};
+% % %     if 1 % Tests
+% % %         if length(z.col_group)==1
+% % %             spec(1,:)={q.groupcombs(1:2) q.groupcombs(3:4)};
+% % %             spec(2,:)={q.groupcombs(4) q.groupcombs(1:3)};
+% % %         elseif length(z.col_group)==2
+% % %             spec(1,:)={q.groupcombs(1:3) q.groupcombs(4:6)};
+% % %             spec(1,:)={q.groupcombs(1:3) q.groupcombs(7:end)};
+% % %             
+% % %         elseif   length(z.col_group)==3
+% % %             spec(1,:)={q.groupcombs(1:3) q.groupcombs(7:8)};
+% % %             spec(2,:)={q.groupcombs(9) q.groupcombs(7:8)};
+% % %         end
+% % %     end
+% % %     
+% % % end
 %% ============test-end ===================================
 a =z.a;
 ha=z.ha;
@@ -738,11 +806,86 @@ for i=1:length(e)
     g(i,:)=[grplabel {da} {hd}]; 
 end
 
-%  disp(char(lg))
 
+if strcmp(z.compType,'file') && ~isempty(labels) % apply names
+    if size(compnamesFile,1)==size(g,1)
+        g(:,1:2)=compnamesFile;
+    end
+end
 
 %  uhelp(lg,1)
 w.g  =g;
 w.log=lg;
+% ==============================================
+%%   read from text-file
+% ===============================================
+function [o labels compnames]=readcomparisonsfromfile(z);
+
+%% ===============================================
+if isfield(z,'compFile')==1 && exist(char(z.compFile))==2
+    file=char(z.compFile);
+else
+   [ fi pa] =uigetfile(fullfile(pwd, '*.txt'),'select comparison file');
+   if isnumeric(fi); return; end
+   file=fullfile(pa, fi);
+end
+q=preadfile(file);
+q=q.all;
+%======find indices =========================================
+ig1=regexpi2(q,'g1');
+ig2=regexpi2(q,'g2');
+iname=regexpi2(q,'name');
+% check equal number of g1 and g2
+if length(ig1)~=length(ig2)
+    error(['groups mismatch: "g1" and "g2" are not of same size (' num2str(length(ig1)) ' vs ' num2str(length(ig2)) ')'])
+end
+if ~isempty(iname)
+    if length(iname)~=length(ig1)
+        error(['name and group mismatch: "g1" and "name" are not of same size (' num2str(length(ig1)) ' vs ' num2str(length(iname)) ')'])
+    end
+end
+% ==========extract comparisons=====================================
+o         ={};
+labels    ={};
+compnames ={};
+for i=1:length(ig1)
+    for j=1:2
+        if j==1; s=q(ig1(i):end);
+        else   ; s=q(ig2(i):end);
+        end
+        v1=min(regexpi2(s,{'{'}));
+        v2=min(regexpi2(s,{'}'}));
+        
+        s=s(v1:v2);
+        s=regexprep(s,{'['},{'''['});
+        s=regexprep(s,{']'},{']'''});
+        % s=
+        s=regexprep(s,{'''\s*'''},{''});
+        s=regexprep(s,{'}'},{'};'});
+        s=strjoin(s,';');
+        eval(s);
+    end
+    if ~isempty(iname)
+        s=q(iname(i));
+        s=regexprep(s,{'vs.|vs' ,'versus'},{'_vs_'},'once');
+        s=regexprep(s,{'name'},{''});
+        s=regexprep([s],{'[^a-zA-Z0-9_]'},{''});
+        name=(s);
+        
+        
+        o(i,:)          ={g1 g2 };
+        labels(i,:)     =name;
+        compnames(i,:)  = strsplit(char(name),'_vs_');
+    end
+end
+
+
+
+
+
+
+
+
+
 
 

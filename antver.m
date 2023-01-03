@@ -839,8 +839,9 @@
 % #gw --> or type "xstat" --> "scripts"-button
 % 
 % 
+% #k [xgroupassigfactorial.m] #n modified
+% make specific group-comparisons via textfile
 % 
-
 
 
 
