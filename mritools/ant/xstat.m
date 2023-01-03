@@ -3321,7 +3321,7 @@ else
     %lg=[ lg;{'contrastDir: '} ;plog([],num2cell(SPM.xCon(xSPM.Ic).c),0,'','plotlines=0')  ]
     lg(end+1,1:2)= {'contrastDir ' ''};
     dx=plog([],num2cell(SPM.xCon(xSPM.Ic).c),0,'','plotlines=0');
-    lg=[lg;[ repmat({''},size(dx,1),1) dx ]]
+    lg=[lg;[ repmat({''},size(dx,1),1) dx ]];
 end
 lg(end+1,1:2)={'dir           : ' xSPM.swd };
 % ==============INPUT data rable=================================
