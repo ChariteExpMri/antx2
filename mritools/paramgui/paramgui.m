@@ -1121,7 +1121,7 @@ if get(hb,'value')==1
     set(hm,'callback',@paramguihistory);
     
     
-    hm = uimenu(m,'label','copy parameter & function to clipboard  [alt+h]');
+    hm = uimenu(m,'label','copy parameter & function to clipboard  [alt+c]');
      set(hm,'callback',@parameter_to_Batch);
     
     hm = uimenu(m,'label','<html><font color=gray>Preferences [ctrl+p]');
@@ -1686,7 +1686,7 @@ if ~isempty(filename) %exist(us.v.info{2})==2
     cp=[w0; w1;w2];
     cp=strjoin(cp,char(10));
     clipboard('copy',cp);
-    hs=addNote(gcf,'text','<b>parameter send to clipboard','fs',30,'col',[1 1 0],'pos',[[.3 .8 .3 .2]]);
+    hs=addNote(gcf,'text','<b>parameter send to clipboard','fs',15,'col',[1 1 0],'pos',[[.3 .8 .3 .2]]);
     %% ===============================================
     
 end

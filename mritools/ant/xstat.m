@@ -229,6 +229,12 @@
 % xstat('set',struct('MCP','FWE','thresh',0.05,'clk',20,'con',con,'show',0));
 % xstat('report',PPTFILE,struct('doc','add','con',con,'bgcol',bgcol    ));
 %
+%% DELETE EXISTING CONTRASTS
+% HIT [deleteC]-button to select Contrasts in a new GUI which will be removed from the SPM.mat
+% xstat('deletecontrast')         ;%delete contrast from SPM-mat,selected by subsequent GUI
+% xstat('deletecontrast','all')   ;%delete all existing contrast from SPM-mat
+% xstat('deletecontrast',[1 3])   ;%delete contrast s1 and 3 from SPM-mat
+% 
 %% #ko Programmatically write staistical table as TXT-file or Excel-file
 % howto: xstat('export', path/filename, *struct)
 % 'export': command to access the export-routine
@@ -406,6 +412,11 @@ if nargin>0
            [fiout g]= extractdata(x);
            varargout{1}=fiout;
            varargout{2}=g;
+        end
+        
+        if strcmp(showgui, 'deletecontrast');
+            if exist('x')==0; x=[];            end
+            deleteContrasts([],[],x);
         end
         %-------------------------internal: obtain group-file +data ---------------
         if strcmp(showgui, 'obtainGroupfile');
@@ -890,6 +901,13 @@ global xvv
 % xvv.fs=7;
 set(h2,'fontsize',xvv.fs);
 end
+
+%% ———————— delete contrasts———————————————————————————————————
+h2=uicontrol('style','pushbutton','units','norm') ;      %show sections
+set(h2, 'string','deleteC','callback',@deleteContrasts,'tag','deleteContrasts');
+set(h2, 'position',[[0.85451 0.22258 0.15 0.03]],'fontsize',6);
+set(h2,'tooltipstring','delete contrasts');
+
 
 %% ———————— recreate———————————————————————————————————
 h2=uicontrol('style','pushbutton','units','norm') ;      %show sections
@@ -2372,7 +2390,106 @@ if isempty(get(h2,'string'))
     defaults.stats.results.volume.nbmax = pref.nmaxclust;
 end
 
+% ==============================================
+%%   delete contrasts
+% ===============================================
+function deleteContrasts(e,e2,contrasts2delete)
 
+%% ===============================================
+hf=findobj(0,'tag','vvstat');
+hb=findobj(0,'tag','loadothercontrast');
+con=hb.String;
+SPM=evalin('base','SPM');
+if exist('contrasts2delete')~=1 || isempty(contrasts2delete)
+    id=selector2(con,{'contrasts'},'position',[0.1285    0.1728    0.3674    0.6589],...
+        'note' ,{'select contrasts to delete'},'title','delete contrasts');
+else
+    if ischar(contrasts2delete) && strcmp(contrasts2delete,'all');
+    id=[1:length(SPM.xCon)];
+    else
+       id=intersect([1:length(SPM.xCon)],contrasts2delete);
+    end
+end
+
+
+
+
+
+if isempty(id) || (length(id)==1 && id==-1); return; end
+%% === test ============================================
+
+% id=[1 3 5];
+cprintf('*[1 0 1]',['deleting CONTRASTS' '\n']);
+%% ===============================================
+
+
+con0=SPM.xCon;
+ncon=length(con0);
+conkeep=setdiff([1:ncon],id);
+conkeepNewName=[1: length(conkeep)];
+spmpath=SPM.swd;
+con1=con0(conkeep);
+
+%delete NIFTIs
+for i=1:length(id)
+    f1=fullfile(spmpath,con0(id(i)).Vspm.fname );
+    f2=fullfile(spmpath,con0(id(i)).Vcon.fname );
+    if exist(f1)==2; delete(f1); end
+    if exist(f2)==2; delete(f2); end 
+end
+%% ===============================================
+
+%rename files
+for i=1:length(con1)
+% for i=1:length(con1)
+    %-----Vspm
+    n1=con1(i).Vspm.fname;
+    [pa fin ext]=fileparts(n1);       n1=[fin ext];
+    n2=[strtok(n1,'_') '_' pnum(i,4) '.nii'];
+    
+    f1=fullfile(spmpath, n1);
+    f2=fullfile(spmpath, n2);
+    if strcmp(f1,f2)==0
+        movefile(f1,f2,'f');
+    end
+    
+    % update struct
+    con1(i).Vspm.fname=n2;
+    hx=spm_vol(f2);
+    des=hx.descrip; %change description
+    des=regexprep(des,'- contrast.*:',['- contrast ' num2str(i) ':' ]);
+    hx.descrip=des;
+    spm_create_vol(hx);
+    con1(i).Vspm=spm_vol(f2);
+    
+    %-----Vcon
+    n1=con1(i).Vcon.fname;
+    [pa fin ext]=fileparts(n1);       n1=[fin ext];
+    n2=[strtok(n1,'_') '_' pnum(i,4) '.nii'];
+         f1=fullfile(spmpath, n1);
+        f2=fullfile(spmpath, n2);
+   if strcmp(f1,f2)==0
+        movefile(f1,f2,'f');
+    end
+    
+    % update struct
+    con1(i).Vcon.fname=n2;
+    hx=spm_vol(f2);
+    des=hx.descrip; %change description
+    des=regexprep(des,' contrast.*:',[' contrast ' num2str(i) ':' ]);
+    hx.descrip=des;
+    spm_create_vol(hx);
+    con1(i).Vcon=spm_vol(f2);
+end
+
+%% =======update struct========================================
+SPM.xCon=con1;
+
+save(fullfile(spmpath,'SPM.mat') ,'SPM' );
+try; assignin('base','SPM', SPM); end
+xstat('loadspm',spmpath);
+
+%% ===============================================
 
 
 %———————————————————————————————————————————————
@@ -2464,7 +2581,22 @@ mb{1}.spm.stats.results.conspec.mask = struct('contrasts', {}, 'thresh', {}, 'mt
 mb{1}.spm.stats.results.units = 1;
 mb{1}.spm.stats.results.print = false;
 % spm_jobman('run',mb);
-evalc('spm_jobman(''run'',mb);'); 
+
+% ___check contrasts__
+aspm=load(fullfile(files));
+%% ________________________________________________________________________________________________
+
+if length(aspm.SPM.xCon)==0
+   cprintf('*[1 0 1]',['This SPM-mat contains no contrasts. NO CONTRASTS DEFINED' '\n']); 
+   cprintf('*[1 0 1]',['SOLUTION: ' '\n']); 
+   disp([ 'HIT [new contrast]-button to manually define contrasts' ]);
+   disp([ 'HIT [add contrast]-button to set contrasts from text-file' ]);
+else
+    evalc('spm_jobman(''run'',mb);');
+end
+%% ________________________________________________________________________________________________
+
+
 cprintf('*[1 0 1]',[ 'Loading: '  ]); fprintf([ strrep(spmfile,[filesep],[filesep filesep]) '\n' ]); 
 
 try; assignin('base','hReg', hReg); end
@@ -3712,7 +3844,14 @@ if ischar(e) && strcmp(e,'initialize')
     set(e2,'userdata',u);
     
     %thiscon=find(~cellfun('isempty',strfind(u.cons,xSPM.title)));
-    thiscon=find(strcmp(u.cons,xSPM.title));
+    thiscon=(find(strcmp(u.cons,xSPM.title)));
+    if length(thiscon)>1
+        if e2.Value<=length(u.cons)
+           thiscon=e2.Value; 
+        else
+           thiscon=thiscon(1) ;
+        end
+    end
     cons=u.cons;
     %     cons{thiscon}=['<html><font color="green"><b>' u.cons{thiscon} '</font>'];
     %     % web('text://<font color="green">This is some text!</font>')

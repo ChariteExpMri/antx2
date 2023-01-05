@@ -103,6 +103,11 @@ ids=[];
 tb=[ cellstr(num2str([1:size(tb,1)]'-1)) tb ];
 us.raw=tb(2:end,:);
 
+%% ======special characters  =========================================
+tb=regexprep(tb,'<','&lt;');
+
+%% ===============================================
+
 % tb=strrep(tb,' ',' ');
 
 % %replace '_' with html-code
@@ -143,6 +148,8 @@ end
 % k2=(regexprep(k,'\s+','</b></TD><TD><b>'))  
 % d=char(d);
 % end
+
+
 
 
 tb2=cellstr(d);

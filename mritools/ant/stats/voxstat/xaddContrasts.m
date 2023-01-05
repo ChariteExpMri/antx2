@@ -7,15 +7,15 @@
 % This textfile can contain one or several comparisons. 
 % Each comparison contains the specifier "g1=" and "g2=" for the two groups, respectively. 
 % Use curly brackets '{}' to define the groups. The factors must be in brackets '[]'
-% optional: use the specifier "name" to assign a name for this comparison
+% Use the specifier "name" to assign a name for this comparison.
 %        The name must contain the string "vs." in the string such as "Ctrl vs. All115dB".
 %        Avoid special characters!
-%% EXAMPLE: The textfile contain the following 3 comparisons 
-%% explanation for the first comparison:the optional name of the comparison is "All Ctrl vs. All 115dB"
+%% EXAMPLE: The below textfile contain 3 comparisons 
+%% Explanation for the first comparison:the name of the comparison is "All Ctrl vs. All 115dB"
 %% group-1 (g1) is defined by curly brackets and contains the subgroups: 7d-control animal,1d-control animal,
-%% 56d-control animal and 84d-control animal
+%% 56d-control animal and 84d-control animal.
 %% group-2 (g2) is defined by curly brackets and contains the subgroups: 7d-115dB animal,1d-115dB animal,
-%% 56d-115dB animal and 84d-115dB animal
+%% 56d-115dB animal and 84d-115dB animal.
 % 
 %             name:All Ctrl vs. All 115dB
 %             g1={      [7d] [Ctrl]             
@@ -49,18 +49,18 @@
 %             =============================================================================
 %% #bo ___ PARAMETER ___ 
 %                                                                                                                                                                                                                            
-% compFile      [SELECT] a text-file with contrasts/comparisons                                                                          
-% spmpath       [SELECT] one or multiple SPM-path(s) 
-%               The new contrasts will be added will be added to the SPM.mat of the
-%               respective SPM-path(s)
-% startContrastIndex: index to append the contrasts
-%                     if "append": the new contrasts will be appended to existing ones
-%                     otherwise a numeric: 
-%                     example, if [20] the new contrasts will be appended starting with index 20 
+% compFile      [SELECT] a text-file with contrasts/comparisons (see example above)                                                                          
+% spmpath       [SELECT] one or multiple SPM-path(s) with existing voxelwise analysis.
+%               The new contrasts is added to the SPM.mat-file of the
+%               selected SPM-path(s)
+% startContrastIndex: starting index to appending the new contrasts
+%                     if "append": the new contrasts will be appended to existing contrasts
+%                     otherwise a numeric value: 
+%                     example: if index is [20] the new contrasts are appended starting with index 20 
 %                      all contrast-indices >=20 will be removed and overwritten by the new contrasts 
-% deleteContrasts    : remove all contrasts 
+% deleteContrasts    : remove all contrasts {default: 0}
 %                      [0] do not remove existing contrasts  {default}
-%                      [1] remove existing contrasts
+%                      [1] remove all existing contrasts
 % 
 % 
 %% #bo ___ EXAMPLES ___
@@ -279,9 +279,11 @@ mb{1}.spm.stats.con.delete = z.deleteContrasts;
 % ==============================================
 %%   remove contrasts
 % ===============================================
-if isnumeric(z.startContrastIndex) && z.startContrastIndex<length(SPM.xCon)
-    keepcon=1:z.startContrastIndex-1;
-    deleteContrasts(spmpath,keepcon );
+if z.deleteContrasts==0
+    if isnumeric(z.startContrastIndex) && z.startContrastIndex<length(SPM.xCon)
+        keepcon=1:z.startContrastIndex-1;
+        deleteContrasts(spmpath,keepcon );
+    end
 end
 % ==============================================
 %%   run batch
@@ -308,9 +310,9 @@ end
 q=preadfile(file);
 q=q.all;
 %======find indices =========================================
-ig1=regexpi2(q,'g1');
-ig2=regexpi2(q,'g2');
-iname=regexpi2(q,'name');
+ig1=regexpi2(q,'^\s*g1\s*=');
+ig2=regexpi2(q,'^\s*g2\s*=');
+iname=regexpi2(q,'^\s*name\s*=|^\s*name\s*:');
 % check equal number of g1 and g2
 if length(ig1)~=length(ig2)
     error(['groups mismatch: "g1" and "g2" are not of same size (' num2str(length(ig1)) ' vs ' num2str(length(ig2)) ')'])
