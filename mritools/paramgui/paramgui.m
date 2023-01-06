@@ -3467,7 +3467,7 @@ if strcmp(class(us.dat{idx,4}),'function_handle')
     return
 end
 
-if strcmp(us.dat{idx,4},'mf') || strcmp(us.dat{idx,4},'md')  || isfunmode==1  %% ICON-SELECTED DATA
+if strcmp(us.dat{idx,4}{1},'mf') || strcmp(us.dat{idx,4}{1},'md')  || isfunmode==1  %% ICON-SELECTED DATA
     
     
     %%###

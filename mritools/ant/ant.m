@@ -1450,7 +1450,7 @@ mh2 = uimenu(mh,'Label','<html><b><font color="fuchsia">check for updates (Githu
 mh = uimenu(f,'Label','Info');
 
 if ispc==1
-    html_a='<font size=5>';
+    html_a='<font size=2>';
     html_e='</font>';
 else
     html_a='<font size=2>';

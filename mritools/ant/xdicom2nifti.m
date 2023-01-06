@@ -9,8 +9,9 @@
 % -Note that the two converters might produce NIFTIs with different origin.
 % #b dirs #n       -Input DICOM folders. Select a main dicom folder or several dicom folders here  
 % #b name #n       -The filename of the output NIFTI file. 
-% -If empty, the filename is generated from dicom-fields
-% -Otherwise use a proper file-name
+%       -If empty, the Nifti-filename is generated from dicom-fields
+%       -If "DIR"  Nifti-filenames are defined by upper DICOM directory-name
+%       -Otherwise use a proper file-name
 %  #g -example: 't0.nii'  -> output filename is allways 't0.nii'
 % #b prefix  #n    -Adds a prefix to the resulting NIFTI-filename. Default: empty (no prefix)
 % #b outdirMain #n -The main folder for the resulting Nifit-files.                                                  
@@ -34,7 +35,10 @@
 %         #g   if '@2'        is used, the resulting animal folder would be: "cc"
 %         #g   if '@1:3'      is used, the resulting animal folder would be: "bb_cc_dd"
 % 
-% #b flatHierarchy #n -Make a flat sub-folder hierarchy (prefered); [1] yes; default [0] no, keep nested folders                                  
+% #b flatHierarchy #n -Make a flat sub-folder hierarchy (prefered);
+%             [2] super flat...no subfolders ...all NIFTIS stored in same folder
+%             [1] flat sub-folder hierarchy {default} 
+%             [0] no, keep nested folders                                  
 % 
 % ______________________________________________________________________________
 % #wo RUN
@@ -45,7 +49,8 @@
 % #wo HISTORY
 %  after running type anth or char(anth) or uhelp(anth) to get the parameter
 % ______________________________________________________________________________
-% #wo EXAMPLE
+% #wo EXAMPLES
+% ______________________________________________________________________________
 %% example1 : Convert all dicoms specified in z.dirs, resulting Nifti file names are here allways 't0.nii'.
 %% The resulting niftis are saved in the specified output main-folder+animal-folder (flat-hierarchy)
 %% The animal folder name contains all upper folders of the original dicom-folder. 
@@ -59,8 +64,35 @@
 % z.outdirName    = '' ;                                              % % Constructor for animal folder name. If empty, folder name is constructed from all upper folders (prefered). 
 % z.flatHierarchy = [1];                                              % % [1] Make flat sub-folder hierarchy (prefered); [0] no, keep nested folders                                  
 % xdicom2nifti(1,z);                                                  % % run function with open GUI
+% ______________________________________________________________________________
+%% example2 : Convert all dicoms specified in z.dirs, 
+%% resulting Nifti file names are defined by upper DICOM directory-name (z.name='DIR')
+%% NIFTIS stored as specified in z.outdirMain, without any subdirs (z.flatHierarchy = [2])
+% z=[];                                                                                                                                                                                                                                                                    
+% z.converter     = 'SPM';                                                                                                                        % % The used Converter {SPM or MRICRON}                                                                                  
+% z.dirs          = { 'F:\data6\juergen_angio\dicoms_3jan23\Malaria_TOF_d0_Bl6_wt_aligned_example\Averaged_TOF_d0_aligned_DSURQE_converted'       % % Input DICOM folders. Select main dicom folder or several dicom folders                                               
+%                     'F:\data6\juergen_angio\dicoms_3jan23\Malaria_TOF_d0_Bl6_wt_aligned_example\Single_TOF_d0_GOL-0081_aligned_converted'                                                                                                                                
+%                     'F:\data6\juergen_angio\dicoms_3jan23\Malaria_TOF_d0_Bl6_wt_aligned_example\T2_d0_GOL_0081_aligned_DSURQE_converted' };                                                                                                                              
+% z.name          = 'DIR';                                                                                                                        % % NIFTI-filename. If empty, name is generated from dicom-fields, if ["DIR"] use upper directory name                   
+% z.prefix        = '';                                                                                                                           % % <optional> add prefix to the NIFTI-filename                                                                          
+% z.outdirMain    = 'F:\data6\juergen_angio\dicoms_3jan23\NII_conv';                                                                              % % output MAIN folder. Niftis will be saved to this location.                                                           
+% z.outdirName    = '@0   -use all upper Dirs (default; same as <empty>) for DirName';                                                            % % Constructor for animal folder name. If empty, folder name is constructed from all upper folders (prefered).          
+% z.flatHierarchy = [2];                                                                                                                          % % [1] Make flat sub-folder hierarchy (prefered); [0] no, keep nested folders, [2] store all niftis in same outputfolder
+% xdicom2nifti(1,z);  
+% ______________________________________________________________________________
+%% example3 : recursively find all dicomfolders in the path specified in z.dirs, 
+%% %% resulting Nifti file names are defined by upper DICOM directory-name (z.name='DIR')
+%% NIFTIS stored as specified in z.outdirMain, without any subdirs (z.flatHierarchy = [2])
 % 
-% 
+% z=[];                                                                                                                                                                                                                                                                    
+% z.converter     = 'SPM';                                                                                                                        % % The used Converter {SPM or MRICRON}                                                                                  
+% z.dirs          = { 'F:\data6\juergen_angio\dicoms_3jan23\Malaria_TOF_d0_Bl6_wt_aligned_example' };                                                                                                                              
+% z.name          = 'DIR';                                                                                                                        % % NIFTI-filename. If empty, name is generated from dicom-fields, if ["DIR"] use upper directory name                   
+% z.prefix        = '';                                                                                                                           % % <optional> add prefix to the NIFTI-filename                                                                          
+% z.outdirMain    = 'F:\data6\juergen_angio\dicoms_3jan23\NII_conv3';                                                                              % % output MAIN folder. Niftis will be saved to this location.                                                           
+% z.outdirName    = '';                                                            % % Constructor for animal folder name. If empty, folder name is constructed from all upper folders (prefered).          
+% z.flatHierarchy = [2];                                                                                                                          % % [1] Make flat sub-folder hierarchy (prefered); [0] no, keep nested folders, [2] store all niftis in same outputfolder
+% xdicom2nifti(1,z); 
 
 
 function xdicom2nifti(showgui,x,pa)
@@ -132,11 +164,12 @@ p={...
     'converter'   converter{1}  'The used Converter {SPM or MRICRON}'   converter
     'inf2'             ''        '' ''
     'dirs'             ''     'Input DICOM folders. Select main dicom folder or several dicom folders'   {@selectDir,pa}
-    'name'             ''     'output NIFTI filename. If empty, use name generated from dicom-fields'    ''
-    'prefix'           ''     'adds a prefix to the output NIFTI-filename'    ''
+    'inf3'      '____OUTPUT____'  '' ''
+    'name'             ''     'NIFTI-filename. If empty, name is generated from dicom-fields, if ["DIR"] use upper directory name '    {'';'DIR'}
+    'prefix'           ''     '<optional> add prefix to the NIFTI-filename'    ''
     'outdirMain'       ''     'output MAIN folder. Niftis will be saved to this location.'   {@selectoutdirMain,pa}
     'outdirName'      outdirconstrlist{1}   'Constructor for animal folder name. If empty, folder name is constructed from all upper folders (prefered). '   outdirconstrlist
-    'flatHierarchy'   [1]      '[1] Make flat sub-folder hierarchy (prefered); [0] no, keep nested folders' {'b'}
+    'flatHierarchy'   [1]      '[1] Make flat sub-folder hierarchy (prefered); [0] no, keep nested folders, [2] store all niftis in same outputfolder' {0 1 2}
     };
 
 p=paramadd(p,x);%add/replace parameter
@@ -145,7 +178,7 @@ p=paramadd(p,x);%add/replace parameter
 % %% show GUI
 if showgui==1
     hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
-    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .5 .3 ],...
+    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .7 .3 ],...
         'title','***dicom2nifti***','info',{@uhelp,[ mfilename '.m']});
     if isempty(m); return; end
     fn=fieldnames(z);
@@ -203,6 +236,7 @@ return
 
 function process(z)
 
+cprintf('*[0 0 1]',['converting DICOMS to NIFTIs' '\n']);
 warning off;
 % keyboard
 pacron=fullfile(fileparts(fileparts(fileparts(which('ant.m')))),'mricron');
@@ -238,8 +272,12 @@ keepsubdir={};
 temppath2save={};
 
 for j=1:length(z.dirs)
-    [files,dirs2] = spm_select('FPListRec',z.dirs{j},'');
+    [files,dirs2] = spm_select('FPListRec',z.dirs{j});
     dirs2=cellstr(dirs2);
+    dirs2=[dirs2; z.dirs{j} ]; %add upper directory, because it could contain dicomt, too
+    dirs2(cellfun(@isempty,dirs2))=[]; %remove empty cells (no subdir found)
+    
+    
     
     for i=1:length(dirs2)
         [fis] = spm_select('FPList',dirs2{i},'.*');
@@ -329,10 +367,18 @@ for j=1:length(sourcedir)
                        
             %newdir  = fullfile(z.outdirMain,mdir)
             % folder_name gets subDirName
+            if isempty(z.outdirMain)
+               z.outdirMain= [stradd( fileparts(z.dirs{1}) ,'NII__' ,1) ];
+               disp(['"z.outdirMain" not specified, new outputdir:  ' z.outdirMain ]);
+            end
+            
+            
             if z.flatHierarchy==1
                 newdir  = fullfile(z.outdirMain,regexprep([mdir],{filesep},{ '_'}));
-            else
+            elseif z.flatHierarchy==0
                 newdir  = fullfile(z.outdirMain,mdir);
+            elseif z.flatHierarchy==2
+                newdir  = fullfile(z.outdirMain);
             end
             
             % more files generated
@@ -341,10 +387,17 @@ for j=1:length(sourcedir)
                 numtag=pnum(i,3);
             end
             
+            
+           
+            %__FILENAME
             if ~isempty(z.name)
-                outfile=[z.prefix z.name   numtag       ] ;
+                if strcmp(z.name,'DIR') % use upper folder name as name
+                    outfile=[z.prefix mdir      numtag  ];
+                else
+                    outfile=[z.prefix z.name   numtag       ] ;
+                end
             else
-                outfile=[z.prefix fi      numtag  ]   ;
+                    outfile=[z.prefix fi      numtag  ]   ;
             end
             [~,namedum]=fileparts(outfile);
             newfile=fullfile(newdir,[namedum '.nii']);
@@ -354,7 +407,7 @@ for j=1:length(sourcedir)
             mkdir(newdir);
             movefile(li{i},  newfile  ,'f');
             
-            disp([' nifti: <a href="matlab: explorerpreselect(''' newfile ''')">' newfile '</a>']);
+            disp(['NIFTI: <a href="matlab: explorerpreselect(''' newfile ''')">' newfile '</a>']);
             % --------log message
             lg(end+1,:)={j i padc newfile};
         catch

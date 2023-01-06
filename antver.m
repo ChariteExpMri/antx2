@@ -845,10 +845,10 @@
 % #k [paramgui.m] #n --> selection of multiple folders possible (via 'md')
 % #k [xstat.m] #n    --> append constrasts to multifactorial design via text-file ..see help of xaddContrasts.m
 % #k [xaddContrasts.m] #n new file to append new contrasts to SPM-multifactorial design
-% 
 % #ba 05 Jan 2023 (11:22:46)
 % #k [xstat.m] #n modified: added option to delete existng contrasts
-% 
+% #ba 06 Jan 2023 (08:38:39)
+% #k [xdicom2nifti.m] #n modified: added option to use the DICOM-folderName as NIFTI-fileName
 % 
 
 

@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   05 Jan 2023 (11:22:46)  
+ &#x1F34E; last modification:   06 Jan 2023 (08:38:39)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**06 Jan 2023 (08:38:39)**</ins>  
+   __[xdicom2nifti.m]__ modified: added option to use the DICOM-folderName as NIFTI-fileName  
+<!---->
   &#x1F535;   <ins>**05 Jan 2023 (11:22:46)**</ins>  
    __[xstat.m]__ modified: added option to delete existng contrasts  
 <!---->
@@ -17,7 +20,6 @@
    __[paramgui.m]__ --> selection of multiple folders possible (via 'md')  
    __[xstat.m]__    --> append constrasts to multifactorial design via text-file ..see help of xaddContrasts.m  
    __[xaddContrasts.m]__ new file to append new contrasts to SPM-multifactorial design  
-    
 <!---->
   &#x1F535;   <ins>**16 Dec 2022 (14:09:43)**</ins>  
    __[VWscript_DWIimages_and_results.m]__ new script  
