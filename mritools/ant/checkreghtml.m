@@ -165,7 +165,7 @@ for i=1:length(pas)
     if exist(f1) && exist(f2)
         [d ds]=getslices(f1,     p.dim,slices,[],0 );
         [o os]=getslices({f1 f2},p.dim,slices,[],0 );
-        gifs   = saveslices_gif({d,ds},{o os}, 1,subpathFP,aname);
+        gifs   = saveslices_gif({d,ds},{o os}, 1,subpathFP,aname,p0);
         vi(1,:)={fname1  spm_vol(f1)};
         vi(2,:)={fname2  spm_vol(f2)};
         isOK=1;
@@ -365,6 +365,19 @@ gifsFP=cellfun(@(a){[  fileparts(htmlfile)   filesep a   ]},gifs);
      l{end+1,1}= ['<pre><font color=' col '> ' gifs{2} '<font color=black>  </pre>   '] ;
  end
 
+%% ___fused image_____________________________________________________________________________________________
+if length(gifsFP)>3
+    if exist(gifsFP{4})==2 && isempty(strfind(gifsFP{4},'ERROR:'))
+        l{end+1,1}= ['<div class="grid fixed"><style="border:none;><img src="' gifs{4} '" width="' num2str(siz) '" height="' num2str(siz) '" /></div>'] ;
+    else
+        if isempty(strfind(gifsFP{4},'ERROR:'))==1
+            col='gray';
+        else
+            col='red';
+        end
+        l{end+1,1}= ['<pre><font color=' col '> ' gifs{4} '<font color=black>  </pre>   '] ;
+    end
+end
 
 % l{end+1,1}= ['<img src="' gifs{1} '" id="' idtag '" width="' num2str(siz) '" height="' num2str(siz) '" onclick="changeImage(''' idtag ''',''' gifs{1} ''',''' gifs{2} ''' )" value="Change">'] ;
 % l{end+1,1}= ['<img src="' gifs{2} '" id="' idtag '" width="' num2str(siz) '" height="' num2str(siz) '" onclick="changeImage(''' idtag ''',''' gifs{1} ''',''' gifs{2} ''' )" value="Change">'] ;

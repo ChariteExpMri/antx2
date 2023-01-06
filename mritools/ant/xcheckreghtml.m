@@ -33,12 +33,20 @@
 % 'grid'           Show line grid on top of image {0,1}; default:1   
 % 'gridspace'      Space between grid lines (in pixels).; default: 20
 % 'gridcolor'      'Grid color (use icon); default: [1 0 0] 
+% 'cmapB'           <optional> specify background-color; otherwise leave empty,  default: ''                                                                       
+% 'cmapF'           <optional> specify foreground-color; otherwise leave empty,  default: ''                                                                         
+% 'showFusedIMG'    <optional> show the fused image [0]no,[1]yes                                                                                           
+% 
 % 
 % #ka BATCH
 % Code is generated during execution and is listed in the 'anth'-variable 
 % Code available via [anth]-Button (main GUI).
+% xcheckreghtml(1,z);     %  RUN WITH OPEN GUI
+% xcheckreghtml(0,z);     %  RUN WITHOUT GUI 
 % 
-% #ka CODE/RUN
+% ==============================================
+%%   #ko __EXAMPLE-1__
+% ===============================================
 % z=[];                                                                                                                                                 
 % z.backgroundImg = { 't2.nii' };                     % % background/reference image (a single file)                                                    
 % z.overlayImg    = { 'c1t2.nii'                      % % overlay image [t2], (may be multiple files)                                                   
@@ -52,10 +60,31 @@
 % z.grid          = [1];                              % % show line grid on top ov image {0,1}                                                          
 % z.gridspace     = [10];                             % % space between grid lines (pixels)                                                             
 % z.gridcolor     = [0  0  1];                        % % grid color
+% xcheckreghtml(1,z);     % % RUN WITH OPEN GUI 
+% ==============================================
+%%  #ko __EXAMPLE-2__
+% show 'ANO.nii' onto 'AVGT.nii'
+% -colormpaps (z.cmapB/z.cmapF) are used
+% -a fused image is shown (z.showFusedIMG=1)
+% ===============================================
+% z=[];                                                                                                                                                                                 
+% z.backgroundImg = {'AVGT.nii' };                      % % [SELECT] Background/reference image (a single file)                                                                        
+% z.overlayImg    = {'ANO.nii' };                        % % [SELECT] Image to overlay (multiple files possible)                                                                        
+% z.outputPath    = 'f:\data6\juergen_angio\checks';     % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )
+% z.outputstring  = 'testColor';                         % % optional Output string added (suffix) to the HTML-filename and image-directory                                             
+% z.slices        = 'n20';                                % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image       
+% z.dim           = [2];                                 % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital                                 
+% z.size          = [300];                               % % Image size in HTML file (in pixels)                                                                                        
+% z.grid          = [1];                                 % % Show line grid on top of image {0,1}                                                                                       
+% z.gridspace     = [20];                                % % Space between grid lines (in pixels)                                                                                       
+% z.gridcolor     = [1  0  0];                           % % Grid color                                                                                                                 
+% z.cmapB         = 'bone';                              % % <optional> specify BG-color; otherwise leave empty                                                                         
+% z.cmapF         = 'parula';                            % % <optional> specify FG-color; otherwise leave empty                                                                         
+% z.showFusedIMG  = [1];                                 % % <optional> show the fused image                                                                                            
+% xcheckreghtml(0,z);        % % RUN WITHOUT GUI                                                                                                                                                                            
 % ______________________
-% xcheckreghtml(1,z);       % % RUN WITH OPEN GUI   
+%   
 % ______________________
-% xcheckreghtml(0,z);       % % RUN WITH CLOSED GUI 
 % 
 % #k Animals are pre-selected via listbox from ANT-gui. However, you can override this selection 
 % #k when using an animal path-list as 3rd input argument.
@@ -131,6 +160,7 @@ if 1
     li=unique(fi2);
 end
 
+cmapList=[ {''} getcmapList];
 
 %% ________________________________________________________________________________________________
 %%  PARAMETER-gui
@@ -150,6 +180,10 @@ p={...
     'grid'    1      'Show line grid on top of image {0,1}'  'b'
     'gridspace'  20  'Space between grid lines (in pixels)'  { 5 10 20 30}
     'gridcolor'   [1 0 0] 'Grid color'  'col'
+    'inf2'   '__optional___' '' ''
+    'cmapB'  ''      '<optional> specify BG-color; otherwise leave empty'  cmapList
+    'cmapF'  ''      '<optional> specify FG-color; otherwise leave empty'  cmapList
+    'showFusedIMG'   0  '<optional> show the fused image'   'b'
     };
 
 
@@ -219,6 +253,19 @@ end
 
 
 
+%% ===== colormaps ==========================================
+function cmaplist=getcmapList();
+colormapeditorString = fileread(strcat(matlabroot,'\toolbox\matlab\graph3d\colormapeditor.m'));
+posStart = strfind(colormapeditorString,'stdcmap(maptype');
+posEnd = strfind(colormapeditorString(posStart:end),'end') + posStart;
+stdcmapString = colormapeditorString(posStart:posEnd);
+split = strsplit(stdcmapString, '(mapsize)');
+list = cellfun(@(x)x(find(x==' ', 1,'last'):end), split,'uni',0);
+list(end) = [];
+list=regexprep((list),'\s+','');
+li2={'gray' 'parula' 'jet' 'hot'};
+cmaplist=[li2 setdiff(list,li2)];
 
+%% ===============================================
 
 

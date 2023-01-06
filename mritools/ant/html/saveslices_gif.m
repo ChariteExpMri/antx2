@@ -1,9 +1,23 @@
 
-function out=saveslices_gif(s1,s2, flip,outpath,outputstr)
+
+
+
+
+function out=saveslices_gif(s1,s2, flip,outpath,outputstr,par)
 tagstr='';
 if exist('outputstr')==1
     tagstr=char(outputstr);
 end
+%% ======== additional parameter =======================================
+if exist('par')~=1; par=struct(); end
+if isfield(par,'cmapB')==0;       par.cmapB=''  ; end
+if isfield(par,'cmapF')==0;       par.cmapF=''  ; end
+
+if ~isempty(par.cmapB) && isempty(par.cmapF);    par.cmapF='parula'; end
+if  isempty(par.cmapB) && ~isempty(par.cmapF);   par.cmapB='gray'; end
+
+if isfield(par,'showFusedIMG')==0;       par.showFusedIMG=0  ; end
+%% ===============================================
 
 if 0
     pa='O:\data4\phagozytose\dat\20190219CH_Exp1_M8'
@@ -33,8 +47,20 @@ if sliceadjust==1
         d(:,:,i)=imadjust(mat2gray(d(:,:,i)));
     end
     if exist('o')==1
-        for i=1:size(d,3)
-            o(:,:,i)=imadjust(mat2gray(o(:,:,i)));
+        if (max(o(:))-min(o(:)))>1e4  & all(round(unique(o(:)))==(unique(o(:))))==1 %reduze dynamic range (Allen-Atlas)
+            
+            x=o(:); x2=x;
+            uni=unique(x); uni(uni==0)=[];
+            for i=1:length(uni)
+                x2(  (x==uni(i)))  =i;
+            end
+            x2=reshape(x2,size(o));
+            %montage2(x2);
+            o=mat2gray(x2);
+        else
+            for i=1:size(d,3)
+                o(:,:,i)=imadjust(mat2gray(o(:,:,i)));
+            end
         end
     end
 end
@@ -103,6 +129,42 @@ if exist('o')==1
 %   imwrite(o3,cmap2,'test2.gif','gif');
 %
 %
+%% ===============================================
+if 0  %test
+    par.cmapB ='bone';
+    par.cmapF ='summer';
+    
+end
+
+%% ===============================================
+isColor=0;
+if ~isempty(par.cmapB) && ~isempty(par.cmapF)
+   isColor=1; 
+end
+if isColor==1;   % test color
+%    d3=repmat(d3,[1 1 3]);
+% %    o3=repmat(o3,[1 1 3]);
+%    [d3,cmap1] = rgb2ind(d3,gray);
+%    B=o3;
+%    
+   cmapB=eval(par.cmapB);
+   cmapF=eval(par.cmapF);
+   
+   CB=ind2rgb(d3, cmapB);  [c1,cmap1] = rgb2ind(CB,cmapB);
+   %fg,imshow(c1,cmapB);
+   
+   CF=ind2rgb(o3, cmapF);  [c2,cmap2] = rgb2ind(CF,cmapF);
+   %fg,imshow(c2,cmapF);
+   
+   d3=c1;
+   o3=c2;
+   
+   %fg,imshow(imfuse(d3,o3,'falsecolor','Scaling','joint','ColorChannels',[1 2 0]))
+
+   
+  
+end
+%% ===============================================
 
 if exist('o')==1
     [~,name]=fileparts(os.V.fname);
@@ -129,7 +191,51 @@ else
     name2='';
 end
 
-out={name1;name2;name3};
+
+% par.showFusedIMG=1;
+% 'change flag!!'
+namefus='';
+if par.showFusedIMG==1
+    try
+        %fg,imshow(imfuse(d3,o3,'falsecolor','Scaling','joint','ColorChannels',[1 2 0]))
+        %fus=imfuse(d3,o3,'falsecolor','Scaling','joint','ColorChannels',[1 2 0]);
+        %fus=imfuse(d3,o3);
+        fus=imfuse(d3,o3,'blend');
+        
+        if size(fus,3)==3
+            [fus,cmap1] = rgb2ind(fus,255);
+        end
+        
+         if exist('CB') && exist('CF')
+            fus=imfuse(CB,CF,'blend');
+            if size(fus,3)==3
+                [fus,cmap1] = rgb2ind(fus,255);
+            end
+        else
+           fus=imfuse(d3,o3,'falsecolor','Scaling','joint','ColorChannels',[1 2 0]); 
+           %fus=imfuse(d3,o3,'blend');
+            if size(fus,3)==3
+                [fus,cmap1] = rgb2ind(fus,255);
+            else
+                cmap1=hot;
+            end
+            
+         end
+        
+        
+        %fg,imshow(fus,cmap1);
+        namefus   =stradd(name1,'_fus',2);
+        gifnamefus=fullfile(outpath,[namefus]);
+        imwrite(fus,cmap1,gifnamefus,'gif');
+        showinfo2('',gifnamefus);
+     catch   
+        namefus='';
+    end
+    
+end
+    
+
+out={name1;name2;name3; namefus};
 
 
 

@@ -849,6 +849,14 @@
 % #k [xstat.m] #n modified: added option to delete existng contrasts
 % #ba 06 Jan 2023 (08:38:39)
 % #k [xdicom2nifti.m] #n modified: added option to use the DICOM-folderName as NIFTI-fileName
+% % #ba 06 Jan 2023 (16:46:35)
+%  #k [xcheckreghtml.m] #n modified:
+%  -allows to specify colormaps for foreground and background-image
+%  -optional: a fused image of foreground and background-image is embedded in the HTMLfile
+% #gw --> access via ANT-animal-listbox: &#8658; context-menu: "check registration-make HTMLfile"
+% #gw --> access via ANT-menu: &#8658; GRAPHICS/"QA: generate HTML-file with overlays"
+% 
+% 
 % 
 
 

@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   06 Jan 2023 (08:38:39)  
+ &#x1F34E; last modification:   % 06 Jan 2023 (16:46:35)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,13 @@
     
     
 ------------------  
+  % &#x1F535;   <ins>**06 Jan 2023 (16:46:35)**</ins>  
+    __[xcheckreghtml.m]__ modified:  
+   -allows to specify colormaps for foreground and background-image  
+   -optional: a fused image of foreground and background-image is embedded in the HTMLfile  
+  &#8618; access via ANT-animal-listbox: &#8658; context-menu: "check registration-make HTMLfile"  
+  &#8618; access via ANT-menu: &#8658; GRAPHICS/"QA: generate HTML-file with overlays"  
+<!---->
   &#x1F535;   <ins>**06 Jan 2023 (08:38:39)**</ins>  
    __[xdicom2nifti.m]__ modified: added option to use the DICOM-folderName as NIFTI-fileName  
 <!---->

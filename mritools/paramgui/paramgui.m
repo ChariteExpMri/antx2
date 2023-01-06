@@ -3358,7 +3358,11 @@ elseif strcmp(us.dat{idx,4},'b')
     n=[tb{1} [   newtag    ]   tb{3} ];
     
 elseif   iscellmode>=1
-    delete(findobj(gcf,'tag','pulldown'));
+    hp=findobj(gcf,'tag','pulldown');
+    if ~isempty(hp)
+        delete(findobj(gcf,'tag','pulldown'));
+        return
+    end
     us=get(gcf,'userdata');
     us.ispulldownON=1;
     set(gcf,'userdata',us);
@@ -3368,11 +3372,40 @@ elseif   iscellmode>=1
     else
         pulldown=  us.dat{idx,4};
     end
+    %% ==========display in pulldownMenu=====================================
+    
+    pulldownStr=pulldown;
+    ckclass=cellfun(@(a){[class(a)]} ,pulldownStr);
+    is=strcmp(ckclass,'function_handle');
+    if ~isempty(is)
+       pulldownStr(is)=cellfun(@(a){['' '@' '' func2str(a) '''' ]} ,pulldownStr(is));
+    end
+    is=strcmp(ckclass,'char') & cellfun(@isempty, pulldownStr);
+    if ~isempty(is)
+       pulldownStr(is)= cellfun(@(a){['''' a '''' ]} ,pulldownStr(is));
+    end
+    
+    is=cellfun(@isnumeric, pulldownStr) & cellfun(@isempty, pulldownStr);
+    if ~isempty(is)
+       pulldownStr(is)= cellfun(@(a){['['   ']' ]} ,pulldownStr(is));
+    end
+    is=cellfun(@isnumeric, pulldownStr);
+    if ~isempty(is)
+       pulldownStr(is)= cellfun(@(a){['[' regexprep(strjoin(cellstr(num2str(a)),';'),'\s+',' ')     ']' ]} ,pulldownStr(is));
+    end
+
+    pulldownStr=cellfun(@(a){[num2str(a)]} ,pulldownStr);
+    %char(pulldownStr)
+    
+    %% ===============================================
+    
     
     %% PULLDOWN
     pd=uicontrol('style','popupmenu','units','normalized','position',[0 0 .3 .1],'tag','pulldown',...
-        'string',pulldown,'backgroundcolor',[1 .8 .43 ]);
+        'string',pulldownStr,'backgroundcolor',[1 .8 .43 ]);
     set(pd,'units','pixels');
+    u.options=pulldown;
+    set(pd,'userdata',u);
     %     hbut= findobj(gcf,'tag','open');
     try
     hbut=e.Source;
@@ -3835,30 +3868,84 @@ catch
 end
 
 % return
-
 % carpos=r.getCaretPosition();
+u=pb.UserData;
+newtag=u.options{va};
+%% ===============================================
 
-newtag=[ char(li(va)) ];
-if iscellmode==1
-    n=[tb{1} [ '''' newtag '''' char(9) ';' ] tb{3}];
-elseif iscellmode==2
-    n=[tb{1} [ ['[' newtag ']'] char(9) ';' ] tb{3}];
+% newtag=[3];
+% newtag=[3 4 5];
+% newtag='home'
+% newtag=''
+% newtag=[]
+% newtag=[1 2; 3 4;5 6]
+% newtag=rand(3,4)
+if isa(newtag,'function_handle')
+     n=[tb{1} [ '@' func2str(newtag)  char(9) ';' ] tb{3}];
+elseif ischar(newtag)
+     n=[tb{1} [ '''' newtag '''' char(9) ';' ] tb{3}]; 
+elseif isnumeric(newtag)
+    if length(newtag)==1 || isempty(newtag)
+        n=[tb{1} [ ['[' num2str(newtag) ']'] char(9) ';' ] tb{3}];
+        %n=[tb{1} [ [ num2str(newtag) ] char(9) ';' ] tb{3}];
+    else
+        if min(size(newtag))==1
+            n=[tb{1} [ ['[' num2str(regexprep(num2str(newtag),'\s+',' ') ) ']'] char(9) ';' ] tb{3}];
+        else 
+           n= [tb{1} [ ['['   strjoin(regexprep(cellstr(num2str(newtag)),'\s+',' '),';')   ']'] char(9) ';' ] tb{3}];
+%             
+%             c=cellstr(num2str(newtag));
+%             c{1}    = [tb{1} [ ['[' c{1} ] char(9) ';' ] tb{3}];
+%             c(2:end  )=cellfun(@(a){[repmat(' ',[1 length(tb{1})+1 ]) a]} ,c(2:end))
+%             %c(2:end  )=cellfun(@(a){[                a ' ;'            ]} ,c(2:end))
+%             c(end  )=cellfun(@(a){[                a char(9) '];'            ]} ,c(end))
+%             n=c;
+        end
+    end
 end
 
-chk=str2num(newtag);
-if isempty(chk)%must be a string
-    n=[tb{1} [ '''' newtag '''' char(9) ';' ] tb{3}];
-else
-    n=[tb{1} [ ['[' newtag ']'] char(9) ';' ] tb{3}];
-end
+% newtag
 
-
-tx3{val}=n;
-try; s1=tx3(1:val-1); catch; s1=[];end
-s2=n;
-try; s3=tx3(val+1:end); catch; s3=[];end
-s2b=reformatline(s2,   s1,s3);
-tx3=[s1;s2b;s3];
+%% ===============================================
+% if 0
+%     
+%     newtag=[ char(li(va)) ];
+%     if iscellmode==1
+%         n=[tb{1} [ '''' newtag '''' char(9) ';' ] tb{3}];
+%     elseif iscellmode==2
+%         n=[tb{1} [ ['[' newtag ']'] char(9) ';' ] tb{3}];
+%     end
+%     %% ===============================================
+%     if ~isempty(newtag)
+%         chk=str2num(newtag);
+%         try;
+%             str2num(chk)
+%         catch
+%             chk=''
+%         end
+%         
+%         if isempty(chk)%must be a string
+%             n=[tb{1} [ '''' newtag '''' char(9) ';' ] tb{3}];
+%         else
+%             n=[tb{1} [ ['[' newtag ']'] char(9) ';' ] tb{3}];
+%         end
+%     end
+% end
+%% ===============================================
+% if size(n,1)==1
+    tx3{val}=n;
+    try; s1=tx3(1:val-1); catch;  s1=[];end
+    s2=n;
+    try; s3=tx3(val+1:end); catch; s3=[];end
+    s2b=reformatline(s2,   s1,s3);
+    tx3=[s1;s2b;s3];
+% else
+%     try; s1=tx3(1:val-1); catch;  s1=[];end
+%     s2=n;
+%     try; s3=tx3(val+1:end); catch; s3=[];end
+%     s2b=reformatline(s2,   s1,s3);
+%     tx3=[s1;s2b;s3];
+% end
 
 
 % %     try
