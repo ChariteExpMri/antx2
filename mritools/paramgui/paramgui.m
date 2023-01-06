@@ -3458,16 +3458,16 @@ end
 
 
 if strcmp(class(us.dat{idx,4}),'function_handle')
-    
-    
-    
-    
-    
-    
     return
 end
 
-if strcmp(us.dat{idx,4}{1},'mf') || strcmp(us.dat{idx,4}{1},'md')  || isfunmode==1  %% ICON-SELECTED DATA
+task=us.dat{idx,4};
+if iscell(task);
+    task=task{1};
+end
+
+
+if strcmp(task,'mf') || strcmp(task,'md')  || isfunmode==1  %% ICON-SELECTED DATA
     
     
     %%###
