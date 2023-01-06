@@ -227,7 +227,7 @@ if par.showFusedIMG==1
         namefus   =stradd(name1,'_fus',2);
         gifnamefus=fullfile(outpath,[namefus]);
         imwrite(fus,cmap1,gifnamefus,'gif');
-        showinfo2('',gifnamefus);
+        %showinfo2('',gifnamefus);
      catch   
         namefus='';
     end
