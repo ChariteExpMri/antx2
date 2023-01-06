@@ -278,7 +278,7 @@ if exist('x')~=1;        x=[]; end
 
 p={...
     'inf1'      '--- COREGESTRATION   ---             '                         '' ''
-    'inf2'      'Block-1,Block-2...Block-3..: are independent coregistrations with independent targetImage/sourceImgae and applyIMages, respectively' ,'' ''
+    %'inf2'      'Block-1,Block-2...Block-3..: are independent coregistrations with independent targetImage/sourceImgae and applyIMages, respectively' ,'' ''
     'inf99'      'coregister sourceImage[t1] onto targetImage[t1] and apply transformation to other images [applyImages]', '' ''
     'inf100'      [repmat('_',[1,100])]                            '' ''
     %
@@ -298,8 +298,8 @@ p={...
     %
     'inf103'      '% PARAMETERS       '  '' ''
     'cost_fun'      'nmi'                                 'objective function: [nmi] norm. mutual Info, [mi] mutual Info, [ecc] entropy corrcoef,[ncc] norm. crosscorr' ,{'nmi' 'mi' 'ecc' 'ncc'}
-    'sep'           [4 2 1 0.5 0.1 .05]                   'optimisation sampling steps (mm)' ,{'4 2 1 0.5 0.1 .05' ;'2 1 0.36 0.18 '}
-    'tol'           [0.01 0.01 0.01   0.001 0.001 0.001]  'tolerences for accuracy of each param' ,{'0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001' ;' 0.02 0.02 0.02 0.001 0.001 0.001'}
+    'sep'           [4 2 1 0.5 0.1 .05]                   'optimisation sampling steps (mm)' , {[4 2 1 0.5 0.1 .05] ;[2 1 0.36 0.18]} %{'4 2 1 0.5 0.1 .05' ;'2 1 0.36 0.18 '}
+    'tol'           [0.01 0.01 0.01   0.001 0.001 0.001]  'tolerences for accuracy of each param' ,{[0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001] ;[0.02 0.02 0.02 0.001 0.001 0.001]} %{'0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001' ;' 0.02 0.02 0.02 0.001 0.001 0.001'}
     'fwhm'          [7 7]                                 'smoothing to apply to 256x256 joint histogram' ,''
     'centerering'   [0]                                   'make copy of targetIMG & set origin to "center" ,than apply centeringTRafo to all coregistered images,  ' ,'b'
 
@@ -325,32 +325,32 @@ p={...
     'isparallel'    0    'parallel processing over animals: [0]no,[1]yes' 'b'
 
     
-    'inf199'        ''                           '' ''
-    'inf200'        ''                           '' ''
-    'inf201'      [ '%___  BLOCK-2 (optional)  '    repmat('_',[1,90])]   '' ''
-    'targetImg2'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
-    'sourceImg2'      {''}                'source image [t2], (moved image)'             {@selector2,li,{'SourceImage'},'out','list','selection','single'}
-    'sourceImgNum2'   1                  'if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum) '  ''
-    'applyImg2'       {''}               'images on which the transformation is applied (do not select the sourceIMG again!)'  {@selector2,li,{'Images to Apply Trafo'},'out','list','selection','multi'}
-    %
-    %     'inf300'      [repmat('�',[1,100])]                            '' ''
-    'inf301'     [ '%___  BLOCK-3 (optional)  '    repmat('_',[1,90])]   '' ''
-    'targetImg3'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
-    'sourceImg3'      {''}                'source image [t2], (moved image)'             {@selector2,li,{'SourceImage'},'out','list','selection','single'}
-    'sourceImgNum3'   1                  'if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum) '  ''
-    'applyImg3'       {''}               'images on which the transformation is applied (do not select the sourceIMG again!)'  {@selector2,li,{'Images to Apply Trafo'},'out','list','selection','multi'}
-    
-    'inf401'      [ '%___  BLOCK-4 (optional)  '    repmat('_',[1,90])]   '' ''
-    'targetImg4'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
-    'sourceImg4'      {''}                'source image [t2], (moved image)'             {@selector2,li,{'SourceImage'},'out','list','selection','single'}
-    'sourceImgNum4'   1                  'if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum) '  ''
-    'applyImg4'       {''}               'images on which the transformation is applied (do not select the sourceIMG again!)'  {@selector2,li,{'Images to Apply Trafo'},'out','list','selection','multi'}
-    
-    'inf501'      [ '%___ BLOCK-5 (optional)  '    repmat('_',[1,90])]   '' ''
-    'targetImg5'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
-    'sourceImg5'      {''}                'source image [t2], (moved image)'             {@selector2,li,{'SourceImage'},'out','list','selection','single'}
-    'sourceImgNum5'   1                  'if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum) '  ''
-    'applyImg5'       {''}               'images on which the transformation is applied (do not select the sourceIMG again!)'  {@selector2,li,{'Images to Apply Trafo'},'out','list','selection','multi'}
+%     'inf199'        ''                           '' ''
+%     'inf200'        ''                           '' ''
+%     'inf201'      [ '%___  BLOCK-2 (optional)  '    repmat('_',[1,90])]   '' ''
+%     'targetImg2'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
+%     'sourceImg2'      {''}                'source image [t2], (moved image)'             {@selector2,li,{'SourceImage'},'out','list','selection','single'}
+%     'sourceImgNum2'   1                  'if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum) '  ''
+%     'applyImg2'       {''}               'images on which the transformation is applied (do not select the sourceIMG again!)'  {@selector2,li,{'Images to Apply Trafo'},'out','list','selection','multi'}
+%     %
+%     %     'inf300'      [repmat('�',[1,100])]                            '' ''
+%     'inf301'     [ '%___  BLOCK-3 (optional)  '    repmat('_',[1,90])]   '' ''
+%     'targetImg3'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
+%     'sourceImg3'      {''}                'source image [t2], (moved image)'             {@selector2,li,{'SourceImage'},'out','list','selection','single'}
+%     'sourceImgNum3'   1                  'if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum) '  ''
+%     'applyImg3'       {''}               'images on which the transformation is applied (do not select the sourceIMG again!)'  {@selector2,li,{'Images to Apply Trafo'},'out','list','selection','multi'}
+%     
+%     'inf401'      [ '%___  BLOCK-4 (optional)  '    repmat('_',[1,90])]   '' ''
+%     'targetImg4'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
+%     'sourceImg4'      {''}                'source image [t2], (moved image)'             {@selector2,li,{'SourceImage'},'out','list','selection','single'}
+%     'sourceImgNum4'   1                  'if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum) '  ''
+%     'applyImg4'       {''}               'images on which the transformation is applied (do not select the sourceIMG again!)'  {@selector2,li,{'Images to Apply Trafo'},'out','list','selection','multi'}
+%     
+%     'inf501'      [ '%___ BLOCK-5 (optional)  '    repmat('_',[1,90])]   '' ''
+%     'targetImg5'      {''}                'target image [t1], (static/reference image)'  {@selector2,li,{'TargetImage'},'out','list','selection','single'}
+%     'sourceImg5'      {''}                'source image [t2], (moved image)'             {@selector2,li,{'SourceImage'},'out','list','selection','single'}
+%     'sourceImgNum5'   1                  'if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum) '  ''
+%     'applyImg5'       {''}               'images on which the transformation is applied (do not select the sourceIMG again!)'  {@selector2,li,{'Images to Apply Trafo'},'out','list','selection','multi'}
 
     };
 
