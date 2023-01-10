@@ -856,6 +856,10 @@
 % #gw --> access via ANT-animal-listbox: &#8658; context-menu: "check registration-make HTMLfile"
 % #gw --> access via ANT-menu: &#8658; GRAPHICS/"QA: generate HTML-file with overlays"
 % 
+% #ba 10 Jan 2023 (01:48:56)
+% minor checks
+% 
+% 
 % 
 % 
 

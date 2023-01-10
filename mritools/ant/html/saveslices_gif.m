@@ -17,6 +17,7 @@ if ~isempty(par.cmapB) && isempty(par.cmapF);    par.cmapF='parula'; end
 if  isempty(par.cmapB) && ~isempty(par.cmapF);   par.cmapB='gray'; end
 
 if isfield(par,'showFusedIMG')==0;       par.showFusedIMG=0  ; end
+if isfield(par,'sliceadjust') ==0;       par.sliceadjust=0   ; end
 %% ===============================================
 
 if 0
@@ -38,32 +39,53 @@ if ~isempty(s2)
  o=s2{1}; os=s2{2};   
 end
 
+% ==============================================
+%%   atlas-many IDs (Allen)
+% ===============================================
+if exist('o')==1
+    if (max(o(:))-min(o(:)))>1e4  & all(round(unique(o(:)))==(unique(o(:))))==1 %reduze dynamic range (Allen-Atlas)
+        
+        x=o(:); x2=x;
+        uni=unique(x); uni(uni==0)=[];
+        for i=1:length(uni)
+            x2(  (x==uni(i)))  =i;
+        end
+        x2=reshape(x2,size(o));
+        %montage2(x2);
+        o=mat2gray(x2);
+    end
+end
+
+
 %=============================================
-sliceadjust=1;
+% sliceadjust=0;
 %=============================================
 
-if sliceadjust==1
+if par.sliceadjust==1
     for i=1:size(d,3)
         d(:,:,i)=imadjust(mat2gray(d(:,:,i)));
     end
-    if exist('o')==1
-        if (max(o(:))-min(o(:)))>1e4  & all(round(unique(o(:)))==(unique(o(:))))==1 %reduze dynamic range (Allen-Atlas)
-            
-            x=o(:); x2=x;
-            uni=unique(x); uni(uni==0)=[];
-            for i=1:length(uni)
-                x2(  (x==uni(i)))  =i;
-            end
-            x2=reshape(x2,size(o));
-            %montage2(x2);
-            o=mat2gray(x2);
-        else
-            for i=1:size(d,3)
-                o(:,:,i)=imadjust(mat2gray(o(:,:,i)));
-            end
-        end
+    %     if exist('o')==1
+    %         if (max(o(:))-min(o(:)))>1e4  & all(round(unique(o(:)))==(unique(o(:))))==1 %reduze dynamic range (Allen-Atlas)
+    %
+    %             x=o(:); x2=x;
+    %             uni=unique(x); uni(uni==0)=[];
+    %             for i=1:length(uni)
+    %                 x2(  (x==uni(i)))  =i;
+    %             end
+    %             x2=reshape(x2,size(o));
+    %             %montage2(x2);
+    %             o=mat2gray(x2);
+    %         else
+    for i=1:size(d,3)
+        o(:,:,i)=imadjust(mat2gray(o(:,:,i)));
     end
 end
+
+
+
+
+
 
 %=============================================
 if flip==1;     flipup = @(x) flipdim(x,1);
@@ -105,19 +127,19 @@ end
 
 
 d2=montageout(permute(d,[1 2 4 3]));
-if sliceadjust==1
-    [d3 cmap1]=gray2ind(d2);
-else
+% if par.sliceadjust==1
+%     [d3 cmap1]=gray2ind(d2);
+% else
     [d3 cmap1]=gray2ind(imadjust(mat2gray( (d2))));
-end
+% end
 
 if exist('o')==1
     o2=montageout(permute(o,[1 2 4 3]));
-    if sliceadjust==1
-        [o3 cmap2]=gray2ind(o2);
-    else
+%     if par.sliceadjust==1
+%         [o3 cmap2]=gray2ind(o2);
+%     else
         [o3 cmap2]=gray2ind(imadjust(mat2gray( (o2))));
-    end
+%     end
  end
 
 
@@ -146,9 +168,33 @@ if isColor==1;   % test color
 % %    o3=repmat(o3,[1 1 3]);
 %    [d3,cmap1] = rgb2ind(d3,gray);
 %    B=o3;
-%    
-   cmapB=eval(par.cmapB);
-   cmapF=eval(par.cmapF);
+
+    try;      cmapB=lutmap(par.cmapB);
+        if size(cmapB,1)>52
+           cmapB= cmapB(round(linspace(1,size(cmapB,1),52)), :) ;
+        end
+    catch;    cmapB=eval(par.cmapB);
+    end
+
+    try;      cmapF=lutmap(par.cmapF);
+         if size(cmapF,1)>52
+           cmapF= cmapF(round(linspace(1,size(cmapF,1),52)), :) ;
+        end
+    catch;    
+        cmapF=eval(par.cmapF);
+    end
+
+ 
+    if size(cmapB,1)>52
+        cmapB= cmapB(round(linspace(1,size(cmapB,1),52)), :) ;
+    end
+    if size(cmapF,1)>52
+        cmapF= cmapF(round(linspace(1,size(cmapF,1),52)), :) ;
+    end
+    
+
+%    cmapB=eval(par.cmapB);
+%    cmapF=eval(par.cmapF);
    
    CB=ind2rgb(d3, cmapB);  [c1,cmap1] = rgb2ind(CB,cmapB);
    %fg,imshow(c1,cmapB);

@@ -161,6 +161,9 @@ if 1
 end
 
 cmapList=[ {''} getcmapList];
+try; 
+    cmapList=[cmapList lutmap('show')'];
+end
 
 %% ________________________________________________________________________________________________
 %%  PARAMETER-gui
@@ -181,9 +184,10 @@ p={...
     'gridspace'  20  'Space between grid lines (in pixels)'  { 5 10 20 30}
     'gridcolor'   [1 0 0] 'Grid color'  'col'
     'inf2'   '__optional___' '' ''
-    'cmapB'  ''      '<optional> specify BG-color; otherwise leave empty'  cmapList
-    'cmapF'  ''      '<optional> specify FG-color; otherwise leave empty'  cmapList
+    'cmapB'           ''      '<optional> specify BG-color; otherwise leave empty'  cmapList
+    'cmapF'           ''      '<optional> specify FG-color; otherwise leave empty'  cmapList
     'showFusedIMG'   0  '<optional> show the fused image'   'b'
+    'sliceadjust'    0  'intensity adjust slices separately; [0]no; [1]yes' 'b'  
     };
 
 

@@ -1310,11 +1310,7 @@ end
 
 
 function he=getparmfiles(li,lih)
-%     'warpParamfile'  fullfile(fileparts(fileparts(which('ant.m'))),'elastix','paramfiles' ,'p33_bspline.txt')      'parameterfile used for warping'  @getparmfiles
-
-he=[];
-pap=fileparts(which('trafoeuler2.txt'));
-msg='select one/more Parameter file for rigid/affine/bspline transformation (in that order)"';
+%     'warpParamfile'  fullfilne/more Parameter file for rigid/affine/bspline transformation (in that order)"';
 [t,sts] = spm_select(inf,'any',msg,'',pap,'.*.txt','');
 t=cellstr(t);
 if isempty(t); return; end
@@ -1323,3 +1319,4 @@ if isempty(t); return; end
 % paramgui('setdata','x.wa.orientelxParamfile',[t ' % rem'])
 he=t;
 return
+                                                                                                                                                                                                         
