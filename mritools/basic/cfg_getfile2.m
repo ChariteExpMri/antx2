@@ -202,6 +202,10 @@ else
 end
 
 end
+
+
+
+
 %=======================================================================
 
 %=======================================================================
@@ -326,6 +330,7 @@ sel = uicontrol(fg,...
 c0 = uicontextmenu('Parent',fg);
 set(sel,'uicontextmenu',c0);
 uimenu('Label','Unselect All', 'Parent',c0,'Callback',@unselect_all);
+uimenu('Label','focus/unfocus listbox', 'Parent',c0,'Callback',@focus_lowerlistbox);
 
 % get cwidth for buttons
 tmp=uicontrol('style','text','string',repmat('X',[1,50]),bf,...
@@ -732,6 +737,11 @@ p=uicontrol('style','pushbutton','units','normalized',...
 set(p,'position',[0.38 0.346 0.042 0.025],'fontsize',7);
 end
 
+
+% keys for selected box
+hr=findobj(findobj(0,'tag','cfg_getfile2'),'tag','selected');
+set(hr,'KeyPressFcn',@KeyPress_LowerListbox);
+
 % % button : use history-selection
 % p=uicontrol('style','pushbuttom','units','normalized',...
 %     'position',[.0934 .325 .05 .0394 ],'backgroundcolor',[1 1 1],'foregroundcolor',[0 .6 0],...
@@ -762,6 +772,18 @@ if ishandle(fg),  delete(fg); end;
 drawnow;
 return;
 %=======================================================================
+end
+
+function focus_lowerlistbox(e,e2)
+hr=findobj(findobj(0,'tag','cfg_getfile2'),'tag','selected');
+if isempty(hr.String)
+    return
+end
+if    isempty(hr.Value); hr.Value=1;  uicontrol(hr);
+else ;  hr.Value=[];                  uicontrol(hr);
+end
+
+
 end
 
 %% ============[get file info]===================================
@@ -863,6 +885,16 @@ else
     uhelp(m,0,'name','SELECTED FILES');
 end
 
+end
+
+
+function KeyPress_LowerListbox(e,e2)
+hr=findobj(findobj(0,'tag','cfg_getfile2'),'tag','selected');
+if strcmp(e2.Key,'uparrow') || strcmp(e2.Key,'downarrow');
+    us.doNotdelete=1;
+    hr.UserData=us;
+    
+end
 end
 
 %% ============[sort files]===================================
@@ -1358,6 +1390,21 @@ end
 
 %=======================================================================
 function unselect(lb,varargin)
+
+try
+    hr=findobj(findobj(0,'tag','cfg_getfile2'),'tag','selected');
+    u=get(hr,'userdata');
+    if isstruct(u) && isfield(u,'doNotdelete')
+        if u.doNotdelete==1
+            u.doNotdelete=0;
+            hr.UserData=u;
+            return
+        end
+    end
+end
+
+
+
 vl      = get(lb,'Value');
 if isempty(vl), return; end;
 str     = get(lb,'String');
@@ -1675,6 +1722,10 @@ h    = uicontrol(fg,...
     'BackgroundColor',col1,...
     'Position',[0.01 0.08 0.98 0.9],...
     'Userdata',struct('ac',{ac},'acv',{acv}));
+
+
+
+
 ea   = uicontrol(fg,...
     'Style','pushbutton',...
     'units','normalized',...
@@ -1956,6 +2007,14 @@ try
             set(gcbf,'Pointer','watch');
         else
             sel    = select_rec1(start,filt);
+            hh=findobj(gcf,'tag','searchsubdirs' ); %
+            if hh.Value==0
+                upperDir=fileparts2(sel);
+                 [basdir] = spm_select('FPList',start,'dir');
+                 basedir=cellstr(basdir);
+                 ismatch=ismember(upperDir,basedir);
+                 sel=sel(ismatch);
+            end
             
         end
         
