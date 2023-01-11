@@ -1511,17 +1511,19 @@ for menuIdx = jMenuBar.getComponentCount:-1:1  %%automatically pull down menu
     %pause(.05);
     hjMenu = handle(jMenu,'CallbackProperties');
     %pause(.05);
-    set(hjMenu,'MouseEnteredCallback','doClick(gcbo)');
-    drawnow;
+    %set(hjMenu,'MouseEnteredCallback','doClick(gcbo)'); % open menu when hovering
+%     drawnow;
     
-    %pause(.05);
+    jMenu.setPopupMenuVisible(false); 
     jMenu.doClick; % open the File menu
-    %     pause(.01);
-    drawnow;
-    
-    jMenu.doClick; % close the menu
-    %pause(.01);
-    drawnow;
+    jMenu.setPopupMenuVisible(false); 
+%     if 0 %PREVIOUS VERSION
+%         jMenu.doClick; % open the File menu
+%         drawnow;
+%         jMenu.doClick; % close the menu
+%         %pause(.01);
+%         drawnow;
+%     end
     
     %     if 0%menuIdx==1
     %         drawnow
