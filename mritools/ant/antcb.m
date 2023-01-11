@@ -82,8 +82,10 @@ end
 if strcmp(do, 'watchfile');     watchfile(input2); end
 if strcmp(do, 'watchfile?');    watchfile('?')  ; end
 
+if strcmp(do,'sel')  ;          varargout=selectdirs(input2,nargout);  end
 if strcmp(do,'selectdirs')  ;   varargout=selectdirs(input2,nargout);  end
 if strcmp(do,'selectdirs?') ;   varargout=selectdirs('?');    end
+
 if strcmp(do,'helpfun') ;       helpfun(input2{2});    end
 
 if strcmp(do,'studydir')  || strcmp(do,'studydir?')
@@ -1601,6 +1603,52 @@ end
 % [pathstr, name, ext] = fileparts2(paths);
 % paths(regexpi2(name,'^_'))=[];
 
+function cb_anima(e,e2)
+antcb('status',0);
+function showanima(arg)
+%% ===============================================
+
+hf= findobj(0,'tag','ant');
+hs=findobj(hf,'tag','status');
+ha=findobj(hf,'tag','showanimation');
+if arg==1
+    if isempty(findobj(hf,'tag','anima'))
+    hr=findobj(hf,'tag','pbloadsubjects');
+    pos=get(hr,'position');
+    hb=uicontrol(hf,'style','pushbutton','units','norm','tag','anima',...
+        'backgroundcolor','w','callback',@cb_anima,'tooltipstring','<html><b>busy</b><br>hit me to hide',...
+        'visible',ha.Checked);
+    
+    si=pos(4);
+    pos2=[0 pos(2)+pos(4) 0.03 0.03 ];
+    set(hb,'pos',pos2);
+    set(hb, 'string',['<html><img src="file:/' which('anim4.gif') '"/></html>'],'value',1);
+    %set(hb, 'string',['<html><img src="file:/'   'C:\Users\skoch\Favorites\Downloads\ezgif.com-gif-maker (1).gif' '"/></html>'],'value',1);
+    
+    set(hb,'units','pixels');
+    pos3=get(hb,'pos');
+    set(hb,'pos',[pos3(1) pos3(2)+1 22 22]);
+    set(hb,'units','norm');
+    else
+        hb=findobj(hf,'tag','anima');
+        hb=hb(1);
+        set(hb,'visible',ha.Checked)  ;
+    end
+    posA=get(hs,'pos');
+     if strcmp(ha.Checked,'off')
+         set(hs,'pos',[0 posA(2:end)]);
+     else
+         pos4=get(hb,'pos');
+         set(hs,'pos',[pos4(1)+pos4(3)+0.001 posA(2:end)]);
+     end
+else
+    hb=findobj(hf,'tag','anima');
+    set(hb,'visible','off')  ;
+    posA=get(hs,'pos');
+    set(hs,'pos',[0 posA(2:end)]);
+end
+
+%% ===============================================
 
 function status(input)
 % input
@@ -1614,6 +1662,9 @@ if bool ==1
     set(hr,'string',['status: BUSY!' msg],'foregroundcolor','r');
     set(hr,'TooltipString',['<html><b><font color=red>BUSY since: <font color k>' datestr(now,'HH:MM:SS')]);
     set(hr,'userdata',datestr(now,'HH:MM:SS'));
+    
+    showanima(1);
+    
 elseif bool==0
     set(hr,'string',['status: IDLE' msg],'foregroundcolor','b');
     lastprocess=get(hr,'userdata');
@@ -1627,7 +1678,7 @@ elseif bool==0
     end
     set(hr,'TooltipString',idlemsg);
     
-    
+    showanima(0);
 end
 drawnow
 pause(.01);
@@ -1970,6 +2021,13 @@ end
 % antcb('selectdirs','none');                         ;%select no animal folder (deselect all)
 % antcb('selectdirs',[1 2]);                          ;%select directories 1 and 2 (selected by index)
 %
+%% select dirs by string in animal-name
+% antcb('selectdirs','dirs','bad|data' )          ; %select all animals with string "bad" or "data" in animal name
+% antcb('selectdirs','dirs',{'Dev' 'cha' 'k33'} ) ; %select all animals with string 'Dev','cha' or 'k33' in animal name
+% antcb('selectdirs','dirs','^bad|^1001' )        ; %select all animals starting with string "bad" or "1001" in animal name
+% antcb('selectdirs','dirs','8$|195$' )           ; %select all animals ending with string "8" or "195" in animal name
+% antcb('selectdirs','dirs','^bad.*195$' )  
+% 
 %% select dirs containing or not containing specific files
 % 1st arg: 'selectdirs'
 % 2nd arg: 'file'
@@ -2155,6 +2213,24 @@ elseif all(strcmp(input{1},'file')) || all(strcmp(input{1},'status'))
     
     %disp(sel)
     set(lb3,'value',iselect);
+    
+    %% ===============================================
+elseif all(strcmp(input{1},'dirs'))
+    %% ===============================================
+    
+   input{2};
+   str=cellstr(input{2});
+   ix=[];
+    for i=1:length(str)
+       ixn=regexpi2(md,str{i});
+       ix=[ix; ixn(:)];
+    end
+    ix=unique(ix);
+    if ~isempty(ix)
+        set(lb3,'value',ix);
+    else
+        set(lb3,'value',[]);
+    end
     
     %% ===============================================
     

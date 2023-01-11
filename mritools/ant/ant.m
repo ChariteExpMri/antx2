@@ -159,7 +159,11 @@ end
 h = uicontrol('style','text','units','normalized','tag','status',...
     'string','status: idle','fontsize',6,'backgroundcolor',[1 1 1],'foregroundcolor', [0.2000    0.6000    1.0000],...
     'HorizontalAlignment','left','position',[[0	.56 .9  .025]],'foregroundcolor',[ 0 0 1]);
-
+   % 'ButtonDownFcn',@statusreset);
+c = uicontextmenu;
+m1 = uimenu(c,'Label','reset status'                ,                'Callback',{@status_context,'reset'});
+m1 = uimenu(c,'Label','enable animimation when busy' ,'Checked','on','Callback',{@status_context,'showanimation'},'tag','showanimation');
+set(h,'UIContextMenu',c);
 
 
 %% FUNCTIONS LISTBOX
@@ -3730,6 +3734,7 @@ end
 % drawnow;
 
 
+
 %========================================================
 function addcontextmenuLB1
 hcm=findobj(gcf,'tag','lb1');
@@ -3757,9 +3762,18 @@ if strcmp(varargin{1},'help')
     end
 end
 
+function status_context(e,e2,arg)
+if strcmp(arg,'reset')
+   antcb('status',0,''); 
+elseif strcmp(arg,'showanimation')
+     ha=findobj(findobj(0,'tag','ant'),'tag','showanimation');
+     if strcmp(ha.Checked,'off'); ha.Checked='on'; else; ha.Checked='off'; end
+end
+% arg
 
+function statusreset(e,e2)
+antcb('status',0,'');
 
-%========================================================
 function statusMsg(bool,msg)
 if exist('msg')==0; msg='';else; msg=['..' msg]; end
 hr=findobj(findobj(0,'tag','ant'),'tag','status');

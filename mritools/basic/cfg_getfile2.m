@@ -75,7 +75,10 @@ function [t,sts] = cfg_getfile2(varargin)
 %
 % This code is based on the file selection dialog in SPM5, with virtual
 % file handling turned off.
-%____________________________________________________________________________
+%__EXAMPLE__________________________________________________________________________
+%    fi=cfg_getfile2(inf,'any','',[],pwd,'.*');
+% 
+
 
 %% addit struct as 8th. input
 %% [1] search recoursively only in specified  paths
