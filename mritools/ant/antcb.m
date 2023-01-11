@@ -1622,7 +1622,7 @@ if arg==1
     si=pos(4);
     pos2=[0 pos(2)+pos(4) 0.03 0.03 ];
     set(hb,'pos',pos2);
-    set(hb, 'string',['<html><img src="file:/' which('anim4.gif') '"/></html>'],'value',1);
+    set(hb, 'string',['<html><img src="file:' which('anim4.gif') '"/></html>'],'value',1);
     %set(hb, 'string',['<html><img src="file:/'   'C:\Users\skoch\Favorites\Downloads\ezgif.com-gif-maker (1).gif' '"/></html>'],'value',1);
     
     set(hb,'units','pixels');
