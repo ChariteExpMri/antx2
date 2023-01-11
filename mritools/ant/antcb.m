@@ -493,6 +493,9 @@ if strcmp(do,'reload')
     antcb('quit');
     ant;
     if ~isempty(configfile)
+        [pa fi ext]=fileparts(configfile);
+        configfile=fullfile(pa,[fi '.m']);
+        
         antcb('load',configfile);
         lb=findobj(gcf,'tag','lb3');
         set(lb,'value',val)
