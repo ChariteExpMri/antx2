@@ -190,55 +190,55 @@
 %% #by change header (ch:)
 % change header using eather a reference file or a transformation-matrix or header of selected-file
 % story as a new file (new name as specified in column-2 /2nd input argument ...or empty to change the original file!!!)
-% - if no reference file or transformation-matrix is given, you can change: 
+% - if no reference file or transformation-matrix is given, you can change:
 %         the dataType, make dimensional flips or add a header-description
 % - dimensional flips : flip left/right; up/down and/or anterior/posterior
 % - description       : add a header description (string)
 % - datatype          : change data type of the NIFTI-image
-% #m WORKING WITH THE GUI: 
+% #m WORKING WITH THE GUI:
 % #b FIRST SELECT THE IMAGE (COLUMN-1), THAN use CONTEXTMENU/CHANGE HEADER
-% 
-% #m COMMAND LINE EXAMPLES: 
+%
+% #m COMMAND LINE EXAMPLES:
 %% =====[change header example-1]==========================================
 %% replace header of "mag.nii" using header of local image ("05_epi_mrexp2.nii"), write description "QR3"
-%% and save as "test2.nii". 
+%% and save as "test2.nii".
 %% IMPORTANT: "05_epi_mrexp2.nii" must be located in the respective animal folder
-%   z=[];                                                                                           
-%   z.files =  { 'mag.nii' 	'test2.nii' 	'ch:image:05_epi_mrexp2.nii;descrip:QR3' };                    
+%   z=[];
+%   z.files =  { 'mag.nii' 	'test2.nii' 	'ch:image:05_epi_mrexp2.nii;descrip:QR3' };
 %   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
 %% =====[change header example-2]==========================================
-%% replace header of "mag.nii" using header of external image ("F:\data5\nogui\misc\_refIMG.nii"), 
+%% replace header of "mag.nii" using header of external image ("F:\data5\nogui\misc\_refIMG.nii"),
 %% flip dimensions dim-1 and dim-2, write description "flipped", change datatType to 64
-%% and save as "test2.nii". 
+%% and save as "test2.nii".
 %% IMPORTANT: "_refIMG.nii" is not located in the animal-directory, therefore the replaced header is identical
-%% for the 'mag.nii'-images of all selected animals 
-%   z=[];                                                                                                                   
+%% for the 'mag.nii'-images of all selected animals
+%   z=[];
 %   z.files =  { 'mag.nii' 	'test2.nii' 	'ch:image:F:\data5\nogui\misc\_refIMG.nii;flipdim:[1 2];dt:[64];descrip:flipped' };
-%   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3)); 
+%   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
 %% =====[change header example-3]==========================================
 %% replace header of "mag.nii" using transformation matrix 'mat'; , change datatType to 64
 %% and save as "test2.nii"
-%   z=[];                                                                                                                   
-%   z.files =  { 'mag.nii' 	'test2.nii' 	'ch:mat:[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1];dt:64' };                                      
+%   z=[];
+%   z.files =  { 'mag.nii' 	'test2.nii' 	'ch:mat:[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1];dt:64' };
 %   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
 %% =====[change header example-4]==========================================
-%% flip dimension dim-2 of image 'mag.nii' and save as "test2.nii". 
-%   z=[];                                                                                                                   
+%% flip dimension dim-2 of image 'mag.nii' and save as "test2.nii".
+%   z=[];
 %   z.files =  { 'mag.nii' 	'test2.nii' 	'ch:flipdim:[2]' };
-%   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3)); 
+%   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
 %% =====[change header example-5]==========================================
-%% flip dimension dim-2 of image 'mag.nii' and save as "test2.nii". 
-%   z=[];                                                                                                                   
+%% flip dimension dim-2 of image 'mag.nii' and save as "test2.nii".
+%   z=[];
 %   z.files =  { 'mag.nii' 	'test2.nii' 	'ch:flipdim:[2]' };
-%   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3)); 
+%   xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
 %% =====[change header example-6]==========================================
 %% replace header of "t2_copy.nii" using transformation matrix 'mat', save changes in original image
 %% IMPORTANT: here the header of the original image is changed (2nd arg is empty)
-%   z=[];                                                                                                                   
-%   z.files =  { 't2_copy.nii' 	'' 	'ch:mat:[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1];' };                                      
-%   xrename(0,z.files(:,1),z.files(:,2),z.files(:,3)); 
-% 
-% 
+%   z=[];
+%   z.files =  { 't2_copy.nii' 	'' 	'ch:mat:[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1];' };
+%   xrename(0,z.files(:,1),z.files(:,2),z.files(:,3));
+%
+%
 %__________________________________________________________________________________________________________________
 %% #by voxel scaling (vf:)
 % change voxel scaling of an image via  the [TASK]-column
@@ -480,6 +480,8 @@ if exist('extractnum')
         extractnum=regexprep(regexprep(extractnum,'NaN',''),'\s+',' ');
         if size(he,1) == size(extractnum,1)
             he(:,3)=extractnum;
+        else
+            he(:,3)=extractnum;
             %         else
             %             error('extractnum be of same size as fi & finew');
         end
@@ -592,6 +594,45 @@ finew=he(:,2);
 volnum=he(:,3);
 he_aux={};
 recycle('on'); %set recycle-bin to on
+
+
+
+%% ===============================================
+% change prefix abbreviation
+ix=regexpi2(finew,'\$p|p:');
+if ~isempty(ix)
+    for i=1:length(ix)
+        prefix=regexprep(finew{ix(i)},'\$p|p:','');
+        if ~isempty(prefix)
+            finew{ix(i)}= [regexprep([prefix fi{i}] ,'\s+','') ];
+        end
+    end
+end
+% ===============================================
+% change prefix abbreviation
+ix=regexpi2(finew,'\$s|s:');
+if ~isempty(ix)
+    for i=1:length(ix)
+        suffix=regexprep(finew{ix(i)},'\$s|s:','');
+        if ~isempty(suffix)
+            [~, namexx,extxx ]=fileparts(fi{i});
+            finew{ix(i)}= [regexprep([  namexx  suffix extxx ] ,'\s+','') ];
+        end
+    end
+end
+% ===============================================
+
+
+
+
+
+%  return
+% xrename(1,{'c1t2.nii' 'c2t2.nii'}, {'p:V_' 'p:M_'},{':' ':'});
+% xrename(1,{'c1t2.nii' 'c2t2.nii'}, {'$pV_' '$pM_'},{':' ':'}); % idential..
+% xrename(1,{'c1t2.nii' 'c2t2.nii'}, {'p:V_' 'p:M_'},{':' ':'});
+% xrename(0,{'c1t2.nii' 'c2t2.nii'}, {'s:_as' 's:bs'},{':' ':'});
+% xrename(0,{'c1t2.nii' 'c2t2.nii'}, {'$s_as' '$sbs'},{':' ':'});% idential..
+%% ===============================================
 
 for i=1:length(pa)      %PATH
     for j=1:length(fi)  %FILE
@@ -734,13 +775,13 @@ for i=1:length(pa)      %PATH
                             x=struct();
                         end
                         if exist('code2')==1
-                           x.mat= str2num(regexprep(code2,'mat:',''));
+                            x.mat= str2num(regexprep(code2,'mat:',''));
                         end
                         
                         
                         %x.image='';
                         % x.mat='304 04';
-                        if isfield(x,'mat'); 
+                        if isfield(x,'mat');
                             if ischar(x.mat);   x.mat=str2num(x.mat); end
                             if isempty(x.mat)
                                 x=rmfield(x,'mat');
@@ -749,7 +790,7 @@ for i=1:length(pa)      %PATH
                         if isfield(x,'image');
                             [IMGpa IMGname IMGext]=fileparts(x.image);
                             if isempty(IMGpa) %local animal path
-                               x.image=fullfile(fileparts(s1), [IMGname IMGext]);
+                                x.image=fullfile(fileparts(s1), [IMGname IMGext]);
                             end
                             
                             
@@ -785,7 +826,7 @@ for i=1:length(pa)      %PATH
                         end
                         
                         [hb b]=rgetnii(s1);                 %get file
-                      
+                        
                         [pas2 names2 exts2]=fileparts(s2);  % specal case:overwrite file
                         if isempty(names2)
                             s2=s1;
@@ -799,8 +840,8 @@ for i=1:length(pa)      %PATH
                             %copyfile(s1,s2,'f');
                         end
                         
- 
-                        %hb.mat=M2;                      
+                        
+                        %hb.mat=M2;
                         for jj=1:length(hb)
                             hb(jj).mat=matN;                    % CHANGE MAT
                         end
@@ -816,9 +857,9 @@ for i=1:length(pa)      %PATH
                         
                         
                         
-                         rsavenii( s2 , hb, b,dt);
-                         
-                         
+                        rsavenii( s2 , hb, b,dt);
+                        
+                        
                         if isfield(x,'flipdim')           %FLIP-DIMENSION
                             try; x.flipdim=str2num(x.flipdim); end
                             if length(x.flipdim)<=3
@@ -841,15 +882,15 @@ for i=1:length(pa)      %PATH
                                 end
                             end
                         end
-                       
+                        
                         %% =========check/debug======================================
                         
                         if 0
-%                             rclosemricron
-%                             rmricron([],s1);
+                            %                             rclosemricron
+                            %                             rmricron([],s1);
                             rmricron([],s2);
                         end
-                                       
+                        
                         if x.usedMethod==0 && length(fieldnames(x))==1
                             msgHDR='(file copied only)';
                         else
@@ -873,6 +914,77 @@ for i=1:length(pa)      %PATH
                         continue
                     end
                     
+                elseif  ~isempty(regexpi2(volnum(j),'^R:|^replace:|^repl:'))...%replace
+                        
+                %                     ~isempty(strfind(volnum{j},'repl:')) || ...%replace
+                %                         ~isempty(strfind(volnum{j},'replace:')) || ...
+                %                         ~isempty(strfind(volnum{j},'R:'))
+                %% ===============================================
+                
+                code=volnum{j};
+                
+%                 code='R:0;ME'
+%                 code='R:<0;ME'
+%                 code='R:<=0;MED'
+%                 code='R:<=0;3'
+%                 code='R: 0;nan'
+%                 code='R: nan;5'
+%                 code='R: inf;7'
+%                 code='R: >0;100'
+%                 code='R: >=0;100;'
+                
+                m=regexprep(code,'^R:|^replace:|^repl:','');
+                
+                in=strsplit(m,';');
+                
+                
+                [ha a ]=rgetnii(s1);
+                a2=a(:);
+               % a2(a2==0)=nan;
+                %a2(a2==0)=inf;
+                if isempty(regexpi2(in{1},{'<|>|='}))
+                    if ~isempty(regexpi2(in{1},{'nan|NaN|NAN'}))
+                      w=  ['iv=find(isnan(a2));'];
+                    elseif ~isempty(regexpi2(in{1},{'inf|INF'}))
+                      w=  ['iv=find(isinf(a2));'];
+                    else
+                    w=['iv=find(a2==' in{1} ');'];
+                    end
+                else
+                    
+                    w=['iv=find(a2' in{1} ');'];
+                    
+                end
+                eval(w);
+                av=a2;
+                av(iv)=[]; 
+                if strcmp(in{2},'ME') || strcmp(in{2},'MED')
+                    if     strcmp(in{2},'ME' ) ;   me=mean(av);
+                    elseif strcmp(in{2},'MED') ;   me=median(av);
+                    end
+                    sd=std(av);
+                    r=randn(length(a2),1);
+                    r=r./std(r);
+                    r=r-mean(r);
+                    r=r*sd;
+                    r=r+me;
+                    a2(iv)=r(1:length(iv));
+                elseif isnumeric(str2num(in{2}))
+                    a2(iv)=str2num(in{2});
+                end
+                a2=reshape(a2,size(a));
+                rsavenii(s2 ,ha,a2,64);
+               % montage2(a2)
+
+               if isDesktop==1
+                   showinfo2('',s2,[],'',sprintf('  VALUES:[in]:%s;[out]:%s',in{1},in{2}) );
+               else
+                   disp(['New IMG with replaced Values: ' s2 ';' ...
+                       sprintf('  [in]:%s;[out]: %s',in{1},in{2}) ]);
+               end
+                
+                %% ===============================================
+                
                 elseif strfind(volnum{j},'vr:'); %vox factor
                     % ==============================================
                     %% voxel resolution
@@ -1608,7 +1720,8 @@ function pan_callback(e,e2,task)
 if strcmp(task,'pop1')
     he=findobj(gcf,'tag','pan_ed_col2');
     hb=findobj(gcf,'tag','pan_pop_col2');
-    set(he,'string',hb.String{hb.Value});
+    insert=regexprep(hb.String{hb.Value},{'(.*\)','\s+'},'');
+    set(he,'string',insert);
 elseif strcmp(task,'pop2')
     he=findobj(gcf,'tag','pan_ed_col3');
     hb=findobj(gcf,'tag','pan_pop_col3');
@@ -1668,7 +1781,7 @@ if ~strcmp(task,'showimageinfo')
         
         list1=unique(ht.Data(:,2));
         list1(strcmp(list1, ''))=[];
-        list1=[list1 ; {''} ;'_test1.nii' ; '_test2.nii' ];
+        list1=[list1 ; {''} ;'_test1.nii'  ;'_test2.nii' ;'p:V_ (add prefix "V_")'; 's:_s (add suffix "_s")' ];
         
         hb=uicontrol(hp,'style','popupmenu','units','norm','tag','pan_pop_col2');
         set(hb,'position',[.55  .6 .45 .2],'string',list1);
@@ -1763,7 +1876,7 @@ if ~strcmp(task,'showimageinfo')
             'mat'      [] 'ALTERNATIVE TO "imageSource": use this transformation-matrix instead (if "mat" is used, keep "image" empty) ' {'1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1'}
             'flipdim'  [] 'flip dimensions by index {1,2,3}: {1} Left/Right, {2} up/down and/or {3} anterior/posterior ... for the respective dimension: example [1 2]: flips L/R and up/down  dimension  ' {'' '1 2' '2' '1' '1 2 3'  }'
             'dt'       [] 'change dataType of the stored image; (empty: preserve orig. dataType)'  { [] 2      4      8   16   64}
-            'descrip'  '' 'add arbitrary description {string} in the description-field of the header'  {'' '..test any text can be provided here' 't2w-image'} 
+            'descrip'  '' 'add arbitrary description {string} in the description-field of the header'  {'' '..test any text can be provided here' 't2w-image'}
             };
         
         hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
@@ -1781,18 +1894,18 @@ if ~strcmp(task,'showimageinfo')
             dx=(getfield(z,fn{j}));
             
             if ~isempty(dx)
-             if isnumeric(dx)
-                 if size(dx,1)==1
-                dx=['[' num2str(dx)  ']'];
-                 else
-                     dx=strjoin(cellstr(num2str(dx)),';');
-                     dx=['[' (dx)  ']'];
-                 end
-                dx=regexprep(dx,'\s+' ,' '); 
-            end   
+                if isnumeric(dx)
+                    if size(dx,1)==1
+                        dx=['[' num2str(dx)  ']'];
+                    else
+                        dx=strjoin(cellstr(num2str(dx)),';');
+                        dx=['[' (dx)  ']'];
+                    end
+                    dx=regexprep(dx,'\s+' ,' ');
+                end
                 
                 
-            t1(end+1,1)={ [fn{j} ':'  dx ]};
+                t1(end+1,1)={ [fn{j} ':'  dx ]};
             end
         end
         if isempty(t1)
@@ -2185,7 +2298,9 @@ tb  = repmat({''},[size(fifull2,1)  ,4]);
 tbh ={'Ndims' 'size' 'resolution' 'origin'} ;
 for i=1:size(fifull2,1)
     try
-        ha=spm_vol(fifull2{i});
+        %         ha=spm_vol(fifull2{i});
+        [msg,ha]=evalc('spm_vol(fifull2{i});');
+        
         ha0=ha;
         ha=ha(1);
         if length(ha0)==1

@@ -3394,7 +3394,25 @@ elseif   iscellmode>=1
        pulldownStr(is)= cellfun(@(a){['[' regexprep(strjoin(cellstr(num2str(a)),';'),'\s+',' ')     ']' ]} ,pulldownStr(is));
     end
 
-    pulldownStr=cellfun(@(a){[num2str(a)]} ,pulldownStr);
+    if length(pulldownStr)==2 && strcmp(pulldownStr{1},'cmap') && iscell(pulldownStr{2}) % CMAP but colors -not specified
+        if isempty(pulldownStr{2})
+            [cmap cmapHTML]=getCMAP();
+            pulldownStr=cmapHTML;
+            pulldown   ={'cmap' cmapHTML};
+        else    % CMAP but some colors specified in advance
+            try
+                [cmapHTML]=getCMAP('html',pulldownStr{2});
+                [cmap    ]=getCMAP(pulldownStr{2});
+                pulldownStr=cmapHTML;
+                pulldown   ={'cmap' cmapHTML};
+            catch
+                pulldownStr=cellfun(@(a){[num2str(a)]} ,pulldownStr{2});
+                
+            end
+        end
+    else
+        pulldownStr=cellfun(@(a){[num2str(a)]} ,pulldownStr);
+    end
     %char(pulldownStr)
     
     %% ===============================================
@@ -3405,6 +3423,7 @@ elseif   iscellmode>=1
         'string',pulldownStr,'backgroundcolor',[1 .8 .43 ]);
     set(pd,'units','pixels');
     u.options=pulldown;
+    u.pulldownStr=pulldownStr;
     set(pd,'userdata',u);
     %     hbut= findobj(gcf,'tag','open');
     try
@@ -3870,7 +3889,12 @@ end
 % return
 % carpos=r.getCaretPosition();
 u=pb.UserData;
-newtag=u.options{va};
+if length(u.options)==2 && strcmp(u.options{1},'cmap') && iscell(u.options{2}) %CMAP
+    nt=u.options{2}{va};
+    newtag=regexprep( [nt ], {'<.*?>' '&#.*;'  '\s+'  '\[\d+]' }, '' );
+else
+    newtag=u.options{va};
+end
 %% ===============================================
 
 % newtag=[3];

@@ -2018,7 +2018,9 @@ end
 % ================================================================================
 % SELECTDIRS - SELECT MOUSE DIRECTORIES in ANT-GUI:
 %  specify either (all dirs),(via id),(via existing/nonexisting file within folder) or (from list)
+% use "selectdirs" or "sel" to select directories
 % EXAMPLES:
+% antcb('sel')                 ;%select all directories
 % antcb('selectdirs')          ;%select all directories
 % antcb('selectdirs','all');                          ;%(same as above )select all directories
 % antcb('selectdirs','none');                         ;%select no animal folder (deselect all)
@@ -2053,7 +2055,8 @@ end
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'|');   %same as previous line
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'ornot'); %select all dirs not containing either 't2.nii' or 'x_t2.nii'
 % antcb('selectdirs','file',{'t2.nii' 'x_t2.nii'},'~|');    %same as previous line
-%
+% antcb('sel','file','mag.nii|wer.nii|t2.nii')             % select all dirs containing 'mag.nii' or 'wer.nii' or 't2.nii'
+% 
 % -----------[ SLECT DIRS BY STATUS-MESSAGE]----------------------------------------------------
 % note status has be be set in advance!
 %% select all animals with status-tag "charge1"
@@ -2146,7 +2149,7 @@ elseif isnumeric(input{1})
     iselect=isect;
     set(lb3,'value',iselect);
     % elseif ~isempty(strfind(char(input{1}),'.nii') )
-elseif all(strcmp(input{1},'file')) || all(strcmp(input{1},'status'))
+elseif all(strcmp(input{1},'file')) || all(strcmp(input{1},'status')) || all(strcmp(input{1},'files'))
     %% =================find file(s) in folder ===========
     if strcmp(input{1},'status')
         hb=findobj(findobj(0,'tag','ant'),'tag','lb3');
@@ -2178,6 +2181,18 @@ elseif all(strcmp(input{1},'file')) || all(strcmp(input{1},'status'))
         else
             files=input{2};
         end
+        % in case of "|"-tags ('mag.nii|klaus.nii') --> split
+        or_char=0;
+        if ~isempty(regexpi2(files,'\|'))
+            dum0={};
+            for i=1:length(files)
+                dum=strsplit(char(files(i)),'|');
+                dum0=[dum0; (dum(:))];
+            end
+            files=dum0;
+            or_char=1;
+        end
+        
         isexist=zeros(size(fp,1), length(files));
         for i=1:length(fp)
             for j=1:length(files)
@@ -2200,6 +2215,9 @@ elseif all(strcmp(input{1},'file')) || all(strcmp(input{1},'status'))
             oper='or';
         else
             oper='and';
+            if or_char==1
+              oper='or' ;  
+            end
         end
     end
     
@@ -2218,7 +2236,7 @@ elseif all(strcmp(input{1},'file')) || all(strcmp(input{1},'status'))
     set(lb3,'value',iselect);
     
     %% ===============================================
-elseif all(strcmp(input{1},'dirs'))
+elseif all(strcmp(input{1},'dirs')) || all(strcmp(input{1},'dir'))
     %% ===============================================
     
    input{2};

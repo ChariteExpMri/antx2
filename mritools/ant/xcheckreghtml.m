@@ -160,10 +160,12 @@ if 1
     li=unique(fi2);
 end
 
-cmapList=[ {''} getcmapList];
-try; 
-    cmapList=[cmapList lutmap('show')'];
-end
+% cmapList=[ {''} getcmapList];
+% try; 
+%     cmapList=[cmapList lutmap('show')'];
+% end
+[cmap cmapHTML]=getCMAP();
+cmapHTML=[{''}; cmapHTML];
 
 %% ________________________________________________________________________________________________
 %%  PARAMETER-gui
@@ -184,8 +186,8 @@ p={...
     'gridspace'  20  'Space between grid lines (in pixels)'  { 5 10 20 30}
     'gridcolor'   [1 0 0] 'Grid color'  'col'
     'inf2'   '__optional___' '' ''
-    'cmapB'           ''      '<optional> specify BG-color; otherwise leave empty'  cmapList
-    'cmapF'           ''      '<optional> specify FG-color; otherwise leave empty'  cmapList
+    'cmapB'           ''      '<optional> specify BG-color; otherwise leave empty'  {'cmap' cmapHTML}
+    'cmapF'           ''      '<optional> specify FG-color; otherwise leave empty'  {'cmap' cmapHTML}
     'showFusedIMG'   0  '<optional> show the fused image'   'b'
     'sliceadjust'    0  'intensity adjust slices separately; [0]no; [1]yes' 'b'  
     };
@@ -259,7 +261,8 @@ end
 
 %% ===== colormaps ==========================================
 function cmaplist=getcmapList();
-colormapeditorString = fileread(strcat(matlabroot,'\toolbox\matlab\graph3d\colormapeditor.m'));
+% colormapeditorString = fileread(strcat(matlabroot,'\toolbox\matlab\graph3d\colormapeditor.m'));
+colormapeditorString = fileread(which('colormapeditor.m'));
 posStart = strfind(colormapeditorString,'stdcmap(maptype');
 posEnd = strfind(colormapeditorString(posStart:end),'end') + posStart;
 stdcmapString = colormapeditorString(posStart:posEnd);

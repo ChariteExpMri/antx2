@@ -168,30 +168,38 @@ if isColor==1;   % test color
 % %    o3=repmat(o3,[1 1 3]);
 %    [d3,cmap1] = rgb2ind(d3,gray);
 %    B=o3;
+cmapB=getCMAP(par.cmapB);
+if size(cmapB,1)>52
+    cmapB= cmapB(round(linspace(1,size(cmapB,1),52)), :) ;
+end
+cmapF=getCMAP(par.cmapF);
+if size(cmapF,1)>52
+    cmapF= cmapF(round(linspace(1,size(cmapF,1),52)), :) ;
+end
 
-    try;      cmapB=lutmap(par.cmapB);
-        if size(cmapB,1)>52
-           cmapB= cmapB(round(linspace(1,size(cmapB,1),52)), :) ;
-        end
-    catch;    cmapB=eval(par.cmapB);
-    end
-
-    try;      cmapF=lutmap(par.cmapF);
-         if size(cmapF,1)>52
-           cmapF= cmapF(round(linspace(1,size(cmapF,1),52)), :) ;
-        end
-    catch;    
-        cmapF=eval(par.cmapF);
-    end
+%     try;      cmapB=lutmap(par.cmapB);
+%         if size(cmapB,1)>52
+%            cmapB= cmapB(round(linspace(1,size(cmapB,1),52)), :) ;
+%         end
+%     catch;    cmapB=eval(par.cmapB);
+%     end
+% 
+%     try;      cmapF=lutmap(par.cmapF);
+%          if size(cmapF,1)>52
+%            cmapF= cmapF(round(linspace(1,size(cmapF,1),52)), :) ;
+%         end
+%     catch;    
+%         cmapF=eval(par.cmapF);
+%     end
 
  
-    if size(cmapB,1)>52
-        cmapB= cmapB(round(linspace(1,size(cmapB,1),52)), :) ;
-    end
-    if size(cmapF,1)>52
-        cmapF= cmapF(round(linspace(1,size(cmapF,1),52)), :) ;
-    end
-    
+%     if size(cmapB,1)>52
+%         cmapB= cmapB(round(linspace(1,size(cmapB,1),52)), :) ;
+%     end
+%     if size(cmapF,1)>52
+%         cmapF= cmapF(round(linspace(1,size(cmapF,1),52)), :) ;
+%     end
+%     
 
 %    cmapB=eval(par.cmapB);
 %    cmapF=eval(par.cmapF);
