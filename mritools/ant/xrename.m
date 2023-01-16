@@ -1,17 +1,25 @@
 
 %% #bc [xrename] RENAME/DELETE/EXTRACT/EXPAND/COPY file(s) from selected ant-mousefolders
-% #wb THESE TAKSKS CAN BE PERFORMED IN THE MOMENT:
-% #b - rename file
-% #b - copy+rename file
-% #b - delete file
-% #b - extract/exand 4d file
-% #b - mathematical operation (masking, roi extraction, combining images) ..see below
-% #b - set voxel resolution
-% #b - change dataType
-% #b - scale image by voxel factor
-% #b - threshold image
-% #b - change header
-%
+% #wb THESE TAKSKS CAN BE PERFORMED:
+% #b - rename file                     (EMPTY)
+% #b - copy+rename file                ('copy' or ':')
+% #b - delete file                     ('##' or 'del' or 'delete')
+% #b - extract (keep 4D image)         (IDX)           #g e.g: '1:3'   | ':'  | '[2 3]'  OR  '2:end-3'
+% #b - expand (4D-image to 3D images)  (IDXs)          #g e.g: '1:3s'  | ':s' | '[2 3]s' OR  '2:ends-3'
+% 
+% #b - change voxel & image resolution ('vr:')         #g e.g.: 'vr: .1 .1 .1'  | 'vr: .1' OR 'vr: nan nan 0.1'
+%      ..also the image is changed
+% #b - change voxel size onle          ('vs:')         #g e.g.: 'vs: .1 .1 .1'  | 'vs: .1' OR 'vs: nan nan 0.1'
+%      ..only the header is changed
+% #b - scale image by voxel factor     ('vf:')         #g e.g.: 'vf:3'          | 'vf:1 1 0.5'
+%      ..also the image is changed
+% #b - change header                   ('ch:')         #g e.g.: 'ch:mat:[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1];dt:64'  | 'ch:descrip:hallo' | 'ch:dt:64'
+% #b - mathematical operation (masking ('mo:')         #g e.g.: see below
+% #b - change dataType                 ('dt:')         #g e.g.: 'dt: 64'  | 'dt:16'
+% #b - threshold image                 ('tr:')         #g e.g.: 'tr:i>0.5=0'
+% #b - Replace value by another value: ('R:' or 'repl:' or 'replace:') #g e.g.: 'R:<=0;1' | 'R:nan;ME'
+% 
+% 
 % % __________________________________________________________________________________________________________________
 % - select one/several images TO RENAME/DELETE/EXTRACT/EXPAND/COPY volumes,aka. files
 % - dirs:  works on preselected dirs (not all dirs), i..e mouse-folders in [ANT] have to be selected before
@@ -23,6 +31,15 @@
 % __________________________________________________________________________________________________________________
 % #yg GUI-USAGE________________________________________________
 %
+%% #lk NEW FILENAME-COLUMN
+% -enter a new filename here, for NIFTI-file(s) no file-extension (.nii) needed
+% -alternatively you can define a PREFIX or SUFFIX here which will be appended to the input-filename:
+% -for PREFIX: enter:  'p:V_'  if the input-image is 'v1.nii' the output-file is 'V_v1.nii'
+%              commandline example to copy and rename a file:  xrename(1,'v1.nii','p:V_',':'); 
+% -for SUFFiX: enter:  's:V_'  if the input-image is 'v1.nii' the output-file is 'v1_s.nii'
+%              commandline example to copy and rename a file: xrename(1,'v1.nii','s:_s',':');   
+% #r -IF the FILENAME-COLUMN is EMPTY the original file will be overwritten !!!
+% 
 %% CONTEXT MENU
 % Select a file/several files from first column and use the #b context menu.
 % The options from the context menu can be used to fill the 2nd (new name) and 3rd column (task)
@@ -115,6 +132,24 @@
 %% ---------------------------------------------------------------
 %__________________________________________________________________________________________________________________
 %
+%% #by REPLACE VALUE BY ANOTHER VALUE
+% Replaces in a 3D/4D image a specific values by another value
+% - TAG: 'R:' or 'repl:' or 'replace:'
+% - ARGs: INPUTVALUE SEMICOLON REPLACING-VALUE
+%  ARGs-EXAMPLES: 
+% 'R:0;ME'          replace zeros with Normally distributed data with mean and STD of the image                       
+% 'R:<0;ME'         replace values below 0 with Normally distributed data with mean and STD of the image                  
+% 'R:<=0;MED'       replace values below 0 with Normally distributed data with median and STD of the image                                            
+% 'R:<=0;3'         replace values below 0 with value 3                  
+% 'R:0;nan'         replace zeros with NaN                  
+% 'R:nan;5'         replace NANs with value 5                  
+% 'R: inf;7'        replace INFs with value 7                    
+% 'R: >0;100'       replace values above 0 with value 100                   
+% 'R: >=0;100;'     replace values equal/above 0 with value 100                        
+%  EXAMPLES: 
+%  xrename(1,'v4D3.nii','v4D3_mod.nii','R:<40;1'); % replace values<40 with 1 in image 'v4D3.nii' and store as 'v4D3_mod.nii'
+%  xrename(1,'v1.nii','v1_0.nii','R:0;ME');        % replace zeros with data with mean and STD of the image in 'v1.nii' and store as 'v1_0.nii' 
+% 
 %% #by Threshold Image (tr:)
 % threshold image and save as new file
 % filled task code in column-3, EXAMPLES:
@@ -181,11 +216,23 @@
 %__________________________________________________________________________________________________________________
 %% #by voxel resolution (vr:)
 % change voxel resolution of an image via  the [TASK]-column
+% IMPORTANT: HERE THE IMAGE WILL BE CHANGED wrt the new voxelsize!!!
 % example: in [TASK]-column type :  "vr: .1 .1 .1" to change the voxel resolution of an image (previous vox resolution was: [.09 .09 .09])
 %          "vr: .1 .1 .1"  this is identical to "vr: .1"
 % #g change voxel resolution of 'AVGT.nii' to [.1 .1 .1] and save as 'test33.nii'
 % z.files={ 'AVGT.nii' 	'test33.nii' 	'vr: .1' };
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
+%__________________________________________________________________________________________________________________
+%% #by voxel size (vs:)
+% set voxel size of an image via  the [TASK]-column
+% IMPORTANT: ONLY THE VOXELSIZE IN THE HEADER IS CHANGED (IMAGE IS NOT CHANGED)!!!
+% example: in [TASK]-column type :  "vs: .1 .1 .1" to set the voxel size of an image (previous vox resolution was: [.09 .09 .09])
+%          "vs: .1 .1 .1"  this is identical to "vs: .1"
+% #g set voxel size to [.07 .07 .1] and save as 'v1Z.nii' 
+% xrename(1,'v1.nii','v1Z.nii','vs: .07 .07 .1');
+% set voxel size of the 2nd dimension to 0.07 preserve vox size of dim1 and dim3 and save as 'v1Z.nii' 
+% xrename(1,'v1.nii','v1Z.nii','vs: nan .07 nan');
+% 
 %__________________________________________________________________________________________________________________
 %% #by change header (ch:)
 % change header using eather a reference file or a transformation-matrix or header of selected-file
@@ -913,12 +960,12 @@ for i=1:length(pa)      %PATH
                         disp('problem to change header');
                         continue
                     end
-                    
+                
+                %% ===============================================    
+                %%   REPLACE VALUES    ('R:' or 'replace:' or 'repl:')
+                %% ===============================================
                 elseif  ~isempty(regexpi2(volnum(j),'^R:|^replace:|^repl:'))...%replace
                         
-                %                     ~isempty(strfind(volnum{j},'repl:')) || ...%replace
-                %                         ~isempty(strfind(volnum{j},'replace:')) || ...
-                %                         ~isempty(strfind(volnum{j},'R:'))
                 %% ===============================================
                 
                 code=volnum{j};
@@ -935,45 +982,56 @@ for i=1:length(pa)      %PATH
                 
                 m=regexprep(code,'^R:|^replace:|^repl:','');
                 
-                in=strsplit(m,';');
+                %in=strsplit(m,';');
+                in=strsplit(m,{';',','});
                 
+                %% ===============================================
                 
                 [ha a ]=rgetnii(s1);
-                a2=a(:);
-               % a2(a2==0)=nan;
-                %a2(a2==0)=inf;
-                if isempty(regexpi2(in{1},{'<|>|='}))
-                    if ~isempty(regexpi2(in{1},{'nan|NaN|NAN'}))
-                      w=  ['iv=find(isnan(a2));'];
-                    elseif ~isempty(regexpi2(in{1},{'inf|INF'}))
-                      w=  ['iv=find(isinf(a2));'];
+                ao=zeros(size(a));
+                for jj=1:size(a,4) %over-4D
+                    
+                    a1=a(:,:,:,jj);
+                    a2=a1(:);
+     
+                    if isempty(regexpi2(in{1},{'<|>|='}))
+                        if ~isempty(regexpi2(in{1},{'nan|NaN|NAN'}))
+                            w=  ['iv=find(isnan(a2));'];
+                        elseif ~isempty(regexpi2(in{1},{'inf|INF'}))
+                            w=  ['iv=find(isinf(a2));'];
+                        else
+                            w=['iv=find(a2==' in{1} ');'];
+                        end
                     else
-                    w=['iv=find(a2==' in{1} ');'];
+                        w=['iv=find(a2' in{1} ');'];
                     end
-                else
+                    eval(w);
                     
-                    w=['iv=find(a2' in{1} ');'];
-                    
-                end
-                eval(w);
-                av=a2;
-                av(iv)=[]; 
-                if strcmp(in{2},'ME') || strcmp(in{2},'MED')
-                    if     strcmp(in{2},'ME' ) ;   me=mean(av);
-                    elseif strcmp(in{2},'MED') ;   me=median(av);
+                    av=a2;
+                    av(iv)=[];
+                    if strcmp(in{2},'ME') || strcmp(in{2},'MED')
+                        if     strcmp(in{2},'ME' ) ;   me=mean(av);
+                        elseif strcmp(in{2},'MED') ;   me=median(av);
+                        end
+                        sd=std(av);
+                        r=randn(length(a2),1);
+                        r=r./std(r);
+                        r=r-mean(r);
+                        r=r*sd;
+                        r=r+me;
+                        a2(iv)=r(1:length(iv));
+                    elseif isnumeric(str2num(in{2}))
+                        a2(iv)=str2num(in{2});
                     end
-                    sd=std(av);
-                    r=randn(length(a2),1);
-                    r=r./std(r);
-                    r=r-mean(r);
-                    r=r*sd;
-                    r=r+me;
-                    a2(iv)=r(1:length(iv));
-                elseif isnumeric(str2num(in{2}))
-                    a2(iv)=str2num(in{2});
-                end
-                a2=reshape(a2,size(a));
-                rsavenii(s2 ,ha,a2,64);
+                    
+                    
+                    a2=reshape(a2,size(a1));
+                    ao(:,:,:,jj)=a2;
+                end %over-4D
+                %% ===============================================
+                
+                
+                rsavenii(s2 ,ha,ao,64);
                % montage2(a2)
 
                if isDesktop==1
@@ -985,13 +1043,14 @@ for i=1:length(pa)      %PATH
                 
                 %% ===============================================
                 
-                elseif strfind(volnum{j},'vr:'); %vox factor
+                elseif ~isempty(strfind(volnum{j},'vr:')) || ~isempty(strfind(volnum{j},'vs:'))
                     % ==============================================
-                    %% voxel resolution
+                    %% voxel resolution (change image also) or
+                    %% voxel size (change header only)
                     % ===============================================
                     try
                         code=volnum{j};
-                        vox=str2num(regexprep(code,'vr:' ,''));
+                        vox=str2num(regexprep(code,{'vr:' 'vs:'} ,''));
                         if length(vox)==1; vox=repmat(vox ,[1 3]); end
                         
                         [ha a ]=rgetnii(s1);
@@ -1001,21 +1060,41 @@ for i=1:length(pa)      %PATH
                             interp=1;
                         end
                         [BB voxold]=world_bb(s1);
+                        
+                        if any(isnan(vox))
+                           inan=isnan(vox);
+                           vox(inan)=voxold(inan);
+                        end
                         delete(s2);
-                        resize_img5(s1,s2, vox, BB, [], interp);
+                        if ~isempty(strfind(volnum{j},'vr:'))
+                            resize_img5(s1,s2, vox, BB, [], interp);
+                            msg='New IMG (altered voxsize and altered image):';
+                            err='problem to change voxel resolution (''vr:'')';
+                        elseif ~isempty(strfind(volnum{j},'vs:'))
+                           msg='New IMG (altered voxsize):';
+                           err='problem to change voxel size (''vs:'')';
+                           
+                           hb=ha(1);
+                           vec=spm_imatrix(hb.mat);
+                           vec(7:9)=vox;
+                           hb.mat=spm_matrix(vec);
+                           rsavenii(s2 , hb, a);
+                           
+                        end 
                         voxsi=sprintf('[%2.3f %2.3f %2.3f]',  voxold(1), voxold(2), voxold(3));
                         voxsi2=sprintf('[%2.3f %2.3f %2.3f]', vox(1)   , vox(2)     ,vox(3));
                         
                         if isDesktop==1
-                            disp(['New IMG with altered voxSize: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
-                                ' new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
+%                             disp([msg '<a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
+%                                 ' new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
+                            showinfo2(msg, s2,'','',[' new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
                         else
-                            disp(['New IMG with altered voxSize: ' s2 '; new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
+                            disp([msg  s2 '; new voxSize: ' voxsi2    ' (previous voxSize: ' voxsi ')' ]);
                         end
                         
                         try; delete(regexprep(s2,'.nii$','.mat')); end
                     catch
-                        disp('problem with voxel resolution');
+                        disp(err);
                         continue
                     end
                 elseif ~isempty( regexpi(volnum{j} ,'^i\d+')  )
@@ -1058,6 +1137,7 @@ for i=1:length(pa)      %PATH
                         code=regexprep(code,rep1,rep2);
                         
                         code=regexprep(code,{ ['tr:' '\s+']  'i' '=' },{'' 'a2(a2' ')='});
+                        code=regexprep(code,{'tr:'},{''});
                         code=[code ';'];
                         code=regexprep(code,rep2,rep1);
                         
@@ -1510,7 +1590,8 @@ if isFig==0
     
     %% HELP
     pb=uicontrol('style','pushbutton','units','norm','position',[.45 0 .15 .03 ],'string','Help','fontweight','bold','backgroundcolor','w',...
-        'callback',   'uhelp(getappdata(gcf,''phelp''),1); set(gcf,''position'',[    0.2938    0.4094    0.6927    0.4933 ]);'          );%@renameFile
+        'callback' ,@getHELP);
+%         'callback',   'uhelp(getappdata(gcf,''phelp''),1); set(gcf,''position'',[    0.2938    0.4094    0.6927    0.4933 ]);'          );%@renameFile
     set(pb,'tooltipstring','get some help');
     set(pb,'units','pixels');
     
@@ -1652,7 +1733,8 @@ end
 uiresume(gcf);
 
 
-
+function getHELP(e,e2)
+uhelp([mfilename '.m']);
 
 function filterfilelist(e,e2)
 
@@ -1688,7 +1770,13 @@ hs = uimenu(cmenu,'label','enter 2nd & 3rd column extended',     'Callback',{@hc
 hs = uimenu(cmenu,'label','copy & rename file'    ,         'Callback',{@hcontext, 'copyNrename'},'separator','off');
 hs = uimenu(cmenu,'label','rename file'           ,         'Callback',{@hcontext, 'rename'},'separator','off');
 
-hs = uimenu(cmenu,'label','clear all fields'      ,         'Callback',{@hcontext, 'clearfields'},'separator','on');
+hs = uimenu(cmenu,'label','<html><font color=orange>clear SELECTION: all fields'      ,  'Callback',{@hcontext, 'clearfields_sel'}      ,'separator','on');
+hs = uimenu(cmenu,'label','<html><font color=orange>clear SELECTION: "NEW FILENAME"'  ,  'Callback',{@hcontext, 'clearfields_sel_file'} ,'separator','off');
+hs = uimenu(cmenu,'label','<html><font color=orange>clear SELECTION: "TASK"'          ,  'Callback',{@hcontext, 'clearfields_sel_task'} ,'separator','off');
+
+hs = uimenu(cmenu,'label','<html><font color=red   >clear ALL: all fields'            ,  'Callback',{@hcontext, 'clearfields'}          ,'separator','on');
+hs = uimenu(cmenu,'label','<html><font color=red   >clear ALL: "NEW FILENAME"'        ,  'Callback',{@hcontext, 'clearfields_file'}     ,'separator','off');
+hs = uimenu(cmenu,'label','<html><font color=red   >clear ALL: "TASK"'                ,  'Callback',{@hcontext, 'clearfields_task'}     ,'separator','off');
 
 hs = uimenu(cmenu,'label','delete file'           ,         'Callback',{@hcontext, 'deleteFile'},'separator','on');
 
@@ -1781,7 +1869,7 @@ if ~strcmp(task,'showimageinfo')
         
         list1=unique(ht.Data(:,2));
         list1(strcmp(list1, ''))=[];
-        list1=[list1 ; {''} ;'_test1.nii'  ;'_test2.nii' ;'p:V_ (add prefix "V_")'; 's:_s (add suffix "_s")' ];
+        list1=[list1 ; {''} ;'_test1.nii'  ;'_test2.nii' ;'p:V_ (ADD FILENAME-PREFIX: here "V_")'; 's:_s (ADD FILENAME-SUFFIX: here "_s")' ];
         
         hb=uicontrol(hp,'style','popupmenu','units','norm','tag','pan_pop_col2');
         set(hb,'position',[.55  .6 .45 .2],'string',list1);
@@ -1805,10 +1893,40 @@ if ~strcmp(task,'showimageinfo')
             '1:ends'  'expand entire 4D-file to separate 3D-files ("1:ends")'
             '1:3s'    'expand the first 3D-volumes of 4D-file to separate 3D-files ("1:3s")'
             ''        'empty this field'
-            'tr: i<=3=0'               'threshold image: set all values <=3 to ZERO  '
-            'tr: i<=3=1;i>20=20;'  'threshold image: set all values <=3 to ONE; and values >20 t0 20  '
-            'tr: i~=0=1;'          'threshold image: set all non-zero values to ONE'
+            'tr: i<=3=0'               'THRESHOLD image: set all values <=3 to ZERO  '
+            'tr: i<=3=1;i>20=20;'      'THRESHOLD image: set all values <=3 to ONE; and values >20 t0 20  '
+            'tr: i~=0=1;'              'THRESHOLD image: set all non-zero values to ONE'
+            'R:0;ME'                   'REPLACE values: zeros replaced by data defined by MEAN&STD of IMAGE)'
+            'R:<2;2'                   'REPLACE values: value of two replace by two'
+            'dt:64'                    'DATA-TYPE: set data-type to 64'
+            'vr: 0.1 0.1 0.1'          'VOXEL-RESOLUTION: change voxelresolution to [0.1 0.1 0.1]'
+            'vr: nan 0.1 nan'          'VOXEL-RESOLUTION: change 2nd dim of voxelresolution to [0.1] keep orig. value for other dims'
+            'vs: 0.1 0.1 0.1'          'set VOXEL-SIZE: set voxel-size to [0.1 0.1 0.1] (change header only)'
+            'vs: 0.05'                 'set VOXEL-SIZE: set voxel-size to [0.05 0.05 0.05] (change header only)'
             };
+        
+        
+        
+%   #b - rename file                     (EMPTY)
+%   #b - copy+rename file                ('copy' or ':')
+%   #b - delete file                     ('##' or 'del' or 'delete')
+%   #b - extract (keep 4D image)         (IDX)           #g e.g: '1:3'   | ':'  | '[2 3]'  OR  '2:end-3'
+%   #b - expand (4D-image to 3D images)  (IDXs)          #g e.g: '1:3s'  | ':s' | '[2 3]s' OR  '2:ends-3'
+%   
+%   #b - change voxel & image resolution ('vr:')         #g e.g.: 'vr: .1 .1 .1'  | 'vr: .1' OR 'vr: nan nan 0.1'
+%        ..also the image is changed
+%   #b - change voxel size onle          ('vs:')         #g e.g.: 'vs: .1 .1 .1'  | 'vs: .1' OR 'vs: nan nan 0.1'
+%        ..only the header is changed
+%   #b - scale image by voxel factor     ('vf:')         #g e.g.: 'vf:3'          | 'vf:1 1 0.5'
+%        ..also the image is changed
+%   #b - change header                   ('ch:')         #g e.g.: 'ch:mat:[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1];dt:64'  | 'ch:descrip:hallo' | 'ch:dt:64'
+%   #b - mathematical operation (masking ('mo:')         #g e.g.: see below
+%   #b - change dataType                 ('dt:')         #g e.g.: 'dt: 64'  | 'dt:16'
+%   #b - threshold image                 ('tr:')         #g e.g.: 'tr:i>0.5=0'
+%   #b - Replace value by another value: ('R:' or 'repl:' or 'replace:') #g e.g.: 'R:<=0;1' | 'R:nan;ME'
+%   
+
+        
         listbk=[[list2 ; {''} ;lis(:,1) ] [list2 ; {''} ;lis(:,2) ]];
         
         
@@ -1864,9 +1982,32 @@ if ~strcmp(task,'showimageinfo')
         out = inputdlg(prompt,dlg_title,num_lines,defaultans);
     elseif strcmp(task,'deleteFile')
         out={'','del'};
-    elseif strcmp(task,'clearfields')
+    elseif strcmp(task,'clearfields') || strcmp(task,'clearfields_task') || strcmp(task,'clearfields_file') ||...
+           strcmp(task,'clearfields_sel') || strcmp(task,'clearfields_sel_task') || strcmp(task,'clearfields_sel_file') 
         out={'',''};
-        selrows=[1:size(us.tb,1)]-1;
+        if strcmp(task,'clearfields') || strcmp(task,'clearfields_task') || strcmp(task,'clearfields_file')
+            selrows=[1:size(us.tb,1)]-1;
+        end
+        
+        modx=[0 0];
+        if     strcmp(task,'clearfields'     ) || strcmp(task,'clearfields_sel')       ; modx=[1 1];
+        elseif strcmp(task,'clearfields_file') || strcmp(task,'clearfields_sel_file')  ; modx=[1 0];    
+        elseif strcmp(task,'clearfields_task') || strcmp(task,'clearfields_sel_task')  ; modx=[0 1]; 
+        end
+        
+        jtable=e;
+        if length(out)==2
+            for i=1:length(selrows)
+                if modx(1)==1;
+                jtable.setValueAt(java.lang.String(''), selrows(i), 1); % to insert this value in cell (1,1)
+                end
+                if modx(2)==1;
+                jtable.setValueAt(java.lang.String(''), selrows(i), 2); % to insert this value in cell (1,1)
+                end
+            end
+        end
+        
+        return
     elseif strcmp(task,'replaceHeader')
         %% ===============================================
         
@@ -1935,6 +2076,7 @@ if ~strcmp(task,'showimageinfo')
     
     for i=1:length(selrows)
         if ~isempty(out{1})
+            i
             jtable.setValueAt(java.lang.String(out{1}), selrows(i), 1); % to insert this value in cell (1,1)
         end
     end
@@ -2216,18 +2358,26 @@ elseif isstruct(p0)
     end
     
     % ===============================================
-    
-    
-    hh=[hh; 'z=[];' ];
-    hh=[hh; struct2list2(z2,'z')];
-    
-    reginput={'z.files(:,1)' 'z.files(:,2)' 'z.files(:,3)'};
-    
-    ac=[reginput(1:size(z.files,2)) ...
-        repmat( {'[]'},[1 3-length(reginput(1:size(z.files,2)))])];
-    a1=strjoin(ac,',');
-    
     isDesktop=usejava('desktop');
+    if size(z.files,1)>1
+        
+        hh=[hh; 'z=[];' ];
+        hh=[hh; struct2list2(z2,'z')];
+        
+        reginput={'z.files(:,1)' 'z.files(:,2)' 'z.files(:,3)'};
+        
+        ac=[reginput(1:size(z.files,2)) ...
+            repmat( {'[]'},[1 3-length(reginput(1:size(z.files,2)))])];
+        a1=strjoin(ac,',');
+        
+       
+    else
+        a1=[  ...
+            '''' z.files{1} ''',' ...
+            '''' z.files{2} ''',' ...
+            '''' z.files{3} '''' ...
+          ];
+    end
     a2=[ mfilename '(' num2str(isDesktop)  ',' a1 ');' ];
     hh(end+1,1)={a2};
     

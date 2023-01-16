@@ -864,6 +864,12 @@
 % -added option to select a colormap from list of colormap (colormaps will be display colorcoded in the pulldownmenu)
 % -colormaps implemented in xcheckreghtml.m
 % 
+% #ba 16 Jan 2023 (23:56:39)
+% #k [xrename.m] #n modified:
+% -added: Replace value in 3d/4D image by another value 
+% -added: set voxe-size in image-header without changing the image
+% -added: option to add a prefix or suffix to the orignal filename for the output image
+% for examples see context menu/"enter 2nd and 3rd column extended"
 % 
 % 
 
