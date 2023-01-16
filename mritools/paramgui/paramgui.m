@@ -43,7 +43,12 @@
 %                 {'mon' 'tue' 'wed'} : icon to open a pulldown to select
 %                 from cell {1 2 'tue' 'wed'} :  same
 %                  'b'   : boolean  -->icon to  alterate [0|1] the boolean value 
+%          --COLOR
 %                 'col' : color    -->icon to open a color-picker GUI
+%          --COLORMAP    (with visualization of the colormaps in paramgui)
+%                {'cmap',{}}                --> select a colormap from ~134 default colormaps
+%                {'cmap',{'gray' 'parula'}} --> select a colormap from the two colormaps
+% 
 %% OUTPUT
 %   m1: cellstring with parameters (and comments)
 %   m2: struct with parameters (without comments)
@@ -77,7 +82,36 @@
 %         modified and executed instead of the actual list
 %  * Preferences       ..open preferences window
 %
-%% EXAMPLE
+% ==============================================
+%%   EXAMPLE: showing GUI with all options
+% ===============================================
+% 
+% p={...
+%     'inf0'        '%______INPUTS____________<' '' ''
+%     'aO'    ''      'TYPE NAME HERE '                   ''
+%     'a1'    ''      'select a file'                     'f'
+%     'a2'    ''      'select multiple files'             'mf'
+%     'a3'    ''      'select a folder '                  'd'
+%     'a4'    ''      'select multiple folders'           'md'
+%     'a5'    ''      'select item from mixed list'       {'cmap','raus' 1 2 3 '' [] 'nothing'}
+%     'a6'    [1 2]   'select item from numeric list'     {[1:10] [1:2] [4:5]}
+%     'a7'    'ab'    'select item from string list'      {'a' 'ab' 'abc' 'abcd'}
+%     'inf2' ''        '' ''  %empty row 
+%     
+%     'inf11'           '  ______OTHER OPTIONS____________<' '(add some more info here)' ''
+%     'color'  [0 0 0]   'pick a color'                         'col'
+%     'inf8' ''        '' ''
+%     
+%     'inf133'        '%______COLORMAPS____________<' '' ''
+%     'a10'           'gray'    'select cmap from default colormaps'                {'cmap',{}}
+%     'a11'           'parula'  'select cmap from specified colormap'               {'cmap',{'gray' 'parula'}}
+%     'a12'           'jet'     'select cmap from specified colormap (not colored)' {'gray' 'parula'}
+%     };
+% [m z]=paramgui(p,'close',1,'figpos',[0.2 0.4 0.5 0.35],'info',{@uhelp, 'paramgui.m' },'title','GUI-123'); %%START GUI
+% 
+% ==============================================
+%%   EXAMPLE-2(older)
+% ===============================================
 %    p={...
 %     'inf98'      '*** ALLEN LABELING                 '                         '' ''
 %     'inf99'      'USE EITHER APPROACH-1 OR APPROACH-2'                         '' ''

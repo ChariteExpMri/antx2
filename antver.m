@@ -859,9 +859,14 @@
 % #ba 10 Jan 2023 (01:48:56)
 % minor checks
 % 
+% #ba 16 Jan 2023 (15:30:39)
+% #k [paramgui.m] #n modified:
+% -added option to select a colormap from list of colormap (colormaps will be display colorcoded in the pulldownmenu)
+% -colormaps implemented in xcheckreghtml.m
 % 
 % 
 % 
+
 
 
 %% ===============================================
