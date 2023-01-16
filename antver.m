@@ -861,8 +861,8 @@
 % 
 % #ba 16 Jan 2023 (15:30:39)
 % #k [paramgui.m] #n modified:
-% -added option to select a colormap from list of colormap (colormaps will be display colorcoded in the pulldownmenu)
-% -colormaps implemented in xcheckreghtml.m
+% -added option to select a colormap from list of colormaps (colormaps appear color-coded in the pulldownmenu)
+% -this option was implemented in xcheckreghtml.m
 % 
 % #ba 16 Jan 2023 (23:56:39)
 % #k [xrename.m] #n modified:

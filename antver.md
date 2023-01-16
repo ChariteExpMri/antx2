@@ -16,8 +16,8 @@
 <!---->
   &#x1F535;   <ins>**16 Jan 2023 (15:30:39)**</ins>  
    __[paramgui.m]__ modified:  
-  -added option to select a colormap from list of colormap (colormaps will be display colorcoded in the pulldownmenu)  
-  -colormaps implemented in xcheckreghtml.m  
+  -added option to select a colormap from list of colormaps (colormaps appear color-coded in the pulldownmenu)  
+  -this option was implemented in xcheckreghtml.m  
     
 <!---->
   &#x1F535;   <ins>**10 Jan 2023 (01:48:56)**</ins>  
