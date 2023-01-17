@@ -1621,11 +1621,18 @@ if arg==1
     hb=uicontrol(hf,'style','pushbutton','units','norm','tag','anima',...
         'backgroundcolor','w','callback',@cb_anima,'tooltipstring','<html><b>busy</b><br>hit me to hide',...
         'visible',ha.Checked);
-    
+   
+    fac=[1 1];
+    try
+      [S1 S2]=getscreensize();%
+      fac=S2(1,3:4)./S1(1,3:4);
+    end
+        
     si=pos(4);
     pos2=[0 pos(2)+pos(4) 0.03 0.03 ];
     set(hb,'pos',pos2);
-    set(hb, 'string',['<html><img src="file:' which('anim4.gif') '"/></html>'],'value',1);
+    %set(hb, 'string',['<html><img src="file:' which('anim4.gif') '"/></html>'],'value',1);
+    set(hb, 'string',['<html><img src="file:' which('anim6.gif') '" width="' num2str(22*fac(1)) '" height="' num2str(22*fac(2)) '"></html>'],'value',1);
     %set(hb, 'string',['<html><img src="file:/'   'C:\Users\skoch\Favorites\Downloads\ezgif.com-gif-maker (1).gif' '"/></html>'],'value',1);
     
     set(hb,'units','pixels');
