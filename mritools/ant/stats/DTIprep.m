@@ -559,12 +559,23 @@ set(hb,'callback',{@xhelp} );
 set(hb,'backgroundcolor',[   1 1 1]);
 set(hb,'tooltipstring',[ 'get some help']);
 %% file assignmnet
-% delete(hb)
-hb=uicontrol('style','pushbutton','units','norm','string','check file assignment','tag','xhelp');
+hb=uicontrol('style','pushbutton','units','norm','string','check file assignment');
 set(hb,'position',[[0.16781 0.80157 0.15 0.08]],'fontsize',7,'foregroundcolor','m','fontweight','bold');
-set(hb,'callback',{@context,'checkassignment'} );
+set(hb,'callback',{@context,'checkassignment'},'tag','checkassignment' );
 set(hb,'backgroundcolor',[   1 1 1]);
 set(hb,'tooltipstring',[ 'check b-table & DTI-data file assignment (order)']);
+%% rename b-tables
+hb=uicontrol('style','pushbutton','units','norm','string','rename b-table(s)');
+set(hb,'position',[[0.16782 0.69439 0.15 0.08]],'fontsize',7,'foregroundcolor','k');
+set(hb,'callback',{@context,'rename_btables'},'tag','rename_btables' );
+set(hb,'backgroundcolor',[   1 1 1]);
+set(hb,'tooltipstring',[ '<html><b>rename b-tables (for MULTIshell-only) </b><br>' ...
+    '..REASON: <br>' ...
+    'filenames of corresponding DWI-files are hard-coded in the current MRTRIX-shellscripts <br>'...
+    'if you have 4 btables, the names of the b-tables must be: <br>'...
+    ' "grad_b100.tx" , "grad_b900.tx" , "grad_b1600.tx" and "grad_b2500.tx" <br>'...
+    'the renameing is done here on the b-tables (txt.files) in the study''s "DTI"-folder'
+    ]);
 
 % ==============================================
 %%   contextmenu.
@@ -1726,8 +1737,102 @@ if strcmp(task,'comands_for_mrtrix')
     
     return
 end
-
-
+% ==============================================
+%%   rename b-tables
+% ===============================================
+if strcmp(task,'rename_btables')
+    %% ===============================================
+    
+    hf=findobj(0,'tag','DTIprep');
+    u=get(hf,'userdata');
+    f1=fullfile(u.studypath,'DTI','check.mat');
+    d=load(f1); d=d.d;
+    
+    tb=d.btable;
+    
+    if ~all(existn(tb)==2)
+        msgbox('PLEASE define b-tabels first! ... via [get b-table(s)]-button');
+        return
+    end
+    if length(tb)==1
+       msgbox('renamimg option for MULTISHELL-data only! ... cancelled');
+        return 
+    end
+    
+    [ xpa xfi xext ]=fileparts2(tb);
+    xfi=cellfun(@(a,b){[ a b]}, xfi, xext );
+    %xfi=xfi([2 4 3 1])
+    try
+        bnumber=str2num(char(regexprep(xfi,'[a-zA-Z\s_.]','')));
+    catch
+        bnumber=[1:length(xfi)]';
+    end
+    xfi=sortrows([xfi  num2cell(bnumber)],2);
+    xfi=xfi(:,1);
+    
+    
+    choices=  {'grad_b100.txt' , 'grad_b900.txt' , 'grad_b1600.txt' 'grad_b2500.txt' }';
+    p={};
+    p(end+1,:)={'inf1' '' 'MUTLISHELL-DATA: for b-tables the following filenames are needed:' '' };
+    p(end+1,:)={'inf2' '' ['"' strjoin(choices,'","') '"'] '' };
+    p(end+1,:)={'inf3' '' ['For your b-tables the following new filenames are suggested: '] '' };
+    for i=1:length(xfi)
+        opt=[choices];
+        sel=choices{i};
+        p(end+1,:) = {  ['btable_' num2str(i)]    sel    [ 'RENAME your orig. file "' xfi{i} '" (b-table) to...' ] ...
+            opt };
+    end
+    [m z]=paramgui(p,'close',1,'figpos',[ 0.2000    0.5322    0.5299    0.2189],...
+        'title','Rename b-tables'); %%START GUI
+    if isempty(m); return; end
+    fn=fieldnames(z);
+    z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
+    
+   %% ========[ rename files (make temp-files first)]=======================================
+    fn=fieldnames(z);
+    fnb=fn(regexpi2(fn,'^btable_'));
+    TA=xfi;
+    for i=1:length(fnb)
+       cur=getfield(z,fnb{i});
+       if isempty(cur)
+          cur= xfi{i};
+       end
+        TA{i,2}=['temp_' cur];
+        TA{i,3}=cur;
+    end
+    % ERROR IF SAME NAME IS GIVEN
+    if length(unique(TA(:,3)))~=length(fnb)
+        msgbox(strjoin({'ERROR: NAME OF NEW b-table-NAME given more than once',...
+            'Each b-table needs a different name!'},char(10)));
+        return
+    end
+    
+        % FIRST: copy to temporary files
+        fis1= stradd(TA(:,1), [xpa{1} filesep],1);
+        fis2= stradd(TA(:,2), [xpa{1} filesep],1);
+        copyfilem(fis1,fis2),
+        % SECOND: remove orig. b-tables
+        deletem(fis1);
+        %third: rename to final name
+        fis3= stradd(TA(:,3), [xpa{1} filesep],1);
+        movefilem(fis2,fis3);
+    
+    %% =========== [update struct] and update GUI =========
+    hf=findobj(0,'tag','DTIprep');
+    u=get(hf,'userdata');
+    f1=fullfile(u.studypath,'DTI','check.mat');
+    d=load(f1); d=d.d;
+    d.btable=fis3;
+    
+    
+    setdata(d);
+    delete(hf);
+    DTIprep;
+    
+    %% ===============================================
+    
+    return
+end
 % ==============================================
 %%  reorder bb-table & DWI-data
 % ===============================================
@@ -1869,8 +1974,21 @@ if strcmp(task,'checkassignment')
             chktab{1,3}='dwi.nii';
         else
             finaldwiname=regexprep(chktab(1:n_btables,1),{'grad_b' '.txt'},{'dwi_b' '.nii'});
+            if length(finaldwiname)==4
+                bnumber=str2num(char(regexprep(finaldwiname,'[a-zA-Z\s_.]','')));
+                if length(bnumber)==4
+                    outrequested={'dwi_b100.nii' 'dwi_b900.nii' 'dwi_b1600.nii' 'dwi_b2500.nii'}';
+                    outrequested=sortrows([outrequested num2cell(bnumber)],2);
+                    finaldwiname=outrequested(:,1);
+                else
+                    
+                    
+                end
+            end
+            
             chktab(1:size(finaldwiname,1),3) =finaldwiname;
         end
+        %% ===============================================
         
         hd={' #ra ___b-table___' '#ka ___INPUT-DWI___'  '#ba ___OUTPUT-DWI___'};
         [~, ms]=plog([],[hd ;chktab ],0,'','s=10;plotlines=0;al=1');
@@ -1880,8 +1998,19 @@ if strcmp(task,'checkassignment')
         ms{end+1,1}=[' #dw -Please check correspondence of b-tables and input-DWI-files!  '];
         ms{end+1,1}=[' #dw  to reorder files use contextmenu: reorder..  '];
         ms{end+1,1}=[' #dw -The table does not state that these files exist for each animal!  '];
+        if n_btables==4
+             ms{end+1,1}=['  '];
+             ms{end+1,1}=[' #, IMPORTANT! '];
+             ms{end+1,1}=[' #r MULTISHELL-approach is used! The names of the DWI-files in the current '];
+             ms{end+1,1}=[' #r shellscripts are hard-coded. The names of the DWI-files'];
+             ms{end+1,1}=[' #r has to be:  '];
+             ms=[ms; finaldwiname];
+             ms{end+1,1}=[' #, PLEASE CHECK THAT THIS IS TRUE FOR THE "___OUTPUT-DWI___" -files!  '];
+        end
         drawnow;
         uhelp(ms,1,'name','assignment');
+        %% ===============================================
+        
         
         %         chktab=[{['\bf' '___b-table___'] ['       ___DWI-file___' '\rm']} ;chktab];
         %         chklist=cellfun(@(a,b){[ a repmat(' ',[1 size(char(chktab(:,1)),2)+2-length(a)]) b ]},  chktab(:,1),chktab(:,2));
