@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   16 Jan 2023 (23:56:39)  
+ &#x1F34E; last modification:   19 Jan 2023 (16:38:46)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,12 +7,19 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**19 Jan 2023 (16:38:46)**</ins>  
+   __[dti_changeMatrix.m]__ modified:  
+  -DTI-weightmatrix can by changed via Excelfile containing the connections to keep   
+  -also possible via command-line (see help of __[dti_changeMatrix.m]__)  
+  &#8618; access via ANT-menu: &#8658; STATISTIC/"DTI-statistic" --> via __[change matrix]__-button  
+<!---->
   &#x1F535;   <ins>**16 Jan 2023 (23:56:39)**</ins>  
    __[xrename.m]__ modified:  
   -added: Replace value in 3d/4D image by another value   
   -added: set voxe-size in image-header without changing the image  
   -added: option to add a prefix or suffix to the orignal filename for the output image  
   for examples see context menu/"enter 2nd and 3rd column extended"  
+    
 <!---->
   &#x1F535;   <ins>**16 Jan 2023 (15:30:39)**</ins>  
    __[paramgui.m]__ modified:  

@@ -871,8 +871,14 @@
 % -added: option to add a prefix or suffix to the orignal filename for the output image
 % for examples see context menu/"enter 2nd and 3rd column extended"
 % 
+% #ba 19 Jan 2023 (16:38:46)
+% #k [dti_changeMatrix.m] #n modified:
+% -DTI-weightmatrix can by changed via Excelfile containing the connections to keep 
+% -also possible via command-line (see help of [dti_changeMatrix.m])
+% #gw --> access via ANT-menu: &#8658; STATISTIC/"DTI-statistic" --> via [change matrix]-button
 % 
-
+% 
+% 
 
 
 %% ===============================================

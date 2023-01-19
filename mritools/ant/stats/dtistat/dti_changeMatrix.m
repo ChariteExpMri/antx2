@@ -28,11 +28,31 @@
 %     [x] saving directory is another directory
 % [RUN] use above paramter specifications and create/save a reduced data matrix
 % 
+% 
+% #gy ___OTHER COMANDLINE OPTIONS___
+% #b  DELETE csv/lut-FILES
+% dti_changeMatrix('delete')               ;% DELETE via GUI
+% dti_changeMatrix('delete','gui',1)       ;% same as above     
+% dti_changeMatrix('delete','gui',1,'files',files)  ;% % DELETE files defined in files via OPEN GUI...files is a cell with fullpath-filenames
+% dti_changeMatrix('delete','gui',1,'files',files)  ;% same but without GUI
+% 
+% #b REDUCE MATRIX BY CONNECTIONS (defined in excelfile)
+% % Here: 'LF' is the LUTfile (labels): 'atlas_lut.txt'
+% %       'MF' is the Matrixfile      :'connectome_di_sy.csv'
+% %       'path' is the fullpath to the main-folder containing the 'LF' and 'MF'
+% %       'COI' is the COI-file with connections to keep: here 'reducedCONS.xlsx'
+%    dti_changeMatrix('run','LF','atlas_lut.txt','MF','connectome_di_sy.csv','path',fullfile(pwd,'dat'),'COI',fullfile(pwd,'reducedCONS.xlsx'))
+% %% THIS IS IDENTICAL TO: 
+%     z.LF  ='atlas_lut.txt';
+%     z.MF  ='connectome_di_sy.csv';
+%     z.path=fullfile(pwd,'dat');
+%     z.COI =fullfile(pwd,'reducedCONS.xlsx');
+%     dti_changeMatrix('run',z);
+% 
+% 
 
 
-
-
-function dti_changeMatrix(w)
+function dti_changeMatrix(w,varargin)
 
 if 0
     %% ===============================================
@@ -48,11 +68,42 @@ if 0
     
 end
 
+if 0
+    
+  z.LF  ='atlas_lut.txt';
+  z.MF  ='connectome_di_sy.csv';
+  z.path=fullfile(pwd,'dat');
+  z.COI =fullfile(pwd,'reducedCONS.xlsx');
+  dti_changeMatrix('run',z);
+
+end
+
+% ==============================================
+%%   spec. evaluations
+% ===============================================
+if exist('w')==1
+    if strcmp(w,'delete')
+        deletefiles(varargin);
+        return
+    elseif strcmp(w,'run')
+        prep4commandline(varargin);
+        return
+    end
+end
+
+
+
+
 % ==============================================
 %%   input
 % =============================================== 
 u.argin=0;%inputargs
 makefig(u);
+
+
+    
+    
+
 
 if exist('w')==1
     if isfield(w,'source') && ~isempty(intersect([1 2],w.source)) 
@@ -266,7 +317,15 @@ set(hb,'position', [0.29534 0.15478 0.4 0.05]);
 % set(hb,'HorizontalAlignment','right');
 set(hb,'tooltipstring', tx);
 
-
+%% delete
+hb=uicontrol('style','pushbutton','units','norm', ...
+    'string','delete files',...
+    'backgroundcolor',[1 .6 .7],'tag','deletefiles',...
+    'fontsize',7);
+set(hb,'position', [0.18656 0.0053029 0.25 0.05]);
+% set(hb,'HorizontalAlignment','right');
+set(hb,'tooltipstring', 'delete CSV-files and lut-files from drive');
+set(hb,'callback',@deletefiles_cb);
 
 
 %% output dir -radio
@@ -325,6 +384,51 @@ set(gcf,'userdata',u);
 % ==============================================
 %%   callbacks
 % ===============================================
+function deletefiles_cb(e,e2)
+deletefiles()
+
+function deletefiles(s)
+if exist('s')==1
+    if iscell(s)
+        if ~isempty(s)
+            s=cell2struct(s(2:2:end),s(1:2:end),2);
+        end
+    end
+end
+p.gui=1;
+p.fi ='';
+if exist('s')==1
+    if isfield(s,'gui')  ==1; p.gui =s.gui ; end
+    if isfield(s,'files')==1; p.fi  =s.files; end
+end
+%% ===============================================
+if p.gui==1 || isempty(p.fi)
+    fi=cfg_getfile2(inf,'any',{'ss' 'ee'},p.fi,pwd,'.*.csv|.*.txt');
+    if isempty(char(fi)); return; end
+    fi=cellstr(fi);
+
+    Q = questdlg(['SURE?...DELETE FILES?' char(10) 'Selected files will be permanently deleted! '], ...
+        'delete'    , 'Yes' ,'No',    'No'        );
+    if strcmp(Q,'Yes')==0; return; end
+    p.fi=fi;
+end
+%% =============delete ==================================
+    cprintf([0 0 1],['Deleting files... \n']);
+    for i=1:length(p.fi);
+       
+           delete(p.fi{i})
+      
+          if  exist(p.fi{i})==0
+              %disp(['...file dows not exist: ' p.fi{i} ]);
+          else
+               disp(['...file exists, but can''t delete, maybe file is open: '  p.fi{i} ]);
+          end
+    end
+    cprintf([0 0 1],['DONE! \n']);
+
+%% ===============================================
+
+
 function xhelp(e,e2)
 uhelp([mfilename '.m']);
 
@@ -365,7 +469,8 @@ if ~isnumeric(paout)
     set(findobj(gcf,'tag','ed_outdir'),'string',paout);
 end
 
-function getData(e,e2)
+function c=getData(e,e2,ss)
+c=[];
 hf=findobj(0,'tag','modmattrix');
 us=get(hf,'userdata');
 
@@ -386,6 +491,8 @@ end
 % ===============================================
 if us.argin==1 && isfield(us,'files')
     fi=us.files;
+elseif exist('ss')==1 && isfield(ss,'files')==1
+    fi=ss.files;
 else
     if exist('files')==0
         cprintf([1 0 1],['Select DTI data..wait..' ]);
@@ -434,6 +541,8 @@ end
 % ===============================================
 if us.argin==1 && isfield(us,'labelfile')
     labelfile=us.labelfile;
+elseif exist('ss')==1 && isfield(ss,'labelfile')==1
+    labelfile=ss.labelfile;
 else
     if source==2 %mrtrix
         if exist('labelfile')  ~=1
@@ -858,10 +967,85 @@ if 0
     disp('s--------');
     disp(s);
 end
-changematrix(s)
+changematrix(s);
 
+
+function prep4commandline(r)
+if 0
+    dti_changeMatrix('run','LF','atlas_lut.txt','MF','connectome_di_sy.csv','path',fullfile(pwd,'dat'),'COI',fullfile(pwd,'reducedCONS.xlsx'))
+end
+if iscell(r)
+    if isstruct(r{1})
+        r=r{1};
+    else
+        r=cell2struct(r(2:2:end),r(1:2:end),2);
+    end
+end
+
+%% ===============================================
+s=struct();
+
+ [files] = spm_select('FPListRec',r.path,'^connectome_di_sy.csv$');
+ mfiles=cellstr(files);
+ if isempty(char(mfiles)); 
+     disp('matrix-files (MF) such as "connectome_di_sy.csv" not specified...');
+     return
+ end
+  [file] = spm_select('FPListRec',r.path,'^atlas_lut.txt$');
+ lfile=cellstr(file);
+ lfile=lfile{1};
+ if isempty(char(lfile)); 
+     disp('LUTfile-files (LF) such as "atlas_lut.txt" not specified...');
+     return
+ end
+ s.files=    mfiles;
+ s.labelfile =lfile;
+ if isfield(s,'suffix')==0   ; s.suffix='_reduction1'; end
+ if isfield(s,'outdir')==0   ; s.outdir='same'       ; end
+
+ 
+ hf=findobj(0,'tag','modmattrix');
+ if isempty(hf)
+     dti_changeMatrix();
+     hf=findobj(0,'tag','modmattrix'); set(hf,'visible','off');
+     
+ end
+ c=getData([],[],s);
+ if isfield(c,'mousename');   s.mousename   = c.mousename; end
+ if isfield(c,'mat');         s.mat         = c.mat; end
+ if isfield(c,'label');       s.label       = c.label; end
+
+ if isfield(r,'COI');        
+     s.keeplabels       = r.COI;
+     s.type             ='excelfile';
+ end 
+ 
+%  s
+% 's'
+ changematrix(s);
+ delete(findobj(0,'tag','modmattrix'));
+
+%% ===============================================
 
 function changematrix(s)
+
+% ==============================================
+%%   mandatory inputs: example
+% ===============================================
+
+%           type: 'excelfile'
+%     keeplabels: 'F:\data6\DTI_thomas_reduceMatrix\reduced.xlsx'
+%          files: {26x1 cell}
+%      mousename: {1x26 cell}
+%            mat: [64x64x26 double]
+%          label: {64x1 cell}
+%      labelfile: 'f:\data6\DTI_thomas_reduceMatrix\dat\2022092…'
+%         suffix: '_REDUCED1'
+%         outdir: 'same'
+% 
+% ==============================================
+%%   
+% ===============================================
 
 
 % for i=1:length(s.keeplabels)
@@ -874,6 +1058,41 @@ if strcmp(s.type,'excelfile')
        msgbox({'COIFILE-error:' char(10) 'check excel-sheet: 1st sheet is empty (data expected)!'}) ;
        return
     end
+    %% ===============================================
+    %scenario-THOMAS: somebody used the excelfile from DTI-output and used those connections (A--B; C--D) in
+    %reduced form, such as:
+%         'R_Field_CA1--L_Field_CA1'      [1]
+%         'R_Field_CA3--L_Field_CA1'      [1]
+%         'R_Field_CA3--L_Ammons_ho…'     [1]
+    if length(regexpi2(a(:,1),'--'))~=0
+        a(:,2)=cellfun(@(a){[num2str(a)]} ,a(:,2) );
+        a(:,2)=regexprep(a(:,2),'\s+','');
+        iuse=regexpi2(a(:,2),'^1$');
+        if isempty(iuse);
+            a(:,2)=repmat({'1'},[size(a,1) 1]);
+        end
+        a(  find(cell2mat(cellfun(@(a){[isempty(a)]} ,a(:,1) ))) , : )=[]; %del empty ROWs
+        a=a(regexpi2(a(:,2),'^1$'),:); %keep only those connections that were indicated by [1]
+        
+        a(:,2)=(cellfun(@(a){[str2num(a)]} ,a(:,2) )) ;%back to numeric
+        %-----split into convential COI-file
+        %as=regexp(a(:,2), '--','split')
+        as={};
+        for i=1:size(a,1)
+            as(i,:)=strsplit(a{i,1},'--');
+        end
+        as(:,3)=a(:,2);
+        %----overwrite vars
+        ha={'connectionA' 'connectionB' 'COI'};
+        a=as(:,1:3);  
+    end
+
+
+    
+    
+    %% ===============================================
+    
+    
     iCOI=find(strcmp(ha,'COI'));
     if iCOI==3 %connections
         iuse=find(cell2mat(a(:,iCOI   ))==1);
@@ -993,7 +1212,7 @@ else
     
 end
 
-disp(v);
+% disp(v);
 % ==============================================
 %%   Label
 % ===============================================

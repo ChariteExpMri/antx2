@@ -1951,6 +1951,10 @@ if 1
         ids=selector2(dx,hdx);
         %            ids=cfg_getfile2(files4);
         %ids=selector3(files4,{'files'}); Older: 07Mar2022_12-39-39
+        if length(ids)==1 && ids==-1
+            set(findobj(gcf,'tag','msg'),'string','..cancelled');
+            return; 
+        end
         ids2=regexprep(files4([ids]),'(\s*\d*\)\s*',''); %remove filecounting, i.e. "( 34 ) "
         hflt=  findobj(gcf,'tag','regexp');
         
