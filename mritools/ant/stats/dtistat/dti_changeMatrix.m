@@ -36,7 +36,8 @@
 % dti_changeMatrix('delete','gui',1,'files',files)  ;% % DELETE files defined in files via OPEN GUI...files is a cell with fullpath-filenames
 % dti_changeMatrix('delete','gui',1,'files',files)  ;% same but without GUI
 % 
-% #b REDUCE MATRIX BY CONNECTIONS (defined in excelfile)
+% #b REDUCE MATRIX using only specific CONNECTIONS 
+% specific CONNECTIONS are defined in an excelfile (COI-file)
 % % Here: 'LF' is the LUTfile (labels): 'atlas_lut.txt'
 % %       'MF' is the Matrixfile      :'connectome_di_sy.csv'
 % %       'path' is the fullpath to the main-folder containing the 'LF' and 'MF'
