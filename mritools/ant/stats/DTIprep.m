@@ -2668,6 +2668,7 @@ end
 
 scripts={
  'DTIscript_exportToHPC_makeBatch.m'
+ 'DTIscript_exportToHPC_makeBatch_old'
  'DTIscript_makeQA_HTML_from_screenshots.m'
  'DTIscript_importFromHPC_allData.m'
  'DTIscript_importFromHPC_connectome.m'

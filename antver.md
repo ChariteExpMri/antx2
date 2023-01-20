@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   19 Jan 2023 (16:38:46)  
+ &#x1F34E; last modification:   20 Jan 2023 (10:18:21)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,11 +7,15 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**20 Jan 2023 (10:18:21)**</ins>  
+   script: __[DTIscript_exportToHPC_makeBatch.m]__ revised:  
+<!---->
   &#x1F535;   <ins>**19 Jan 2023 (16:38:46)**</ins>  
    __[dti_changeMatrix.m]__ modified:  
   -DTI-weightmatrix can by changed via Excelfile containing the connections to keep   
   -also possible via command-line (see help of __[dti_changeMatrix.m]__)  
   &#8618; access via ANT-menu: &#8658; STATISTIC/"DTI-statistic" --> via __[change matrix]__-button  
+    
 <!---->
   &#x1F535;   <ins>**16 Jan 2023 (23:56:39)**</ins>  
    __[xrename.m]__ modified:  

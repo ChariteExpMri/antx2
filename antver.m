@@ -877,9 +877,11 @@
 % -also possible via command-line (see help of [dti_changeMatrix.m])
 % #gw --> access via ANT-menu: &#8658; STATISTIC/"DTI-statistic" --> via [change matrix]-button
 % 
+% #ba 20 Jan 2023 (10:18:21)
+% #k script: [DTIscript_exportToHPC_makeBatch.m] #n revised:
 % 
 % 
-
+% 
 
 %% ===============================================
 %----- EOF

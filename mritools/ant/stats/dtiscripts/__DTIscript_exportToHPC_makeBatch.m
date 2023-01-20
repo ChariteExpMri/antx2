@@ -5,17 +5,10 @@
 %     2) create batch script that can be run on the HPC-cluster
 %         -->as copyNpaste version from help window
 %     3) {optional} transfers the batch-file to HPC-cluster* (username+password required!)
-%     4) {optional} make batch-file executable*   </font>
+%     4) {optional} make batch-file executable*
+% </font>
 % * for 3+4: the user has to provide the hostname, username and password for the HPC-cluster 
-% <font color="fuchsia"><b>- TESTED ON WINDOWS ONLY! </font> <font color="#FC0539";size="5">
-% 
-% _________ [ CHARITE ] ____________________________
-% <font color="red"> For CHARITE: only the following paramter have to be set:</font></b></font><code style="display:inline;background-color:D9D9D9;margin:0;font-size:15px;line-height:.0;padding:0;color:000000";><b>
-% [1] paHPCstudy_asW      :HPC-TARET-PATH for this study, such as "X:\Imaging\Paul_DTI\_test_AG_Wulczyn"                                                                  
-% [2] painDat             :INPUT-DATA-PATH of form ["studypath"+"DTI_export4mrtrix"+"dat"], such as: "H:\Daten-2\Imaging\AG_Wulczyn\Arpp21_Nov2022\DTI_export4mrtrix\dat"
-% [3] bash.jobName        :shortname of the job, such as "wulc"                                                                                                                  
-% [4] p.animals   (check) :use 'all' to export all animals or use indices for specific animals [1,2,3...] ...animals are copied to HPC-TARGET-PATH                       
-% [5] p.start_shfile      :starting shellscript, check species and inserted the adaquate shellscript </code> 
+% <font color="red"><b>- TESTED ON WINDOWS ONLY! </b> </font>
 % 
 % <b><u><font color="fuchsia"> PREREQUISITES </font></b></u>
 % - standard registration to atlas has to be done before
@@ -24,73 +17,64 @@
 % - The data from "DTI_export4mrtrix"-folder is than transferred to the HPC-cluster.
 %   <b> EXAMPLE FOR MULTISHELL-APPROACH </b>
 % The folder "DTI_export4mrtrix" contains the animal-folder
-% and each animal folder contains the following files (15 files):       <code style="display:inline;margin:0;font-size:12px;line-height:.0;padding:0;color:0000FF">
-%    "c_t2.nii"            "rc_t2.nii"           "rc_mt2.nii"
-%    "dwi_b100.nii"        "dwi_b900.nii"        "dwi_b1600.nii"    "dwi_b2500.nii"
-%    "grad_b100.txt"       "grad_b900.txt"       "grad_b1600.txt"   "grad_b2500.txt"
-%    "ANO_DTI.nii"         "rc_ix_AVGTmask.nii"  "ANO_DTI.txt"      "atlas_lut.txt"  </code>
+% and each animal folder contains the following files (15 files): 
+% <pre style="color:0000FF;font-size:15x;line-height:.0;padding:0;margin:0;">
+%    -  "ANO_DTI.nii"         "rc_ix_AVGTmask.nii"
+%    -  "ANO_DTI.txt"         "atlas_lut.txt"
+%    -  "c_t2.nii"            "rc_t2.nii"         "rc_mt2.nii"
+%    -  "dwi_b100.nii"        "dwi_b900.nii"      "dwi_b1600.nii"    "dwi_b2500.nii"
+%    -  "grad_b100.txt"       "grad_b900.txt"     "grad_b1600.txt"   "grad_b2500.txt  
+% </PRE>
+% 
 %% ===============================================
 % <b><u><font color="fuchsia"> HOW TO RUN BATCH ON HPC? </font></b></u>
 % [1] The "shellscripts"-folder with the necessary shellscripts must be manually
-% copied to HPC-storage, into the study-folder. The study folder ("paHPCstudy_asW")
+% copied to HPC-storage, into the study-folder. The study folder ("pastudy")
 % will finally contain two folders: 
 %   (1) "shellscripts" : folder with all shellscripts (sh-files)
 %   (2) "data"         : folder with all animals for DTI-processing
 % 
-% -ideally the resulting HPC-slurm batch-file will than contain the explicit path 
+% -ideally the reulting HPC-slurm batch-file will than contain the explicit path 
 % to the animals in the "data"-folder
 % start slurm-batch on the HPC-cluster using "sbatch mybatch.sh" ..where "mybatch.sh" is the name of your batch-file
 %% ===============================================
 
 clear; warning off;
 
-%% ==================================================================
+%% ==============================================
 %% variable paramter-settings (please modify accordingly)
 %% #r  __MANDATORY INPUTS___
-%% ==================================================================
-%% FOR CHARITE: only the following paramter have to be set:
-% -------------
-% [1] paHPCstudy_asW          :HPC-TARET-PATH for this study, such as "X:\Imaging\Paul_DTI\_test_AG_Wulczyn"
-% [2] painDat                 :INPUT-DATA-PATH of form ["studypath"+"DTI_export4mrtrix"+"dat"], such as: "H:\Daten-2\Imaging\AG_Wulczyn\Arpp21_Nov2022\DTI_export4mrtrix\dat"
-% [3] bash.jobName            :shortname of the job, such as "wulc"
-% [4] p.animals   (check)     :use 'all' to export all animals or use indices for specific animals [1,2,3...] ...animals are copied to HPC-TARGET-PATH
-% [5] p.start_shfile          :starting shellscript, check species and inserted the adaquate shellscript
 %% ==============================================
 
-%[paHPCstudy_asW]: TARGET-HPC-PATH: Target folder on HPC (use path as seen from WINDOWS (asW))
-paHPCstudy_asW     = 'X:\Imaging\Paul_DTI\_test_AG_Wulczyn'  ;% HPC-TARGET-path as seen from WINDOWS (asW)
+% [pastudy]: (TARGET), HPC-storage: windows-based STUDYPATH-containing the data and shellscripts on HPC-storage
+pastudy='X:\Daten-2\Imaging\Paul_DTI\Eranet\test123_data4DTIproc';
 
-% [painDat]: WINDOWS-folder withINPUT-data for DTI-processing ; form ["studypath"+"DTI_export4mrtrix"+"dat"]
-painDat            = fullfile( 'H:\Daten-2\Imaging\AG_Wulczyn\Arpp21_Nov2022'    ,...
-                     'DTI_export4mrtrix','dat');
+% [painDat]: (SOURCE), the WINDOWS-folder containing the INPUT-data for DTI-processing (output of DTIprep-"export files ")
+painDat=fullfile('H:\Daten-2\Imaging\AG_Boehm_Sturm\ERA-Net_topdownPTSD\Brains_charge2_July2021',...
+    'DTI_export4mrtrix','dat');
 
-bash.jobName       = 'WulcTest'   ; % arbitrary name of jobname in bashfile (no space, specific characters)
-bash.jobTime       = '7-00'       ; % max-limit on total HPC run time: example: "22:00:00" for 22hours;  "7-00" for 7 days
-bash.jobCPUs       = 100          ; % number of CPUs (50 seems to be ok, 120 seems to be a bit better but maybe you have to wait to obtian the capacity)
 
-p.copydirs         = 1            ; % copy the data to HPC: [1] yes, [0] no
-p.overwriteDirs    = 0            ; % force to overwrite data on HPC: [1]yes, [0] no, if folder exist do not copy data
+bash.jobName  ='test124'   ; % arbitrary name of jobname in bashfile (no space, specific characters)
+bash.jobTime  ='7-00'       ; % max-limit on total HPC run time: example: "22:00:00" for 22hours;  "7-00" for 7 days
+bash.jobCPUs  =100          ; % number of CPUs (50 seems to be ok, 120 seems to be a bit better but maybe you have to wait to obtian the capacity)
+
+
+p.copydirs     =1           ;% should the data be copied [1] yes, [0] no
+p.overwriteDirs=0           ;% force overwrite copyied data [1]yes, [0] no, if folder exist do not copy data
 
 %______ animals to export/to included in batch (use "all" or a numeric vector) ____________
-p.animals          = 'all'    ;%animals to copy to HPC: 'all': all inimals from "painDat"-dir
-%p.animals         = [1 2 3 ] ;%animals to copy  to HPC: 'all': all inimals from "painDat"-dir, or numeric array ; example [1 2 4]
+%p.animals     ='all'   ;%animals to copy/process: 'all': all inimals from "painDat"-dir
+p.animals     =[1,2,4 ] ;%animals to copy/process: 'all': all inimals from "painDat"-dir, or numeric array ; example [1 2 4]--> process animals 1,2 and 4
 
 %______ <optional> TRANSFER batch-parameter __________________
 p.transferBatch    = 1; % [0,1]transfer batch; [0]no just show batch(copy/nPaste); [1]yes, write batch(sh-file) to HPC-cluster
-
 % ----the following applies only if "p.transferBatch" is "1"
-p.HPC_hostname     = 's-sc-frontend2.charite.de'       ; % HPC-hostname:  old HOSTNAME: 's-sc-test4.charite.de
-p.makeExecutable   = 1;                                ; % make shellscript executable ('chmod' starter shellscript)
-p.condaEnvironment = 'dtistuff'                        ; % name of the conda-environment (containing mrtrix,fsl,ants); otherwise leave empty ('')
-p.start_shfile     = 'mouse_dti_complete_7texpmri.sh'  ; % shellscript-starting file: either 'rat_exvivo_complete_7expmri.sh' or 'mouse_dti_complete_7texpmri.sh'
+p.HPC_hostname     = 's-sc-test4.charite.de'   ;%HPC-cluster hostname
+p.makeExecutable   = 1;                        ;%make file executable (chmod sh-file)
 
-%% =======[FOR CHARITE: DO NOT MODIFY THE FOLLOWING PARAMTERS!!!, otherwise specify 'p.paHPCstudy_asL' ]========================================
-p.paHPC            = '/sc-projects/sc-proj-agtiermrt/Daten-2'  ; % MAIN-DIR on HPC to store the data (as seen from LINUX; "asL")
-p.paHPCstudy_asL   = [];                                         % for CHARITE: keep empty otherwise specify the target-folder on HPC ..(as seen from LINUX; "asL")
-
-
-
-
+p.condaEnvironment ='dtistuff'                 ;%name of the conda-environment (containing mrtrix,fsl,ants); otherwise leave empty ('')
+p.pastudyHPC       ='/sc-projects/sc-proj-agtiermrt/Daten-2/Imaging/Paul_DTI/Eranet' ;% the LINUX-based-STUDYPATH-containing the data and shellscripts on HPC-storage
+p.start_shfile     ='rat_exvivo_complete_7expmri.sh'  ;% shellscript-starting file
 
 
 
@@ -98,15 +82,10 @@ p.paHPCstudy_asL   = [];                                         % for CHARITE: 
 %% ========================================================================
 %% #ka  ___ internal stuff ___                  
 %% ========================================================================
-if isempty(p.paHPCstudy_asL)
-    [isplit1 fileseps1]=strsplit(paHPCstudy_asW,  paHPCstudy_asW(min(regexpi(paHPCstudy_asW,'[\\/]'))) ); %split
-    [isplit2 fileseps2]=strsplit(p.paHPC,  p.paHPC(min(regexpi(p.paHPC,'[\\/]')))) ;
-    p.paHPCstudy_asL=strjoin([p.paHPC isplit1(2:end)], fileseps2{1});
-end
 
-% return
+
 p.batchFilename    = ['batch_' bash.jobName '.sh']       ;%filename of the batch-file (sh-file)
-[~,studyname]=fileparts(paHPCstudy_asW);
+[~,studyname]=fileparts(pastudy);
 
 
 %% =====================================================================
@@ -124,12 +103,12 @@ end
 if p.copydirs==1
     iscoping=0;
     
-    mkdir(paHPCstudy_asW);
+    mkdir(pastudy);
     for i=1:length(dirs)
         if  ~isempty(find(animal_ids==i)) ;% if animalID is specified
             Sdir=dirs{i};
             [pa,animal]=fileparts(Sdir);
-            Tdir=fullfile(paHPCstudy_asW,'data', [ 'a' pnum(i,3)],animal);
+            Tdir=fullfile(pastudy,'data', [ 'a' pnum(i,3)],animal);
             
             if exist(Tdir)~=7 || p.overwriteDirs==1
                 disp([ 'copying data: '  '[a' pnum(i,3) '] - "' animal  '"   ...wait..' ]);
@@ -155,8 +134,8 @@ end
 % '#SBATCH --nodes=1              # Specify number of nodes'
 % '#SBATCH --ntasks-per-node=120      #120           # Will request 120 logical CPUs'
 % '#SBATCH --time=22:00:00             # Set a limit on the total run time'
-% '#SBATCH --output=my_jobTest4.o    # File name for standard output' % .o%j
-% '#SBATCH --error=my_jobTest4.e     # File name for standard error output' e%j
+% '#SBATCH --output=my_jobTest4.o%j    # File name for standard output'
+% '#SBATCH --error=my_jobTest4.e%j     # File name for standard error output'
 % ''
 % 'eval "$(conda shell.bash hook)" # Connect Conda with the bash shell'
 % 'conda activate dtistuff            # Activate conda virtual environment'
@@ -166,23 +145,17 @@ end
 % ==============================================
 %% [PART-3] make animal-batch
 % ===============================================
-space=repmat(' ',[1 10]);
-bash.partition='compute';
-bash.nodes    =1;
 o={...
     '#!/bin/bash'
-    ['#SBATCH --job-name='           bash.jobName           '        # Specify job name'  ]
-    ['#SBATCH --partition='          bash.partition         '    # Specify partition name']
-    ['#SBATCH --nodes='              num2str(bash.nodes)    '              # Specify number of nodes']
-    ['#SBATCH --ntasks-per-node='    num2str(bash.jobCPUs)  '  # Will request 120 logical CPUs']
-    ['#SBATCH --time='               bash.jobTime           '            # Set a limit on the total run time; example: 22:00:00(22hours) or 7-00(7days)']
-    ['#SBATCH --output='             bash.jobName   '.o'    '        # File name for standard output       (alternative: .o%j)']
-    ['#SBATCH --error='              bash.jobName   '.e'    '         # File name for standard error output (alternative: .e%j)']
+    ['#SBATCH --job-name='       bash.jobName      '                    # Specify job name'  ]
+    '#SBATCH --partition=compute                  # Specify partition name'
+    '#SBATCH --nodes=1                            # Specify number of nodes'
+    ['#SBATCH --ntasks-per-node='    num2str(bash.jobCPUs)       '                 # Will request 120 logical CPUs']
+    ['#SBATCH --time='               bash.jobTime          '                           # Set a limit on the total run time; example: 22:00:00(22hours) or 7-00(7days)']
+    ['#SBATCH --output=my_job_' bash.jobName   '.o%j           # File name for standard output']
+    ['#SBATCH --error=my_job_'  bash.jobName   '.e%j            # File name for standard error output']
     ''
     };
-
-%% ===============================================
-
 oconda={};
 if ~isempty(p.condaEnvironment)
     oconda={
@@ -196,13 +169,13 @@ o= [o; oconda; {'';''}];
 % pamainlx='sc-projects/sc-proj-agtiermrt/Daten-2/Imaging/Paul_DTI/Eranet';
 % pastudylx =['/' strrep(fullfile(pamainlx,studyname),filesep ,'/')];
 
-pastudylx=p.paHPCstudy_asL;
+pastudylx=p.pastudyHPC;
 padatlx   =[pastudylx '/data'];
 pascriptslx =[pastudylx '/shellscripts'];
 
 
 % =====get animal folders==========================================
-padat=fullfile(paHPCstudy_asW,'data');
+padat=fullfile(pastudy,'data');
 [dirs] = spm_select('List',padat,'dir','^a.*');
 animals=cellstr(dirs);
 
@@ -314,6 +287,7 @@ if p.makeExecutable==1
 end
 
 disp('Done!');
+
 
 
 
