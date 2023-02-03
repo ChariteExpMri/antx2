@@ -38,7 +38,12 @@
  
 
 
-function dti_plotmatrix(us)
+function dti_plotmatrix(us,pp)
+
+if exist('pp')~=1
+   pp=struct(); 
+end
+
 warning off;
 % --------------------
 % load('work1.mat');
@@ -81,7 +86,10 @@ sx.gap=0.005;
 prepimage(sx);
 prepdata();
 
+return
 
+set( findobj(findobj(0,'tag','dtifig1'),'tag','set_showlabel'), 'value',1)
+set( findobj(findobj(0,'tag','dtifig1'),'tag','show_statvalue'), 'value',1)
 
 
 function prepdata()
@@ -94,6 +102,7 @@ sx.inv2='INPUT2----variableINPUT------------';
 at(strcmp(cellfun(@(a){[ num2str(a)]} , at(:,1) ),'NaN'),:)=[];
 hat=at(1,:);
 at=at(2:end,:);
+at(:,1)=regexprep(at(:,1),'''',''); %remove apostrophe as in "'R_Ammon's_horn_MODIF'"
 
 % ==============================================
 %%   

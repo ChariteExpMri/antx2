@@ -495,6 +495,11 @@ if isfield(p,'makecoi')
     return
 end
 
+if isfield(p,'plot')
+    plotresults(p);
+    return
+end
+
 
 
 %-----------------DTI Paramter addon
@@ -1733,6 +1738,21 @@ if source==2
     % ==============================================
     %%   label
     % ===============================================
+    % check path
+    if size(char(labelfile),1)==1
+        [pal fil extl]=fileparts(char(labelfile));
+        if isempty(pal)
+            lablist=(stradd(fileparts2(fi),[filesep fil extl],2));
+            iuse=min(find(existn(lablist)==2));
+            if isempty(iuse)
+               error([ 'lutfile: not found ...use fullpath-lutfile or check filename' ]) ;
+            else
+            labelfile=lablist(iuse);
+            end
+        end
+    end
+    
+    
     
      try
         t=readtable(char(labelfile));
@@ -1745,6 +1765,9 @@ if source==2
         for i=1:size(t0,1)
             temp=  strsplit(t0{i});
             tt(i, 1:length(temp))=temp;
+        end
+        if isempty(char(tt(:,1)))==1 %remove 1st-column if empty 
+            tt(:,1)=[];
         end
         %remove header-row
         if strcmp(tt{1},'#')==1 || ~isempty(strfind(t0{1},'Labelname'))
@@ -3088,7 +3111,15 @@ out =[diffxy   M1    M2    sd1 sd2     sPooled   se        sum(~isnan(x),2) sum(
 head={'diff'  'ME1' 'ME2'  'SD1' 'SD2' 'Var(p)' 'SE(p)'    'n1' 'n2'                         'Med1' 'Med2' };
 
 
-function show(e,e2)
+function plotresults(pp)%parser for CMD
+show([],[],pp);
+
+function show(e,e2,pp)
+
+if exist('pp')~=1
+    pp=struct();
+end
+
 hf=findobj(0,'tag','dtistat');
 type=get(findobj(hf,'tag','menuplot'),'value');
 us=get(hf,'userdata');
@@ -3196,36 +3227,41 @@ if strcmp(us.pw(1).parameter,'connectivity')
     if type==1    %dti_plotmatrix
         cprintf([1 0 1],['wait... '    '\n' ]);
         
-        
-        %% ------------get the atlas
-        choice='another';
-        if isfield(us,'atlas')==1
-            [choice] = questdlg(...
-                {'Use this atlas?' ...
-                [us.atlas]}, ...
-                ['select corresponding Atlas (excelfile with color-coding)'  ], ...
-                'Yes','select another atlas','cancel','Yes');
-        end
-        
-        if ~isempty(strfind(choice,'cancel'))
-            return
-        elseif ~isempty(strfind(choice,'another'))
-            [pa fi ext]=fileparts(us.groupfile);
-            if isempty(pa); pa=pwd; end
-            [t,sts] = spm_select(1,'any','select corresponding Atlas (excelfile with color-coding)' ,'',pa,'.*.xlsx');
-            if isempty(t);
-                msgbox('corresponding Atlas (excelfile) not defined ...abort process');
-                return
-            end
-            us.atlas=t;
+        if isfield(pp,'atlas') && exist(pp.atlas)==2 %cmdline
+            us.atlas=pp.atlas;
             hf=findobj(0,'tag','dtistat');
             set(hf,'userdata',us);
+        else
+            %% ------------get the atlas
+            choice='another';
+            if isfield(us,'atlas')==1
+                [choice] = questdlg(...
+                    {'Use this atlas?' ...
+                    [us.atlas]}, ...
+                    ['select corresponding Atlas (excelfile with color-coding)'  ], ...
+                    'Yes','select another atlas','cancel','Yes');
+            end
+            
+            if ~isempty(strfind(choice,'cancel'))
+                return
+            elseif ~isempty(strfind(choice,'another'))
+                [pa fi ext]=fileparts(us.groupfile);
+                if isempty(pa); pa=pwd; end
+                [t,sts] = spm_select(1,'any','select corresponding Atlas (excelfile with color-coding)' ,'',pa,'.*.xlsx');
+                if isempty(t);
+                    msgbox('corresponding Atlas (excelfile) not defined ...abort process');
+                    return
+                end
+                us.atlas=t;
+                hf=findobj(0,'tag','dtistat');
+                set(hf,'userdata',us);
+            end
         end
         %% ---
         
         
         
-        dti_plotmatrix(us);
+        dti_plotmatrix(us,pp);
         cprintf([1 0 1],['done.'    '\n' ]);
         
         

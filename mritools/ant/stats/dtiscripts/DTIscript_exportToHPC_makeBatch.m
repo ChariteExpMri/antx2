@@ -172,13 +172,13 @@ bash.nodes    =1;
 o={...
     '#!/bin/bash'
     ['#SBATCH --job-name='           bash.jobName           '        # Specify job name'  ]
+    ['#SBATCH --output='             bash.jobName   '.o'    '        # File name for standard output       (alternative: .o%j)']
+    ['#SBATCH --error='              bash.jobName   '.e'    '         # File name for standard error output (alternative: .e%j)']
     ['#SBATCH --partition='          bash.partition         '    # Specify partition name']
     ['#SBATCH --nodes='              num2str(bash.nodes)    '              # Specify number of nodes']
     ['#SBATCH --ntasks-per-node='    num2str(bash.jobCPUs)  '  # Will request 120 logical CPUs']
     ['#SBATCH --time='               bash.jobTime           '            # Set a limit on the total run time; example: 22:00:00(22hours) or 7-00(7days)']
-    ['#SBATCH --output='             bash.jobName   '.o'    '        # File name for standard output       (alternative: .o%j)']
-    ['#SBATCH --error='              bash.jobName   '.e'    '         # File name for standard error output (alternative: .e%j)']
-    ''
+  ''
     };
 
 %% ===============================================

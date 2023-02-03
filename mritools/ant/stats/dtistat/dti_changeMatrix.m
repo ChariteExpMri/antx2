@@ -63,7 +63,7 @@ if 0
    w.dtifile={'F:\data4\sarahDTI_stat\_testMerge_HC\connectome_di_sy__Level2.csv'}
    w.source =1; %mrtrix
    w.type   ='select&merge';
-   dti_changeMatrix(w)
+   dti_changeMatrix(w);
     
     %% ===============================================
     
@@ -1231,7 +1231,7 @@ for i=1:length(v.label)
     end
     lut=[lut;    tp ];
 end
-lut2=plog([],[ w(1,:); lut],0,'','plotlines=0');
+lut2=plog([],[ w(1,:); lut],0,'','plotlines=0;al=1');
 % pwrite2file('test.txt' ,lut2 );
 
 % ==============================================
