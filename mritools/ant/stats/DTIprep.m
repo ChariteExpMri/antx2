@@ -97,6 +97,8 @@
 %  'rc_t2.nii'           % % t2.nii,transformed+resliced to DWI-space
 %  'dwi.nii'             % % original DWI-file, copied & renamed
 %  'grad.txt'            % % b-table
+%  'grad_fix.txt'        % % b-table for preprocessing only (i.e. for dwifslpreproc/FSL-Eddy)
+%  'grad_b1600_fix.txt'  % %  ||
 %
 %
 % #kc ___MULTI-SHELL___
@@ -110,10 +112,14 @@
 %  'dwi_b1600.nii'       % %  ||
 %  'dwi_b3400.nii'       % %  ||
 %  'dwi_b6000.nii'       % %  ||
-%  'grad_b100.txt'       % % b-table
+%  'grad_b100.txt'       % % b-tables
 %  'grad_b1600.txt'      % %  ||
 %  'grad_b3400.txt'      % %  ||
 %  'grad_b6000.txt'      % %  ||
+%  'grad_b100_fix.txt'   % % b-tables for preprocessing only (i.e. for dwifslpreproc/FSL-Eddy) 
+%  'grad_b1600_fix.txt'  % %  ||
+%  'grad_b3400_fix.txt'  % %  ||
+%  'grad_b6000_fix.txt'  % %  ||
 %
 % ====================================================
 %%   #lk [1] COMMANDS: GUI-mode  &  command-line-mode                       
@@ -1315,6 +1321,32 @@ if n_btables~=n_dwis
             end
         end
         
+        % ==============================================
+        %%      create the btables with fixed Bvalues
+        % ===============================================
+        for j=1:size(d.btable,1)
+            [paw namew ext]=fileparts(d.btable{j});
+            grfix_file =fullfile(thisdir, [namew ext]);
+            grfix_file2=stradd(grfix_file,'_fix',2);
+            
+            t=preadfile(grfix_file);
+            t=t.all;
+            t=str2num(char(t));
+            
+            me=median(t(2:end,4));
+            t(2:end,4)=me;
+            
+            pwrite2file(grfix_file2,t); 
+            showinfo2([ ' ... crating btable-for-preprocessing: ' ] ,grfix_file2,[],[], [ '>> ' grfix_file2 ]);
+        end
+        
+        
+        
+        
+        
+        
+        %% ===============================================
+        
     end%Mdirs
     
     
@@ -1387,7 +1419,7 @@ if strcmp(task,'exportfiles')
         'ANO_DTI.nii'
         };
     files=[files; btablefiles; DWIfiles];
-    
+    files=[files; stradd(btablefiles,'_fix',2)];% add grad with fixed b-values
     
     %% ------for each animal
     for i=1:length(mdirs)

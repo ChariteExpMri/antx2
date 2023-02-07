@@ -880,6 +880,15 @@
 % #ba 20 Jan 2023 (10:18:21)
 % #k script: [DTIscript_exportToHPC_makeBatch.m] #n revised:
 % 
+% #ba 07 Feb 2023 (22:25:52)
+% #k [DTIprep.m] #n modified: 
+% B-tables are now accompanied by b-tables with fixed b-values ("grad*_fix.txt"). 
+% The b-tables with fixed b-values will be used for MRtrix preprocessing only (dwifslpreproc/FSL-Eddy).
+% Reason: Sometimes the large variation of b-values within the same shell leads to the FSL-Eddy error 
+% "inconsistent b-values detected". To circumvent this issue, the preprocessing uses the b-tables with 
+% fixed b-values. For further analysis steps the fixed b-values will be replaced by the original b-values.
+% 
+% 
 % 
 % 
 
