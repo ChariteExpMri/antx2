@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   07 Feb 2023 (22:25:52)  
+ &#x1F34E; last modification:   % 13 Feb 2023 (12:30:06)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  % &#x1F535;   <ins>**13 Feb 2023 (12:30:06)** </ins>  
+   __[DTIprep.m]__ modified ...scripts added to see status of processing /delete MRtrix-related files   
+<!---->
   &#x1F535;   <ins>**07 Feb 2023 (22:25:52)**</ins>  
    __[DTIprep.m]__ modified:   
   B-tables are now accompanied by b-tables with fixed b-values ("grad*_fix.txt").   
@@ -14,6 +17,7 @@
   Reason: Sometimes the large variation of b-values within the same shell leads to the FSL-Eddy error   
   "inconsistent b-values detected". To circumvent this issue, the preprocessing uses the b-tables with   
   fixed b-values. For further analysis steps the fixed b-values will be replaced by the original b-values.  
+    
 <!---->
   &#x1F535;   <ins>**20 Jan 2023 (10:18:21)**</ins>  
    script: __[DTIscript_exportToHPC_makeBatch.m]__ revised:  

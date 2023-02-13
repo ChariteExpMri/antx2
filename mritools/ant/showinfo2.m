@@ -39,8 +39,16 @@ if strcmp(ext,'.nii')==0 ;%~isempty(regexp(im1,'.xls|.xlsx'))
     name=[fi ext];
     if isdekstop==1
         if ispc
-            mg=([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
-                ' or <a href="matlab: system(''start ' im1 ''');">' 'open' '</a>' ' '  msg2 ]);
+            if isempty(ext); 
+                mg=([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
+                    ' or <a href="matlab: explorer(''' im1 ''');">' 'open' '</a>' ' '  msg2 ]); 
+            else
+                mg=([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
+                    ' or <a href="matlab: system(''start ' im1 ''');">' 'open' '</a>' ' '  msg2 ]);
+            end
+            
+            
+
         elseif ismac
             mg=([msg ' [' name ']: <a href="matlab: explorerpreselect(''' im1 ''');">' 'Explorer' '</a>' ...
                 ' or <a href="matlab: system(''open ' im1 ''');">' 'open' '</a>' ' '  msg2  ]);

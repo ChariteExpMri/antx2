@@ -97,8 +97,6 @@
 %  'rc_t2.nii'           % % t2.nii,transformed+resliced to DWI-space
 %  'dwi.nii'             % % original DWI-file, copied & renamed
 %  'grad.txt'            % % b-table
-%  'grad_fix.txt'        % % b-table for preprocessing only (i.e. for dwifslpreproc/FSL-Eddy)
-%  'grad_b1600_fix.txt'  % %  ||
 %
 %
 % #kc ___MULTI-SHELL___
@@ -112,14 +110,10 @@
 %  'dwi_b1600.nii'       % %  ||
 %  'dwi_b3400.nii'       % %  ||
 %  'dwi_b6000.nii'       % %  ||
-%  'grad_b100.txt'       % % b-tables
+%  'grad_b100.txt'       % % b-table
 %  'grad_b1600.txt'      % %  ||
 %  'grad_b3400.txt'      % %  ||
 %  'grad_b6000.txt'      % %  ||
-%  'grad_b100_fix.txt'   % % b-tables for preprocessing only (i.e. for dwifslpreproc/FSL-Eddy) 
-%  'grad_b1600_fix.txt'  % %  ||
-%  'grad_b3400_fix.txt'  % %  ||
-%  'grad_b6000_fix.txt'  % %  ||
 %
 % ====================================================
 %%   #lk [1] COMMANDS: GUI-mode  &  command-line-mode                       
@@ -2706,6 +2700,8 @@ scripts={
  'DTIscript_importFromHPC_connectome.m'
  'DTIscript_importFromHPC_DWImaps.m'
  'DTIscript_runDTIprep_COMANDLINE.m'
+ 'script_checkMRTRIX_process.m'
+ 'script_DELETE_MRtrixFiles_fromHPC.m'
 };
 
 if isGUI==0
