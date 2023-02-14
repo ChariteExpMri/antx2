@@ -129,15 +129,29 @@ if Pass == 0
     gui.login_text = uicontrol(gui.main,'Style','text','FontSize',8,'HorizontalAlign','left',...
         'Units','characters','String','Login','Position',[1 7.65 40 1]);
 end
-gui.password_text = uicontrol(gui.main,'Style','text','FontSize',8,'HorizontalAlign','left',...
+gui.password_text = uicontrol(gui.main,'Style','text','FontSize',7,'HorizontalAlign','left',...
     'Units','characters','String','Password','Position',[1 4.15 40 1]);
 % Edits
 if Pass == 0
     gui.edit1 = uicontrol(gui.main,'Style','edit','FontSize',8,'HorizontalAlign','left','BackgroundColor','white',...
-        'Units','characters','String','','Position',[1 6.02 40 1.7],'KeyPressfcn',{@Escape});
+        'Units','characters','String','','Position',[1 6.02 40 1.7],...
+        'KeyPressfcn',{@Escape},'tag','un');
+    %%---
+   
+   global mpw
+   if isfield(mpw,'login') && isfield(mpw,'password')
+      hb = uicontrol(gui.main,'Style','pushbutton','FontSize',7,'HorizontalAlign',...
+          'left','BackgroundColor','white');
+
+     set(hb, 'Units','characters',  'String',mpw.login,'foregroundcolor','b')
+     set(hb,'Position',[30 7.77778 10 1.2],'callback',{@fillcredentials}); 
+     set(hb,'tooltipstring',['fill credentials for "' mpw.login '"  '] )
+   end
+%%---
 end
 gui.edit2 = uicontrol(gui.main,'Style','edit','FontSize',8,'HorizontalAlign','left','BackgroundColor','white',...
-    'Units','characters','String','','Position',[1 2.52 40 1.7],'KeyPressfcn',{@KeyPress_Function,gui.main},'Userdata','');
+    'Units','characters','String','','Position',[1 2.52 40 1.7],'KeyPressfcn',{@KeyPress_Function,gui.main},...
+    'Userdata','','tag','pw');
 
 % Buttons
 gui.OK = uicontrol(gui.main,'Style','push','FontSize',8,'Units','characters','String','OK','Position',[12 .2 10 1.7],'Callback',{@OK,gui.main},'KeyPressfcn',{@Escape});
@@ -175,6 +189,48 @@ else % If OK wasn't pressed output nothing
 end
 delete(gui.main) % Close the GUI
 setappdata(0,'logindlg',[]) % Erase handles from memory
+
+
+function fillcredentials(h,eventdata,fig)
+% automatic fill PW
+fig=gcf;
+
+global mpw
+if ~isfield(mpw,'password'); return; end
+
+hu=findobj(gcf,'tag','un');
+set(hu,'string',mpw.login);
+h=findobj(gcf,'tag','pw');
+
+password = get(h,'Userdata');
+password=mpw.password;
+% for i=1:length(pw)
+% key = get(fig,'currentkey');
+% switch key
+%     case 'backspace'
+%         password = password(1:end-1); % Delete the last character in the password
+%     case 'return'  % This cannot be done through callback without making tab to the same thing
+%         gui = getappdata(0,'logindlg');
+%         OK([],[],gui.main);
+%     case 'tab'  % Avoid tab triggering the OK button
+%         gui = getappdata(0,'logindlg');
+%         uicontrol(gui.OK);
+%     case 'escape'
+%         % Close the login dialog
+%         Escape(fig,[])
+%     otherwise
+%         password = [password get(fig,'currentcharacter')]; % Add the typed character to the password
+% end
+SizePass = size(password); % Find the number of asterisks
+if SizePass(2) > 0
+    asterisk(1,1:SizePass(2)) = '*'; % Create a string of asterisks the same size as the password
+    set(h,'String',asterisk) % Set the text in the password edit box to the asterisk string
+else
+    set(h,'String','')
+end
+set(h,'Userdata',password) % Store the password in its current state
+
+
 %% Hide Password
 function KeyPress_Function(h,eventdata,fig)
 % Function to replace all characters in the password edit box with

@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   % 13 Feb 2023 (12:30:06)  
+ &#x1F34E; last modification:   14 Feb 2023 (17:37:59)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,8 +7,12 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**14 Feb 2023 (17:37:59)**</ins>  
+   script: __[DTIscript_exportToHPC_makeBatch.m]__ revised again...  
+<!---->
   % &#x1F535;   <ins>**13 Feb 2023 (12:30:06)** </ins>  
    __[DTIprep.m]__ modified ...scripts added to see status of processing /delete MRtrix-related files   
+    
 <!---->
   &#x1F535;   <ins>**07 Feb 2023 (22:25:52)**</ins>  
    __[DTIprep.m]__ modified:   

@@ -1,49 +1,3 @@
-
-%% <b> exported data to HPC-cluster for DTI-processing  storage </b>
-% <font color="blue"> This script does the following:
-%     1) transfer necessary data to HPC-cluster storage
-%     2) create batch script that can be run on the HPC-cluster
-%         -->as copyNpaste version from help window
-%     3) {optional} transfers the batch-file to HPC-cluster* (username+password required!)
-%     4) {optional} make batch-file executable*   </font>
-% * for 3+4: the user has to provide the hostname, username and password for the HPC-cluster 
-% <font color="fuchsia"><b>- TESTED ON WINDOWS ONLY! </font> <font color="#FC0539";size="5">
-% 
-% _________ [ CHARITE ] ____________________________
-% <font color="red"> For CHARITE: only the following paramter have to be set:</font></b></font><code style="display:inline;background-color:D9D9D9;margin:0;font-size:15px;line-height:.0;padding:0;color:000000";><b>
-% [1] paHPCstudy_asW      :HPC-TARET-PATH for this study, such as "X:\Imaging\Paul_DTI\_test_AG_Wulczyn"                                                                  
-% [2] painDat             :INPUT-DATA-PATH of form ["studypath"+"DTI_export4mrtrix"+"dat"], such as: "H:\Daten-2\Imaging\AG_Wulczyn\Arpp21_Nov2022\DTI_export4mrtrix\dat"
-% [3] bash.jobName        :shortname of the job, such as "wulc"                                                                                                                  
-% [4] p.animals   (check) :use 'all' to export all animals or use indices for specific animals [1,2,3...] ...animals are copied to HPC-TARGET-PATH                       
-% [5] p.start_shfile      :starting shellscript, check species and inserted the adaquate shellscript </code> 
-% 
-% <b><u><font color="fuchsia"> PREREQUISITES </font></b></u>
-% - standard registration to atlas has to be done before
-% - all DTIprep-steps have to be done before 
-% - The DTIprep-step "export-files" is necessary to create the export-folder "DTI_export4mrtrix" with necessary files!
-% - The data from "DTI_export4mrtrix"-folder is than transferred to the HPC-cluster.
-%   <b> EXAMPLE FOR MULTISHELL-APPROACH </b>
-% The folder "DTI_export4mrtrix" contains the animal-folder
-% and each animal folder contains the following files (15 files):       <code style="display:inline;margin:0;font-size:12px;line-height:.0;padding:0;color:0000FF">
-%    "c_t2.nii"            "rc_t2.nii"           "rc_mt2.nii"
-%    "dwi_b100.nii"        "dwi_b900.nii"        "dwi_b1600.nii"    "dwi_b2500.nii"
-%    "grad_b100.txt"       "grad_b900.txt"       "grad_b1600.txt"   "grad_b2500.txt"
-%    "ANO_DTI.nii"         "rc_ix_AVGTmask.nii"  "ANO_DTI.txt"      "atlas_lut.txt"  </code>
-%% ===============================================
-% <b><u><font color="fuchsia"> HOW TO RUN BATCH ON HPC? </font></b></u>
-% [1] The "shellscripts"-folder with the necessary shellscripts must be manually
-% copied to HPC-storage, into the study-folder. The study folder ("paHPCstudy_asW")
-% will finally contain two folders: 
-%   (1) "shellscripts" : folder with all shellscripts (sh-files)
-%   (2) "data"         : folder with all animals for DTI-processing
-% 
-% -ideally the resulting HPC-slurm batch-file will than contain the explicit path 
-% to the animals in the "data"-folder
-% start slurm-batch on the HPC-cluster using "sbatch mybatch.sh" ..where "mybatch.sh" is the name of your batch-file
-% modif:14-Feb-2023 17:36:52
-%% ===============================================
-
-
 % ==============================================
 %%  REVISITED export DTI for HPC
 % ===============================================
@@ -73,9 +27,9 @@ painDat  = fullfile( 'H:\Daten-2\Imaging\AG_Boehm_Sturm\ERA-Net_topdownPTSD\Brai
 bash.jobName       = 'kkk'   ; % arbitrary name of jobname in bashfile (no space, specific characters)
 
 %______ animals to export to HPC-CLUSTER and USE in batch(s) (use "all" or a numeric vector) ____________
-p.numBatchfiles    = 1        ; %number of batchfiles, each batchfile process a subset of animals (default: 1 )
- p.animals         = 'all'  ;%animals to copy to HPC: 'all': all inimals from "painDat"-dir
-%p.animals         = [1:7] ;%animals to copy  to HPC: 'all': all inimals from "painDat"-dir, or numeric array ; example [1 2 4]
+p.numBatchfiles    = 2        ; %number of batchfiles, each batchfile process a subset of animals (default: 1 )
+% p.animals          = 'all'  ;%animals to copy to HPC: 'all': all inimals from "painDat"-dir
+p.animals         = [1:7] ;%animals to copy  to HPC: 'all': all inimals from "painDat"-dir, or numeric array ; example [1 2 4]
 
 % ----------------[other batch-parameter]--------
 bash.jobTime       = '7-00'       ; % max-limit on total HPC run time: example: "22:00:00" for 22hours;  "7-00" for 7 days
@@ -363,7 +317,6 @@ for ss=1:p.numBatchfiles
     
 end %ss several shell-files
 disp('Done!');
-
 
 
 

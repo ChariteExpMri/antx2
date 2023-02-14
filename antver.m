@@ -891,6 +891,10 @@
 % % #ba 13 Feb 2023 (12:30:06) 
 % #k [DTIprep.m] #n modified ...scripts added to see status of processing /delete MRtrix-related files 
 % 
+% #ba 14 Feb 2023 (17:37:59)
+% #k script: [DTIscript_exportToHPC_makeBatch.m] #n revised again...
+% 
+% 
 % 
 
 %% ===============================================
