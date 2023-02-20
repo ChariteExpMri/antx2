@@ -897,6 +897,8 @@
 % #ba 20 Feb 2023 (23:22:40)
 % #k new script: [DTIscript_DTIstatisticComplete1.m] #n 
 % -run DTI-statistic,create matrix-plots and ball-n-stick-plots, save plots as PPT, save tables as Excelfiles
+% #gw --> access via MENU: Statistic/DTI-statistic (scripts-button)   or type "dtistat" and hit scripts-button
+% 
 % 
 % 
 

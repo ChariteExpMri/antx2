@@ -10,6 +10,7 @@
   &#x1F535;   <ins>**20 Feb 2023 (23:22:40)**</ins>  
    new script: __[DTIscript_DTIstatisticComplete1.m]__   
   -run DTI-statistic,create matrix-plots and ball-n-stick-plots, save plots as PPT, save tables as Excelfiles  
+  &#8618; access via MENU: Statistic/DTI-statistic (scripts-button)   or type "dtistat" and hit scripts-button  
 <!---->
   &#x1F535;   <ins>**14 Feb 2023 (17:37:59)**</ins>  
    script: __[DTIscript_exportToHPC_makeBatch.m]__ revised again...  
