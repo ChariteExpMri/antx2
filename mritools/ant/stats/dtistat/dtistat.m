@@ -5580,6 +5580,7 @@ scripts={
 'STscript_export4vol3d_manycalcs.m'
 'DTIscript_plotsummary.m'
 'DTIscript_plotsummary_severalCALCS.m'
+'DTIscript_reduceMatric_viaCOIfile.m'
 'DTIscript_DTIstatisticComplete1.m'
 % 'DTIscript_HPC_exportData_makeBatch.m' 
 % 'DTIscript_posthoc_makeHTML_QA.m'
