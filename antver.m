@@ -894,6 +894,9 @@
 % #ba 14 Feb 2023 (17:37:59)
 % #k script: [DTIscript_exportToHPC_makeBatch.m] #n revised again...
 % 
+% #ba 20 Feb 2023 (23:22:40)
+% #k new script: [DTIscript_DTIstatisticComplete1.m] #n 
+% -run DTI-statistic,create matrix-plots and ball-n-stick-plots, save plots as PPT, save tables as Excelfiles
 % 
 % 
 

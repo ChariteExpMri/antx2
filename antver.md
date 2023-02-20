@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   14 Feb 2023 (17:37:59)  
+ &#x1F34E; last modification:   20 Feb 2023 (23:22:40)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,8 +7,13 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**20 Feb 2023 (23:22:40)**</ins>  
+   new script: __[DTIscript_DTIstatisticComplete1.m]__   
+  -run DTI-statistic,create matrix-plots and ball-n-stick-plots, save plots as PPT, save tables as Excelfiles  
+<!---->
   &#x1F535;   <ins>**14 Feb 2023 (17:37:59)**</ins>  
    script: __[DTIscript_exportToHPC_makeBatch.m]__ revised again...  
+    
 <!---->
   % &#x1F535;   <ins>**13 Feb 2023 (12:30:06)** </ins>  
    __[DTIprep.m]__ modified ...scripts added to see status of processing /delete MRtrix-related files   

@@ -500,6 +500,10 @@ if isfield(p,'plot')
     return
 end
 
+if isfield(p,'summaryplot')
+    summaryplot(p);
+    return
+end
 
 
 %-----------------DTI Paramter addon
@@ -591,7 +595,21 @@ if 0
     
 end
 
+function summaryplot(p)
 
+pptfile=p.pptfile;
+atlas  =p.atlas  ;  
+if exist(pptfile)==2; delete(pptfile); end
+
+dtistat('plot','atlas',atlas,'thr',1,'p',0.01,'label',1,'value',1,'fs',4,'pptfile',pptfile);
+dtistat('plot','atlas',atlas,'thr',2,'p',0.05,'label',1,'value',1,'fs',4,'pptfile',pptfile);
+dtistat('plot','atlas',atlas,'thr',2,'p',0.01,'label',1,'value',1,'fs',4,'pptfile',pptfile);
+dtistat('plot','atlas',atlas,'thr',2,'p',0.005,'label',1,'value',1,'fs',4,'pptfile',pptfile);
+dtistat('plot','atlas',atlas,'thr',2,'p',0.001,'label',1,'value',1,'fs',4,'pptfile',pptfile);
+dtistat('plot','atlas',atlas,'thr',3,'p',0.01,'label',1,'value',1,'fs',4,'pptfile',pptfile);
+
+
+% plotresults(p);
 
 
 function createGui
@@ -4939,12 +4957,19 @@ if isnumeric(z.contrast)
 end
 
 %---ATLAS
+[pa fi ext]=fileparts(z.ano);
+if strcmp(ext,'.xlsx')
+    z.ano=fullfile(pa , [ fi  '.nii']); %replace with NIfti-format
+end
+
+
 fAno=char(z.ano); %fullfile(pwd,'templates','ANO.nii');
 [ha a mm]=rgetnii(fAno);
 fAnoxls=strrep(fAno,'.nii','.xlsx');
 [~,~,b]=xlsread(fAnoxls);
 del=find(strcmp(cellfun(@(a){[num2str(a)]}, b(:,1)),'NaN'));
 b(del,:)=[];
+b(:,1)=strrep(b(:,1),'''',''); %remove apostrophe
 hb      =b(1,:);
 b       =b(2:end,:);
 %---HEMI
@@ -5553,6 +5578,9 @@ scripts={
 'STscript_DTIstatistic_diffDTImatrices_diffGroups.m'
 'STscript_export4vol3d_simple.m'
 'STscript_export4vol3d_manycalcs.m'
+'DTIscript_plotsummary.m'
+'DTIscript_plotsummary_severalCALCS.m'
+'DTIscript_DTIstatisticComplete1.m'
 % 'DTIscript_HPC_exportData_makeBatch.m' 
 % 'DTIscript_posthoc_makeHTML_QA.m'
 % 'DTIscript_posthoc_exportData4Statistic.m'

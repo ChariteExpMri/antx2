@@ -981,6 +981,7 @@ if iscell(r)
     else
         r=cell2struct(r(2:2:end),r(1:2:end),2);
     end
+    
 end
 
 %% ===============================================
@@ -999,6 +1000,9 @@ s=struct();
      disp('LUTfile-files (LF) such as "atlas_lut.txt" not specified...');
      return
  end
+ if isfield(r,'suffix'); s.suffix=r.suffix; end
+     
+     
  s.files=    mfiles;
  s.labelfile =lfile;
  if isfield(s,'suffix')==0   ; s.suffix='_reduction1'; end

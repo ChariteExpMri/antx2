@@ -1413,8 +1413,9 @@ if strcmp(task,'exportfiles')
         'ANO_DTI.nii'
         };
     files=[files; btablefiles; DWIfiles];
-    files=[files; stradd(btablefiles,'_fix',2)];% add grad with fixed b-values
-    
+    try
+        files=[files; stradd(btablefiles,'_fix',2)];% add grad with fixed b-values
+    end
     %% ------for each animal
     for i=1:length(mdirs)
         thispa=mdirs{i};
