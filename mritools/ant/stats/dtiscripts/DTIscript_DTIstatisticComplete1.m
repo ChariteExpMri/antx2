@@ -58,7 +58,7 @@ for i=1:size(combs,1)
     % ===============================================
     dtistat('set','inputsource','MRtrix' );
     dtistat('group', x.groupingfile);                        % % LOAD groupAssignment (ExcelFile)
-    dtistat('conpath', conpath ,'x.confiles', x.confiles  ,'labelfile',x.lutfile); % % LOAD connectivity-Files & LUTfile
+    dtistat('conpath', conpath ,'confiles', x.confiles  ,'labelfile',x.lutfile); % % LOAD connectivity-Files & LUTfile
     dtistat('set','within',0,'test',stattest,'tail','both' );
     dtistat('set','FDR',1,'qFDR',0.05,'showsigsonly',1,'sort',1,'rc',0 );
     dtistat('set','nseeds',1000000,'propthresh',thresh,'thresh','max','log',1 );
