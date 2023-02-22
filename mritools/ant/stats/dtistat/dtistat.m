@@ -601,12 +601,12 @@ pptfile=p.pptfile;
 atlas  =p.atlas  ;  
 if exist(pptfile)==2; delete(pptfile); end
 
-dtistat('plot','atlas',atlas,'thr',1,'p',0.01,'label',1,'value',1,'fs',4,'pptfile',pptfile);
-dtistat('plot','atlas',atlas,'thr',2,'p',0.05,'label',1,'value',1,'fs',4,'pptfile',pptfile);
-dtistat('plot','atlas',atlas,'thr',2,'p',0.01,'label',1,'value',1,'fs',4,'pptfile',pptfile);
-dtistat('plot','atlas',atlas,'thr',2,'p',0.005,'label',1,'value',1,'fs',4,'pptfile',pptfile);
-dtistat('plot','atlas',atlas,'thr',2,'p',0.001,'label',1,'value',1,'fs',4,'pptfile',pptfile);
-dtistat('plot','atlas',atlas,'thr',3,'p',0.01,'label',1,'value',1,'fs',4,'pptfile',pptfile);
+dtistat('plot','atlas',atlas,'thr',1,'p',0.1   ,'label',1,'value',1,'fs',4,'pptfile',pptfile);
+dtistat('plot','atlas',atlas,'thr',2,'p',0.05  ,'label',1,'value',1,'fs',4,'pptfile',pptfile);
+dtistat('plot','atlas',atlas,'thr',2,'p',0.01  ,'label',1,'value',1,'fs',4,'pptfile',pptfile);
+dtistat('plot','atlas',atlas,'thr',2,'p',0.005 ,'label',1,'value',1,'fs',4,'pptfile',pptfile);
+dtistat('plot','atlas',atlas,'thr',2,'p',0.001 ,'label',1,'value',1,'fs',4,'pptfile',pptfile);
+dtistat('plot','atlas',atlas,'thr',3,'p',0.05  ,'label',1,'value',1,'fs',4,'pptfile',pptfile);
 
 
 % plotresults(p);

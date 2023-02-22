@@ -430,7 +430,9 @@ end
 if 0
     filenode='C:\Users\skoch\Desktop\shrew_3dvol\_testNodes2.xlsx';
 end
-
+if isempty(filenode)
+   return 
+end
 [~,aa,a]=xlsread(filenode);
 if numel((a{1}))==1
     %% ------ get sheetNumber

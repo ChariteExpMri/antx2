@@ -19,7 +19,7 @@ cf;  clear; warning off
 % ===============================================
 x=struct();
 x.pastudy       ='f:\data6\DTI_thomas_reduceMatrix'       ;% STUDY-folder 
-x.resultDir     ='result_DTI_reducedCON2'                 ;% NAME of OUTPUT-FOLDER (SHORTNAME) ..this folder will be created
+x.resultDir     ='result_DTI_reducedCON2_Rev3'                 ;% NAME of OUTPUT-FOLDER (SHORTNAME) ..this folder will be created
 x.groupingfile  =fullfile(x.pastudy,'group','groupassignment.xlsx') ; %group-assignment File (Excel-file)
 x.outdirPrefix  ='resDTI_'                                ;% prefix of the new output-subdir-folders (located within "x.resultDir")
 
@@ -56,6 +56,7 @@ for i=1:size(combs,1)
     % ==============================================
     %%   2.1) SET PARAMETER
     % ===============================================
+    dtistat
     dtistat('set','inputsource','MRtrix' );
     dtistat('group', x.groupingfile);                        % % LOAD groupAssignment (ExcelFile)
     dtistat('conpath', conpath ,'confiles', x.confiles  ,'labelfile',x.lutfile); % % LOAD connectivity-Files & LUTfile
@@ -160,6 +161,10 @@ files=cellstr(files);
 
 for i=1:length(files)
     file=files{i};
+    if isempty(file); 
+        disp(['file for xvol3d not found (reason: either not exported or no surviving connections)']);
+        continue; 
+    end
     %--------------------
     [paIN fi ext]=fileparts(file);
     paOUT=fullfile(paIN,'images');
@@ -256,6 +261,10 @@ end
 cf
 pax=fullfile(x.pastudy,x.resultDir)  ;%main Folder with calculations
 [imgDirs] = spm_select('FPListRec',pax,'dir','^images$');
+if isempty(imgDirs);
+    disp(['could not make PPT.. (reason: either Excelfile not exported or no surviving connections)']);
+    return; 
+end
 imgDirs=cellstr(imgDirs);
 
 for i=1:length(imgDirs)
@@ -263,7 +272,6 @@ for i=1:length(imgDirs)
     FileOut=fullfile(  fileparts(pain)   , 'ballnsticks.pptx');
     ballnstick2ppt(pain,FileOut); 
 end
-
 
 
 

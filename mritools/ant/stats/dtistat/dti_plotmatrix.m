@@ -130,6 +130,16 @@ end
 %     set( findobj(findobj(0,'tag','dtifig1'),'tag','cmap'), 'value',pp.cmap);
 %     set_cmap();
 % end
+
+hf=findobj(0,'tag','dtifig1');
+ht=findobj(hf,'tag','tx_nosurvive');
+if ~isempty(ht)
+    delete(findobj(hf,'tag','statvalue'));
+end
+% xl=(get(findobj(hf,'tag','ax1'),'xlim'))
+% yl=(get(findobj(hf,'tag','ax1'),'ylim'))
+% set(ht,position,)
+
 if  isfield(pp,'pptfile') && ~isempty(pp.pptfile)
     % pptfile=fullfile('F:\data6\DTI_thomas_reduceMatrix\__test_output','test1.pptx');
     savePPT(pp);
@@ -258,14 +268,19 @@ delete(findobj(hf,'tag','tx_nosurvive'));
 if isempty(s)
    % addNote(hf,'note','close') ;
     %hs=addNote(gcf,'text','no connections survived!','state',2,'pos',[.7 .5 .3 .3]);
-    cim=findobj(hf,'type','image');
+    ax1=findobj(hf,'tag','ax1');
+    cim=findobj(ax1,'type','image');
    set(cim(1),'visible','off');
    % msgbox({'no conections left!' 'change threshold/threshold-Type'});
-   ax1=get(cim(1),'parent');
+   %ax1=get(cim(1),'parent');
+  
    %% ===============================================
+    axes(ax1);
    ht=text(mean(get(ax1,'xlim')), mean(get(ax1,'ylim')),['no connections survived!'],'tag','tx_nosurvive' );
    set(ht,'HorizontalAlignment','center','fontsize',9,'fontweight','bold');
    set(ht,'backgroundcolor',[1 1 0]);
+   
+   try; delete(findobj(hf,'tag','statvalue')); end
    %% ===============================================
    
     return
@@ -412,16 +427,23 @@ ax1=findobj(hf,'tag','ax1');
 axes(ax1);
 % txt-Test-statistic
 if get(findobj(hf,'tag','show_statvalue'),'value') ==1
-    ht=[];
-    for i=1:size(sx.s,1)
-        for j=1:size(sx.s,2)
-            if sx.s(i,j)~=0
-                ht(end+1,1)=text(j,i, sprintf('%2.2f',sx.s(i,j)));
+ht=findobj(hf,'tag','tx_nosurvive');
+if isempty(ht)
+    if isfield(sx,'s')==1
+        ht=[];
+        for i=1:size(sx.s,1)
+            for j=1:size(sx.s,2)
+                if sx.s(i,j)~=0
+                    ht(end+1,1)=text(j,i, sprintf('%2.2f',sx.s(i,j)));
+                end
             end
         end
+        set(ht,'fontsize',sx.fs_statscore,'fontweight','bold','tag','statvalue','HorizontalAlignment','center',...
+            'color','w');
     end
-    set(ht,'fontsize',sx.fs_statscore,'fontweight','bold','tag','statvalue','HorizontalAlignment','center',...
-        'color','w');
+else
+     delete(findobj(hf,'tag','statvalue'));
+end
 else
    delete(findobj(hf,'tag','statvalue')); 
 end
@@ -618,7 +640,7 @@ set(hb,'tooltipstring',['contrast name'],'backgroundcolor',[1.0000  0.8431 0],..
 
 
 %% THRESHTYPE (pulldown: all,etc)
-hb=uicontrol('style','popupmenu','units','norm', 'string', {'all' , 'thresh', 'FDR'});
+hb=uicontrol('style','popupmenu','units','norm', 'string', {'uncorrected' , 'thresh', 'FDR'});
 set(hb,'position',[0.0 0.83452 0.09 0.047619],'tag','threshtype');
 % set(hb,'position',[0.0125 0.91071 0.10714 0.047619],'tag','threshtype');
 set(hb,'tooltipstring',['threshold Type' char(10) ' all: show all connections ' char(10) ... 
@@ -1087,22 +1109,47 @@ ix=min([min(strfind(fd,[filesep 'dat' filesep])) min(strfind(fd,[filesep 'data' 
 
 htr=findobj(hf,'tag','threshtype');
 comparison=get(findobj(hf,'tag','contrast_str'),'string');
+thresh=htr.String{htr.Value};
+if strcmp(thresh,'thresh')
+    thresh='uncorrected';
+end
+pvalue=get(findobj(hf,'tag','thresh'),'string');
+if isfield(us,'s')
+    nsigcxn=num2str(length(find(us.s(:)~=0)));
+else
+    nsigcxn=num2str(0) ;
+end
+groupsize=regexprep(num2str(num2str(cellfun(@length,us.us.pw.groupmembers))),'\s+',',');
+if strcmp(thresh,'FDR')
+    try;
+        pvalmsg= ['qFDR:      ' num2str(us.us.pw.z.qFDR)] ;
+    catch
+        pvalmsg= ['qFDR:      ' pvalue] ;
+    end
+else
+    pvalmsg= ['p-value:   ' pvalue] ;
+    
+end
+
 info=...
     {
     %['Contrast: ' lb.String{lb.Value} ]
-    ['COMP: ' comparison ]
-    ['THR: '   htr.String{htr.Value}   ]
-    ['p:   '   get(findobj(hf,'tag','thresh'),'string')]
-    ['stat: ' pw.stattype]
-    ['#sign.voxel: '         num2str(length(find(us.s(:)~=0)))]
+    ['COMP:      ' comparison ]
+    ['MCP:       ' thresh   ]
+     pvalmsg
+    ['stat:      ' pw.stattype]
+    ['sign.CXNs: ' nsigcxn]
+    [' ']
+    ['clim:      ' ['[' num2str(get(findobj(hf,'tag','clim'),'string')) ']']]
+    ['n1,n2:     ' ['[' groupsize ']']]
     };
 
 info2=...
     {
-    ['STUDY: '         studyname]
-    ['data: '         fd(1:ix)]
-    ['groupfile: '         us.us.groupfile]
-    ['atlas: '         us.us.atlas]
+    ['study:     '    studyname]
+    ['data:      '    fd(1:ix)]
+    ['groupfile: '    us.us.groupfile]
+    ['atlas:     '    us.us.atlas]
     };
 
 
@@ -1141,16 +1188,18 @@ exportToPPTX('addpicture',hf);
 
 if 1
     %     exportToPPTX('addtext',lb.String{lb.Value});
-    exportToPPTX('addtext',[comparison],'Position',[0 0 sip(1) 0.4  ],...
+    exportToPPTX('addtext',['DTI: ' comparison  ' (' thresh ', p=' pvalue ')'],'Position',[0 0 sip(1) 0.4  ],...
         'Color',[0 0 1],'FontWeight','bold','BackgroundColor',[1.0000    0.9686    0.9216]);
     %exportToPPTX('addtext',    [['C' num2str(cons(1))] ': '  lb.String{lb.Value}]   );
    
 end
   exportToPPTX('addtext',strjoin(info,char(10)),'FontSize',10,...
-        'Position',[0 1 3 3  ]);
+        'Position',[0 1 3 3  ],...
+        'FontName','Consolas');
     
 exportToPPTX('addtext',strjoin(info2,char(10)),'FontSize',8,...
-        'Position',[ sip(1)/2 sip(2)-1+sip(2)/20 8 1]);
+        'Position',[ sip(1)/2 sip(2)-1+sip(2)/20 8 1],...
+        'FontName','Consolas');
     
 %exportToPPTX('addnote',sprintf('Notes data: slide number %d',slideNum));
 exportToPPTX('addnote',['source: '  pwd ]);
