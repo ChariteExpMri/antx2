@@ -1091,7 +1091,12 @@ else
     lg{end+1,1}=[ 'files = ' '{' '''' s.files{1} ''''   ];
     dum=cellfun(@(a){[ repmat(' ',1, length(['files = ' '{']) ) '''' a  ''' ' ]}, s.files(2:end));
     dum{end}=[dum{end} '};'];
-    lg=[lg;dum];
+    if size(dum,2)>size(dum,1)
+        lg=[lg;dum'];
+    else
+        lg=[lg;dum];
+    end
+
 end
 
 if isempty(s.path)
