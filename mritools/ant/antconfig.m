@@ -195,20 +195,22 @@ p={...
 %     'wa.fib'         r.fib       'reference fiber image' 'f'
     %'wa.refsample'  r.refsample       'a sample image in reference space' 'f'
 
+    'inf34'   '_________OTHERS________________________________________________________________' '' ''
+    'wa.resizeFactor'   1      'use a smaller value such as 0.9 if animal brain is much smaller than the template; default: 1.0 '   {1 .9 .85 1.1}
     
-    
-    'inf34'   '_________VOLUMES TO TRANSFORM________________________________________________________________' '' ''
-    'wa.tf_t2'                  1        'create "x_t2.nii" (mouse-t2-image)                         in TEMPLATESPACE (forwardTrafo)'     'b'
-    'wa.tf_avg'                 1        'create "ix_AVGT.nii" (template-structural-image)                 in MOUSESPACE (inverseTrafo)'     'b'
-
-    'wa.tf_ano'                 1        'create "ix_ANO.nii" (template-label-image)                       in MOUSESPACE (inverseTrafo)'     'b'
-   % 'wa.tf_anopcol'            0        'create "ix_ANOpcol.nii" (template-pseudocolor-label-image label) in MOUSESPACE (inverseTrafo)'     'b'
-   % 'wa.tf_refc1'              0        'create "ix_refIMG.nii" (template-grayMatter-image)               in MOUSESPACE (inverseTrafo)'     'b'
-    'wa.tf_c1'                  0        'create "x_c1t2.nii" (mouse-grayMatter-image)               in TEMPLATESPACE (forwardTrafo)'     'b'
-    'wa.tf_c2'                  0        'create "x_c2t2.nii" (mouse-whiteMatter-image)              in TEMPLATESPACE (forwardTrafo)'     'b'
-    'wa.tf_c3'                  0        'create "x_c3t2.nii" (mouse-CSF-image)                      in TEMPLATESPACE (forwardTrafo)'     'b'
-    'wa.tf_c1c2mask'            0        'create "x_c1c2mask.nii" (mouse-gray+whiteMatterMask-image) in TEMPLATESPACE (forwardTrafo)'     'b'
-    };
+%     
+%     'inf34'   '_________VOLUMES TO TRANSFORM________________________________________________________________' '' ''
+%     'wa.tf_t2'                  1        'create "x_t2.nii" (mouse-t2-image)                         in TEMPLATESPACE (forwardTrafo)'     'b'
+%     'wa.tf_avg'                 1        'create "ix_AVGT.nii" (template-structural-image)                 in MOUSESPACE (inverseTrafo)'     'b'
+% 
+%     'wa.tf_ano'                 1        'create "ix_ANO.nii" (template-label-image)                       in MOUSESPACE (inverseTrafo)'     'b'
+%    % 'wa.tf_anopcol'            0        'create "ix_ANOpcol.nii" (template-pseudocolor-label-image label) in MOUSESPACE (inverseTrafo)'     'b'
+%    % 'wa.tf_refc1'              0        'create "ix_refIMG.nii" (template-grayMatter-image)               in MOUSESPACE (inverseTrafo)'     'b'
+%     'wa.tf_c1'                  0        'create "x_c1t2.nii" (mouse-grayMatter-image)               in TEMPLATESPACE (forwardTrafo)'     'b'
+%     'wa.tf_c2'                  0        'create "x_c2t2.nii" (mouse-whiteMatter-image)              in TEMPLATESPACE (forwardTrafo)'     'b'
+%     'wa.tf_c3'                  0        'create "x_c3t2.nii" (mouse-CSF-image)                      in TEMPLATESPACE (forwardTrafo)'     'b'
+%     'wa.tf_c1c2mask'            0        'create "x_c1c2mask.nii" (mouse-gray+whiteMatterMask-image) in TEMPLATESPACE (forwardTrafo)'     'b'
+   };
 
 
 p2=paramadd(p,an);%add/replace parameter

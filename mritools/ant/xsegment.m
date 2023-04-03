@@ -213,13 +213,15 @@ if 1
     if exist(overridefun)
         pabef=pwd;
         cd(paoverride);
-        parm=override();
-        cd(pabef);
-        if isfield(parm,'segm') && isfield(parm.segm,'opts')
-            fields=fieldnames(parm.segm.opts);
-            disp('overriding parameters from "override.m"-function');
-            for i=1:length(fields)
-                job.opts= setfield(job.opts,  fields{i}   ,getfield(parm.segm.opts,fields{i}) );
+        try
+            parm=override();
+            cd(pabef);
+            if isfield(parm,'segm') && isfield(parm.segm,'opts')
+                fields=fieldnames(parm.segm.opts);
+                disp('overriding parameters from "override.m"-function');
+                for i=1:length(fields)
+                    job.opts= setfield(job.opts,  fields{i}   ,getfield(parm.segm.opts,fields{i}) );
+                end
             end
         end
     end

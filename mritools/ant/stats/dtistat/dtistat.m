@@ -2774,7 +2774,7 @@ sz{end+1,1}        =['groups (size):          '      grp];
 
 
 try
-    sz{end+1,1}    =['# number of nodes:       '      num2str(size(us.con.conlabels,1))];
+    sz{end+1,1}    =['# number of pairwise connections:       '      num2str(size(us.con.conlabels,1))];
 end
 
 try

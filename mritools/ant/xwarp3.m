@@ -215,6 +215,11 @@ if find(s.task==1)
     end
     %disp('---post_removePrivate');
     
+    % delete "defs.mat" if resizeFactor is not 1
+     if isfield(s,'resizeFactor') && any(s.resizeFactor~=1)
+        delete(fullfile(s.pa,'defs.mat')); 
+     end
+    
     if exist(fullfile(s.pa,'defs.mat'))==0  %% COPY TPMS if not exists
         %% COPY TEMPLATES FROM studyTemplatepath to current MOUSEPATH
         %(1)TPMS
@@ -240,7 +245,29 @@ if find(s.task==1)
         
         
 
-        
+        %% ====[resize TPMs by factor]===========================================
+        % scenario: animal is much smaller than template
+        if isfield(s,'resizeFactor') && any(s.resizeFactor~=1)
+            disp(['..resizeFactor: [' num2str(s.resizeFactor) ']' ]);
+            tpm=replacefilepath(t.refTPM,s.pa);
+            copyfilem(t.refTPM,tpm);
+            if 0  %CHECK RESIZING
+                tpmBK= stradd(tpm,'_BK',2)
+                copyfilem(t.refTPM,tpmBK);
+            end
+            
+            rf=s.resizeFactor;
+            %rf=[0.9];
+            % rf=[0.5 .5 .5]
+            % rf=[1 1 .5]
+            if length(rf)==1; rf=repmat(rf,[1 3]); end
+            m=diag([rf(:); 1]);
+            for i=1:length(tpm)
+                ha=spm_vol(tpm{i});
+                spm_get_space(tpm{i},m*ha.mat);
+            end
+        end
+        %% ===============================================
         
        
         
@@ -267,6 +294,9 @@ if find(s.task==1)
             spm_get_space(tpm{j}, defs.tpms{j,2}  );
         end
     end
+    
+
+ 
     %% BIAS FIELD CORRECTION
     if isfield(s,'BiasFieldCor') && s.BiasFieldCor==1
         origfile=stradd(s.t2,['biased'],2);
@@ -783,13 +813,13 @@ if find(s.task==4)
     load(fullfile(s.pa,'reorient.mat'));
     
     %% BACKWARD
-    if isfield(s,'tf_ano') && s.tf_ano==1
+%     if isfield(s,'tf_ano') && s.tf_ano==1
         file={fullfile(s.templatepath,'ANO.nii')} ; %showinfo(['   ..transform: ' file{1}]);
         try
         fis=doelastix('transforminv'  , s.pa,    file ,0,M );
         showinfo2(msgvol,fis{1},-1) ;
         end
-    end
+%     end
     
     if  isfield(s,'tf_anopcol') && s.tf_anopcol==1
         file={fullfile(s.templatepath,'ANOpcol.nii')} ;%showinfo(['   ..transform: ' file{1}]);
@@ -799,13 +829,13 @@ if find(s.task==4)
         end
     end
     
-    if  isfield(s,'tf_avg') && s.tf_avg==1
+%     if  isfield(s,'tf_avg') && s.tf_avg==1
         file={fullfile(s.templatepath,'AVGT.nii')} ; %showinfo(['   ..transform: ' file{1}]);
         try
         fis=doelastix('transforminv'  , s.pa,    file ,3,M );
         showinfo2(msgvol,fis{1},-1) ;
         end
-    end
+%     end
     
     if  isfield(s,'tf_refc1') && s.tf_refc1==1
         file={fullfile(s.pa,'_refIMG.nii')} ; %showinfo(['   ..transform: ' file{1}]);
@@ -817,20 +847,20 @@ if find(s.task==4)
     
     
     %% FORWARD
-    if isfield(s,'tf_t2') && s.tf_t2==1
+%     if isfield(s,'tf_t2') && s.tf_t2==1
         file={fullfile(s.pa,'t2.nii')} ; %showinfo(['   ..transform: ' file{1}]);
         try
             fis=doelastix('transform'  , s.pa,   file  ,3,M );
             showinfo2(msgvol,fis{1},+1) ;
         end
-    end
+%     end
     if isfield(s,'tf_c1') && s.tf_c1==1
         file={fullfile(s.pa,'c1t2.nii')} ; %showinfo(['   ..transform: ' file{1}]);
         try
             fis=doelastix('transform'  , s.pa,    file  ,3,M );
             showinfo2(msgvol,fis{1},+1) ;
         end
-    end
+   end
     if isfield(s,'tf_c2') && s.tf_c2==1
         file={fullfile(s.pa,'c2t2.nii')} ; %showinfo(['   ..transform: ' file{1}]);
         try
