@@ -757,14 +757,19 @@ set(h2,'tooltipstring','one-way-anova within subjects','fontsize',7);
 h2=uicontrol('style','pushbutton','units','norm')   ;   %fullfactorial
 set(h2,'string', 'fullfactorial','callback', @fullfactorial);
 set(h2,'position',[-0.00025874 0.80825 0.3 0.05]);
-set(h2,'tooltipstring','fullfactorial','fontsize',7);
+set(h2,'tooltipstring','full-factorial model ','fontsize',7);
+
+h2=uicontrol('style','pushbutton','units','norm')   ;   %fullfactorial
+set(h2,'string', 'flex.factorial','callback', @flexfactorial);
+set(h2,'position',[0.3 0.80825 0.3 0.05]);
+set(h2,'tooltipstring','flexible-factorial model','fontsize',7);
+
 
 h2=uicontrol('style','pushbutton','units','norm')   ;   %fullfactorial
 set(h2,'string', 'add contrasts','callback', @addcontrast);
 set(h2,'position',[0.0043616 0.77492 0.3 0.03]);
 set(h2,'tooltipstring','<html>for fullfactorial design only: <br> add additional contrasts from textfile',...
     'fontsize',7,'foregroundcolor',[0 .5 1]);
-
 
 h2=uicontrol('style','pushbutton','units','norm')   ;   %multiple regression
 set(h2,'string', 'm. regression','callback', @multipleregression);
@@ -773,7 +778,7 @@ set(h2,'tooltipstring','multiple regression','fontsize',7);
 
 h2=uicontrol('style','pushbutton','units','norm')   ;  %USERDEFINED
 set(h2,'string', 'userdefined','callback',@userdefined);
-set(h2,'position',[[0.60039 0.82492 0.3 0.05]]);
+set(h2,'position',[[0.6697 0.82492 0.3 0.05]]);
 set(h2,'tooltipstring','build your own analysis');
 % ==============================================
 %%   view results GUI
@@ -1085,6 +1090,8 @@ if isfield(xvv.x,'stattype')
         onewayanova_within;
     elseif strcmp(xvv.x.stattype, 'fullfactorial')
         fullfactorial;
+    elseif strcmp(xvv.x.stattype, 'flexfactorial')
+        flexfactorial;    
     end
     
 end
@@ -1624,6 +1631,7 @@ stattests={...
     'onewayanova'        '% ONE-WAY-ANOVA' 
     'onewayanova_within' '% within-ONE-WAY-ANOVA' 
     'fullfactorial'      '% fullfactorial ANOVA'
+    'flexfactorial'      '% flexfactorial ANOVA'
     };
 
 
@@ -1655,6 +1663,55 @@ p={
     'runSPMbatch'     1                  'run SPM-batch, [0|1]; if [0] you have to start the SPM-batch by yourself,i.e hit the green triangle, [1] batch runs automatically ' 'b';
     'showResults'     1                  'show results; [0|1]; if [1] voxelwise results will be shown afterwards' 'b'; 
     };
+
+%for fullfactorial design add in/dependency-option
+if strcmp(xtype,'fullfactorial')
+    pbk=p;
+    isep=find(strcmp(pbk(:,1),'group_col'));
+    pq1=pbk(1:isep    ,:);
+    pq2=pbk(isep+1:end,:);
+    dep={'factorDependency'  [0] 'dependencies of factor(s):[0]independent/between; [1] dependent/within (repeated measures); specify each factor (number of factors must match number of columns s "group_col")'...
+        {...
+        [0];[1]; ...
+        [0 0];[1 1];[0 1];[1 0];...
+        [0 0 0];[1 1 1];[1 0 0];[0 1 0];[0 0 1]; [1 1 0]; [1 0 1]; [0 1 1]}...
+        };
+    p=[pq1;dep;pq2];
+end
+if strcmp(xtype,'flexfactorial')
+    %% ===============================================
+    
+ 'a'  
+ pbk=p;
+ isep=find(strcmp(pbk(:,1),'group_col'));
+ pq1=pbk(1:isep    ,:);
+ pq2=pbk(isep+1:end,:);
+ 
+ subjfact={'subjectFactor_col'  [] 'column of within subject-factor (column contains integers, same integer for the same animals (identical integers for repeated measurements of the same animal))',[]};
+ 
+ dep={'factorDependency'  [0] 'dependencies of factor(s):[0]independent/between; [1] dependent/within (repeated measures); specify each factor (number of factors must match number of columns s "group_col")'...
+     {...
+     [0];[1]; ...
+     [0 0];[1 1];[0 1];[1 0];...
+     [0 0 0];[1 1 1];[1 0 0];[0 1 0];[0 0 1]; [1 1 0]; [1 0 1]; [0 1 1]}...
+     };
+ pq2=pbk(isep+1:end,:);
+ varia={'factorVariance'  [0] 'variance of factor(s):[0]unequal; [1] equal; specify each factor (number of factors must match number of columns s "group_col")'...
+     {...
+     [0];[1]; ...
+     [0 0];[1 1];[0 1];[1 0];...
+     [0 0 0];[1 1 1];[1 0 0];[0 1 0];[0 0 1]; [1 1 0]; [1 0 1]; [0 1 1]}...
+     };
+    
+    
+ %% ===============================================
+ p=[pq1;subjfact;dep;varia; pq2];
+    
+    
+%  displine();
+% return
+end
+
 
 istat=strcmp(stattests(:,1),xtype);
 if isempty(istat)
@@ -1802,27 +1859,29 @@ if ~isempty(imissdir)
     a(imissdir+1,:)=[];
 end
 % =========remove covars that do not fit ()======================================
-try
-    if ~isempty(x.regress_col)
-        try
-            covs=a(2:end,x.regress_col);
-            
-            is_noNumeric=cell2mat(cellfun(@(a){[~isnumeric(a)]} ,covs));
-            is_NAN      =cell2mat(cellfun(@(a){[strcmp(num2str(a),'NaN')]} ,covs));
-            ix_notOK    =find(sum(is_noNumeric+is_NAN,2));
-            
-            if ~isempty(ix_notOK)
-                cprintf('*[1 0 .5]',['non-numeric values or NaN or spaces for covars/regressValues found!' '\n']);
-                cprintf('*[1 0 .5]',['excel-rows: '  regexprep(num2str(ix_notOK'),'\s+',',') '\n']);
-                disp(covs(ix_notOK,:));
+if 1
+    try
+        if ~isempty(x.regress_col)
+            try
+                covs=a(2:end,x.regress_col);
                 
-                cprintf('*[1 0 .5]',['..please remove those values from group-assignment file!!!!' '\n']);
-                error('abbort: covars/regression values ...not numeric or contain NANs/spaces');
+                is_noNumeric=cell2mat(cellfun(@(a){[~isnumeric(a)]} ,covs));
+                is_NAN      =cell2mat(cellfun(@(a){[strcmp(num2str(a),'NaN')]} ,covs));
+                ix_notOK    =find(sum(is_noNumeric+is_NAN,2));
+                
+                if ~isempty(ix_notOK)
+                    cprintf('*[1 0 .5]',['non-numeric values or NaN or spaces for covars/regressValues found!' '\n']);
+                    cprintf('*[1 0 .5]',['excel-rows: '  regexprep(num2str(ix_notOK'),'\s+',',') '\n']);
+                    disp(covs(ix_notOK,:));
+                    
+                    cprintf('*[1 0 .5]',['..please remove those values from group-assignment file!!!!' '\n']);
+                    error('abbort: covars/regression values ...not numeric or contain NANs/spaces');
+                end
+                
+            catch
+                cprintf('*[1 0 .5]',['index/indices of regress_col does not match ' '\n']);
+                error(['wrong regress_col-index/indices: ' num2str(x.regress_col)]);
             end
-            
-        catch
-            cprintf('*[1 0 .5]',['index/indices of regress_col does not match ' '\n']);
-            error(['wrong regress_col-index/indices: ' num2str(x.regress_col)]);
         end
     end
 end
@@ -3775,6 +3834,12 @@ voxstat_onewayANOVAwithin();
 %———————————————————————————————————————————————
 function fullfactorial(e,e2,varargin)
 voxstat_multifactorial();
+%———————————————————————————————————————————————
+%%   flexfactorial
+%———————————————————————————————————————————————
+function flexfactorial(e,e2,varargin)
+voxstat_flexfactorial();
+
 %———————————————————————————————————————————————
 %%   twosampleTest
 %———————————————————————————————————————————————

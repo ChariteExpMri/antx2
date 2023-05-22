@@ -27,7 +27,7 @@ img={            %PLEASE MODIFY: THE IMAGES TO RUN THE VOXWISE ANALYSIS (MUST BE
     'x_t2.nii'
     };
 
-if exist(paoutmain)~=7; mkdir(paoutmain); end
+if exist(paout)~=7; mkdir(paout); end
 for i=1:length(img)
     
     [~,imgNameShort]=fileparts(img{i});

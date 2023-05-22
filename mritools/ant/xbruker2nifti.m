@@ -705,12 +705,16 @@ p={...
     %'inf100'      [repmat('=',[1,50])]                           '' ''
     %
     'inf101'      [repmat('=',[1,100])]                                    ''  ''
-    'inf1'      '  [1] MOUSE DIRECTORY NAME (added to "SubjectId")         '                                    ''  ''
+    'inf1'      '  [1] ANIMAL DIRECTORY NAME (added to "SubjectId")         '                                    ''  ''
     'inf102'      [repmat('=',[1,100])]                                    ''  ''
     'prefix_Dir'        ''    'add arbitrary string as PREFIX-STRING to the new animal directory '  {'' 'test_' 'other_'}
     'StudNo_Dir'        0     'add VisuStudyNumber as SUFFIX-STRING,  (bool)'  'b'
     'ExpNo_Dir'         0     'add VisuExperimentNumber (parent folder of "pdata") as SUFFIX-STRING,(bool)'  'b'
     'PrcNo_Dir'         0     'add VisuProcessingNumber/ReconstructionNumber(subfolder of "pdata") as SUFFIX-STRING,(bool)'  'b'
+    'StudId_Dir'        0     'add StudId as SUFFIX to animal directory name' 'b'
+    'SubjectName_Dir'   0     'add SubjectName as SUFFIX to animal directory name' 'b'
+    
+    
     %
     'inf103'      '% arrangement of suffixes       '                                    ''  ''
     'delimiter'     '_'        'delimiter between suffixes (cell); e.g: "s20141009_01sr_121" vs "s20141009_01sr_1_2_1" '  {'' '_' }
@@ -840,6 +844,18 @@ for i=1:size(files,1)
             if z.suffixLetter==1  ; let='p'; else ;let=''; end
             mfold=[mfold delimiter let dx{i, strcmp( dh,    'PrcNo'  )}] ;
         end
+        
+        if z.StudId_Dir==1;
+          mfold=  [mfold delimiter char(dx(i,strcmp(dh,'StudId')))];
+        end
+        if z.SubjectName_Dir==1;
+          mfold=  [mfold delimiter char(dx(i,strcmp(dh,'SubjectName')))];
+        end
+        
+      
+        
+        
+        
         if ~isempty(char(z.prefix_Dir))
             mfold= [char(z.prefix_Dir) mfold ];
         end

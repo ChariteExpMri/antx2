@@ -103,10 +103,25 @@ mask      = s.mask;
 mb={};
 mb{1}.spm.stats.factorial_design.dir ={outdir}                ;% {'O:\data2\x03_yildirim\v00_fullfactorial_test\'};
 
+
+% code dependency of factors
+if isfield(s,'factorDependency')
+    if length(s.factorDependency)==length(factors)
+        dept=s.factorDependency;
+    else
+        dept=repmat(s.factorDependency, [1 length(factors)]);
+        dept=dept(1:length(factors));
+    end
+else
+   s.factorDependency=zeros(1,length(factors)); % make all independent 
+   dept=s.factorDependency;
+end
+
+
 for i=1:length(factors) %FACTOR
     mb{1}.spm.stats.factorial_design.des.fd.fact(i).name =        factors{i} ;% 'desease';
     mb{1}.spm.stats.factorial_design.des.fd.fact(i).levels =      nlev(i);
-    mb{1}.spm.stats.factorial_design.des.fd.fact(i).dept = 0;
+    mb{1}.spm.stats.factorial_design.des.fd.fact(i).dept = dept(i);    % default: dept = 0; which is independent
     mb{1}.spm.stats.factorial_design.des.fd.fact(i).variance = 1;
     mb{1}.spm.stats.factorial_design.des.fd.fact(i).gmsca = 0;
     mb{1}.spm.stats.factorial_design.des.fd.fact(i).ancova = 0;
@@ -239,11 +254,83 @@ for i=1:size(comb,2)
     %disp(fmat);
     fcon(i,:)={  ['F_' factors{i} ] fmat };
 end
+
+%% ======[interim: get combi-names from comb]=========================================
+combstr={};
+for i=1:size(comb,1)
+    for j=1:size(comb,2)
+        thisfaclevels=levcode{j}.c;
+        levvec=cell2mat(thisfaclevels(:,2));
+        levname=thisfaclevels{find(levvec==comb(i,j)),1};
+        combstr{i,j}=levname;
+    end
+end
+    
+
+
+
+
+%% =====[t-contrasts: interactions]==========================================
+icombia=allcomb([1:size(comb,1)],[1:size(comb,1)]);
+% icombia(icombia(:,1)==icombia(:,2),:)=[];
+icombia(icombia(:,1)>=icombia(:,2),:)=[];
+tias ={};
+tias2={};
+concode=[];
+tconIA={};
+
+keepNcharacters=4;
+
+for i=1:size(icombia,1)
+    %zvec=zeros(1,size(comb,1));
+    l1=combstr(icombia(i,1),:);
+    l2=combstr(icombia(i,2),:);
+    
+    d1=comb(icombia(i,1),:);
+    d2=comb(icombia(i,2),:);
+    
+    
+    isequal=strcmp(l1,l2);
+    if (sum(isequal)+1)==length(l1);
+        tias(end+1,:)=[l1 '|' l2];
+        tias2(end+1,:)=[num2cell(d1) '|' num2cell(d1)];
+        concode(end+1,:)=[ icombia(i,1) icombia(i,2) ];
+        
+        L1=regexprep(cellfun(@(a){[ a(1:keepNcharacters)]}, cellfun(@(a){[ a repmat('#',[1 10])]}, l1)),'#','');
+        L2=regexprep(cellfun(@(a){[ a(1:keepNcharacters)]}, cellfun(@(a){[ a repmat('#',[1 10])]}, l2)),'#','');
+ 
+        
+        L1=strjoin(L1,'_');
+        L2=strjoin(L2,'_');
+        
+        
+        zvec=zeros(1,size(comb,1));
+        zvec(icombia(i,1))=+1; 
+        zvec(icombia(i,2))=-1;
+        
+        zvec2=-zvec;
+        
+        thiscon={ [L1 '>' L2] (zvec )};  %contrast
+        tconIA(end+1,:)=thiscon;
+        
+        thiscon={ [L1 '<' L2] (zvec2)};  %inverse contrast
+        tconIA(end+1,:)=thiscon;
+        
+    end
+end
+
+disp(tconIA);
+keyboard
+
+%% ===============================================
+
+
 % =====[F-contrasts: INTERACTION ]==========================================
 
 % interaction
 nIX=size(fcon,1);
-comia=allcomb([1 nIX],[1 nIX]);
+% comia=allcomb([1 nIX],[1 nIX]);
+comia=allcomb([1:nIX],[1:nIX]);
 comia(comia(:,1)>=comia(:,2),:)=[];
 fconIA={};
 for i=1:size(comia,1)
