@@ -1019,7 +1019,19 @@ if showgui==1
     close(h);
 end
 
-%% ==========output-vsriable =====================================
+% ==============================================
+%%   save local log-file
+% ===============================================
+try
+    hlogfile=['NIFTI'  'RAW'       'SUCCESS'      out.hd    'ErrorMessage'     ];
+    logfile =[out.nifti out.raw num2cell(out.success) out.d out.errmsg];
+    
+    logfile_fmt=(plog([],[  hlogfile;logfile],0,'','plotlines=0;al=1' ));
+    
+    logfileName=fullfile(paout,   ['logImport_' regexprep(datestr(now),{'\s+',':'},{'__','-'}) '.log']);
+    pwrite2file(logfileName,logfile_fmt);
+end
+%% ==========output-variable =====================================
 
 if nargout==1
     varargout{1}=out;
