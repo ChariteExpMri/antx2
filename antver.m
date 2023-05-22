@@ -898,7 +898,8 @@
 % #k new script: [DTIscript_DTIstatisticComplete1.m] #n 
 % -run DTI-statistic,create matrix-plots and ball-n-stick-plots, save plots as PPT, save tables as Excelfiles
 % #gw --> access via MENU: Statistic/DTI-statistic (scripts-button)   or type "dtistat" and hit scripts-button
-% 
+% #ba 22 May 2023 (09:49:20)
+% #k [xbruker2nifti.m] #n modified: option to add 'StudId' and 'SubjectName' as suffix to animal-directory name
 % 
 % 
 
