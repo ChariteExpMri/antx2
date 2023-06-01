@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   22 May 2023 (09:49:20)  
+ &#x1F34E; last modification:   01 Jun 2023 (11:38:22)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,11 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**01 Jun 2023 (11:38:22)**</ins>  
+  __[xbruker2nifti.m]__ modified:   
+  -logfile for Bruker converted files is created for each animal  
+  -added example for Bruker conversion without GUI  
+<!---->
   &#x1F535;   <ins>**22 May 2023 (09:49:20)**</ins>  
    __[xbruker2nifti.m]__ modified: option to add 'StudId' and 'SubjectName' as suffix to animal-directory name  
 <!---->

@@ -182,7 +182,50 @@
 % 3   20220301_ECM_Round11_Cage1_M04 1      4     3     User:epi_mre 07_epi_mre                 3.402 10-Mrz-2022 11:24:26 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\4\pdata\3\2dseq ECM longitudinal       Cage1_M04             2
 % 3   20220301_ECM_Round11_Cage1_M04 1      6     1     FieldMap     B0Map-ADJ_B0MAP          1.04858 10-Mrz-2022 11:24:22 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\6\pdata\1\2dseq ECM longitudinal       Cage1_M04             3
 % ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-
+% 
+% ==============================================
+%%  commandline example: BRUKER DATA  using Anastasia's data
+% ===============================================                                                                                                                                                                                                                                  
+% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+% set    SubjectId           StudNo  ExpNo  PrcNo  MRseq         protocol                  sizeMB   date                  file                                                                                            StudId  SubjectName  CoreDim  
+% 1      2021517_aj_T7_271   1       1      1      FLASH         01_Localizer_multi_slice  0.49152  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\1\pdata\1\2dseq   40G_1   T7_271       2        
+% 1      2021517_aj_T7_271   1       2      1      DtiEpi        02_DWI_Trace_EPI_sat       4.7186  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\2\pdata\1\2dseq   40G_1   T7_271       2        
+% 1      2021517_aj_T7_271   1       2      2      DtiEpi        nan                        5.2429  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\2\pdata\2\2dseq   40G_1   T7_271       2        
+% 1      2021517_aj_T7_271   1       3      1      RARE          03_T2_TurboRARE            4.1943  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\3\pdata\1\2dseq   40G_1   T7_271       2        
+% 1      2021517_aj_T7_271   1       4      1      RARE          04_T1_RARE_32slices        4.1943  01-Jun-2023 10:22:08  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\4\pdata\1\2dseq   40G_1   T7_271       2        
+% 1      2021517_aj_T7_271   1       5      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:06  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\5\pdata\1\2dseq   40G_1   T7_271       2        
+% 1      2021517_aj_T7_271   1       5      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:06  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\5\pdata\2\2dseq   40G_1   T7_271       2        
+% 1      2021517_aj_T7_271   1       6      1      FieldMap      B0Map-ADJ_B0MAP            1.0486  01-Jun-2023 10:22:08  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\6\pdata\1\2dseq   40G_1   T7_271       3        
+% 1      2021517_aj_T7_271   1       7      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:10  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\7\pdata\1\2dseq   40G_1   T7_271       2        
+% 1      2021517_aj_T7_271   1       7      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:10  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\7\pdata\2\2dseq   40G_1   T7_271       2        
+% 1      2021517_aj_T7_271   1       8      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:06  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\8\pdata\1\2dseq   40G_1   T7_271       2        
+% 1      2021517_aj_T7_271   1       8      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:06  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\8\pdata\2\2dseq   40G_1   T7_271       2        
+% 2      2021517_aj_T13_277  1       1      1      FLASH         01_Localizer_multi_slice  0.49152  01-Jun-2023 10:22:12  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\1\pdata\1\2dseq  40G_1   T13_277      2        
+% 2      2021517_aj_T13_277  1       2      1      DtiEpi        02_DWI_Trace_EPI_sat       4.7186  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\2\pdata\1\2dseq  40G_1   T13_277      2        
+% 2      2021517_aj_T13_277  1       2      2      DtiEpi        nan                        5.2429  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\2\pdata\2\2dseq  40G_1   T13_277      2        
+% 2      2021517_aj_T13_277  1       3      1      FieldMap      B0Map-ADJ_B0MAP            1.0486  01-Jun-2023 10:22:10  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\3\pdata\1\2dseq  40G_1   T13_277      3        
+% 2      2021517_aj_T13_277  1       4      1      RARE          03_T2_TurboRARE            4.1943  01-Jun-2023 10:22:12  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\4\pdata\1\2dseq  40G_1   T13_277      2        
+% 2      2021517_aj_T13_277  1       5      1      RARE          04_T1_RARE_32slices        4.1943  01-Jun-2023 10:22:14  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\5\pdata\1\2dseq  40G_1   T13_277      2        
+% 2      2021517_aj_T13_277  1       6      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:18  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\6\pdata\1\2dseq  40G_1   T13_277      2        
+% 2      2021517_aj_T13_277  1       6      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:18  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\6\pdata\2\2dseq  40G_1   T13_277      2        
+% 2      2021517_aj_T13_277  1       7      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:14  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\7\pdata\1\2dseq  40G_1   T13_277      2        
+% 2      2021517_aj_T13_277  1       7      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:14  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\7\pdata\2\2dseq  40G_1   T13_277      2        
+% 2      2021517_aj_T13_277  1       8      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\8\pdata\1\2dseq  40G_1   T13_277      2        
+% 2      2021517_aj_T13_277  1       8      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\8\pdata\2\2dseq  40G_1   T13_277      2        
+% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+% % 
+% % OPTION-[1]: import all Anastasia Bruker data (no gui)
+% w1=xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0);
+% 
+% % OPTION-[2]: import only a preselection of Anastasia Bruker data (no gui)
+% %preselection
+% w1=xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0,'show',1);  %read Bruker data
+% w1.showtable(w1)    % show table with all Bruker-data
+% %import data with strings 'nan' or 'T1 or 'T2' found in field 'protocol' ..these files
+% % correspond to 'nan', '04_T1_RARE_32slices' and '03_T2_TurboRARE' in the 'protocol'-field
+% w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol','nan|T1|T2'},'paout',fullfile(pwd,'dat'));
+% 
+%  
 
 
 function varargout=xbruker2nifti(pain,sequence,trmb,x,varargin)
@@ -936,7 +979,10 @@ for i=1:size(files,1)
         %%===============================================
         hh         = ni.hd;
         hh.fname   = fpname;
-        hh.descrip = ['source: ' brukerfile];
+        
+        ifilesep=strfind(brukerfile,filesep);
+        brukerfile_short=brukerfile(ifilesep(end-4)+1:end);
+        hh.descrip = [ brukerfile_short];
         
         % PRECISION
         %hh.dt         = [16 0]  ;%'float32'
@@ -1031,6 +1077,26 @@ try
     logfileName=fullfile(paout,   ['logImport_' regexprep(datestr(now),{'\s+',':'},{'__','-'}) '.log']);
     pwrite2file(logfileName,logfile_fmt);
 end
+% ==============================================
+%%   save logfile within each animal folder
+% ===============================================
+try
+    px_out=fileparts2(out.nifti);
+    px_out_uni=unique(px_out);
+    
+    for i=1:length(px_out_uni)
+        ix=find(strcmp(px_out,px_out_uni{i}));
+        logfileAnimal=logfile(ix,:);
+        logfile_fmt=(plog([],[  hlogfile;logfileAnimal],0,'','plotlines=0;al=1' ));
+        
+        logfileName=fullfile(px_out_uni{i},   ['logImport_' regexprep(datestr(now),{'\s+',':'},{'__','-'}) '.log']);
+        pwrite2file(logfileName,logfile_fmt);
+        showinfo2('saved: ',logfileName);
+    end
+end
+
+
+
 %% ==========output-variable =====================================
 
 if nargout==1

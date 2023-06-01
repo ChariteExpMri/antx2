@@ -900,6 +900,10 @@
 % #gw --> access via MENU: Statistic/DTI-statistic (scripts-button)   or type "dtistat" and hit scripts-button
 % #ba 22 May 2023 (09:49:20)
 % #k [xbruker2nifti.m] #n modified: option to add 'StudId' and 'SubjectName' as suffix to animal-directory name
+% #ba 01 Jun 2023 (11:38:22)
+% [xbruker2nifti.m] #n modified: 
+% -logfile for Bruker converted files is created for each animal
+% -added example for Bruker conversion without GUI
 % 
 % 
 
