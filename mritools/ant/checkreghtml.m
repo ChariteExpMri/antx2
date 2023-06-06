@@ -174,6 +174,7 @@ for i=1:length(pas)
         p.slices='im2:>0'
     end
     if ischar(sliceOperation) && ~isempty(regexpi(sliceOperation,'im1:|im2:'))
+        try
         [aa bb]=strtok(sliceOperation,':');
         refNr=str2num(regexprep(aa,'\D+',''));
         astr=['ref=f' num2str(refNr) ';'];
@@ -187,6 +188,9 @@ for i=1:length(pas)
              usedslices=1:siz(3);
          end
         p.slices=usedslices;
+        catch
+           p.slices='n6'; 
+        end
     end
     
     
