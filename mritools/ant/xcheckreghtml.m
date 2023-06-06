@@ -23,10 +23,19 @@
 %                     Best way: create a new folder "checks" in the study-folder.
 % 'outputstring'     - <optional> Output string added (suffix) to the HTML-filename and image-directory 
 % 'slices'          SLICE-SELECTION TYPE
-%                    +option-1) "n"+NUMBER: number of slices to plot  
+%                   option-1) "n"+NUMBER: number of slices to plot  
 %                     example:     'n6': plots 6 equidistant slices
-%                    +option-2)  a single number, which plots every nth. image
+%                   option-2)  a single number, which plots every nth. image
 %                     example:     4 or '4': plots every 4th slice
+%                   option-3)  display slices containing specific numeric value, example
+%                              show only slices containng a mask-value =1, all values in slices depicted           
+%                     'im2:==1'   from image 2 (2nd image) plot only slices containing the value 1                                
+%                     'im2:~=0'   from image 2 (2nd image) plot only slices with values ~=0                               
+%                     'im2:>0'    from image 2 (2nd image) plot only slices containing the values > 0  
+%                  option-4)  same as option-3, but display only matching values in these slices,
+%                               all other values neglected
+%                     'im2k:==672'  from image 2 (2nd image) plot only slices containing the value 672
+%                                    all other values in found slices are neglected
 % 'dim'            Dimension to plot {1,2,3}: 
 %                    -In standard-space this is: {1}transversal,{2}coronal,{3}sagital
 % 'size'           Image size in HTML file (in pixels); default: 400  
@@ -82,7 +91,63 @@
 % z.cmapF         = 'parula';                            % % <optional> specify FG-color; otherwise leave empty                                                                         
 % z.showFusedIMG  = [1];                                 % % <optional> show the fused image                                                                                            
 % xcheckreghtml(0,z);        % % RUN WITHOUT GUI                                                                                                                                                                            
-% ______________________
+% ==============================================
+%%  example:  overlay mask onto t1-image
+% ===============================================
+% z=[];                                                                                                                                                                                       
+% z.backgroundImg = { 't1.nii' };                              % % [SELECT] Background/reference image (a single file)                                                                        
+% z.overlayImg    = { 't1_mask.nii' };                         % % [SELECT] Image to overlay (multiple files possible)                                                                        
+% z.outputPath    = '';     % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )
+% z.outputstring  = 'maskT1';                                        % % optional Output string added (suffix) to the HTML-filename and image-directory                                             
+% z.slices        = 'n6';                                      % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image       
+% z.dim           = [1];                                       % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital                                 
+% z.size          = [400];                                     % % Image size in HTML file (in pixels)                                                                                        
+% z.grid          = [1];                                       % % Show line grid on top of image {0,1}                                                                                       
+% z.gridspace     = [20];                                      % % Space between grid lines (in pixels)                                                                                       
+% z.gridcolor     = [1  0  0];                                 % % Grid color                                                                                                                 
+% z.cmapB         = '';                                        % % <optional> specify BG-color; otherwise leave empty                                                                         
+% z.cmapF         = '';                                        % % <optional> specify FG-color; otherwise leave empty                                                                         
+% z.showFusedIMG  = [0];                                       % % <optional> show the fused image                                                                                            
+% z.sliceadjust   = [0];                                       % % intensity adjust slices separately; [0]no; [1]yes                                                                          
+% xcheckreghtml(0,z);                                                                                                                                                                          
+% ==============================================
+%%  example: show only slices containing a mask-values
+% ===============================================
+% z=[];                                                                                                                                                                                       
+% z.backgroundImg = { 't1.nii' };                              % % [SELECT] Background/reference image (a single file)                                                                        
+% z.overlayImg    = { 't1_mask.nii' };                         % % [SELECT] Image to overlay (multiple files possible)                                                                        
+% z.outputPath    = '';     % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )
+% z.outputstring  = 'mask';                                        % % optional Output string added (suffix) to the HTML-filename and image-directory                                             
+% z.slices        = 'im2:>0';                                      % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image       
+% z.dim           = [1];                                       % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital                                 
+% z.size          = [400];                                     % % Image size in HTML file (in pixels)                                                                                        
+% z.grid          = [1];                                       % % Show line grid on top of image {0,1}                                                                                       
+% z.gridspace     = [20];                                      % % Space between grid lines (in pixels)                                                                                       
+% z.gridcolor     = [1  0  0];                                 % % Grid color                                                                                                                 
+% z.cmapB         = '';                                        % % <optional> specify BG-color; otherwise leave empty                                                                         
+% z.cmapF         = '';                                        % % <optional> specify FG-color; otherwise leave empty                                                                         
+% z.showFusedIMG  = [0];                                       % % <optional> show the fused image                                                                                            
+% z.sliceadjust   = [1];                                       % % intensity adjust slices separately; [0]no; [1]yes                                                                          
+% xcheckreghtml(1,z);   
+% ========================================================
+%%  example: Overlay show slices with caudoputamen only
+% =========================================================
+% z=[];                                                                                                                                                                                       
+% z.backgroundImg = { 'AVGT.nii' };                              % % [SELECT] Background/reference image (a single file)                                                                        
+% z.overlayImg    = { 'ANO.nii' };                         % % [SELECT] Image to overlay (multiple files possible)                                                                        
+% z.outputPath    = '';     % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )
+% z.outputstring  = 'caudoPut';                                        % % optional Output string added (suffix) to the HTML-filename and image-directory                                             
+% z.slices        = 'im2k:==672';                                      % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image       
+% z.dim           = [2];                                       % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital                                 
+% z.size          = [400];                                     % % Image size in HTML file (in pixels)                                                                                        
+% z.grid          = [1];                                       % % Show line grid on top of image {0,1}                                                                                       
+% z.gridspace     = [20];                                      % % Space between grid lines (in pixels)                                                                                       
+% z.gridcolor     = [1  0  0];                                 % % Grid color                                                                                                                 
+% z.cmapB         = '';                                        % % <optional> specify BG-color; otherwise leave empty                                                                         
+% z.cmapF         = '';                                        % % <optional> specify FG-color; otherwise leave empty                                                                         
+% z.showFusedIMG  = [0];                                       % % <optional> show the fused image                                                                                            
+% z.sliceadjust   = [0];                                       % % intensity adjust slices separately; [0]no; [1]yes                                                                          
+% xcheckreghtml(0,z);  
 %   
 % ______________________
 % 

@@ -385,6 +385,7 @@ ms={...
     'match'
     'closest match (max metric)'
     'let me decide!'
+    'closest match (max metric), no new DIR'
     };
 hb=uicontrol('style','pop','units','norm','tag','pop_match');
 set(hb,'string',ms,'backgroundcolor','w');
@@ -690,6 +691,11 @@ for i=1:size(s,1)
         ic=min(find(met==max(met)))  ;
     elseif matchtype==4
         ic=[];
+    elseif matchtype==5
+        inewdir=regexpi2(b(:,4),'create NEW')
+        met2=met;
+        met2(inewdir)=0;
+        ic=min(find(met2==max(met2)))  ;
     end
     check=repmat({logical(0)},[size(b,1) 1] );
     check(ic)={logical(1)};

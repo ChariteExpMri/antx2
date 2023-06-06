@@ -136,7 +136,17 @@ l=htmlprep(htmlfile,'styles.css',header,p );
 % ==============================================
 %%
 % ===============================================
-
+if (ischar(p.slices) && ~isempty(regexpi(p.slices,'im1:|im2:')) ) ; %plot slices only with mask-values
+    sliceOperation=p.slices;
+     slicekeepvalue=0;
+elseif (ischar(p.slices) && ~isempty(regexpi(p.slices,'im1k:|im2k:')) ) 
+    p.slices=regexprep(p.slices,'k','');
+    sliceOperation=p.slices;
+     slicekeepvalue=1;
+else
+    sliceOperation=[];
+    slicekeepvalue=0;
+end
 
 
 for i=1:length(pas)
@@ -157,6 +167,29 @@ for i=1:length(pas)
     f1=fullfile(px,fname1);
     f2=fullfile(px,fname2);
     isOK=0;
+    
+   
+    % display by value, such as mask values
+    if 0
+        p.slices='im2:>0'
+    end
+    if ischar(sliceOperation) && ~isempty(regexpi(sliceOperation,'im1:|im2:'))
+        [aa bb]=strtok(sliceOperation,':');
+        refNr=str2num(regexprep(aa,'\D+',''));
+        astr=['ref=f' num2str(refNr) ';'];
+        eval(astr);
+         [x xs]=getslices(ref,     p.dim,'1',[],0 );
+         siz=size(x);
+         x=reshape(x,[prod(siz(1:2)) siz(3)]);
+         eval(['xb=x' strrep(bb,':','') ';']);
+         usedslices=find(sum(xb,1)>0);
+         if isempty(usedslices);  %if no matching maskvalue is found
+             usedslices=1:siz(3);
+         end
+        p.slices=usedslices;
+    end
+    
+    
     if isnumeric(p.slices)
         slices=(p.slices);
     else
@@ -165,6 +198,16 @@ for i=1:length(pas)
     if exist(f1) && exist(f2)
         [d ds]=getslices(f1,     p.dim,slices,[],0 );
         [o os]=getslices({f1 f2},p.dim,slices,[],0 );
+        
+        if slicekeepvalue==1
+            if refNr==1
+                eval(['d=d' strrep(bb,':','') ';']);
+            else
+                eval(['o=o' strrep(bb,':','') ';']);
+            end
+            
+        end
+        
         gifs   = saveslices_gif({d,ds},{o os}, 1,subpathFP,aname,p0);
         vi(1,:)={fname1  spm_vol(f1)};
         vi(2,:)={fname2  spm_vol(f2)};
