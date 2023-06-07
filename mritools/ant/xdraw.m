@@ -406,6 +406,10 @@ makegui;
 set(gcf,'color', pp.bgcolor);
 % set(findobj(gcf,'tag','waitnow'),'visible','on','string','..wait..');  
 
+[pax namex ext]=fileparts(u.f1);
+if isempty(pax); pax=pwd; end
+[~,updir]=(fileparts(pax));
+set(gcf,'name',[ 'xdraw: [' updir ']: "' [namex ext] '"' ]);
 
 u.dummy=1;
 set(gcf,'userdata',u);
@@ -431,7 +435,9 @@ u.useslice=u.lastslices(u.usedim) ;%round(u.dim(u.usedim)/2);
 u.contour=0;
 u.contourlines=10;
 % thresh via controus ------
-u.threshcolor=[0     1     0];
+% u.threshcolor=[0     1     0];
+u.threshcolor=[0 0.4471 0.7412];
+u.threshLineWidth=1;
 
 
 % global lastmovecords
@@ -2365,6 +2371,73 @@ drawnow;
 figure(hf2);
 
 
+function mask2struct(e,e2)
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+hax=findobj(hf1,'type','axes');
+% co=get(hax,'CurrentPoint')
+global currpo
+
+
+global SLICE
+r1=SLICE.r1;
+r2=SLICE.r2;
+% ----------------------------------------------------
+%% transpose
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    %x=permute(r2, [2 1 3]);
+    r1=r1';
+    r2=r2';
+end
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    r1=flipud(r1);
+    r2=flipud(r2);
+end
+bw=bwlabeln(r2==r2(currpo.co(2),currpo.co(1)));
+bw=r2(currpo.co(2),currpo.co(1))*double(bw==bw(currpo.co(2),currpo.co(1)));
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    bw=flipud(bw);
+end
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    bw=bw';
+end
+
+u.copymask=bw;
+set(hf1,'userdata',u);
+
+function mask2slice(e,e2)
+hf1=findobj(0,'tag','xpainter');
+u=get(hf1,'userdata');
+hax=findobj(hf1,'type','axes');
+global SLICE
+r1=SLICE.r1;
+r2=SLICE.r2;
+bw=u.copymask;
+% ----------------------------------------------------
+%% transpose
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+    %x=permute(r2, [2 1 3]);
+    bw=bw';
+    r2=r2';
+end
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    bw=flipud(bw);
+    r2=flipud(r2);
+end
+
+r2n=bw+r2;
+
+% % =========BACK=====================================
+aa_setslice(r2n);
+%update IDlist
+hb=findobj(hf1,'tag','edvalue');
+% set(hb,'string', num2str(newID))
+edvalue();
+setslice([],1);
+
+
+
+
 function pb_undoredo(e,e2,direction)
 hf1=findobj(0,'tag','xpainter');
 u=get(hf1,'userdata');
@@ -3823,7 +3896,7 @@ if visible==1
     hold on
     delete(findobj(gca,'type','contour'));
     try
-        [hc ]=contour(x,1,'r','hittest','off','color',u.threshcolor);
+        [hc ]=contour(x,1,'r','hittest','off','color',u.threshcolor,'linewidth',u.threshLineWidth);
     end
 else
     delete(findobj(gca,'type','contour'));
@@ -3868,6 +3941,21 @@ if strcmp(task,'color')
     u.threshcolor=uisetcolor(u.threshcolor,'contour color (threshold)');
     set(gcf,'userdata',u);
     slid_thresh([],[]);
+elseif strcmp(task,'linewidth')
+    %% ===============================================
+    u=get(gcf,'userdata');
+    prompt={'enter linewidth:'};
+    name='linewidht';
+    numlines=1;
+    defaultanswer={'1'};
+    answer=inputdlg(prompt,name,numlines,defaultanswer);
+    if ~isempty(str2num(answer{1}))
+        u.threshLineWidth=str2num(answer{1});
+    end
+    set(gcf,'userdata',u);
+    slid_thresh([],[]);
+   %% ===============================================
+   
 end
 
 
@@ -3950,7 +4038,8 @@ set(hb,'position',[ .1  .0 .13 1],'value',1);
 c = uicontextmenu;
 hb.UIContextMenu = c;
 % Create menu items for the uicontextmenu
-m1 = uimenu(c,'Label','change color','Callback',{@thresh_context,'color'});
+m1 = uimenu(c,'Label','change color'    ,'Callback',{@thresh_context,'color'});
+m1 = uimenu(c,'Label','change linewidht','Callback',{@thresh_context,'linewidth'});
 % m1 = uimenu(c,'Label','assign another ID','Callback',{@idlist_contextmenu,'reassignID'});
 
 
@@ -4332,6 +4421,24 @@ try
 end
 jCombo.setToolTipText('contrast limits for image saturation');
 
+%==========================================================================================
+%=========copymask=================================================================================
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'cb_mask2struct');           %SET-next-SLICE
+set(hb,'position',[ .85 .7 .15 .04],'string','cp mask','callback',@mask2struct);
+set(hb,'fontsize',6,'backgroundcolor',[0.8706    0.9216    0.9804]);
+set(hb,'tooltipstring',['copy selected mask to struct' char(10) ...
+    ' can be used for other slices...first click onto a mask before hitting this button'  ]);
+set(hb,'parent',pan2);
+set(hb,'position',[0.0178 0.859 0.4 0.03]); %PAN2
+
+%=========insert mask=================================================================================
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'cb_mask2struct');           %SET-next-SLICE
+set(hb,'position',[ .85 .7 .15 .04],'string','insert mask','callback',@mask2slice);
+set(hb,'fontsize',6,'backgroundcolor',[0.8706    0.9216    0.9804]);
+set(hb,'tooltipstring',['insert mask into another slice' char(10) ...
+    ' '  ]);
+set(hb,'parent',pan2);
+set(hb,'position',[0.43 0.859 0.4 0.03]); %PAN2
 
 
 %==========================================================================================
@@ -6235,6 +6342,12 @@ end
 
 function buttondown(e,e2,par)
 % '##'
+global currpo
+hf1=findobj(0,'tag','xpainter');
+hax=findobj(hf1,'type','axes');
+co=get(hax,'CurrentPoint');
+currpo.co=round(co(1,[1 2]));
+% disp(currpo.co);
 
 
 % ==============================================

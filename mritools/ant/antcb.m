@@ -1837,11 +1837,16 @@ function v=selectimageviagui(inp)
 % inp{1} ...dataUpperpath
 % inp{2} ... single or multi
 
-sdirs=antcb('getsubdirs', inp{1});
-if isempty(char(sdirs))
-    v=[];
-    cprintf([1 0 0],[' no directory selected \n']);
-    return
+[o o2]=fileparts2(fileparts2(inp));
+if strcmp(o2{1},'dat')   % input are animal-folders
+    sdirs=inp;
+else                     %input is dat-path
+    sdirs=antcb('getsubdirs', inp{1});
+    if isempty(char(sdirs))
+        v=[];
+        cprintf([1 0 0],[' no directory selected \n']);
+        return
+    end
 end
 [tb tbh v]=antcb('getuniquefiles',sdirs);
 he=selector2(v.tb,v.tbh,...
