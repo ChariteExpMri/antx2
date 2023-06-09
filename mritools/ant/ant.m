@@ -2640,13 +2640,14 @@ elseif strcmp(task,'drawmask')
     end
     %% ==============================[cmd]===========
     if strcmp(u.mousekey,'right')
-        hlpfun='xdraw.m';
+        hlpfun='xdraw_caller.m';
         showcmd(hlpfun);
         return
     end
     %% ===============================================
     
-    xdraw;
+    %     xdraw;
+    xdraw_caller(1);
     %     statusMsg(1,' generate mask from excelfile');
     %     xexcel2atlas(1);
     %     statusMsg(0);

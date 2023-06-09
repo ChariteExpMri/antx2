@@ -1,5 +1,16 @@
 
 
+% xdraw_caller : draw mask using a background image (example t2.nii)
+% behaviour is depending on the input-source:
+% #g source=1 : work on preselected ANIMAL FOLDERS from
+%     -the drawing mask tool is opend seqnetialle for all preselected animals
+%     -here the background image has to be defined in advance (default: "t2.nii")
+% #g source=2 :  from another folder
+%         -user is asked for the path&name of the background image during the calling process
+% 
+% 
+% this is only a wrapper for xdraw.m
+
 function xdraw_caller(showgui,x,pa)
 
 
@@ -60,6 +71,12 @@ p={...
     'inf0' ''  '____ONLY IF "SOURCE" IS [1] (ANIMAL FOLDERS)'  ''
     'bgImg'   {'t2.nii'}                '[SELECT] Background image to draw a mask'      {@selector2,li,{'BackgroundImage'},'out','list','selection','single'}
     'maskImg'      {''}                 'optional: [SELECT] mask image to modif...'         {@selector2,li,{'MaskImage(s)'},'out','list','selection','single'}
+    'tr'          [1]                   'transpose image: 0|1  (only display prupose)'  {'b'}  
+    'fl'          [0]                   'flip up/down image: 0|1  (only display prupose)'  {'b'}  
+    'con'         [1]                   'increase contrast: 0|1  (only display prupose)'  {'b'}  
+    
+    
+    
     };
 
 
@@ -69,7 +86,7 @@ p=paramadd(p,x);%add/replace parameter
 % %% show GUI
 if showgui==1
     hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
-    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[0.3535    0.4133    0.4479    0.1533 ],...
+    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[0.3535    0.4133    0.4479    0.2 ],...
         'title',['***DRAW MASK*** ('  mfilename ')' ],'info',hlp);
     if isempty(m); return; end
     fn=fieldnames(z);
@@ -91,6 +108,11 @@ xmakebatch(z,p, mfilename);
 %%   process
 % ===============================================
 if z.source==1
+    if isfield(z,'tr');         w.tr  =z.tr; end
+    if isfield(z,'fl');         w.fl  =z.fl; end
+    if isfield(z,'con');        w.con =z.con; end
+    
+    
     for i=1:length(pa)
         sprintf('%s' ,'draw mask: ');
         f1=fullfile(pa{i},char(z.bgImg));
@@ -100,22 +122,22 @@ if z.source==1
         
         if exist(f1)
             if ~isempty(char(z.maskImg)) && exist(f2)
-                cprintf('*[0 0 1]',['draw mask for ' '[' animalname ']: ']);
+                cprintf('*[0 0 1]',[num2str(i) ']' 'draw mask for ' '[' animalname ']: ']);
                 cprintf(' [0 0 0]',[' BG: ' char(z.bgImg) '; MSK: ' char(z.maskImg)  '\n']);
-                xdraw(f1,f2);
+                xdraw(f1,f2,w);
             else
-                cprintf('*[0 0 1]',['draw mask for ' '[' animalname ']: ']);
+                cprintf('*[0 0 1]',[num2str(i) ']' 'draw mask for ' '[' animalname ']: ']);
                 cprintf(' [0 0 0]',[' BG: ' char(z.bgImg)  '\n']);
-                xdraw(f1,[]);
+                xdraw(f1,[],w);
                 
             end
         else
-            cprintf(' [1 0 1]',[' BG-image: ' char(z.bgImg)  ' does not exist\n']);
+            cprintf(' [1 0 1]',[num2str(i) ']' ' BG-image: ' char(z.bgImg)  ' does not exist\n']);
         end
         
         disp('..READY to draw... ');
         drawnow;
-        uiwait(findobj(0,'tag','xpainter'));
+        waitfor(findobj(0,'tag','xpainter'));
         
     end
     cprintf(' [0 .5 0]',['DONE!\n']);

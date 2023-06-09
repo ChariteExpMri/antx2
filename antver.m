@@ -904,6 +904,9 @@
 % [xbruker2nifti.m] #n modified: 
 % -logfile for Bruker converted files is created for each animal
 % -added example for Bruker conversion without GUI
+% [xdraw.m] #n modified 
+% lesions can be delineated: First, preselect the animal folders, than go to #gw --> ANT-menu: &#8658; masks/"draw mask" 
+% 
 % 
 % 
 

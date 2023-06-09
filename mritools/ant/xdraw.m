@@ -264,10 +264,16 @@
 % xdraw(fullfile(pwd,'AVGT.nii'),fullfile(pwd,'AVGThemi.nii'));  % #g load bg-image, load existing mask
 % xdraw(fullfile(pwd,'t2.nii'),fullfile(pwd,'masklesion.nii'));
 %
-%
+% xdraw   % start gui, user is asked for BG-image and optional a mask-file (the mask can be modified)
+% xdraw('t2.nii')   ; % open BGimage "t2.nii" from local path
+% xdraw('t2.nii','mask.nii') ; % open "t2.nii" and mask "mask.nii" from local path
+% xdraw('t2.nii','mask.nii',struct('tr',1,'fl',1,'con',1)); % ..also transpose/flipUD image and enhance contrast
+% 
+% xdraw('?',[],struct('tr',1)) ;% user has to provide the BG-image, image will be transposed
+% xdraw('?','?',struct('tr',1))% user has to provide the BG and mask-image
+% 
 
-
-function  xdraw(file,maskfile)
+function xdraw(file,maskfile,varargin)
 warning off;
 disp('..please wait..');
 try; delete(findobj(0,'tag','otsu'));end
@@ -275,7 +281,7 @@ clear global SLICE
 % ==============================================
 %%   file
 % ===============================================
-if exist('file')~=1
+if exist('file')~=1 || isempty(file) || strcmp(file,'?')==1
     msg='select background file (NIFTI) ...mandatory';
     disp(msg);
     [fi pa]=uigetfile(fullfile(pwd,'*.nii'),msg);
@@ -290,7 +296,7 @@ u.f1=file;
 % ==============================================
 %%   maskfile
 % ===============================================
-if exist('maskfile')~=1
+if exist('maskfile')~=1 || strcmp(maskfile,'?')==1
     msg='select mask file (NIFTI) or hit "cancel" ...optional';
     disp(msg);
     disp('The mask file be in register with the background image (similar w.r.t voxel-size,dims,orientation)');
@@ -438,6 +444,41 @@ u.contourlines=10;
 % u.threshcolor=[0     1     0];
 u.threshcolor=[0 0.4471 0.7412];
 u.threshLineWidth=1;
+u.ini_transpose=1;
+u.ini_flipud   =0;
+u.ini_contrast =1;
+
+
+set(findobj(gcf,'tag','rd_transpose'),'value',u.ini_transpose);
+set(findobj(gcf,'tag','rd_flipud')   ,'value',u.ini_flipud);
+set(findobj(gcf,'tag','cb_adjustIntensity')   ,'value',u.ini_contrast);
+
+% ==============================================
+%%   aux inputs
+% ===============================================
+
+if ~isempty(varargin)
+    isddparam=0;
+    if isstruct(varargin{1})
+        p=varargin{1};
+        isddparam=1;
+    elseif ~isempty(varargin) &&  mod(length(varargin),2)==0
+        p=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+        isddparam=1;
+    end
+    
+    if isddparam==1;
+        if isfield(p,'tr')
+            set(findobj(gcf,'tag','rd_transpose'),'value',p.tr);
+        end
+        if isfield(p,'fl')
+            set(findobj(gcf,'tag','rd_flipud'),'value',p.fl);
+        end
+        if isfield(p,'con')
+            set(findobj(gcf,'tag','cb_adjustIntensity'),'value',p.con);
+        end
+    end
+end
 
 
 % global lastmovecords
@@ -461,6 +502,9 @@ set(gcf,'SizeChangedFcn', @resizefig);
 set_idlist;
 edvalue([],[]);
 set(findobj(gcf,'tag','waitnow'),'visible','off');  
+
+
+
 
 % ==============================================
 %%   timer
@@ -4493,7 +4537,7 @@ set(hb,'position',[ .9 .02 .1 .04],'string','save mask', 'callback',{@pb_save});
 set(hb,'fontsize',7,'backgroundcolor','w','fontweight','bold');
 set(hb,'tooltipstring',['save new mask as niftifile' char(10) '']);
 set(hb,'parent',pan2);
-set(hb,'position',[ .3 .02 .5 .04]); %PAN2
+set(hb,'position',[-0.005 0.0568 0.5 0.04]); %PAN2
 
 %save file-2
 
@@ -4513,9 +4557,25 @@ list={'save: mask [sm]' %'save: masked image [smi]'
     };
 set(hb,'string',list);
 set(hb,'parent',pan2);
-set(hb,'position',[ .3 .07 .7 .04]); %PAN2
+set(hb,'position',[0.013 0.104 0.7 0.04]); %PAN2
 
 
+%exit figure
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_closefig');
+set(hb,'position',[ .9 .02 .1 .04],'string','exit', 'callback',{@pb_closefig});
+set(hb,'fontsize',7,'backgroundcolor','w','fontweight','bold');
+set(hb,'tooltipstring',['close window' char(10) '...do not forget to save the mask before closing the window!']);
+set(hb,'parent',pan2);
+set(hb,'position',[0.725 0.0044 0.25 0.04]); %PAN2
+
+
+%show in MRicron
+hb=uicontrol('style','pushbutton','units','norm', 'tag'  ,'pb_mricron');
+set(hb,'position',[ .9 .02 .1 .04],'string','show Mricron', 'callback',{@pb_mricron});
+set(hb,'fontsize',6,'backgroundcolor','w','fontweight','bold');
+set(hb,'tooltipstring',['show mask via MRicron' char(10) '']);
+set(hb,'parent',pan2);
+set(hb,'position',[0.01 0.0136 0.5 0.04]); %PAN2
 
 %=========clear mask=================================================================================
 hb=uicontrol('style','popupmenu','units','norm', 'tag'  ,'clear mask');           %SET-next-SLICE
@@ -4856,7 +4916,7 @@ if 1%~isempty(chkicon);
     set(hb,'tooltipstring',['autofocus window' char(10) 'window becoms focused (active) when mouse hovers over it' char(10) '[a] shortcut']);
     %set(hb,'position',[ .84 .2 .11 .035]);
     set(hb,'parent',pan2);
-    set(hb,'position',[0.05 0.1195 0.6 0.035]);
+    set(hb,'position',[-0.01 0.1503 0.6 0.035]);
 end
 
 
@@ -4894,7 +4954,30 @@ set(pan3,'userdata',v);
 % set(pan3,'userdata',pos3);
 % set(pan3,'units','norm');
 
+function pb_mricron(e,e2)
+%% ===============================================
 
+hf1=findobj(0,'tag','xpainter');
+u=get(gcf,'userdata');
+f1=u.f1;
+[pa name ext]=fileparts(f1);
+if isempty(pa); pa=pwd; end
+f1=fullfile(pa,[name ext]);
+
+[fi pa]=uigetfile(fullfile(pa,'*.nii'),'select maskfile');
+if isnumeric(fi)
+    disp('...no mask was selected...');
+     rmricron([],f1,[],1);
+else
+    f2=fullfile(pa,fi);
+    rmricron([],f1,f2,1);
+end
+
+
+%% ===============================================
+
+function pb_closefig(e,e2)
+delete(findobj(0,'tag','xpainter'));
 
 function idlist_contextmenu(e,e2,task)
 hf1=findobj(0,'tag','xpainter');
@@ -7227,6 +7310,7 @@ bw=createMask(h);
 xm=round(mean(x2));
 ym=round(mean(y2));
 activeIcons_show();
+
 
 uiwait(hf1); %wait for activeIcons.selection
 u=get(hf1,'userdata');

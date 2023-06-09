@@ -18,7 +18,7 @@
 % #b - change dataType                 ('dt:')         #g e.g.: 'dt: 64'  | 'dt:16'
 % #b - threshold image                 ('tr:')         #g e.g.: 'tr:i>0.5=0'
 % #b - Replace value by another value: ('R:' or 'repl:' or 'replace:') #g e.g.: 'R:<=0;1' | 'R:nan;ME'
-% 
+% #b -flip image along 1st dim.        (flip:)         #g e.g.: 'flip:' 
 % 
 % % __________________________________________________________________________________________________________________
 % - select one/several images TO RENAME/DELETE/EXTRACT/EXPAND/COPY volumes,aka. files
@@ -34,10 +34,10 @@
 %% #lk NEW FILENAME-COLUMN
 % -enter a new filename here, for NIFTI-file(s) no file-extension (.nii) needed
 % -alternatively you can define a PREFIX or SUFFIX here which will be appended to the input-filename:
-% -for PREFIX: enter:  'p:V_'  if the input-image is 'v1.nii' the output-file is 'V_v1.nii'
-%              commandline example to copy and rename a file:  xrename(1,'v1.nii','p:V_',':'); 
-% -for SUFFiX: enter:  's:V_'  if the input-image is 'v1.nii' the output-file is 'v1_s.nii'
-%              commandline example to copy and rename a file: xrename(1,'v1.nii','s:_s',':');   
+% -for PREFIX: enter:  'p:bla_'  if the input-image is 'v1.nii' the output-file is 'V_bla.nii'
+%              commandline example to copy and rename a file:  xrename(1,'v1.nii','p:bla_',':'); 
+% -for SUFFiX: enter:  's:_blob'  if the input-image is 'v1.nii' the output-file is 'v1_blob.nii'
+%              commandline example to copy and rename a file: xrename(1,'v1.nii','s:_blob',':');   
 % #r -IF the FILENAME-COLUMN is EMPTY the original file will be overwritten !!!
 % 
 %% CONTEXT MENU
@@ -769,6 +769,7 @@ for i=1:length(pa)      %PATH
                 elseif strfind(volnum{j},'dt:')==1; %vox factor
                     % ==============================================
                     %% change dataType
+                    % 
                     % ===============================================
                     try
                         code=volnum{j};
@@ -790,6 +791,57 @@ for i=1:length(pa)      %PATH
                         disp('problem to change dataType');
                         continue
                     end
+                elseif strfind(volnum{j},'flip:')==1; %flip image in standardspace
+                    % ==============================================
+                    %% flip image
+                    % xrename(0,'x_t1_mask.nii','s:_inv','flip:');
+                    % xrename(0,'x_t1_mask.nii','s:_inv3','flip:m=1');
+                    % xrename(0,'x_t1_mask.nii','s:_inv3','flip:m=1;in=1;');
+                    % ===============================================
+                    try
+                        code=volnum{j};
+                        c=regexprep(code,'flip:' ,'');
+                        c=regexprep(c,'\s+','');
+                        if ~isempty(c); 
+                        c=[c ';'];
+                        end
+                        
+                        g=struct();
+                        g.mode=2;
+                        g.dim=1;
+                        g.doreslice=1;
+                        g.dt=64;
+                        g.interp=0;
+                            
+                        if ~isempty(c)
+                            c2=tostruct(c);
+                            if isfield(c2,'m');  g.mode     =c2.m; end
+                            if isfield(c2,'d');  g.dim      =c2.d; end
+                            if isfield(c2,'r');  g.doreslice=c2.r; end
+                            if isfield(c2,'dt'); g.dt       =c2.dt; end
+                            if isfield(c2,'in'); g.interp   =c2.in; end
+                        end
+                        
+                        
+                        
+                        flipIMG(s1,s2,g.mode,g.dim,g.doreslice,g.dt,g.interp);
+                        
+                        if isDesktop==1
+                            if exist(s1)==2
+                                showinfo2('New flipped IMG ',s2,s1);
+                            else
+                            disp(['New flipped IMG: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>'...
+                                ]);
+                            end
+                        else
+                            disp(['New flipped IMG: ' s2  ]);
+                        end
+                        
+                    catch
+                        disp('problem to flip image');
+                        continue
+                    end    
+                    
                 elseif strfind(volnum{j},'ch:')==1; %vox factor
                     % ==============================================
                     %% change header (ch)
@@ -2476,6 +2528,16 @@ v.tbh=[{'Unique-Files-In-Study', '#found'} tbh];
 % ==============================================
 %%
 % ===============================================
+function ccc2=tostruct(ccc)
+
+eval(ccc);
+varw=who;
+varw(strcmp(varw,'ccc'))=[];
+ccc2=struct();
+for i=1:length(varw)
+    eval(['ccc2.' varw{i} '=' varw{i} ';']); 
+end
+
 
 function waitspin(status,msg)
 if status==1

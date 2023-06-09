@@ -11,6 +11,8 @@
   __[xbruker2nifti.m]__ modified:   
   -logfile for Bruker converted files is created for each animal  
   -added example for Bruker conversion without GUI  
+  __[xdraw.m]__ modified   
+  lesions can be delineated: First, preselect the animal folders, than go to &#8618; ANT-menu: &#8658; masks/"draw mask"   
 <!---->
   &#x1F535;   <ins>**22 May 2023 (09:49:20)**</ins>  
    __[xbruker2nifti.m]__ modified: option to add 'StudId' and 'SubjectName' as suffix to animal-directory name  

@@ -1,5 +1,34 @@
 
+% #yk ___Usage___
+% The panel depict: 
+%     left: the input image
+%   middle: the contour lines on top of the input image
+%    right: output image, i.e. the mask that can be forwarded to the slice of xdraw.m
+% step-1) move the the green vertical bar to left/right to change the contourlines
+%  For example if the slice contain a lesion: adjust the contourlines that they match the boundary 
+%  of the lesion.
+% step-2) click into the area of an enclosed contour. This area will appear in the right image.
+% Steps (1) and (2) can be done multiple times, for example in case of ROIs (multiple lesions).
+% 
+% [median filter]  - when radio is checked, the order of the median filter can be changed to change 
+%                    the behaviour of the contourlines
+% [ID]             - numeric value of the mask of the right image
+%                  - change ID before doing step-2
+%                  - for multiple ROIs multiple IDs can be used
+% [clear] -clear mask
+% [inv]   -invert mask
+% [rem]   -remove ROI from mask (see toolip fo usage)
+% [rMan]  -manually remove region/ROI by drawing tool (see toolip fo usage)
+% [cID]   -change ID/value of region/ROI (see toolip fo usage)
+% [cbar]  -show/hide toolbar
+% 
+% 
+% #yk ___CMDLINE___
 % [msk]=threshtool(sa,struct('medfilt',1,'tr',.6));
+% INPUT:
+% img: 2d-slice
+
+
 function [msk]=threshtool(img,param)
 % clc
 warning off;
@@ -83,6 +112,7 @@ function makeFig(u)
 
 delete(findobj(0,'tag','threshtool'));
 fg;
+set(gcf,'visible','off');
 set(gcf,'menubar','none','tag','threshtool','name','threshTool','NumberTitle','off');
 % h1=axes('position',[0 .4 .4 .4]);
 % set(h1,'position',[0 .45 .5 .5],'tag','ax1');; axis off;
@@ -100,11 +130,13 @@ h3=subplot(2,2,4);
 % h1=axes(); h2=axes(); h4=axes();
 % h3=axes();
 
-set(h1,'position',[ 0   .45 .333 .5],'tag','ax1');; axis on;
-set(h2,'position',[.333 .45 .333 .5],'tag','ax2'); axis on;
-set(h4,'position',[.666 .45 .333 .5],'tag','ax4'); axis on;
-
-set(h3,'position',[0.05 .24 .9 .2],'tag','ax3'); axis on;
+set(h1,'position',[ 0   .45 .333 .5],'tag','ax1');; axis off;
+set(h1,'xTickLabel',[],'yTickLabel',[]);
+set(h2,'position',[.333 .45 .333 .5],'tag','ax2'); axis off;
+set(h2,'xTickLabel',[],'yTickLabel',[]);
+set(h4,'position',[.666 .45 .333 .5],'tag','ax4'); axis off;
+set(h4,'xTickLabel',[],'yTickLabel',[]);
+set(h3,'position',[0.05 .24 .9 .17],'tag','ax3'); axis on;
 
 
 set(h3,'fontsize',8,'fontweight','bold');
@@ -119,7 +151,7 @@ set(gcf,'userdata',u);
 set(gcf,'WindowButtonMotionFcn',@thresh_moving);
 set(gcf,'WindowButtonDownFcn'  ,{@thresh_figbut,1});
 set(gcf,'WindowButtonUpFcn'    ,{@thresh_figbut,0});
-drawnow;
+% drawnow;
 set(u.h1,'tag','ax1');
 set(u.h2,'tag','ax2');
 set(u.h3,'tag','ax3');
@@ -153,11 +185,11 @@ set(hp,'tooltipstring',['ID, numeric value to assign for mask']);
 % set(hp,'tag','id_ed','callback',@id_cb,'string',num2str(u.id));
 
 
-%% CLEAR
-hp=uicontrol('style','pushbutton','units','norm','string','clear');
-set(hp,'position' ,[0.9    0.15    0.08    0.05],'backgroundcolor','w');
-set(hp,'tooltipstring',['clear output']);
-set(hp,'tag','clearMask','callback',@clearMask);
+% %% CLEAR
+% hp=uicontrol('style','pushbutton','units','norm','string','clear');
+% set(hp,'position' ,[0.9    0.15    0.08    0.05],'backgroundcolor','w');
+% set(hp,'tooltipstring',['clear output']);
+% set(hp,'tag','clearMask','callback',@clearMask);
 %% SUBMIT
 hp=uicontrol('style','pushbutton','units','norm','string','Done');
 set(hp,'position' ,[0.9    0.05    0.08    0.05],'backgroundcolor','w');
@@ -169,10 +201,61 @@ set(hp,'position' ,[0.82    0.05    0.08    0.05],'backgroundcolor','w');
 set(hp,'tooltipstring',['cancel']);
 set(hp,'tag','thresh_cancel','callback',{@thresh_done,'cancel'});
 
+%% Help
+hp=uicontrol('style','pushbutton','units','norm','string','Help');
+set(hp,'position' ,[0.46607 0.0035714 0.08 0.05],'backgroundcolor','w');
+set(hp,'tooltipstring',['get some help']);
+set(hp,'tag','thresh_cancel','callback',{@xhelp});
 
 set(findobj(gcf,'type','axes'),'fontsize',7,'fontweight','bold');
 
-drawnow;
+%% ===============================================
+%% CLEAR
+hp=uicontrol('style','pushbutton','units','norm','string','clear');
+set(hp,'position' ,[0.675 0.40833 0.05 0.04],'backgroundcolor','w');
+set(hp,'tooltipstring',['clear mask']);
+set(hp,'callback',{@cmenuCB_output,'clear'},'fontsize',7);
+% 
+hp=uicontrol('style','pushbutton','units','norm','string','inv');
+set(hp,'position' ,[ 0.7250 0.40833 0.05 0.04],'backgroundcolor','w');
+set(hp,'tooltipstring',['invert mask']);
+set(hp,'callback',{@cmenuCB_output,'invert'},'fontsize',7);
+% 
+hp=uicontrol('style','pushbutton','units','norm','string','rem');
+set(hp,'position' ,[0.7750 0.40833 0.05 0.04],'backgroundcolor','w');
+set(hp,'tooltipstring',['remove ROI:' char(10) ...
+    'click onto ROI to remove this ROI']);
+set(hp,'callback',{@cmenuCB_output,'removeThis'},'fontsize',7);
+% 
+hp=uicontrol('style','pushbutton','units','norm','string','rMan');
+set(hp,'position' ,[0.8250 0.40833 0.05 0.04],'backgroundcolor','w');
+set(hp,'tooltipstring',['remove manually:' char(10) ...
+     'draw region to remove ...than double-click into region']);
+set(hp,'callback',{@cmenuCB_output,'manuallyRemove'},'fontsize',7);
+
+
+hp=uicontrol('style','pushbutton','units','norm','string','cID');
+set(hp,'position' ,[0.8750 0.40833 0.05 0.04],'backgroundcolor','w');
+set(hp,'tooltipstring',['change ID/Value:' char(10) ...
+     'click onto region/ROI to change the ID/value']);
+set(hp,'callback',{@cmenuCB_output,'changeValue'},'fontsize',7);
+
+% m1 = uimenu(c,'Label','clear image/Mask','Callback',{@cmenuCB_output,'clear'});
+% m1 = uimenu(c,'Label','invert Mask','Callback',{@cmenuCB_output,'invert'});
+% m1 = uimenu(c,'Label','remove a local region (via ginput)','Callback',{@cmenuCB_output,'removeThis'});
+% m1 = uimenu(c,'Label','manually remove part','Callback',{@cmenuCB_output,'manuallyRemove'});
+
+
+hp=uicontrol('style','pushbutton','units','norm','string','cbar');
+set(hp,'position' ,[0.95536 0.40833 0.05 0.04],'backgroundcolor',[0.8941    0.9412    0.9020]);
+set(hp,'tooltipstring',['show/hide colorbar:' char(10) ...
+     ' ...usefull to check Ids/values']);
+set(hp,'callback',{@cmenuCB_output,'showColorbar'},'fontsize',7);
+
+%% ===============================================
+
+
+% drawnow;
 
 
 % function id_cb(e,e2)
@@ -180,6 +263,8 @@ drawnow;
 % hb=findobj(gcf,'tag','id_ed');
 % u.id=str2num(get(hb,'string'));
 % set(gcf,'userdata',u);
+function xhelp(e,e2)
+uhelp([mfilename '.m']);
 
 
 function thresh_done(e,e2, status)
@@ -214,32 +299,115 @@ him=findobj(ax,'type','image');
 c = uicontextmenu;
 him.UIContextMenu = c;
 % Create menu items for the uicontextmenu
+m1 = uimenu(c,'Label','clear image/Mask','Callback',{@cmenuCB_output,'clear'});
 m1 = uimenu(c,'Label','invert Mask','Callback',{@cmenuCB_output,'invert'});
 m1 = uimenu(c,'Label','remove a local region (via ginput)','Callback',{@cmenuCB_output,'removeThis'});
+m1 = uimenu(c,'Label','manually remove part','Callback',{@cmenuCB_output,'manuallyRemove'});
+m1 = uimenu(c,'Label','change value (ID)','Callback',{@cmenuCB_output,'changeValue'});
 
+m1 = uimenu(c,'Label','show Colorbar','Callback',{@cmenuCB_output,'showColorbar'});
 % m2 = uimenu(c,'Label','dotted','Callback',@context,'invert');
 % m3 = uimenu(c,'Label','solid','Callback',@context,'invert');
 
 function cmenuCB_output(e,e2,par)
+hf=findobj(0,'tag','threshtool');
 u=get(gcf,'userdata');
 
 ax4=findobj(gcf,'tag','ax4');
 im4=findobj(ax4,'type','image');
 d=get(im4,'cdata');
-if strcmp(par,'invert')
-    d3=~d;
+if strcmp(par,'clear')
+    d3=zeros(size(d));
     set(im4,'cdata', d3);          u.maskout=d3;
-elseif strcmp(par,'removeThis')
+elseif strcmp(par,'invert')
+    if length(unique(d))<3
+    d3=~d;
+    else
+       d3=d-1;
+       d3(d3==-1)=max(unique(d3))+1;
+    end
+    set(im4,'cdata', d3);          u.maskout=d3;
+elseif strcmp(par,'removeThis') || strcmp(par,'changeValue')
+    
     axes(ax4)
     co=ginput(1); co=round(co);
-    d2=bwlabeln(d); 
-    invm=~(d2==d2(co(2),co(1)));
-    d3=d.*invm;
+   
+    if strcmp(par,'removeThis')
+        d2=bwlabeln(d);
+        d2=d2.*(d==d(co(2),co(1)));
+        d3=d;
+        val=0;
+        d3(d2~=0)=val;
+    
+    
+    elseif strcmp(par,'changeValue')
+        set(hf,'WindowButtonUpFcn'    ,[]);
+        %% ===============================================
+        drawnow;
+        prompt = {['Enter new ID/Value (previous value: '  num2str(d(co(2),co(1))) '):' ]};
+        dlg_title = 'Input';
+        num_lines = 1;
+        defaultans = {num2str(d(co(2),co(1)))};
+        answer = inputdlg(prompt,dlg_title,num_lines,defaultans);
+        if isempty(answer); 
+            set(hf,'WindowButtonUpFcn'    ,{@thresh_figbut,0});
+            return, end
+         A1=(str2num(answer{1}));
+         val=d(co(2),co(1));
+         if isnumeric(A1);
+             val=A1;
+         end
+         set(hf,'WindowButtonUpFcn'    ,{@thresh_figbut,0});
+         %% ===============================================
+          d2=bwlabeln(d);
+          d2==d2(co(2),co(1));
+          v1=d2==d2(co(2),co(1));
+          v2=d2~=d2(co(2),co(1));
+          d3=v2.*d+(v1*val);
+        
+        %% ===============================================
+    end
+   
+    
+%     invm=~(d2==d2(co(2),co(1)));
+%     d3=d.*invm;
     set(im4,'cdata', d3);          u.maskout=d3;
+ elseif strcmp(par,'manuallyRemove')
+     %% ===============================================
+%      set(gcf,'WindowButtonUpFcn'     ,[]);
+%      set(gcf,'WindowButtonUpFcn'     ,@freehandstop);
+    ax4= findobj(gcf,'tag','ax4');
+     axes(ax4);
+     h = imfreehand(ax4);
+     wait(h);
+     try
+         bw=createMask(h);
+         d3=d;
+         d3(bw==1)=0;
+         set(im4,'cdata', d3);          u.maskout=d3;
+         delete(h);
+     end
+elseif strcmp(par,'showColorbar')
+     ax4= findobj(gcf,'tag','ax4');
+     axes(ax4);
+     hcbar=findobj(gcf,'tag','colorbar1');
+     if isempty(hcbar)
+     t = colorbar('peer',gca,'Tag','colorbar1');
+     else
+         delete(hcbar);
+         %colorbar off
+     end
 end
 set(gcf,'userdata',u);
 
 
+
+
+
+% function freehandstop(e,e2)
+% 
+% 'sss'
+%  delete(findobj(gcf,'userdata','imtool'));
 
 
 function showContour(e,e2)
@@ -266,12 +434,13 @@ if isempty(him1);
     image(u.h1,s);
     title('input');
     set(gca,'tag','ax1');
-    
+      axis off;
     % ----ax3
     axes(u.h3);
     imhist(bg);
     xlim([0 1]);
     set(gca,'tag','ax3');
+%     axis off;
 % else
 %    set(him1,'cdata',s);   
 end
@@ -284,6 +453,7 @@ if isempty(him4);
     imagesc(u.h4,u.maskin);  
     title('output'); colormap gray;
 set(gca,'tag','ax4'); 
+ axis off;
 cmenuCB_create();
 else   ;    
 %     set(him4,'cdata',u.maskin); 
@@ -406,12 +576,19 @@ title('output'); drawnow;
 
 
 function thresh_moving(e,e2)
-changethreshold('moving');
+if strcmp(get(gcf,'tag'),'threshtool')
+    changethreshold('moving');
+end
 
 %———————————————————————————————————————————————
 %%    moving
 %———————————————————————————————————————————————
 function changethreshold(par1)
+
+if strcmp(get(gcf,'tag'),'threshtool')==0
+   return 
+end
+try
 o=overobj('axes');
 ch=get(o,'children');
 %  disp(['move: ' num2str(strcmp(get(o,'tag'),'ax3')) ]);
@@ -446,6 +623,7 @@ elseif strcmp(par1,'click')
 end
 updateSlider();
 % disp(u.tr);
+end
 
 function thresh_figbut(e,e2,butstate)
 u=get(gcf,'userdata');
