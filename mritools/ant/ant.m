@@ -1290,14 +1290,17 @@ mh2 = uimenu(mh,'Label','<html><font color="black"> apply 2d-registration to oth
     'userdata',[HSTART 'if other images needs to be registered as well' HEND '..apply this function']);
 
 %% ==========[menu:Allas & mask]=====================================
-mh = uimenu(f,'Label','atlas/masks');
+mh = uimenu(f,'Label','atlas+masks');
 
 mh2 = uimenu(mh,'Label',' Mask-Generator (GUI)',                                           'Callback',{@menubarCB, 'maskgenerate'},'Separator','on',...
     'userdata',[HSTART 'generate mask(s)' HEND ' from NIFTI-file ("ANO.nii")']);
 
 mh2 = uimenu(mh,'Label',' draw mask',                  'Callback',{@menubarCB, 'drawmask'},'Separator','on',...
      'userdata',[HSTART 'manually draw a mask' ]);
+mh2 = uimenu(mh,'Label','merge masks',                  'Callback',{@menubarCB, 'mergemasks'},'Separator','off',...
+     'userdata',[HSTART 'merge multiple masks' ]);
 
+ 
  mh2 = uimenu(mh,'Label',' create RGB-NIFTI-atlas',    'Callback',{@menubarCB, 'call_createRGBatlas'},'Separator','on',...
      'userdata',[HSTART 'create RGB-NIFTI file from NIFTI-Atlas-file' ]);
 
@@ -2658,6 +2661,23 @@ elseif strcmp(task,'drawmask')
     %     statusMsg(1,' generate mask from excelfile');
     %     xexcel2atlas(1);
     %     statusMsg(0);
+    
+elseif strcmp(task,'mergemasks')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xmergemasks';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xmergemasks.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    statusMsg(1,'merge masks');
+    xmergemasks(1);
+    statusMsg(0);
+    
  elseif strcmp(task,'call_createRGBatlas')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xmakeRGBatlas';

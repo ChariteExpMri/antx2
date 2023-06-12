@@ -901,18 +901,21 @@
 % #ba 22 May 2023 (09:49:20)
 % #k [xbruker2nifti.m] #n modified: option to add 'StudId' and 'SubjectName' as suffix to animal-directory name
 % #ba 01 Jun 2023 (11:38:22)
-% [xbruker2nifti.m] #n modified: 
+% #k [xbruker2nifti.m] #n modified: 
 % -logfile for Bruker converted files is created for each animal
 % -added example for Bruker conversion without GUI
-% [xdraw.m] #n modified 
+% #k [xdraw.m] #n modified 
 % lesions can be delineated: First, preselect the animal folders, than go to #gw --> ANT-menu: &#8658; masks/"draw mask" 
 % 
 % #ba 12 Jun 2023 (18:53:05)
-% [xgunzip2nifti.m] #n new, convert local gzip-files to NIFTI-files
+% #k [xgunzip2nifti.m] #n new, convert local gzip-files to NIFTI-files
 % #gw --> access via ANT-menu: &#8658; Main/"convert gzip-files to NIFTI"
-% [xobj2nifti.m] #n new, convert local obj-files (Analyze) to NIFTI-files
+% #k [xobj2nifti.m] #n new, convert local obj-files (Analyze) to NIFTI-files
 % #gw --> access via ANT-menu: &#8658; Main/"convert obj-files to NIFTI"
 % -reference image can be used to replace header
+% #k [xmergemasks.m] #n new, merge multiple masks within animal folders
+% #gw --> access via ANT-menu: &#8658; atlas+masks/"merge masks"
+% 
 % 
 % 
 
