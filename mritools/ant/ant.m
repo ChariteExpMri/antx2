@@ -1194,8 +1194,15 @@ mh2 = uimenu(mh,'Label',' Import DATA via "Dir-to-Dir" correspondence',   'Callb
 %     'userdata',sprintf('import any data from external "name"-matching directories to internal mouse directories \n prerequisite:  matching directory-name-tag')       );
 mh2 = uimenu(mh,'Label',' Distribute files (files from outside to selected mouse-folders)',   'Callback',{@menubarCB, 'distributefilesx'} , ...
     'userdata',[HSTART 'import NIFTI-files from external source' HEND '..prerequisite: matching file-name-tag or directory-name-tag']);
-mh2 = uimenu(mh,'Label',' convert dicom to nifti',         'Callback',{@menubarCB, 'xconvertdicom2nifti' },'separator','on',  ...
+mh2 = uimenu(mh,'Label',' convert dicom to NIFTI',         'Callback',{@menubarCB, 'xconvertdicom2nifti' },'separator','on',  ...
      'userdata',[HSTART 'convert DICOM-files to NIFTI-files' ]);
+
+mh2 = uimenu(mh,'Label',' convert obj-files to NIFTI',         'Callback',{@menubarCB, 'x_convertOBJfiles' },'separator','off',  ...
+     'userdata',[HSTART 'convert local obj-files (ANALYZE-files) to NIFTI-files' ]);
+ mh2 = uimenu(mh,'Label',' convert gzip-files to NIFTI',         'Callback',{@menubarCB, 'x_convertGZIPfiles' },'separator','off',  ...
+     'userdata',[HSTART 'convert local gzip-files to NIFTI-files' ]);
+ 
+ 
 mh2 = uimenu(mh,'Label',' merge directories',              'Callback',{@menubarCB, 'xmergedirectories' },  ...
      'userdata',[HSTART 'merge the  contents of pairwise assigned directories' ]);
 mh2 = uimenu(mh,'Label',' export files (from ANT-project)',              'Callback',{@menubarCB, 'export'},'Separator','on', ...
@@ -2734,6 +2741,38 @@ elseif strcmp(task,'xconvertdicom2nifti')
     end
     %% ===============================================
     xdicom2nifti(1);
+    
+    
+    %________________________________________________
+elseif strcmp(task,'x_convertOBJfiles')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xobj2nifti';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xobj2nifti.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    xobj2nifti(1);
+    
+    
+    %________________________________________________
+elseif strcmp(task,'x_convertGZIPfiles')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xgunzip2nifti';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xgunzip2nifti.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    xgunzip2nifti(1);
     
     
     %________________________________________________

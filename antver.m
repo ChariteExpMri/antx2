@@ -907,6 +907,12 @@
 % [xdraw.m] #n modified 
 % lesions can be delineated: First, preselect the animal folders, than go to #gw --> ANT-menu: &#8658; masks/"draw mask" 
 % 
+% #ba 12 Jun 2023 (18:53:05)
+% [xgunzip2nifti.m] #n new, convert local gzip-files to NIFTI-files
+% #gw --> access via ANT-menu: &#8658; Main/"convert gzip-files to NIFTI"
+% [xobj2nifti.m] #n new, convert local obj-files (Analyze) to NIFTI-files
+% #gw --> access via ANT-menu: &#8658; Main/"convert obj-files to NIFTI"
+% -reference image can be used to replace header
 % 
 % 
 

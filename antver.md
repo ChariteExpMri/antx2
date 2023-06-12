@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   01 Jun 2023 (11:38:22)  
+ &#x1F34E; last modification:   12 Jun 2023 (18:53:05)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,12 +7,20 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**12 Jun 2023 (18:53:05)**</ins>  
+  __[xgunzip2nifti.m]__ new, convert local gzip-files to NIFTI-files  
+  &#8618; access via ANT-menu: &#8658; Main/"convert gzip-files to NIFTI"  
+  __[xobj2nifti.m]__ new, convert local obj-files (Analyze) to NIFTI-files  
+  &#8618; access via ANT-menu: &#8658; Main/"convert obj-files to NIFTI"  
+  -reference image can be used to replace header  
+<!---->
   &#x1F535;   <ins>**01 Jun 2023 (11:38:22)**</ins>  
   __[xbruker2nifti.m]__ modified:   
   -logfile for Bruker converted files is created for each animal  
   -added example for Bruker conversion without GUI  
   __[xdraw.m]__ modified   
   lesions can be delineated: First, preselect the animal folders, than go to &#8618; ANT-menu: &#8658; masks/"draw mask"   
+    
 <!---->
   &#x1F535;   <ins>**22 May 2023 (09:49:20)**</ins>  
    __[xbruker2nifti.m]__ modified: option to add 'StudId' and 'SubjectName' as suffix to animal-directory name  
