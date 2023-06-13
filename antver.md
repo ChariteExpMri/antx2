@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   % 13 Jun 2023 (12:04:18)  
+ &#x1F34E; last modification:   13 Jun 2023 (12:04:18)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,15 +7,15 @@
     
     
 ------------------  
-  % &#x1F535;   <ins>**13 Jun 2023 (12:04:18)**</ins>  
+  &#x1F535;   <ins>**13 Jun 2023 (12:04:18)**</ins>  
    __[paramgui.m]__ #n, added 2D-cell pulldown   
 <!---->
   &#x1F535;   <ins>**12 Jun 2023 (18:53:05)**</ins>  
-   __[xgunzip2nifti.m]__ new, convert local gzip-files to NIFTI-files  
+   __[xgunzip2nifti.m]__ new, convert gzip-files to NIFTI-files within animal folders  
   &#8618; access via ANT-menu: &#8658; Main/"convert gzip-files to NIFTI"  
-   __[xobj2nifti.m]__ new, convert local obj-files (Analyze) to NIFTI-files  
+   __[xobj2nifti.m]__ new, convert obj-files (Analyze) to NIFTI-files within animal folders  
   &#8618; access via ANT-menu: &#8658; Main/"convert obj-files to NIFTI"  
-  -reference image can be used to replace header  
+    reference image can be used to replace header  
    __[xmergemasks.m]__ new, merge multiple masks within animal folders  
   &#8618; access via ANT-menu: &#8658; atlas+masks/"merge masks"  
 <!---->
