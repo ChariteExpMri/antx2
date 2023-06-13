@@ -915,6 +915,8 @@
 % -reference image can be used to replace header
 % #k [xmergemasks.m] #n new, merge multiple masks within animal folders
 % #gw --> access via ANT-menu: &#8658; atlas+masks/"merge masks"
+% % #ba 13 Jun 2023 (12:04:18)
+% #k [paramgui.m] #n, added 2D-cell pulldown 
 % 
 % 
 % 

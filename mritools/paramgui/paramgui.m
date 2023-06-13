@@ -93,9 +93,10 @@
 %     'a2'    ''      'select multiple files'             'mf'
 %     'a3'    ''      'select a folder '                  'd'
 %     'a4'    ''      'select multiple folders'           'md'
-%     'a5'    ''      'select item from mixed list'       {'cmap','raus' 1 2 3 '' [] 'nothing'}
-%     'a6'    [1 2]   'select item from numeric list'     {[1:10] [1:2] [4:5]}
-%     'a7'    'ab'    'select item from string list'      {'a' 'ab' 'abc' 'abcd'}
+%     'a5'    ''      'select item from mixed pulldown'       {'cmap','raus' 1 2 3 '' [] 'nothing'}
+%     'a6'    [1 2]   'select item from numeric pulldown'        {[1:10] [1:2] [4:5]}
+%     'a7'    'ab'    'select item from char pulldown'        {'a' 'ab' 'abc' 'abcd'}
+%     'a8'    'ab'    'select item from 2d mixed pulldown'      {'inster "a"' 'a'; 'insert "ab"' 'ab'; 'insert nothing ([])' [];'insert nothing ('''')' ''; 'enter numeric (5)',5; 'enter numeric vec ([1 2 3])',[1:3]}
 %     'inf2' ''        '' ''  %empty row 
 %     
 %     'inf11'           '  ______OTHER OPTIONS____________<' '(add some more info here)' ''
@@ -106,9 +107,23 @@
 %     'a10'           'gray'    'select cmap from default colormaps'                {'cmap',{}}
 %     'a11'           'parula'  'select cmap from specified colormap'               {'cmap',{'gray' 'parula'}}
 %     'a12'           'jet'     'select cmap from specified colormap (not colored)' {'gray' 'parula'}
-%     };
+%     }
 % [m z]=paramgui(p,'close',1,'figpos',[0.2 0.4 0.5 0.35],'info',{@uhelp, 'paramgui.m' },'title','GUI-123'); %%START GUI
-% 
+% ==============================================
+%%   EXAMPLE: showing GUI with pulldown-options
+% ===============================================
+% m={'enter prefix (example $p:<prefixName>) ' '$p:myprefix_'
+%    'enter suffix (example $s:<suffixName>) ' '$s:_mysuffix'
+%    'enter nothing ('''') ' ''
+%    'enter nothing ([]) ' []
+%    'enter numeric (1)' 1
+%    };
+% p={
+% 'var1'   ''        'EXAMPLE OF 2D-pulldown'              m    
+% 'var2'   ''        'EXAMPLE 1D-pulldown'                       {'cmap','raus' 1 2 3 '' [] 'nothing'}
+% 'cmap'   'parula'  'EXAMPLE select from specified colormap'    {'cmap',{'gray' 'parula'}};
+% }
+% [m z]=paramgui(p,'close',1,'uiwait',1,'figpos',[0.2 0.4 0.5 0.35]); %%START GUI
 % ==============================================
 %%   EXAMPLE-2(older)
 % ===============================================
@@ -162,11 +177,15 @@
 % ,'info','vline.m')
 % ,'info',{'Processing Parameters','-->see process1203.m'}
 % 
-%% GET VARIABLES during runtime (within function  call)
+%% GET ALL VARIABLES during runtime (within function  call)
 % [x1,x2]= paramgui('getdata')
 % x1: cell-list of current input-paramters
 % x2: struct with current input-paramters ..-> use this for stateDepended changes
-% 
+%% GET SPECIFIC VARIABLES during runtime (within function  call)
+% [x]=paramgui('get',<variable-list>);
+% [x]=paramgui('get','warpParamfile'); % obtain struct with field 'warpParamfile'
+% [x]=paramgui('get','warpParamfile','cleanup'); % obtain struct with fields 'warpParamfile' & 'cleanup'
+% [x ]=paramgui('get','warpParamfile','cleanup','tol'); % obtain struct with fields 'warpParamfile','cleanup' & tol
 %% DYNAMICALLY SET VARIABLE FIELD
 % -during runtime, variablename must exist,
 % -variable name must  come with struct-name use 'x.reorienttype' instead of 'reorienttype'
@@ -291,8 +310,12 @@ if ischar(dat)
         varargout{1}=aa;
         varargout{2}=bb;
         return
+    elseif strcmp(dat,'get');   
+       [aa bb]=getdata2(varargin);
+        varargout{1}=aa;
+        varargout{2}=bb;
+      return
     elseif strcmp(dat,'setdata');
-        
         setdata(varargin);
         return
     elseif strcmp(dat,'setchoice');
@@ -1582,22 +1605,61 @@ else
     eval(txt);
     varargout{1}=x;
 end
-
 eval(txt);
 varargout{2}=x;
-
 try
     c=list2cell(char(txt), us.dat );
     varargout{3}=c;
 catch
     varargout{3}=[];
 end
-
 %'PARAMETERS'
 params.cb1=get(findobj(gcf,'tag','cb1'),'value');
 varargout{4}=params;
 
+function [varargout]=getdata2(varargin)
+drawnow
+hf=findobj(gcf,'tag','paramgui');
+us=  get(findobj(0,'tag','paramgui'),'userdata');
+v=us.v;
 
+try
+    txt=us.jCodePane.getText;
+catch
+    error('..process cancelled (GUI-based)');
+    return
+end
+% if strcmp(v.out,'pass')
+%     varargout{1}=char(txt);
+% else
+%     eval(txt);
+%     varargout{1}=x;
+% end
+eval(txt);
+% varargout{2}=x;
+
+fn=varargin{1};
+fn=regexprep(fn,'^x\.','');
+y=struct();
+for i=1:length(fn)
+    try
+        y=setfield(y,fn{i},getfield(x,fn{i}));
+    end
+end
+varargout{1}=y;
+varargout{2}=[]; %not speccified
+
+
+
+% try
+%     c=list2cell(char(txt), us.dat );
+%     varargout{3}=c;
+% catch
+%     varargout{3}=[];
+% end
+% %'PARAMETERS'
+% params.cb1=get(findobj(gcf,'tag','cb1'),'value');
+% varargout{4}=params;
 
 function figkey(h,e)
 
@@ -3333,7 +3395,7 @@ elseif strcmp(us.dat{idx,4},'mf')
     ls(1)=   { [ ls{1}  char(9)  tb{3} ]};
     n=ls;
     
-elseif all(strcmp(us.dat{idx,4},'d')) || all(strcmp(us.dat{idx,4},'md'))
+elseif all(all(strcmp(us.dat{idx,4},'d'))) || all(all(strcmp(us.dat{idx,4},'md')))
     dum=us.dat{idx,2};
     if exist(dum)==7
         prepwd=fileparts(dum) ;
@@ -3444,6 +3506,10 @@ elseif   iscellmode>=1
                 
             end
         end
+    elseif sum(size(pulldownStr)>1)==2
+        bk=us.dat{idx,4};
+        pulldownStr=bk(:,1);
+        pulldown   =bk(:,2);
     else
         pulldownStr=cellfun(@(a){[num2str(a)]} ,pulldownStr);
     end

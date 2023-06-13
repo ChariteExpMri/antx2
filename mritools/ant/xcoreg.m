@@ -1309,4 +1309,20 @@ end
 
 
 function he=getparmfiles(li,lih)
-%     'warpParamfile'  fullfil  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ  Àÿ
+
+[r x]=paramgui('getdata','x.warpParamfile');
+
+he=x.warpParamfile;
+% pap=fileparts(which('Par0025affine.txt'));
+pap=(fullfile(fileparts(antpath),'elastix','paramfiles'));
+msg='parameterFiles (order important)';
+[t,sts] = spm_select(inf,'any',msg,'',pap,'.*.txt');
+if isempty(t); return; end
+t=cellstr(t);
+he=t;
+% paramgui('setdata','x.wa.elxParamfile',t)
+return
+
+
+
+
