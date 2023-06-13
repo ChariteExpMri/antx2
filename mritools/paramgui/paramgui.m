@@ -1776,7 +1776,7 @@ if ~isempty(filename) %exist(us.v.info{2})==2
     end
     w1=regexprep(w1,'^x.','z.');
     is=min(regexpi2(w1,'^z.'));
-    [w1(1:is-1); 'z=[];'; w1(is:end)]; %insert emoty struct
+    w1=[w1(1:is-1); 'z=[];'; w1(is:end)]; %insert empty struct
     
     w2=[filename '(1,z);	% RUN'];
     cp=[w0; w1;w2];

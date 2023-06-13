@@ -18,7 +18,7 @@
 % #b - change dataType                 ('dt:')         #g e.g.: 'dt: 64'  | 'dt:16'
 % #b - threshold image                 ('tr:')         #g e.g.: 'tr:i>0.5=0'
 % #b - Replace value by another value: ('R:' or 'repl:' or 'replace:') #g e.g.: 'R:<=0;1' | 'R:nan;ME'
-% #b -flip image along 1st dim.        (flip:)         #g e.g.: 'flip:' 
+% #b - flip image along 1st dim.       (flip:)         #g e.g.: 'flip:' 
 % 
 % % __________________________________________________________________________________________________________________
 % - select one/several images TO RENAME/DELETE/EXTRACT/EXPAND/COPY volumes,aka. files
@@ -34,9 +34,11 @@
 %% #lk NEW FILENAME-COLUMN
 % -enter a new filename here, for NIFTI-file(s) no file-extension (.nii) needed
 % -alternatively you can define a PREFIX or SUFFIX here which will be appended to the input-filename:
-% -for PREFIX: enter:  'p:bla_'  if the input-image is 'v1.nii' the output-file is 'V_bla.nii'
+% -for #b PREFIX: #n :'p:myprefix', where 'myprefix' is the prefix to add.
+%              EXAMPLE: 'p:bla_'  if the input-image is 'v1.nii' the output-file is 'V_bla.nii'
 %              commandline example to copy and rename a file:  xrename(1,'v1.nii','p:bla_',':'); 
-% -for SUFFiX: enter:  's:_blob'  if the input-image is 'v1.nii' the output-file is 'v1_blob.nii'
+% -for #b SUFFiX: #n : 's:mysuffix', where 'mysuffix' is the prefix to append.
+%              EXAMPLE:  's:_blob'  if the input-image is 'v1.nii' the output-file is 'v1_blob.nii'
 %              commandline example to copy and rename a file: xrename(1,'v1.nii','s:_blob',':');   
 % #r -IF the FILENAME-COLUMN is EMPTY the original file will be overwritten !!!
 % 

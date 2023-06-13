@@ -33,8 +33,11 @@
 %                   The data is internally stored in the "d" variable (2D-array: voxels-by-animals
 %                   EXAMPLES:  z.type='sqrt(mean((d.^2),2))'  --> ..would calculate RMS across animals 
 %                              z.type='mean(d,2)'             --> ..would calculate the mean across animals 
-%                   
-% 'outdir'           output-folder where the resulting NIFTI is stored
+%  
+% 'isBrain          ensure that map is within brain-mask: [0]no [1]yes, map is inside brain boundary                                   
+%                   default: [1]
+% 'outdir'          output-folder where the resulting NIFTI is stored, 
+%                   if empty, map is stored in the "results" folder of the study
 % 'outputnameSuffix' <optional> Add a suffix. The suffix-string is appended to output fileName (NIFTI-file)
 % 
 % 
@@ -125,11 +128,11 @@ respath=fullfile(fileparts(an.datpath),'results');
 if exist('x')~=1;        x=[]; end
 hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
 p={...
-    'file'            ''          'Select image (example select "x_masklesion.nii")'  {@uniquefiles,li,lih,fi2}
-    'type'            'percent'   'choose math. operation across images: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*} )'  {'percent' 'abs' 'sum' 'mean','median','max'}
-    
-    'outdir'            respath   'output-folder where resulting NIFTI is stored' 'd' 
-    'outputnameSuffix'   ''       '<optional> suffix-string appended to output fileName (NIFTI-file)'  {'imap' 'lesion','mcao'}
+    'file'             ''          'Select image (example select "x_masklesion.nii")'  {@uniquefiles,li,lih,fi2}
+    'type'             'percent'   'choose math. operation across images: {percent|sum|mean|median|min|max|sd|mode|rms|*specific*} )'  {'percent' 'abs' 'sum' 'mean','median','max'}
+    'isBrain'          [1]         'ensure that map is within brain-mask: [0]no [1]yes, map is inside brain boundary'  'b'
+    'outdir'           respath     '<optional> output-folder to save the map, if empty, map is stored in the study''s results folder' 'd' 
+    'outputnameSuffix'   ''        '<optional> suffix-string appended to output fileName (NIFTI-file)'  {'imap' 'lesion','mcao'}
     };
 
 
@@ -189,10 +192,15 @@ else
 end
 
 fis2=fis(iexist);
+if isempty(fis2)
+      cprintf([1 0 1],[ '!' 'file "' char(z.file) '" not found..task cancelled'  '\n'] );
+      return
+end
 % ==============================================
 %%   [2] load data
 % ===============================================
 N=size(fis2,1);
+
 ha=spm_vol(fis2{1});   %PREALLOC
 a2=zeros(prod(ha.dim),N); 
 for i=1:N
@@ -244,6 +252,14 @@ end
 
 a4=reshape(a3,ha.dim);
 
+% ensure map is within brain-boundary
+if z.isBrain==1
+    fbrain=fullfile(fileparts(fileparts(pa{1})),'templates','AVGTmask.nii');
+    [hb b]=rgetnii(fbrain);
+    a4=a4.*b;
+end
+
+
 % ==============================================
 %%   [4] save data
 % ===============================================
@@ -253,7 +269,13 @@ if ~isempty(z.outputnameSuffix)
 end
 [~,imageName]=fileparts(z.file);
 
-if exist(z.outdir)~=7;    mkdir(z.outdir)  ; end
+if isempty(z.outdir)
+    z.outdir=fullfile(fileparts(fileparts(pa{1})),'results');
+end
+if exist(z.outdir)~=7;  
+    mkdir(z.outdir)  ; 
+end
+
 NameOut=  ['MAP' typestr '_' imageName  suffix '.nii' ];
 Fout=fullfile(z.outdir, NameOut);
 
@@ -261,6 +283,10 @@ if 1
   rsavenii(Fout,ha,a4,[ 16 0]);  
 end
 showinfo2('MAP' ,Fout,[],[], [ '>> ' Fout ]);
+Fbg=fullfile(fileparts(fileparts(pa{1})),'templates','AVGT.nii');
+if exist(Fbg)==2
+    showinfo2('MAP' ,Fbg,Fout,13);
+end
 
 % ==============================================
 %%   [5] log results
