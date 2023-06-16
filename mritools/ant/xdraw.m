@@ -4192,7 +4192,7 @@ end
 % ===============================================
 
 pan3 = uipanel('Title','contour','FontSize',7,'units','norm', 'BackgroundColor','white',  'Position',[0 0 .5 .3]);
-set(pan3,'Position',[.25 0 .45 .05],'Title','','tag','panel3','visible','on','backgroundcolor','w');
+set(pan3,'Position',[.2 0 .55 .05],'Title','','tag','panel3','visible','on','backgroundcolor','w');
 set(pan3,'units','pixels','visible','on');
 set(pan3,'BorderType','etchedout','shadowColor',[1 0 0]);
 set(pan3,'BorderType','etchedout','BackgroundColor',[1 1 1]);
@@ -4308,6 +4308,17 @@ set(hb,'parent',pan3,'callback',@slid_thresh_flt);
 set(hb,'position',[ .93  .0 .07 1]);
 set(hb,'units','pixels'); set(hb,'position',[ 206     1    15    17]);
 
+
+%% fill interior contours
+hb=uicontrol('style','radio');
+set(hb,'parent',pan3,'backgroundcolor','w');%,'callback',@slid_thresh)
+% set(hb,'units','norm','position',[0.223 -0.0394 0.08 0.8]);
+set(hb,'string','fill','tag','fillcontourlines');
+set(hb,'fontsize',6,'backgroundcolor','w');
+set(hb,'tooltipstring',[ 'fill interour contourlines'],'value',1);
+% set(hb,'callback',@contourhelp);
+set(hb,'units','pixels'); set(hb,'position',[266.65 1.8 30 15]);
+
 %% help
 hb=uicontrol('style','pushbutton');
 set(hb,'parent',pan3,'backgroundcolor','w');%,'callback',@slid_thresh)
@@ -4316,7 +4327,7 @@ set(hb,'string','?','tag','contourhelp');
 set(hb,'fontsize',8,'fontweight','bold','backgroundcolor',[1 .84 0]);
 set(hb,'tooltipstring',['get help ' char(10) 'how to use contourlines to draw mask/roi']);
 set(hb,'callback',@contourhelp);
-set(hb,'units','pixels'); set(hb,'position',[ [233 1.5 15 15]]);
+set(hb,'units','pixels'); set(hb,'position',[290.15 1.35 15 15]);
 
 
 % ==============================================
@@ -7273,7 +7284,9 @@ if get(hd,'userdata')==1  %PAINT NOW ---button down
                 u.boundary=[];
             end
             %m1=cm==cm(cc(1),cc(2));
-            m1=imfill(m1,'holes');
+            if get(findobj(gcf,'tag','fillcontourlines'),'value')==1 %fill interour of contour
+                m1=imfill(m1,'holes');
+            end
             %m1=imdilate(m1,strel('disk',1));
 
             if get(findobj(hf1,'tag','thresh_visible'),'value')==1
