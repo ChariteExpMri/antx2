@@ -55,7 +55,8 @@ try
     pwlast=pw{1};
     
     disp(['<a href="matlab: cd(''' pwlast ''');">' ['Go Back To:'  ] '</a>' ' ' pwlast ]);
-    disp(['<a href="matlab: ant;">' ['open ANTx2-GUI'  ] '</a>' ' '  ]);
+    %disp(['<a href="matlab: ant;">' ['open ANTx2-GUI'  ] '</a>' ' '  ]);
+    disp(['<a href="matlab: ant;">' ['open ANTx2-GUI'  ] '</a>' '        ' '<a href="matlab: anthistory;">' ['open study-history'  ] '</a>'  ]);
 end
 
 

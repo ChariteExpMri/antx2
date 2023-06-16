@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   13 Jun 2023 (12:04:18)  
+ &#x1F34E; last modification:   % 16 Jun 2023 (16:11:44)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,15 @@
     
     
 ------------------  
+  % &#x1F535;   <ins>**16 Jun 2023 (16:11:44)**</ins>  
+   __[xdraw.m]__ refurbished  
+  contour-line filling: borders can be added to contraint the filling  
+  added simple drawing tool  
+    
+ % ===============================================  
+ ----- EOF  
+  make antvermd for GIT: antver('makeantver')  
+<!---->
   &#x1F535;   <ins>**13 Jun 2023 (12:04:18)**</ins>  
    __[paramgui.m]__ #n, added 2D-cell pulldown   
 <!---->

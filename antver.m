@@ -917,10 +917,11 @@
 % #gw --> access via ANT-menu: &#8658; atlas+masks/"merge masks"
 % #ba 13 Jun 2023 (12:04:18)
 % #k [paramgui.m] #n, added 2D-cell pulldown 
+% % #ba 16 Jun 2023 (16:11:44)
+% #k [xdraw.m] #n refurbished
+% contour-line filling: borders can be added to contraint the filling
+% added simple drawing tool
 % 
-% 
-% 
-
 %% ===============================================
 %----- EOF
 % make antvermd for GIT: antver('makeantver')
