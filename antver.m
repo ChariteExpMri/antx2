@@ -921,7 +921,28 @@
 % #k [xdraw.m] #n refurbished
 % contour-line filling: borders can be added to contraint the filling
 % added simple drawing tool
+% #ba 12 Jul 2023 (08:53:34)
+% #k [xmakepseudoatlas.m] #n new, create pseudo-color NIFTI-atlas based on existing NIFTI-ATLAS 
+% rationale: atlases such as the Allen brain atlas use sparse IDs over a large dynamic range. 
+% This is sometimes not optimal for displaying atlas
+% #gw --> access via ANT-menu: &#8658; atlas+masks/"create pseudo-color atlas"
 % 
+% #ba 13 Jul 2023 (08:51:56)
+% [P28 developing mouse template] added to gdrive
+% this is a modified version of the Allen developing mouse atlas 
+%   - Paper : David M Young, Siavash Fazel Darbandi, Grace Schwartz, Zachary Bonzell, Deniz Yuruk, Mai Nojima, Laurent C Gole, John LR Rubenstein, Weimiao Yu, Stephan J Sanders (2021) Constructing and optimizing 3D atlases from 2D data with application to the developing mouse brain eLife 10:e61408
+%             https://doi.org/10.7554/eLife.61408
+%             https://elifesciences.org/articles/61408
+%   - #gw -->  access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
+% 
+% 
+% 
+% 
+
+
+
+
+
 %% ===============================================
 %----- EOF
 % make antvermd for GIT: antver('makeantver')

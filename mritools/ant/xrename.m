@@ -684,9 +684,12 @@ end
 %% ===============================================
 
 for i=1:length(pa)      %PATH
+    [~,Z.animalDir]=fileparts(pa{i});
     for j=1:length(fi)  %FILE
         s1=fullfile(pa{i},fi{j}); %OLD FILENAME
         if exist(s1)==2  %CHK EXISTENCE
+            Z.file=fi{j};
+            
             if strcmp(finew{j},'##')==1 || strcmp(finew{j},'delete')==1  % DELETE FILE
                 %                 if 1
                 %                     disp('---delete-test--');
@@ -1211,7 +1214,24 @@ for i=1:length(pa)      %PATH
                     %% test
                     
                     
+                elseif ~isempty(strfind(volnum{j},'descrip:')) || ~isempty(strfind(volnum{j},'desc:'))
+                    code=volnum{j};
+                    code=regexprep(code,{'desc:' 'descrip:'},{''});
                     
+                    if strcmp(s1,s2)==1
+                        sx=s1;
+                    else
+                        copyfile(s1,s2,'f');
+                        sx=s2;
+                    end
+                    
+                    hm=spm_vol(sx);
+                    for i=1:length(hm)
+                        hm(i).descrip=code;
+                    end
+                    spm_create_vol(hm);
+                    
+                   disp(['..description changed in "' Z.file '" of [' Z.animalDir ']' ' --> current description: "'  hm(1).descrip '"' ]);
                     
                     
                     
@@ -1335,7 +1355,7 @@ for i=1:length(pa)      %PATH
                     
                     %% delete targetfile if exists
                     %if strcmp(thisvol,':')==1
-                    if exist(s2)==2
+                    if exist(s2)==2 && save_separately==0
                         delete(s2);
                     end
                     %end

@@ -1,6 +1,8 @@
 function [lineobj,xs,ys] = freehanddraw(varargin)
 % [LINEOBJ,XS,YS] = FREEHANDDRAW(ax_handle,line_options)
-%
+% EXAMPLE: fg,imagesc; [hg,x y] = freehanddraw(gca,'pointer','hand','color',[1 0 1])
+% 
+% 
 % Draw a smooth freehand line object on the current axis (default),
 % or on the axis specified by handle in the first input argument.
 % Left-click to begin drawing, right-click to terminate, or double-click
@@ -8,6 +10,7 @@ function [lineobj,xs,ys] = freehanddraw(varargin)
 % 
 %
 % INPUT ARGUMENTS:  First:      axis handle (optional)
+%                  optional: define pointer wvia 'pointer' & pointer to use, default: 'hand'
 %                  Additional: valid line property/value pairs
 %
 % OUTPUT ARGUMENTS: 1) Handle to line object
@@ -25,6 +28,7 @@ function [lineobj,xs,ys] = freehanddraw(varargin)
 % Modified:
 % 10/05/05: Now allows double-click closing of contour
 
+warning off
 axdef = 0;
 if nargin ~= 0 & ishandle(varargin{1})
 	try
@@ -45,7 +49,30 @@ hold on;
 % set(gcf,'Pointer','crosshair','doublebuffer','on');
 
 %Get the initial point
-[xs,ys,zs] = ginput(1);
+% [xs,ys,zs] = ginput(1)
+ pointer='hand';
+if ~isempty(varargin)
+    ispointerfield=find(strcmp(varargin,'pointer'));
+    if ~isempty(ispointerfield)
+        pointer= varargin{ispointerfield+1};
+        varargin(ispointerfield:ispointerfield+1)=[];      
+    end
+end
+
+% t = timer('tag','timerDraw333','ExecutionMode','fixedRate','Period',0.5);
+% t.TimerFcn = @(~,~) disp('3 seconds have elapsed');
+% t.TimerFcn=@timerfun;
+% start(t);
+
+% pointer
+[xs,ys,zs] = myginput(1,pointer);
+% zs
+if zs==27 %ESCAPE
+    [lineobj,xs,ys]=deal([]);
+%     delete(timerfind('tag','timerDraw333'));
+    return
+end
+
 
 %Create and store line object
 if axdef
@@ -65,8 +92,11 @@ set(gcf,'windowbuttonupfcn',@winkeyup);
 % end
 % set(gcf,'Pointer','arrow','doublebuffer','on');
 
-while ~isempty(get(gcf,'windowbuttonupfcn'))
-    drawnow;
+while ~isempty(get(gcf,'windowbuttonupfcn')) && zs~=27
+%     char = get(gcf, 'CurrentCharacter')
+%             button = abs(get(gcf, 'CurrentCharacter'))
+    %get(gcf,'CurrentCharacter');
+     drawnow;
 end
 
 %Extract xyz data from line object for return in output variables
@@ -90,8 +120,14 @@ set(gcf,'Pointer',oldvals.Pointer,...
 %Reset hold value of the axis
 if ~oldhold, hold off; end 
 
+if zs==27 %ESCAPE
+    [lineobj,xs,ys]=deal([]);
+%     delete(timerfind('tag','timerDraw333'));
+end
+
 function wbmfcn(varargin)
 lineobj = getappdata(gcf,'lineobj');
+% rand(1)
 if strcmp(get(gcf,'selectiontype'),'normal');
     tmpx = get(lineobj,'xdata');
     tmpy = get(lineobj,'ydata');
@@ -116,3 +152,19 @@ return
 
 function winkeyup(e,e2)
 set(gcf,'windowbuttonupfcn',[]);
+
+% 
+% function timerfun(e,e2)
+% % 'hi'
+% 
+% 
+% % char = get(gcf, 'CurrentCharacter')
+% button = abs(get(gcf, 'CurrentCharacter'))
+% if button==27
+%    try; uiresume(gca); end
+%     delete(timerfind('tag','timerDraw333'));
+%     
+% end
+
+
+

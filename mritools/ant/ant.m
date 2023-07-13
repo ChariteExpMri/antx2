@@ -1304,6 +1304,8 @@ mh2 = uimenu(mh,'Label','merge masks',                  'Callback',{@menubarCB, 
  mh2 = uimenu(mh,'Label',' create RGB-NIFTI-atlas',    'Callback',{@menubarCB, 'call_createRGBatlas'},'Separator','on',...
      'userdata',[HSTART 'create RGB-NIFTI file from NIFTI-Atlas-file' ]);
 
+  mh2 = uimenu(mh,'Label',' create pseudo-color atlas',    'Callback',{@menubarCB, 'call_createPseudoatlas'},'Separator','off',...
+     'userdata',[HSTART 'create pseudo-color atlas if region-IDs have large dynamic range (Allen mouse brain)for diplay purpose' ]);
  
  
 mh2 = uimenu(mh,'Label','generate DTI-atlas','separator','on');
@@ -2690,11 +2692,25 @@ elseif strcmp(task,'mergemasks')
         return
     end
     %% ===============================================
-    
- 
     statusMsg(1,' create RGB-atlas');
     xmakeRGBatlas(1);
     statusMsg(0);
+  
+  elseif strcmp(task,'call_createPseudoatlas')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xmakepseudoatlas';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xmakepseudoatlas.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    statusMsg(1,' create pseudo-atlas');
+    xmakepseudoatlas(1);
+    statusMsg(0);   
     
 elseif strcmp(task,'segmenttube')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here

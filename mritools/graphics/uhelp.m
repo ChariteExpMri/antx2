@@ -28,7 +28,7 @@
 % ------- #b Other shortcuts #n --------------------
 % #g [ctrl+m]       #n toggle READMODE (RM) / EDITMODE (EM)
 % #g [ctrl+t]       #n toggle adjust window to  textwidth
-% #g [alt+up/down]  #n change fonttype
+% #g [ctrl+shift+left/right]  #n change fonttype
 %
 % ##  see also contextmenu
 %

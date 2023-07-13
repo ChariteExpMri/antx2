@@ -392,8 +392,12 @@ end
 if iscell(z.TASK)
     %task=str2num(cell2mat(regexpi(char(z.TASK),'\d','match')'))';
 %     task=str2num(char(regexprep(z.TASK,'\D',' ')));
-    [st, en, match] = regexp(z.TASK, '\[.*?\]', 'start', 'end', 'match');
-    task=str2num(char(match{1}));
+    [st, en, match] = regexp(z.TASK{1}, '\[.*?\]', 'start', 'end', 'match');
+    if isempty(match)
+        task=str2num(char(z.TASK));
+    else
+        task=str2num(char(match{1}));
+    end
 elseif isnumeric(z.TASK)
     task=z.TASK;
 else

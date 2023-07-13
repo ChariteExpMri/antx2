@@ -61,6 +61,7 @@ otc={...
     'pi/2 pi 0'  ;%Wu/salamancha
     'pi 0 pi/2'
     '0 0 pi/2'
+    '0 pi/2 -pi'
    % 'pi  pi/2 0' %8: 'pi pi/2 0'
     };
 

@@ -126,6 +126,10 @@ else
          end
       end
       
+      char = get(fig, 'CurrentCharacter');
+            button = abs(get(fig, 'CurrentCharacter'));
+      
+      
       ptr_fig = get(0,'CurrentFigure');
       if(ptr_fig == fig)
          if keydown

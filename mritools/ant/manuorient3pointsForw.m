@@ -97,7 +97,7 @@
 % 
 % 
 
-function manuorient3points(p)
+function manuorient3points2(p)
 % clc
 if 0
     manuorient3points()
@@ -1363,8 +1363,8 @@ m2=spm_matrix(B);
 mx=[m2*m];
 % mx(1:3,4)=mx(1:3,4)+trans';
 
-% g3=stradd(g2,[strrep(p.prefix,'','') ''],1); % landet im template-folder
-g3=stradd(g1,[strrep(p.prefix,'','') ''],1); % landet im g1-folder ("t2.nii"-dir)
+ g3=stradd(g2,[strrep(p.prefix,'','') ''],1); % landet im template-folder
+%g3=stradd(g1,[strrep(p.prefix,'','') ''],1); % landet im g1-folder ("t2.nii"-dir)
 copyfile(g2,g3,'f');
 spm_get_space(g3,mx);
 [pa,name, ext]=fileparts(g3);

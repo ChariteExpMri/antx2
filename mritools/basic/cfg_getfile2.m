@@ -975,6 +975,14 @@ li=get(e,'string');
 oldinreg=get(hedregexp,'string');
 if isempty(find(strcmp(li,oldinreg)))
     newlist=[li; oldinreg ];
+    %% ========================  BUTTON-lost-issue =======================
+    temp={};
+    for i=1:length(lastfiltertoken)
+%         class(lastfiltertoken{i})
+        temp=[temp; cellstr(lastfiltertoken{i})];
+    end
+    lastfiltertoken=temp
+    %% ===============================================
     
     lastfiltertoken=[lastfiltertoken; newlist];
     lastfiltertoken=unique(lastfiltertoken);

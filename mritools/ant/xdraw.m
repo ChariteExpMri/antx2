@@ -450,7 +450,7 @@ u.ini_contrast =1;
 
 u.isboundarySet=0;
 u.boundary=[];
-u.boundarycolor=[0 1 0];
+u.boundarycolor=[1 0 1];
 
 set(findobj(gcf,'tag','rd_transpose'),'value',u.ini_transpose);
 set(findobj(gcf,'tag','rd_flipud')   ,'value',u.ini_flipud);
@@ -459,9 +459,8 @@ set(findobj(gcf,'tag','cb_adjustIntensity')   ,'value',u.ini_contrast);
 % ==============================================
 %%   aux inputs
 % ===============================================
-
+isddparam=0;
 if ~isempty(varargin)
-    isddparam=0;
     if isstruct(varargin{1})
         p=varargin{1};
         isddparam=1;
@@ -480,6 +479,11 @@ if ~isempty(varargin)
         if isfield(p,'con')
             set(findobj(gcf,'tag','cb_adjustIntensity'),'value',p.con);
         end
+        %         if isfield(p,'dim')
+        %             hx=findobj(gcf,'tag','rd_changedim');
+        %             set(hx,'value',p.dim);
+        %             hgfeval(hx,get(hx,'Callback'));
+        %         end
     end
 end
 
@@ -513,6 +517,17 @@ slid_thresh();
 
 
 set(findobj(gcf,'tag','waitnow'),'visible','off');  
+
+
+
+if isddparam==1;
+    if isfield(p,'dim')
+        hx=findobj(gcf,'tag','rd_changedim');
+        set(hx,'value',p.dim);
+        hgfeval(get(hx,'Callback'));
+    end
+end
+
 % ==============================================
 %%   timer
 % ===============================================
@@ -791,22 +806,27 @@ set(gcf,'WindowButtonUpFcn',[]);
 % set(gcf,'WindowButtonUpFcn',@boundary_setMousrRelease);
 set(gcf,'Pointer','arrow');
 pos=[];
-[hg,pos(:,1),pos(:,2)] = freehanddraw(gca,'color',u.boundarycolor,'linewidth',1);
-% delete(hg);
-set(hg,'tag','border2','hittest','off');
-u.boundarypos=pos;
-u.isboundarySet=0;
-set(findobj(gcf,'tag','addBorder'),'BackgroundColor',[1 1 1]);
-set(gcf,'userdata',u);
-% if ~isempty(pos)
-%     g=plot(pos(:,1),pos(:,2),'-r','tag','border2','linewidth',1,'hittest','off','color',u.boundarycolor);
-% end
-
-% function boundary_setMousrRelease(e,e2)
-% u=get(gcf,'userdata');
-% 
-% u.isboundarySet=0;
-% set(gcf,'userdata',u);
+[hg,x,y] = freehanddraw(gca,'color',u.boundarycolor,'linewidth',1);
+if ~isempty(x)
+    pos(:,1)=x;
+    pos(:,2)=y;
+    
+    % delete(hg);
+    set(hg,'tag','border2','hittest','off');
+    u.boundarypos=pos;
+    u.isboundarySet=0;
+    set(findobj(gcf,'tag','addBorder'),'BackgroundColor',[1 1 1]);
+    set(gcf,'userdata',u);
+    % if ~isempty(pos)
+    %     g=plot(pos(:,1),pos(:,2),'-r','tag','border2','linewidth',1,'hittest','off','color',u.boundarycolor);
+    % end
+    
+    % function boundary_setMousrRelease(e,e2)
+    % u=get(gcf,'userdata');
+    %
+    % u.isboundarySet=0;
+    % set(gcf,'userdata',u);
+end
 set(gcf,'WindowButtonMotionFcn', {@motion,1})
 set(gcf,'WindowButtonDownFcn', {@buttondown,[]});
 set(gcf,'WindowButtonUpFcn'     ,@selstop);
@@ -1055,6 +1075,7 @@ elseif strcmp(e2.Key,'d')|| strcmp(e2.Key,'6') ;%strcmp(e2.Key,'uparrow') || str
     
     
     hb=findobj(hf1,'tag','imdrawSimple');
+    set(hb,'value',1);
     hgfeval(get(hb,'callback'),[],[]);
     
 elseif strcmp(e2.Key,'u')
@@ -1748,9 +1769,9 @@ set(gcf,'WindowButtonDownFcn',@pb_otsu3D_transmit);
 
 
 
-%�����������������������������������������������
-%%   main caller for 3d-otsu
-%�����������������������������������������������
+% ==============================================
+%%    main caller for 3d-otsu
+% ===============================================
 function pb_otsu3D(e,e2)
 hf=findobj(0,'tag','otsu3d');
 delete(hf);
@@ -1762,9 +1783,9 @@ otsu3Dmontage_plot([],[]);
 % pb_otsu3Dmontage();
 
 
-%�����������������������������������������������
-%%   prep otsu
-%�����������������������������������������������
+% ==============================================
+%%    prep otsu
+% ===============================================
 function otsu3Dmontage_plot(e,e2)
 % disp('otsu3d');
 % 'aaa'
@@ -1787,10 +1808,9 @@ if medfltdo==1
     end
     %[a] = ordfilt3D(a,medfltval);
 end
-
-%�����������������������������������������������
-%%   % ADJUST IMAGE
-%�����������������������������������������������
+% ==============================================
+%%    % ADJUST IMAGE
+% ===============================================
 % disp('adjust 3d-volume');
 [as hs]=montageout(permute(a,[1 2 4 3]));
 as=adjustIntensity(as);
@@ -1809,16 +1829,9 @@ for i=1:hs(1)
     end
 end
 a=as2;
-%�����������������������������������������������
-%%
-%�����������������������������������������������
-
 
 ot3=reshape(  otsu(a(:),numcluster),[ size(a)]);
 v=get(hf3,'userdata');
-%�����������������������������������������������
-%%
-%�����������������������������������������������
 o=ot3 ;%u.otsu;
 a=u.a;
 TX=repmat(permute([1:size(a,3) ]',[3 2 1]),[size(a,1)  size(a,2)  1]); %for slicewise-reversing
@@ -1844,6 +1857,11 @@ v.o=o;
 % end
 v.TX=TX;
 
+
+
+
+
+
 if docrop==1        %------------------------- CROP
     cm=mean(o,3)==1 ;%crop
     cm=imdilate(cm,strel('square',[7]));
@@ -1855,9 +1873,19 @@ if docrop==1        %------------------------- CROP
 else
     v.ins_lr=[1:size(o,2)];
     v.ins_ud=[1:size(o,1)];
+    
+%     if u.usedim~=3
+%         
+%                 flipdimens=[setdiff([1:3],u.usedim) 2];
+%                 otemp=permute(o,flipdimens);
+%                 v.ins_lr=[1:size(otemp,2)];
+%                 v.ins_ud=[1:size(otemp,1)];
+%     end
+    
 end
 
 v.o1=o; %after cropping
+v.a1=a;
 v.TX1=TX;
 
 o2 =montageout(permute(o ,[1 2 4 3]));
@@ -1886,9 +1914,6 @@ bg=im2double(uint8(cat(3,bg,bg,bg)));
 % bg=double(ind2rgb( round(mat2gray(a2).*255) ,gray));
 % ma=im2double(label2rgb(o2,'jet'));
 % fg,image(bg)
-%�����������������������������������������������
-%%
-%�����������������������������������������������
 fus3=(bg.*(1-alpha)+ma.*(alpha)  );
 v.him=findobj(gca,'type','image');
 if ~isempty(v.him) ; set(v.him,'cdata',fus3); else;     v.him=image(fus3); end
@@ -1950,10 +1975,9 @@ try
     
 end
 
-
-%�����������������������������������������������
-%%   otsu_transmit 3d
-%�����������������������������������������������
+% ==============================================
+%%    otsu_transmit 3d
+% ===============================================
 function pb_otsu3D_transmit(e,e2);
 co=get(gca,'CurrentPoint');
 co=round(co(1,[1 2])) ;%right-down
@@ -1988,6 +2012,7 @@ cl=reshape(dum2, size(reg));
 numsubslust=size(tb,1);
 
 cl2 =montageout(permute(cl,[1 2 4 3]));
+
 % clrgb=im2double(label2rgb(cl2,'jet'));
 
 %________________________________________________colorize
@@ -2016,11 +2041,14 @@ set(gcf,'WindowButtonMotionFcn',@otsu3d_subclustermotion);
 v.inf3='*** sub-cluster-selection ***';
 v.cl =cl;
 v.cl2=cl2;
-% title({['#clusters: ' num2str(numsubslust)];['\fontsize{16}black {\color{magenta}magenta click cluster']})
 
-%�����������������������������������������������
-%%   title subcluster
-%�����������������������������������������������
+v.index3d=reshape([1:prod(size(cl))]',[size(cl) ]);
+v.index2d=montageout(permute(v.index3d,[1 2 4 3]));
+
+% title({['#clusters: ' num2str(numsubslust)];['\fontsize{16}black {\color{magenta}magenta click cluster']})
+% ==============================================
+%%    title subcluster
+% ===============================================
 ti=title(['\fontsize{10}  -->  { ' ...
     '\color[rgb]{0 0 1} Cluster-' num2str(val) ...
     '\color[rgb]{0 0 0} contains  '  ...
@@ -2029,9 +2057,6 @@ ti=title(['\fontsize{10}  -->  { ' ...
     ]);
 pos=get(ti,'position');
 set(ti,'position',[ 100 pos(2) 0],'HorizontalAlignment','left');
-%�����������������������������������������������
-%%
-%�����������������������������������������������
 set(hf3,'userdata',v);
 
 axis off;
@@ -2090,22 +2115,173 @@ val=v.cl2(co(2),co(1));
 mp=v.cl2==val;
 if val==0; return; end
 
-%--------backtrafo
-b1=zeros(size(v.o1));
+%% ===============================================
+idx=v.index2d(co(2),co(1));
+
+b1=v.cl==val;
+% s=v.a1.*(b1==1);
+%% ===============================================
+% prune cluster-slicewise
+%% ===============================================
+
+[xa xb xc ]=ind2sub(size(b1), idx);
+c1=squeeze(b1(:,:,xc));
+cr=bwlabeln(c1);
+cref=cr==cr(xa,xb);
+ivec   =[ xc+1:size(b1,3)  xc-1:1   ];
+ivecref=[ xc:size(b1,3)-1   xc:2   ];
+isl=[ivec' ivecref'];
+
+bm=zeros(size(b1));
+bm(:,:,xc)=cref;
+for i=1:size(isl,1)  
+    r1=bwlabeln(b1(:,:,isl(i,1)));
+    r2=bm(:,:,isl(i,2))~=0;
+    q=(r2(:).*r1(:));
+    uni=unique(q); uni(uni==0)=[];
+    t=[uni(:) histc(q,uni)];
+    t=flipud(sortrows(t,2));
+     
+    uni=0;
+    t(find(t(:,2)<50),:)=[];
+    if~isempty(t)
+        t=t(1,:);
+        uni=t(:,1);
+        %     disp([i length(uni)  ]);
+        q2=zeros(size(r1));
+        for j=1:length(uni)
+            q2(r1==uni(j))=1;
+        end
+        bm(:,:,isl(i,1))=q2;
+    end
+%     figure(10);
+%     subplot(2,2,1); imagesc(r1);
+%     subplot(2,2,2); imagesc(r2) ;title('ref');
+%     subplot(2,2,3); imagesc(bm(:,:,isl(i,1))); title([i length(uni)  ])
+%     drawnow; pause
+end
+b1=bm;
 
 
-for i=1:size(b1,3)
-    ix=find(v.TX2==i);
-   [ i length(ix) ]
-    if ~isempty(ix)
-        tt=reshape(  mp(ix), [length(v.ins_ud) length(v.ins_lr)] );
-        b1(:,:,i)=tt;
+%% ===============================================
+
+
+
+% ==============================================
+%%   
+% ===============================================
+
+b2=zeros(size(v.o));
+% fill background image if image is croped and subcluster is at the border
+if get(findobj(hf3,'tag','otsu3_crop'),'value')==1 %croped image
+    bord=mp([1 end],:,:);bord=bord(:);
+    bord=mp(:,[1 end],:);bord=[bord(:); bord(:)];
+    if [sum(bord>0)./length(bord)>.5]
+        b2=ones(size(b2));
     end
 end
+b2(v.ins_ud, v.ins_lr,:)=b1;
+
+disp(['size b1:' num2str( size(b1))])
+disp(['size b2:' num2str( size(b2))])
+
+% ------flipdim
+if get(findobj(hf1,'tag','rd_flipud'),'value')==1
+    b2=flipdim(b2,1);
+end
+if get(findobj(hf1,'tag','rd_transpose'),'value')==1
+     b2=permute(b2,[2 1 3]);
+end
+
+b3=b2;
+if u.usedim==2
+        b3=   permute(b2,[setdiff([1:3],u.usedim) u.usedim]);
+elseif u.usedim==1
+        b3=   permute(b2,[ 3 1 2]);
+end
+%  size(u.a):   164   212   158
+% ------------ update mask
+inmaskVal=str2num(get(findobj(hf1,'tag','edvalue'),'string'));
+b3(b3==1)=inmaskVal;
+
+
+disp(['size b1:' num2str( size(b1))]);
+disp(['size b2:' num2str( size(b2))]);
+disp(['size b3:' num2str( size(b3))]);
+disp(['size a:' num2str( size(u.a))]);
+% montage2(u.a)
+% montage2(b3)
+%% ===============================================
+
+
+
+u.b=b3;
+set(hf1,'userdata',u);
+figure(hf1);
+setslice();
+
+
+
+return
+%% ===============================================
+
+% global SLICE
+% fg,imagesc(SLICE.r1)
+
+%% ===============================================
+
+%--------backtrafo
+ b1=zeros(size(v.o1));
+
+ if u.usedim~=3
+     
+     b1=zeros(size(v.o1));
+     size(b1)
+     
+%        158   164   212
+     
+%      flipdimens=[setdiff([1:3],u.usedim) u.usedim]
+%      b1=zeros(size(v.o1));
+%      b1=permute(b1,flipdimens);
+%      size(b1)
+%         
+%      % end
+%     dimv=[size(v.o1,flipdimens(1)) size(v.o1,flipdimens(2))  size(v.o1,flipdimens(3)) ] ;
+%     b1=zeros(dimv);
+ 
+    for i=1:size(b1,1)
+        ix=find(v.TX2==i);
+        if ~isempty(ix)
+            [length(mp(ix))   prod([size(b1,u.usedim) size(b1,3)])]
+            tt=squeeze(reshape(  mp(ix), [size(b1,u.usedim) size(b1,3)] ));
+            b1(i,:,:)=tt;
+        end
+    end
+%     b1=permute(b1,[setdiff([1:3],u.usedim) u.usedim]);
+    
+ else
+      b1=zeros(size(v.o1));
+     for i=1:size(b1,3)
+         ix=find(v.TX2==i);
+         if ~isempty(ix)
+             tt=reshape(  mp(ix), [length(v.ins_ud) length(v.ins_lr)] );
+             b1(:,:,i)=tt;
+         end
+     end
+     
+     
+ end
+
+
+
+
 % ------deCrop
 %get(findobj(hf3,'tag','otsu3_crop'),'value')
 % if ~isempty(v.ins_lr) || ~isempty(v.ins_ud)
 b2=zeros(size(v.o));
+
+
+
 % fill background image if image is croped and subcluster is at the border
 if get(findobj(hf3,'tag','otsu3_crop'),'value')==1 %croped image
     bord=mp([1 end],:,:);bord=bord(:);
@@ -2123,6 +2299,11 @@ end
 if get(findobj(hf1,'tag','rd_transpose'),'value')==1
     b2=permute(b2,[2 1 3]);
 end
+
+if u.usedim~=3
+        b2=   permute(b2,[setdiff([1:3],u.usedim) u.usedim]);
+end
+
 
 % ------------ update mask
 ix=find(b2(:)==1);
@@ -2159,10 +2340,9 @@ return
 % end
 
 
-
-%�����������������������������������������������
-%%   otsu3Dmontage_post
-%�����������������������������������������������
+% ==============================================
+%%    otsu3Dmontage_post
+% ===============================================
 function otsu3Dmontage_post(e,e2)
 % 'post3d'
 hf3=findobj(0,'tag','otsu3d');
@@ -4899,19 +5079,19 @@ if ~isempty(chkicon);
     set(hb,'cdata',e);
     
      %% SIMPLE free-hand drawing-II
-    hb=uicontrol('style','togglebutton','units','norm', 'tag'  ,'imdrawSimple');           %SET-next-SLICE
-    set(hb,'fontsize',8,'backgroundcolor',colpb,'value',0,'string','','userdata','imtoolsbutton');
-    % ---
-    set(hb,'callback',{@imdrawtool_prep,   6     });
-    setappdata(hb,'toolnr',1);
-    set(hb,'tooltipstring',['SIMPLE free-hand drawing' char(10) 'shortcut [6]'  '; [esc] to quit' ]);
-    set(hb,'parent',pan2);
-    set(hb,'position',[ x y xs ys]);
-    [e map]=imread(fullfile(picon,'Freehand_24px.png'),'BackGroundColor',[0.7569    0.8667    0.7765]);
-   set(hb,'backgroundcolor',[[0.7569    0.8667    0.7765]]);
-    e=double(imresize(e,[16 16],'cubic'));
-    if max(e(:))>1; e=e./255; end
-    set(hb,'cdata',e); 
+%     hb=uicontrol('style','togglebutton','units','norm', 'tag'  ,'imdrawSimple');           %SET-next-SLICE
+%     set(hb,'fontsize',8,'backgroundcolor',colpb,'value',0,'string','','userdata','imtoolsbutton');
+%     % ---
+%     set(hb,'callback',{@imdrawtool_prep,   6     });
+%     setappdata(hb,'toolnr',1);
+%     set(hb,'tooltipstring',['SIMPLE free-hand drawing' char(10) 'shortcut [6]'  '; [esc] to quit' ]);
+%     set(hb,'parent',pan2);
+%     set(hb,'position',[ x y xs ys]);
+%     [e map]=imread(fullfile(picon,'Freehand_24px.png'),'BackGroundColor',[0.7569    0.8667    0.7765]);
+%    set(hb,'backgroundcolor',[[0.7569    0.8667    0.7765]]);
+%     e=double(imresize(e,[16 16],'cubic'));
+%     if max(e(:))>1; e=e./255; end
+%     set(hb,'cdata',e); 
     
     
    
@@ -7586,8 +7766,28 @@ elseif type==5
         %     catch; imdrawtool(e,e2, type);
     end
 elseif type==6
-    [hg,pos(:,2),pos(:,1)] = freehanddraw(gca,'color',u.boundarycolor,'linewidth',1);
-    delete(hg)
+    
+        %set(gcf,'WindowButtonDownFcn', []);
+        %set(gcf,'WindowButtonUpFcn'     ,[]);
+        set(gcf,'WindowButtonMotionFcn', [])
+        %set(gcf,'WindowKeyPressFcn', []);
+        %set(gcf,'ButtonDownFcn', []);
+    
+        [hg,x,y] = freehanddraw(gca,'pointer','hand','color',u.boundarycolor,'linewidth',1);
+        delete(hg);
+        pos=[y x];
+        %     pos=[];
+        if isempty(pos);
+            set(gcf,'WindowButtonDownFcn',  {@buttondown,[]});
+            set(gcf,'WindowButtonUpFcn'     ,@selstop);
+            set(gcf,'WindowButtonMotionFcn', {@motion,1})
+            set(gcf,'WindowKeyPressFcn', {@keys});
+            %         uicontrol(findobj(hf1,'tag','preview')); %set focus to allow brush-resize
+            %         undo_redolabel_update()
+        
+        return
+    end
+    
     dimp= u.dim(setdiff(1:3,u.usedim));
     bo=  double(poly2mask(pos(:,1),pos(:,2),dimp(1),dimp(2)));
     mx=zeros(dimp);
@@ -7726,16 +7926,11 @@ end
 %u.r2=r2n;
 global SLICE
 SLICE.r2=r2n;
-
-
 u=putsliceinto3d(u,r2n,'b');
-
 % ----history
 u.histpointer=u.histpointer+1;
 u.hist(:,:,u.histpointer)=r2n;
 u.hist(:,:,u.histpointer+1:end)=[]; %remove older stuff
-
-
 % ------------
 set(hf1,'userdata',u);
 undo_redolabel_update();
