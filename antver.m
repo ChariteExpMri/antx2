@@ -935,7 +935,8 @@
 %             https://elifesciences.org/articles/61408
 %   - #gw -->  access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
 % 
-% 
+% #ba 30 Aug 2023 (15:37:19)
+% script: VWscript_DWIimages__oneWayANOVA.m added to scripts-collection (avaliable from xstat.m)
 % 
 % 
 

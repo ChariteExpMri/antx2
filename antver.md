@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   13 Jul 2023 (08:51:56)  
+ &#x1F34E; last modification:   30 Aug 2023 (15:37:19)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**30 Aug 2023 (15:37:19)**</ins>  
+  script: VWscript_DWIimages__oneWayANOVA.m added to scripts-collection (avaliable from xstat.m)  
+<!---->
   &#x1F535;   <ins>**13 Jul 2023 (08:51:56)**</ins>  
   __[P28 developing mouse template]__ added to gdrive  
   this is a modified version of the Allen developing mouse atlas   
@@ -14,6 +17,7 @@
               https://doi.org/10.7554/eLife.61408  
               https://elifesciences.org/articles/61408  
     - &#8618;  access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9  
+    
 <!---->
   &#x1F535;   <ins>**12 Jul 2023 (08:53:34)**</ins>  
    __[xmakepseudoatlas.m]__ new, create pseudo-color NIFTI-atlas based on existing NIFTI-ATLAS   

@@ -43,16 +43,16 @@ for i=1:length(grps)
     niftis{i,1}=M.files(ix);
 end
 
-%覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧・
+%覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧?E
 %   get other parans
-%覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧・
+%覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧?E
 outdir    = s.output_dir;
 mask      = s.mask;
 mkdir(outdir);
 %% ===============================================
-%覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧・
+%覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧?E
 %  batch
-%覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧・
+%覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧?E
 mb={};
 mb{1}.spm.stats.factorial_design.dir = {outdir};
 
@@ -106,9 +106,9 @@ mb{3}.spm.stats.con.spmmat(1).src_exbranch = substruct('.','val', '{}',{2}, '.',
 mb{3}.spm.stats.con.spmmat(1).src_output = substruct('.','spmmat');
 
 % v=allcomb(grps,grps);
-%覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧・
+%覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧?E
 %  contrasts
-%覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧・
+%覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧?E
 v=nchoosek([1:length(grps)],2);
 pat={'>'   1 -1
     '<'   -1  1 };
@@ -162,6 +162,11 @@ mb{4}.spm.stats.results.conspec(1).mask = struct('contrasts', {}, 'thresh', {}, 
 mb{4}.spm.stats.results.units = 1;
 mb{4}.spm.stats.results.print = false;
 
+
+
+
+
+
 %%  smoothing
 if s.smoothing==1
     % change [1] Data Smoothing [2]data for factDesignSpecif. [3] dependency-order
@@ -178,7 +183,7 @@ if s.smoothing==1
     ms={};
     ms{1}.spm.spatial.smooth.data = [nifti_all];
     ms{1}.spm.spatial.smooth.fwhm = smoothfwhm ;% [0.28 0.28 0.28];
-    ms{1}.spm.spatial.smooth.dtype = 0;
+    ms{1}.spm.spatial.smooth.dtype = 64;  % [0]same ;[64]float
     ms{1}.spm.spatial.smooth.im = 0;
     ms{1}.spm.spatial.smooth.prefix = 's';
     
