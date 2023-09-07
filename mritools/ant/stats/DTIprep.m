@@ -2694,8 +2694,9 @@ if exist('argin') && length(argin)>1
 end
 
 scripts={
- 'DTIscript_exportToHPC_makeBatch.m'
- 'DTIscript_exportToHPC_makeBatch_old'
+ 'DTIscript_exportToHPC_makeBatch_07-09-2023.m'
+ 'DTIscript_exportToHPC_makeBatch_14-02-2023.m'
+ 'DTIscript_exportToHPC_makeBatch_19-01-2023.m'
  'DTIscript_makeQA_HTML_from_screenshots.m'
  'DTIscript_importFromHPC_allData.m'
  'DTIscript_importFromHPC_connectome.m'

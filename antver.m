@@ -937,6 +937,11 @@
 % 
 % #ba 30 Aug 2023 (15:37:19)
 % script: VWscript_DWIimages__oneWayANOVA.m added to scripts-collection (avaliable from xstat.m)
+% #ba 07 Sep 2023 (12:27:25)
+% new script "DTIscript_exportToHPC_makeBatch_07-09-2023.m" added. Script exports dti-data to HPC for preprocessing
+% script works with SLURM-JOB-ARRAY (parallelized) due to restricted proc-time (max 48h) on CHARITE-HPC
+% 
+% 
 % 
 % 
 
