@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   07 Sep 2023 (12:27:25)  
+ &#x1F34E; last modification:   15 Sep 2023 (13:10:51)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,9 +7,13 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**15 Sep 2023 (13:10:51)**</ins>  
+   __[dtiPREP.m]__ modified, new option: transfer GM,WM,CSF-mask to MRtrix-pipeline   
+<!---->
   &#x1F535;   <ins>**07 Sep 2023 (12:27:25)**</ins>  
   new script "DTIscript_exportToHPC_makeBatch_07-09-2023.m" added. Script exports dti-data to HPC for preprocessing  
   script works with SLURM-JOB-ARRAY (parallelized) due to restricted proc-time (max 48h) on CHARITE-HPC  
+    
 <!---->
   &#x1F535;   <ins>**30 Aug 2023 (15:37:19)**</ins>  
   script: VWscript_DWIimages__oneWayANOVA.m added to scripts-collection (avaliable from xstat.m)  

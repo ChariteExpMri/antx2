@@ -941,7 +941,8 @@
 % new script "DTIscript_exportToHPC_makeBatch_07-09-2023.m" added. Script exports dti-data to HPC for preprocessing
 % script works with SLURM-JOB-ARRAY (parallelized) due to restricted proc-time (max 48h) on CHARITE-HPC
 % 
-% 
+% #ba 15 Sep 2023 (13:10:51)
+% #k [dtiPREP.m] #n modified, new option: transfer GM,WM,CSF-mask to MRtrix-pipeline 
 % 
 % 
 

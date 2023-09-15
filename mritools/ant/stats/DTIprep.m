@@ -351,6 +351,17 @@ end
 % ===============================================
 if p.gui==1
     makefig();
+    %cc=get_Config_parameter();
+    
+    drawnow;
+    hb=findobj(findobj(0,'tag','DTIprep'),'tag','ch_useCompartments');
+    cc=get_Config_parameter();
+    drawnow
+    if isfield(cc,'useTissueCompartments')
+        set(hb,'value',cc.useTissueCompartments);
+    end
+
+    
 end
 
 
@@ -434,7 +445,7 @@ set(hb,'tooltipstring',[...
 %% frame-2
 hframe2 = uipanel('Title','PROCESSING STEPS','FontSize',8,'tag','uip2',...
     'BackgroundColor','white');
-set(hframe2,'position',[[0.001 0 .34 .64]]);
+set(hframe2,'position',[[0.001 0 .35 .64]]);
 
 
 %% ===============================================
@@ -577,6 +588,20 @@ set(hb,'tooltipstring',[ '<html><b>rename b-tables (for MULTIshell-only) </b><br
     'the renameing is done here on the b-tables (txt.files) in the study''s "DTI"-folder'
     ]);
 
+
+% use compartments (GM,WM,CSF)
+hb=uicontrol('style','checkbox','units','norm','string','use GM,WM,CSF','tag', 'ch_useCompartments');
+set(hb,'position',[0.19459 0.42252 0.15 0.1],'backgroundcolor','w','fontsize',6);
+set(hb,'tooltipstring',['optional: use also brain tissue compartments (GM,WM,CSF)' char(10) ...
+    '!if [yes]: check this box before running "register..","rename.." and "export.." ' char(10) ...
+    'purpose: If Mrtrix-"dwi2response" fails use these segmentation masks as explicit masks via "dwi2response manual" ' char(10) ...
+    '-might be usefull for ex-vivo data  or if  compartment-voxels are suboptimal selected via MRtrix-pipeline']);
+set(hb,'value',1);
+set(hb,'callback', @configFile_write_CompartmentValue);
+
+
+
+
 % ==============================================
 %%   contextmenu.
 % ===============================================
@@ -594,7 +619,7 @@ m= uimenu(c,'Label','<html><font color =fuchsia>which animal are currently selec
 m= uimenu(c,'Label','<html><font color =red> delete files','Callback',{@context,'deletefiles'},'separator','on');
 m= uimenu(c,'Label','<html><font color =blue><b>check assignment of b-tables & (DWI-files)',  'Callback',{@context,'checkassignment'},'separator','on');
 m= uimenu(c,'Label','<html><font color =blue>reorder b-table/DWI-data',   'Callback',{@context,'reorder_data'},'separator','off');
-m= uimenu(c,'Label','<html><font color =green>sow voxel size of 1st DTI/DWI-file ',  'Callback',{@context,'getvoxSize'},'separator','on');
+m= uimenu(c,'Label','<html><font color =green>show voxel size of 1st DTI/DWI-file ',  'Callback',{@context,'getvoxSize'},'separator','on');
 m= uimenu(c,'Label','<html><font color =green>show comands for mrtrix',  'Callback',{@context,'comands_for_mrtrix'},'separator','on');
 
 % ==============================================
@@ -658,6 +683,20 @@ if ~isempty(u.studypath)
     updateLB();
 end
 
+
+
+function configFile_write_CompartmentValue(e,e2)
+
+%% ===============================================
+val=get( findobj(findobj(0,'tag','DTIprep'),'tag','ch_useCompartments') ,'value');
+set_Config_parameter_inFile('useTissueCompartments',val);
+
+
+% type('DTIconfig.m')
+% d=getdata();
+% dtipath=d.dtipath;
+% fconfig=fullfile(dtipath,'DTIconfig.m');
+% type(fconfig)
 
 % ==============================================
 %%  MRTRIXissue
@@ -732,6 +771,75 @@ if strcmp( task,  'inconsistent-b-values')
     end
     %% ----
 end
+
+function  set_Config_parameter_inFile(var,value)
+%% ===============================================
+
+cc=[];
+d=getdata();
+dtipath=d.dtipath;
+fconfig=fullfile(dtipath,'DTIconfig.m');
+
+
+a=preadfile(fconfig); a=a.all;
+new=value;
+
+
+% var='useTissueCompartments';
+% new=0;
+% new='1';
+% new={'rc_t2.nii' 'rc_ix_AVGTmask.nii'};
+
+
+if isnumeric(new)
+    newStr=[' [' num2str(new) ']'];
+elseif ischar(new)
+    newStr=regexprep(new, {'^''' '''$'},'');
+    newStr=[' ''' newStr ''''];
+elseif iscell(new)
+    newStr=strjoin(cellfun(@(a){[''''  a '''' ]} ,new), ' ');
+    newStr=['{' newStr '}'];
+    
+end
+
+
+ix=regexpi2(a,var);
+if ~isempty(ix)
+    ix=ix(1);
+    l=a{ix};
+    sep1=min(regexpi(l,'='));
+    sep2=min(regexpi(l,'%|;\s%'));
+    
+    l2=[l(1:sep1)   newStr  '  ;  '  l(sep2:end)];
+    
+    a2=a;
+    a2{ix}=l2;
+    pwrite2file(fconfig,a2);
+end
+
+% type(fconfig)
+
+%% ===============================================
+
+
+
+
+
+function  cc=get_Config_parameter()
+cc=[];
+d=getdata();
+dtipath=d.dtipath;
+fconfig=fullfile(dtipath,'DTIconfig.m');
+if exist(fconfig)==2
+    thispa=pwd;
+    try
+        cd(dtipath);
+        cc=DTIconfig();
+    end
+    cd(thispa);
+end
+
+
 
 % ==============================================
 %%  PROC STEPS
@@ -1097,6 +1205,15 @@ if strcmp(task,'registerimages')
             'mt2.nii'
             'ix_AVGT.nii'};
         
+        % IF CHECK-BOX-checked than use tissue-compartments
+        if cc.useTissueCompartments==1 
+             TPMS={...
+                 'c1t2.nii'
+                'c2t2.nii'
+                'c3t2.nii'};
+            z.applyImg1= [z.applyImg1 ; TPMS];   
+        end
+        
         
         z.cost_fun      =cc.cost_fun     ;% FORMERLY: 'nmi';
         z.sep           =cc.sep          ;% FORMERLY: [4  2  1  0.5  0.1  0.05];
@@ -1211,9 +1328,23 @@ if strcmp(task,'renamefiles')
         [DTItemplateLUT0 '.txt'             ]    'ANO_DTI.txt'  %'atlas_lut.txt'
         };
     
-    if size(d.btable,1)==1%singleshell
-        files(end+1,:)={d.DTIfileName{1}      'dwi.nii'  };
-    else %multishell
+    
+     % IF CHECK-BOX-checked than use tissue-compartments
+     if cc.useTissueCompartments==1
+         TPM_coreg={...
+             'rc_c1t2.nii'         'rc_c1t2.nii'
+             'rc_c2t2.nii'         'rc_c2t2.nii'
+             'rc_c3t2.nii'         'rc_c3t2.nii'
+             };
+         
+         files= [files ; TPM_coreg];
+         % files= [TPM_coreg; files  ];
+     end
+     
+     
+     if size(d.btable,1)==1%singleshell
+         files(end+1,:)={d.DTIfileName{1}      'dwi.nii'  };
+     else %multishell
         [~,btable_name0,ext ]=fileparts2(d.btable);
         btable_name_ext=cellfun(@(a,b){[ a b ]},  btable_name0, ext);
         btable_name  =strrep(btable_name0,'grad_','');
@@ -1279,6 +1410,14 @@ if n_btables~=n_dwis
                     lut=preadfile(fx1); lut=lut.all;
                     lut=regexprep(lut,'['''']',''); %remove apostrophe as in Ammon's_horn (produces an error in DTI-pipeline)
                     pwrite2file(fx2,lut)
+                elseif strcmp(files{j,2}, 'rc_c1t2.nii') || strcmp(files{j,2}, 'rc_c2t2.nii') ...
+                         || strcmp(files{j,2}, 'rc_c3t2.nii')
+                     
+                     [ha a]=rgetnii(fx1);
+                     hb=ha;
+                     %hb.dt=[8 0];
+                     rsavenii(fx2,  hb,a,64);
+                     
                 else
                     if strcmp(fx1,fx2)==0
                         copyfile(fx1,fx2,'f');
@@ -1416,6 +1555,20 @@ if strcmp(task,'exportfiles')
     try
         files=[files; stradd(btablefiles,'_fix',2)];% add grad with fixed b-values
     end
+    
+    % IF CHECK-BOX-checked than use tissue-compartments
+     if cc.useTissueCompartments==1
+         TPM_coreg={...
+             'rc_c1t2.nii'       
+             'rc_c2t2.nii'        
+             'rc_c3t2.nii'        
+             };
+         
+         files= [files ; TPM_coreg];
+         % files= [TPM_coreg; files  ];
+     end
+    
+    
     %% ------for each animal
     for i=1:length(mdirs)
         thispa=mdirs{i};
@@ -2881,6 +3034,10 @@ s.warpParamfile={fullfile(fileparts(antpath),'elastix','paramfiles','Par0025affi
 % ___ parameter for approach-1 & approach-2 ___
 s.cleanup       = [1];                   % clean up (remove interim data)
 s.isparallel    = [0];                   % run coregistration in parallel
+
+%__ tissue compartments
+s.useTissueCompartments       = [1];     % copy/register&transfer tissue compartments
+
 
 % ==============================================
 %%  task: check registration (HTMLfiles)
