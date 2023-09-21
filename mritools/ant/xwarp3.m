@@ -337,12 +337,21 @@ if find(s.task==1)
         fprintf('..done.\n ');
     elseif s.usePriorskullstrip==3 % '_msk.nii' allready exists (same props as t2.nii)    
         % ==============================================
-        %%   dirty maskingApproach for tubes
+        %%   dirty maskingApproach for tubes, 3 classes
         % ===============================================
         fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']..' ]);
         %         skullstrip2(s.t2,5,[3:7],20,1,0,1);
         skullstrip2(s.t2,5,[3],1,20,1,0,1);
         fprintf('..done.\n ');
+    elseif s.usePriorskullstrip==5 % '_msk.nii' allready exists (same props as t2.nii)    
+        % ==============================================
+        %%   dirty maskingApproach for tubes, 2 classes
+        % ===============================================
+        fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']..' ]);
+        %         skullstrip2(s.t2,5,[3:7],20,1,0,1);
+        skullstrip2(s.t2,5,[2],1,20,1,0,1);
+        fprintf('..done.\n ');
+        
     elseif s.usePriorskullstrip==4 % '_msk.nii' allready exists (same props as t2.nii)
         % ==============================================
         %%  mutitube: use t2.nii but remove background

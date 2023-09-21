@@ -945,6 +945,10 @@
 % #k [dtiPREP.m] #n modified, new option: transfer GM,WM,CSF-mask to MRtrix-pipeline 
 % 
 % 
+% #ba 21 Sep 2023 (22:43:56)
+% antconfig/project-file modified, 
+% optional mode for initial skull stripping via otsu method (x.wa.usePriorskullstrip =  [5]) 
+% 
 
 
 

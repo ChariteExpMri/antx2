@@ -33,10 +33,13 @@
 % options [0] : 't2.nii' is already skullstripped (exvivo brain) 
 %         [1] : create '_msk.nii' based on pcnn3d-tool. #b real skull-stripping 
 %              #g default: [1]
-%         [2] : create '_msk.nii' based on otsu-method. This option is prone to errors and should be
-%               only tested for exvivo skullstripped brain preserved in the stuff that produces 
+%         [2] : '_msk.nii' is a copy of 't2.nii' (no changes)
+%         [3] : create '_msk.nii' based on otsu-method (3 clusters). 
+%               -This option is prone to errors.
+%               -method can be useful for exvivo skullstripped braisn preserved in the stuff that produces 
 %               high-contrast in the MR-image
-%         [3] : '_msk.nii' is a copy of 't2.nii'.
+%         [5] : same as  [3] but using 2-otsu clusters 
+%               might work better than [3]
 %         [4] : '_msk.nii' is basically 't2.nii' but background is removed to accellerate segmentation
 %               *use this option for exvivo skullstripped brain preserved in the stuff that produces 
 %               high-contrast in the MR-image. 

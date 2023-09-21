@@ -981,7 +981,7 @@ if isempty(find(strcmp(li,oldinreg)))
 %         class(lastfiltertoken{i})
         temp=[temp; cellstr(lastfiltertoken{i})];
     end
-    lastfiltertoken=temp
+    lastfiltertoken=temp;
     %% ===============================================
     
     lastfiltertoken=[lastfiltertoken; newlist];
