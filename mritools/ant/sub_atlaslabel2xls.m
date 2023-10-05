@@ -43,7 +43,7 @@ mkdir(resultsfolder);
 
 %fileout=fullfile(pwd,'test2.xls')
 % disp(['GENERATING EXCELFILE ...']);
-disp(['..creating XLSfile: ' fileout]);
+% disp(['..creating XLSfile: ' fileout]);
 
 
 %add info
@@ -228,6 +228,92 @@ pp.paramname = pp.tbh;
 
 %=========================================================================
 %
+%        WRITE another format
+%
+%=========================================================================
+
+% ==============================================
+%%   mat
+% ===============================================
+if ~isempty(strfind(z.format,'mat'))
+    w=struct();
+    w.date    = datestr(now);
+    w.animal  =pp.Eheader(2:end);
+    w.region  =pp.Elabel;
+    w.hatlas  =z.atlasTBH;
+    w.atlas   =z.atlasTB;
+    w.funpara =v;
+    w.info1 ='__values_';
+    w.info =infox;
+    
+    for i=1:length(pp.paramname)
+        % tbx=[...
+        %         pp.Eheader
+        %         [pp.Elabel num2cell(squeeze(pp.tb(:,i,:)))]
+        %         ];
+        w=setfield(w, pp.tbh{i}, squeeze(pp.tb(:,i,:)));
+    end
+   [paf namef extf]=fileparts(fileout);
+   disp(['..creating .mat-file: ' fileout]);
+   fileout=fullfile(paf,[namef '.mat']);
+   save(fileout,'w');
+   return 
+end
+
+% ==============================================
+%%   csv or other format
+% ===============================================
+
+if ~isempty(strfind(z.format,'csv')) || ~isempty(strfind(z.format,'txt')) %;|| ~isempty(strfind(z.format,'dat'))
+    
+    [fmt delim]=strtok(z.format,'|');
+    fmt=['.' regexprep(fmt,'\.','')];
+    delim=regexprep(delim,{'\|' '\s'},{''});
+    if isempty(delim);    
+        delim=',' ;        
+    end
+    
+    [paf namef extf]=fileparts(fileout);
+    paout=fullfile(paf,namef);
+    if exist(paout)~=7; mkdir(paout), end
+    disp(['..creating ' fmt '-files(delim: "' delim '") [DIR]:' paout]);
+    
+    % writetable(table(infox),fileout,'Sheet','INFO')
+    for i=1:length(pp.paramname)
+        tbx=[...
+            pp.Eheader
+            [pp.Elabel num2cell(squeeze(pp.tb(:,i,:)))]
+            ];
+        try
+            T=cell2table(tbx(2:end,:),'VariableNames',tbx(1,:));
+        catch
+            %issue with VariableNames 'first character must be char')
+            i_numeric=regexpi2(tbx(1,:),'^\d|_') ;%indicate if 1st letter is numeric or 'underscore'
+            tbx(1,i_numeric)=cellfun(@(a){['s' a ]},tbx(1,i_numeric));
+            T=cell2table(tbx(2:end,:),'VariableNames',tbx(1,:));
+        end
+        fileout_spec =fullfile(paout, [pp.paramname{i} fmt] );
+        writetable(T,fileout_spec ,'Delimiter',delim); 
+    end
+    
+    
+    % write "atlas" WITH:  'Region'  'colHex'  'colRGB'  'ID'  'Children'
+    try
+        T=cell2table(z.atlasTB,'VariableNames',z.atlasTBH);
+        fileout_spec =fullfile(paout, ['atlas' fmt] );
+        writetable(T,fileout_spec ,'Delimiter',delim);
+    end
+    % write INFO
+    fileout_spec =fullfile(paout, ['info' fmt] );
+    writetable(table(infox),fileout_spec ,'Delimiter',delim);
+    
+    fileout=paout;
+    return
+end
+
+
+%=========================================================================
+%
 %        WRITE EXCEL-FILE
 %
 %=========================================================================
@@ -246,7 +332,7 @@ pp.paramname = pp.tbh;
 % % %     end
 % % % end
 
-
+disp(['..creating XLSfile: ' fileout]);
 % ==============================================
 %%   check existence of excel-application
 % ===============================================

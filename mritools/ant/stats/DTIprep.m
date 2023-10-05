@@ -5,7 +5,7 @@
 % and saved in the "shellscripts" folder (same level as the dat-folder)
 %
 % ==============================================
-%%  #lk [1] GUI-MODE                          
+%%  #lk [1] GUI-MODE
 % ===============================================
 % #b DTIprep can be closed and reloaded anytime. The parameter are stored in the
 % #b "DTI"-folder (checks.mat)
@@ -42,9 +42,9 @@
 %    - it is important that the order of the b-tables and DWI-files (DTI-data) corresponds
 %    - to theck this : hit button [check file assignment]
 %    - to reorder b-tables / DWI-files  --> use menu: tools/reorder b-table/DWI-data
-% 
-% 
-% 
+%
+%
+%
 % #r &#9654; Preserve ORDER! First do (a),than (b), than (c)!
 % #n &#9654; You can close the DTI-prep gui anytime! The userinput and progress is stored in a
 %    mat-file ("check.mat") in the folder #r "DTI".
@@ -116,37 +116,37 @@
 %  'grad_b6000.txt'      % %  ||
 %
 % ====================================================
-%%   #lk [1] COMMANDS: GUI-mode  &  command-line-mode                       
+%%   #lk [1] COMMANDS: GUI-mode  &  command-line-mode
 % =====================================================
 % DTIprep('scripts','cmd')   ; % show available scripts in CMD-window
 %
 % ==============================================
-%%   #lk [2] COMMANDS: GUI-mode                         
+%%   #lk [2] COMMANDS: GUI-mode
 % ===============================================
 % DTIprep('scripts')         ; % open the scripts-window only
-% 
+%
 % ==============================================
-%%   #lk [3] COMMANDS: command-line-mode                          
+%%   #lk [3] COMMANDS: command-line-mode
 % ===============================================
 % - DTIprep can be performed via command line
 % - please use either command line mode or GUI-mode !
 % - click DTIprep "scripts"-button to obtain an examle of DTIprep via COMMAND LINE ("DTIscript_runDTIprep_COMANDLINE.m")
-% 
+%
 % - Here a "DTI"-folder is created in the studies folder containing a DTI-struct
 %   with necessary inputs
-% #yk COMMANDS  
+% #yk COMMANDS
 %  DTIprep('delete'); %delete existing "DTI"-folder
 % #b __initialize___
 %  DTIprep('ini')         : -optional initialize DTIprep-struct and create "DTI-folder"
 %                           -the struct is not empty and must be filled!
 %  DTIprep('ini',d)       : -initialize DTIprep-struct and fill requested parameters
-%     where d is a struct with fields: 
+%     where d is a struct with fields:
 %         d.brukerdata    : -fullpath to a sample Bruker-rawdata set from one animal to obtain the b-table(s)
-%                           -char   
+%                           -char
 %         d.DTItemplate   : -fullpath to DTI-atlas NIFTI-file
-%                           -char   
+%                           -char
 %         d.DTItemplateLUT: -fullpath to DTI-atlas txt-file with labels corresponding to DTI-atlas NIFTI-file
-%                           -char         
+%                           -char
 %         d.DTIfileName   : -short filenames of the DWI/DTI-files located in animal folders
 %                           -cell
 %                           -examlpe: {'q_b100.nii' 'q_b900.nii' 'q_b1600.nii' 'q_b2500.nii'}; %
@@ -161,9 +161,9 @@
 % DTIprep('run',[1],mdirs)  ; %run task:[1]distribute files
 % DTIprep('run',[1:2],mdirs); %run task:[1]distribute files,[2]deform files
 % DTIprep('run',[1:6],mdirs); %run task:[1]distribute files,[2]deform files[3]register files[4]rename files[5]export files[6]create HTMLfiles for check registration
-% 
+%
 % #lk ===============================================
-% #lk 2a) EXAMPLE:  DTIprep VIA COMMAND LINE         
+% #lk 2a) EXAMPLE:  DTIprep VIA COMMAND LINE
 % #lk ===============================================
 % % % ==== [initialize struct and import data] ====
 % DTIprep('delete'); %delete existing "DTI"-folder
@@ -174,7 +174,7 @@
 % d.DTIfileName    ={'q_b100.nii' 'q_b900.nii' 'q_b1600.nii' 'q_b2500.nii'}; % % filenames of the DWI/DTI-files located in animal folders
 % DTIprep('ini',d);  % % initialize DTIprep-struct and fill requested parameters
 % DTIprep('import'); % % import b-table and DTItemplate/DTItemplateLUT
-% 
+%
 % % % === [optional: reorder 'DTIfileName' and/or 'btable'] ====
 % % aim (1) 'DTIfileName'and 'btable' match in order
 % %     (2) appear from lowest to highest number of aqu. angles (b100,b900,b1600, b2500)
@@ -195,16 +195,16 @@
 % end
 % % % ==== [check if struct is filles: __INI____ is "yes"; '__IMPORT_____' is "yes"] ====
 % DTIprep('check'); % check struct (check if everything is initialized/imported/tasks performed)
-% 
+%
 % % % ==== [run all tasks] ====
 % mdirsAll=antcb('getallsubjects');% get all animals
 % mdirs=mdirsAll(1)               ;% example here; use only the first animal
 % DTIprep('run','all',mdirs)      ;% same as: DTIprep('run',[1:6]);
-% 
-% 
-% 
+%
+%
+%
 % ==================================================================================
-% #lk 2b)  INFO:  empty DTIprep-struct, 
+% #lk 2b)  INFO:  empty DTIprep-struct,
 % #lk      no initialization, no import, no tasks performed yet
 % ===================================================================================
 % ---------[struct info]-------
@@ -233,7 +233,7 @@
 %  ...not initialized/defined jet!
 % -------------------------------
 % ======================================================================
-% #lk 2c)    INFO:   filled struct: 
+% #lk 2c)    INFO:   filled struct:
 % #lk         initialization, import and tasks performed
 % =======================================================================
 % ---------[struct info]-------
@@ -282,20 +282,23 @@
 % -check and if missing adds a newline character at the end of (each) btable-txt files (grad.txt/grad*.txt)
 %  REASON: potential concatenation of grad-files in the multishell approach failed
 
-function DTIprep(varargin)
+function varargout=DTIprep(varargin)
 
 % ==============================================
 %%
 % ===============================================
 %v=cell2struct(varargin(3:2:end),varargin(2:2:end),2);
-                %makestruct(v);
-                
+%makestruct(v);
+
 p.gui=1 ;% show gui
 
 %% ===========[inputs: only for noGUI-mode]====================================
 if nargin>0
-    close(findobj(0,'tag','DTIprep')); % no gui
-    
+    if strcmp(varargin{1},'check')
+        %do nothing
+    else
+        close(findobj(0,'tag','DTIprep')); % no gui
+    end
     if strcmp(varargin{1},'ini')
         close(findobj(0,'tag','DTIprep')); % no gui
         p.gui=0;
@@ -312,10 +315,10 @@ if nargin>0
         nogui_check();
         return
         
-    elseif strcmp(varargin{1},'reorder')  
+    elseif strcmp(varargin{1},'reorder')
         if nargin~=3
-           disp('2nd arg must be "DTIfileName"/("d") or "btable"/"b"');
-           disp('3rd arg must be an array to resort such as [1 3 2 4]');
+            disp('2nd arg must be "DTIfileName"/("d") or "btable"/"b"');
+            disp('3rd arg must be an array to resort such as [1 3 2 4]');
             return
         end
         nogui_change_order(varargin{2},varargin{3});
@@ -331,17 +334,17 @@ if nargin>0
             end
         end
         if exist(dtidir)==0
-             disp(['.."DTI"-folder deleted']);
+            disp(['.."DTI"-folder deleted']);
         end
         
-      elseif strcmp(varargin{1},'import')  
-            nogui_importdata();
-      elseif strcmp(varargin{1},'run') 
-          if nargin==2
-             nogui_run(varargin{2});
-          else
-             nogui_run(varargin{2},varargin{3});
-          end
+    elseif strcmp(varargin{1},'import')
+        nogui_importdata();
+    elseif strcmp(varargin{1},'run')
+        if nargin==2
+            nogui_run(varargin{2});
+        else
+            nogui_run(varargin{2},varargin{3});
+        end
     end
     return
 end
@@ -360,7 +363,7 @@ if p.gui==1
     if isfield(cc,'useTissueCompartments')
         set(hb,'value',cc.useTissueCompartments);
     end
-
+    
     
 end
 
@@ -381,13 +384,18 @@ set(hb,'position',[0.34816 0.90204 0.15 0.1]);
 set(hb,'tooltipstring',[...
     '<html><b>select study path</b><br>' ...
     'use this if you don''t have the ANTx-gui open and the desired project loaded' '<br>'...
-    ['- if ANTx-gui is open and the desired project loaded there is no need to press this button' '<br>']...   
+    ['- if ANTx-gui is open and the desired project loaded there is no need to press this button' '<br>']...
     ]);
 
 %% Listbox
 hl=uicontrol('style','listbox','units','norm','tag','lb_check');
 set(hl,'position',[0.5 0 .5 1]);
 set(hl,'string','<>');
+
+c = uicontextmenu;
+m= uimenu(c,'Label','display in CMD-window','Callback',{@context_listbox,'dispInCMD'},'separator','on');
+% m= uimenu(c,'Label','open DTI-directory',  'Callback',{@context_listbox,'openDTIDir'},'separator','off');
+set(hl     ,'UIContextMenu',c);
 
 %% frame-1
 hb = uipanel('Title','USER INPUT','FontSize',8,'tag','uip1',...
@@ -575,6 +583,8 @@ set(hb,'position',[[0.16781 0.80157 0.15 0.08]],'fontsize',7,'foregroundcolor','
 set(hb,'callback',{@context,'checkassignment'},'tag','checkassignment' );
 set(hb,'backgroundcolor',[   1 1 1]);
 set(hb,'tooltipstring',[ 'check b-table & DTI-data file assignment (order)']);
+
+
 %% rename b-tables
 hb=uicontrol('style','pushbutton','units','norm','string','rename b-table(s)');
 set(hb,'position',[[0.16782 0.69439 0.15 0.08]],'fontsize',7,'foregroundcolor','k');
@@ -587,7 +597,7 @@ set(hb,'tooltipstring',[ '<html><b>rename b-tables (for MULTIshell-only) </b><br
     ' "grad_b100.tx" , "grad_b900.tx" , "grad_b1600.tx" and "grad_b2500.tx" <br>'...
     'the renameing is done here on the b-tables (txt.files) in the study''s "DTI"-folder'
     ]);
-
+set(hb,'visible','off');
 
 % use compartments (GM,WM,CSF)
 hb=uicontrol('style','checkbox','units','norm','string','use GM,WM,CSF','tag', 'ch_useCompartments');
@@ -622,6 +632,9 @@ m= uimenu(c,'Label','<html><font color =blue>reorder b-table/DWI-data',   'Callb
 m= uimenu(c,'Label','<html><font color =green>show voxel size of 1st DTI/DWI-file ',  'Callback',{@context,'getvoxSize'},'separator','on');
 m= uimenu(c,'Label','<html><font color =green>show comands for mrtrix',  'Callback',{@context,'comands_for_mrtrix'},'separator','on');
 
+
+
+
 % ==============================================
 %%   UIMENU/TOOLS
 % ===============================================
@@ -642,6 +655,15 @@ m= uimenu(f,'Label','<html><font color =green>show comands for mrtrix',  'Callba
 %% ===============================================
 f = uimenu('Label','<html><b>MIsc');
 m= uimenu(f,'Label','show/edit DTIconfig-file','Callback',{@context,'DTIconfig_edit'},'separator','on');
+m= uimenu(f,'Label','               ','separator','on');
+
+m= uimenu(f,'Label','make copy of DTI-folder (BACKUP)','Callback',{@context,'copy_DTIfolder'},'separator','on');
+m= uimenu(f,'Label','remove DTI-folder','Callback',{@context,'remove_DTIfolder'},'separator','off');
+m= uimenu(f,'Label','import a BACKUP-DTI-folder','Callback',{@context,'import_DTIfolder'},'separator','off');
+
+m= uimenu(f,'Label','remove DTI-export-folder','Callback',{@context,'remove_DTIexportfolder'},'separator','on');
+
+
 %% ===============================================
 f = uimenu('Label','MRTRIX-ISSUES/BUGs');
 uimenu(f,'Label','Solution: ERROR ""inconsistent b-values detected" ','Callback',{@MRTRIXissue, 'inconsistent-b-values'});
@@ -927,8 +949,26 @@ if strcmp(task,'getbtable')
                 ck(i,1)=1;
             end
         end
-        if all([1 1])==1
+        if all(ck)==1
             d.btable=bfi;
+            
+            % reverse-Phase-encoding (RPE)
+            d.isReversePhaseEncoding='NO';
+            d.ReversePhaseEncoding  =[];
+            ix= find(cell2mat(cellfun(@(a){[ (a.ReversedPhaseEncoding) ]},  o(:,3)))==1);
+            if ~isempty(ix)
+                d.isReversePhaseEncoding='YES';
+                d.ReversePhaseEncoding= bfi(ix);
+            else
+                d.isReversePhaseEncoding='NO';
+                d.ReversePhaseEncoding  = [];
+            end
+            %% =====reorder such that RPE-Btables are on bottom ==================
+            if ~isempty(ix)
+               d.btable= d.btable( [setdiff([1:length(bfi)]', ix(:)) ; ix(:)]);
+            end
+            %% ===============================================
+            
             save(f1,'d');
             
         else
@@ -1002,26 +1042,84 @@ if strcmp(task,'getDTIfile')
         % ===============================================
         
     end
-    
+     %% ===============================================
     %    [t,sts] = spm_select(n,typ,mesg,sel,wd,filt,frames)
     %[t,sts]    = spm_select(1,'image',mesg,[],pax,'.*.nii');
     %[t, sts]=  cfg_getfile2(inf,'image',mesg,[],pax,'.*.nii');
+    isabort=0;
     if sts==0;
         disp('..user abort');
+        isabort=1;
         return;
     end
     %[~, name, ext]=fileparts(t);
     [~, name, ~ ]=fileparts2(t);
-    
+    % =============================================== 
     % __try sorting files via numeric values
     try
         [sortnames isort ]=sort(str2num(char(regexprep(name,'\D',''))));
         if ~isempty(isort)
-        name=name(isort);
+            name=name(isort);
         end
     end
+    % ===============================================
+    % try to assign dwi-files to btables
+    % ===============================================
+    try
+        [~, Bname,Bext]=fileparts2(d.btable);
+        Bname=regexprep(Bname,'grad_','');
+        isort=zeros(length(Bname),1);
+        for i=1:length(name)
+            ix= regexpi2(Bname,[name{i} ]);
+            if length(ix==1)
+                isort(i,1)=ix;
+            end
+        end
+        if isempty(find(isort==0))
+            name=name(isort);
+        end
+        %disp(plog([],[ Bname name ],0,'','al=1;plotlines=0' ));
+    end
+     % ===============================================
+    % check: RPE-files should be at the end of list
+    % ===============================================
+      if isfield(d,'isReversePhaseEncoding') && strcmp(d.isReversePhaseEncoding,'YES')
+          try
+             [~,rpefiles, rpeExt]=fileparts2(d.ReversePhaseEncoding);
+             rpefiles_Btable0= cellfun(@(a,b){[a b ]},  rpefiles, rpeExt);
+             
+             rpefiles_dwi(:,1)   =regexprep(rpefiles_Btable0,{'^grad_','.txt$'},{'' ''});
+             ix_rpeBtab=zeros(length(rpefiles),1);
+             ix_rpeDWI=zeros(length(rpefiles),1);
+             for i=1:length(rpefiles_dwi)
+                 ix1=find(strcmp(name,rpefiles_dwi{i}));
+                 ix2=find(strcmp(Bname,rpefiles_dwi{i}));
+                 if length(ix1==1) &&  length(ix2==1)
+                    ix_rpeBtab(i,1)=ix1;
+                    ix_rpeDWI(i,1)=ix2;
+                 end
+             end
+             if isempty(find(ix_rpeBtab==0)) && isempty(find(ix_rpeDWI==0)) 
+               name      =    name([setdiff([1:length(name)'],ix_rpeDWI(:)), ix_rpeDWI(:)]);
+               d.btable  =d.btable([setdiff([1:length(name)'],ix_rpeBtab(:)), ix_rpeBtab(:)]);
+             end
+             
+%              if 0
+%                  disp(name);
+%                  disp(d.btable);
+%              end
+          end   
+      end
+    
+    %% ===============================================
+    
+    
     
     d.DTIfileName=cellfun(@(a){[ a '.nii' ]},  name);
+    if isempty(char(name)) %aborted selection/nothing selected
+        d.isReversePhaseEncoding ='NO';
+        d.ReversePhaseEncoding   =[];
+    end
     save(f1,'d');
     
     %____________________
@@ -1038,7 +1136,7 @@ end
 if strcmp(task,'distributefiles')
     cprintf('*[1 0 1]', ['START..  distributing files.. \n']);
     padat=fullfile(u.studypath,'dat');
-
+    
     if exist('pp') && isfield(pp,'mdirs')
         mdirs=pp.mdirs;
     else
@@ -1109,7 +1207,7 @@ end
 if strcmp(task,'deformfiles')
     cprintf('*[1 0 1]', ['START..  deforming files.. \n']);
     padat=fullfile(u.studypath,'dat');
-  
+    
     if exist('pp') && isfield(pp,'mdirs')
         mdirs=pp.mdirs;
     else
@@ -1206,12 +1304,12 @@ if strcmp(task,'registerimages')
             'ix_AVGT.nii'};
         
         % IF CHECK-BOX-checked than use tissue-compartments
-        if cc.useTissueCompartments==1 
-             TPMS={...
-                 'c1t2.nii'
+        if cc.useTissueCompartments==1
+            TPMS={...
+                'c1t2.nii'
                 'c2t2.nii'
                 'c3t2.nii'};
-            z.applyImg1= [z.applyImg1 ; TPMS];   
+            z.applyImg1= [z.applyImg1 ; TPMS];
         end
         
         
@@ -1303,7 +1401,7 @@ end
 if strcmp(task,'renamefiles')
     cprintf('*[1 0 1]', ['START..  renaming files.. \n']);
     padat=fullfile(u.studypath,'dat');
-
+    
     if exist('pp') && isfield(pp,'mdirs')
         mdirs=pp.mdirs;
     else
@@ -1318,52 +1416,52 @@ if strcmp(task,'renamefiles')
     [~,DTIatlas0]      =fileparts(d.DTItemplate);
     [~,DTItemplateLUT0]=fileparts(d.DTItemplateLUT);
     
-    files={...
-        'rc_ix_AVGTmask.nii'                 ''
-        'rc_ix_ANO.nii'                      ''
-        ['rc_ix_' DTIatlas0 '.nii'     ]     'ANO_DTI.nii'          %'rc_ix_DTI_harms31mar20.nii'
-        'rc_mt2.nii'                         ''
-        'rc_t2.nii'                          ''
-        [DTItemplateLUT0 '.txt'             ]    'atlas_lut.txt'
-        [DTItemplateLUT0 '.txt'             ]    'ANO_DTI.txt'  %'atlas_lut.txt'
+    files={... %old neame  newname   internalToken
+        'rc_ix_AVGTmask.nii'                 ''                  ''
+        'rc_ix_ANO.nii'                      ''                  ''
+        ['rc_ix_' DTIatlas0 '.nii'     ]     'ANO_DTI.nii'       ''   %'rc_ix_DTI_harms31mar20.nii'
+        'rc_mt2.nii'                         ''                  ''
+        'rc_t2.nii'                          ''                  ''
+        [DTItemplateLUT0 '.txt'             ]    'atlas_lut.txt'  'atlaslus'
+        [DTItemplateLUT0 '.txt'             ]    'ANO_DTI.txt'    'atlaslut2' %'atlas_lut.txt'
         };
     
     
-     % IF CHECK-BOX-checked than use tissue-compartments
-     if cc.useTissueCompartments==1
-         TPM_coreg={...
-             'rc_c1t2.nii'         'rc_c1t2.nii'
-             'rc_c2t2.nii'         'rc_c2t2.nii'
-             'rc_c3t2.nii'         'rc_c3t2.nii'
-             };
-         
-         files= [files ; TPM_coreg];
-         % files= [TPM_coreg; files  ];
-     end
-     
-     
-     if size(d.btable,1)==1%singleshell
-         files(end+1,:)={d.DTIfileName{1}      'dwi.nii'  };
-     else %multishell
+    % IF CHECK-BOX-checked than use tissue-compartments
+    if cc.useTissueCompartments==1
+        TPM_coreg={...
+            'rc_c1t2.nii'         'rc_c1t2.nii'   'tpm'
+            'rc_c2t2.nii'         'rc_c2t2.nii'   'tpm'
+            'rc_c3t2.nii'         'rc_c3t2.nii'   'tpm'
+            };
+        
+        files= [files ; TPM_coreg];
+        % files= [TPM_coreg; files  ];
+    end
+    
+    
+    if size(d.btable,1)==1%singleshell
+        files(end+1,:)={d.DTIfileName{1}      'dwi.nii'   'dwi'};
+    else %multishell
         [~,btable_name0,ext ]=fileparts2(d.btable);
         btable_name_ext=cellfun(@(a,b){[ a b ]},  btable_name0, ext);
         btable_name  =strrep(btable_name0,'grad_','');
         
         %check
-%         n_btables=size(btable_name,1);
-%         n_dwis  =size(d.DTIfileName,1);
-
+        %         n_btables=size(btable_name,1);
+        %         n_dwis  =size(d.DTIfileName,1);
+        
         n_btables=length(btable_name);
-         n_dwis  =length(d.DTIfileName);
-
-%% =========check same-size of b-table and DWI-files ======================================
-
-if n_btables~=n_dwis
-    %%
-    chktab=repmat({' '}, [  max([n_btables n_dwis]) 2]);
-    chktab(1:n_btables,1) =btable_name_ext;
-    chktab(1:n_dwis,2)    =d.DTIfileName;
-    chktab=[{['\bf' '___b-table___'] ['       ___DWI-file___' '\rm']} ;chktab];
+        n_dwis  =length(d.DTIfileName);
+        
+        % =========check same-size of b-table and DWI-files ======================================
+        
+        if n_btables~=n_dwis
+            %%
+            chktab=repmat({' '}, [  max([n_btables n_dwis]) 2]);
+            chktab(1:n_btables,1) =btable_name_ext;
+            chktab(1:n_dwis,2)    =d.DTIfileName;
+            chktab=[{['\bf' '___b-table___'] ['       ___DWI-file___' '\rm']} ;chktab];
             
             chklist=cellfun(@(a,b){[ a repmat(' ',[1 size(char(chktab(:,1)),2)+10-length(a)]) b ]},  chktab(:,1),chktab(:,2));
             ms={
@@ -1382,7 +1480,7 @@ if n_btables~=n_dwis
         
         % keyboard
         for i=1:size(d.DTIfileName,1)
-            files(end+1,:)=  {d.DTIfileName{i}     [ 'dwi_' btable_name{i} '.nii' ] };
+            files(end+1,:)=  {d.DTIfileName{i}     [ 'dwi_' btable_name{i} '.nii' ]   'dwi' };
         end
     end
     %% ===================================================================================================
@@ -1396,7 +1494,7 @@ if n_btables~=n_dwis
                 fx2=fullfile(thisdir, files{j,2});
                 %disp(char([fx1  '#' fx2]));
                 
-                %% MRTRIX potential error DATAYPE: float-DT instead of Integer
+                % MRTRIX potential error DATAYPE: float-DT instead of Integer
                 if strcmp(files{j,2},'ANO_DTI.nii')
                     %keyboard
                     [ha a]=rgetnii(fx1);
@@ -1411,19 +1509,19 @@ if n_btables~=n_dwis
                     lut=regexprep(lut,'['''']',''); %remove apostrophe as in Ammon's_horn (produces an error in DTI-pipeline)
                     pwrite2file(fx2,lut)
                 elseif strcmp(files{j,2}, 'rc_c1t2.nii') || strcmp(files{j,2}, 'rc_c2t2.nii') ...
-                         || strcmp(files{j,2}, 'rc_c3t2.nii')
-                     
-                     [ha a]=rgetnii(fx1);
-                     hb=ha;
-                     %hb.dt=[8 0];
-                     rsavenii(fx2,  hb,a,64);
-                     
+                        || strcmp(files{j,2}, 'rc_c3t2.nii')
+                    
+                    [ha a]=rgetnii(fx1);
+                    hb=ha;
+                    %hb.dt=[8 0];
+                    rsavenii(fx2,  hb,a,64);
+                    
                 else
                     if strcmp(fx1,fx2)==0
                         copyfile(fx1,fx2,'f');
                     end
                 end
-                %%  ----remove 'descrip' & private  frpm HDR----------
+                % ----remove 'descrip' & private  frpm HDR----------
                 [paw namew extw]= fileparts(fx2);
                 if strcmp(extw,'.nii')==1
                     hb=spm_vol(fx2);
@@ -1444,6 +1542,10 @@ if n_btables~=n_dwis
             for j=1:size(d.btable,1)
                 [paw namew ext]=fileparts(d.btable{j});
                 grfile=fullfile(thisdir, [namew ext]);
+                if exist(grfile)==0
+                    grfile0=fullfile(d.dtipath, [namew ext]);
+                    copyfile(grfile0,grfile,'f');
+                end
                 a=fileread(grfile);
                 
                 if double(a(end))~=10
@@ -1453,23 +1555,126 @@ if n_btables~=n_dwis
                 end
             end
         end
+        % ==============================================
+        %%   RPE-NAMING-ISSUE
+        % ===============================================
+        if isfield(d,'isReversePhaseEncoding') && strcmp(d.isReversePhaseEncoding,'YES')
+             [~,rpefiles, rpeExt]=fileparts2(d.ReversePhaseEncoding);
+             rpefiles_Btable0= cellfun(@(a,b){[a b ]},  rpefiles, rpeExt);
+             rpefiles_dwi(:,1)   =regexprep(rpefiles_Btable0,{'^grad_','.txt$'},{'dwi_' '.nii'});
+             rpefiles_dwi(:,2)   = regexprep(rpefiles_dwi(:,1),'^dwi_', 'dwi_RPE_'); %new Name
+             
+             rpefiles_btable(:,1)  =rpefiles_Btable0;
+             rpefiles_btable(:,2)  = regexprep(rpefiles_btable(:,1),'^grad_', 'grad_RPE_'); %new Name
+             
+             for j=1:size(rpefiles_btable,1)
+                 % RPE B-table
+                 fx1=fullfile(thisdir, rpefiles_btable{j,1});
+                 fx2=fullfile(thisdir, rpefiles_btable{j,2});
+                 if exist(fx1)==2
+                     %copy RPE-btable
+                     movefile(fx1,fx2,'f');
+                     disp([' ..new name of RPE-Btable-file "' rpefiles_dwi{j,2} '" (old: "' rpefiles_dwi{j,1}  '") ' ]);
+                 
+                     % copy RPE-DWI
+                     fy1=fullfile(thisdir, rpefiles_dwi{j,1});
+                     fy2=fullfile(thisdir, rpefiles_dwi{j,2});
+                     if exist(fy1)==2
+                         movefile(fy1,fy2,'f');
+                     end
+                     %----remove non-valid rows in B-table (Non-zeros)
+                     t=preadfile(fx2);
+                     t=t.all;
+                     t=str2num(char(t));
+                     val=round(t(:,4)/100)*100;
+                     if length(find(val==0))>=length(find(val~=0))  %remove  non b0-rows
+                         keepRows=find(val==0);
+                         t2=t(keepRows,:);
+                         pwrite2file(fx2,t2);
+                         
+                         if exist(fy2)==2
+                             [ha a]=rgetnii(fy2);
+                             a2 =a(:,:,:,keepRows);
+                             ha2=ha(keepRows);
+                             for jj=1:length(ha2)
+                                 ha2(jj).n=[jj  ha2(jj).n(2)];
+                                 %disp(ha2(jj).n);
+                             end
+                             try; delete(fy2); end
+                             rsavenii(fy2 , ha2, a2,64);
+                         end
+                         
+                     end
+                 
+                 end
+                 
+                 
+                 
+%                  % DWI-file
+%                  fx1=fullfile(thisdir, rpefiles_dwi{j,1});
+%                  fx2=fullfile(thisdir, rpefiles_dwi{j,2});
+%                  if exist(fx1)==2
+%                      movefile(fx1,fx2,'f');
+%                      disp([' ..new name of RPE-DWIfile "' rpefiles_dwi{j,2} '" (old: "' rpefiles_dwi{j,1}  '") ' ]);
+%                  end
+                 
+                 
+                 
+             end
+        end
+        % ==============================================
+        %% RPE-remove nonvalid Volumes
+        % ===============================================
+
+        
+        
         
         % ==============================================
         %%      create the btables with fixed Bvalues
         % ===============================================
-        for j=1:size(d.btable,1)
-            [paw namew ext]=fileparts(d.btable{j});
-            grfix_file =fullfile(thisdir, [namew ext]);
-            grfix_file2=stradd(grfix_file,'_fix',2);
+        
+        [~,btabfiles, btabExt]=fileparts2(d.btable);
+        btables0= cellfun(@(a,b){[a b ]}, btabfiles, btabExt);
+        
+        if isfield(d,'isReversePhaseEncoding') && strcmp(d.isReversePhaseEncoding,'YES')
+            [~,rpefiles, rpeExt]=fileparts2(d.ReversePhaseEncoding);
+            rpefiles_Btable0= cellfun(@(a,b){[a b ]},  rpefiles, rpeExt);
+            rpefiles_btable={};
+             rpefiles_btable(:,1)  =rpefiles_Btable0;
+             rpefiles_btable(:,2)  = regexprep(rpefiles_btable(:,1),'^grad_', 'grad_RPE_'); %new Name
+             ix=(ismember(btables0,rpefiles_btable(:,1)));
+             btables0(ix,1)=rpefiles_btable(:,2);
+        end
+             
+        
+        for j=1:length(btables0)
+            [paw namew ext]=fileparts(btables0{j});
+            grfix_file  =fullfile(thisdir, [namew ext]);
+            grfix_file2 =stradd(grfix_file,'_fix',2);
             
             t=preadfile(grfix_file);
             t=t.all;
             t=str2num(char(t));
+            %----median-method (only if single b-value is used)
+            %val=median(t(2:end,4));
+            %t(2:end,4)=val;
+            % ----round-method
+            %val=round(t(:,4)/100)*100;
+            %t(:,4)=val;
             
-            me=median(t(2:end,4));
-            t(2:end,4)=me;
-            
-            pwrite2file(grfix_file2,t); 
+            %----median-method (for multiple b-values)
+            val=round(t(:,4)/100)*100;
+            unival=unique(val);
+            vec2=zeros(size(val));
+            for jj=1:length(unival)
+                %vec2(find(val==unival(jj)))=unival(jj);
+                ix=find(val==unival(jj));
+                vec2(ix)= median(t(ix,4));
+            end
+            t(:,4)=vec2;
+            % disp(t)
+
+            pwrite2file(grfix_file2,t);
             showinfo2([ ' ... crating btable-for-preprocessing: ' ] ,grfix_file2,[],[], [ '>> ' grfix_file2 ]);
         end
         
@@ -1512,7 +1717,7 @@ if n_btables~=n_dwis
 end
 
 % ==============================================
-%%
+%%   export files
 % ===============================================
 if strcmp(task,'exportfiles')
     cprintf('*[1 0 1]', ['START ... exporting files) \n']);
@@ -1523,7 +1728,7 @@ if strcmp(task,'exportfiles')
     
     
     padat=fullfile(u.studypath,'dat');
-
+    
     if exist('pp') && isfield(pp,'mdirs')
         mdirs=pp.mdirs;
     else
@@ -1535,13 +1740,27 @@ if strcmp(task,'exportfiles')
     [~,dum]=fileparts2(d.btable);
     btablefiles=stradd(dum,[  '.txt' ] ,2);
     
-    
-    if size(btablefiles,1)==1 %single shell
-        DWIfiles={'dwi.nii'};
-    else%multishell
-        DWIfiles=cellfun(@(a){[ a '.nii' ]},  strrep(dum,'grad','dwi'));
+    if isfield(d,'isReversePhaseEncoding') && strcmp(d.isReversePhaseEncoding,'YES')
+        [~,rpefiles, rpeExt]=fileparts2(d.ReversePhaseEncoding);
+        rpefiles_Btable0= cellfun(@(a,b){[a b ]},  rpefiles, rpeExt);
+        rpefiles_btable(:,1)  =rpefiles_Btable0;
+        rpefiles_btable(:,2)  = regexprep(rpefiles_btable(:,1),'^grad_', 'grad_RPE_'); %new Name
+        ix=ismember(btablefiles,rpefiles_btable(:,1));
+        btablefiles(ix,1)=rpefiles_btable(:,2);
+        
+
     end
     
+    
+%     if size(btablefiles,1)==1 %single shell
+%         DWIfiles={'dwi.nii'};
+%     else%multishell
+        DWIfiles=cellfun(@(a){[ a '.nii' ]},  strrep(dum,'grad_','dwi_'));
+%     end
+    if isfield(d,'isReversePhaseEncoding') && strcmp(d.isReversePhaseEncoding,'YES')
+       DWIfiles(ix)=regexprep(DWIfiles(ix),'dwi_','dwi_RPE_')
+    end
+
     files={...
         'rc_ix_AVGTmask.nii'
         'rc_mt2.nii'
@@ -1557,16 +1776,16 @@ if strcmp(task,'exportfiles')
     end
     
     % IF CHECK-BOX-checked than use tissue-compartments
-     if cc.useTissueCompartments==1
-         TPM_coreg={...
-             'rc_c1t2.nii'       
-             'rc_c2t2.nii'        
-             'rc_c3t2.nii'        
-             };
-         
-         files= [files ; TPM_coreg];
-         % files= [TPM_coreg; files  ];
-     end
+    if cc.useTissueCompartments==1
+        TPM_coreg={...
+            'rc_c1t2.nii'
+            'rc_c2t2.nii'
+            'rc_c3t2.nii'
+            };
+        
+        files= [files ; TPM_coreg];
+        % files= [TPM_coreg; files  ];
+    end
     
     
     %% ------for each animal
@@ -1618,7 +1837,7 @@ if strcmp(task,'checkreg')
     pa_check =fullfile(d.studypath,cc.cr.outputdir); % formerly: fullfile(d.studypath,'checks')
     
     padat    =fullfile(u.studypath,'dat');
-   
+    
     
     if exist('pp') && isfield(pp,'mdirs')
         mdirs=pp.mdirs;
@@ -1804,8 +2023,17 @@ for i=1:length(mdirs)
     end
 end
 
+% ==============================================
+%% context_listbox
+% ==============================================
+function context_listbox(e,e2,task)
+hf=findobj(0,'tag','DTIprep');
+u=get(hf,'userdata');
+padat=fullfile(u.studypath,'dat');
 
-
+if strcmp(task,'dispInCMD')
+   nogui_check();
+end
 
 % ==============================================
 %%   context
@@ -1825,6 +2053,68 @@ if strcmp(task,'DTIconfig_edit')
     end
     return
 end
+if strcmp(task,'remove_DTIfolder')
+    fdir=fullfile(u.studypath,'DTI');
+    
+    button = questdlg(['Delete "DTI"-folder?' char(10) 'All DTI-configurations will be lost!' char(10) ,...
+        ['delete folder: "' fdir '"?'],...
+        ],'','yes','no','no');
+    if strcmp(button,'yes')
+        close(findobj(0,'tag','DTIprep'));
+        rmdir(fdir,'s');
+        disp('DTI-folder deleted');
+    end
+    button = questdlg(['re-open DTIprep-GUI?' char(10)  ,...
+        ['this will create a new folder: "' fdir '"?'],...
+        ],'','yes','no','yes');
+    if strcmp(button,'yes')
+        DTIprep
+    end
+    return
+end
+if strcmp(task,'copy_DTIfolder')
+     fdir=fullfile(u.studypath,'DTI');
+     if exist(fdir)
+         [pax dirname]=fileparts(fdir);
+         %fdir2=stradd(fdir,['_Backup__' datestr(now,'ddmmmyyyy_HH-MM-SS')],2);
+         newname=[dirname '_Backup__' datestr(now,'ddmmmyyyy_HH-MM-SS')];
+         fdir2=fullfile(pax,newname);
+         copyfile(fdir,fdir2,'f');
+         showinfo2(['created BackupFolder: [' dirname ']'], fdir2);
+     end
+    return
+end
+if strcmp(task,'import_DTIfolder')
+    
+    button = questdlg(['import a Backup-DTI-folder as "DTI"?' char(10) 'All prevous DTI-configurations in folder "DTI" will be lost!' char(10) ,...
+        ],'','yes','no','no');
+    if strcmp(button,'yes')
+        
+        [t,sts] = spm_select(1,'dir','select a Backup-DTI-folder ',[],u.studypath,'^DTI_Backup');
+        if isempty(t); return; end
+        fdir_bk=t;
+        fdir   =fullfile(u.studypath,'DTI');
+        copyfile(fdir_bk,fdir,'f');
+        close(findobj(0,'tag','DTIprep'));
+        DTIprep
+        disp('DTI-folder imported');
+    end
+    return
+end
+if strcmp(task,'remove_DTIexportfolder')
+    fdir_export=fullfile(u.studypath,'DTI_export4mrtrix');
+    
+    button = questdlg(['Delete DTI-EXPORT-folder (""DTI_export4mrtrix" ")?' char(10) ...
+        ['delete folder: "' fdir_export '"?'],...
+        ],'','yes','no','no');
+    if strcmp(button,'yes')
+        rmdir(fdir_export,'s');
+        disp('exportfolder "DTI_export4mrtrix" deleted');
+    end
+    return
+end
+
+
 
 if strcmp(task,'openStudyDir')
     explorer(u.studypath);
@@ -1935,8 +2225,8 @@ if strcmp(task,'rename_btables')
         return
     end
     if length(tb)==1
-       msgbox('renamimg option for MULTISHELL-data only! ... cancelled');
-        return 
+        msgbox('renamimg option for MULTISHELL-data only! ... cancelled');
+        return
     end
     
     [ xpa xfi xext ]=fileparts2(tb);
@@ -1968,15 +2258,15 @@ if strcmp(task,'rename_btables')
     fn=fieldnames(z);
     z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
     
-   %% ========[ rename files (make temp-files first)]=======================================
+    %% ========[ rename files (make temp-files first)]=======================================
     fn=fieldnames(z);
     fnb=fn(regexpi2(fn,'^btable_'));
     TA=xfi;
     for i=1:length(fnb)
-       cur=getfield(z,fnb{i});
-       if isempty(cur)
-          cur= xfi{i};
-       end
+        cur=getfield(z,fnb{i});
+        if isempty(cur)
+            cur= xfi{i};
+        end
         TA{i,2}=['temp_' cur];
         TA{i,3}=cur;
     end
@@ -1987,15 +2277,15 @@ if strcmp(task,'rename_btables')
         return
     end
     
-        % FIRST: copy to temporary files
-        fis1= stradd(TA(:,1), [xpa{1} filesep],1);
-        fis2= stradd(TA(:,2), [xpa{1} filesep],1);
-        copyfilem(fis1,fis2),
-        % SECOND: remove orig. b-tables
-        deletem(fis1);
-        %third: rename to final name
-        fis3= stradd(TA(:,3), [xpa{1} filesep],1);
-        movefilem(fis2,fis3);
+    % FIRST: copy to temporary files
+    fis1= stradd(TA(:,1), [xpa{1} filesep],1);
+    fis2= stradd(TA(:,2), [xpa{1} filesep],1);
+    copyfilem(fis1,fis2),
+    % SECOND: remove orig. b-tables
+    deletem(fis1);
+    %third: rename to final name
+    fis3= stradd(TA(:,3), [xpa{1} filesep],1);
+    movefilem(fis2,fis3);
     
     %% =========== [update struct] and update GUI =========
     hf=findobj(0,'tag','DTIprep');
@@ -2146,6 +2436,20 @@ if strcmp(task,'checkassignment')
         
         n_btables=size(btables,1);
         n_dwis  =size(dwis,1);
+        %% ===============================================
+        BvaluesRounded={};
+        gradtables={};
+        for i=1:size(d.btable)
+            a0=preadfile(d.btable{i});
+            a=a0.all;
+            gradtables{i,1}=a;
+            a=str2num(char(a));
+            numDir(i,1)=size(a,1);
+            
+            dx=round(unique(a(:,4)));
+            BvaluesRounded{i,1}=strjoin(regexprep(cellstr(num2str(unique(round(dx/100)*100))),'\s+',''),',');
+        end
+        %% ===============================================
         
         chktab=repmat({' '}, [  max([n_btables n_dwis]) 3]);
         chktab(1:n_btables,1) =btables;
@@ -2168,10 +2472,34 @@ if strcmp(task,'checkassignment')
             
             chktab(1:size(finaldwiname,1),3) =finaldwiname;
         end
+        
         %% ===============================================
         
-        hd={' #ra ___b-table___' '#ka ___INPUT-DWI___'  '#ba ___OUTPUT-DWI___'};
-        [~, ms]=plog([],[hd ;chktab ],0,'','s=10;plotlines=0;al=1');
+        hd1={' #ra ___b-table___' '#ka ___INPUT-DWI___'  '#ba ___OUTPUT-DWI___'};
+        [~, ms1]=plog([],[hd1 ;chktab ],0,'','s=10;plotlines=0;al=1');
+        
+        chktab2(1:n_btables,1) =btables;
+        chktab2(:,2)=num2cell(numDir);
+        chktab2(:,3)=BvaluesRounded;
+        hd2={' #ra ___b-table___' '#kw ___No-DWI-ANGLES___'  ' ___rounded B-values___'};
+        [~, ms2]=plog([],[hd2 ;chktab2 ],0,'','s=10;plotlines=0;al=1');
+        
+        % RPE
+        ms3={'  '};
+        if isfield(d,'isReversePhaseEncoding') && strcmp(d.isReversePhaseEncoding,'YES')
+            ms3{end+1,1}=[' #wb  reverse phase encoding (RPE): #kw ' d.isReversePhaseEncoding ];
+            [~,rpefiles, rpeExt]=fileparts2(d.ReversePhaseEncoding);
+            rpefiles= cellfun(@(a,b){['RPE-Btable: ' a b ]},  rpefiles, rpeExt);
+            
+            ms3=[ms3; rpefiles];
+        else
+            ms3{end+1,1}=[' #wb  reverse phase encoding: #kw  ' 'NO' ];
+            
+        end
+        
+        
+        
+        ms=[ms1;ms2; ms3];
         
         ms{end+1,1}=['  '];
         ms{end+1,1}=[' #dw ' repmat('_',[1 80])];
@@ -2179,16 +2507,28 @@ if strcmp(task,'checkassignment')
         ms{end+1,1}=[' #dw  to reorder files use contextmenu: reorder..  '];
         ms{end+1,1}=[' #dw -The table does not state that these files exist for each animal!  '];
         if n_btables==4
-             ms{end+1,1}=['  '];
-             ms{end+1,1}=[' #, IMPORTANT! '];
-             ms{end+1,1}=[' #r MULTISHELL-approach is used! The names of the DWI-files in the current '];
-             ms{end+1,1}=[' #r shellscripts are hard-coded. The names of the DWI-files'];
-             ms{end+1,1}=[' #r has to be:  '];
-             ms=[ms; finaldwiname];
-             ms{end+1,1}=[' #, PLEASE CHECK THAT THIS IS TRUE FOR THE "___OUTPUT-DWI___" -files!  '];
+            ms{end+1,1}=['  '];
+            ms{end+1,1}=[' #, IMPORTANT! '];
+            ms{end+1,1}=[' #r MULTISHELL-approach is used! The names of the DWI-files in the current '];
+            ms{end+1,1}=[' #r shellscripts are hard-coded. The names of the DWI-files'];
+            ms{end+1,1}=[' #r has to be:  '];
+            ms=[ms; finaldwiname];
+            ms{end+1,1}=[' #, PLEASE CHECK THAT THIS IS TRUE FOR THE "___OUTPUT-DWI___" -files!  '];
         end
+        
+        ms5={''};
+        ms5{end+1,1}=[' #wk  CONTENT O B-tables' ];
+        for i=1:size(gradtables,1)
+            ms5{end+1,1} =['<HTML><font color=green><b> &#9654;' [ ' [' num2str(i) '] ' btables{i}]   '</font></b>'];
+            ms5=[ms5;gradtables{i}];
+            ms5{end+1,1}=' ';
+        end
+        ms5=[ms5; repmat({' '},[3 1])];
+        msa=[ms;ms5];
+        
+        
         drawnow;
-        uhelp(ms,1,'name','assignment');
+        uhelp(msa,1,'name','assignment');
         %% ===============================================
         
         
@@ -2249,29 +2589,39 @@ if isempty(an);
 end
 f1=fullfile(fileparts(an.datpath),'DTI','check.mat');
 if exist(f1)==2
-   load(f1);
-   
-   disp( [' *** [DTIprep-info saved]: ' f1  ]);
-   disp('---------[struct info]-------');
-   disp(d);
-   disp('---------[btable] -------------');
-   if isempty(d.btable)
-       disp(' ...not imported jet!');
-   else
-       disp(d.btable);
-   end
-   disp('---------[DTIfileName] --------');
-   if isempty(d.DTIfileName)
-       disp(' ...not initialized/defined jet!');
-   else
-       disp(d.DTIfileName);
-   end
-   disp('-------------------------------');
+    load(f1);
+    
+    disp( [' *** [DTIprep-info saved]: ' f1  ]);
+    disp('---------[struct info]-------');
+    disp(d);
+    disp('---------[btable] -------------');
+    if isempty(d.btable)
+        disp(' ...not imported jet!');
+    else
+        %disp(char(d.btable));
+        [~,r2,r3]=fileparts2(d.btable);
+        disp(cellfun(@(a,b){[ a b ]},  r2, r3));
+    end
+    disp('---------[DTIfileName] --------');
+    if isempty(d.DTIfileName)
+        disp(' ...not initialized/defined jet!');
+    else
+        disp(d.DTIfileName);
+    end
+    
+     
+     if isfield(d,'isReversePhaseEncoding') && strcmp(d.isReversePhaseEncoding,'YES')
+        disp('---------[ReversePhaseEncoding] --------');
+        [~,r2,r3]=fileparts2(d.ReversePhaseEncoding);
+        disp(cellfun(@(a,b){[ a b ]},  r2, r3));
+     end
+     
+    disp('-------------------------------');
 else
     disp(['file not found: ' f1]);
     disp('initialize the project first, use:  DTIprep(''ini''); ');
 end
-    
+
 
 function nogui_change_order(fieldname,order)
 if strcmp(fieldname,'d')
@@ -2283,21 +2633,21 @@ global an;
 d=getdata;
 
 if strcmp(fieldname,'DTIfileName') || strcmp(fieldname,'btable')
-   val= getfield(d,fieldname);
-   if length(val)==length(order)
-      d=setfield(d,fieldname,val(order) );
-      setdata(d);
-      disp(['***  "' fieldname '" was reordered: ']);
-      %d=getdata;
-      %disp(getfield(d,fieldname));
-      DTIprep('check');
-   else
-      disp(['cannot resort: mismatch number of entries in  "' fieldname '"  and order-vector' ]) ;
-   end
-   
+    val= getfield(d,fieldname);
+    if length(val)==length(order)
+        d=setfield(d,fieldname,val(order) );
+        setdata(d);
+        disp(['***  "' fieldname '" was reordered: ']);
+        %d=getdata;
+        %disp(getfield(d,fieldname));
+        DTIprep('check');
+    else
+        disp(['cannot resort: mismatch number of entries in  "' fieldname '"  and order-vector' ]) ;
+    end
+    
 end
 
-    
+
 
 %% ===============================================
 function makestruct(u)
@@ -2413,10 +2763,10 @@ end
 
 if ischar(task)
     if strcmp(task,'all')
-       task=1:6; 
+        task=1:6;
     end
 else
-   task=sort(task);  
+    task=sort(task);
 end
 
 if isfield(pp,'mdirs')==1
@@ -2433,7 +2783,7 @@ if ~isempty(find(task==1))
 end
 if ~isempty(find(task==2))
     process([],[],'deformfiles',pp);
-     msg=[msg '(2)deform; '];
+    msg=[msg '(2)deform; '];
 end
 if ~isempty(find(task==3))
     process([],[],'registerimages',pp);
@@ -2464,7 +2814,7 @@ disp(['ET: ' sprintf('%2.2fmin',toc(atime)/60) ...
 % if get(findobj(hf,'Tag','ch_exportfiles'),'value')==1
 %     process([],[],'exportfiles');
 % end
-% 
+%
 % if get(findobj(hf,'Tag','ch_checkreg'),'value')==1
 %     process([],[],'checkreg');
 % end
@@ -2477,7 +2827,7 @@ out=getBtable(d.brukerdata);
 
 bfiles={};
 for i=1:size(out,1)
-  bfiles(i,1)=  {out{i,3}.fileout};
+    bfiles(i,1)=  {out{i,3}.fileout};
 end
 d.btable=bfiles;
 d.is_Btable_imported='YES';
@@ -2488,7 +2838,7 @@ f2=d.DTItemplate;
 f2c=fullfile(d.dtipath, [name ext]);
 isok=0;
 try
-   copyfile(f2,f2c,'f') ;
+    copyfile(f2,f2c,'f') ;
     disp('...DTItemplate imported');
     isok=isok+1;
 end
@@ -2497,7 +2847,7 @@ f2=d.DTItemplateLUT;
 [ ~,name ext ]=fileparts(f2);
 f2c=fullfile(d.dtipath, [name ext]);
 try;
-   copyfile(f2,f2c,'f') ;
+    copyfile(f2,f2c,'f') ;
     disp('...DTItemplateLUT imported');
     isok=isok+1;
 end
@@ -2512,10 +2862,10 @@ DTIprep('check');
 
 function updateLB(varargin)
 
-    
+
 hf=findobj(0,'tag','DTIprep');
 if isempty(hf)
-   return 
+    return
 end
 u=get(hf,'userdata');
 hb=findobj(hf,'Tag','lb_check');
@@ -2534,6 +2884,8 @@ if exist(f1)==0
     d.btable   =[];
     d.DTItemplate    =[];
     d.DTItemplateLUT =[];
+    d.isReversePhaseEncoding  ='NO';
+    d.ReversePhaseEncoding   = [];
     d.is_Atlas_distributed   ='NO';
     d.is_Btable_distributed  ='NO';
     d.isdeformed             ='NO';
@@ -2847,17 +3199,17 @@ if exist('argin') && length(argin)>1
 end
 
 scripts={
- 'DTIscript_exportToHPC_makeBatch_07-09-2023.m'
- 'DTIscript_exportToHPC_makeBatch_14-02-2023.m'
- 'DTIscript_exportToHPC_makeBatch_19-01-2023.m'
- 'DTIscript_makeQA_HTML_from_screenshots.m'
- 'DTIscript_importFromHPC_allData.m'
- 'DTIscript_importFromHPC_connectome.m'
- 'DTIscript_importFromHPC_DWImaps.m'
- 'DTIscript_runDTIprep_COMANDLINE.m'
- 'script_checkMRTRIX_process.m'
- 'script_DELETE_MRtrixFiles_fromHPC.m'
-};
+    'DTIscript_exportToHPC_makeBatch_07-09-2023.m'
+    'DTIscript_exportToHPC_makeBatch_14-02-2023.m'
+    'DTIscript_exportToHPC_makeBatch_19-01-2023.m'
+    'DTIscript_makeQA_HTML_from_screenshots.m'
+    'DTIscript_importFromHPC_allData.m'
+    'DTIscript_importFromHPC_connectome.m'
+    'DTIscript_importFromHPC_DWImaps.m'
+    'DTIscript_runDTIprep_COMANDLINE.m'
+    'script_checkMRTRIX_process.m'
+    'script_DELETE_MRtrixFiles_fromHPC.m'
+    };
 
 if isGUI==0
     cprintf('*[1 0 1]','*** AVAILABLE SCRIPTS for [DTIprep] ***\n');
@@ -2881,17 +3233,17 @@ scripts_gui([],'figpos',[.3 .2 .4 .4], 'pos',[0 0 1 1],'name','scripts: DTIprep'
 %%   older
 % ===============================================
 return
-% 
+%
 % scripts_process([],[],'close');
-% 
+%
 % h=uipanel('units','norm');
 % set(h,'position',[0.5 0  .5 1 ],'title','scripts','tag','scripts_panel');
 % set(h,'ForegroundColor','b','fontweight','bold');
-% 
-% 
+%
+%
 % % %% ====[lb script-name]===========================================
 % % scripts={
-% %   
+% %
 % %     'DTIscript_HPC_exportData_makeBatch.m'
 % %     'DTIscript_posthoc_makeHTML_QA.m'
 % %     % 'DTIscript_posthoc_exportData4Statistic.m'

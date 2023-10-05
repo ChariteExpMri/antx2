@@ -10,6 +10,9 @@
   &#x1F535;   <ins>**21 Sep 2023 (22:43:56)**</ins>  
   antconfig/project-file modified,   
   optional mode for initial skull stripping via otsu method (x.wa.usePriorskullstrip =  __[5]__)   
+    
+   __[xgetlabels4.m]__ modified,   
+  different output-formats (.xlsx, .mat, .csv) now available  
 <!---->
   &#x1F535;   <ins>**15 Sep 2023 (13:10:51)**</ins>  
    __[dtiPREP.m]__ modified, new option: transfer GM,WM,CSF-mask to MRtrix-pipeline   

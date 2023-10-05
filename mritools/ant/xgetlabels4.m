@@ -218,6 +218,7 @@ p={...
     
     
     'fileNameOut'  ''   '<optional> specific name of the output-file. EMPTY FIELD: use timestamp+paramter for file name ' {@saveas,v}
+    'format'       '.xlsx'  'select output-format: default: ".xlsx"; other formats: ".mat" ".csv" ".csv|tab" "csv|space"  "csv|bar"  ".txt|tab" ".txt|space",".txt|bar"'  {'.xlsx' '.mat' '.csv' '.csv|tab' 'csv|space'  'csv|bar'  '.txt|tab' '.txt|space' '.txt|bar'}
     
     'inf44'        '________________________________________________________________________________'    '' ''
     'inf4'        '% READ-OUT PARAMETERS'      ' THESE PARAMETERS WILL BE GENERATED FROM EACH REGION '   ''
@@ -307,6 +308,7 @@ else
     
     [pp ]=extractdataMain(s);
     fout=sub_atlaslabel2xls(pp,s);  %save to excel
+    %  fout=sub_atlaslabel2Format(pp,s);  %save to specific format
     showinfo2('new file' ,fout);
     if nargout==1; varargout{1}=fout; end  %%   output
 end
@@ -328,6 +330,31 @@ return
 %% ##############################################################
 %% % ###############################  SUBS  ###############################
 %% ##############################################################
+
+% function fout=sub_atlaslabel2Format(pp,s);  %save to specific format
+% fout='';
+% if ~isempty(strfind(s.format,'xls'))
+%     fout=sub_atlaslabel2xls(pp,s);  %save to excel
+% end
+% 
+% if ~isempty(strfind(s.format,'mat'))
+%    'a' 
+% end
+
+
+
+
+
+
+
+%===================================================================================================
+% ==============================================
+%%   
+% ===============================================
+
+
+
+
 
 function [pp ]=extractdataMain(s);
 dx    =[];

@@ -949,6 +949,10 @@
 % antconfig/project-file modified, 
 % optional mode for initial skull stripping via otsu method (x.wa.usePriorskullstrip =  [5]) 
 % 
+% #k [xgetlabels4.m] #n modified, 
+% different output-formats (.xlsx, .mat, .csv) now available
+% 
+% 
 
 
 

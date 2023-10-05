@@ -341,7 +341,19 @@ uimenu('Parent',ctx,'Label','select/unselect this [s]',  'callback',@selecthighl
 uimenu('Parent',ctx,'Label','select all [a]',   'callback',@selectall,'separator','on');
 uimenu('Parent',ctx,'Label','deselect all [d]', 'callback',@deselectall);
 uimenu('Parent',ctx,'Label','find & select [f]','callback',@findAndSelect,'separator','on');
-uimenu('Parent',ctx,'Label','multi find & select [f]','callback',@findnested,'separator','on');
+uimenu('Parent',ctx,'Label','multi find & select [f]','callback',@findnested,'separator','off');
+
+hg=uimenu('Parent',ctx,'Label','copy to clipboard','separator','on');
+uimenu('Parent',hg,'Label','content'                ,'callback',{@copyContent,1,1},'separator','on');
+uimenu('Parent',hg,'Label','content (tabulated)'    ,'callback',{@copyContent,1,2},'separator','of');
+uimenu('Parent',hg,'Label','highlighted rows'            ,'callback',{@copyContent,2,1},'separator','on');
+uimenu('Parent',hg,'Label','highlighted rows (tabulated)','callback',{@copyContent,2,2},'separator','of');
+uimenu('Parent',hg,'Label','selecions'               ,'callback',{@copyContent,3,1},'separator','on');
+uimenu('Parent',hg,'Label','selecions (tabulated)'   ,'callback',{@copyContent,3,2},'separator','of');
+
+
+
+
 if isfield(params,'contextmenu')
    for i=1:size(params.contextmenu,1)
       uimenu('Parent',ctx,'Label',params.contextmenu{i,1},'callback',params.contextmenu{i,2},...
@@ -1220,6 +1232,39 @@ selectthis(t,2);
 
 function selectspecificButton(t,b)
 findnested([],[]);
+
+function copyContent(t,b,selmode,fmt)
+hg1=findobj(gcf,'tag','lb1');
+hg2=findobj(gcf,'tag','lb2');
+us=get(gcf,'userdata');
+sel= us.sel;
+if fmt==1
+    v=get(hg1,'string');
+    v2=regexprep( v, {'<.*?>' ,'&nbsp;'}, {'',' '} );
+    hv=get(hg2,'string');
+    hv2=regexprep( hv, {'<.*?>' ,'&nbsp;'}, {'',' '} );
+    if selmode==2
+        v2=v2(get(hg1,'value'));
+    elseif selmode==3
+        v2=v2(find(sel==1));
+    end
+    l=[hv2; v2];
+    mat2clip(l);
+elseif fmt==2
+    % ----tabulated
+    hv2= ['sel' us.header(:)' ];
+    v2 =  [num2cell(sel) us.raw]; 
+  
+   if selmode==2
+        v2=v2(get(hg1,'value'),:);
+    elseif selmode==3
+        v2=v2(find(sel==1),:);
+   end
+     l=[hv2; v2];
+    mat2clip(l,'\t');
+end
+% get(t,'value')
+
 
 function selectspecificButton_old(t,b)
 t=findobj(gcf,'tag','lb1');

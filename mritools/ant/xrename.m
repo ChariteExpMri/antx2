@@ -405,9 +405,12 @@
 % ==============================================
 %%    wildcards
 % ===============================================
+% use ".*" wildcard, optional "^"/"$" for start/ending string
 % xrename(1,{'^.*.doc'},{},{'del'});  %delete all doc-files
 % xrename(1,{'^.*.doc'},{'newdoc.doc'},{':'}); %make copy of all docfiles...call it 'newdoc.doc'
-%
+% xrename(1,'anatomy_axial.*.nii','t2.nii','1s'); %extract 1st volume
+% xrename(1,'^B0Map'      ,'NEW.nii',':');   %copyNrename NIFTI(s) starting with "B0Map"
+% xrename(1,'sat_4_1.nii$','NEW.nii',':');   %copyNrename NIFTI(s) ending with "sat_4_1.nii"
 % ==============================================
 %%    optional pairwise inputs
 % ===============================================
@@ -605,7 +608,7 @@ end
 delete(findobj(0,'tag','xrename'));
 s.pa=pa; %additional struct
 
-[ v2,he2 ]=parse4gui(v,he);
+[ v2,he2 ]=parse4gui(v,he); %parses commands to cell  
 if usejava('desktop')==0;
     showgui=0;
 end
@@ -1467,7 +1470,7 @@ extractvolnum =repmat({''}, [size(v.tb,1) 1]);
 if ~isempty(he{1})
     for i=1:size(he,1)
         % wildcard
-        if ~isempty(strfind( he{i,1},'*'))
+        if ~isempty(regexpi( he{i,1},'*|\^|\$')) %~isempty(strfind( he{i,1},'*'))
             %id=regexpi2(v.tb(:,1), ['^' he{i,1}] );
             id=regexpi2(v.tb(:,1), [ he{i,1}] );
         else

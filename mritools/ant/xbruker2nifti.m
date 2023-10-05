@@ -754,7 +754,7 @@ p={...
     'StudNo_Dir'        0     'add VisuStudyNumber as SUFFIX-STRING,  (bool)'  'b'
     'ExpNo_Dir'         0     'add VisuExperimentNumber (parent folder of "pdata") as SUFFIX-STRING,(bool)'  'b'
     'PrcNo_Dir'         0     'add VisuProcessingNumber/ReconstructionNumber(subfolder of "pdata") as SUFFIX-STRING,(bool)'  'b'
-    'StudId_Dir'        0     'add StudId as SUFFIX to animal directory name' 'b'
+    'StudID_Dir'        1     'add StudId as SUFFIX to animal directory name' 'b'
     'SubjectName_Dir'   0     'add SubjectName as SUFFIX to animal directory name' 'b'
     
     
@@ -767,7 +767,7 @@ p={...
     'inf200'      [repmat('=',[1,100])]                                    ''  ''
     'inf22'      ' [2] SUFFIXES of FILENAMES  (added to "protocoll-name")        '                                    ''  ''
     'inf201'      [repmat('=',[1,100])]                                    ''  ''
-    'ExpNo_File'     0        'VisuExperimentNumber (parent folder of "pdata"),(bool)'  'b'
+    'ExpNo_File'     1        'VisuExperimentNumber (parent folder of "pdata"),(bool)'  'b'
     'PrcNo_File'     1        'VisuProcessingNumber/ReconstructionNumber(subfolder of "pdata"),(bool)'  'b'
     'renameFiles'   ''   'rename files   -->via GUI'  {@renamefiles,protocol,[]}
     'prefix'        ''   'add prefix to filename' {'NI_' [regexprep(datestr(now),{':' ' '},'_') '_'] ''}
@@ -888,7 +888,7 @@ for i=1:size(files,1)
             mfold=[mfold delimiter let dx{i, strcmp( dh,    'PrcNo'  )}] ;
         end
         
-        if z.StudId_Dir==1;
+        if z.StudID_Dir==1;
           mfold=  [mfold delimiter char(dx(i,strcmp(dh,'StudId')))];
         end
         if z.SubjectName_Dir==1;
