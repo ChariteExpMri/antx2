@@ -1442,7 +1442,12 @@ if strcmp(task,'renamefiles')
     
     
     if size(d.btable,1)==1%singleshell
-        files(end+1,:)={d.DTIfileName{1}      'dwi.nii'   'dwi'};
+        % OLD: files(end+1,:)={d.DTIfileName{1}      'dwi.nii'   'dwi'};
+        
+        [~,btable_name0,ext ]=fileparts2(d.btable);
+        btable_name_ext=cellfun(@(a,b){[ a b ]},  btable_name0, ext);
+        btable_name  =strrep(btable_name0,'grad_','');
+        files(end+1,:)=  {d.DTIfileName{1}     [ 'dwi_' btable_name{1} '.nii' ]   'dwi' };
     else %multishell
         [~,btable_name0,ext ]=fileparts2(d.btable);
         btable_name_ext=cellfun(@(a,b){[ a b ]},  btable_name0, ext);
