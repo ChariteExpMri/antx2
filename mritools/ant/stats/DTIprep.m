@@ -412,9 +412,10 @@ set(hb,'tooltipstring',[...
     ' - if a <B> single b-table </B> is found --> this is a <B>single-shell </B>approach <br>'...
     ' - if <B> several b-tables </B> are found --> this is a <B>multi-shell </B>approach <br>'...
     ]);
+set(hb,'callback',{@process, 'getbtable'} );
+
 
 %% getDTIfile
-set(hb,'callback',{@process, 'getbtable'} );
 hb=uicontrol('style','pushbutton','units','norm','string','get DTIfile(s)','tag','getDTIfile');
 set(hb,'position',[0.0053571 0.7422 0.15 0.1]);
 set(hb,'callback',{@process, 'getDTIfile'} );
@@ -3199,7 +3200,7 @@ if exist('argin') && length(argin)>1
 end
 
 scripts={
-    'DTIscript_exportToHPC_makeBatch_07-09-2023.m'
+    'DTIscript_exportToHPC_makeBatch_20-10-2023.m'
     'DTIscript_exportToHPC_makeBatch_14-02-2023.m'
     'DTIscript_exportToHPC_makeBatch_19-01-2023.m'
     'DTIscript_makeQA_HTML_from_screenshots.m'

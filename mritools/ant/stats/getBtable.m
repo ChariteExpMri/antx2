@@ -386,6 +386,7 @@ if size(b,1)>0
         %% ===============================================
         
         ms={'<html><font color=black> <br> '
+            '<html><b><font color=red> REMOVE B-tables (gradient tables) OF NO INTEREST !!! </font><b> '
             'At least one b-table was found more than once!'
             'Presumably, one of the first scans (see scan-number) was used as wharm up!'
             '<HTML> Please select this scan, i.e. select the scan(s) you do <b><u>NOT </b></u> want to use!'
@@ -408,7 +409,7 @@ if size(b,1)>0
         end
         
         
-        id=selector2(t,ht,'title','delete files (selected files will be deleted)','note',ms);
+        id=selector2(t,ht,'title','REMOVE B-tables (gradient tables) OF NO INTEREST','note',ms);
         %% ===============================================
 
         

@@ -274,11 +274,17 @@ end
 % ==============================================
 %%   labeling
 % ===============================================
-disp('..Atlas labeling..');
 
+disp('..Atlas labeling..');
 s=z;
+if isempty(char(s.files))
+     error(['### NO FILES DEFINED ("files"-variable)..see documentation of [' mfilename '.m]']);
+     %error(' ..');
+end
+
 s=getatlasType(s,pa);  %get atlasType (1,2,3,4)
 s=checkfiles(s,pa);
+
 s=readAtlas(s);     % read the atlas -->parse to table in s-struct
 
 % assignin('base','s',s);

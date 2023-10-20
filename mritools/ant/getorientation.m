@@ -173,7 +173,7 @@ for i=1:np
     plotimage(i);  
 end
 colormap gray;
-set(gcf,'menubar','none','NumberTitle','off','name',['Select Orientation: '  p.info ],...
+set(gcf,'menubar','none','NumberTitle','off','name',['Select Orientation: '  char(p.info) ],...
     'tag','findorientation');
 
 

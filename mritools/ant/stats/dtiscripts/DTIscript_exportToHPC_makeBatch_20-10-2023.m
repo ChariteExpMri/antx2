@@ -254,11 +254,11 @@ for ss=1:p.numBatchfiles
     %  #SBATCH --array=1-4            # Specify array elements
     
     %% ===============================================
-    
+%     ['eval "$(conda shell.bash hook)"               # Connect Conda with the bash shell']
     oconda={};
     if ~isempty(p.condaEnvironment)
         oconda={
-            ['eval "$(conda shell.bash hook)"               # Connect Conda with the bash shell']
+            ['eval "$(/opt/conda/bin/conda shell.bash hook)" # Conda initialization in the bash shell']
             ['conda activate ' p.condaEnvironment  '        # Activate conda virtual environment']
             };
     end

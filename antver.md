@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   21 Sep 2023 (22:43:56)  
+ &#x1F34E; last modification:   20 Oct 2023 (10:17:42)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,12 +7,17 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**20 Oct 2023 (10:17:42)**</ins>  
+  script __[DTIscript_exportToHPC_makeBatch_07-09-2023.m]__ created  
+  reason: conda-path changed on our HPC  
+<!---->
   &#x1F535;   <ins>**21 Sep 2023 (22:43:56)**</ins>  
   antconfig/project-file modified,   
   optional mode for initial skull stripping via otsu method (x.wa.usePriorskullstrip =  __[5]__)   
     
    __[xgetlabels4.m]__ modified,   
   different output-formats (.xlsx, .mat, .csv) now available  
+    
 <!---->
   &#x1F535;   <ins>**15 Sep 2023 (13:10:51)**</ins>  
    __[dtiPREP.m]__ modified, new option: transfer GM,WM,CSF-mask to MRtrix-pipeline   

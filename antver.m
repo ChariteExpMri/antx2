@@ -952,6 +952,11 @@
 % #k [xgetlabels4.m] #n modified, 
 % different output-formats (.xlsx, .mat, .csv) now available
 % 
+% #ba 20 Oct 2023 (10:17:42)
+% script [DTIscript_exportToHPC_makeBatch_07-09-2023.m] created
+% reason: conda-path changed on our HPC
+% 
+% 
 % 
 
 
