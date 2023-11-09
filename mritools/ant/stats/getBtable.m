@@ -355,9 +355,9 @@ if size(b,1)>0
     
     
     % ==============================================
-    %% check same Name
+    %% GUI to deselect DWI-files
     % ===============================================
-    if length(unique(b(:,1)))~=size(b,1)  && par.wfi==1
+    if 1  %length(unique(b(:,1)))~=size(b,1)  && par.wfi==1
         
         names                =b(:,1);
         scannum              =cellfun(@(a){[ num2str(a.scanNo) ]},  b(:,3));

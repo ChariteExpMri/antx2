@@ -578,12 +578,19 @@ set(hb,'position',[0.22317 0.91118 0.05 0.08],'fontsize',8);
 set(hb,'callback',{@xhelp} );
 set(hb,'backgroundcolor',[   1 1 1]);
 set(hb,'tooltipstring',[ 'get some help']);
-%% file assignmnet
+%% file assignment
 hb=uicontrol('style','pushbutton','units','norm','string','check file assignment');
-set(hb,'position',[[0.16781 0.80157 0.15 0.08]],'fontsize',7,'foregroundcolor','m','fontweight','bold');
+set(hb,'position',[[0.16781 0.80157 0.16 0.08]],'fontsize',6,'foregroundcolor','m','fontweight','bold');
 set(hb,'callback',{@context,'checkassignment'},'tag','checkassignment' );
 set(hb,'backgroundcolor',[   1 1 1]);
 set(hb,'tooltipstring',[ 'check b-table & DTI-data file assignment (order)']);
+
+%% renameDWIfiles (check similar DWI-filenames across animals)
+hb=uicontrol('style','pushbutton','units','norm','string','check DWI-filenames');
+set(hb,'position',[0.16781 0.72165 0.16 0.08],'fontsize',7,'foregroundcolor','m','fontweight','bold');
+set(hb,'callback',{@context,'checkDWIfilesnames'},'tag','checkDWIfilesnames' );
+set(hb,'backgroundcolor',[   1 1 1],'fontsize',6);
+set(hb,'tooltipstring',[ 'check existence of DWI-filenames across animals']);
 
 
 %% rename b-tables
@@ -2412,7 +2419,9 @@ end
 % ==============================================
 %%
 % ===============================================
-
+if strcmp(task,'checkDWIfilesnames')
+    renameDWIfiles();
+end
 
 if strcmp(task,'checkassignment')
     

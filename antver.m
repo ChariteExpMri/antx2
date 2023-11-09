@@ -955,6 +955,10 @@
 % #ba 20 Oct 2023 (10:17:42)
 % script [DTIscript_exportToHPC_makeBatch_07-09-2023.m] created
 % reason: conda-path changed on our HPC
+% % #ba 09 Nov 2023 (12:42:50)
+% % #k [renameDWIfiles.m] #n new, function to check and rename DWI-files across animals 
+%  case: different scan-numbers in DWI-filenames across animals
+% -available via DTIprep-GUI, [check DWI-filename]-button
 % 
 % 
 % 

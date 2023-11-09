@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   20 Oct 2023 (10:17:42)  
+ &#x1F34E; last modification:   % 09 Nov 2023 (12:42:50)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,11 @@
     
     
 ------------------  
+  % &#x1F535;   <ins>**09 Nov 2023 (12:42:50)**</ins>  
+  %  __[renameDWIfiles.m]__ new, function to check and rename DWI-files across animals   
+   case: different scan-numbers in DWI-filenames across animals  
+  -available via DTIprep-GUI, __[check DWI-filename]__-button  
+<!---->
   &#x1F535;   <ins>**20 Oct 2023 (10:17:42)**</ins>  
   script __[DTIscript_exportToHPC_makeBatch_07-09-2023.m]__ created  
   reason: conda-path changed on our HPC  
