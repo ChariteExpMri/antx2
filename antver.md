@@ -10,6 +10,7 @@
   &#x1F535;   <ins>**13 Nov 2023 (01:09:12)**</ins>  
    __[xcoreg2D_singleSlice.m]__ new function: coregister 3D-images using 2D-registration of a specified slice   
   and apply transformation parameters to all other slices.   
+  &#8618; access via ANT-menu: &#8658; 2D/"single slice 2D-registration"   
 <!---->
   &#x1F535;   <ins>**09 Nov 2023 (12:42:50)**</ins>  
    __[renameDWIfiles.m]__ new, function to check and rename DWI-files across animals   

@@ -962,7 +962,7 @@
 % #ba 13 Nov 2023 (01:09:12)
 % #k [xcoreg2D_singleSlice.m] #n new function: coregister 3D-images using 2D-registration of a specified slice 
 % and apply transformation parameters to all other slices. 
-% 
+% #gw --> access via ANT-menu: &#8658; 2D/"single slice 2D-registration" 
 % 
 % 
 
