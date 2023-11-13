@@ -366,8 +366,8 @@ disp([ '  ..MaximumNumberOfIterations: ['  num2str(chk__NO_iterations) ']' ]);
 % varargout=elastix(movingImage,fixedImage,outputDir,paramFile,varargin)
 % [v v2]=elastix(bb,aa,paout,paramFile);
 fprintf(' ..running Elastix..');
-% [logela v v2]=evalc('elastix(bb,aa,paout,paramFile)');
-[v v2]=elastix(bb,aa,paout,paramFile);
+ [logela v v2]=evalc('elastix(bb,aa,paout,paramFile)');
+%[v v2]=elastix(bb,aa,paout,paramFile);
 
 if 0
     %% ===============Version-2=================================
