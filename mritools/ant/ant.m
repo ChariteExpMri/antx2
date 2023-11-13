@@ -1289,6 +1289,9 @@ mh2 = uimenu(mh,'Label','<html><font color="black"> coregister slices 2D <font c
 mh2 = uimenu(mh,'Label','<html><font color="black"> apply 2d-registration to other images <font color="red"><i> *',     'Callback',{@menubarCB, 'coregister2Dapply'},...
     'userdata',[HSTART 'if other images needs to be registered as well' HEND '..apply this function']);
 
+mh2 = uimenu(mh,'Label','<html><font color="black"> single slice 2D-registration<font color="red"><i> *',     'Callback',{@menubarCB, 'call_xcoreg2D_singleSlice'},...
+    'userdata',[HSTART 'register 3D images via one single slice 2D-registration ' HEND '#'],'separator','on');
+
 %% ==========[menu:Allas & mask]=====================================
 mh = uimenu(f,'Label','atlas+masks');
 
@@ -2375,9 +2378,25 @@ elseif strcmp(task,'extractslice')
     statusMsg(1,' extract slices [2d]');
     xextractslice(1);
     statusMsg(0);
+ 
     
+elseif strcmp(task,'call_xcoreg2D_singleSlice')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xcoreg2D_singleSlice';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xcoreg2D_singleSlice.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    statusMsg(1,' singleSlice 2D-registration');
+    xcoreg2D_singleSlice(1);
+    statusMsg(0)    
     
-    
+
     %________________________________________________
 elseif strcmp(task,'xnewproject')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here

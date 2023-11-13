@@ -959,6 +959,9 @@
 % #k [renameDWIfiles.m] #n new, function to check and rename DWI-files across animals 
 %  case: different scan-numbers in DWI-filenames across animals
 % -available via DTIprep-GUI, [check DWI-filename]-button
+% #ba 13 Nov 2023 (01:09:12)
+% #k [xcoreg2D_singleSlice.m] #n new function: coregister 3D-images using 2D-registration of a specified slice 
+% and apply transformation parameters to all other slices. 
 % 
 % 
 % 

@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   09 Nov 2023 (12:42:50)  
+ &#x1F34E; last modification:   13 Nov 2023 (01:09:12)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**13 Nov 2023 (01:09:12)**</ins>  
+   __[xcoreg2D_singleSlice.m]__ new function: coregister 3D-images using 2D-registration of a specified slice   
+  and apply transformation parameters to all other slices.   
+<!---->
   &#x1F535;   <ins>**09 Nov 2023 (12:42:50)**</ins>  
    __[renameDWIfiles.m]__ new, function to check and rename DWI-files across animals   
    case: different scan-numbers in DWI-filenames across animals  
