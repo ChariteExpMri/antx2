@@ -219,6 +219,7 @@ end
 s.V=V;
 s.smm      =slicesmm ;
 s.slicesnum=slicesnum;
+s.transform=transform;
 
 if 0
     

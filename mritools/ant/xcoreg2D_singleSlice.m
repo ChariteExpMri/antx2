@@ -16,6 +16,9 @@
 %                   -currently supports only a slice from the 3rd dimension
 %                   -The estimated registration parameters will than be applied to the other slices
 %                   -default slice: 1, i.e. the 1st slice
+% 'sliceDimension'  -The slice for registration is taken from this dimension 
+%                   -options: {1|2|3}; 
+%                   -default: [3] , i.e. slice is taken from 3rd dimension 
 %                    
 % 'parameterFiles'  -Elastix-2D-parameter-files
 %                   -either rigid,affine or Bspline,
@@ -153,8 +156,8 @@ p={...
     'targetFile'       {''}      'target image (single 3D-NIFTI-file)'       {@selector2,li,{'TargetImage'},'out','list','selection','single','position','auto','info','select target-image'}
     'sourceFiles'      {''}      'source images (1/more 3D-NIFTI-files)'     {@selector2,li,{'SourceImage'},'out','list','selection','multi','position','auto','info','select one/more source-image(s)'}
     
-    'slice'          1           'slice  to register (3rd dimension), registration parameter will be applied to the other slices'  {1 2 3 }
-    
+    'slice'            1          'slice  to register (3rd dimension), registration parameter will be applied to the other slices'  {1 2 3 }
+    'sliceDimension'   3          'slice is taken from this dimension {1|2|3}; default: [3]'  { 1 2 3} 
     %---------
     'parameterFiles'   parameterFiles 'Elastix-2D-paramer-files (rigid,affine or Bspline), single or multiple files'  {@getparmfiles }
 
@@ -176,7 +179,7 @@ p=paramadd(p,x);%add/replace parameter
 if showgui==1
     %hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
     [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .7 .4 ],...
-        'title',['***REGISTER2D via refslice***' '[' mfilename '.m]'],'info',{@uhelp, [mfilename '.m']});
+        'title',['***REGISTER VOLUME via single specified slice***' '[' mfilename '.m]'],'info',{@uhelp, [mfilename '.m']});
     if isempty(m); return; end
     fn=fieldnames(z);
     z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
@@ -236,7 +239,7 @@ if p0.isParallel==1 && length(p0.sourceFiles)>1
 else
     for i=1:length(p0.sourceFiles)
         p            =p0;
-        p.iter       =1;
+        p.iter       =i;
         p.niter      =length(p0.sourceFiles);
         p.sourceFiles=p0.sourceFiles(i);
         proc_register(p);
@@ -278,10 +281,10 @@ function proc_register(p)
 px             =char(p.mdir); %mdir
 p.target       =fullfile(char(p.mdir),char(p.targetFile));
 p.source       =fullfile(char(p.mdir),char(p.sourceFiles));
-% p.slice        =1;
-% p.interpOrder  =3;
-% p.outputPrefix ='c';
-% p.cleanup      =1;
+
+if ischar(p.sliceDimension) || isempty(p.sliceDimension) || ismember(p.sliceDimension,[1:3])==0
+    p.sliceDimension=3;
+end
 
 % ==============================================
 %%   
@@ -290,11 +293,24 @@ p.source       =fullfile(char(p.mdir),char(p.sourceFiles));
 [paT filenameT extT]=fileparts(p.target );
 [~,animal]=fileparts(paS );
 cprintf('*[0 0 1]',[ 'ANIMAL' '"' animal ':'  '" [' num2str(p.iter) '/'  num2str(p.niter) ']'  '\n'] );
-cprintf('[0 0 1]' ,[ '  [SOURCE]: ' '"' [ filenameS extS] '"; [TARGET]: ' '"' [ filenameT extT]  '"; [SLICE]:' num2str(p.slice)  '\n'] );
+cprintf('[0 0 1]' ,[ '  [SOURCE]: ' '"' [ filenameS extS] '"; [TARGET]: ' '"' [ filenameT extT] ...
+    '"; [SLICE]:' num2str(p.slice) '; [SLICE-DIM]:' num2str(p.sliceDimension) '\n'] );
 %% ===============================================
 timex1=tic;
-[ha a]=rgetnii(p.target);  % TARGET
-[hb b]=rgetnii(p.source);  % SOURCE
+[ha a0]=rgetnii(p.target);  % TARGET
+[hb b0]=rgetnii(p.source);  % SOURCE
+
+%% ============[permute DIMs, such that slice is internally taken from last dim]===================================
+% p.sliceDimension=p.sliceDimension;
+dimPerm    =[setdiff([1:3],p.sliceDimension) p.sliceDimension];
+a=permute(a0,dimPerm);
+b=permute(b0,dimPerm);
+
+a2=ipermute(a,dimPerm);
+b2=ipermute(b,dimPerm);
+% montage2(b2)
+%% ===============================================
+
 aa=a(:,:,p.slice) ;    
 bb=b(:,:,p.slice) ;
 %% ==========[add path]=====================================
@@ -425,7 +441,12 @@ for i=1 :size(b,3)
 end
 fprintf('\n');
 
-% return
+% ==============================================
+%%   permute DIMS back
+% ===============================================
+
+% a2=ipermute(a,dimPerm); %don't need, because a2 is just copied
+b3=ipermute(b2,dimPerm);
 % ==============================================
 %%   save file
 % ===============================================
@@ -435,9 +456,9 @@ end
 
 [pam finame ext]=fileparts(p.source) ;
 file2save=fullfile(pam,[ p.prefix  finame ext]);
-hb2=hb;
+hb3=hb;
 
-rsavenii(file2save, hb2, b2,64);
+rsavenii(file2save, hb3, b3,64);
 % showinfo2(['registerd file:' ],file2save);
 showinfo2(['regist img:' ],p.target ,file2save);
 

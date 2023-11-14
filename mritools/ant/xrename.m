@@ -1236,6 +1236,41 @@ for i=1:length(pa)      %PATH
                     
                    disp(['..description changed in "' Z.file '" of [' Z.animalDir ']' ' --> current description: "'  hm(1).descrip '"' ]);
                     
+                elseif strfind(volnum{j},'pd:') || strfind(volnum{j},'permdim:'); %permute dimensions
+                    % ==============================================
+                    %% permute dimension: 'permdim:' or 'pd:'; example 'pd: 1 3 2'
+                    % ===============================================
+
+                    code=volnum{j};
+                    code=regexprep(code,{'pd:' 'permdim:'},'');
+                    dim=str2num(code); %new permorder
+                    
+                    [ha a]=rgetnii(s1); 
+                    if length(ha)>1  % 4DIM
+                       dim= [dim setdiff([1:4],dim)]; 
+                    else
+                       dim= [dim setdiff([1:3],dim)];
+                    end
+                    dimMat=dim(1:3);
+                    
+                    a2=permute(a, dim);
+                    
+                    vc=spm_imatrix(ha(1).mat);
+                    vc_ord=[dimMat dimMat+3 dimMat+6 dimMat+9];
+                    vc2=vc(vc_ord);
+                    mat=spm_matrix(vc2);
+                    
+                    hx =ha;
+                    siz=size(a2);
+                    for i=1:length(hx)
+                        hx(i).mat=mat;
+                        hx(i).dim=siz(1:3);
+                    end
+                    rsavenii(s2, hx, a2,64);
+                    
+                    showinfo2(['orig dimension: ' s1 ' '],s1);
+                    showinfo2(['permute dimension: ' s2 ' '],s2);
+                    %% ________________________________________________________________________________________________
                     
                     
                 elseif strfind(volnum{j},'mo:'); %vox factor

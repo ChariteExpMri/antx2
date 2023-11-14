@@ -906,6 +906,11 @@ if exist(fconfig)==2
     end
     cd(thispa);
     
+    is_useCompartments=get(findobj(hf,'tag','ch_useCompartments'),'value');
+    if ~isempty(is_useCompartments)
+        cc.useTissueCompartments=is_useCompartments;
+    end
+    
 end
 
 % ==============================================
