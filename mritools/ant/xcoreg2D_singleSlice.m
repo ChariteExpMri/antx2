@@ -11,6 +11,10 @@
 % 'sourceFiles'     -one or more source images (3D-NIFTI-files) which should be registered to the targetFile
 %                   -target and source-images must have the same header-parameters and image parameters 
 %                    i.e. similar header-matrix & same image-size
+% 
+%                   -ALTERNATIVE: use file-filter (regexp)
+%                        examples: '^T1rho_2DG.*.nii'  --> all NIFTI-files starting with 'T1rho_2DG'
+%                                  '.*_post.nii$'      --> all NIFTI-files ending with '_post.nii'
 %                    
 % 'slice'           -slice  which is used for registration
 %                   -currently supports only a slice from the 3rd dimension
@@ -32,8 +36,8 @@
 %                   -default: 'auto'
 %              
 % 'prefix'          -file prefix of the output file (NIFTI) attached to the original filename 
-%                   -if empty, the filename-prefix 'c' is used
-%                   -default: 'c'    
+%                   -if empty, the filename-prefix 'c_' is used
+%                   -default: 'c_'    
 %                     
 % 'cleanup'         -do cleanup. Remove temporary processing folder 
 %                        [0]: no clean up 
@@ -162,7 +166,7 @@ p={...
     'parameterFiles'   parameterFiles 'Elastix-2D-paramer-files (rigid,affine or Bspline), single or multiple files'  {@getparmfiles }
 
     'interpOrder'  'auto'    'interpolation: [0] nearest neighbour, [1] bilinear interpolation, [3] spline interpolation, order 3, ["auto"] to autodetect interpolation order' {'auto',0,1,2,3,4,5}'
-    'prefix'       'c'       'file prefix of the output file (if empty, "c" is used  )'   {'c' 'c_'} 
+    'prefix'       'c_'       'file prefix of the output file (if empty, "c_" is used  )'   {'c' 'c_'} 
     'cleanup'      [1]       'do cleanup. Remove temporary processing folder, {0|1|2}; default: [1]'  {0 1 2}     
     'isParallel'   [0]       'parallel processing over sourceFiles , {0|1}; default: [0]'   'b'
     
@@ -213,12 +217,30 @@ parameterFiles=cellstr(parameterFiles);
 %===========================================
 cprintf('*[ 0.3020    0.7451    0.9333]',[ '*** 2D-REGISTRATION via REFERENCE-SLICE ***' '\n'] );
 timex0=tic;
+
 for i=1:length(pa)
         z2     =z;
         z2.mdir=pa{i};
+        
+        z2.tempfileParfor=fullfile(z2.mdir,'_tempXcoreg2SParfor.txt');
+        try; delete(z2.tempfileParfor) ;end
+        if exist(z2.tempfileParfor)==2;
+            fclose('all');
+            try; delete(z2.tempfileParfor) ;end
+        end
+        f = fopen(z2.tempfileParfor, 'w');
+        fprintf(f, '%d\n', 0); % Save N at the top of progress.txt
+        fclose(f);
+    
+        
         [~,animal]=fileparts(z2.mdir);
         cprintf('*[ 0.3020    0.7451    0.9333]',[ '[' num2str(i) '/' num2str(length(pa)) '] animal: "' animal '"' '\n'] );
         proc_mdir(z2);
+        try; delete(z2.tempfileParfor) ;end
+        if exist(z2.tempfileParfor)==2;
+            fclose('all');
+            try; delete(z2.tempfileParfor) ;end
+        end
 end
 cprintf('*[0 .5 0]',[ '2D-REGISTRATION finished! ' sprintf('(%ct=%0.2fmin)', 916,toc(timex0)/60)  '\n'] );
 
@@ -228,10 +250,27 @@ cprintf('*[0 .5 0]',[ '2D-REGISTRATION finished! ' sprintf('(%ct=%0.2fmin)', 916
 % ===============================================
 function proc_mdir(p0);
 
+%% ----IF regexp-FILTER IS USED
+sourcefile=p0.sourceFiles;
+if length(sourcefile)==1
+    sourcefile=char(sourcefile);
+    if ~isempty(regexpi(sourcefile,'\^|\$|*'))
+        mdir=char(p0.mdir);
+        [files] = spm_select('List',mdir,sourcefile);
+        p0.sourceFiles=cellstr(files);
+        p0.sourceFiles(find(strcmp(p0.sourceFiles,p0.targetFile)))=[];%remove targetFile from list
+        p0.sourceFiles=natsort(p0.sourceFiles); %sort numeric
+        disp([ '..using fileFilter: "' sourcefile '"'  ', ' num2str(length(p0.sourceFiles))  ' sourcefiles were found: ' strjoin(p0.sourceFiles,'|') ]);
+    end
+end
+
+%------------------------------
+timex2=tic;
+
 if p0.isParallel==1 && length(p0.sourceFiles)>1
     parfor i=1:length(p0.sourceFiles)
         p            =p0;
-        p.iter       =1;
+        p.iter       =i;
         p.niter      =length(p0.sourceFiles);
         p.sourceFiles=p0.sourceFiles(i);
         proc_register(p);
@@ -245,6 +284,10 @@ else
         proc_register(p);
     end 
 end
+
+[~, animal]=fileparts(char(p0.mdir));
+showinfo2(['   processed:'],char(p0.mdir));
+cprintf('*[0 .5 0]',[ 'Done animal "' animal '"! ' sprintf('(%ct=%2.2fmin)', 916,toc(timex2)/60)  '\n'] );
 
 
 % ==============================================
@@ -295,7 +338,22 @@ end
 cprintf('*[0 0 1]',[ 'ANIMAL' '"' animal ':'  '" [' num2str(p.iter) '/'  num2str(p.niter) ']'  '\n'] );
 cprintf('[0 0 1]' ,[ '  [SOURCE]: ' '"' [ filenameS extS] '"; [TARGET]: ' '"' [ filenameT extT] ...
     '"; [SLICE]:' num2str(p.slice) '; [SLICE-DIM]:' num2str(p.sliceDimension) '\n'] );
-%% ===============================================
+
+%% =================[progress for parallelport]==============================
+f = fopen(p.tempfileParfor, 'a');
+fprintf(f, '1\n');
+fclose(f);
+
+f = fopen(p.tempfileParfor, 'r');
+progress = fscanf(f, '%d');
+fclose(f);
+percent = (length(progress)-1)/p.niter*100;
+% disp(percent);
+disp([ '   progress: '  num2str(length(progress)-1) '/'  num2str(p.niter) ' ' sprintf('(%1.0f%%)', 100*(length(progress)-1)/p.niter) ...
+    ' ' [repmat('x',[1 length(progress)-1]) repmat('.',[1 p.niter-[length(progress)-1]]) ] ]);
+%% ===============[get data]================================
+
+
 timex1=tic;
 [ha a0]=rgetnii(p.target);  % TARGET
 [hb b0]=rgetnii(p.source);  % SOURCE
@@ -381,7 +439,7 @@ disp([ '  ..MaximumNumberOfIterations: ['  num2str(chk__NO_iterations) ']' ]);
 % cd(fileparts(which('elastix.exe')))
 % varargout=elastix(movingImage,fixedImage,outputDir,paramFile,varargin)
 % [v v2]=elastix(bb,aa,paout,paramFile);
-fprintf(' ..running Elastix..');
+fprintf('  ..running Elastix..');
  [logela v v2]=evalc('elastix(bb,aa,paout,paramFile)');
 %[v v2]=elastix(bb,aa,paout,paramFile);
 
@@ -460,7 +518,7 @@ hb3=hb;
 
 rsavenii(file2save, hb3, b3,64);
 % showinfo2(['registerd file:' ],file2save);
-showinfo2(['regist img:' ],p.target ,file2save);
+showinfo2(['  ..regist img:' ],p.target ,file2save);
 
 % ==============================================
 %%   copy orig-targetfile and add prefix
