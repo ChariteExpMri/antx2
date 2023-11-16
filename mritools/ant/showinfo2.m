@@ -64,7 +64,6 @@ if strcmp(ext,'.nii')==0 ;%~isempty(regexp(im1,'.xls|.xlsx'))
         disp(mg);
     else
         varargout{1}=mg;
-        
     end
     
     
@@ -78,6 +77,9 @@ if exist('colorstr')==0
     colorstr='0';
 else
     colorstr= num2str(colorstr);
+    if isempty(colorstr)
+        colorstr=0;
+    end
 end
 
 if exist('im2')~=1; im2=''; end
@@ -142,16 +144,21 @@ if ~ isempty(im2)
                 msg2=[' [' name1 ' - ' name2 ']:'];
             end
             if isdekstop==1
-                disp([msg msg2 ' <a href="matlab: explorerpreselect(''' b.img ''');">' 'Explorer' '</a>' ...
-                    ' or <a href="matlab: rmricron([],''' a.img ''' ,''' b.img ''', ' colorstr ')">' 'MRicron' '</a>'   ]);
+%                 disp([msg msg2 ' <a href="matlab: explorerpreselect(''' b.img ''');">' 'Explorer' '</a>' ...
+%                     ' or <a href="matlab: rmricron([],''' a.img ''' ,''' b.img ''', ' colorstr ')">' 'MRicron' '</a>'   ]);
+               mg=[msg msg2 ' <a href="matlab: explorerpreselect(''' b.img ''');">' 'Explorer' '</a>' ...
+                    ' or <a href="matlab: rmricron([],''' a.img ''' ,''' b.img ''', ' colorstr ')">' 'MRicron' '</a>'   ];
             else
-                disp([msg msg2 ':"' a.img '","' b.img '"' ]);
+               % disp([msg msg2 ':"' a.img '","' b.img '"' ]);
+                mg=[msg msg2 ':"' a.img '","' b.img '"' ];
             end
         end
-        
-        
-        
-        
+        if nargout==0
+            disp(mg);
+        else
+            varargout{1}=mg;
+        end
+
     end
 end
 
@@ -161,10 +168,17 @@ if isempty(im2)
     end
     %SINGLE IMG
     if isdekstop==1
-        disp([msg ' [' a.name ']: <a href="matlab: explorerpreselect(''' a.img ''');">' 'Explorer' '</a>' ...
-            ' or <a href="matlab: rmricron([], ''' a.img ''',[], 0)">' 'MRicron' '</a>' ' ' msg2  ]);
+%         disp([msg ' [' a.name ']: <a href="matlab: explorerpreselect(''' a.img ''');">' 'Explorer' '</a>' ...
+%             ' or <a href="matlab: rmricron([], ''' a.img ''',[], 0)">' 'MRicron' '</a>' ' ' msg2  ]);
+      mg=  [msg ' [' a.name ']: <a href="matlab: explorerpreselect(''' a.img ''');">' 'Explorer' '</a>' ...
+            ' or <a href="matlab: rmricron([], ''' a.img ''',[], 0)">' 'MRicron' '</a>' ' ' msg2  ];
     else
-        disp([msg ' [' a.name ']: "' a.img '", ' msg2]);
+        mg=([msg ' [' a.name ']: "' a.img '", ' msg2]);
+    end
+    if nargout==0
+        disp(mg);
+    else
+        varargout{1}=mg;
     end
 end
 

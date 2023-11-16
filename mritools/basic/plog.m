@@ -18,14 +18,16 @@ function [w hist]=plog(hist, X,do,title, varargin)
 % al  : 'al=1' left align; 'al=2' right align (default: al=2) 
 % d..decimal values;  'd=2]'
 % 'plotlines=0'  %do not plot lines, 'plotlines=1': plot lines
-% 'upperline', '0'  , hide upper line
-% 'space'      '0'
+% 'upperline', '0' or '1'  , hide/show upper line (dashed line); example: 'upperline=0;'
+% 'space'      '0' or '1'  , remove lines by space;              example: 'space=0;'
+% 'ind'         value      , indent text to the right by value;  example: 'ind=5;' 
 % see examples in plog
 %% EXAMPLES
 % ds={   'PARAMETER '         'Hfdr'    'Huncor'    'p'             'T'          'ME'         'SD'        'SE'        'n1'    'n2'    'df'
 % 'degrees_und(dx)'    [   1]    [     1]    ' 0.0007913'    [-4.1265]    [-3.4783]    [1.7881]    [0.8429]    [ 9]    [ 9]    [16]};
 % str='NETWORKPARAMETER (NW-metrics) - scalar metrics'
 % df=plog([],ds,0,str,'s=0,upperline=0')
+% df=plog([],ds,0,str,'s=0,upperline=0;ind=4')
 % df=plog([],ds,0,str,'s=0,space=1')
 % df=plog([],ds,0,str,'s=0,style=1')
 % plog([],[{'rr' 'r'  'eeee' ;'rr' 'rrr'  'eeee' ;}],0,'TEST' ,'al=1'   ); %align left
@@ -87,9 +89,16 @@ if 0
       
 end
 
-for i=1:length(varargin)
-    eval([varargin{i} ';']);
-    
+if length(varargin)>0
+    for i=1:length(varargin)
+        %         if i==1 && ischar(varargin{i})
+        %
+        %         end
+        varargin{i}=[strrep(varargin{i},',',';') ';'];
+        eval([varargin{i} ';']);
+        
+        
+    end
 end
 
 
@@ -392,10 +401,17 @@ if exist('upperline')==1
         w{1}=repmat(' ',[1 size(w{1},2)]);
     end
 end
-if exist('space')==1
+if exist('space')==1; %space instead of dashed-line
     if space==1
         ix=find(~cellfun('isempty',regexpi(w,'¯¯¯¯¯')));
-        w(ix)={repmat(' ',[1 size(w{ix(1)},2)])};
+        if ~isempty(ix)
+            w(ix)={repmat(' ',[1 size(w{ix(1)},2)])};
+        end
+    end
+end
+if exist('ind')==1; %indent text example: 'ind=5;'  
+    if isnumeric(ind)
+        w=cellfun(@(a){[ repmat(' ',[1 ind]) a]}, w );
     end
 end
 

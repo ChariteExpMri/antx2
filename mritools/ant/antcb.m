@@ -2326,6 +2326,7 @@ end
 if usegui==1;
     li2=get(lb3,'string');
     va2=get(lb3,'value');
+    drawnow;
     index=va2;
 else %using NOGUI
     index=iselect;
@@ -2354,6 +2355,7 @@ end
 
 
 hgfeval(get(lb3,'callback'),lb3);
+drawnow;
 % hl=findobj(findobj(0,'tag','ant'),'tag','lb3')
 % hgfeval(get(hl,'callback'),hl)
 % hgfeval(hc,hl)

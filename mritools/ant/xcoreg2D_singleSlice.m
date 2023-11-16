@@ -50,6 +50,12 @@
 %                     [1] parallel processing
 %                   -default: [0]
 % 
+% 'simulate'        -simulate process: i.e. check existence of sourceFiles and targetFile &
+%                    check whether header-mat and dimensions are similar
+%                   -if [0]: simulate only; if [1]: rgister images 
+%                   -default: [0]
+% 
+% 
 %% #b ____ADDITIONAL ELASTIX-SPECIFICATIONS____
 % [MaximumNumberOfIterations]:  maximum number of iterations, (leave empty to use default iteration from parameter-file) 
 %     -depending on the number of parameterfiles you can specify the number of iterations for each parameterfile.
@@ -170,6 +176,10 @@ p={...
     'cleanup'      [1]       'do cleanup. Remove temporary processing folder, {0|1|2}; default: [1]'  {0 1 2}     
     'isParallel'   [0]       'parallel processing over sourceFiles , {0|1}; default: [0]'   'b'
     
+    'inf2999'     '' '' ''
+    'simulate'     [0]       'simulate only (check existence of files,similar header-mat and dimensions) , {0|1}; default: [0]'   'b'
+
+    
     'inf3000'        ''                           '' ''
     'inf3'  '___ELASTIX_PARAMETER_SPECS___'  ' ' ' '
     'MaximumNumberOfIterations'   []    'number of iterations (if empty use number of iterations as specified in parameter-file)'   param_iterations
@@ -215,9 +225,14 @@ parameterFiles=cellstr(parameterFiles);
 %===========================================
 %%   process: [1] loop over m-dirs
 %===========================================
-cprintf('*[ 0.3020    0.7451    0.9333]',[ '*** 2D-REGISTRATION via REFERENCE-SLICE ***' '\n'] );
+if z.simulate==1
+    cprintf('*[0.9294    0.6941    0.1255]',[ 'SIMULATION ONLY: *** 2D-REGISTRATION via REFERENCE-SLICE *** ' '\n'] );
+else
+    cprintf('*[ 0.3020    0.7451    0.9333]',[ '*** 2D-REGISTRATION via REFERENCE-SLICE ***' '\n'] );
+end
 timex0=tic;
 
+msg2={};
 for i=1:length(pa)
         z2     =z;
         z2.mdir=pa{i};
@@ -235,20 +250,43 @@ for i=1:length(pa)
         
         [~,animal]=fileparts(z2.mdir);
         cprintf('*[ 0.3020    0.7451    0.9333]',[ '[' num2str(i) '/' num2str(length(pa)) '] animal: "' animal '"' '\n'] );
-        proc_mdir(z2);
+        msg2{i,1}=proc_mdir(z2);
+        
         try; delete(z2.tempfileParfor) ;end
         if exist(z2.tempfileParfor)==2;
             fclose('all');
             try; delete(z2.tempfileParfor) ;end
         end
 end
-cprintf('*[0 .5 0]',[ '2D-REGISTRATION finished! ' sprintf('(%ct=%0.2fmin)', 916,toc(timex0)/60)  '\n'] );
+
+evalin('base', ['clear ' ['log_' mfilename]]); %CLEAR LOG-VARIABLE
+if z.simulate==1
+    cprintf('*[0.9294    0.6941    0.1255]',[ 'SIMULATION ONLY: 2D-REGISTRATION finished! ' sprintf('(%ct=%0.2fmin)', 916,toc(timex0)/60)  '\n'] );
+else
+    cprintf('*[0 .5 0]',[ '2D-REGISTRATION finished! ' sprintf('(%ct=%0.2fmin)', 916,toc(timex0)/60)  '\n'] );
+
+end
+% length(msg2)==1 && isempty(char(msg2)) ||
+if  sum(cellfun(@isempty,msg2 ))==length(msg2) %ERRORS OCCURED
+    if z.simulate==1
+        cprintf('*[0.9294    0.6941    0.1255]',[ 'STATUS: all files seems to be OK.' '\n'] );
+    else
+        cprintf('*[0 .5 0]',[ 'STATUS: all files processed' '\n'] );
+    end
+else
+    cprintf('*[1 0 1]',[ 'STATUS: some files were not processed--> see variable "' ['log_' mfilename] '" in workspace' '\n'] );
+    assignin('base',['log_' mfilename],msg2);
+    mg=[' see VARIABLE <a href="matlab: disp(char(' ['log_' mfilename] '));">' [ ['log_' mfilename] ] '</a> to inspect errors.'];
+    disp(mg);
+end
+
+
 
 
 % ==============================================
 %%           [2] loop over source-files
 % ===============================================
-function proc_mdir(p0);
+function msg2=proc_mdir(p0);
 
 %% ----IF regexp-FILTER IS USED
 sourcefile=p0.sourceFiles;
@@ -266,14 +304,14 @@ end
 
 %------------------------------
 timex2=tic;
-
+msg={};
 if p0.isParallel==1 && length(p0.sourceFiles)>1
     parfor i=1:length(p0.sourceFiles)
         p            =p0;
         p.iter       =i;
         p.niter      =length(p0.sourceFiles);
         p.sourceFiles=p0.sourceFiles(i);
-        proc_register(p);
+        msg{i,1}=proc_register(p);
     end
 else
     for i=1:length(p0.sourceFiles)
@@ -281,19 +319,31 @@ else
         p.iter       =i;
         p.niter      =length(p0.sourceFiles);
         p.sourceFiles=p0.sourceFiles(i);
-        proc_register(p);
+        msg{i,1}=proc_register(p);
     end 
 end
 
 [~, animal]=fileparts(char(p0.mdir));
-showinfo2(['   processed:'],char(p0.mdir));
-cprintf('*[0 .5 0]',[ 'Done animal "' animal '"! ' sprintf('(%ct=%2.2fmin)', 916,toc(timex2)/60)  '\n'] );
 
+% if p0.simulate==1
+%     cprintf('*[0.9294    0.6941    0.1255]',[ 'SIMULATION: 2D-REGISTRATION finished! ' sprintf('(%ct=%0.2fmin)', 916,toc(timex0)/60)  '\n'] );
+% end
+
+if sum(cellfun(@isempty,msg )) ==length(msg)  %everything is OK!!
+    showinfo2(['   processed:'],char(p0.mdir));
+    cprintf('*[0 .5 0]',[ 'Done animal "' animal '"! ' sprintf('(%ct=%2.2fmin)', 916,toc(timex2)/60)  '\n'] );
+    msg2='';
+else
+     showinfo2(['   could not process!:'],char(p0.mdir));
+    cprintf('*[1 0 1]',[ 'ERROR unprocessed animal "' animal '"! ' sprintf('(%ct=%2.2fmin)', 916,toc(timex2)/60)  '\n'] );
+    msg(cellfun(@isempty,msg ))=[] ; %remove empty-cells (okish-cells)
+    msg2=char(msg);
+end
 
 % ==============================================
 %%  loop over source-files
 % ===============================================
-function proc_register(p)
+function msg=proc_register(p)
 
 
 % ==============================================
@@ -351,12 +401,69 @@ percent = (length(progress)-1)/p.niter*100;
 % disp(percent);
 disp([ '   progress: '  num2str(length(progress)-1) '/'  num2str(p.niter) ' ' sprintf('(%1.0f%%)', 100*(length(progress)-1)/p.niter) ...
     ' ' [repmat('x',[1 length(progress)-1]) repmat('.',[1 p.niter-[length(progress)-1]]) ] ]);
+
+
+%% ===============[check consistency of data]================================
+msg={};
+% return
+if exist(      p.target)==2;
+    ha=spm_vol(p.target);
+else
+    msg{end+1,1}=[ 'ERROR: targetFile missing: "' p.target '"'] ;
+    msg{end+1,1}=showinfo2(['    animal:'],paT);
+    if ~isempty(msg);  msg=char(msg);     return;   end
+end
+if exist(      p.source)==2;
+    hb=spm_vol(p.source);
+else
+    msg{end+1,1}=[ 'ERROR: sourceFile missing: "' p.source '"'] ;
+    msg{end+1,1}=showinfo2(['    animal:'],paS);
+    if ~isempty(msg);  msg=char(msg);     return;   end
+end
+
+ck.sameDim=sum([ha(1).dim(1:3)  == hb(1).dim(1:3) ]) ==3;
+ck.sameMat=sum(ha(1).mat(:)==hb(1).mat(:))           ==16;
+
+if ck.sameDim~=1
+    msg{end+1,1}=['ERROR: dim-mismatch targetFile/sourceFile: ' ['DIM [' regexprep(num2str(ha(1).dim(1:3)),'\s+', ' ') ']' ' vs ' '[' regexprep(num2str(hb(1).dim(1:3)),'\s+', ' ') ']'] ] ;
+    msg{end+1,1}=['    animal: "' animal '"'] ;
+    msg{end+1,1}=showinfo2(['    targetFile:'],p.target);
+    msg{end+1,1}=showinfo2(['    sourceFile:'],p.source);
+end
+if ck.sameMat~=1
+    msg{end+1,1}=['ERROR: header-matrix-mismatch targetFile/sourceFile: '] ;
+    msg{end+1,1}=['    animal: "' animal '"'] ;
+    msg{end+1,1}=showinfo2(['    targetFile:'],p.target);
+    msg=[msg; plog([],[ ha(1).mat ],0,'','al=2;plotlines=0;ind=10;' )];
+    msg{end+1,1}=showinfo2(['    sourceFile:'],p.source);
+    msg=[msg; plog([],[ hb(1).mat ],0,'','al=2;plotlines=0;ind=10;' )];
+end
+
+% char(msg)
+
+if ~isempty(msg);  msg=char(msg);     return;   end
+
+
+if p.simulate==1
+   return 
+end
+
 %% ===============[get data]================================
 
 
 timex1=tic;
 [ha a0]=rgetnii(p.target);  % TARGET
 [hb b0]=rgetnii(p.source);  % SOURCE
+
+
+
+
+% if sum([ha(1).dim(1:3)  == hb(1).dim(1:3) ])
+    
+    
+    
+
+
 
 %% ============[permute DIMs, such that slice is internally taken from last dim]===================================
 % p.sliceDimension=p.sliceDimension;
