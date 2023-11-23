@@ -130,7 +130,7 @@ for i=1:length(pa)
         %===============================================
         msg=['animal:"' o{i,1} '"'  char(8594) ';ROTATION:[' o{i,2} ']' repmat(' ',[1 12-length(o{i,2})]) ...
             ';idx:[' num2str(o{i,3}) '];best metric:[' num2str(o{i,4}) ']'];
-        cprintf('[0 .5 0]',[msg  '\n'] );
+        cprintf('*[0 .5 0]',[msg  '\n'] );
     else
         disp(ms);
     end
