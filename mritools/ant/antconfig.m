@@ -34,12 +34,14 @@
 %         [1] : create '_msk.nii' based on pcnn3d-tool. #b real skull-stripping 
 %              #g default: [1]
 %         [2] : '_msk.nii' is a copy of 't2.nii' (no changes)
+%                -EXVIVO-data: appriach for already scullstriped data
 %         [3] : create '_msk.nii' based on otsu-method (3 clusters). 
 %               -This option is prone to errors.
-%               -method can be useful for exvivo skullstripped braisn preserved in the stuff that produces 
+%               -method can be useful for exvivo skullstripped brains preserved in the stuff that produces 
 %               high-contrast in the MR-image
-%         [5] : same as  [3] but using 2-otsu clusters 
+%         [5] : same as [3] but using 2-otsu clusters 
 %               might work better than [3]
+%         [6] : EXVIVO-data in TUBE with high-contrast solution (e.g. PBS) + posthoc skullstripping (pcnn3d)
 %         [4] : '_msk.nii' is basically 't2.nii' but background is removed to accellerate segmentation
 %               *use this option for exvivo skullstripped brain preserved in the stuff that produces 
 %               high-contrast in the MR-image. 
@@ -150,6 +152,53 @@ if ~isempty(spaceInPath)
    return
 
 end
+
+%% =====[skullStrippingMethos]==========================================
+meth_skullstrip=...
+    {...
+    '[1]: create "_msk.nii" using pcnn3d-tool (default)'                                   [1]
+    '[3]: create "_msk.nii" unsing otsu-method (3 clusters)'                               [3]
+    '[5]: create "_msk.nii" unsing otsu-method (2 clusters)'                               [5]
+    '[6]: EXVIVO & tube with high-contrast (PBS) solution ("deTube"+pcnn3d)'               [6]
+    '[0]: "t2.nii" is already skullstripped (exvivo brain) '                               [0]
+    '[2]: create "_msk.nii" as copy of "t2.nii"  (for allready skullstripped brains)'      [2]
+    '[4]: "_msk.nii" is "t2.nii" but background is removed to accellerate segmentation'    [4]
+    '[-1]: brain masked "_msk.nii" is assumed to exist in path'                            [-1]
+    };
+%              #g default: [1]
+%         [2] : '_msk.nii' is a copy of 't2.nii' (no changes)
+%                -EXVIVO-data: appriach for already scullstriped data
+%         [3] : create '_msk.nii' based on otsu-method (3 clusters). 
+%               -This option is prone to errors.
+%               -method can be useful for exvivo skullstripped brains preserved in the stuff that produces 
+%               high-contrast in the MR-image
+%         [5] : same as [3] but using 2-otsu clusters 
+%               might work better than [3]
+%         [6] : EXVIVO-data in TUBE with high-contrast solution (e.g. PBS) + posthoc skullstripping (pcnn3d)
+%         [4] : '_msk.nii' is basically 't2.nii' but background is removed to accellerate segmentation
+%               *use this option for exvivo skullstripped brain preserved in the stuff that produces 
+%               high-contrast in the MR-image. 
+%        [-1] : brain masked image '_msk.nii' is assumed to exist in the path
+
+% options [0] : 't2.nii' is already skullstripped (exvivo brain) 
+%         [1] : create '_msk.nii' based on pcnn3d-tool. #b real skull-stripping 
+%              #g default: [1]
+%         [2] : '_msk.nii' is a copy of 't2.nii' (no changes)
+%                -EXVIVO-data: appriach for already scullstriped data
+%         [3] : create '_msk.nii' based on otsu-method (3 clusters). 
+%               -This option is prone to errors.
+%               -method can be useful for exvivo skullstripped brains preserved in the stuff that produces 
+%               high-contrast in the MR-image
+%         [5] : same as [3] but using 2-otsu clusters 
+%               might work better than [3]
+%         [6] : EXVIVO-data in TUBE with high-contrast solution (e.g. PBS) + posthoc skullstripping (pcnn3d)
+%         [4] : '_msk.nii' is basically 't2.nii' but background is removed to accellerate segmentation
+%               *use this option for exvivo skullstripped brain preserved in the stuff that produces 
+%               high-contrast in the MR-image. 
+%        [-1] : brain masked image '_msk.nii' is assumed to exist in the path
+
+
+% {1 0 2 3 4 -1}
 %% ===============================================
 
 
@@ -164,7 +213,7 @@ p={...
     'inf2'   '_______________________________________________________________________________________________' '' ''
     
     'wa.BiasFieldCor'        [0]         'perform initial bias field correction (only needed if initial skullstripping failes) ' 'b'
-    'wa.usePriorskullstrip'  [1]         'use a priori skullstripping (used for automatic registration)'  {1 0 2 3 4 -1}
+    'wa.usePriorskullstrip'  [1]         'priori skullstripping method (used for automatic registration)' meth_skullstrip ;% {1 0 2 3 4 -1}
     'wa.fastSegment'         [1]         'faster segmentation by cutting boundaries of t2.nii [0,1]' 'b'
     
     

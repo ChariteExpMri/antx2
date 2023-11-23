@@ -312,17 +312,28 @@ if find(s.task==1)
     end
     
     %% SKULLSTRIP T2.nii
-    if s.usePriorskullstrip==1
+    if s.usePriorskullstrip==1 || s.usePriorskullstrip==6
         %disp('#check---skullstripp');
-        fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: use pcnn3d-tool ' ]);
+        if s.usePriorskullstrip==1
+            F1=s.t2;
+            msg='use';
+        elseif s.usePriorskullstrip==6
+            F1=removeTube(s.t2);
+            msg='remove tube & use';
+        end
+        
+        fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: ' msg ' pcnn3d-tool ' ]);
 
         %if isfield(s,'species') && strcmp(s.species,'rat')  % ##-RAT-##
         if isfield(s,'species') && (strcmp(s.species,'rat') || strcmp(s.species,'etruscianshrew'))   
             skparam.species = s.species;
-            evalc('skullstrip_pcnn3d(s.t2, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip'' ,skparam  )'); ;
+            evalc(['skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip'' ,skparam  )']); ;
         else
             %skullstrip_pcnn3d(s.t2, fullfile(s.pa, '_msk.nii' ),  'skullstrip'   );
-            evalc('skullstrip_pcnn3d(s.t2, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip''   )'); ;
+            evalc('skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip''   )'); ;
+        end
+        if s.usePriorskullstrip==6
+            try; delete(F1); end
         end
         fprintf('..done.\n ');
         

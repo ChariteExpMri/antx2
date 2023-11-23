@@ -666,8 +666,9 @@ uimenu('Parent',ContextMenu, 'Label','  SPMDISP: overlay t2.nii & ALLen(GM)', 'c
 % uimenu('Parent',ContextMenu, 'Label','    overlay [x_t2.nii] & [ANO.nii] ', 'callback', {@cmenuCasesCB,'ovl' });
 % uimenu('Parent',ContextMenu, 'Label','    overlay [x_t2.nii] & [_b1grey.nii] ', 'callback', {@cmenuCasesCB,'ovl' });
 
-uimenu('Parent',ContextMenu, 'Label','examine orientation',                   'callback', {@cmenuCasesCB,'examineOrientation' },       'ForegroundColor',[  1   0.3882    0.3882],    'Separator','on');
-uimenu('Parent',ContextMenu, 'Label','get orientation via 3point selection',  'callback', {@cmenuCasesCB,'getOrientationVia3points' }, 'ForegroundColor',[ 1    0.3882    0.3882],    'Separator','off');
+uimenu('Parent',ContextMenu, 'Label','get orientation -automatic mode',      'callback', {@cmenuCasesCB,'getOrientationAutomatic' },   'ForegroundColor',[1   0.3882    0.3882],    'Separator','on');
+uimenu('Parent',ContextMenu, 'Label','examine orientation',                  'callback', {@cmenuCasesCB,'examineOrientation' },        'ForegroundColor',[1   0.3882    0.3882],    'Separator','off');
+uimenu('Parent',ContextMenu, 'Label','get orientation via 3point selection', 'callback', {@cmenuCasesCB,'getOrientationVia3points' },  'ForegroundColor',[1   0.3882    0.3882],    'Separator','off');
 
 uimenu('Parent',ContextMenu, 'Label','   *clipboard selected fullpaths-folders',                 'callback', {@cmenuCasesCB,'copyfullpath' },      'Separator','on');
 uimenu('Parent',ContextMenu, 'Label','   *clipboard selected folders ',                          'callback', {@cmenuCasesCB,'copypath' },          'Separator','off');
@@ -922,7 +923,17 @@ switch cmenutask
                 ovlcontour({f1;f2},2,['5 50'],[.08 0 0.05 0.05],[1 1 0],{jet .5  [ ]}, dirx);
             end
         end
-        
+    case  'getOrientationAutomatic'  
+        px=antcb('getsubjects');
+        o=xgetpreorientAuto(1);
+        if ~isempty(o)
+            disp(cell2table(o,'VariableNames',{'animal' 'rotation' 'RotationIndex' 'metric'}));
+            disp(['The 3rd-column represents the RotationIndex of the best matching rotation']);
+            disp(['Here the optimal rotation-index is [' num2str(o{1,3}) '] for the 1st row']);
+            disp(['Please set a single value of the RotationIndex to "x.wa.orientationType" in your project-file']);
+            disp(['(via "settings"/gear-icon ) ']);
+        end
+
         
     case 'examineOrientation'
         px=antcb('getsubjects');

@@ -310,6 +310,10 @@ jTable.setAutoResizeMode(jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 % set(jtable,'MouseClickedCallback',@selID)
 % if 0
 set(jTable,'MousemovedCallback',@mousemovedTable);
+
+% selCol=[1 0 0];
+selCol=[0 0 1];
+set(jTable, 'SelectionForeground',java.awt.Color(selCol(1),selCol(2),selCol(3)));
 % end
 if 1
     set(t, 'CellSelectionCallback',@cellclicked);
@@ -755,12 +759,16 @@ function contextmenu_create()
 hf=findobj(0,'tag','anthistory');
 u=get(hf,'userdata');
 c = uicontextmenu;
-m= uimenu(c,'Label','delete current selection from history','Callback',@removefromhistory);
+m= uimenu(c,'Label','open study directory','Callback',{@context,'openStudyDir'},'separator','on');
+m= uimenu(c,'Label',' show configfile','Callback',{@context,'showConfigfile'});
+
+m= uimenu(c,'Label','export study or data of study..','Callback',{@context,'doublicateStudy'},'separator','on');
+
+m= uimenu(c,'Label','delete current selection from history','Callback',@removefromhistory,'separator','on');
 m= uimenu(c,'Label','delete history of THIS STUDY (all entries of this study is deleted)','Callback',{@context,'deleteStudy'});
 m= uimenu(c,'Label','keep newest 3 entries  of THIS STUDY in history (remove the older entries)','Callback',{@context,'keepNewest3'});
 
-m= uimenu(c,'Label','open study directory','Callback',{@context,'openStudyDir'},'separator','on');
-m= uimenu(c,'Label',' show configfile','Callback',{@context,'showConfigfile'});
+
 
 
 set(u.t,'UIContextMenu',c);
@@ -881,8 +889,183 @@ elseif strcmp(task,'showConfigfile')
         end
         edit(pfile);
     end
+elseif strcmp(task,'doublicateStudy')
     
+    for i=1:length(isel)
+        pfile=fullfile(u.d{isel(i),2}, u.d{isel(i),3});
+        if exist(pfile)==2
+            doublicateStudy(pfile);
+            return
+        end
+    end
 end
+
+
+
+function doublicateStudy(pfile)
+
+% pfile
+%% ===============================================
+paWD=pwd;
+[paIN fun ext]=fileparts(pfile);
+cd(paIN);
+run([fun ext]);
+cd(paWD);
+
+study=fileparts(x.datpath);
+k=dir(study);
+sub={k(:).name}';
+iupp=regexpi2(sub,'^\.$|^\..$');
+sub(iupp)=[];
+isdir=[k(:).isdir]';
+isdir(iupp)=[];
+type=repmat({'file'},[length(isdir) 1]);
+type(isdir)={'dir'};
+
+
+
+% =========[select subFiles/dirs]======================================
+t=[sub type];
+t=sortrows([t],[2 1]);
+ht={'Name' 'Type'};
+% hpresel =[1:size(t,1)];
+htit    ='STEP1/3: select files/dirs to copy';
+hpos    =[ 0.0826    0.3128    0.5062    0.4144];
+% hnote   ={'select files & folders to copy...'};
+drawnow;
+id=selector2(t,ht,'iswait',1,'finder',1,'title',htit,...
+    'position',[hpos]);%,'note',hnote);
+drawnow;
+if id==-1; return; end
+t=t(id,:);
+if isempty(t); return; end
+%% =========[select dat-folder]======================================
+animals=[];
+if ~isempty(find(strcmp(t(:,1),'dat')))
+    k=dir(x.datpath);
+    sub={k(:).name}';
+    iupp=regexpi2(sub,'^\.$|^\..$');
+    sub(iupp)=[];
+    isdir=[k(:).isdir]';
+    isdir(iupp)=[];
+    type=repmat({'file'},[length(isdir) 1]);
+    type(isdir)={'dir'};
+    
+    t2=[sub type];
+    ht2={'Files' 'Type'};
+    hpresel =[1:size(t2,1)];
+    htit    ='select animals to copy';
+    hpos    =[ 0.0826    0.3128    0.5062    0.4144];
+    hnote   ={'STEP2/3: select Animals to export...'};
+    id2=selector2(t2,ht2,'iswait',1,'finder',1,'title',htit,...
+        'position',[hpos]);%,'note',hnote); ,'preselect',hpresel,
+    drawnow;
+    animals=t2(id2,:);
+end
+%% ==========[select files]=====================================
+if ~isempty(animals)
+    %  generate list of nifit-files within pa-path
+    pa=stradd(animals(:,1),[ x.datpath filesep ],1);
+    fi2={};
+    for i=1:length(pa)
+        [files,~] = spm_select('FPListRec',pa{i}) ;%,['.*.nii$']);
+        if ischar(files); files=cellstr(files);   end;
+        fis=strrep(files,[pa{i} filesep],'');
+        fi2=[fi2; fis];
+    end
+    li=unique(fi2);
+    
+    t3=[li  ];
+    ht3={'Files' };
+    hpresel =[1:size(t3,1)];
+    htit    ='select files to copy';
+%     hpos    =[ 0.0826    0.3128    0.5062    0.4144];
+    hnote   ={'STEP3/3: select files from "dat"-folder to copy...'};
+    id3=selector2(t3,ht3,'iswait',1,'finder',1,'title',htit);%,...
+%         'note',hnote); 
+    drawnow;
+    datfiles=t3(id3,:);
+end
+
+%% ============[make outputfolder]===================================
+[pax studyname ]=fileparts(study);
+newstudy=fullfile(pax, [studyname '__exportTEMP']);
+if exist(newstudy)~=7
+    mkdir(newstudy);
+end
+%% ============[copy everything besides of dat-folder]===================================
+isdatfolderSelected=~isempty(find(strcmp(t(:,1),'dat')));
+if isdatfolderSelected==1
+    padatNew=fullfile(newstudy,'dat');
+    if exist(padatNew)~=7
+        mkdir(padatNew);
+    end
+end
+t(strcmp(t(:,1),'dat'),:  )=[];
+if ~isempty(t)
+    fprintf(' copy subdir files/folders..');
+    for i=1:size(t,1)
+        f1=fullfile(study,t{i,1});
+        f2=fullfile(newstudy,t{i,1});
+        copyfile(f1,f2,'f');
+    end
+end
+
+%% ============[copy  dat-folder]===================================
+padatNew=fullfile(newstudy,'dat');
+if isdatfolderSelected==1
+    if exist(padatNew)~=7
+        mkdir(padatNew);
+    end
+    if ~isempty(animals)
+        fprintf(' copy animal-files/folders..');
+        for j=1:size(animals,1)
+            pa_newanimal=fullfile(padatNew, animals{j,1});
+            pa_oldanimal=fullfile(x.datpath, animals{j,1});
+            
+            
+            for i=1:size(datfiles,1)
+                f1=fullfile(pa_oldanimal,datfiles{i} );
+                % exist(f1)
+                if exist(f1)==2 %if exist in source...
+                    f2=fullfile(pa_newanimal,  datfiles{i})   ;
+                    [pam ]=fileparts(f2);
+                    if exist(pam)~=7 ;
+                        mkdir(pam);
+                    end
+                    copyfile(f1,f2,'f');
+                end
+            end
+            
+        end
+    end
+end
+%% ========[change proj.file]=======================================
+f1=fullfile( newstudy, [ fun ext]);
+if exist(f1)==2
+    fprintf(' change projectfile..');
+    a=preadfile(f1); a=a.all;
+    
+    is=regexpi2(a,'x.datpath');
+    r=a{is};
+    q1=r(1: min(strfind(r,'=')));
+    q2=['''' padatNew ''''];
+    q3=r(min(strfind(r,'%')):end);
+    r2=[q1 '  ' q2 '   '  q3];
+    a2=a;
+    a2(is)={r2};
+    pwrite2file(f1,a2);
+end
+
+% ==============================================
+%%   
+% ===============================================
+fprintf('\n');
+showinfo2(['exported folder:'],newstudy);
+cprintf('*[0 .5 0]',[ '..exporting study Done! ' '\n'] );
+
+
+
 % ==============================================
 %%   messages
 %% ===============================================

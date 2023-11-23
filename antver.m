@@ -963,6 +963,10 @@
 % #k [xcoreg2D_singleSlice.m] #n new function: coregister 3D-images using 2D-registration of a specified slice 
 % and apply transformation parameters to all other slices. 
 % #gw --> access via ANT-menu: &#8658; 2D/"single slice 2D-registration" 
+% #ba 23 Nov 2023 (14:08:03)
+% #k [xgetpreorientAuto.m] #n new, get studies "t2.nii" pre-orientation automatically 
+% -available via ANTx animal-listbox context menu, [get orientation -automatic mode]
+% 
 % 
 % 
 
