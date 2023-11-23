@@ -218,11 +218,11 @@ for i=1:length(parameterFile0)
     
     if ~isempty(z.MaximumNumberOfIterations)
         set_ix(parameterfile{i}, 'MaximumNumberOfIterations',z.MaximumNumberOfIterations);
-        get_ix(parameterfile{i}, 'MaximumNumberOfIterations')
+        get_ix(parameterfile{i}, 'MaximumNumberOfIterations');
     end
     if ~isempty(z.NumberOfResolutions)
         set_ix(parameterfile{i}, 'NumberOfResolutions',z.NumberOfResolutions);
-        get_ix(parameterfile{i}, 'NumberOfResolutions')
+        get_ix(parameterfile{i}, 'NumberOfResolutions');
     end
 end
 
