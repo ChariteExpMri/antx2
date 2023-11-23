@@ -117,8 +117,11 @@ pa=cellstr(pa);
 
 o={};
 for i=1:length(pa)
+    
     z2=z;
     z2.mdir=pa{i};
+    %[~,animal]=fileparts(z2.mdir);
+    cprintf('[0 .5 0]',[['___['   num2str(i) ']'   repmat('_',[1 50]) ]  '\n'] );
     [u ms]=proc(z2);
     if ~isempty(u)
         o(end+1,:)={u.animal u.bestrot  u.ixbest  u.bestmetric} ;
@@ -131,6 +134,7 @@ for i=1:length(pa)
     else
         disp(ms);
     end
+    
     %===============================================
 end
 %% ===============================================
