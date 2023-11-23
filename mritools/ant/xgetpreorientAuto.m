@@ -125,7 +125,7 @@ for i=1:length(pa)
         
         
         %===============================================
-        msg=['animal:"' o{i,1} '"'  char(8594) '  ROTATION:[' o{i,2} ']' repmat(' ',[1 20-length(o{i,2})]) ...
+        msg=['animal:"' o{i,1} '"'  char(8594) ';ROTATION:[' o{i,2} ']' repmat(' ',[1 12-length(o{i,2})]) ...
             ';idx:[' num2str(o{i,3}) '];best metric:[' num2str(o{i,4}) ']'];
         cprintf('[0 .5 0]',[msg  '\n'] );
     else
@@ -503,7 +503,7 @@ for i=1:size(tb,1)
     
     
     if z.verbose==1
-        cprintf('[0 .5 0]',['animal: "' animal '"; IDX:[' num2str(i) ']; ROT:[' otc{i,:} '];'  repmat(' ',[1 15-length(otc{i,:})]) 'metric: [' num2str(met) ']\n'] );
+        cprintf('[0 .5 0]',['animal:"' animal '";IDX:[' num2str(i) '];ROT:[' otc{i,:} '];'  repmat(' ',[1 12-length(otc{i,:})]) 'metric:[' num2str(met) ']\n'] );
     end
     
     
