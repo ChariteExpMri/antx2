@@ -182,7 +182,8 @@ if 0
     copyfile(f2orig,f2,'f');
 end
 if 1
-    f2orig1=fullfile(fileparts(fileparts(z.mdir)),'templates','AVGT.nii');
+    f2orig1=fullfile(fileparts(fileparts(z.mdir)),'templates','_b1grey.nii');
+    %f2orig1=fullfile(fileparts(fileparts(z.mdir)),'templates','AVGT.nii');
     f2orig2=fullfile(fileparts(fileparts(z.mdir)),'templates','AVGTmask.nii');
     [ha a]=rgetnii(f2orig1);
     [hb b]=rgetnii(f2orig2);
@@ -252,6 +253,7 @@ otc=rot;
 %  otc=otc(11);
 % %otc=otc(1:3);
 %  otc=otc(2);
+% otc=otc([1 7]);
 
 tb=cell2mat(cellfun(@(a){str2num(a)},otc));
 
@@ -381,16 +383,22 @@ for i=1:size(tb,1)
 
         [hx x]=rgetnii(rmovs);
         y=x>0; %msk
-
+         [ht t]=rgetnii(f1);
         %% ===============================================
         x=x.*(y>0);
-        [ht t]=rgetnii(f1);
         t=t.*(y>0);   
+        
+%         x=reshape(otsu(x(:),4),[hx.dim]);
+%         t=reshape(otsu(t(:),4),[ht.dim]);
 %         sd_trs=1.5;
 %         x=imgaussfilt3(x,sd_trs);
 %         t=imgaussfilt3(t,sd_trs);
         met=corr(x(:),t(:));
-%         met=calcMI(x,t);
+        
+        
+%    met=calcMI(x,t);
+%          met=([sum((x(:)-t(:)).^2)]./length(x(:)));
+         
         met=met*-1;
         metvec(i,1)=met;
         

@@ -90,7 +90,7 @@
 // So, in 2D, with 4 resolutions, the following schedule is used:
 //(ImagePyramidSchedule 8 8 8  4 4 4  2 2 2  1 1 1 )
 // And in 3D:
-//(ImagePyramidSchedule 8 8 8  4 4 4  2 2 2  1 1 1 )
+//(ImagePyramidSchedule  4 4 4  2 2 2  1 1 1 )
 // You can specify any schedule, for example:
 //(ImagePyramidSchedule 4 4  4 3  2 1  1 1 )
 // Make sure that the number of elements equals the number
@@ -107,7 +107,7 @@
 // which usually works well. In case of unusual high-resolution images
 // (eg histology) it is necessary to increase this value a bit, to the size
 // of the "smallest visible structure" in the image:
-//(MaximumStepLength 1.0)
+(MaximumStepLength 1.0)
 
 // **************** Image sampling **********************
 
@@ -153,4 +153,5 @@
 (ResultImagePixelType "float")
 (ResultImageFormat "nii")
 
-
+(MaximumNumberOfSamplingAttempts 100)
+(RequiredRatioOfValidSamples 0.05)
