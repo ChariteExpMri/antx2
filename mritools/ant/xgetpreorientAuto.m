@@ -55,9 +55,10 @@ p={...
 'parameterFile'   parameterFile 'Elastix-3D-RIGID-paramer-file'  {@getparmfiles }
 
 'verbose'       [1]       'display info in cmd-windows {0|1}'  'b'
-'plotMetric'    [1]       'plot metric [0|1]'   'b'
+'plotMetric'    [0]       'bar-plot, display metric across rotations; [0|1]'   'b'
 'plotOvleray'   [2]       'plot overlay of best rotation [0|1|2], [1] and [2] are different visualizations'   {0 1 2}
 
+'inf4000' '' '' ''
 'debug'         [0]       'debugMode: {0|1}, of [1] plot every orientation'  'b'
 'cleanup'       [1]       'do cleanup. Remove temporary processing folder, {0|1}; default: [1]'  {0 1}
 
@@ -120,8 +121,8 @@ for i=1:length(pa)
     
     z2=z;
     z2.mdir=pa{i};
-    %[~,animal]=fileparts(z2.mdir);
-    cprintf('[0 .5 0]',[['___['   num2str(i) ']'   repmat('_',[1 50]) ]  '\n'] );
+    [~,animal]=fileparts(z2.mdir);
+    cprintf('*[0 .5 0]',[['___['   num2str(i) '] '    ' "' animal '" ' repmat('_',[1 10]) ]  '\n'] );
     [u ms]=proc(z2);
     if ~isempty(u)
         o(end+1,:)={u.animal u.bestrot  u.ixbest  u.bestmetric} ;
