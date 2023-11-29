@@ -1236,7 +1236,7 @@ for i=1:length(pa)      %PATH
                     
                    disp(['..description changed in "' Z.file '" of [' Z.animalDir ']' ' --> current description: "'  hm(1).descrip '"' ]);
                     
-                elseif strfind(volnum{j},'pd:') || strfind(volnum{j},'permdim:'); %permute dimensions
+              elseif ~isempty(strfind(volnum{j},'pd:')) || ~isempty(strfind(volnum{j},'permdim:')); %permute dimensions
                     % ==============================================
                     %% permute dimension: 'permdim:' or 'pd:'; example 'pd: 1 3 2'
                     % ===============================================
