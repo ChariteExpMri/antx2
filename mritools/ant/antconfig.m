@@ -197,8 +197,14 @@ meth_skullstrip=...
 %               high-contrast in the MR-image. 
 %        [-1] : brain masked image '_msk.nii' is assumed to exist in the path
 
+%% ======[orientType]=========================================
 
-% {1 0 2 3 4 -1}
+ [arg,rot]=evalc(['' 'findrotation2' '']);
+ orientype=[cellfun(@(a,b){['[' num2str(a) '] which is [' b  ']']}, num2cell([1:size(rot,1)]') ,rot)];
+ orientype(:,2)=num2cell([1:size(orientype,1)])';
+%% ============[]===================================
+
+
 %% ===============================================
 
 
@@ -219,7 +225,7 @@ p={...
     
     
     %'wa.orientRefimage'     2                          'RefImage for rough Reorientation: [0]grayMatter and use old functions),[1]grayMatter,[2]"_sample2.nii2 (T2w-image in AllenSpace)'  num2cell(0:2)
-    'wa.orientType'          1                          'index from ReorientationTable (see: help findrotation2) to rougly match inputVol and "AllenSpace-template" (example [1]Berlin,[5]Munich/Freiburg)' {@selectorientation }
+    'wa.orientType'          1     'reorientation index (see "examine orientation" from animal listbox context menu; see: help findrotation2,  ) to rougly match inputVol and "AllenSpace-template" (example [1]Berlin,[5]Munich/Freiburg)' orientype %{@selectorientation }
     'wa.orientelxParamfile'  which('trafoeuler5.txt')   'single Parameter file for rough Rigid-body registration; default: "trafoeuler2.txt"; use trafoeuler3.txt for large dislocations ' {@paramfilesRigid }
     
     
