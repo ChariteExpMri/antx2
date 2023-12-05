@@ -1193,8 +1193,12 @@ mh2 = uimenu(mh,'Label',' New Project',                          'Callback',{@me
 mh2 = uimenu(mh,'Label',' Create Study Templates',               'Callback',{@menubarCB, 'copytemplates' },  ...
     'userdata',[HSTART 'copying template to study-templates folder ' HEND ' ...using defined voxel-size ']);
 mh2 = uimenu(mh,'Label',' Import Bruker data',                   'Callback',{@menubarCB, 'brukerImport'},'separator','on',    ...
-     'userdata',[HSTART 'import Bruker raw-date' HEND ' ..from various MR-sequences (2dseq/reco)']);
-mh2 = uimenu(mh,'Label',' Import DATA',                          'Callback',{@menubarCB, 'dataimport'  },  ...
+     'userdata',[HSTART 'import Bruker raw-data' HEND ' ..from various MR-sequences (2dseq/reco)']);
+
+ mh2 = uimenu(mh,'Label',' Import NIFTI-Bruker data',                   'Callback',{@menubarCB, 'bruker_NIFTI_Import'},'separator','on',    ...
+     'userdata',[HSTART 'import NIFTI files already existing in Bruker raw-data' HEND '  ...']);
+ 
+ mh2 = uimenu(mh,'Label',' Import DATA',                          'Callback',{@menubarCB, 'dataimport'  },  ...
     'userdata',[HSTART 'import NIFTI-files from other external folder(s)' HEND '...to animal-folders of the study']);
     mh2 = uimenu(mh,'Label',' Import NIFTI via header-replacement',  'Callback',{@menubarCB, 'dataimport2' },  ...
          'userdata',[HSTART 'replace header of NIFTI-files ' HEND '..using the header of a reference-file']);
@@ -2236,6 +2240,27 @@ if strcmp(task,'brukerImport')
     xbruker2nifti({'guidir' [fileparts(an.datpath) filesep]} ,0);
     statusMsg(0);
     %________________________________________________
+%________________________________________________
+elseif strcmp(task,'bruker_NIFTI_Import')
+    
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xbrukernifti';
+        return ;
+    end
+    if strcmp(u.mousekey,'right')
+        %% ===============================================
+        hlpfun='xbrukernifti.m';
+        showcmd(hlpfun);
+        %% ===============================================
+        return
+    end
+    %r=ante;     r.brukerimport();   % !! OLD
+    statusMsg(1,' brukerNIFTI');
+    global an;
+    xbrukernifti;%%%({'guidir' [fileparts(an.datpath) filesep]} ,0);
+    statusMsg(0);
+    %________________________________________________    
+    
 elseif strcmp(task,'coregister')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xcoreg';

@@ -941,10 +941,103 @@ end
 %%   BTABLE
 % ===============================================
 if strcmp(task,'getbtable')
+    
+    
+
+    
+    
+%% ===============================================
+
+opts=struct('WindowStyle','modal','Interpreter','tex','Default','cancel');
+msg={
+    'Please specify source of B-table'
+    '\color{blue}Bruker-RawData: \color{black}Btable is extracted from Bruker-RawData'
+    '\color{blue}AnimalDir     : \color{black} Btable already exists in Study''s Animal-folder'
+    };
+answer = questdlg(msg,'Source of Btable',...
+    'Bruker-RawData','AnimalDir','cancel',opts);
+
+if strcmp(answer,'cancel')
+     disp('..user abort');        return
+end
+
+%% ===============================================
+if strcmp(answer,'AnimalDir')
+    %% ===============================================
+   
+   load(f1);
+   pdat=fullfile(d.studypath,'dat');
+    mesg='select Btables from one Animal-folder, (please put RPE-files at the end)';
+    %    [t,sts] = spm_select(n,typ,mesg,sel,wd,filt,frames)
+    [t,sts] = spm_select(2,'any',mesg,[],pdat,'.*.txt');
+    if sts==0; return; end
+    t=cellstr(t);
+    
+    [mdir filex extx]=fileparts2(t);
+    
+    %---sort: RPE a the end
+    idwiRPE  =regexpi2(filex,'rev');
+    idwi     =setdiff(1:length(filex), idwiRPE);
+    iso=[idwi(:); idwiRPE(:)];
+    filex=filex(iso);
+    
+    %% ===============================================
+    
+    specpath=mdir{1};
+    btableFiles={};
+    numrows=[];
+    for i=1:length(filex)
+        F1=fullfile(specpath  , [        filex{i} '.txt']);
+        F2=fullfile(d.dtipath , ['grad_' filex{i} '.txt']);
+        btableFiles(end+1,1)={F2} ;
+        copyfile(F1,F2,'f');
+        
+        dx=preadfile(F2);
+        numrows(i,1)=size(dx.all,1);
+    end
+    %% ===============================================
+%     isRPE=zeros(length(filex),1);
+%     isRPE(regexpi2(filex,'rev'))=1;
+    isRPE=regexpi2(filex,'rev');
+    
+    tb=[filex(:)   num2cell(numrows) ];
+    tb=cellfun(@(a){[ num2str(a)]}, tb );
+    htb={'Btable Names'  'number of Btable-rows'};
+    
+     id=selector2(tb,htb,'iswait',1,'preselect',isRPE,...
+         'note',{'Please indicate the REVERSE-PHASE-ENCODING files (RPE) files'
+         'REP files has to be tagged [x] '},'title','RPE-files',...
+         'position',[ 0.12    0.19    0.44    0.66]);
+    
+     if id==-1
+          disp('..user abort');    return
+     end
+    %% ===============================================
+    if isempty(id)
+        d.isReversePhaseEncoding='NO';
+        d.ReversePhaseEncoding  = [];
+    else
+        d.isReversePhaseEncoding='YES';
+        d.ReversePhaseEncoding= btableFiles(id);
+    end
+    
+    d.btable=btableFiles;
+    save(f1,'d');   
+     updateLB();
+    cprintf([0 0 1], ['   DONE!\n']);
+    
+    
+    
+    
+    %% ===============================================
+    return
+end
+%% ===============================================
+
+    
     o=getBtable;
     if isempty(o)
-        disp('..user abort');
-        return
+        disp('..user abort');        return
     end
     
     % sort b-table accord size of entries in txt-files

@@ -19,6 +19,8 @@
 % #b - threshold image                 ('tr:')         #g e.g.: 'tr:i>0.5=0'
 % #b - Replace value by another value: ('R:' or 'repl:' or 'replace:') #g e.g.: 'R:<=0;1' | 'R:nan;ME'
 % #b - flip image along 1st dim.       (flip:)         #g e.g.: 'flip:' 
+% #b -remove volume of 4D-image        (rmvol:)        #g e.g.:  'rmvol:6'; remove volume 6; 'rmvol:[1 4:end]' remove volume 1 and 4,5,6,7..
+% 
 % 
 % % __________________________________________________________________________________________________________________
 % - select one/several images TO RENAME/DELETE/EXTRACT/EXPAND/COPY volumes,aka. files
@@ -215,6 +217,15 @@
 %          'c2t2.nii' 	'' 	         'i2' };
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
 %
+%__________________________________________________________________________________________________________________
+%% #by remove volume(s) from 4D volume  (rmvol:)
+% example
+% remove vol-Nr 6 from 'test_revDtiEpi_5_1.nii', save new file 'test_revDtiEpi_5_1_corrected.nii' (using suffix-tag)
+% xrename(1,'test_revDtiEpi_5_1.nii','s:_corrected' ,'rmvol:6')
+%
+% same as above but remove all volumes >2
+% xrename(1,'test_revDtiEpi_5_1.nii','s:_corrected' ,'rmvol:3:end')
+% 
 %__________________________________________________________________________________________________________________
 %% #by voxel resolution (vr:)
 % change voxel resolution of an image via  the [TASK]-column
@@ -1235,7 +1246,64 @@ for i=1:length(pa)      %PATH
                     spm_create_vol(hm);
                     
                    disp(['..description changed in "' Z.file '" of [' Z.animalDir ']' ' --> current description: "'  hm(1).descrip '"' ]);
+             
+             elseif ~isempty(strfind(volnum{j},'rmvol:')) || ~isempty(strfind(volnum{j},'removevol:'))      
+                %% ===============================================
+                
+                 code=volnum{j} ;
+                 code=regexprep(code,{'rmvol:' 'removevol:'},{''});
+                 
+%                  code='4'
+%                  code='1 4 6'
+%                  code='[1 4:end]'
+%                   code='1 2 4:end'
+%                  code='77'
+                 
+                 code=['[' code  ']'];
+                 [ha a]=rgetnii(s1);
+                 if ~isempty(strfind(code,'end'));
+                     vol_ixstr=strrep(code,'end',num2str(size(a,4)) );
+                     eval(['volix=' vol_ixstr ';']);
+                 else
+                     eval(['volix=[' code '];']);
+                     
+                 end
+                 volix=unique(volix);
+                 ivol2del=find(ismember(1:size(a,4), volix)) ;
+                 
+                 if isempty(ivol2del)
+                     disp(['failed: 4Dvol has ' num2str(length(ha))  ' 3D-vols, can''t remove the following volumes :[' num2str(volix) ']' ]  );
+                 else
+                     a(:,:,:,ivol2del)=[];
+                     ha(ivol2del)=[];
+                     for jj=1:length(ha)
+                         ha(jj).n(1)=jj;
+                     end
+                     try; delete(s2); end
+                     rsavenii(s2,ha,a,64);
+                      
+                     showinfo2(['[' Z.animalDir '] reduced volume:'],s2);
+                     
+                     %---check if DWI-file with same name exist
+                     [pay namey exty]=fileparts(s1);
+                     [paN nameN extN]=fileparts(s2);
+                     s1Txt=fullfile(pay,[namey '.txt']);
+                     if exist(s1Txt)==2
+                         dwifile=preadfile(s1Txt); dwifile=dwifile.all;
+                         dwifile(ivol2del,:)=[];
+                         F2new=fullfile(paN,[nameN '.txt']);
+                         pwrite2file(F2new,dwifile);
+                         showinfo2(['[' Z.animalDir '] reduced Btable:'],F2new); 
+                     end
+                     
+                     
                     
+                     
+                 end
+                 
+                 %% ===============================================
+                 
+                   
               elseif ~isempty(strfind(volnum{j},'pd:')) || ~isempty(strfind(volnum{j},'permdim:')); %permute dimensions
                     % ==============================================
                     %% permute dimension: 'permdim:' or 'pd:'; example 'pd: 1 3 2'
@@ -1981,7 +2049,7 @@ if ~strcmp(task,'showimageinfo')
         
         list1=unique(ht.Data(:,2));
         list1(strcmp(list1, ''))=[];
-        list1=[list1 ; {''} ;'_test1.nii'  ;'_test2.nii' ;'p:V_ (ADD FILENAME-PREFIX: here "V_")'; 's:_s (ADD FILENAME-SUFFIX: here "_s")' ];
+        list1=[list1 ; {''} ;'t2.nii';'_test1.nii'  ;'_test2.nii' ;'p:V_ (ADD FILENAME-PREFIX: here "V_")'; 's:_s (ADD FILENAME-SUFFIX: here "_s")' ];
         
         hb=uicontrol(hp,'style','popupmenu','units','norm','tag','pan_pop_col2');
         set(hb,'position',[.55  .6 .45 .2],'string',list1);
@@ -2002,6 +2070,7 @@ if ~strcmp(task,'showimageinfo')
         lis={...
             ':'       'copy this file ("copy", same as ":")'
             'del'     'delete this file ("del", same as "##")'
+            '1'       'extract 1st 3D volume ("1")'
             '1:ends'  'expand entire 4D-file to separate 3D-files ("1:ends")'
             '1:3s'    'expand the first 3D-volumes of 4D-file to separate 3D-files ("1:3s")'
             ''        'empty this field'
