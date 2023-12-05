@@ -967,8 +967,14 @@
 % #k [xgetpreorientAuto.m] #n new, get studies "t2.nii" pre-orientation automatically 
 % -available via ANTx animal-listbox context menu, [get orientation -automatic mode]
 % 
+% #ba 05 Dec 2023 (23:25:04)
+% #k [ximportBrukerNifti.m] #n new, import existing NIFTI-files from Brukerdata.
+% -available via ANTx menu Main/Import existing NIFTI-files from Bruker data
 % 
 % 
+% 
+% 
+
 
 
 

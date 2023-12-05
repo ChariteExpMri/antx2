@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   23 Nov 2023 (14:08:03)  
+ &#x1F34E; last modification:   05 Dec 2023 (23:25:04)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,9 +7,14 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**05 Dec 2023 (23:25:04)**</ins>  
+   __[ximportBrukerNifti.m]__ new, import existing NIFTI-files from Brukerdata.  
+  -available via ANTx menu Main/Import existing NIFTI-files from Bruker data  
+<!---->
   &#x1F535;   <ins>**23 Nov 2023 (14:08:03)**</ins>  
    __[xgetpreorientAuto.m]__ new, get studies "t2.nii" pre-orientation automatically   
   -available via ANTx animal-listbox context menu, __[get orientation -automatic mode]__  
+    
 <!---->
   &#x1F535;   <ins>**13 Nov 2023 (01:09:12)**</ins>  
    __[xcoreg2D_singleSlice.m]__ new function: coregister 3D-images using 2D-registration of a specified slice   

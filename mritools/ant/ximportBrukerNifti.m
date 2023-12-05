@@ -1,12 +1,68 @@
 
-%%  import NIFTIs from Brukerdata..These nifti-files exist in BrukerRawData
+%%  import existing NIFTI-files from Brukerdata. NIFTIS already exist in Bruker-RawData-structure
+%  
+% 
+%     
+% ==============================================
+%%   examples GUI
+% ===============================================
+% 
+%% simplest from, GUIs will open for raw-folder, files-selection and parameters..
+% ximportBrukerNifti()
+% 
+%% import NIFTI from several Bruker-folders located in "RAW_main_study_protocol"
+%% GUIs for files-selection and parameter-specs will open...
+%   raw  ='F:\data7\AG_schmid_main_study_protocol_30nov23\RAW_main_study_protocol'
+%   ximportBrukerNifti('raw',raw)
+% 
+%% import NIFTI from from single Bruker raw-folder "AK7147_TP1"
+%% here NIFTIs of ExpNumber(e): 4 and 5 are imported,
+%% dat/outputfolder is defined  , ..with file and parameter-GUIs open
+%   raw='F:\data7\AG_schmid_main_study_protocol_30nov23\RAW_main_study_protocol\AK7147_TP1'
+%   out=fullfile(pwd,'dat');
+%   ximportBrukerNifti('raw',raw,'dat',out,'sel',{'e' [4 5]},'guiFile',0,'guiPara',0)
+%     
+%     
+%% import NIFTI from several Bruker-folders located in "RAW_main_study_protocol"
+%% here NIFTIs of ExpNumber(e): 4 and 5 are imported, ..no GUIs
+%% dat/outputfolder: not needed to be specified if ant-project is loaded
+%   raw  ='F:\data7\AG_schmid_main_study_protocol_30nov23\RAW_main_study_protocol'
+%   ximportBrukerNifti('raw',raw,'sel',{'e' [4 5]},'guiFile',0,'guiPara',0)
+%     
+%% import NIFTI from several Bruker-folders located in "RAW_main_study_protocol"
+%% here NIFTIs of ExpNumber(e): 4 and 5 are converted but only for animals (a) with names
+%% containing the string 'AK714' or 'GH2716'
+%%  ..no GUIs
+%   raw  ='F:\data7\AG_schmid_main_study_protocol_30nov23\RAW_main_study_protocol'
+%   ximportBrukerNifti('raw',raw,'sel',{'a'  'AK714|GH2716'  'e' [4 5]},'guiFile',0,'guiPara',0)
+%     
+%% import NIFTI from several Bruker-folders located in "RAW_main_study_protocol"
+%% here NIFTIs with protocol(p) containing either 'DTI' or 'T2' are imported
+%%  ..no GUIs
+%   raw  ='F:\data7\AG_schmid_main_study_protocol_30nov23\RAW_main_study_protocol'
+%   ximportBrukerNifti('raw',raw,'sel',{'p'  'DTI|T2'},'guiFile',0,'guiPara',0)
+% 
+%% import all NIFTI-files 
+%    raw='F:\data7\AG_schmid_main_study_protocol_30nov23\RAW_main_study_protocol\AK7147_TP1'
+%    ximportBrukerNifti('raw',raw,'sel','all','guiFile',0,'guiPara',0)
+% 
+% 
+
+    
+    %% ===============================================
+
+
 
 % paraw  ='F:\data7\AG_schmid_main_study_protocol_30nov23\RAW_main_study_protocol'
 % ===============================================
-function xbrukernifti(varargin)
+function ximportBrukerNifti(varargin)
 
 %% ===============================================
 v.raw=[];
+v.dat=[];
+v.sel=[];
+v.guiFile=1;
+v.guiPara=1;
 
 if nargin>0
     vin=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
@@ -22,9 +78,17 @@ if ~isempty(an)
     v.study  =fileparts(v.padat);
 end
 
+if ~isempty(v.dat)
+    v.padat=char(v.dat);
+end
 
 %% ===============================================
 
+if 0
+  
+    
+    
+end
 
 % 'H:\Daten-2\Extern\AG_Schmid\test_13oct23\raw\20230918_142607_wmstrokepilot_QJ9977_TP4_1_4\4\pdata\1\nifti'
 % 'H:\Daten-2\Extern\AG_Schmid\test_13oct23\raw\20230918_142607_wmstrokepilot_QJ9977_TP4_1_4\6\pdata\1\nifti'
@@ -34,7 +98,7 @@ end
 % outmain='F:\data7\AG_schmid_main_study_protocol_30nov23';
 % paraw  ='F:\data7\AG_schmid_main_study_protocol_30nov23\RAW_main_study_protocol';
 % % outdat='F:\data7\AG_schmid_main_study_protocol_30nov23'
-% 
+%
 % paraw={'F:\data7\AG_schmid_main_study_protocol_30nov23\RAW_main_study_protocol\AK7147_TP1'
 %     'F:\data7\AG_schmid_main_study_protocol_30nov23\RAW_main_study_protocol\GH2716_TP1'};
 %% ===============================================
@@ -46,7 +110,7 @@ if isempty(v.raw)
     try;   prefdir=v.study;
     catch; prefdir=pwd;
     end
-        
+    
     msg={'BRUKER-IMPORT: IMPORT existing NIFTI files from BRUKER-FOLDER(s)',...
         'select the "main"-BRUKER Folder [such as "raw"-dir] that contains the import data'...
         'Note: this folder must contain a folder for each mouse',...
@@ -144,20 +208,92 @@ for j=1:length(animals)
     end
     
 end
+fclose('all');
 fprintf('..done.\n ');
 % other fields: a.VisuSubjectName a.VisuCoreDim
 
 
 % ==============================================
-%%   selection
+%%   table
 % ===============================================
 
 gh={ '#' 'animal' 'protocol' 'Exp#' 'Proc#' ...
     '1stNiftiName' '#NIFTIs'  'RPE' 'StudyId' 'SubjectId'};
 g=cellfun(@(a){[ num2str(a)]}, g );
-pos=[0.078    0.077   0.78    0.86];
-tit='select NIFTIs to import';
-id=selector2(g,gh,'iswait',1,'finder',1,'position',pos,'title',tit );
+preselect=[];
+
+
+% v.sel={'e' [4 5],'a'  '.*AK714.*'}
+% v.sel={'e' [4 5]}
+% v.sel={'a'  '.*AK714.*'};
+% v.sel={'p'  'T2'};
+% v.sel={'p'  'DTI|T2'};
+% v.sel={'p'  'DTI'};
+%v.sel={'a'  'AK714|GH2716','e',[4 5]};
+
+if ~isempty(v.sel)
+    
+    
+    if ischar(v.sel) && strcmp(v.sel,'all')
+        preselect=[1:size(g,1)]';
+    else
+        
+        
+        if length(v.sel)==1
+            
+        else
+            [q1]=(ones(size(g,1)  ,5));
+            w=cell2struct(v.sel(2:2:end),v.sel(1:2:end),2);
+            if isfield(w,'e')
+                vs= g(:,regexpi2(gh,'Exp#'));
+                if ischar(w.e)
+                    eval(['w.e=[' w.e '];']);
+                end
+                va=cellfun(@(a){[ num2str(a)]}, num2cell((w.e(:))));
+                is1= ismember(vs,va);
+                is2= ismember(g(:,regexpi2(gh,'Proc#')),'1');
+                ps1=(sum([is1 is2],2)==2);
+                q1(:,1)=ps1;
+            end
+            if isfield(w,'a')
+                vs= g(:,regexpi2(gh,'animal'));
+                iw=regexpi2(vs,w.a);
+                is1=zeros(length(vs),1);
+                is1(iw)=1;
+                is2= ismember(g(:,regexpi2(gh,'Proc#')),'1');
+                ps2=(sum([is1 is2],2)==2);
+                q1(:,2)=ps2;
+            end
+            if isfield(w,'p')
+                vs= g(:,regexpi2(gh,'protocol'));
+                is1=~cellfun('isempty',regexpi(vs,w.p));
+                is2= ismember(g(:,regexpi2(gh,'Proc#')),'1');
+                ps2=(sum([is1 is2],2)==2);
+                q1(:,2)=ps2;
+            end
+            
+            if isfield(w,'a') || isfield(w,'e') || isfield(w,'p')
+                preselect=find(sum(q1,2)==size(q1,2));
+            end
+        end
+    end
+end
+
+% ==============================================
+%  GUI-file-selection
+% ===============================================
+if isempty(preselect) || v.guiFile==1 && ~isempty(preselect)
+    
+    pos=[0.078    0.077   0.78    0.86];
+    tit='select NIFTIs to import';
+    if isempty(preselect)
+        id=selector2(g,gh,'iswait',1,'finder',1,'position',pos,'title',tit );
+    else
+        id=selector2(g,gh,'iswait',1,'finder',1,'position',pos,'title',tit,'preselect',preselect );
+    end
+else
+    id=preselect;
+end
 
 if  isempty(id) || id(1)==-1
     disp(' user abort..'); return;
@@ -197,7 +333,7 @@ p={...
 
 
 x=struct();
-showgui=1;
+showgui=v.guiPara;
 
 p=paramadd(p,x);%add/replace parameter
 if showgui==1
@@ -258,8 +394,8 @@ for i=1:length(id)
     if exist(paout)~=7; mkdir(paout); end
     
     % get NIFTIS and sort them..
-    nifile  =niftis{ix};
-    nifile   =natsort(nifile);
+    nifile   =niftis{ix};
+    nifile   =natsort(nifile);   %SORT NIFTI-FILES !!!!
     
     % outputNamen
     ExpNo_File='';

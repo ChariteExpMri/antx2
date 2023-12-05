@@ -1195,8 +1195,8 @@ mh2 = uimenu(mh,'Label',' Create Study Templates',               'Callback',{@me
 mh2 = uimenu(mh,'Label',' Import Bruker data',                   'Callback',{@menubarCB, 'brukerImport'},'separator','on',    ...
      'userdata',[HSTART 'import Bruker raw-data' HEND ' ..from various MR-sequences (2dseq/reco)']);
 
- mh2 = uimenu(mh,'Label',' Import NIFTI-Bruker data',                   'Callback',{@menubarCB, 'bruker_NIFTI_Import'},'separator','on',    ...
-     'userdata',[HSTART 'import NIFTI files already existing in Bruker raw-data' HEND '  ...']);
+ mh2 = uimenu(mh,'Label',' Import existing NIFTI-files from Bruker data',                   'Callback',{@menubarCB, 'bruker_NIFTI_Import'},'separator','on',    ...
+     'userdata',[HSTART 'import NIFTI files which already exist in Bruker raw-data-structure' HEND '  ...']);
  
  mh2 = uimenu(mh,'Label',' Import DATA',                          'Callback',{@menubarCB, 'dataimport'  },  ...
     'userdata',[HSTART 'import NIFTI-files from other external folder(s)' HEND '...to animal-folders of the study']);
@@ -2244,12 +2244,12 @@ if strcmp(task,'brukerImport')
 elseif strcmp(task,'bruker_NIFTI_Import')
     
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
-        hlpfun='xbrukernifti';
+        hlpfun='ximportBrukerNifti';
         return ;
     end
     if strcmp(u.mousekey,'right')
         %% ===============================================
-        hlpfun='xbrukernifti.m';
+        hlpfun='ximportBrukerNifti.m';
         showcmd(hlpfun);
         %% ===============================================
         return
@@ -2257,7 +2257,7 @@ elseif strcmp(task,'bruker_NIFTI_Import')
     %r=ante;     r.brukerimport();   % !! OLD
     statusMsg(1,' brukerNIFTI');
     global an;
-    xbrukernifti;%%%({'guidir' [fileparts(an.datpath) filesep]} ,0);
+    ximportBrukerNifti;%%%({'guidir' [fileparts(an.datpath) filesep]} ,0);
     statusMsg(0);
     %________________________________________________    
     
