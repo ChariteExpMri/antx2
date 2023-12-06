@@ -103,7 +103,9 @@ end
 ix_mdir_filenameIssue=find(sum(fex,2)~=size(fex,2));
 ix_mdir_ok=setdiff([1:length(mdirs)],ix_mdir_filenameIssue);
 mdirsTemp=mdirs;
-mdirsTemp(ix_mdir_filenameIssue)=cellfun(@(a){[char(9654) a]}, mdirsTemp(ix_mdir_filenameIssue));
+% mdirsTemp(ix_mdir_filenameIssue)=cellfun(@(a){[char(9654) a]}, mdirsTemp(ix_mdir_filenameIssue));
+mdirsTemp(ix_mdir_filenameIssue)=cellfun(@(a){['!!! ISSUE >>>>  [' a ']' ]}, mdirsTemp(ix_mdir_filenameIssue));
+
 mdirsTemp(ix_mdir_ok)=cellfun(@(a){[' ' a]}, mdirsTemp(ix_mdir_ok));
 
 % return
@@ -121,9 +123,9 @@ cprintf('*[0 .5 1]', [ repmat('=', 1,80)  '\n']);
 cprintf('*[0 .5 1]', [  ' Check existence of DWI-files across animal folders'   '\n']);
 disp(char(r2));
 if isempty(ix_mdir_filenameIssue)
-  cprintf('*[0 .5 0]', [  ' ..all DWI-files found in all animals!!!'   '\n']);
+  cprintf('*[0 .5 0]', [  ' ..all DWI-files found/assigned in all animals!!!'   '\n']);
 else
-    cprintf('*[1 .0 1]', [  ' animals with missing DWI-files'   '\n']);
+    cprintf('*[1 .0 1]', [  ' animals with missing/unassigned DWI-files'   '\n']);
     r3=plog([],[r([1; ix_mdir_filenameIssue+1],:)],0,'','plotlines=0;');
     disp(char(r3));
     cprintf('*[0 .5 1]', [ repmat('=', 1,80)  '\n']);
@@ -170,9 +172,15 @@ set(hb,'position',[0.0071429 0.55238 0.4 0.4]);
 set(hb,'string',v.mdirsIssue);
 set(hb,'callback',@selectMdir_cb);
 set(hb,'fontsize',8);
-set(hb,'tooltipstring',['<html>animals with missing DWI-files' ...
+set(hb,'tooltipstring',['<html>animals with missing/unassigned DWI-files' ...
     '<br> select animals here' ...
     ]);
+%% ========[header of animal listbox]=======================================
+
+hb=uicontrol('style','text','units','norm','tag','th1');
+set(hb,'position',[0.0017857 0.95595 0.4 0.03]);
+set(hb,'foregroundcolor','r','backgroundcolor','w','fontweight','bold');
+set(hb,'string','animals with unassigned DWI-files');
 
 %% ======[save option]=========================================
 saveopt=...
@@ -231,6 +239,17 @@ set(hr,'position',[0.28839 0.5 0.12 0.05]);
 set(hr,'callback',{@cb_misc,'openAnimalDir'});
 set(hr,'tooltipstring',['open current animal-folder (for inspections)']);
 %% ===============================================
+%% =========[update]======================================
+hr=uicontrol('style','pushbutton','units','norm','tag','close');
+set(hr,'backgroundcolor',[1 1 1]);
+set(hr,'string',['update GUI']);
+set(hr,'position',[0.0071429 0.50119 0.12 0.05]);
+set(hr,'callback',{@cb_misc,'update'});
+set(hr,'tooltipstring',['update GUI']);
+%% ===============================================
+
+
+
 hb=findobj(hf,'tag','lb1');
 for i=1:length(v.mdirsIssue)
    hb.Value=i;
@@ -274,13 +293,24 @@ end
 animal=v.mdirs{v.ix_mdir_filenameIssue(idx)};
 mdir=fullfile(v.padat,animal);
 [files] = spm_select('List',mdir,'.*.nii');
+isExist4D=1;
+if length(files)==0
+    delete(findobj(hf,'tag','tx_dwiname'));
+    delete(findobj(hf,'tag','rb_dwinamePot'));
+    files={'no 4D-NIFTI found !!!-->please import DWI-file!!!'};
+    isExist4D=0;
+%     return
+end
 files=cellstr(files);
 potlist=zeros(length(files),2);
+
 for i=1:length(files)
+    if isExist4D==1
     h=spm_vol(fullfile(mdir,files{i}));
     %length(h)
     if size(h,1)>1
         potlist(i,:)=[1 length(h)];
+    end
     end
 end
 ix_pot=find(potlist(:,1)==1);
@@ -288,8 +318,8 @@ files=files(ix_pot);
 potlist=potlist(ix_pot,:);
 %% ===============================================
 ht=uicontrol('style','text','units','norm','tag','tx_animal');
-set(ht,'backgroundcolor',col1);
-set(ht,'string',['MDIR: ' animal],'fontweight','bold');
+set(ht,'backgroundcolor',[1 1 1]);
+set(ht,'string',['Animal: ' animal],'fontweight','bold');
 set(ht,'position',[0.45 .95 .5 .035]);
 
 
@@ -300,7 +330,7 @@ tb={};
 for i=1:length(ix_missfiles)
     hb=uicontrol('style','text','units','norm','tag','tx_dwiname');
     set(hb,'backgroundcolor',col1);
-    set(hb, 'string',v.dwis{ix_missfiles(i)});
+    set(hb, 'string',['FILE: ' v.dwis{ix_missfiles(i)}]);
     set(hb,'position',[0.45 stp .5 .035]);
     
     files2=files;
@@ -456,5 +486,7 @@ elseif strcmp(task,'openAnimalDir')
     v=get(gcf,'userdata');
     hb=findobj(gcf,'tag','lb1');
     explorer(fullfile(v.padat,hb.String{hb.Value}));
+elseif strcmp(task,'update')
+    renameDWIfiles();
 end
 
