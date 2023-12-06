@@ -278,6 +278,7 @@ files=cellstr(files);
 potlist=zeros(length(files),2);
 for i=1:length(files)
     h=spm_vol(fullfile(mdir,files{i}));
+    %length(h)
     if size(h,1)>1
         potlist(i,:)=[1 length(h)];
     end
@@ -306,7 +307,11 @@ for i=1:length(ix_missfiles)
     
     ix_matchvol=find(potlist(:,2)==numvolsref(ix_missfiles(i)));
     files2=files(ix_matchvol);
-    
+    isExist4D=1;
+    if isempty(files2)
+        files2={'no 4D-NIFTI found !!!-->please import DWI-file!!!'};
+        isExist4D=0;
+    end
     
     for j=1:length(files2)
         hr=uicontrol('style','radio','units','norm','tag','rb_dwinamePot');
@@ -314,7 +319,9 @@ for i=1:length(ix_missfiles)
         set(hr,'position',[0.45 stp-.032*j .5 .035]);
         set(hr,'userdata',i);
         
-        
+        if isExist4D==0
+           set(hr,'enable','off','BackgroundColor',[1 0.84 0]) 
+        end
         
         w.idx=idx;
         w.animal=animal;
@@ -416,6 +423,12 @@ for j=1:length(ix)
         ftarget=tb{i,1};
         f1=fullfile(v.padat,animal,fsource );
         f2=fullfile(v.padat,animal,ftarget );
+        
+        if exist(f1)==0
+            %disp(['no 4D-NIFTI found in [' animal '] --> can''t assign/rename DWI-file']);
+            cprintf('*[1 0 0]', ['FAILED: no 4D-NIFTI found in [' animal '] --> can''t assign/rename DWI-file' '\n']);
+            continue
+        end
         
         cprintf('*[0 .7 1]', [  ' DWIfile:  ' ftarget  '\n']);
         
