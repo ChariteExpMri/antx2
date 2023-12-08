@@ -767,8 +767,8 @@ p={...
     'inf200'      [repmat('=',[1,100])]                                    ''  ''
     'inf22'      ' [2] SUFFIXES of FILENAMES  (added to "protocoll-name")        '                                    ''  ''
     'inf201'      [repmat('=',[1,100])]                                    ''  ''
-    'ExpNo_File'     1        'VisuExperimentNumber (parent folder of "pdata"),(bool)'  'b'
-    'PrcNo_File'     1        'VisuProcessingNumber/ReconstructionNumber(subfolder of "pdata"),(bool)'  'b'
+    'ExpNo_File'     0        'VisuExperimentNumber (parent folder of "pdata"),(bool)'  'b'
+    'PrcNo_File'     0        'VisuProcessingNumber/ReconstructionNumber(subfolder of "pdata"),(bool)'  'b'
     'renameFiles'   ''   'rename files   -->via GUI'  {@renamefiles,protocol,[]}
     'prefix'        ''   'add prefix to filename' {'NI_' [regexprep(datestr(now),{':' ' '},'_') '_'] ''}
     'suffix'        ''   'add suffix to filename' {'_NI' ['_' regexprep(datestr(now),{':' ' '},'_')] ''}
