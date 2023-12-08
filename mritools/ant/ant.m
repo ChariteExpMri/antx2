@@ -1645,9 +1645,13 @@ javax.swing.MenuSelectionManager.defaultManager().clearSelectedPath();
 
 
 % ==============================================
-%%  menu: set mouse click-selection 
+%%  MENU: set mouse click-selection 
 % ===============================================
+drawnow;
 ss=menu_getTable();
+% drawnow;
+hjok={};
+% ss
 for i=1:size(ss,1)
     hm=ss{i,4};
     hj=ss{i,3};
@@ -1657,12 +1661,18 @@ for i=1:size(ss,1)
             % LEFT/RIGHT MOUSE_CLICK
             %                         hj=handle(hj, 'CallbackProperties');
             set(hj,'MousePressedCallback', {@menuclick_cb,hm,hj});
+            hjok{end+1}=hj;
         catch
             hj2=handle(hj, 'CallbackProperties');
-            set(hj2,'MouseEnteredCallback',{@showfunctionhelp,hm,hj});
+            set(hj2,'MouseEnteredCallback', {@showfunctionhelp,hm,hj});
+            set(hj2,'MousePressedCallback', {@menuclick_cb,hm,hj});
+            hjok{end+1}=hj;
         end
     end
 end
+
+% assignin('base','hjok',hjok);
+
 
 function menubar_setTooltips(enableTT)
 %% JAVA MENU
@@ -1806,9 +1816,12 @@ end
 function menuclick_cb(e,e2,hm,hj)
 hf=findobj(0,'tag','ant');
 u=get(hf,'userdata');
+
 % u.ismenuinterupted=1;
 % disp('------------------------');
-% e2.getButton;
+%  e2.getButton;
+%  pause(0.01);
+% drawnow;
 % get(e2)
 if double(e2.getButton)==1   %     'left'
     u.mousekey='left';
