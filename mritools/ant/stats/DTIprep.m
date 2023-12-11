@@ -309,7 +309,7 @@
 %% ===============================================
 % mdirs={'F:\data7\AG_schmid_main_study_protocol_30nov23\dat\AK7147_TP1_4d_38'}
 % DTIprep('run','all',mdirs)  ; %run task:[1]distribute files,[2]deform files[3]register files[4]rename files[5]export files[6]create HTMLfiles for check registration;same as: DTIprep('run',[1:6]);
-% __other optthions 
+% % __other optthions 
 % % DTIprep('run','all',mdirs)  ;%run task:[1]distribute files,[2]deform files[3]register files[4]rename files[5]export files[6]create HTMLfiles for check registration;same as: DTIprep('run',[1:6]);
 % % DTIprep('run',[1],mdirs)  ; %run task:[1]distribute files
 % % DTIprep('run',[1:2],mdirs); %run task:[1]distribute files,[2]deform files
@@ -2904,7 +2904,7 @@ if exist('u')==1;
         inonexist=find(isexist==0);
         [~,~,fmt]=fileparts2(u.btable);
         %inonexist=[1 2];
-        if ~isempty(inonexist) || strcmp(unique(fmt),'.txt')~=1
+        if ~isempty(inonexist) || all(strcmp(unique(fmt),'.txt'))~=1
             disp('ERROR: the following B-tables do not exist. Please check format of Btables (.txt)!!!: ')
             disp(char((u.btable(inonexist))));
             error('Btables do not exist --> check path')
