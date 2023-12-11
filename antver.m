@@ -971,7 +971,8 @@
 % #k [ximportBrukerNifti.m] #n new, import existing NIFTI-files from Brukerdata.
 % -available via ANTx menu Main/Import existing NIFTI-files from Bruker data
 % 
-% 
+% #ba 11 Dec 2023 (12:26:44)
+% #k [ximportBrukerNifti.m] #n modified ...noGUI-mode enabled (see last example on HELP of DTIprep.m )
 % 
 % 
 
