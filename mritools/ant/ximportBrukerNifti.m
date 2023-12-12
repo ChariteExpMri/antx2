@@ -142,6 +142,7 @@ for i=1:length(paraw)
     fis=[fis; fi];
 end
 %% ===============================================
+fclose('all');
 d={};
 pas=fileparts2(fis);
 pas=unique(pas);
@@ -151,6 +152,7 @@ for i=1:length(pas)
     ts= strsplit(pas{i},filesep);
     d(i,1:length(ts))=ts;
     animalvec(i,1)=ts(regexpi2(ts',['^pdata$'])-2);
+    fclose('all');
 end
 
 animals=unique(animalvec);
@@ -206,6 +208,8 @@ for j=1:length(animals)
         visu_meth(end+1,:)  ={a m};
         niftis(end+1,1)     ={fis2};
         path_2dseq(end+1,1) ={pa2dseq};
+        
+        fclose('all');
     end
     
 end
@@ -488,7 +492,7 @@ function tb2=getBtable(pa2dseq,visu,meth,z);
 
 acqpFile=fullfile(fileparts(fileparts((pa2dseq))), 'acqp');
 acqp=readBrukerParamFile(acqpFile);
-
+fclose('all');
 %% ============[shorten vars (see getbruker.m)]===================================
 
 v  = visu;           % v  =readBrukerParamFile(fullfile(pa,'visu_pars'));
