@@ -1808,7 +1808,6 @@ if 1%try
         set(hx(i),'units','pixels');
     end
 end
-
 %% ===============================================
 
 function findsim_CB(e,e2,task)

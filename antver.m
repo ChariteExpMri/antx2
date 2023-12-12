@@ -974,6 +974,10 @@
 % #ba 11 Dec 2023 (12:26:44)
 % #k [ximportBrukerNifti.m] #n modified ...noGUI-mode enabled (see last example on HELP of DTIprep.m )
 % 
+% #ba 12 Dec 2023 (14:09:47)
+% #k [xrename.m] #n  added option to run operation(mean/median/mode/sum/min/max/std/zscore/var) over 4th dim of NIFTI-file
+% 
+% 
 % 
 
 

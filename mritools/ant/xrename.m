@@ -19,8 +19,9 @@
 % #b - threshold image                 ('tr:')         #g e.g.: 'tr:i>0.5=0'
 % #b - Replace value by another value: ('R:' or 'repl:' or 'replace:') #g e.g.: 'R:<=0;1' | 'R:nan;ME'
 % #b - flip image along 1st dim.       (flip:)         #g e.g.: 'flip:' 
-% #b -remove volume of 4D-image        (rmvol:)        #g e.g.:  'rmvol:6'; remove volume 6; 'rmvol:[1 4:end]' remove volume 1 and 4,5,6,7..
-% 
+% #b - remove volume of 4D-image       (rmvol:)        #g e.g.:  'rmvol:6'; remove volume 6; 'rmvol:[1 4:end]' remove volume 1 and 4,5,6,7..
+% #b - operations on 4th dimensions of 4D volume  (mean:)(median:)(mode:)(sum:)(max:)(min:)(std:)(zscore:)(var:)
+%                                        #g e.g.: xrename(0,'T2map_MSME_CRP_2_1.nii' ,'s:_mean', 'mean:')      
 % 
 % % __________________________________________________________________________________________________________________
 % - select one/several images TO RENAME/DELETE/EXTRACT/EXPAND/COPY volumes,aka. files
@@ -225,6 +226,28 @@
 %
 % same as above but remove all volumes >2
 % xrename(1,'test_revDtiEpi_5_1.nii','s:_corrected' ,'rmvol:3:end')
+% 
+%__________________________________________________________________________________________________________________
+%% #by operations over 4th dimensions of 4D volume  (mean:)(median:)(mode:)(sum:)(max:)(min:)(std:)(zscore:)(var:)
+% the output is a 3D-NIFTI-file
+% 
+% examples:
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'T2mean.nii', 'mean:')     ;% mean over all volumes of 4th-DIM: save as 'T2mean.nii'
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'s:_mean',    'mean:')     ;% mean over all volumes of 4th-DIM: save file as 'T2map_MSME_CRP_2_1_mean.nii' (add suffix '_mean')
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'s:_mean', 'mean:1 3')     ;% mean over volumes [1,3] over 4th-DIM: adding suffix '_mean'
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'s:_mean', 'mean:1:4')     ;% mean over volumes [1,2,3,4] over 4th-DIM: adding suffix '_mean'
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'s:_mean', 'mean:1:end')   ;% mean over all volumes over 4th-DIM: adding suffix '_mean'
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'s:_mean', 'mean:1:end-1') ;% mean over all volumes except the last one over 4th-DIM: adding suffix '_mean'
+% 
+%__ the below examples work also with when assigning specific indices/volumes (see above examples)
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'dum', 'median:');% median over all vols of 4th dimension, save as 'dum.nii'
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'dum', 'mode:')  ;% mode/most frequent value over all vols of 4th dimension, save as 'dum.nii'
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'dum', 'sum:')   ;% sum over all vols of 4th dimension, save as 'dum.nii'
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'dum', 'max:')   ;% maximum over all vols of 4th dimension, save as 'dum.nii'
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'dum', 'min:')   ;% minimum over all vols of 4th dimension, save as 'dum.nii'
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'dum', 'std:')   ;% standard-deviation over all vols of 4th dimension, save as 'dum.nii'
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'dum', 'zscore:');% zscore over all vols of 4th dimension, save as 'dum.nii'
+% xrename(0,'T2map_MSME_CRP_2_1.nii' ,'dum', 'var:')   ;% variance over all vols of 4th dimension, save as 'dum.nii'
 % 
 %__________________________________________________________________________________________________________________
 %% #by voxel resolution (vr:)
@@ -464,7 +487,7 @@
 
 
 function xrename(showgui,fi,finew,extractnum,varargin)
-
+warning off;
 p0.dummy=1;
 if nargin>4
     pin= cell2struct(varargin(2:2:end),varargin(1:2:end),2);
@@ -626,7 +649,13 @@ end
 if showgui==0
     he=he2; tbout=v2.tb ;
 else
-    [he, tbout isOKpressed]=renameGUI(v2,he2,s, showgui);
+    if size(v2.tb,1)<10
+        [he, tbout isOKpressed]=renameGUI(v2,he2,s, showgui, struct('pos', [.2 .4 .6 .3]));
+        
+    else
+        [he, tbout isOKpressed]=renameGUI(v2,he2,s, showgui);
+    end
+    
     
     %     isOKpressed
     %     return
@@ -1247,8 +1276,88 @@ for i=1:length(pa)      %PATH
                     
                    disp(['..description changed in "' Z.file '" of [' Z.animalDir ']' ' --> current description: "'  hm(1).descrip '"' ]);
              
+             elseif ~isempty(strfind(volnum{j},'mean:')) || ~isempty(strfind(volnum{j},'median:')) ||...
+                    ~isempty(strfind(volnum{j},'sum:'))  || ~isempty(strfind(volnum{j},'max:'))    || ...
+                    ~isempty(strfind(volnum{j},'min:'))  || ~isempty(strfind(volnum{j},'mode:'))   || ...
+                    ~isempty(strfind(volnum{j},'std:'))  || ~isempty(strfind(volnum{j},'zscore:')) || ...
+                    ~isempty(strfind(volnum{j},'var:'))
+                 %% ==========[mean volume over 4th dim]=====================================
+                 code=volnum{j} ;
+                 %code='mean: 3:4';
+                 %code='mean: end';
+                 %code='mean: 4:end';
+                 %code='median: 3:4';
+                 %code='sum: 3:4';
+                % code='sum: ';
+                %code='max: 3:4';
+                %code='min: 1:2';
+                %code='mode: 1:2';
+                %code='mode: 1:2';
+                %code='std: 1:2';
+                %code='zscore: ';
+                %code='var: ';
+                 
+                 [spl]=regexp(code, ':','split','once');
+                 cmd=spl{1};
+                 res=spl{2};
+                 if isempty(regexprep(res,'\s+',''))
+                     res='';
+                 end
+                 
+                 err='';
+                 [ha]=spm_vol(s1);
+                 if length(ha)>1
+                      [ha a]=rgetnii(s1);
+                     if isempty(res); idx=[1:length(ha)];
+                     else
+                         idxstr=['idx=[' res '];'];
+                         idxstr=regexprep(idxstr,'end',num2str(length(ha)) );
+                         eval(idxstr);
+                     end
+                     idx=intersect([1:length(ha)],idx); % check that no lower/hight indices are given
+                     
+                     if length(idx)>1
+                         b=a(:,:,:,idx);
+                         if     strcmp(cmd,'mean');    b2 =mean(b,4);       lastcmd='mean';
+                         elseif strcmp(cmd,'median')   b2 =median(b,4);     lastcmd='median';
+                         elseif strcmp(cmd,'mode')     b2 =mode(b,4);       lastcmd='mode';
+                         elseif strcmp(cmd,'sum')      b2 =sum(b,4);        lastcmd='sum';
+                         elseif strcmp(cmd,'max')      b2 =max(b,[],4);     lastcmd='max';
+                         elseif strcmp(cmd,'min')      b2 =min(b,[],4);     lastcmd='min';
+                         elseif strcmp(cmd,'std')      b2 =std(b,[],4);     lastcmd='std';
+                         elseif strcmp(cmd,'zscore')   b2 =zscore(b,[],4);  lastcmd='zscore';
+                         elseif strcmp(cmd,'var')      b2 =var(b,[],4);     lastcmd='var';
+                         end
+                         %disp(['indices: [' num2str((idx))  ']']);
+                         %disp(['size   : [' num2str(size(b2))  ']']);
+                         %disp(['lastcmd: ' lastcmd]);
+                         
+                         %write file
+                         if exist('b2')==1
+                             try; delete(s2); end
+                             hb2=ha(1);
+                             rsavenii(s2,hb2,b2,64);
+                             
+                             showinfo2(['[' Z.animalDir ']' 'new volume(' cmd '):'],s2,[],[],...
+                                 ['INFO: function over 4th.DIM: "' lastcmd '";' ...
+                                 ['indices:' regexprep(num2str(idx),'\s+',',')]]);
+                             
+                         end
+                     else
+                         err=['error in [' Z.animalDir ']: NIFTI [' Z.file '] length of 4th-dim indices must larger 1'];
+                         
+                     end
+                 else
+                     err=['error in [' Z.animalDir ']: NIFTI [' Z.file '] is 3-dimensional, but 4-dim NIFTI is needed.']; 
+                 end
+                 if ~isempty(err)
+                     disp(err);
+                 end
+                 
+                 
+                 %% ===============================================                
              elseif ~isempty(strfind(volnum{j},'rmvol:')) || ~isempty(strfind(volnum{j},'removevol:'))      
-                %% ===============================================
+                %% ==========[remove volume]=====================================
                 
                  code=volnum{j} ;
                  code=regexprep(code,{'rmvol:' 'removevol:'},{''});
@@ -1617,7 +1726,8 @@ tbh      = [ v.tbh(1)  'NEW FILENAME_______________' 'TASK_________________' v.t
 
 % tb    =tb(: ,[1 end 2:end-1 ]); % 2nd element is new name
 % tbh   =tbh(:,[1 end 2:end-1 ]);
-tbh{1}='Filename';  %give better name
+% tbh{1}='Filename';  %give better name
+tbh{1}='Filename_______________';  %give better name
 tbh   =upper(tbh);
 
 
@@ -1636,8 +1746,14 @@ he2=he;
 %________________________________________________
 %%  rename files
 %________________________________________________
-function [he tbout isOKpressed]=renameGUI(v,he,s, showgui)
+function [he tbout isOKpressed]=renameGUI(v,he,s, showgui,varargin)
 % keyboard
+if ~isempty(varargin);%nargin>4
+    pin=varargin{1};
+    
+end
+
+
 tb= v.tb;
 tbh=v.tbh;
 isOKpressed=0;
@@ -1711,6 +1827,7 @@ end
 if isFig==0
     % make figure
     f = fg; set(gcf,'menubar','none','units','normalized','position',[    0.3049    0.0867    0.6000    0.8428]);
+    set(f,'visible','off');
     set(f,'tag','xrename');
     tx=uicontrol('style','text','units','norm','position',[0 .95 1 .05 ],...
         'string',      '..rename/copy/delete/extract/expand NIFTIs, see [help]...',... % UPPER-TITLE
@@ -1738,7 +1855,7 @@ if isFig==0
     t.ColumnEditable =logical(tbeditable ) ;% [false true  ];
     t.BackgroundColor = [1 1 1; 0.9451    0.9686    0.9490];
     
-    
+
     % waitspin(1,'wait...');
     drawnow;
     
@@ -1801,6 +1918,12 @@ if isFig==0
         end
         
     end
+    if exist('pin') ==1
+        if isfield(pin,'pos')
+            set(f,'position',pin.pos);
+        end
+    end
+    set(f,'visible','on');
     
     position = [10,100,90,20];  % pixels
     hContainer = gcf;  % can be any uipanel or figure handle
@@ -1821,7 +1944,11 @@ if isFig==0
     
     
     %% ===============================================
-    
+%   if exist('pin') ==1
+%       if isfield(pin,'pos')
+%          set(f,'position',pin.pos); 
+%       end
+%   end
     
     
     us.tb  =tb;
@@ -2001,10 +2128,12 @@ elseif strcmp(task,'cancel')
     set(findobj(gcf,'tag','pan1'),'userdata','cancel');
     %     delete(findobj(gcf,'tag','pan1'));
     delete(findobj(gcf,'tag','pan_ed_cancel'));
+    delete(findobj(gcf,'tag','hsim_pbmovepan'));
     %uiresume(gcf);
 elseif strcmp(task,'ok')
     set(findobj(gcf,'tag','pan1'),'userdata','ok');
     delete(findobj(gcf,'tag','pan_ed_cancel'));
+    delete(findobj(gcf,'tag','hsim_pbmovepan'));
 end
 
 function hcontext(e,e2,task)
@@ -2035,13 +2164,62 @@ if ~strcmp(task,'showimageinfo')
         ht= findobj(gcf,'tag','table');
         
         delete(findobj(0,'tag','pan1'));
+        hf=findobj(gcf,'tag','xrename');
+        fig_unit=get(hf,'units');
+        set(hf,'units','pixels');
+        figposPix=get(hf,'position');
+        set(hf,'units',fig_unit);
+        
+        panpos=[[230 300   270 120]];
+        panpos=[200 figposPix(4)-120-100  270 120];
         hp = uipanel('Title','enter 2nd/3rd column','FontSize',8,...
-            'BackgroundColor','white','units','norm','tag','pan1');
-        set(hp,'position',[0.25 .5   .3 .15]);
-        %---------------------
-        %TXT
+            'BackgroundColor','white','units','pixels','tag','pan1');
+        set(hp,'position',panpos);
+        
+        
+        %% ==============pan-tool=================================
+
+        img=[129	129	129	129	129	129	129	0	0	129	129	129	129	129	129	129
+            129	129	129	0	0	129	0	215	215	0	0	0	129	129	129	129
+            129	129	0	215	215	0	0	215	215	0	215	215	0	129	129	129
+            129	129	0	215	215	0	0	215	215	0	215	215	0	129	0	129
+            129	129	129	0	215	215	0	215	215	0	215	215	0	0	215	0
+            129	129	129	0	215	215	0	215	215	0	215	215	0	215	215	0
+            129	0	0	129	0	215	215	215	215	215	215	215	0	215	215	0
+            0	215	215	0	0	215	215	215	215	215	215	215	215	215	215	0
+            0	215	215	215	0	215	215	215	215	215	215	215	215	215	0	129
+            129	0	215	215	215	215	215	215	215	215	215	215	215	215	0	129
+            129	129	0	215	215	215	215	215	215	215	215	215	215	215	0	129
+            129	129	0	215	215	215	215	215	215	215	215	215	215	0	129	129
+            129	129	129	0	215	215	215	215	215	215	215	215	215	0	129	129
+            129	129	129	129	0	215	215	215	215	215	215	215	0	129	129	129
+            129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129
+            129	129	129	129	129	0	215	215	215	215	215	215	0	129	129	129];
+        img=uint8(img);
+        img(img==img(1,1))=255;
+        if size(img,3)==1; img=repmat(img,[1 1 3]); end
+        img=double(img)/255;
+        %% ______________
+        
+        hv=uicontrol('style','pushbutton','units','pixels','tag', 'hsim_pbmovepan');
+        set(hv,'position',[panpos(1) panpos(2)+panpos(4) .015 .015],'string','',...
+            'CData',img,'tooltipstr',['shift panel position' char(10) 'left mouseclick+move mouse/trackpad pointer position' ]);%, 'callback', {@changecolumn,-1} );
+        set(hv,'position',[panpos(1)+panpos(3)-17 panpos(2)+panpos(4)-17 15 15 ]);
+        je = findjobj(hv); % hTable is the handle to the uitable object
+        set(je,'MouseDraggedCallback',{@hsim_motio,hp}  );
+        % set(hp,'units','pixels');
+        % pos=get(hp,'position');
+        % set(hp,'position',[pos(1:2) 16 16]);
+        % set(hp,'units','norm');
+        set(hv,'tooltipstring',[...
+            '<html><b>drag icon to move panel</b>']);
+        
+        %% ===============================================
+        %% ================[column2]===============================
+        %TXT-col2
         hb=uicontrol(hp,'style','text','units','norm','tag','pan_tx_col2','string','column-2: NEW FILENAME');
         set(hb,'position',[0    .75   .8 .2],'backgroundcolor','w','horizontalalignment','left');
+        set(hb,'foregroundcolor','b');
         
         hb=uicontrol(hp,'style','edit','units','norm','tag','pan_ed_col2');
         set(hb,'position',[0    .6  .5 .2]);
@@ -2051,14 +2229,24 @@ if ~strcmp(task,'showimageinfo')
         list1(strcmp(list1, ''))=[];
         list1=[list1 ; {''} ;'t2.nii';'_test1.nii'  ;'_test2.nii' ;'p:V_ (ADD FILENAME-PREFIX: here "V_")'; 's:_s (ADD FILENAME-SUFFIX: here "_s")' ];
         
+        %TXT-selectable options
+        hb=uicontrol(hp,'style','text','units','norm','string','selectable options');
+        set(hb,'position',[.55   .75   .8 .2],'backgroundcolor','w','horizontalalignment','left');
+        set(hb,'foregroundcolor','k');
+        
         hb=uicontrol(hp,'style','popupmenu','units','norm','tag','pan_pop_col2');
         set(hb,'position',[.55  .6 .45 .2],'string',list1);
         set(hb,'tooltipstring','selected item from popup-menu is used to fill the left edit box');
         set(hb,'callback',{@pan_callback,'pop1'});
-        %----------------
-        %TXT
+        
+        
+        
+        %% ================[column3]===============================
+        %TXT-col3
         hb=uicontrol(hp,'style','text','units','norm','tag','pan_tx_col2','string','column-3: TASK');
         set(hb,'position',[0     .4 .8 .2],'backgroundcolor','w','horizontalalignment','left');
+        set(hb,'foregroundcolor','b');
+        
         
         hb=uicontrol(hp,'style','edit','units','norm','tag','pan_ed_col3');
         set(hb,'position',[0     .25 .5 .2]);
@@ -2084,32 +2272,25 @@ if ~strcmp(task,'showimageinfo')
             'vr: nan 0.1 nan'          'VOXEL-RESOLUTION: change 2nd dim of voxelresolution to [0.1] keep orig. value for other dims'
             'vs: 0.1 0.1 0.1'          'set VOXEL-SIZE: set voxel-size to [0.1 0.1 0.1] (change header only)'
             'vs: 0.05'                 'set VOXEL-SIZE: set voxel-size to [0.05 0.05 0.05] (change header only)'
+            'rmvol:6'                  'remove 6th volume of 4D-NIFTI-file'
+            'mean:'                    '[mean:]   mean over 4th dimension of 4D-NIFTI-file (4D NIFTI only) '
+            'median:'                  '[median:] median over 4th dimension of 4D-NIFTI-file (4D NIFTI only) '
+            'sum:'                     '[sum:]    sum over 4th dimension of 4D-NIFTI-file (4D NIFTI only) '
+            'max:'                     '[max:]    max over 4th dimension of 4D-NIFTI-file (4D NIFTI only) '
+            'min:'                     '[min:]    min over 4th dimension of 4D-NIFTI-file (4D NIFTI only) '
+            'zscore:'                  '[zscore:] zsore over 4th dimension of 4D-NIFTI-file (4D NIFTI only) '
+            'std:'                     '[std:]    std over 4th dimension of 4D-NIFTI-file (4D NIFTI only) '
+            'var:'                     '[var:]    variance over 4th dimension of 4D-NIFTI-file (4D NIFTI only) '
             };
         
-        
-        
-%   #b - rename file                     (EMPTY)
-%   #b - copy+rename file                ('copy' or ':')
-%   #b - delete file                     ('##' or 'del' or 'delete')
-%   #b - extract (keep 4D image)         (IDX)           #g e.g: '1:3'   | ':'  | '[2 3]'  OR  '2:end-3'
-%   #b - expand (4D-image to 3D images)  (IDXs)          #g e.g: '1:3s'  | ':s' | '[2 3]s' OR  '2:ends-3'
-%   
-%   #b - change voxel & image resolution ('vr:')         #g e.g.: 'vr: .1 .1 .1'  | 'vr: .1' OR 'vr: nan nan 0.1'
-%        ..also the image is changed
-%   #b - change voxel size onle          ('vs:')         #g e.g.: 'vs: .1 .1 .1'  | 'vs: .1' OR 'vs: nan nan 0.1'
-%        ..only the header is changed
-%   #b - scale image by voxel factor     ('vf:')         #g e.g.: 'vf:3'          | 'vf:1 1 0.5'
-%        ..also the image is changed
-%   #b - change header                   ('ch:')         #g e.g.: 'ch:mat:[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1];dt:64'  | 'ch:descrip:hallo' | 'ch:dt:64'
-%   #b - mathematical operation (masking ('mo:')         #g e.g.: see below
-%   #b - change dataType                 ('dt:')         #g e.g.: 'dt: 64'  | 'dt:16'
-%   #b - threshold image                 ('tr:')         #g e.g.: 'tr:i>0.5=0'
-%   #b - Replace value by another value: ('R:' or 'repl:' or 'replace:') #g e.g.: 'R:<=0;1' | 'R:nan;ME'
-%   
 
-        
         listbk=[[list2 ; {''} ;lis(:,1) ] [list2 ; {''} ;lis(:,2) ]];
         
+        
+         %TXT-selectable options
+        hb=uicontrol(hp,'style','text','units','norm','string','selectable options');
+        set(hb,'position',[.55   .4   .8 .2],'backgroundcolor','w','horizontalalignment','left');
+        set(hb,'foregroundcolor','k');
         
         hb=uicontrol(hp,'style','popupmenu','units','norm','tag','pan_pop_col3');
         set(hb,'position',[.55   .25 .45 .2],'string',listbk(:,2));
@@ -2257,7 +2438,6 @@ if ~strcmp(task,'showimageinfo')
     
     for i=1:length(selrows)
         if ~isempty(out{1})
-            i
             jtable.setValueAt(java.lang.String(out{1}), selrows(i), 1); % to insert this value in cell (1,1)
         end
     end
@@ -2274,6 +2454,41 @@ else
     files=us.tb(iselrows,1);
     show_imageinfo(files);
 end
+
+%% ===============================================
+function hsim_motio(e,e2,hpa)
+if 1%try
+    units=get(0,'units');
+    set(0,'units','norm');
+    mp=get(0,'PointerLocation');
+    set(0,'units',units);
+    
+    fp  =get(gcf,'position');
+    hp  =findobj(gcf,'tag','hsim_pbmovepan');
+    set(hp,'units','norm');
+    pos =get(hp,'position');
+    set(hp,'units','pixels');
+    mid=pos(3:4)/2;
+    newpos=[(mp(1)-fp(1))./(fp(3))  (mp(2)-fp(2))./(fp(4))];
+    if newpos(1)-mid(1)<0; newpos(1)=mid(1); end
+    if newpos(2)-mid(2)<0; newpos(2)=mid(2); end
+    if newpos(1)-mid(1)+pos(3)>1; newpos(1)=1-pos(3)+mid(1); end
+    if newpos(2)-mid(2)+pos(4)>1; newpos(2)=1-pos(4)+mid(2); end
+    df=pos(1:2)-newpos+mid;
+    hx=[hp hpa];
+    for i=1:length(hx)
+        set(hx(i),'units','norm');
+        pos2=get(hx(i),'position');
+        pos3=[ pos2(1:2)-df   pos2([3 4])];
+        if length(hx)==1
+            set(hx,'position', pos3);
+        else
+            set(hx(i),'position', pos3);
+        end
+        set(hx(i),'units','pixels');
+    end
+end
+%% ===============================================
 
 
 function show_imageinfo(files);
