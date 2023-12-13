@@ -22,20 +22,41 @@
 %    - make a fresh installation
 %    - you have to specify a target-directory to download/save the toolbox
 % hit #b [close] #n when finished..
+%% ===================================
+%%   [INSTALLATION WITHOUT GUI]
+%% ===================================
+% where "path2install"  is the path to install ANTx2 (i.e. upper folder!)
+% installfromgithub('install','path',path2install) ;
 % 
+% example: install antx without GUI
+% installfromgithub('install','path','X:\ressources\bla')
 %-------------------------
 
 
 function installfromgithub(varargin)
 
  
-if nargin==1
-    if strcmp(varargin{1},'install')
-        installer
+% if nargin==1
+%     if strcmp(varargin{1},'install')
+%         installer
+%         return
+%     end
+if nargin==0
+    clear global antupd
+else
+    if ischar(varargin{1}) && strcmp(varargin{1},'install')
+        if nargin==1
+        installer();
+        else
+          s=cell2struct(varargin(3:2:end),varargin(2:2:end),2);
+          if isfield(s,'isgui')==0
+              s.isgui=0;
+          end
+          installer(s);
+          try; delete(findobj(0,'tag','fupd')); end
+        end
         return
     end
-elseif nargin==0
-    clear global antupd
 end
 
 if strcmp(mfilename,'installfromgithub')
@@ -83,11 +104,32 @@ mkgui();
 end
 
 %% installer
-function installer
+function installer(arg)
 % keyboard
 
+if exist('arg')==1
+   s=arg; 
+   
+   if isfield(s,'path')
+       global antupd
+       v.pwd       = pwd              ; %'X:\ressources'
+       v.updatepath= fileparts(s.path);%'X:\ressources'
+       v.antxpath  = '';
+       v.tempfile  = '';
+       v.patempup  = s.path; %'X:\ressources\bla'
+       antupd=v;
+   end
+   
+   
+end
+
 atime=tic;
-mkgui();
+if exist('s') && isfield(s,'isgui') && s.isgui==0
+    %without gui
+    % installfromgithub('install','path',pwd)
+else
+    mkgui();
+end
 fprintf(['installation..please wait..\n']);
 setstatus(1,'fresh installation..'); drawnow;
 
@@ -109,8 +151,12 @@ if exist(fullfile(antupd.patempup,'antx2'))==7
     %disp(fullfile(antupd.patempup,'_antx2'));
     
     if isunix && ~ismac
-        pa2=fullfile(antupd.patempup, 'antx2');
-        system(['sudo rm -r "' pa2 '"']);
+        try
+            rmdir(fullfile(antupd.patempup,'antx2'),'s');
+        catch
+            pa2=fullfile(antupd.patempup, 'antx2');
+            system(['sudo rm -r "' pa2 '"']);
+        end
     else
         try;     rmdir(fullfile(antupd.patempup,'antx2'),'s'); end
     end
@@ -171,7 +217,9 @@ if 1
         eval(clonefun);
         msg=git(['ls-remote --exit-code ' gitrepository]); %CHECK ACCESS
         
-        if contains(msg,'unable to access') || (exist(fullfile(antupd.patempup,'antx2','.git'))~=7)
+        %if contains(msg,'unable to access') || (exist(fullfile(antupd.patempup,'antx2','.git'))~=7)
+        if ~isempty(regexp(msg,'unable to access')) || (exist(fullfile(antupd.patempup,'antx2','.git'))~=7)
+
             installLinux(antupd,gitrepository);
             if isunix && ~ismac
                 %system(['sudo git clone --depth=1 ' gitrepository])
@@ -255,6 +303,9 @@ else
 end
 installfromgithub;
 
+if exist('s') && isfield(s,'isgui') && s.isgui==0
+    try; cd(s.path); end
+end
 
 end
 %% ________________________________________________________________________________________________
