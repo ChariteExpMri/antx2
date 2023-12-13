@@ -65,7 +65,12 @@ end
 
 numLines = size(data,1)+size(subheader,1)+size(header,1); %number of lines
 
+try
 exc=actxserver('excel.application');
+catch
+   return 
+end
+
 [PATHSTR,NAME,EXT] = fileparts(filename);
 if isempty(PATHSTR)
     try
