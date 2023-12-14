@@ -296,7 +296,7 @@ end
 %  GUI-file-selection
 % ===============================================
 if isempty(preselect) || v.guiFile==1 && ~isempty(preselect)
-    
+    drawnow;
     pos=[0.078    0.077   0.78    0.86];
     tit='select NIFTIs to import';
     if isempty(preselect)
@@ -304,6 +304,7 @@ if isempty(preselect) || v.guiFile==1 && ~isempty(preselect)
     else
         id=selector2(g,gh,'iswait',1,'finder',1,'position',pos,'title',tit,'preselect',preselect );
     end
+    drawnow;
 else
     id=preselect;
 end
