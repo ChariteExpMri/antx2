@@ -183,6 +183,14 @@ for j=1:length(animals)
         px=d(ix(i),:);
         px(cellfun(@isempty,px))=[]; %remove empty space
         pani=strjoin(px,filesep);
+        
+         %adding beginning file-separator (for UNIX)
+        if ~ispc
+            if strcmp(pani(1),'filesep')==0
+                pani=[filesep pani ];
+            end
+        end
+        
         fis2= spm_select('FPList',pani,'^.*.nii');
         fis2=cellstr(fis2);
         
