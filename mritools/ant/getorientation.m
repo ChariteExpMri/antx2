@@ -1,6 +1,21 @@
 % determine orientation for an image relative to a reference image
 % the selected orientation-id can be used in the  #r parameter settings file, field: 'orientType'
 % [id rotstring]=getorientation(varargin)
+% 
+% #lk ____HOW DO DO IT ____
+% GET PREORIENTATION 
+% 1) change each image to CORONAL orientation [dim1],[dim2] or [dim3] button 
+% 2) set 3 landmarks in each volume 
+%      2.1) top(superior) of OLFACT. BULBUS
+%      2.2) superior part of MIDLINE STRUCTURE
+%      2.3) inferor part of MIDLINE STRUCTURE and onthe same plane as (2)
+%        -ideally, the 3 points (a) anatomically match in both images 
+%                               (b) must have a large large distance from each other 
+% 3) Select MRicron from pulldown and hit [check]-button to inspect the overlay. 
+%              -alternatively, just and hit [check]-button (without MRicron)  
+% 4) If the overlay is "ROUGHLY" OK, hit [CLOSE]-button. 
+% 
+% 
 %
 % #g MANUAL MODE
 % if in manual mode, the rotations of the last row can be modified manually. For this, click one of the
@@ -37,7 +52,11 @@
 % [id rotstring]=getorientation; % use file selection via gui
 % [id rotstring]=getorientation('ref',ref,'img',f1); % ref image and image defined
 % [id rotstring]=getorientation('ref',refimg,'img',img,'info', name,'mode',2,'wait',0,'rot',rot(1:3),'disp',1);
-
+%
+%____example__
+%      [id rotstring]=getorientation('ref',g1,'img',g2,'info', 'please inspect orientation (1st panel)','mode',1,...
+%             'wait',0,'rot',rota(ir),'disp',1,'slices',1,'manualmode',0,'shownumber',0,'radio',0);
+        
 
 function [id rotstring]=getorientation(varargin)
 
@@ -61,9 +80,16 @@ if isfield(p,'mode')==0;          p.mode=1; end
 if isfield(p,'info')==0;          p.info=''; end
 if isfield(p,'rot')==0;           p.rot=''; end
 if isfield(p,'disp')==0;          p.disp=1; end
-if isfield(p,'colormap')==0;      p.colormap='parula'; end
-if isfield(p,'manualmode')==0;    p.manualmode=1; end
-if isfield(p,'slices')==0;        p.slices=5; end
+if isfield(p,'colormap')==0;      p.colormap='gray'; end
+if isfield(p,'slices')==0;        p.slices=1; end     %No of slices for MIP
+if isfield(p,'manualmode')==0;    p.manualmode=1; end  %add manual mode (last panel), (0|1); default: 1
+
+if isfield(p,'shownumber')==0;    p.shownumber=1; end  %remove numeric indicator  ('1)', '2)' etc); (0|1); default: 1
+if isfield(p,'radio')==0;         p.radio=1;      end  %change radio to text text (0|1); default: 1
+
+        
+        
+        
 
 if isfield(p,'img')==0 || isempty(p.img)
     [t,sts] = spm_select(1,'image','select image',[],pwd,'.*.nii',1);
@@ -134,7 +160,9 @@ delete(findobj(0,'tag','findorientation'));
 
 
 %add manual rotation
-rot{end+1,1}='0 0 0';
+if p.manualmode==1
+    rot{end+1,1}='0 0 0';
+end
 np=size(rot,1);
 
 
@@ -146,7 +174,7 @@ set(gcf,'KeyPressFcn',@keysx);
 set(rb,'fontsize',6);
 for i=1:length(rb)
     pos=get(rb(i),'position');
-    set(rb(i),'position',[pos(1:2) .1 0.03]);
+    set(rb(i),'position',[pos(1:2) .12 0.03]);
 end
 
 %% ================================
@@ -173,9 +201,20 @@ for i=1:np
     plotimage(i);  
 end
 colormap gray;
-set(gcf,'menubar','none','NumberTitle','off','name',['Select Orientation: '  char(p.info) ],...
+set(gcf,'menubar','none','NumberTitle','off','name',[char(p.info) ],...
     'tag','findorientation');
 
+
+for i=1:length(rb)
+    if p.shownumber==0  %remove numeric indicator  ('1)', '2)' etc)
+        stm=get(rb(i),'string');
+        stm=regexprep(stm,'.*)','');
+        set(rb(i),'string',stm);
+    end
+    if p.radio==0   %  change radio to text text
+        set(rb(i),'style','text');
+    end
+end
 
 %========== controls ===============================
 

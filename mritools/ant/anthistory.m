@@ -692,39 +692,41 @@ set(findobj(hf,'tag','ed_sel'),'string',u.txtmsgDefault,'backgroundcolor',[.9 .9
 function mousemovedTable(e,e2)
 hf=findobj(0,'tag','anthistory');
 u=get(hf,'userdata');
-if 1
-    e2.getPoint;
-    % jtable=e;
-    % index = jtable.convertColumnIndexToModel(e2.columnAtPoint(e2.getPoint())) + 1
-    if u.istablesort==1
-        row=e.rowAtPoint(e2.getPoint());
-        col=e.columnAtPoint(e2.getPoint());
-        
-        ms0={};
-        for j=1:length(u.hd)
-            ms0{j,1}=  u.jTable.getValueAt(row , j-1);
+try
+    if 1
+        e2.getPoint;
+        % jtable=e;
+        % index = jtable.convertColumnIndexToModel(e2.columnAtPoint(e2.getPoint())) + 1
+        if u.istablesort==1
+            row=e.rowAtPoint(e2.getPoint());
+            col=e.columnAtPoint(e2.getPoint());
+            
+            ms0={};
+            for j=1:length(u.hd)
+                ms0{j,1}=  u.jTable.getValueAt(row , j-1);
+            end
+            ms0 = regexprep(ms0, {'<.*?>','&nbsp;','\s+$'}, '' );
+            ms=ms0;
+            %         sn=u.jTable.getValueAt(row , j-1); %get color
+            %         i1=min(strfind(sn,'=rgb('));
+            %         i2=strfind(sn,')');  i2=i2(i2>i1);
+            %         bgcol=str2num(regexprep(sn(i1:i2),{'=rgb','(' ')'},''))./255;
+            ms=ms0;
+        else
+            row=e.rowAtPoint(e2.getPoint())+1;
+            col=e.columnAtPoint(e2.getPoint())+1;
+            ms=u.d(row,:)';
         end
-        ms0 = regexprep(ms0, {'<.*?>','&nbsp;','\s+$'}, '' );
-        ms=ms0;
-        %         sn=u.jTable.getValueAt(row , j-1); %get color
-        %         i1=min(strfind(sn,'=rgb('));
-        %         i2=strfind(sn,')');  i2=i2(i2>i1);
-        %         bgcol=str2num(regexprep(sn(i1:i2),{'=rgb','(' ')'},''))./255;
-        ms=ms0;
-    else
-        row=e.rowAtPoint(e2.getPoint())+1;
-        col=e.columnAtPoint(e2.getPoint())+1;
-        ms=u.d(row,:)';
+        
+        
+        msiz=size(char(u.hd),2);
+        ms2=cellfun(@(a,b){['[' a ']'  repmat(' ' ,[1 msiz+2-length(a) ])  b '<br>' ]}, u.hd' ,ms );
+        ms2=strrep(ms2, ' ', '&nbsp;' );
+        ms2{2}=[ '<font color=blue><b>' ms2{2} '</b></font> ' ];
+        
+        ms3=['<html><p style="font-family:''Monospace''">' strjoin(ms2,char(10))];
+        e.setToolTipText(ms3);
     end
-    
-    
-    msiz=size(char(u.hd),2);
-    ms2=cellfun(@(a,b){['[' a ']'  repmat(' ' ,[1 msiz+2-length(a) ])  b '<br>' ]}, u.hd' ,ms );
-    ms2=strrep(ms2, ' ', '&nbsp;' );
-    ms2{2}=[ '<font color=blue><b>' ms2{2} '</b></font> ' ];
-    
-    ms3=['<html><p style="font-family:''Monospace''">' strjoin(ms2,char(10))];
-    e.setToolTipText(ms3);
 end
 
 function removefromhistory(e,e2)

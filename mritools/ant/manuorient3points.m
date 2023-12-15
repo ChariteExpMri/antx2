@@ -97,7 +97,7 @@
 % 
 % 
 
-function manuorient3points(p)
+function s=manuorient3points(p)
 % clc
 if 0
     manuorient3points()
@@ -163,7 +163,14 @@ if 0
     p.showMricron =0;
     % p.verbose     =1;
 end
+
+% ==============================================
+%%   
+% ===============================================
+s=[];
+
 u.p=p;
+
 
 % u.dotidxA=[    2764215     3609405     1540400];
 % u.dotidxB=[      316707      251186      254605];
@@ -188,6 +195,7 @@ u.colcross=...
     0 1 1
      ];
 u.fs=7;
+u.doCloseFig=0;
 % ----------------------------------
 
 makegui(u);
@@ -198,6 +206,47 @@ redraw();
 if u.p.wait==1
     uiwait(gcf);
 end
+%% ===============================================
+s=[];
+hf=findobj(gcf,'tag','manuorient3points');
+if isempty(hf)
+   return 
+end
+u=get(hf,'userdata');
+if u.p.wait==1
+    s=struct();
+    if isfield(u,'fin_rot')
+        s.rot=u.fin_rot;
+    end
+    if isfield(u,'fin_tra')
+        s.tra=u.fin_tra;
+    end
+    if isempty(fieldnames(s))
+        s=[];
+    else
+        [arg,rot]=evalc(['' 'findrotation2' '']);
+        rottb=cell2mat(cellfun(@(a){[ str2num(a)]}, rot ));
+        if isfield(s,'rot') && length(s.rot==3)
+            s.rot_df=rottb-repmat(s.rot(:)',[size(rottb,1) 1]);
+            s.rot_ssd=sqrt(sum(s.rot_df.^2,2));
+            s.rot_ixd=find(s.rot_ssd==min(s.rot_ssd));
+            s.add='__other info___';
+            s.funtable='[arg,rot]=evalc([''findrotation2''])';
+            s.tableStr=rot;
+            s.table=rottb;
+        end
+        
+    end
+end
+
+
+%% ===============================================
+
+if u.doCloseFig==1
+  try; close(hf); end
+end
+
+
 
 
 function keys(e,e2)
@@ -1204,7 +1253,12 @@ hf=findobj(0,'tag','manuorient3points');
 % close(gcf);
 function pbclose(e,e2);
 disp('..close window');
-close(gcf);
+% close(gcf);
+hf=findobj(0,'tag','manuorient3points');
+u=get(hf,'userdata');
+u.doCloseFig=1;
+set(hf,'userdata',u);
+uiresume(hf);
 
 function pbcheck(e,e2)
 u=get(gcf,'userdata');
@@ -1313,13 +1367,17 @@ ir=ir(1);
 % disp(['best match: (#' num2str(ir) ') '  '[' rota{ir}  ']']);
 % [id rotstring]=myrottest('ref',g1,'img',g2,'rot',rota(ir),'wait',0);
 % keyboard
+%% ===============================================
+
 if strcmp(arg,'check')
     hp=findobj(hf,'tag','popcheck');
     if get(hp,'value')==1 || get(hp,'value')==3  %  p.showmatch==1
-        [id rotstring]=getorientation('ref',g1,'img',g2,'info', 'best match','mode',1,...
-            'wait',0,'rot',rota(ir),'disp',1);
+        [id rotstring]=getorientation('ref',g1,'img',g2,'info', 'please inspect orientation (1st panel)','mode',1,...
+            'wait',0,'rot',rota(ir),'disp',1,'slices',1,'manualmode',0,'shownumber',0,'radio',0);
     end
 end
+%% ===============================================
+
 
 rot    =str2num(rota{ir});
 trans  =(tb(ir,3:5));
@@ -1381,7 +1439,11 @@ if strcmp(arg,'check')
     %if p.showMricron==1
        drawnow;
        if exist(g3)==2
-        rmricron([],g1,g3,1);
+           try
+               rmricron([],g1,g3,1);
+           catch
+               disp('Cannot sisplay in MRICRON');
+           end
        else
           disp('Cannot sisplay in MRICRON'); 
        end
@@ -1391,6 +1453,15 @@ if strcmp(arg,'check')
    
    disp(['   ROTATIONS:  ' regexprep(num2str(B(4:6)),'\s+',' ') ]);
    disp(['TRANSLATIONS:  ' regexprep(num2str(B(1:3)),'\s+',' ') ]);
+   
+   %% ======Parse OUTPUT=========================================
+   
+   u.final='---results-----';
+   u.fin_rot=[B(4:6)];
+   u.fin_tra=[B(1:3)];
+   set(hf,'userdata',u);
+   %% ===============================================
+   
     return
 end
 
