@@ -2,28 +2,28 @@
 % display files folderwise in command-window (no GUI)
 %
 %% [OPTIONAL PAIRWISE INPUTS] ___________________________________________
-% 'form':  form to display (default: 1)
+% 'form' or 'm':  form/mode to display (default: 1)
 %       1    files x folder ..long version
 %       11   files x folder ..compact version
 %       2    folder x files ..long version
 %       22   folder x files ..compact version
-% 'flt'  filter   (default: '.*.nii')
+% 'flt'  or 'f' : filter   (default: '.*.nii')
 %       examples;
 %         '.*'  ...all files
 %         '.*.nii'  ...all NIFTI-files
 %         '^t2.*.nii'   ...all NIFTI-files starting with t2
 %         '^ANO|^AVG.*.nii'  ...all NIFTI-files starting with ANO or AVG
-% 'counts' show extra column/raw with counts
+% 'counts' or 'c' show extra column/raw with counts
 %        [0] no; [1] yes    ..default: [1]
 % 'countsonly' show only counts ...just filenames and counts across folders
 %           [0] no; [1] yes    ..default: [1]
 %         - 'counts' has to be set to [1] if 'countsonly' should be used
 %           example: dispfiles('countsonly',1,'form',1)
 % 
-% dir     :-as  <char> : upper dir (dat-dir) to search in subdirs
+% dir or 'd' :-as  <char> : upper dir ("dat"-dir) to search in subdirs or other dir
 %           default: use data-path from loaded project (an.datpath)
-%         : as <cell> list of fullpath-animal-dirs 
-% show : show in comand-window (default: 1)
+%         : as <cell> list of fullpath-animal-dirs or other dir 
+% show or 's' : show in comand-window (default: 1)
 %       [1] yes
 %       [0] no
 %% [OPTIONAL OUTPUT] ___________________________________________
@@ -39,11 +39,16 @@
 
 % dispfiles;  %show all NIFTI from loaded project-file
 % o=dispfiles('flt','.*'); % show all files
-% dispfiles('form',2,'flt','^t2.*.nii');  % find all NIFTIs starting with 't2'
+% dispfiles('tpm'); %search for files with string 'tpm' in it
+% dispfiles({'PD' 'T1' 'MT'});  %search for files with strings 'PD','T1' or 'MT'
+% same as
+% dispfiles('flt',{'PD','T1' 'MT'})
+% dispfiles('form',2,'flt','^t2.*.nii');  %find all NIFTIs starting with 't2'
 % dispfiles('form',2,'flt','^ANO|^AVG.*.nii')  %find all NIFTI-files starting with ANO or AVG
 % dispfiles('form',2,'flt','^ANO|^AVG.*.nii','counts',0,'dir',fullfile(pwd,'dat2')); %%find all NIFTI-files starting with ANO or AVG, show no count-column/row, use explicit main folder
 % o=dispfiles('form',2,'flt','.*.nii','counts',0,'dir',fullfile(pwd,'dat'),'show',0); % find all NIFTIs,show no count-column/row, use explicit main folder, do not show, parse output
-
+% -check nifti-files in template folder of two studies using shortcuts
+% dispfiles('f','nii','m',1,'s',1,'c',1,'d',{'F:\data8_MPM\MPM_agBrandt3\templates','F:\data7\AG_schmid\templates'})
 function varargout=dispfiles(varargin)
 
 % clc
@@ -59,15 +64,34 @@ p.dir   =[];
 p.show  =1;
 p.countsonly=0;
 
+
 if nargin>0
-    pin= cell2struct(varargin(2:2:end),varargin(1:2:end),2);
-    p=catstruct(p,pin);
+    if nargin==1 % direct search for work...1st-arg
+        if ischar(varargin{1})
+            p.flt=varargin{1};
+        elseif  iscell(varargin{1})  % search for files using multiple strings
+            p.flt= strjoin(varargin{1},'|');
+        end
+    else
+        pin= cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+        p=catstruct(p,pin); 
+    end
 end
 
+%shortcuts
+if isfield(p,'m');  p.form   =p.m; end %->form/mode
+if isfield(p,'s');  p.show   =p.s; end %show
+if isfield(p,'f');  p.flt    =p.f; end %flt
+if isfield(p,'c');  p.counts =p.c; end %counts
+if isfield(p,'d');  p.dir    =p.d; end %dirs
 
-% p
-%
-% return
+ 
+ 
+if  iscell(p.flt)
+    p.flt= strjoin(p.flt,'|');
+end
+
+   
 
 
 
@@ -113,6 +137,13 @@ elseif iscell(pam)
 else
     error('dir(s) not specified');
 end
+
+if isempty(char(dirs2{1})) %some other direct path such as 'templates'
+    dirs=cellstr(pam);
+    [~, dirs2]=fileparts2(dirs);
+end
+
+
 
 % p.flt='.*.nii';
 % fis={};
