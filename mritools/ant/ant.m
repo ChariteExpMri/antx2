@@ -666,9 +666,10 @@ uimenu('Parent',ContextMenu, 'Label','  SPMDISP: overlay t2.nii & ALLen(GM)', 'c
 % uimenu('Parent',ContextMenu, 'Label','    overlay [x_t2.nii] & [ANO.nii] ', 'callback', {@cmenuCasesCB,'ovl' });
 % uimenu('Parent',ContextMenu, 'Label','    overlay [x_t2.nii] & [_b1grey.nii] ', 'callback', {@cmenuCasesCB,'ovl' });
 
-uimenu('Parent',ContextMenu, 'Label','get orientation -automatic mode',      'callback', {@cmenuCasesCB,'getOrientationAutomatic' },   'ForegroundColor',[1   0.3882    0.3882],    'Separator','on');
-uimenu('Parent',ContextMenu, 'Label','examine orientation',                  'callback', {@cmenuCasesCB,'examineOrientation' },        'ForegroundColor',[1   0.3882    0.3882],    'Separator','off');
-uimenu('Parent',ContextMenu, 'Label','get orientation via 3point selection', 'callback', {@cmenuCasesCB,'getOrientationVia3points' },  'ForegroundColor',[1   0.3882    0.3882],    'Separator','off');
+uimenu('Parent',ContextMenu, 'Label','<html><b>examine orientation via HTMLfile (fastest way)',      'callback', {@cmenuCasesCB,'examineOrientationHTML' },  'ForegroundColor',[1   0.3882    0.3882],    'Separator','on');
+uimenu('Parent',ContextMenu, 'Label','<html><b>examine orientation',                                'callback', {@cmenuCasesCB,'examineOrientation' },      'ForegroundColor',[1   0.3882    0.3882],    'Separator','off');
+uimenu('Parent',ContextMenu, 'Label','get orientation -automatic mode',                             'callback', {@cmenuCasesCB,'getOrientationAutomatic' },  'ForegroundColor',[1   0.3882    0.3882],    'Separator','OFF');
+uimenu('Parent',ContextMenu, 'Label','get orientation via 3point selection',                        'callback', {@cmenuCasesCB,'getOrientationVia3points' },  'ForegroundColor',[1   0.3882    0.3882],    'Separator','off');
 
 uimenu('Parent',ContextMenu, 'Label','   *clipboard selected fullpaths-folders',                 'callback', {@cmenuCasesCB,'copyfullpath' },      'Separator','on');
 uimenu('Parent',ContextMenu, 'Label','   *clipboard selected folders ',                          'callback', {@cmenuCasesCB,'copypath' },          'Separator','off');
@@ -1012,6 +1013,55 @@ switch cmenutask
             
             
         end
+        
+    case 'examineOrientationHTML'
+       %% ===============================================
+       px=antcb('getsubjects');
+        refimg=fullfile(fileparts(fileparts(px{1})),'templates','AVGT.nii');
+        if exist(refimg)~=2
+            antcb('copytemplates');
+%             warning('refImage in templates-folder not found..please select an appropriate "AVGT.nii" as reference image');
+%             [t,sts] = spm_select(1,'image','select reference image (example: "AVGT.nii")',[],pwd,'.*.nii',1);
+%             refimg=strtok(t,',');
+            
+            
+        end
+        for i=1% FIRST-ANIMAL-ONLY :size(px,1)
+            img=fullfile(px{i},'t2.nii');
+            if exist(img)~=2
+                warning('"t2.nii" image not found not found..please select another image');
+                [t,sts] = spm_select(1,'image','select image (example "t2.nii") ',[],px{i},'.*.nii',1);
+                img=strtok(t,',');
+            end
+            
+            source=img;
+            target=refimg;
+            
+            xgetpreorientationHTML(0,struct('source',source,'target', target) );
+            
+            %% ===============================================
+            col=[[0.584313725490196 0.388235294117647 0.388235294117647]];
+            colstr=[ '[' num2str(col) ']'];
+           ms= {'PREORIENTATION from NATIVE-space to STANDARD space'
+            'PLEASE INSPECT the above HTML-file and find the adequate PRE-ORIENTATION/PRE-ORIENTATION '
+            'THE change the ANTx-projectfile (proj.m): specify variable [x.wa.orientType] either :'
+            '- as numeric value, i.e. the rotationTable-Index (single numeric value in brackets [ ] from HTMLfile)'
+            '- or as string, containing the three rotation-values (''rotX rotY rotZ'') from HTMLfile'
+            'when done, update the ANTx-GUI via : antcb(''reload'') or reload the project-file'
+            };
+           cprintf(colstr,[   strjoin(ms,char(10))  '\n'] );
+        
+            
+         
+            
+            
+            
+        end
+        
+        
+       %% ===============================================
+       
+        
     case 'getOrientationVia3points'
         px=antcb('getsubjects');
         refimg=fullfile(fileparts(fileparts(px{1})),'templates','AVGT.nii');
@@ -1257,6 +1307,10 @@ end
 mh = uimenu(f,'Label','Tools');
 mh2 = uimenu(mh,'Label',' coregister images',                                              'Callback',{@menubarCB, 'coregister'},      ...
     'userdata',[HSTART 'coregister images' HEND '.. a source image is registered to a target image' HEND '..other images can be applied']);
+
+mh2 = uimenu(mh,'Label',' obtain pre-orientation (via HTMLfile) ',                                              'Callback',{@menubarCB, 'getPreorientationHTML_anyImage'},      ...
+    'userdata',[HSTART 'obtain pre-orientation ' HEND '.. get pre-orientation between source and target image' HEND ' ']);
+
 mh2 = uimenu(mh,'Label',' register exvivo to invivo',                                       'Callback',{@menubarCB, 'registerexvivo'},   ...
     'userdata',[HSTART 'an exvivo skull-stripped image is registered to an invivo image']);
 mh2 = uimenu(mh,'Label',' register CT image',                                              'Callback',{@menubarCB, 'registerCT'},      ...
@@ -2291,7 +2345,28 @@ elseif strcmp(task,'coregister')
     xcoreg(1);
     statusMsg(0);
     
+    
+elseif strcmp(task,'getPreorientationHTML_anyImage')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xgetpreorientationHTML';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xgetpreorientationHTML.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    
+    statusMsg(1,'pre-orientation via HTML');
+    xgetpreorientationHTML
+    statusMsg(0);
+    
     %________________________________________________
+    
+    
+    
 elseif strcmp(task,'registerexvivo')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xregisterexvivo';

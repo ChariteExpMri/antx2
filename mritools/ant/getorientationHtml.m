@@ -19,12 +19,14 @@ p.gridcolor  =[1 0 0];
 p.dim        =2;  %dimension to plot
 % p.slices    ='n6';
 p.outputstring='Reorient';
+p.pcolthresh   =1e6   ;%pseudocolorThreshold ...if reached create pseudocolored image  (e.g for 'ANO.nii')
 
 
 
 if nargin>2
     s = {varargin{:}};
-    p = cell2struct(s(2:2:end),s(1:2:end),2);
+    pin = cell2struct(s(2:2:end),s(1:2:end),2);
+    p=catstruct(p,pin);
 end
 
 
@@ -94,9 +96,16 @@ for i=1:size(p.rot,1)
     rotinv = vecinv(4:6);
     
     o = get_orthoview(     p.img,[0 0 0 rotinv],0,'max',p.slices);
-    o.imgc=imadjust(mat2gray(o.imgc));
-    o.imgs=imadjust(mat2gray(o.imgs));
-    o.imgt=imadjust(mat2gray(o.imgt));
+    if max(max([o.imgc(:) ; o.imgs(:) ; o.imgt(:)]))>p.pcolthresh %1e2%6
+        o=pseudocolorize(o);
+        o.imgc=mat2gray(o.imgc);
+        o.imgs=mat2gray(o.imgs);
+        o.imgt=mat2gray(o.imgt);
+    else
+        o.imgc=imadjust(mat2gray(o.imgc));
+        o.imgs=imadjust(mat2gray(o.imgs));
+        o.imgt=imadjust(mat2gray(o.imgt));
+    end
     % ===============================================
     
     si=[size(o.imgc) size(o.imgs) size(o.imgt)];
@@ -122,9 +131,16 @@ for i=1:size(p.rot,1)
     
     if i==1
         u = get_orthoview( p.ref,[0 0 0 ],0,'max',p.slices);
-        u.imgc=imadjust(mat2gray(u.imgc));
-        u.imgs=imadjust(mat2gray(u.imgs));
-        u.imgt=imadjust(mat2gray(u.imgt));
+        if max(max([u.imgc(:) ; u.imgs(:) ; u.imgt(:)])) >p.pcolthresh
+            u=pseudocolorize(u);
+            u.imgc=mat2gray(u.imgc);
+            u.imgs=mat2gray(u.imgs);
+            u.imgt=mat2gray(u.imgt);
+        else
+            u.imgc=imadjust(mat2gray(u.imgc));
+            u.imgs=imadjust(mat2gray(u.imgs));
+            u.imgt=imadjust(mat2gray(u.imgt));
+        end
                       
         si=[size(u.imgc) size(u.imgs) size(u.imgt)];
         mxh=max(si(1:2:end));
@@ -201,7 +217,7 @@ end
 if ~isempty(strfind(f1,[filesep 'dat' filesep]))
     outpath=fullfile(fileparts(fileparts(fileparts(f1))),'checks');
 elseif ~isempty(strfind(f2,[filesep 'dat' filesep]))
-    outpath=fullfile(fileparts(fileparts(fileparts(f1))),'checks')
+    outpath=fullfile(fileparts(fileparts(fileparts(f1))),'checks');
 end
 if isempty(char(outpath))
     try
@@ -290,7 +306,6 @@ v{end+1,1}=['<br><br><br>'];
 
 
 pwrite2file(htmlfile, l);
-disp('Done.');
 
 showinfo2('checkRegHtml',htmlfile);
 
@@ -328,9 +343,27 @@ indexfile=fullfile(outpath,index_name);
 pwrite2file(indexfile, s2);
 showinfo2('INDEXfile',indexfile);
 
+disp('Done.');
 %———————————————————————————————————————————————
-%%
+%%  subs
 %———————————————————————————————————————————————
+
+function u=pseudocolorize(u);
+%% ===============================================
+fis={'imgc' 'imgs' 'imgt'};
+for i=1:length(fis)
+    eval(['q=u.' fis{i} ';'])  ;%q=u.imgc;
+    siq=size(q);
+    q=q(:);
+    [~,ps] = sort(q,'ascend');
+    r = 1:length(q);
+    r(ps) = r;
+    q=reshape(r,[siq]) ;
+    eval(['u.' fis{i} '=q;'])  ;%q=u.imgc;
+end
+
+%% ===============================================
+
 
 
 function l1=addInfo(l, vi,p);

@@ -977,6 +977,14 @@
 % #ba 12 Dec 2023 (14:09:47)
 % #k [xrename.m] #n  added option to run operation(mean/median/mode/sum/min/max/std/zscore/var) over 4th dim of NIFTI-file
 % 
+% #ba 20 Dec 2023 (14:00:20)
+% #k xgetpreorientationHTML] #n new, obtain pre-orientatino (pre-alignmentTask) via HTMLfile
+% saves a HTML-file in the study's 'checks'-folder
+% To obtain the pre-orientation from native-space to standard-space:
+% #gw --> access via ANTx animal-listbox context menu: &#8658; [examine orientation via HTMLfile]
+% For any other images with different orientations:
+% #gw --> access via ANT-menu: &#8658; tools/"obtain pre-orientation (via HTMLfile)"
+% 
 % 
 % 
 

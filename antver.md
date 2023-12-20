@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   12 Dec 2023 (14:09:47)  
+ &#x1F34E; last modification:   20 Dec 2023 (14:00:20)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,8 +7,17 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**20 Dec 2023 (14:00:20)**</ins>  
+   xgetpreorientationHTML]__ new, obtain pre-orientatino (pre-alignmentTask) via HTMLfile  
+  saves a HTML-file in the study's 'checks'-folder  
+  To obtain the pre-orientation from native-space to standard-space:  
+  &#8618; access via ANTx animal-listbox context menu: &#8658; __[examine orientation via HTMLfile]__  
+  For any other images with different orientations:  
+  &#8618; access via ANT-menu: &#8658; tools/"obtain pre-orientation (via HTMLfile)"  
+<!---->
   &#x1F535;   <ins>**12 Dec 2023 (14:09:47)**</ins>  
    __[xrename.m]__  added option to run operation(mean/median/mode/sum/min/max/std/zscore/var) over 4th dim of NIFTI-file  
+    
 <!---->
   &#x1F535;   <ins>**11 Dec 2023 (12:26:44)**</ins>  
    __[ximportBrukerNifti.m]__ modified ...noGUI-mode enabled (see last example on HELP of DTIprep.m )  
