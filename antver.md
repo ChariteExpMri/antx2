@@ -8,8 +8,8 @@
     
 ------------------  
   &#x1F535;   <ins>**20 Dec 2023 (14:00:20)**</ins>  
-   xgetpreorientationHTML]__ new, obtain pre-orientatino (pre-alignmentTask) via HTMLfile  
-  saves a HTML-file in the study's 'checks'-folder  
+   __[xgetpreorientationHTML]__ new, obtain pre-orientation (the "pre-alignment task") via HTMLfile  
+  -The output ia a HTML-file in the study's 'checks'-folder. The HTML-file contains different orientations of the source-image.  
   To obtain the pre-orientation from native-space to standard-space:  
   &#8618; access via ANTx animal-listbox context menu: &#8658; __[examine orientation via HTMLfile]__  
   For any other images with different orientations:  
