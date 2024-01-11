@@ -146,6 +146,8 @@ fclose('all');
 d={};
 pas=fileparts2(fis);
 pas=unique(pas);
+idel=setdiff([1:length(pas)]' ,regexpi2(pas,[filesep 'pdata' filesep])); % non-'pdata-folders'
+pas(idel)=[];
 animalvec={};
 maxsplit=max(cell2mat(cellfun(@(a){[ length(strsplit(a,filesep)) ]}, pas )));
 for i=1:length(pas)
