@@ -3422,6 +3422,7 @@ if exist('argin') && length(argin)>1
 end
 
 scripts={
+    'DTIscript_exportToHPC_makeBatch_11-01-2024.m'
     'DTIscript_exportToHPC_makeBatch_20-10-2023.m'
     'DTIscript_exportToHPC_makeBatch_14-02-2023.m'
     'DTIscript_exportToHPC_makeBatch_19-01-2023.m'

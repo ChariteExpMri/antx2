@@ -983,7 +983,7 @@
 % To obtain the pre-orientation from native-space to standard-space:
 % #gw --> access via ANTx animal-listbox context menu: &#8658; [examine orientation via HTMLfile]
 % For any other images with different orientations:
-% #gw --> access via ANT-menu: &#8658; tools/"obtain pre-orientation (via HTMLfile)"
+% #gw --> access via ANT-menu: &#8658; Tools/"obtain pre-orientation (via HTMLfile)"
 % 
 % 
 % 

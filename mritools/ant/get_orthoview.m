@@ -219,8 +219,8 @@ for j=1:size(slic,2)
     Dims = round(diff(bb)'+1);
     is   = inv(rr.Space);
     cent = is(1:3,1:3)*slicmm(:) + is(1:3,4);
-    
-    
+    mvec=spm_imatrix(rr.Space);
+    voxsi=mvec(7:9)';
     
     M = rr.Space\rr.vols{i}.premul*rr.vols{i}.mat;
     TM0 = [ 1 0 0 -bb(1,1)+1
@@ -229,6 +229,7 @@ for j=1:size(slic,2)
         0 0 0 1];
     TM = inv(TM0*M);
     TD = Dims([1 2]);
+    voxT=voxsi([1 2]);
     
     CM0 = [ 1 0 0 -bb(1,1)+1
         0 0 1 -bb(1,3)+1
@@ -236,6 +237,7 @@ for j=1:size(slic,2)
         0 0 0 1];
     CM = inv(CM0*M);
     CD = Dims([1 3]);
+    voxC=voxsi([1 3]);
     
     if rr.mode ==0,
         SM0 = [ 0 0 1 -bb(1,3)+1
@@ -244,6 +246,7 @@ for j=1:size(slic,2)
             0 0 0 1];
         SM = inv(SM0*M);
         SD = Dims([3 2]);
+        voxS=voxsi([3 2]);
     else
         SM0 = [ 0 -1 0 +bb(2,2)+1
             0  0 1 -bb(1,3)+1
@@ -251,6 +254,7 @@ for j=1:size(slic,2)
             0  0 0 1];
         SM = inv(SM0*M);
         SD = Dims([2 3]);
+        voxS=voxsi([2 3]);
     end;
     
     rr.hld=1;
@@ -301,6 +305,9 @@ o.imgt=imgt;
 o.cent=cent;
 o.bb  =bb;
 o.nslic=nslic;
+
+o.voxmm=fliplr([voxC voxS voxT]');
+o.dim  =fliplr([CD  SD  TD ]');
 
 % if plotter==1   fg,
 %     subplot(2,2,1);imagesc(imgc);

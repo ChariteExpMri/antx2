@@ -13,7 +13,7 @@
   To obtain the pre-orientation from native-space to standard-space:  
   &#8618; access via ANTx animal-listbox context menu: &#8658; __[examine orientation via HTMLfile]__  
   For any other images with different orientations:  
-  &#8618; access via ANT-menu: &#8658; tools/"obtain pre-orientation (via HTMLfile)"  
+  &#8618; access via ANT-menu: &#8658; Tools/"obtain pre-orientation (via HTMLfile)"  
 <!---->
   &#x1F535;   <ins>**12 Dec 2023 (14:09:47)**</ins>  
    __[xrename.m]__  added option to run operation(mean/median/mode/sum/min/max/std/zscore/var) over 4th dim of NIFTI-file  
