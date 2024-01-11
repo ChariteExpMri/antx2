@@ -166,7 +166,11 @@ if strcmp(do, 'selectimageviagui')
 end
 
 if strcmp(do, 'loadprojectfile') || strcmp(do, 'load')
-    loadprojectfile(input);
+    if exist('input')==1;     loadprojectfile(input);
+    else;                     loadprojectfile();
+    end
+        
+        
 end
 if strcmp(do, 'loadprojectfile?') || strcmp(do, 'load?')  ;
     disp(help(['antcb' filemarker 'loadprojectfile']));
