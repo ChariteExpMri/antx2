@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   20 Dec 2023 (14:00:20)  
+ &#x1F34E; last modification:   12 Jan 2024 (12:55:22)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**12 Jan 2024 (12:55:22)**</ins>  
+   __[DTIprep.m]__ modified, check Number of b-values and number of DWI-volumes  
+<!---->
   &#x1F535;   <ins>**20 Dec 2023 (14:00:20)**</ins>  
    __[xgetpreorientationHTML]__ new, obtain pre-orientation (the "pre-alignment task") via HTMLfile  
   -The output ia a HTML-file in the study's 'checks'-folder. The HTML-file contains different orientations of the source-image.  
@@ -14,9 +17,10 @@
   &#8618; access via ANTx animal-listbox context menu: &#8658; __[examine orientation via HTMLfile]__  
   For any other images with different orientations:  
   &#8618; access via ANT-menu: &#8658; Tools/"obtain pre-orientation (via HTMLfile)"  
+    
 <!---->
   &#x1F535;   <ins>**12 Dec 2023 (14:09:47)**</ins>  
-   __[xrename.m]__  added option to run operation(mean/median/mode/sum/min/max/std/zscore/var) over 4th dim of NIFTI-file  
+   __[xrename.m]__ added option to run operation(mean/median/mode/sum/min/max/std/zscore/var) over 4th dim of NIFTI-file  
     
 <!---->
   &#x1F535;   <ins>**11 Dec 2023 (12:26:44)**</ins>  

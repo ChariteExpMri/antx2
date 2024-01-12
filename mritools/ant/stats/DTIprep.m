@@ -2601,6 +2601,25 @@ if strcmp(task,'checkassignment')
         
         n_btables=size(btables,1);
         n_dwis  =size(dwis,1);
+        %% =========[get number of volumes]======================================
+        disp('..please wait..');
+        [mdirs] = spm_select('FPList',padat,'dir');
+        mdirs=cellstr(mdirs);
+        t=repmat({''},[length(mdirs) 1+length(dwis)]);
+        for i=1:length(mdirs)
+            [~,animal]=fileparts(mdirs{i});
+            t{i,1}=animal;
+            for j=1:length(dwis)
+                f2=fullfile(mdirs{i}, dwis{j});
+                if exist(f2)==2
+                h=length(spm_vol(f2));
+                else
+                h=0;    
+                end
+                t{i,j+1}=h;
+            end
+        end
+        
         %% ===============================================
         BvaluesRounded={};
         gradtables={};
@@ -2612,7 +2631,7 @@ if strcmp(task,'checkassignment')
             numDir(i,1)=size(a,1);
             
             dx=round(unique(a(:,4)));
-            BvaluesRounded{i,1}=strjoin(regexprep(cellstr(num2str(unique(round(dx/100)*100))),'\s+',''),',');
+            BvaluesRounded{i,1}=strjoin(regexprep(cellstr(num2str(unique(round(dx/500)*500))),'\s+',''),',');
         end
         %% ===============================================
         
@@ -2640,14 +2659,26 @@ if strcmp(task,'checkassignment')
         
         %% ===============================================
         
-        hd1={' #ra ___b-table___' '#ka ___INPUT-DWI___'  '#ba ___OUTPUT-DWI___'};
+        hd1={' #ga ___b-TABLE___' '#ka ___INPUT-DWI___'  '#ba ___OUTPUT-DWI___'};
         [~, ms1]=plog([],[hd1 ;chktab ],0,'','s=10;plotlines=0;al=1');
         
-        chktab2(1:n_btables,1) =btables;
-        chktab2(:,2)=num2cell(numDir);
-        chktab2(:,3)=BvaluesRounded;
-        hd2={' #ra ___b-table___' '#kw ___No-DWI-ANGLES___'  ' ___rounded B-values___'};
-        [~, ms2]=plog([],[hd2 ;chktab2 ],0,'','s=10;plotlines=0;al=1');
+        
+        % also show numVols of 1st animal
+        if length(numDir)==length(t(1,2:end))
+            chktab2(1:n_btables,1) =btables;
+            chktab2(:,2)=num2cell(numDir);
+            chktab2(:,3)=t(1,2:end);
+            chktab2(:,4)=BvaluesRounded;
+            hd2={' #ga _b-TABLE_' '#km _No-DWI-ANGLES_' '#kc _No-DWI-Volumes(1st animal)'  '#kw _rounded B-values__'};
+            [~, ms2]=plog([],[hd2 ;chktab2 ],0,'','s=10;plotlines=0;al=1');
+             ms2{end+1,1}=[' #r Please check that No-DWI-ANGLES and No-DWI-Volumes are similar ..otherwise change order! '];
+        else
+            chktab2(1:n_btables,1) =btables;
+            chktab2(:,2)=num2cell(numDir);
+            chktab2(:,3)=BvaluesRounded;
+            hd2={' #ga ___b-TABLE_' '#kw ___No-DWI-ANGLES___'  ' ___rounded B-values___'};
+            [~, ms2]=plog([],[hd2 ;chktab2 ],0,'','s=10;plotlines=0;al=1');
+        end
         
         % RPE
         ms3={'  '};
@@ -2678,18 +2709,28 @@ if strcmp(task,'checkassignment')
             ms{end+1,1}=[' #r shellscripts are hard-coded. The names of the DWI-files'];
             ms{end+1,1}=[' #r has to be:  '];
             ms=[ms; finaldwiname];
-            ms{end+1,1}=[' #, PLEASE CHECK THAT THIS IS TRUE FOR THE "___OUTPUT-DWI___" -files!  '];
+           % ms{end+1,1}=[' #, PLEASE CHECK THAT THIS IS TRUE FOR THE "___OUTPUT-DWI___" -files!  '];
         end
         
+        %% =====[plot animal-table with number of DWI-volumes]==
+        
+         hd6=[[' #ra ___animal_(n=' num2str(size(t,1)) ')__']  cellfun(@(a){[ ' DWI' num2str(a) ]}, num2cell(1:length(dwis)))];
+            [~, ms6]=plog([],[hd6; t ],0,'','s=10;plotlines=0;al=1;s=0;');
+            ms6=['  '; ' #lk  [2] DWI-VOLUMES COUNTS ACROSS ANIMALS '; ms6(2:end)];
+            ms6=[ms6; ' #d *with following DWI-files'];
+            ms6=[ms6; cellfun(@(a,b){[ ' #d DWI' num2str(a) ': ' b ]}, num2cell(1:length(dwis(:)))',dwis)];
+        %uhelp(ms6);
+        %% ===============================================
+        
         ms5={''};
-        ms5{end+1,1}=[' #wk  CONTENT O B-tables' ];
+        ms5{end+1,1}=[' #lk [3]  CONTENT O B-tables' ];
         for i=1:size(gradtables,1)
             ms5{end+1,1} =['<HTML><font color=green><b> &#9654;' [ ' [' num2str(i) '] ' btables{i}]   '</font></b>'];
             ms5=[ms5;gradtables{i}];
             ms5{end+1,1}=' ';
         end
         ms5=[ms5; repmat({' '},[3 1])];
-        msa=[ms;ms5];
+        msa=[ms; ms6;  ms5];
         
         
         drawnow;
