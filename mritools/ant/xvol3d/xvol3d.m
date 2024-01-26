@@ -767,7 +767,7 @@ set(hb,'callback',{@showarrows},'tag','showarrows','fontsize',8,'backgroundcolor
 
 %% __________________________________________________________________________________________________
 %BRAIN
-hb=uicontrol(hs,'style','edit','units','norm','string','0.2');
+hb=uicontrol(hs,'style','edit','units','norm','string','0.05');
 set(hb,'position',[0    0.1 .15 .04],'tooltipstring','brain alpha/transparency');
 set(hb,'callback',{@brainparam,'alpha'},'fontsize',8,'tag','brainalpha');
 
@@ -852,11 +852,11 @@ f2= uimenu(f,'Label','display available colormaps','Callback',@Colormaps_showAll
 f2= uimenu(f,'Label','convert regions with scores to "load selection" file ','Callback',@convert2loadleselection_cb);
 
 f = uimenu('Label','props');
-f2= uimenu(f,'Label','<html><font color=red>INFO: <font color=green>[props]: use import to generate a previous plot based on an previously exported property file');
+% f2= uimenu(f,'Label','<html><font color=red>INFO: <font color=green>[props]: use import to generate a previous plot based on an previously exported property file');
 
 f2= uimenu(f,'Label','<html><font color=blue> copy properties to clipboard (to rerun) ','Callback',@prop_toClipboard_call,'separator','on');
-f2= uimenu(f,'Label','<html><font color=gray>import prop-file (to re-rerun code) ..not recommended use "clipboard" instead ','Callback',@prop_import_call);
-f2= uimenu(f,'Label','<html><font color=gray>export prop-file (to later re-rerun code) ..not recommended use "clipboard" instead ','Callback',@prop_export_call);
+% f2= uimenu(f,'Label','<html><font color=gray>import prop-file (to re-rerun code) ..not recommended use "clipboard" instead ','Callback',@prop_import_call);
+% f2= uimenu(f,'Label','<html><font color=gray>export prop-file (to later re-rerun code) ..not recommended use "clipboard" instead ','Callback',@prop_export_call);
 
 
 
@@ -906,6 +906,7 @@ if isempty(u2)
 end
 
 g=[];
+%vgen_Msg=' % *** GENERAL PARAMETER ***';
 g.info_______=' *** GENERAL PARAMETER ***';
 g.mask=u2.mask;
 curfig=gcf;
@@ -947,6 +948,53 @@ head={...
     '%% ==============================================='
     };
 vmain=[head; vmain; {' '}];
+
+
+
+
+%% =======atlas========================================
+if isfield(u2,'atlas') && exist(u2.atlas)==2 
+    m=[];
+    %m.info_______=' % *** ATLAS *** ';
+    m.atlas=u2.atlas;
+    vatlas=regexprep(struct2list(m),'^m.','p.');
+    atlas_Msg=' % *** ATLAS *** ';
+    vmain=    [vmain;atlas_Msg; vatlas; {' '}];
+    
+    hf=findobj(0,'tag','xvol3d');
+    w1=findobj(hf,'type','patch','tag','region');
+    if ~isempty(w1)
+       % m.info1_______=' *	colorized regions * ';
+        ar={};
+        for i=1:length(w1)
+            v=[];
+            v.atlas_ID  = get(w1(i),'userdata');
+            v.facecolor = get(w1(i),'facecolor');
+            v.FaceAlpha = get(w1(i),'FaceAlpha');
+            % ===============================================
+            
+            b={'ID' v.atlas_ID 'facecolor' v.facecolor 'FaceAlpha' v.FaceAlpha};
+            %b={'ee',[1 2; 3 4]}
+            for j=1:length(b)
+                if isnumeric(b{j}); 
+                    b{j}= ...
+                    ['['  regexprep(num2str(strjoin(  cellstr(num2str(b{j}))  ,';')),'\s+',',') ']']   ;
+                elseif ischar(b{j}); 
+                   b{j}=  ['''' b{j} ''''];
+                end
+            end
+            ar{i,1} =['   '  strjoin(b,',')];
+            % =============================================== 
+        end
+        atlasregions_Msg=' % COLORIZED REGIONS ';
+        atlasregions    =[ 'p.atlasregions={  %ATLAS-REGIONS'; ar  ;'    };'  ];
+        
+        vmain=[vmain; atlasregions_Msg; atlasregions];
+    end
+    
+end
+
+%% ===============================================
 
 % % ==============================================
 % %%   save parameter-main/general
@@ -1034,9 +1082,16 @@ if isclipboard==1
     v2=regexprep(v2,'^gen.'  ,'p.gen.');
     v2=regexprep(v2,'^main.' ,'p.main.');
     v2=regexprep(v2,'^con.'  ,'p.con.');
-    v2(end,1)={'%-----load xvol3-properties-----------------------'};
+    v2(end+1,1)={'%-----load xvol3-properties-----------------------'};
     v2(end+1,1)={'xvol3d(''loadprop'',p); % load properties'};
+    %% ==========MAKE NICER =====================================
+    iv=regexpi2(v2,'^p.gen.info');
+    v2(iv)={'% *** GENERAL PARAMETER ***'};
+    
+    iv=regexpi2(v2,'^p.main.info');
+    v2(iv)={'% *** MAIN PARAMETER [xvol3d-window]*** '};
     %% ===============================================
+    
     
     
     mat2clip(v2);
@@ -1165,6 +1220,75 @@ if exist('p')==1
     try; xvol3d('view',[p.gen.view]); end
 end
 % ==============================================
+%%   load atlas
+% ===============================================
+if isfield(p,'atlas')==1 &&  exist(p.atlas)==2
+     xvol3d('loadatlas',p.atlas);            % load atlas
+    %% ===============================================
+    
+    if isfield(p,'atlasregions')==1
+        ar=p.atlasregions;
+        if isnumeric(ar)
+            artemp={};
+            for i=1:length(ar)
+                artemp(i,:)={'ID', ar(i)};   
+            end  
+            ar=artemp;
+        end
+        arstr=cellfun(@(a){[num2str(a)]}, (ar(1,:))); %used as search-string
+        
+        at_ids=[cell2mat(ar(:,2))]';
+        xvol3d('regions',at_ids);                  %  preselect regions by ID (here "cauoputamne" and "prim. motor area, layer 1")
+
+        u=get(h2,'userdata');
+        for i=1:length(at_ids)
+            is=find(cell2mat(u.lu(:,4))==at_ids(i));
+            if ~isempty(is)
+                try
+                col=[regexprep(num2str(ar{i,regexpi2(arstr,'FaceColor')+1}),'\s+',' ')];
+                u.lu{ is ,3 }=col;
+                end
+            end
+            set(h2,'userdata',u);
+        end
+        xvol3d('regions','plot');                 % opens regions selection table; plot preselected regions
+       
+        
+        try
+            % GUI alpha-CONTROL-edit
+            
+            h3=findobj(0,'tag','regionselect');
+            hb=findobj(h3,'tag','alpha');
+            at_transparency=median(cell2mat(ar(:,regexpi2(arstr,'FaceAlpha')+1)));
+            set(hb,'string',num2str(at_transparency));
+        end
+        
+        try
+            %set patch-parameter  (color/alpha) manually
+            hpatch=findobj(h2,'type','patch','tag','region');
+            patchID=cell2mat(get(hpatch,'userdata'));
+            for i=1:length(ar)
+                is=find(patchID==at_ids(i));
+                at_para=[ar(i,3:end)];
+                evalc('set(hpatch(is),at_para{:})');
+            end
+        end
+        
+        
+        
+    end
+    
+   %% ===============================================
+         
+end
+
+
+
+
+
+
+
+% ==============================================
 %%   load connection-properties
 % ===============================================
 if exist('prop')==1 || exist('con')
@@ -1229,6 +1353,9 @@ if exist('prop')==1 || exist('con')
     try; xvol3d('view',[p.gen.view]); end
     
 end %con
+
+figure(findobj(0,'tag','xvol3d'))
+
 % ==============================================
 %%
 % ===============================================
@@ -3673,10 +3800,12 @@ function scripts_swow_call(e,e2)
 
 scripts={...
     'vol3dscript_loadMask.m'
+    'vol3dscript_loadMask_Atlas_Regions_SaveImages.m'
     'vol3dscript_loadConnections.m'
     'vol3dscript_loadMask_loadConnections.m'
     'vol3dscript_saveImage.m'
     'vol3dscript_loadParameter'
+    
     %'STscript_export4vol3d_simple.m'
     %'STscript_export4vol3d_manycalcs.m'};
 %scripts={'ddf.m' 'mean.m' 'mm.m' 'snip_testNote.m'

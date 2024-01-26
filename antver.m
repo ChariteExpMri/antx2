@@ -989,7 +989,13 @@
 % #k [DTIprep.m] #n modified, check Number of b-values and number of DWI-volumes
 % 
 % 
-
+% #ba 26 Jan 2024 (15:41:27)
+% #k [xvol3d] #n modified, parameter-settings for displaying atlas-regions can be stored as script
+% and the same plot can be re-created
+% -a sccript "vol3dscript_loadMask_Atlas_Regions_SaveImages.m" can be used from the "scripts"-menu
+%  of xvol3d-GUI. To store a parameter-settings after finalizing the plot use "probs"-menu/copy-properties-to clipboard
+% 
+% 
 
 
 
