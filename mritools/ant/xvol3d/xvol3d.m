@@ -1266,7 +1266,11 @@ if isfield(p,'atlas')==1 &&  exist(p.atlas)==2
         try
             %set patch-parameter  (color/alpha) manually
             hpatch=findobj(h2,'type','patch','tag','region');
-            patchID=cell2mat(get(hpatch,'userdata'));
+            if length(hpatch)==1
+                patchID=(get(hpatch,'userdata'));
+            else
+                patchID=cell2mat(get(hpatch,'userdata'));
+            end
             for i=1:length(ar)
                 is=find(patchID==at_ids(i));
                 at_para=[ar(i,3:end)];
