@@ -997,7 +997,7 @@
 % 
 % #ba 31 Jan 2024 (16:50:36)
 % #k [xoperateMaps] #n new
-%  arithmetic operations (add,subt,mult,div) on maps (heatmaps/incidenceMaps/etc)
+%  arithmetic operations (add,subtract,multiply,divide) two maps (heatmaps/incidenceMaps/etc)
 %  example usage: subtract two incidence(lesion)-maps from each other
 % #gw --> access via ANT-menu: &#8658; snips/math operations on maps
 % 

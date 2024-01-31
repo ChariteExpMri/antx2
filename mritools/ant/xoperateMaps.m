@@ -1,7 +1,7 @@
 
 
 %% #b arithmetic operations on maps (heatmaps/IncidenceMaps/MeanImage Maps etc)
-% function to perform math operations (+,-,*,/) from maps, such as incidence-maps
+% function to perform math operations (+,-,*,/) of two maps, such as incidence-maps
 % example usage: subtract two incidence(lesion)-maps from each other
 %
 % #lk  ___PARAMETER___
