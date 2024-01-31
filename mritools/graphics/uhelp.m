@@ -2906,7 +2906,8 @@ function x=setup(x)
 %***setup-start  %ANCHOR- DO NOT REMOVE THIS
 x.colbg=[1 1 1];
 x.fontsize=[8];
-x.FontName='Courier New';
+% x.FontName='Courier New';
+x.FontName='Consolas';
 x.FontAngle='normal';
 x.FontWeight='normal';
 x.fgpos=[0.3049      0.4189      0.3889      0.4667];

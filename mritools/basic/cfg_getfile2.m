@@ -693,7 +693,18 @@ set(hp,'position',[0.9262 0.28864 0.07 0.025],'tooltipstring','show 4D NIFTI fil
 set(hp,'callback',@update);
 
 %% ============[sort]===================================
-sortlist={'sort: default','sort by path length' 'sort by pathName' 'sort by fileName' 'sort by fileExtension'};
+sortlist={...
+    'sort: default' 
+    'sort by path length'
+    'sort by pathName' 
+    'sort by fileName' 
+    'sort by fileName-reverse String'
+    'sort by fileExtension'
+    };
+sortlist2=cellfun(@(a){[ a '(descend)' ]}, sortlist);
+sortlist=[sortlist sortlist2]';
+sortlist=sortlist(:);
+
 hp=uicontrol('style','popupmenu','units','normalized',...
     'position',[0.001 .5 .5 .09 ],'backgroundcolor',[ 0.9400    0.9400    0.9400],'foregroundcolor',[0 .6 0],...
     'string',sortlist,'fontsize',7,'fontweight','bold','tag','sortList','horizontalalignment','left'    );
@@ -904,6 +915,8 @@ end
 
 
 function sortList(e,e2)
+%% ===============================================
+
 hs=findobj(gcf,'tag','sortList');
 val=get(hs,'value');
 
@@ -912,24 +925,47 @@ s=get(hl,'string');
 if isempty(s)
     return
 end
-if val==1%sort by default
-    s=sortrows(s,1);
-elseif val==2%sort by path-length
-    s=sortrows([s (cellfun(@(a){[ length(a)  ]} ,s))],2);
-elseif val==3 || val==4 || val==5 % by pathName/fileName/extension
-    [pa name ext]=fileparts2(s);
-    if val==3%by pathName
+
+meth=hs.String{hs.Value};
+
+switch meth
+    case {'sort: default',  'sort: default(descend)'} %val==1%sort by default
+        s=sortrows(s,1);
+        
+    case {'sort by path length','sort by path length(descend)'} %val==2%sort by path-length
+        s=sortrows([s (cellfun(@(a){[ length(a)  ]} ,s))],2);
+        
+    case {'sort by pathName',     'sort by path length(descend)'} %pathName
+        [pa name ext]=fileparts2(s);
         t=sortrows([pa name ext],1);
-    elseif val==4%by FileName
+        s=cellfun(@(a,b,c){[ fullfile(a,[b c])]} ,t(:,1),t(:,2),t(:,3));
+        
+    case {'sort by fileName',       'sort by fileName(descend)'} %fileName
+        [pa name ext]=fileparts2(s);
         t=sortrows([pa name ext],2);
-    elseif val==5%by extension
-        t=sortrows([pa name ext],3);
-    end
-    s=cellfun(@(a,b,c){[ fullfile(a,[b c])]} ,t(:,1),t(:,2),t(:,3));
-    
-    
+        s=cellfun(@(a,b,c){[ fullfile(a,[b c])]} ,t(:,1),t(:,2),t(:,3));
+        
+    case {'sort by fileName-reverse String', 'sort by fileName-reverse String(descend)'} %'sort by fileName-reverse String'
+        [pa name ext]=fileparts2(s);
+        t=[pa name ext];
+        [~,isort]=sort(cellfun(@(a){[ a(length(a):-1:1) ]}, t(:,2)));
+        t=t(isort,:);
+        s=cellfun(@(a,b,c){[ fullfile(a,[b c])]} ,t(:,1),t(:,2),t(:,3));
+        
+    case {'sort by fileExtension',    'sort by fileExtension(descend)'} %'sort by fileExtension'
+        [pa name ext]=fileparts2(s);
+        t=sortrows([pa name ext],2);
+        s=cellfun(@(a,b,c){[ fullfile(a,[b c])]} ,t(:,1),t(:,2),t(:,3));
+        
 end
+
+if ~isempty(strfind(meth,'(descend)')); 
+    s=flipud(s);         
+end
+
+
 set(hl,'string',s(:,1));
+%% ===============================================
 
 
 end

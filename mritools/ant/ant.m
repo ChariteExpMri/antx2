@@ -1471,11 +1471,14 @@ mh2 = uimenu(mh,'Label','<html><font color="blue">scripts collection',          
 
 mh2 = uimenu(mh,'Label','get corrected lesion volume',                                  'Callback',{@menubarCB, 'getlesionvolume'},...
  'userdata',[HSTART 'obtain corrected lesion volume' HEND '..the output is an Excel-file']);
-mh2 = uimenu(mh,'Label','create Maps (incidenceMaps/MeanImage etc)',                                           'Callback',{@menubarCB, 'makeMaps'},...
+
+mh2 = uimenu(mh,'Label','<html><font color="green"><b>create maps </b></font><font color="gray">(incidenceMaps/MeanImage)</font>',                     'Callback',{@menubarCB, 'makeMaps'},'separator','on',...
      'userdata',[HSTART 'function to create aggregated maps across animals' HEND '..create: Incidence-maps, mean/median-image']);
 
+mh2 = uimenu(mh,'Label','<html><font color="green"><b>math operations on maps </b></font><font color="gray">(incidenceMaps etc.)</font>',    'Callback',{@menubarCB, 'mathopMaps'},'separator','off',...
+     'userdata',[HSTART 'function to perform math operations on several maps ' HEND '']); 
 
-mh2 = uimenu(mh,'Label','convert image to SNR-image',                                           'Callback',{@menubarCB, 'convert2SNRimage'},...
+mh2 = uimenu(mh,'Label','convert image to SNR-image',                                           'Callback',{@menubarCB, 'convert2SNRimage'},'separator','on',...
     'userdata',[HSTART 'calculate an SNR-image']);
 
 % mh2 = uimenu(mh,'Label',' DEBUG-functions'                                          );
@@ -3500,10 +3503,27 @@ elseif strcmp(task,'makeMaps')
     end
     %% ===============================================
     
-    statusMsg(1,' create Maps');
+    statusMsg(1,' create maps');
     xcreateMaps;
     statusMsg(0);
     %________________________________________________
+elseif strcmp(task,'mathopMaps')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xoperateMaps';
+        return ;
+    end
+    %% ==============================[cmd]===========
+    if strcmp(u.mousekey,'right')
+        hlpfun='xoperateMaps.m';
+        showcmd(hlpfun);
+        return
+    end
+    %% ===============================================
+    
+    statusMsg(1,' math op on maps');
+    xoperateMaps;
+    statusMsg(0);
+    %________________________________________________    
 elseif strcmp(task,'convert2SNRimage')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xcalcSNRimage';

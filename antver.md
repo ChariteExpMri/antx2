@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   26 Jan 2024 (15:41:27)  
+ &#x1F34E; last modification:   31 Jan 2024 (16:50:36)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,11 +7,18 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**31 Jan 2024 (16:50:36)**</ins>  
+   __[xoperateMaps]__ new  
+   arithmetic operations (add,subt,mult,div) on maps (heatmaps/incidenceMaps/etc)  
+   example usage: subtract two incidence(lesion)-maps from each other  
+  &#8618; access via ANT-menu: &#8658; snips/math operations on maps  
+<!---->
   &#x1F535;   <ins>**26 Jan 2024 (15:41:27)**</ins>  
    __[xvol3d]__ modified, parameter-settings for displaying atlas-regions can be stored as script  
   and the same plot can be re-created  
   -a sccript "vol3dscript_loadMask_Atlas_Regions_SaveImages.m" can be used from the "scripts"-menu  
    of xvol3d-GUI. To store a parameter-settings after finalizing the plot use "probs"-menu/copy-properties-to clipboard  
+    
 <!---->
   &#x1F535;   <ins>**12 Jan 2024 (12:55:22)**</ins>  
    __[DTIprep.m]__ modified, check Number of b-values and number of DWI-volumes  
