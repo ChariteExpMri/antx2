@@ -667,7 +667,28 @@ tb=tb(isexist==1,:);
 % disp(' *** OBJfile-MOUSEFOLDER-ASSIGNMENT       (..please check assignment)');
 cprintf([0,0.5,0],[' *** OBJfile-MOUSEFOLDER-ASSIGNMENT       (..please check assignment)' '\n']);
 if exist(fullfile(tb{1,1},[ tb{1,2} tb{1,3} ]))==2  %# NOTE:  tb(1)+tb(2)+tb(3) form fullpath of objectFile
-    disp(char(cellfun(@(a,b,c,d) {[ fullfile(a,[b c])  ': '  ' >---> ' d]} ,tb(:,1),tb(:,2),tb(:,3),tb(:,4))));
+   % disp(char(cellfun(@(a,b,c,d) {[ fullfile(a,[b c])  ': '  ' >---> ' d]} ,tb(:,1),tb(:,2),tb(:,3),tb(:,4))));
+   
+   %% ===============================================
+   [~,animalDirs]=fileparts2(tb(:,4));
+   %    disp(char(cellfun(@(a,b,c,d) {[ fullfile([b c])  ': '  ' >---> ' d]} ,tb(:,1),tb(:,2),tb(:,3), animalDirs  )));
+   for i=1:size(tb,1)
+       cprintf('*[0 0 1]', [ [ '*ASSIGNMENT: ' num2str(i)  '  ___'  ] '\n']);
+       space1=repmat(' ',[1 length(animalDirs{i})-length([tb{i,2} tb{i,3}])]);
+       disp([ [tb{i,2} tb{i,3}]   space1 ' [INPUT]'  ]);
+       disp([ animalDirs{i}              ' [OUTPUT]' ]);
+       [q1 q2]=deal(nan(1,200));
+       q1(1:length(double([tb{i,2} tb{i,3}])))=double([tb{i,2} tb{i,3}]);
+       q2(1:length(double([animalDirs{i}  ])))=double([animalDirs{i}]);
+       isimchar=find((q1-q2)==0);
+       simchar=char(q1(isimchar));
+       space=repmat(' ',[1 length(animalDirs{i})-length(simchar)]);
+       cprintf('[1 0 1]', [  simchar  space ' [similar substring]\n']);
+   end
+   %% ===============================================
+
+   
+   
 else
     disp(char(cellfun(@(a,b,c) {[': ' a b ' >---> ' c]} ,tb(:,2),tb(:,3),tb(:,4))));
 end

@@ -132,6 +132,7 @@ if 1
         end
         irow=irow+1;
     end
+    try
     [fis2] = spm_select('FPList',pa,'colorbar.tif');
     a=imread(fis2);
     b=a(30:250,1520:1750,:);
@@ -140,17 +141,19 @@ if 1
     px2(2)=px2(2)+gap;
     px2(3:4)=[x/2 y/2];
     exportToPPTX('addpicture',b,'Position',px2);
+    end
 end
 
 % reurn
 
 %% ========== TXT =====================================
+try
 [fis3] = spm_select('FPList',pa,'node_list.txt');
 labs=preadfile(fis3); labs=labs.all;
 
  exportToPPTX('addtext',strjoin(labs,char(10)),'FontSize',10,...
         'Position',[ ncol.*xstp+1 0.5 4  sip(2) ]);
-
+end
 
 
 %% ===============================================
