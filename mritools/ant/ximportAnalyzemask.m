@@ -162,8 +162,32 @@ if 1
     li2h={'ReferenceImage' 'Dim' 'origin','rsolution' 'dt'};
 end
 
-%% zuordnen
-tb=zurodnen(fi2imp , pa);
+%% =========0[old assignment ]======================================
+if 0
+    %% zuordnen
+    tb=zurodnen(fi2imp , pa);
+end
+
+%% ==========[ new Assignment]=====================================
+[pamainFile,FileName, ext]=fileparts2(fi2imp);
+[pamain,animalDir]=fileparts2(pa);
+
+objfiles=cellfun(@(a,b){[ a b]}, FileName, ext);
+
+
+o=gui_assign(objfiles ,animalDir,'ndirs',1,'matchtype',3,'wait',1);
+
+if isempty(o); disp('..proc cancelled...'); return; end
+
+[~,selObjFiles, selObjExt]=fileparts2(o(:,1));
+selObjPath=[repmat((pamainFile(1)),[length(selObjFiles)  1]) ];
+
+selDir=stradd( o(:,2),[ pamain{1} filesep ],1 );
+tb=[selObjPath selObjFiles selObjExt selDir ];
+
+
+%% ===============================================
+
 
 
 

@@ -6,7 +6,7 @@
 %     [x hx]=findkeys(keys,list,'show',1);
     
     
-function [x hx]=findkeys(keys,list,varargin)
+function [x hx]=findkeys2(keys,list,varargin)
 
 x={};
 % clear;clc
@@ -17,43 +17,15 @@ if 0
     %% =========example======================================
     
     keys={
-        'T2_266_20G_1_G_d195'
-        'T2_309_40G_2_G_d195'
-        'T2_362_20G_3_T_d45'
-        'T2_362_40G_3_T_d22'
-        'T2_377_20G_4_T_d22'
-        'T3_266_40G_1_T_d45'};
+        '20231031_191353_wmstroke_mainstudy_AK7144_TP1_4d_CORRECTED_CC.obj'};
     
-    list={'1001_a1'
-        '1001_a2'
-        '20201118CH_Exp10_9258'
-        'Devin_5apr22'
-        'Kevin'
-        'anna_issue'
-        'bad_202114_aj_T2_309_40G_2_G_d195'
-        'bad_2021619_aj_T3_266_40G_1_T_d45'
-        'bad_2021821_aj_T2_266_20G_1_G_d195'
-        'bad_2022616_aj_T2_362_40G_3_T_d22'
-        'changeHeader'
-        'empty'
-        'k3339'
-        'makoto_NAN'
-        'nodata'
-        'slicewise2D'
-        'statImage'
-        'sus_20220215NW_ExpPTMain_009938'
-        'test_20220301_ECM_Round11_Cage1_M04'
-        'ventr'
-        'xx31'};
+    list={'wmstroke_mainstudy_AK7140_TP1_4d_1_9'
+        'wmstroke_mainstudy_AK7144_TP1_4d_CORRECTED_1_27'};
     
-    
-    list=['rrT2_ra,_265_20G_1_G_d195' ; list; 'T2_266_20G_1_G_d195' ; ];
-    
-    % ninsert=cell2mat(cellfun(@(a){[ length(repmat( '#',[1 size(char(q),2)-length(a)+5]  ))   ]}, q ))
-    
-    x=findkeys(keys,list);
-    [x hx]=findkeys(keys,list,'show',0);
-    [x hx]=findkeys(keys,list,'show',1);
+ 
+    x=findkeys2(keys,list);
+    [x hx]=findkeys2(keys,list,'show',1);
+    % [x hx]=findkeys2(keys,list,'show',1);
     %% ===============================================
     
     
@@ -65,12 +37,14 @@ end
 
 keys=cellstr(keys);
 list=cellstr(list);
+p.show=0;
 
 if ~isempty(varargin)
    p0=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+   p=catstruct(p,p0);
 end
-p.show=0;
-p=catstruct(p,p0);
+
+
 
 %% ===============================================
 %%      proc
@@ -105,12 +79,36 @@ li=list;
 [s3 indices]=deal(repmat({''},[length(li),1 ]));
 
 for i=1:length(li)
-    %r=fpat(  w, key2{i} );
-    [ d1,d2,d3 idx]=metricLCS( li{i},key);
-    s1(i,1)=d1;
-    s2(i,1)=d2;
-    s3{i,1}=d3;
+
+%     [ d1,d2,d3 idx]=metricLCS( li{i},key);
+%     s1(i,1)=d1;
+%     s2(i,1)=d2;
+%     s3{i,1}=d3;
+%     indices{i,1}=idx;
+    %% ===============================================
+    str1=key;
+    str2=li{i};
+    P = length(str1);
+    Q = length(str2);
+    [D, dist, aLongestString idx] = metricLCS(str1, str2);
+    nLCS = length(aLongestString);    %do not call the result LCS, that is the function name!
+    RatioQ = nLCS/Q;
+    RatioP = nLCS/P;
+    
+    this_EA = (RatioP + RatioQ)/2;  % MSTP-Similarity Equal Average
+    this_WA = (P*RatioP+Q*RatioQ)/(P+Q);% MSTP-Similarity Weighted Average
+    
+%     z={ str1 str2  aLongestString this_EA  this_WA};
+%     disp(cell2table(z));
+    
+    s1(i,1) =this_EA;
+    s2(i,1)  =dist;
+    s3{i,1}  =aLongestString;
     indices{i,1}=idx;
+    
+    
+    %% ===============================================
+    
 end
 
 typodiff=length(key)-s2;

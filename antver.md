@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   31 Jan 2024 (16:50:36)  
+ &#x1F34E; last modification:   13 Feb 2024 (17:56:15)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,11 +7,15 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**13 Feb 2024 (17:56:15)**</ins>  
+   __[ximportAnalyzemask]__ modified...better assignment of obj-files to animal-dirs  
+<!---->
   &#x1F535;   <ins>**31 Jan 2024 (16:50:36)**</ins>  
    __[xoperateMaps]__ new  
    arithmetic operations (add,subtract,multiply,divide) two maps (heatmaps/incidenceMaps/etc)  
    example usage: subtract two incidence(lesion)-maps from each other  
   &#8618; access via ANT-menu: &#8658; snips/math operations on maps  
+    
 <!---->
   &#x1F535;   <ins>**26 Jan 2024 (15:41:27)**</ins>  
    __[xvol3d]__ modified, parameter-settings for displaying atlas-regions can be stored as script  

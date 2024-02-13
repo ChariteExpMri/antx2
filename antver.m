@@ -1001,6 +1001,8 @@
 %  example usage: subtract two incidence(lesion)-maps from each other
 % #gw --> access via ANT-menu: &#8658; snips/math operations on maps
 % 
+% #ba 13 Feb 2024 (17:56:15)
+% #k [ximportAnalyzemask] #n modified...better assignment of obj-files to animal-dirs
 % 
 % 
 
