@@ -790,7 +790,7 @@ if isfield(p0,'suffix')==1; x.suffix=p0.suffix  ; end
 
 p=paramadd(p,x);%add/replace parameter
 if showgui==1
-    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .83 .6 ],...
+    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .2 .84 .7 ],...
         'title','BrukerImport');
 else
     z=param2struct(p);
