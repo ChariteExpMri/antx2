@@ -142,6 +142,9 @@ p.figpos         =[0.1729    0.1922    0.7410    0.7422]; % figure position
 % -----------
 p.bgcolTable=[ 0.9451    0.9686    0.9490; 1 1 1 ];
 p.lab_show_nNout  ='show N-output';
+p.autoAdjustColumns=1;
+p.blockAutoresizeCol=1;
+p.ColumnWidth=[];
 % ==============================================
 %%   varargin
 % ===============================================
@@ -292,7 +295,9 @@ if 1
     
     for i=1:size(mdirsLB,1)
         colstr=sprintf('%d,%d,%d',bgcol(i,1),bgcol(i,2),bgcol(i,3));
-        mdirsLB{i}=['<html><p style="background-color:rgb(' colstr ');">' mdirsLB{i}] ;
+         mdirsLB{i}=['<html><p style="background-color:rgb(' colstr ');">' mdirsLB{i}] ;
+      % mdirsLB{i}=['<html>' mdirsLB{i}] ;
+
         %    if i==1
         %       tb(is(i),2)={logical(1)} ;
         %    end
@@ -310,6 +315,9 @@ if 1
     set(hb,'tooltipstring',['<html><b>input-directories</b><br> select directory to jump to list ']);
     
 end
+
+
+
 
 
 function makefig(p);
@@ -467,12 +475,24 @@ set(hb,'callback',@call_reversesearch,'value',p.isreversesearch);
 set(hb,'position',[0.078745 -0.00071858 0.1 0.03]);
 set(hb,'tooltipstring',['<html><b>reverse search <br>']);
 
+% ==============[adjust column-Width]=================================
+hb=uicontrol('style','pushbutton','units','norm','tag','pb_adjustColWid');
+set(hb,'string','adj.Cwidth','backgroundcolor','w','fontweight','normal','fontsize',7);
+set(hb,'callback',@pb_adjustColWid);
+set(hb,'position',[[0.59981 0.8002 0.05 0.03]]);
+set(hb,'tooltipstring',['<html><b> autoAdjust Columns <br>']);
+
 %% ===============================================
 set(gcf,'KeyPressFcn',@keysTable);
 u=p;
 set(gcf,'userdata',u);
 
+function pb_adjustColWid(e,e2)
 
+% if get(e,'value')==
+u=get(gcf,'userdata');
+u.t.ColumnWidth='Auto';
+autoColumsize();
 
 
 function call_help(e,e2)
@@ -491,9 +511,20 @@ makeTable();
 function ed_ndirs(e,e2)
 
 u=get(gcf,'userdata');
+% u.blockAutoresizeCol=1;
+% set(gcf,'userdata',u);
+
 u.ndirs=str2num(get(findobj(gcf,'tag','ed_ndirs'),'string'));
-set(gcf,'userdata',u);
+%set(u.jt,'ComponentResizedCallback',[]); ;drawnow;drawnow;drawnow;drawnow;drawnow
+set(gcf,'userdata',u);drawnow;drawnow;drawnow;drawnow;drawnow
 makeTable();
+
+
+% u=get(gcf,'userdata');
+% u.blockAutoresizeCol=0;
+% set(gcf,'userdata',u);
+
+% set(u.jt,'ComponentResizedCallback',@storeColwidth);
 
 %% ===============================================
 function call_showmatch(e,e2)
@@ -643,33 +674,16 @@ set(hb,'backgroundcolor',hb_bgcol);
 
 function pop_match(e,e2,type)
 
+u=get(gcf,'userdata');
+% set(u.jt,'ComponentResizedCallback',[]);
+
 hp=findobj(gcf,'tag','pop_match');
 matchtype=hp.Value;
 if matchtype~=4
     recodeTables(matchtype)
 end
 makeTable();
-
-% u=get(gcf,'userdata');
-% i_unset=setdiff([1:4],type);
-% hr=[...
-%     findobj(gcf,'tag','rd_match1')
-%     findobj(gcf,'tag','rd_match2')
-%     findobj(gcf,'tag','rd_match3')
-%     findobj(gcf,'tag','rd_match4')];
-% set(hr(i_unset),'value',0);
-%
-% u.matchtype=type;
-% set(gcf,'userdata',u);
-%
-% if get(e,'value')==1
-
-
-% end
-
-% function updateDB()
-% u=get(gcf,'userdata');
-
+% set(u.jt,'ComponentResizedCallback',@storeColwidth);
 
 
 
@@ -769,22 +783,37 @@ for i=1:size(s,1)
     %u.tb{i,1}=tb;
     u.tb=[u.tb; tb];
 end
-space=5;
-fac=2;
-htb{1}=[ u.hdr_in   repmat('_',[1 round(fac*size(char(tb(:,1)),2)+space) ])];
+space=1;
+fac=1;
+fac1=1.7;
+fac3=1;
+htb{1}=[ u.hdr_in   repmat('_',[1 round(fac1*size(char(tb(:,1)),2)+space) ])];
 htb{2}=[ 'CHECK' ];
-htb{3}=[ u.hdr_out  repmat('_',[1 round(fac*size(char(tb(:,3)),2)+space) ]) ];
+htb{3}=[ u.hdr_out  repmat('_',[1 round(fac3*size(char(tb(:,3)),2)+space) ]) ];
 htb{4}=[ 'Metric' ];
 htb{5}=[ 'missMatch' ];
 htb{6}=[ 'LCS' repmat('_',[1 size(char(tb(:,6)),2)+space ])];
+%% ===============================================
+% nc=cell2mat(cellfun(@(a){[length(a) ]}, tb(:,1)));
+% inc=min(find(nc==max(nc)))
+% 
+% htb{1}=['<html> bla <!-- ' tb{inc,1} ' -->']
+% jtable.setAutoResizeMode(1)
+%% ===============================================
 
 u.htb=htb;
 
+% fac1=1.6;
 htb_reverse=htb;
-htb_reverse{1}=[ u.hdr_out   repmat('_',[1 round(fac*size(char(tb(:,1)),2)+space) ])];
-htb_reverse{3}=[ u.hdr_in  repmat('_',[1 round(fac*size(char(tb(:,3)),2)+space) ]) ];
+htb_reverse{1}=[ u.hdr_out   repmat('_',[1 round(fac1*size(char(tb(:,1)),2)+space) ])];
+htb_reverse{3}=[ u.hdr_in    repmat('_',[1 round(fac1*size(char(tb(:,3)),2)+space) ]) ];
+
+% htb_reverse{1}=htb{3};
+% htb_reverse{3}=htb{1};
+
 
 u.htb_reverse=htb_reverse;
+
 
 
 %% ===============================================
@@ -964,12 +993,57 @@ if isempty(ht)
     u=get(gcf,'userdata');
     u.t   =t;
     u.jt  =jtable;
-    % u.tb  =tb;
-    % u.htb =htb;
+    %get(handle(u.jt, 'CallbackProperties'))
+   % MouseDraggedCallback
+   % set(u.jt,'ComponentResizedCallback',@storeColwidth);
+
     
     set(gcf,'userdata',u);
+    autoColumsize();
+    
 else
-    ht.Data=tb;
+    %% ===============================================
+    try
+        colwidCurr=[];
+        for i=1:length(u.t.ColumnName)
+            colwidCurr(1,i)=u.jt.getColumnModel().getColumn(i-1).getWidth;
+        end
+        
+        
+        ScreenPixelsPerInch = java.awt.Toolkit.getDefaultToolkit().getScreenResolution();
+        ScreenDevices = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+        MainScreen = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getScreen()+1;
+        MainBounds = ScreenDevices(MainScreen).getDefaultConfiguration().getBounds();
+        MonitorPositions = zeros(numel(ScreenDevices),4);
+        for n = 1%:numel(ScreenDevices)
+            Bounds = ScreenDevices(n).getDefaultConfiguration().getBounds();
+            MonitorPositions(n,:) = [Bounds.getLocation().getX() + 1,-Bounds.getLocation().getY() + 1 - Bounds.getHeight() + MainBounds.getHeight(),Bounds.getWidth(),Bounds.getHeight()];
+        end
+        monposMatlab=get(0,'MonitorPositions');
+        fract=MonitorPositions./monposMatlab;
+        colwidCurr=round(colwidCurr./fract(3));
+        
+        if ~isempty(find((cell2mat(u.ColumnWidth)==colwidCurr)==0))
+            u.ColumnWidth=num2cell(colwidCurr);
+            set(gcf,'userdata',u);
+           % disp('mode:userAdjusted')
+        end
+    end
+    
+    set(u.t,'Data',tb, 'ColumnWidth',u.ColumnWidth); 
+       
+        
+  
+
+    %% ===============================================
+    
+    
+    
+   % set(u.jt,'ComponentResizedCallback',[]);
+%     cwid=u.t.ColumnWidth;
+%     ht.Data=tb;
+%     u.t.ColumnWidth=cwid;
+   % set(u.jt,'ComponentResizedCallback',@storeColwidth);
     
 end
 %% ========[color backgeoundTable]=======================================
@@ -981,11 +1055,115 @@ bgcolvec=repmat([1:size(bgcol,1)],[1 length(nums_uni) ]);
 
 [~, ia ]=ismember(nums, nums_uni);
 bgcolMat=bgcol(bgcolvec(ia),:);
-u.t.BackgroundColor=bgcolMat;
+% u.t.BackgroundColor=bgcolMat;
+%% =======[autoresize cols]========================================
+% htb=regexprep(t.ColumnName,'_*$','');
+% 
+% space=3;
+% fac=1.2;
+% tb=ht.Data;
+% tb(:,1)=regexprep( tb(:,1), '<.*?>', '' );
+% tb(:,3)=regexprep( tb(:,1), '<.*?>', '' );
+% htb{1}=[ u.hdr_in   repmat('_',[1 round(fac*size(char(tb(:,1)),2)+space) ])];
+% % htb{2}=[ 'CHECK' ];
+% htb{3}=[ u.hdr_out  repmat('_',[1 round(fac*size(char(tb(:,3)),2)+space) ]) ];
+% % htb{4}=[ 'Metric' ];
+% % htb{5}=[ 'missMatch' ];
+% % htb{6}=[ 'LCS' repmat('_',[1 size(char(tb(:,6)),2)+space ])];
+% ht.ColumnName=htb;
+% %% ===============================================
+% set(u.t,'units','pixel');
+% tablew = u.t.Position(3); %get with of the uitable
+% set(u.t,'units','normalized');
+% maxLen = max(cellfun(@length,tb),[],1); % Calculate the with of the data in cell C. 
+% maxLen(find(maxLen==1))=10;
+% f = tablew/sum(maxLen); % Normalize it to the with of the table
+% 
+% cellMaxLen = num2cell(maxLen*f);
+% set(u.t, 'ColumnWidth', cellMaxLen);
+if 0
+    if isempty(u.ColumnWidth)
+        autoColumsize();
+        u.autoAdjustColumns=0;
+        u.ColumnWidth=u.t.ColumnWidth;
+        set(gcf,'userdata',u);
+    else
+        u=get(gcf,'userdata')
+%         u.t.ColumnWidth=u.ColumnWidth
+        u.t.ColumnWidth=num2cell(10+cell2mat(u.ColumnWidth));
+        u.t.ColumnWidth=num2cell(1+cell2mat(u.ColumnWidth));
+        
+%         for i=1:length(u.t.ColumnName)
+%             %u.jt.getColumnModel().getColumn(i-1).getPreferredWidth;
+%             setMaxWidth( u.jt.getColumnModel().getColumn(i-1),u.ColumnWidth{i});
+%         end
+     
+%         
+%         u.t.ColumnWidth=u.ColumnWidth
+%         u.t.ColumnWidth
+    end
+end
+
+% set(u.jt,'ComponentResizedCallback',@storeColwidth);
+% ==============================================
+%%   
+% ===============================================
+function storeColwidth(e,e2)
+
+
+%% ===============================================
+u=get(gcf,'userdata');
+
+% if u.blockAutoresizeCol==1; return; end
+% rand(1)
+
+cwid=[];
+for i=1:length(u.t.ColumnName)
+    cwid(1,i)=u.jt.getColumnModel().getColumn(i-1).getPreferredWidth;
+end
+u.ColumnWidth=num2cell(cwid);
+set(gcf,'userdata',u);
 
 
 %% ===============================================
 
+
+function autoColumsize
+%% ===============================================
+u=get(gcf,'userdata');
+tb=u.t.Data;
+len=cellfun(@length,tb);
+maxLen = max(len);
+cwid=zeros(1,length(maxLen),1);
+fontName=u.t.FontName;
+for i=1:length(cwid)
+    % ===============================================
+%     cf
+   ix= min(find(len(:,i)==maxLen(i)));
+   txt=[tb{ix,i} ];
+   if ~ischar(txt); txt=num2str(txt); end
+      txt=[regexprep( txt, '<.*?>', '' ) ];
+%    fg
+  ht= text(0,0,txt);
+  hb= uicontrol('style','listbox','string',txt,'position', [100 100 400 60],...
+      'fontName',fontName,'visible','off');
+  ext=round(get(hb,'extent'));
+  delete(hb);
+  cwid(i)=ext(3);
+  % ===============================================
+  
+    
+end
+space=10;
+cwid=cwid+space;
+cwid(2)=cwid(2)+3.*space;
+u.ColumnWidth   =num2cell(cwid);
+u.t.ColumnWidth =u.ColumnWidth;
+set(gcf,'userdata',u);
+
+
+
+%% ===============================================
 
 
 

@@ -1014,10 +1014,14 @@ for i=1:size(files,1)
                 spm_write_vol(hh2(j),ni.d(:,:,:,j));
             end
         elseif ndims(ni.d)==2
-            hh=spm_create_vol(hh);
-            hh=spm_write_vol(hh,  ni.d);
-            
-            
+            if hh.dim(1)==size(ni.d,1) && hh.dim(2)==size(ni.d,2)
+                hh=spm_create_vol(hh);
+                hh=spm_write_vol(hh,  ni.d);
+            else
+                hh.dim=[size(ni.d) 1];
+                hh=spm_create_vol(hh);
+                hh=spm_write_vol(hh,  ni.d); 
+            end  
         end
         
         try
