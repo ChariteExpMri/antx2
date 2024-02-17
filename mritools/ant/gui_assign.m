@@ -1,37 +1,38 @@
 
-% gui_assign: file-to-directory assignment
-%  [o]=gui_assign(infiles,list2,varargin);
+% gui_assign: assign list1 to list2 (files to dirs) based on substring-similarity
+% example file-to-directory assignment
+%  [o]=gui_assign(list1,list2,varargin);
 % 
 %% INPUTS:
-% list1 : {cell} list of shortnames* of input-dirs
-% list2: {cell} list of shortnames* of output-dirs
+% list1 :{cell} list of shortnames* of list1 (example: files)
+% list2: {cell} list of shortnames* of list2 (example: directories)
 % optional: pariwise inputs:
 %     wait           :debug mode..busy state/wait for user to press ok/cancel  (default: 0),{0|1} 
 %     matchtype      :match-type filter: default: 4 ('let me decide'),{1|2|3|4} 
-%     ndirs          :number of output-dirs to display (default: 5), a numeric value  
-%     hdr_in         :header-name of the input-directories, a 'string'
-%     hdr_out        :header-name of the output-directories, a 'string'
+%     show-N-output  :number of list2 display (default: 1), a numeric value  
+%     hdr_in         :header-name of the list1 (example: 'files' for files), a 'string'
+%     hdr_out        :header-name of the list2 (example: 'dirs' for directories), a 'string'
 %     figtitle       :figure-title of the gui, a 'string'
 %     figpos         :defines the figure position, 4-values ([x,y,w,h])  
-%% OUTPUT: n-x-2 celltable with assigned inputdirs (column-1) and corresponding outputdirs (column-2)
+%% OUTPUT: n-x-2 celltable with assigned list1 (column-1) and corresponding list2 (column-2)
 %       not that the output again contains the directory as shortnames*!
 %  *shortnames please do not use the fullpath names of the directories
-% 
+% -if nothing is assign, the output is empty
 % 
 % #ko __GUI__
-% [input dirs]: listbox containing all input-directories ....select one input directory to jump to the 
-%    correcponding 1st row of the assignment table
+% [input list1]: listbox containing list1 ....click onto one item to jump to the 
+%    correcponding 1st row of the list1-item in the table
 % [assignment table]: this table contains the following columns
-%   [input directories]: input directories
-%   [check]            : checkbox [0|1], check input-output-assignment here
-%                      : only one output-dir can be assigned for the one input-dir!
-%   [output directories]: output directories
+%   [list1-items]:    for example files
+%   [check]            : checkbox [0|1], check list1-list2-assignment here
+%                      : only list1-list2-assignment output-dir can be assigned for the one input-dir!
+%   [list2-items]: for example directories
 %   [metric]: metric of correspeondence, 
 %               [2]: perfect match ; 
-%               [1]: match but output-dir contains also a prefix/suffix-string
+%               [1]: match but list1-list2-assignment contains also a prefix/suffix-string
 %               [<1]: degree of matching 
-%   [mismatch]: numeric value of mismatch of this inut-dir string and this output-dir string
-%   [LCS]: largest common string of this inut-dir and this output-dir
+%   [mismatch]: numeric value of mismatch of this list1/list2-item 
+%   [LCS]: largest common substring of list1/list2-item
 % 
 % [clear] : clear all assignments..set all checkboxes unchecked 
 % [pulldown-matchfilter]: preselect checkboxes 
@@ -133,7 +134,7 @@ end
 % ===============================================
 p.wait           =1;             %debug mode (default: 0)
 p.matchtype      =4;             % match-type filter: default: 4 ('let me decide')
-p.ndirs          =5;             % number of output-dirs to display (default: 5)
+p.ndirs          =3;             % number of output-dirs to display (default: 5)
 p.hdr_in         ='INPUT';  % header-name of the input-directories
 p.hdr_out        ='OUTPUT'; % header-name of the output-directories
 p.figtitle       =['match-files and_dirs [' mfilename ']' ] ;%'figure-title of the gui
@@ -515,6 +516,10 @@ u=get(gcf,'userdata');
 % set(gcf,'userdata',u);
 
 u.ndirs=str2num(get(findobj(gcf,'tag','ed_ndirs'),'string'));
+if u.ndirs<1; 
+    u.ndirs=1;
+   set(findobj(gcf,'tag','ed_ndirs'),'string', num2str(u.ndirs));
+end
 %set(u.jt,'ComponentResizedCallback',[]); ;drawnow;drawnow;drawnow;drawnow;drawnow
 set(gcf,'userdata',u);drawnow;drawnow;drawnow;drawnow;drawnow
 makeTable();
@@ -559,6 +564,30 @@ mtab=cellfun(@(a){[ double(a) ]}, mtab);
 mtab=cell2mat(mtab);
 dif=mtab-repmat(mtab(1,:),[ size(mtab,1) 1]);
 commonString=find(sum(dif.^2,1)==0);
+
+%% ===============================================
+
+% x=u.t.Data;
+% w1=regexprep( x(:,1), '<.*?>', '' )
+% idvec=str2num(char(regexprep(w1,{'].*' '['},{''})));
+% id=unique(idvec)
+% s={};
+% for i=1:length(id)
+%     ix=find(idvec==idvec(i))
+%     iuse=ix(find([x{ix,2}]==1))
+%     
+%     q=[  ['[' num2str(id(i))  ']' ]  x(iuse,1) x(iuse,3)  num2str(x{iuse,4}) x(iuse,5) ]
+%     s(i,:)=q;
+% 
+% end
+% 
+% % ===============================================
+% s(:,2)=regexprep(s(:,2),{'<.*?>'},{''});
+% s(:,3)=regexprep(s(:,3),{'<.*?>'},{''});
+% s(:,1)=cellfun(@(a){['<html>' a ]}, s(:,1))
+% h=plog([],[s],0,'e','al=1;plotlines=0;' );
+% uhelp(h,1)
+
 
 %% ===============================================
 v={};
@@ -1133,7 +1162,7 @@ function autoColumsize
 u=get(gcf,'userdata');
 tb=u.t.Data;
 len=cellfun(@length,tb);
-maxLen = max(len);
+maxLen = max(len,1);
 cwid=zeros(1,length(maxLen),1);
 fontName=u.t.FontName;
 for i=1:length(cwid)
