@@ -38,7 +38,7 @@ hb.descrip  ='';
 % hb.mat=[[diag([ 1 1 1]); 0 0 0 ] [[([size(a)/2]+[1 1 1]./2).*[-1 -1 -1] 1]]']
 % hb.mat=[[diag([ 1 1 1]); 0 0 0 ] [ -(hb.dim/2+1) 1 ]'];
 
-if length(hb.mat)==2
+if length(hb.dim)==2
   hb.mat=[[diag([ 1 1 1]); 0 0 0 ] [ -(hb.dim/2+1) 1 1 ]'];  
 else
   hb.mat=[[diag([ 1 1 1]); 0 0 0 ] [ -(hb.dim/2+1) 1   ]'];  
