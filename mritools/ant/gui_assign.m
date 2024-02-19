@@ -1162,7 +1162,7 @@ function autoColumsize
 u=get(gcf,'userdata');
 tb=u.t.Data;
 len=cellfun(@length,tb);
-maxLen = max(len,1);
+maxLen = max(len,[],1);
 cwid=zeros(1,length(maxLen),1);
 fontName=u.t.FontName;
 for i=1:length(cwid)
