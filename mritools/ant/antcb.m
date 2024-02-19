@@ -1978,7 +1978,7 @@ function v=getuniquefiles(agi)
 
 
 % pa=antcb('getsubjects'); %path
-p.flt=['.*.nii*$']
+p.flt=['.*.nii*$'];
 pin=cell2struct(agi(2:2:end),agi(1:2:end),2);
 p=catstruct(p,pin);
 pa=p.getuniquefiles;
