@@ -225,6 +225,40 @@
 % % correspond to 'nan', '04_T1_RARE_32slices' and '03_T2_TurboRARE' in the 'protocol'-field
 % w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol','nan|T1|T2'},'paout',fullfile(pwd,'dat'));
 % 
+%% ===============================================
+%% additional nonGUI-parameter
+%% ===============================================
+% 'prefix_Dir'      add arbitrary string as PREFIX-STRING to animal directory
+%                     string, default: ''
+% 'StudNo_Dir'      add VisuStudyNumber as SUFFIX-STRING to animal directory
+%                      {0|1}, default: 0
+% 'ExpNo_Dir'       add VisuExperimentNumber (parent folder of "pdata") as SUFFIX-STRING to animal directory
+%                     {0|1}, default: 0
+% 'PrcNo_Dir'       add VisuProcessingNumber/ReconstructionNumber(subfolder of "pdata") as SUFFIX-STRING to animal directory
+%                     {0|1}, default: 0
+% 'StudID_Dir'      add StudId as SUFFIX to animal directory
+%                     {0|1}, default: 1
+% 'SubjectName_Dir' add SubjectName as SUFFIX to animal directory 
+%                     {0|1}, default: 0
+% 
+% 'ExpNo_File'     add VisuExperimentNumber as suffix to new file
+%                      {0|1}, default: 0
+% 'PrcNo_File'     add VisuProcessingNumber/ReconstructionNumber as suffix to new file
+%                      {0|1}, default: 0
+% 'prefix'        add prefix to new file
+%                      string, default: ''
+% 'suffix'        add suffix to new file
+%                      string, default: ''
+% 
+% 
+%% example: import files which Protocol contains string 'T1rho', adding EXPerimentNumber to file
+% w1=xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0,'show',1);
+% w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol','T1rho'},...
+%     'paout',fullfile(pwd,'dat'),'ExpNo_File',1);
+%  
+%% example: import files which Protocol contains string 'T1rho', addding EXPerimentNumber & ProcNumber to file
+% w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol','T1rho'},...
+%     'paout',fullfile(pwd,'dat'),'ExpNo_File',1,'PrcNo_File',1);
 %  
 
 
@@ -839,6 +873,44 @@ if showgui==1
     h = waitbar(0,'Please wait...');
 end
 %% ===============================================
+
+% ==============================================
+%%  non-GUI input parameter 
+% ===============================================
+if exist('p0')==1 && isstruct(p0)
+    
+    paratab={
+        % DIR
+        'prefix_Dir'        ''    'add arbitrary string as PREFIX-STRING to the new animal directory '  {'' 'test_' 'other_'}
+        'StudNo_Dir'        0     'add VisuStudyNumber as SUFFIX-STRING,  (bool)'  'b'
+        'ExpNo_Dir'         0     'add VisuExperimentNumber (parent folder of "pdata") as SUFFIX-STRING,(bool)'  'b'
+        'PrcNo_Dir'         0     'add VisuProcessingNumber/ReconstructionNumber(subfolder of "pdata") as SUFFIX-STRING,(bool)'  'b'
+        'StudID_Dir'        1     'add StudId as SUFFIX to animal directory name' 'b'
+        'SubjectName_Dir'   0     'add SubjectName as SUFFIX to animal directory name' 'b'
+        
+        % FILE                            ''  ''
+        'ExpNo_File'     0        'VisuExperimentNumber (parent folder of "pdata"),(bool)'  'b'
+        'PrcNo_File'     0        'VisuProcessingNumber/ReconstructionNumber(subfolder of "pdata"),(bool)'  'b'
+        'renameFiles'   ''   'rename files   -->via GUI'  {@renamefiles,protocol,[]}
+        'prefix'        ''   'add prefix to filename' {'NI_' [regexprep(datestr(now),{':' ' '},'_') '_'] ''}
+        'suffix'        ''   'add suffix to filename' {'_NI' ['_' regexprep(datestr(now),{':' ' '},'_')] ''}
+        };
+    
+    for i=1:size(paratab)
+        if isfield(p0,paratab{i,1})
+            z=setfield(z, paratab{i,1},getfield(p0,paratab{i,1}));
+        end
+    end
+    
+    
+    
+end
+
+
+
+
+%% ===============================================
+
 % PARAMETER-OUTPUT __
 %   if nargout==1
 
