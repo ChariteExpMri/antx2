@@ -1005,7 +1005,13 @@
 % #k [ximportAnalyzemask] #n modified...better assignment of obj-files to animal-dirs
 % 
 % 
-
+% #ba 20 Feb 2024 (11:42:08)
+% #k [ximportAnalyzemask2D.m] #n new
+% import 2D (single slice) Analyze ('*.obj')-file and convert to NIFTI
+% #gw --> access via ANT-menu: &#8658; Main/import 2D-ANALYZE (obj) files
+% 
+% 
+% 
 
 
 

@@ -1252,10 +1252,15 @@ mh2 = uimenu(mh,'Label',' Import Bruker data',                   'Callback',{@me
     'userdata',[HSTART 'import NIFTI-files from other external folder(s)' HEND '...to animal-folders of the study']);
     mh2 = uimenu(mh,'Label',' Import NIFTI via header-replacement',  'Callback',{@menubarCB, 'dataimport2' },  ...
          'userdata',[HSTART 'replace header of NIFTI-files ' HEND '..using the header of a reference-file']);
+     
 mh2 = uimenu(mh,'Label',' Import ANALYZE (*.obj) files (masks)', 'Callback',{@menubarCB, 'importAnalyzmask' }, ...
-    'userdata',[HSTART 'import and convert ANALYZE-files' HEND ' (*.obj) files to NIFTI-files']);
+    'userdata',[HSTART 'import and convert ANALYZE-files' HEND ' (*.obj) files to NIFTI-files'],'separator','on');
+mh2 = uimenu(mh,'Label',' Import 2D-ANALYZE (*.obj) files (masks)', 'Callback',{@menubarCB, 'importAnalyzmask_2D' }, ...
+    'userdata',[HSTART 'import and convert 2D-ANALYZE-files' HEND ' 2D-(*.obj) files to NIFTI-files']);
+
 mh2 = uimenu(mh,'Label',' Import DATA via "Dir-to-Dir" correspondence',   'Callback',{@menubarCB, 'dataimportdir2dir'},    ...
-     'userdata',[HSTART 'import any data from external "name"-matching directories' HEND '..to internal mouse directories' HEND 'animal-names (folders) must match']);
+     'userdata',[HSTART 'import any data from external "name"-matching directories' HEND '..to internal mouse directories' HEND 'animal-names (folders) must match'],...
+     'separator','on');
 %     'userdata',sprintf('import any data from external "name"-matching directories to internal mouse directories \n prerequisite:  matching directory-name-tag')       );
 mh2 = uimenu(mh,'Label',' Distribute files (files from outside to selected mouse-folders)',   'Callback',{@menubarCB, 'distributefilesx'} , ...
     'userdata',[HSTART 'import NIFTI-files from external source' HEND '..prerequisite: matching file-name-tag or directory-name-tag']);
@@ -2599,6 +2604,21 @@ elseif strcmp(task,'importAnalyzmask')
     end
     %% ===============================================
     ximportAnalyzemask(1);
+    
+elseif strcmp(task,'importAnalyzmask_2D')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='ximportAnalyzemask2D';
+        return ;
+    end
+    if strcmp(u.mousekey,'right')  %% cmd
+        hlpfun='ximportAnalyzemask2D.m';
+        showcmd(hlpfun);
+        return
+    end
+   
+    ximportAnalyzemask2D(1); % fun
+    
+    
     %________________________________________________
 elseif strcmp(task,'dataimportdir2dir')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
