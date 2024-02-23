@@ -1010,6 +1010,10 @@
 % import 2D (single slice) Analyze ('*.obj')-file and convert to NIFTI
 % #gw --> access via ANT-menu: &#8658; Main/import 2D-ANALYZE (obj) files
 % 
+% #ba 23 Feb 2024 (13:14:33)
+% #k [xcoreg2D_singleSlice_arbSlice] #n new
+% coregister 3D-images using 2D-registration of a single specified slice-slice assignment pair and
+% apply transformation parameters to all other slices and apply to other 3D-images.
 % 
 % 
 

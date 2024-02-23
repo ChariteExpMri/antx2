@@ -1363,8 +1363,11 @@ mh2 = uimenu(mh,'Label','<html><font color="black"> coregister slices 2D <font c
 mh2 = uimenu(mh,'Label','<html><font color="black"> apply 2d-registration to other images <font color="red"><i> *',     'Callback',{@menubarCB, 'coregister2Dapply'},...
     'userdata',[HSTART 'if other images needs to be registered as well' HEND '..apply this function']);
 
-mh2 = uimenu(mh,'Label','<html><font color="black"> single slice 2D-registration<font color="red"><i> *',     'Callback',{@menubarCB, 'call_xcoreg2D_singleSlice'},...
+mh2 = uimenu(mh,'Label','<html><font color="black"> single-slice 2D-registration<font color="red"><i> *same modality',     'Callback',{@menubarCB, 'call_xcoreg2D_singleSlice'},...
     'userdata',[HSTART 'register 3D images via one single slice 2D-registration ' HEND '#'],'separator','on');
+
+mh2 = uimenu(mh,'Label','<html><font color="black"> arbitrary single-slice 2D-registration<font color="red"><i> *different modality',     'Callback',{@menubarCB, 'call_xcoreg2D_singleSlice_arbSlice'},...
+    'userdata',[HSTART 'register 3D images via single-slice-pair assigned 2D-registration ' HEND '#'],'separator','off');
 
 %% ==========[menu:Allas & mask]=====================================
 mh = uimenu(f,'Label','atlas+masks');
@@ -2517,16 +2520,27 @@ elseif strcmp(task,'call_xcoreg2D_singleSlice')
         hlpfun='xcoreg2D_singleSlice';
         return ;
     end
-    %% ==============================[cmd]===========
-    if strcmp(u.mousekey,'right')
+    if strcmp(u.mousekey,'right')   %% [cmd]===========
         hlpfun='xcoreg2D_singleSlice.m';
         showcmd(hlpfun);
         return
     end
-    %% ===============================================
-    statusMsg(1,' singleSlice 2D-registration');
+    statusMsg(1,' singleSlice 2D-registration'); %% [exec]
     xcoreg2D_singleSlice(1);
     statusMsg(0)    
+elseif strcmp(task,'call_xcoreg2D_singleSlice_arbSlice')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xcoreg2D_singleSlice_arbSlice';
+        return ;
+    end
+    if strcmp(u.mousekey,'right')   %% [cmd]===========
+        hlpfun='xcoreg2D_singleSlice_arbSlice.m';
+        showcmd(hlpfun);
+        return
+    end
+    statusMsg(1,' singleSlice 2D-reg, arbSlice'); %% [exec]
+    xcoreg2D_singleSlice_arbSlice(1);
+    statusMsg(0)
     
 
     %________________________________________________

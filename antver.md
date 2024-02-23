@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   20 Feb 2024 (11:42:08)  
+ &#x1F34E; last modification:   23 Feb 2024 (13:14:33)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,10 +7,16 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**23 Feb 2024 (13:14:33)**</ins>  
+   __[xcoreg2D_singleSlice_arbSlice]__ new  
+  coregister 3D-images using 2D-registration of a single specified slice-slice assignment pair and  
+  apply transformation parameters to all other slices and apply to other 3D-images.  
+<!---->
   &#x1F535;   <ins>**20 Feb 2024 (11:42:08)**</ins>  
    __[ximportAnalyzemask2D.m]__ new  
   import 2D (single slice) Analyze ('*.obj')-file and convert to NIFTI  
   &#8618; access via ANT-menu: &#8658; Main/import 2D-ANALYZE (obj) files  
+    
 <!---->
   &#x1F535;   <ins>**13 Feb 2024 (17:56:15)**</ins>  
    __[ximportAnalyzemask]__ modified...better assignment of obj-files to animal-dirs  
