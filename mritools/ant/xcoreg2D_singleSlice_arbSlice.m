@@ -807,8 +807,7 @@ applyfile=p.apply{ii};
 [~, fname]=fileparts(applyfile);
 tempdir=fullfile(p.thisAnimalDir, ['temp_apply_' fname ]);
 if exist(tempdir)~=7; mkdir(tempdir); end
-%% ===============================================
-%copy trafofile
+%% ======[copy trafofile]=========================================
 trafofile=strrep(p.trafofile, p.paout,tempdir);
 copyfilem(p.trafofile,trafofile);
 %-----if more than one trafofile: change "InitialTransformParametersFileName"
@@ -817,6 +816,24 @@ for i=2:length(trafofile)
     prevtrafofile=fullfile(tempdir,[tname{i-1} text{i-1}] );
     %get_ix(trafofile{i}, 'InitialTransformParametersFileName')
     set_ix(trafofile{i}, 'InitialTransformParametersFileName',prevtrafofile) ;
+end
+
+%% =======[iterpolation]========================================
+
+if ischar(p.interpOrder) && strcmp(p.interpOrder,'auto')
+    [hb b]=rgetnii(applyfile);
+    unib=unique(b(:));
+    if sum(unib==round(unib))==length(unib)  ;% integers --> NN-interp
+        interpOrder=0;
+    else
+        interpOrder=1;
+    end
+else
+    interpOrder=p.interpOrder;
+end
+for i=1:length(trafofile)
+    set_ix(trafofile{i}, 'ResultImagePixelType' ,'float');
+    set_ix(trafofile{i}, 'FinalBSplineInterpolationOrder' ,interpOrder);
 end
 
 %prevous: (InitialTransformParametersFileName "F:\data8\schoenke_2dregistration\dat\20231117PM_hypothermia_2DG_PME000651_2DG\temp_reg2D__c_T1rho_2DG__001\TransformParameters.0.txt")
