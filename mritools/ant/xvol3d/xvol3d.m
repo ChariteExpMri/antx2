@@ -3808,7 +3808,8 @@ scripts={...
     'vol3dscript_loadConnections.m'
     'vol3dscript_loadMask_loadConnections.m'
     'vol3dscript_saveImage.m'
-    'vol3dscript_loadParameter'
+    'vol3dscript_loadParameter.m'
+    'vol3dscript_ballnsticks2PPT.m'
     
     %'STscript_export4vol3d_simple.m'
     %'STscript_export4vol3d_manycalcs.m'};

@@ -1015,7 +1015,13 @@
 % coregister 3D-images using 2D-registration of a single specified slice-slice assignment pair and
 % apply transformation parameters to all other slices and apply to other 3D-images.
 % 
+% #ba 27 Feb 2024 (13:49:45)
+% #k [vol3dscript_ballnsticks2PPT] #n new script
+% generate ppt-file containing previously saved ballNstick plots (previously saved as 'v*tif')
+% #gw --> access via xvol3d (GUI): &#8658; scripts/show scripts
 % 
+% 
+
 
 
 
