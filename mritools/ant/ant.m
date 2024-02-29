@@ -1369,6 +1369,9 @@ mh2 = uimenu(mh,'Label','<html><font color="black"> single-slice 2D-registration
 mh2 = uimenu(mh,'Label','<html><font color="black"> arbitrary single-slice 2D-registration<font color="red"><i> *different modality',     'Callback',{@menubarCB, 'call_xcoreg2D_singleSlice_arbSlice'},...
     'userdata',[HSTART 'register 3D images via single-slice-pair assigned 2D-registration ' HEND '#'],'separator','off');
 
+mh2 = uimenu(mh,'Label','<html><font color="black"> extract slice, preserve alignment<font color="blue"><i> preserve alignment with inputVolume',     'Callback',{@menubarCB, 'call_xextractslice_aligned'},...
+    'userdata',[HSTART 'extract single slice from 3D/4D-volume, preserve alignment with inputVolume ' HEND ' '],'separator','on');
+
 %% ==========[menu:Allas & mask]=====================================
 mh = uimenu(f,'Label','atlas+masks');
 
@@ -2024,7 +2027,9 @@ try
         msg=regexprep(msg,'<br>',char(10));
         msg=strsplit2(msg,char(10))';
         %msg=cellfun(@(a){['<html><p style="font-family:''Courier New''"> ' a]} ,msg );
-        msg=cellfun(@(a){[' #ka ' a repmat(' ',[1 70])]} ,msg );
+        %msg=cellfun(@(a){[' #ka ' a repmat(' ',[1 70])]} ,msg );
+        %msg=cellfun(@(a){[' #ka ' a repmat(' ',[1 70])]} ,msg );
+        try; msg{end+1,1}=repmat('_',[1 70]); end
         msg=[lab2; msg ];
     end
    %uhelp(msg,1);
@@ -2541,7 +2546,20 @@ elseif strcmp(task,'call_xcoreg2D_singleSlice_arbSlice')
     statusMsg(1,' singleSlice 2D-reg, arbSlice'); %% [exec]
     xcoreg2D_singleSlice_arbSlice(1);
     statusMsg(0)
-    
+ 
+elseif strcmp(task,'call_xextractslice_aligned')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xextractslice_aligned';
+        return ;
+    end
+    if strcmp(u.mousekey,'right')   %% [cmd]===========
+        hlpfun='xextractslice_aligned.m';
+        showcmd(hlpfun);
+        return
+    end
+    statusMsg(1,' extract slice (keep aligned)'); %% [exec]
+    xextractslice_aligned(1);
+    statusMsg(0)    
 
     %________________________________________________
 elseif strcmp(task,'xnewproject')

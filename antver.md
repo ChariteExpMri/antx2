@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   27 Feb 2024 (13:49:45)  
+ &#x1F34E; last modification:   29 Feb 2024 (10:44:56)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,10 +7,16 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**29 Feb 2024 (10:44:56)**</ins>  
+   __[xextractslice_aligned]__ new  
+  extract 2d-slice from 3D/4D-volume, preserve alignment with original file  
+  &#8618; access via ANT-menu: &#8658; 2D/extract slice,preserve alignment  
+<!---->
   &#x1F535;   <ins>**27 Feb 2024 (13:49:45)**</ins>  
    __[vol3dscript_ballnsticks2PPT]__ new script  
   generate ppt-file containing previously saved ballNstick plots (previously saved as 'v*tif')  
   &#8618; access via xvol3d (GUI): &#8658; scripts/show scripts  
+    
 <!---->
   &#x1F535;   <ins>**23 Feb 2024 (13:14:33)**</ins>  
    __[xcoreg2D_singleSlice_arbSlice]__ new  

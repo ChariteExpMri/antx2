@@ -1020,8 +1020,13 @@
 % generate ppt-file containing previously saved ballNstick plots (previously saved as 'v*tif')
 % #gw --> access via xvol3d (GUI): &#8658; scripts/show scripts
 % 
+% #ba 29 Feb 2024 (10:44:56)
+% #k [xextractslice_aligned] #n new
+% extract 2d-slice from 3D/4D-volume, preserve alignment with original file
+% #gw --> access via ANT-menu: &#8658; 2D/extract slice,preserve alignment
 % 
-
+% 
+% 
 
 
 
