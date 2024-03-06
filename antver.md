@@ -11,6 +11,12 @@
    __[xflipLR]__ new  
   flip left/right image in native or standard space  
   &#8618; access via ANT-menu: &#8658; TOOLS/flip left/right images  
+   __[xop]__ new  
+  image operation, identical to xrename.m (wrapper function of xrename)   
+  &#8618; access via ANT-menu: &#8658; TOOLS/xop  
+   __[xinsertslice_aligned]__ new  
+  insert 2d-slices into 3D/4D-volume, preserve alignment with reference file  
+  &#8618; access via ANT-menu: &#8658; 2D/insert slices back to 3D/4D volume  
 <!---->
   &#x1F535;   <ins>**29 Feb 2024 (10:44:56)**</ins>  
    __[xextractslice_aligned]__ new  

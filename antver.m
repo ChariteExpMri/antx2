@@ -1029,6 +1029,13 @@
 % #k [xflipLR] #n new
 % flip left/right image in native or standard space
 % #gw --> access via ANT-menu: &#8658; TOOLS/flip left/right images
+% #k [xop] #n new
+% image operation, identical to xrename.m (wrapper function of xrename) 
+% #gw --> access via ANT-menu: &#8658; TOOLS/xop
+% #k [xinsertslice_aligned] #n new
+% insert 2d-slices into 3D/4D-volume, preserve alignment with reference file
+% #gw --> access via ANT-menu: &#8658; 2D/insert slices back to 3D/4D volume
+% 
 % 
 % 
 
