@@ -1,11 +1,11 @@
 %% extract 2d-slice from 3D/4D-volume, preserve alignment with original file
-% #yk xextractslice_aligned.m
 % - This function extracts one/more 2d slices from a 3d or 4d volume with preserved aligment to original file
 % - each single slice is stored in a new nifti, 
 % DIRS:  works on preselected mouse dirs, i.e. mouse-folders in [ANT] have to be selected before
+% #b function-name: #lk [xextractslice_aligned]
 % ______________________________________________________________________________________________
 %
-%% #ky PARAMETER:
+%% #lk PARAMETER:
 % 'file'           - nifti-file, to extract slice(s) (example: t2.nii) 
 %                  - nifti-volume is 3D or 4D
 % 'slicenumber'    - index of the slice(s) to extract   
@@ -27,7 +27,7 @@
 % 
 %
 % ______________________________________________________________________________________________
-%% #ky RUN-def:
+%% #lk RUN-def:
 % xextractslice_aligned(showgui,x)
 % with inputs:
 % showgui: (optional)  :  0/1   :no gui/open gui
@@ -37,7 +37,7 @@
 % xextractslice_aligned(0,z);   % ...run without GUI with specified parametes (z-struct)
 % xextractslice_aligned(1,z);   % ...run with opening GUI with specified parametes (z-struct)
 % ______________________________________________________________________________________________
-%% #ky EXAMPLES
+%% #lk EXAMPLES
 %% ======[3Dim]=========================================
 %% extract slices 3 and 4, saved as 't2anat_slice003.nii' & 't2anat_slice004.nii'
 % z=[];                                                                                                                                           
@@ -82,8 +82,7 @@
 % z.volumenumber = 'end';               % % if file is a 4D-volume: select index of volume in 4th dimension (default: 1)                            
 % z.outputname   = '_$v_$s';            % % name of the outputfile (see left icon)                                                                  
 % z.showoutput   = [1];                 % % display hyperlink to visualize overlay of output with orig.file                                         
-% xextractslice_aligned(0,z);                                                                                                                     
-                              
+% xextractslice_aligned(0,z);                                                                                                                                                
 % ______________________________________________________________________________________________
 %
 %% #r RE-USE BATCH: see 'anth' [..anthistory] -variable in workspace
@@ -91,10 +90,6 @@
 %
 
 function xextractslice_aligned(showgui,x,pa)
-
-
-
-
 
 %———————————————————————————————————————————————
 %%   PARAMS
@@ -112,12 +107,9 @@ end
 % v=getuniquefiles(pa);
  [tb tbh v]=antcb('getuniquefiles',pa);
 
-
-
 % ==============================================
 %%   PARAMETER-gui
 % ===============================================
-
 outname_opt={...
     '<html>[filename]+"_slice"+[sliceNo] <font color=fuchsia>; tag:"_slice$s"<font color=green>; example: "t2_slice001.nii"'      , '_slice$s';...
     '<html>[filename]+[_sliceNo]<font color=fuchsia>; tag:"_$s"<font color=green>example: "t2_001.nii">                        [_$s]'           , '_$s';...
@@ -125,8 +117,6 @@ outname_opt={...
     '<html>[filename]+[volumeNo]+[sliceNo]<font color=fuchsia>; tag:"_$v_$s"<font color=green>; example: "t2_01_001.nii"'        , '_$v_$s';...
     '<html>use my own name [please modify filename here]                            '        , '_test.nii' ;...
     };
-
-
 
 if exist('x')~=1;        x=[]; end
 p={...
@@ -148,16 +138,14 @@ if showgui==1%% show GUI
 else
     z=param2struct(p);
 end
-
 % ==============================================
 %%   batch
 % ===============================================
 xmakebatch(z,p, mfilename);
 
-
-%———————————————————————————————————————————————
+% ==============================================
 %%   SUB  PROCESS
-%———————————————————————————————————————————————
+% ===============================================
 cprintf('[0 0 1]',[ repmat(char(hex2dec('2580')),[1 200]) '\n'] );
 cprintf('*[0 0 1]',[ ' Extract slice... \n'] );
 mdirs=cellstr(pa);
@@ -174,14 +162,10 @@ for i=1:length(mdirs)
 end
 cprintf('*[0 0 1]',[ ' Done\n'] );
 
-
-
-
-
-%% ===============================================
+% ==============================================
+%%   extract slice
+% ===============================================
 function extractSlice_call(z)
-
-%% ===============================================
 
 z.file=char(z.file);
 f1=fullfile(z.mdir,z.file  );

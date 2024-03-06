@@ -116,12 +116,12 @@ if (isempty(colorbrewer.(ctype).(cname){ncol}))
     while(isempty(colorbrewer.(ctype).(cname){ncol}))
         ncol=ncol+1;
     end        
-    disp(' ')
-    disp('----------------------------------------------------------------------')
-    disp(['The minimum number of colors for table *' cname '* is ' num2str(ncol)])
-    disp('This minimum value shall be defined as ncol instead')
-    disp('----------------------------------------------------------------------')
-    disp(' ')
+%     disp(' ')
+%     disp('----------------------------------------------------------------------')
+%     disp(['The minimum number of colors for table *' cname '* is ' num2str(ncol)])
+%     disp('This minimum value shall be defined as ncol instead')
+%     disp('----------------------------------------------------------------------')
+%     disp(' ')
 end
 
 colormap=(colorbrewer.(ctype).(cname){ncol})./255;

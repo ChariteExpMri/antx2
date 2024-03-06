@@ -1,7 +1,7 @@
 
 
 function  filenameout=rsavenii(filename,h,d, dt)
-%% save Nifti
+%% save Niftifile ('.nii' or '.nii.gz')
 %  filenameout=rsavenii(filename,h,d, dt)
 %             rsavenii(filename,h,d)
 % filenameout=rsavenii(filename,h,d)
@@ -12,8 +12,9 @@ function  filenameout=rsavenii(filename,h,d, dt)
 %% out
 % filenameout : written filename
 %% example
-% rsavenii('test',h,d )
-% rsavenii('test2.nii',h,d )
+% rsavenii('test',h,d )        ; %save Nifti-file
+% rsavenii('test2.nii',h,d )   ; %save Nifti-file
+% rsavenii('test2.nii.gz',h,d ); %save as zipped Nifti-file
 % works with 4d
 
 % remove both pinfo and private ( removing of pinfo  allows to store TPMs with dataType: 2
@@ -21,6 +22,13 @@ function  filenameout=rsavenii(filename,h,d, dt)
 warning off;
 
 [pa fi ext]= fileparts(filename);
+do_gzip=0;
+if strcmp(ext,'.gz')
+    filename=fullfile(pa,[fi ]);
+    [pa fi ext]= fileparts(filename);
+    do_gzip=1;
+end
+    
 % if isempty(pa);     pa=''; end
 if isempty(ext);    ext='.nii'; end
 
@@ -90,4 +98,11 @@ else % 4d-data
     % ==============================================
     %%
     % ===============================================
+end
+
+
+if do_gzip==1
+    fout=gzip(filename,pa);
+    filenameout=char(fout);
+    delete(filename)
 end

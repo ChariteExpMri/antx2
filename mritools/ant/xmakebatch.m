@@ -29,7 +29,7 @@ if isempty(callerfile)
    % hh{end+1,1}=['%% info :                -     '  ];   
 else
     hh{end+1,1}=['%% #g FUNCTION:    [' [callerfile '.m' ] ']' ];
-    hh{end+1,1}=['%% info :           ' hlp];
+    hh{end+1,1}=['%% ' regexprep(hlp,'^\s' ,'')];
 end
 hh{end+1,1}=('%% =====================================================');
 % hh=[hh; 'z=[];' ];

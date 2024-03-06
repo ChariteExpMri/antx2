@@ -1025,9 +1025,12 @@
 % extract 2d-slice from 3D/4D-volume, preserve alignment with original file
 % #gw --> access via ANT-menu: &#8658; 2D/extract slice,preserve alignment
 % 
+% #ba 06 Mar 2024 (15:48:32)
+% #k [xflipLR] #n new
+% flip left/right image in native or standard space
+% #gw --> access via ANT-menu: &#8658; TOOLS/flip left/right images
 % 
 % 
-
 
 
 %% ===============================================

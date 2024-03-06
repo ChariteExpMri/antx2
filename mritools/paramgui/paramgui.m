@@ -3520,7 +3520,7 @@ elseif   iscellmode>=1
     
     %% PULLDOWN
     pd=uicontrol('style','popupmenu','units','normalized','position',[0 0 .3 .1],'tag','pulldown',...
-        'string',pulldownStr,'backgroundcolor',[1 .8 .43 ]);
+        'string',pulldownStr,'backgroundcolor',[1 .8 .43 ],'max',1000,'min',1);
     set(pd,'units','pixels');
     u.options=pulldown;
     u.pulldownStr=pulldownStr;
@@ -3541,10 +3541,18 @@ elseif   iscellmode>=1
     try
         drawnow;%pause(.2)
         jPopup = findjobj(findobj(gcf,'Tag','pulldown'));
-        %jPopup.setEditable(true)
-        %drawnow
-        % jPopup.hidePopup();
-        jPopup.showPopup();
+        
+       % jPopup.setEditable(true)
+        
+        drawnow;%drawnow;drawnow
+        jPopup.showPopup();%jPopup.showPopup();
+        drawnow
+%         pause(.2)
+        jPopup.hidePopup();%jPopup.hidePopup();
+        drawnow;drawnow;drawnow
+%         pause(.2)
+        jPopup.showPopup();%jPopup.showPopup();
+        drawnow
     end
     
     

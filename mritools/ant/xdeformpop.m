@@ -229,10 +229,42 @@ if isfield(aux,'showgui')%force gui to open
 end
 %% ===============================================
 
+if 0
+    
+    b=gco
+    jb = findjobj(b);
+    oldBgColor = jb.getBackground;
+    newBgColor = javax.swing.plaf.ColorUIResource(oldBgColor);
+    jb.setBackground(newBgColor);
+    jb.repaint;  % force a redraw
+    
+    
+    q=javax.swing.UIManager
+    javax.swing.UIManager.setLookAndFeel(q.getSystemLookAndFeelClassName)
+    
+   luf=q.getInstalledLookAndFeels 
+   
+    javax.swing.UIManager.setLookAndFeel(q.getSystemLookAndFeelClassName)
+    
+    javax.swing.UIManager.setLookAndFeel(luf(2).getClassName)
+    javax.swing.UIManager.setLookAndFeel(luf(5).getClassName)
+
+
+end
+
+% javax.swing.UIManager$LookAndFeelInfo[Metal javax.swing.plaf.metal.MetalLookAndFeel]
+% javax.swing.UIManager$LookAndFeelInfo[Nimbus com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel]
+% javax.swing.UIManager$LookAndFeelInfo[CDE/Motif com.sun.java.swing.plaf.motif.MotifLookAndFeel]
+% javax.swing.UIManager$LookAndFeelInfo[Windows com.sun.java.swing.plaf.windows.WindowsLookAndFeel]
+% javax.swing.UIManager$LookAndFeelInfo[Windows Classic com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel]
+% 
 
 % ==============================================
 %%   GUI
 % ===============================================
+
+
+
 x=struct();
 
 
@@ -241,19 +273,61 @@ sel.interp     =cellfun(@(a){[   (a)]} ,num2cell([p0.interp      setdiff([0:4], 
 sel.source     =cellfun(@(a){[   (a)]} ,num2cell([p0.source      setdiff([1 2],   p0.source)]'));
 
 
+% opt_dir={
+%     '<html>forward to Standard-Space (x_t2.nii-space)<FONT color="fuchsia"> [1]',[1]
+%     '<html>inverse to Native-Space (t2.nii-space) <FONT color="fuchsia">[-1]'   ,[-1]
+%     };
+opt_dir={
+    '<html>to Standard-Space ("x_t2.nii"-space) <b><FONT color="green"> [1]',[1]
+    '<html>to Native-Space ("t2.nii"-space) <b><FONT color="fuchsia">[-1]'   ,[-1]
+    };
+opt_res={
+    'default target resolution [nan]'                   nan
+    'voxel-size(triplet), example [.05 .05 .1 ]'        [.05 .05 .1  ]
+    'image-dimension (triplet), example [300 300 300 ]' [300 300 300 ]
+    };
+opt_interp={
+    'nearest neighbor interpolation [0] (for mask/atlas)'    [0]
+    'linear interpolation [1]'                               [1]
+    '2nd order B-spline interpolation [2]'                   [2]
+    '3rd order B-spline interpolation [3]'                   [3]
+    '4th order B-spline interpolation [4]'                   [4]
+};
+opt_source={
+    'INTERN: image to be transformed is located in animal''s dat-folder [1]'      [1]
+    'EXTERN: image to be transformed is located outside animal''s datfolder [2]'  [2]
+};
+% ===[specific options]============================================
+opt_imgsize={
+    'default target image size [nan]'                    [nan nan nan];
+    'large target image size; example [300 300 300]'     [300 300 300];
+    'change image size in 3rd dim only; example [NaN  NaN  300]'          [NaN  NaN  300];
+    'change image size in 1st and 3rd dim only; example [200  NaN  200]'  [200  NaN  200];
+    };
+opt_origin={
+    'default target image origin [nan]'                         [nan nan nan];
+    'preserve origin when imageSize is changed [''auto'']'     'auto';
+    'specify specific origin; example [-5.7450 -8.8645 -8.5203]'   [-5.7450 -8.8645 -8.5203];
+    };
+opt_suffix={
+    'default: no suffix, (use only prefix ''ix_''/''x_'')   ['''']'                         '';
+    'add suffix: example [''_transformed'']'                          '_transformed';
+    };
+
+% ===============================================
 p={...
     'inf1'      '___ GENERAL PARAMETERS ___             '                         '' ''
-    'direction'      sel.dir{1}                'DIRECTION: [-1] inverse to Native-Space, [1] forward to Standard-Space' ,sel.dir
-    'resolution'     p0.resolution             'RESOLUTION: target space resolution: default input: [NAN]; see help for further information' ,''
-    'interpolation'  sel.interp{1}             'INTERPOLATION: [0] NN, [1] linear, [4] cub.bspline  (use [0] for mask/atlases and [1 or 4] for all other images)' sel.interp
-    'imgSource'      sel.source{1}             'IMAGE SOURCE:[1]intern/located in dat-folder,[2] extern,image located somewhere else (e.g. in template folder)'  sel.source
+    'direction'      sel.dir{1}                'DIRECTION: [-1] inverse to Native-Space, [1] forward to Standard-Space' ,opt_dir
+    'resolution'     p0.resolution             'RESOLUTION: target space resolution: default input: [NAN]; see help for further information' ,opt_res
+    'interpolation'  sel.interp{1}             'INTERPOLATION: [0] NN, [1] linear, [4] cub.bspline  (use [0] for mask/atlases and [1 or 4] for all other images)' opt_interp% sel.interp
+    'imgSource'      sel.source{1}             'IMAGE SOURCE:[1]intern/located in animal''s dat-folder,[2]extern,image located somewhere else (e.g. in template folder)'  opt_source%sel.source
     
     'inf2'      ''  '' ''
     'inf3'      '___ SPECIFIC OPTIONS ___'  '' ''
     
-    'imgSize'          p0.imgSize           'IMAGE SIZE: target image size: default input: [NAN]; see help for further information' ,''
-    'imgOrigin'        p0.imgOrigin         'IMAGE ORIGIN: target image ORIGIN: default input: [NAN]; see help for further information' ,''
-    'fileNameSuffix'   p0.suffix             '<optional> add additional suffix to the fileName of the resulting image' ''
+    'imgSize'          p0.imgSize           'IMAGE SIZE /define bounding box: target image size: default input: [NAN]; see help for further information'     ,opt_imgsize
+    'imgOrigin'        p0.imgOrigin         'IMAGE ORIGIN: target image ORIGIN: default input: [NAN]; see help for further information' ,opt_origin
+    'fileNameSuffix'   p0.suffix             '<optional> add additional suffix to the fileName of the resulting image' opt_suffix
     'isparallel'       0                     'parallel processing for lot of files; {0|1};  default:0'  'b'
     'force2overwrite'  1                     'force to overwrite existing file; {0|1}; default:1  '  'b'
     };

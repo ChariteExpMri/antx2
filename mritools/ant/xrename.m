@@ -1,5 +1,6 @@
 
 %% #bc [xrename] RENAME/DELETE/EXTRACT/EXPAND/COPY file(s) from selected ant-mousefolders
+% 
 % #wb THESE TAKSKS CAN BE PERFORMED:
 % #b - rename file                     (EMPTY)
 % #b - copy+rename file                ('copy' or ':')
@@ -21,7 +22,15 @@
 % #b - flip image along 1st dim.       (flip:)         #g e.g.: 'flip:' 
 % #b - remove volume of 4D-image       (rmvol:)        #g e.g.:  'rmvol:6'; remove volume 6; 'rmvol:[1 4:end]' remove volume 1 and 4,5,6,7..
 % #b - operations on 4th dimensions of 4D volume  (mean:)(median:)(mode:)(sum:)(max:)(min:)(std:)(zscore:)(var:)
-%                                        #g e.g.: xrename(0,'T2map_MSME_CRP_2_1.nii' ,'s:_mean', 'mean:')      
+%                                        #g e.g.: xrename(0,'T2map_MSME_CRP_2_1.nii' ,'s:_mean', 'mean:') 
+% #b - replace Nifti-Header            ('rHDR:')        #g e.g.: header is replaced by a reference file (refference file is tagged as 'ref' in the 3rd column) 
+% #b - replace Nifti-mat               ('rmat:')        #g e.g.: NIfti-HDR-mat is replaced by a reference file (refference file is tagged as 'ref' in the 3rd column) 
+% #b - gzip Nifti-file                 ('gzip:')        #g e.g.: 'gzip:'
+% #b - gunzip Nifti-file               ('gunzip:')      #g e.g.: 'gunzip:'
+% #b - apply function to NIFTI         ('niifun:')      #g e.g.: 'niifun:myfunc.m' % to apply function 'myfunc.m' on sleected NIFTIfile
+% 
+% #r The functions 'XRENAME' and 'XOP' (lowercase) are identical, XOP is a wrapper-function of XRENAME)
+% 
 % 
 % % __________________________________________________________________________________________________________________
 % - select one/several images TO RENAME/DELETE/EXTRACT/EXPAND/COPY volumes,aka. files
@@ -321,7 +330,55 @@
 %   z.files =  { 't2_copy.nii' 	'' 	'ch:mat:[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1];' };
 %   xrename(0,z.files(:,1),z.files(:,2),z.files(:,3));
 %
-%
+%__________________________________________________________________________________________________________________
+%% #by replace Nifti-Header (rHDR:)
+% A reference-file is needed, tagged with 'ref' in 3rd-column.  Here, the HDR of 'test3.nii' is
+% replaced by HDR of 'test2.nii' (tagged with 'ref') and result is saved as 'bla.nii'
+%     z=[];
+%     z.files =  { 'test3.nii' 	'bla.nii' 	'rHDR:'
+%                  'test2.nii' 	''   	    'ref'  };
+%     xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
+%__________________________________________________________________________________________________________________
+%% #by replace Nifti-mat (rmat:)
+% A reference-file is needed, tagged with 'ref' in 3rd-column.  Here, the HDR of 'adc.nii' is
+% replaced by HDR of 'adc2.nii' (tagged with 'ref') and result is saved as 'bla.nii'
+%     z=[];
+%     z.files =  { 'adc.nii' 	'bla.nii' 	'rmat:'
+%                  'adc2.nii' 	''   	    'ref'  };
+%     xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
+%__________________________________________________________________________________________________________________
+%% #by zip Nifti-file (gzip:)
+%     xrename(1,'test3.nii' ,	'test3.nii' ,	'gzip:')
+% same as
+%     xrename(1,'test3.nii' ,	'test3' ,     	'gzip:')
+%     xrename(1,'test3.nii' ,	'test3.nii.gz',	'gzip:')
+%__________________________________________________________________________________________________________________
+%% #by unzip Nifti-file (gunzip:)
+%     xrename(1, 'test3.nii.gz' ,	'test3.nii' ,	'gunzip:')
+%__________________________________________________________________________________________________________________
+%% #by apply function to NIFTI (niifun: functionname) 
+% a function can be applied to a NIFTI-file (arbitrary function name)
+% structure of the function:
+% function [ha a]=myfunc(ha,a)    
+%    with inputs : ha: header of NIFTI, a =3D/4D-vol array
+%    with outputs: ha: header of NIFTI, a =3D/4D-vol array 
+% header and array manipulation can be made here
+% ---- example of myfunc.m --------
+% function [ha a]=myfunc(ha,a)
+% a=a*3;
+% disp('multiply by 3');      %multiply values by factor 3
+% a=imdilate(a,ones(10,10));  %dilate mask
+% disp('dilate mask');
+% -----------------------------  << save as 'myfunc.m' in the study's main folder
+% 
+% funcname='F:\data8\schoenke_2dregistration\myfunc.m'
+% xrename(1,'ADCmask.nii' ,	'test.nii',	['niifun:' funcname ]);
+%   
+% or function''s shortname if 'myfunc.m' is located in the study's main dir or in the subfolder 'code' 
+% or 'codes' in the study folder:
+% xrename(1,'ADCmask.nii' ,	'test.nii',	'niifun:myfunc.m');
+%                          
+
 %__________________________________________________________________________________________________________________
 %% #by voxel scaling (vf:)
 % change voxel scaling of an image via  the [TASK]-column
@@ -666,12 +723,18 @@ end
 
 % return
 % keyboard
+%% add special files due to special inserts in col-3
 try
     iadd=find(~cellfun(@isempty,  regexpi(tbout(:,3), '^##$|^del$|^delete$')));
     he=[he; tbout(iadd,1:3)];
 end
+try
+  if isempty(find(strcmp(he(:,end),'ref')))
+    iadd=find(~cellfun(@isempty,  regexpi(tbout(:,3), '^ref$')));
+    he=[he; tbout(iadd,1:3)];
+  end
+end
 % he
-%
 % return
 
 %———————————————————————————————————————————————
@@ -728,6 +791,8 @@ end
 
 for i=1:length(pa)      %PATH
     [~,Z.animalDir]=fileparts(pa{i});
+    Z.animalDirFP  =pa{i};
+    
     for j=1:length(fi)  %FILE
         s1=fullfile(pa{i},fi{j}); %OLD FILENAME
         if exist(s1)==2  %CHK EXISTENCE
@@ -1448,7 +1513,150 @@ for i=1:length(pa)      %PATH
                     showinfo2(['orig dimension: ' s1 ' '],s1);
                     showinfo2(['permute dimension: ' s2 ' '],s2);
                     %% ________________________________________________________________________________________________
+                elseif strfind(volnum{j},'rmat:'); 
+                    %% ===[replace meat by ref-file-mat]===========
+                    % z=[];
+                    % z.files =  { 'adc.nii' 	'bla' 	'rmat:'
+                    %              'adc2.nii' 	''   	'ref' };
+                    % xop(1,z.files(:,1),z.files(:,2),z.files(:,3));
+                    %% ===============================================
+                    %---reffile
+                    ixref=find(strcmp(he(:,end),'ref'));
+                    if isempty(ixref); 
+                        error('no reference-file found ... no file tagged with ''ref''');
+                    end
+                    refName=he{ ixref };
+                    fref=fullfile(Z.animalDirFP, refName);
+                    hr=spm_vol(fref); %[hr r]=rgetnii(fref);
                     
+                    [ha a]=rgetnii(s1);
+                    delete(s2);
+                    hb=ha;
+                    for jj=1:length(ha)
+                        hb(jj).mat= hr(jj).mat;
+                        %hb(jj).descrip='replaced-HDRmat';
+                    end
+                    
+                    rsavenii(s2, hb, a, 64);
+                    showinfo2(['replace HDRmat:[' Z.animalDir ']'],s2);
+                    %% ===============================================
+                elseif strfind(volnum{j},'rHDR:');
+                    %% ===[replace header by ref-file]===========
+                    % z=[];
+                    % z.files =  { 'test3.nii' 	'bla' 	'rHDR:'
+                    %              'test2.nii' 	''   	'ref' };
+                    % xop(1,z.files(:,1),z.files(:,2),z.files(:,3));
+                    %% ===============================================
+                    %---reffile
+                    ixref=find(strcmp(he(:,end),'ref'));
+                    if isempty(ixref); 
+                        error('no reference-file found ... no file tagged with ''ref''');
+                    end
+                    refName=he{ ixref };
+                    fref=fullfile(Z.animalDirFP, refName);
+                    hr=spm_vol(fref); %[hr r]=rgetnii(fref);
+                    
+                    [ha a]=rgetnii(s1);
+                    delete(s2);
+                    %hr.descrip='replaced-HDR';
+                    rsavenii(s2, hr, a, 64);
+                    showinfo2(['replace HDR:[' Z.animalDir ']'],s2);
+                    %% ===============================================
+               elseif strfind(volnum{j},'gzip:');
+                    %% ===[gzip file]===========
+                    % z=[];
+                    % z.files =  { 'test3.nii' 	'bla' 	'gzip:'};
+                    % xop(1,z.files(:,1),z.files(:,2),z.files(:,3));
+                    %% ===============================================
+                    s3=gzip(s1,Z.animalDirFP);
+                    s3=char(s3);
+                    [paw namew extw]=fileparts(s2);
+                    s4=fullfile(paw,[namew '.nii.gz']);
+                    try; 
+                        movefile(s3,s4,'f')
+                    showinfo2(['gzip:[' Z.animalDir ']'],s4);
+                    end
+                    %% ===============================================
+                elseif strfind(volnum{j},'gunzip:');
+                    %% ===[gunzip file]===========
+                    % z=[];
+                    % z.files =  { 'test3.nii.gz' 	'test3.nii' 	'gunzip:'};
+                    % xop(1,z.files(:,1),z.files(:,2),z.files(:,3));
+                    %% ===============================================
+                    [pax namex extx]=fileparts(s2);
+                    s2=fullfile(pax,[ namex '.nii.gz']);
+                    if strcmp(s1,s2)==0
+                        copyfile(s1,s2,'f');
+                    end
+                    s3=gunzip(s2,Z.animalDirFP);
+                    showinfo2(['gunzip:[' Z.animalDir ']'],s3{1});
+                    if strcmp(s1,s2)==0
+                        delete(s2);
+                    end
+                    %% ===============================================
+                 elseif ~isempty(regexpi(volnum{j},'^niifun:'))==1
+                     
+                     if 0
+                         funcname='F:\data8\schoenke_2dregistration\myfunc.m'
+                         funcname='myfunc.m'
+                         xrename(1,'ADCmask.nii' ,	'test.nii',	['niifun:' funcname ]);
+                     end
+                     code=volnum{j};
+                     fun=regexprep(code,'^niifun:\s*','');
+                     err=1;
+                     if exist(fun)~=2
+                         [funcpa funcname funcext]=fileparts(fun);
+                         
+                         subdirs={'' 'code' 'codes'};
+                         pathBase=fileparts(fileparts(Z.animalDirFP));
+                         for jj=1:length(subdirs)
+                             potdir=fullfile(pathBase,subdirs{jj});
+                             potfile=fullfile( potdir, [ funcname funcext]);
+                             if exist(potfile)==2
+                                 fun=potfile;
+                             end
+                         end
+                     end
+                     if exist(fun)==2; err=0; end
+                     
+                     if err==1
+                        error(['function not found: "' [funcname funcext] '...add full path or save function' ...
+                            ' in study-dir or in "code"-dir or "codes"-dir within study-dir' ]) ;
+                     end
+                     [funcpa funcname funcext]=fileparts(fun);
+                     if isempty(funcpa);
+                         funcpa=pwd;
+                     end
+                     %% ===============================================
+                     try
+                         paThis=pwd;
+                         cd(funcpa)
+                         
+                         [ha a]=rgetnii(s1);
+                         disp(['...applied function: ' fun]);
+                         [hb,b] = feval(funcname,ha,a);
+                         
+                         cd(paThis)
+                         
+                         rsavenii(s2, hb, b, 64);
+                         showinfo2(['apply function "' funcname '.m" :[' Z.animalDir ']'],s2);
+                     catch ME
+                        rethrow(ME); 
+                     end
+                     %% ===============================================
+
+                     
+                         
+                    
+                         
+                         
+                     
+                     
+                     
+                     %% ===============================================
+                     
+                     
+                     
                     
                 elseif strfind(volnum{j},'mo:'); %vox factor
                     % ==============================================
@@ -1516,6 +1724,9 @@ for i=1:length(pa)      %PATH
                     % ==============================================
                     %%   %% extractvolume
                     % ===============================================
+                    if ischar(volnum{j}) && strcmp(volnum{j},'ref')
+                        continue
+                    end
                     
                     
                     thisvol= lower(volnum{j});
@@ -1879,7 +2090,12 @@ if isFig==0
     
     setappdata(gcf,'phelp',h);
     
-    set(gcf,'name',[' manipulate file [' mfilename '.m]'],'NumberTitle','off');
+    stack = dbstack('-completenames');
+    funcname=mfilename;
+     if ~isempty(find(strcmp({stack.name},'xop')))
+        funcname=[mfilename '.m' ' or ' 'xop.m' ];
+    end
+    set(gcf,'name',[' manipulate file [' funcname ']'],'NumberTitle','off');
     set(gcf,'SizeChangedFcn', @resizefig);
     % ==============================================
     %%   controls
@@ -2041,7 +2257,17 @@ uiresume(gcf);
 
 
 function getHELP(e,e2)
-uhelp([mfilename '.m']);
+
+stack = dbstack('-completenames');
+funcname=mfilename;
+if ~isempty(find(strcmp({stack.name},'xop')))
+   funcname='xop'; 
+end
+h=help(mfilename);
+if strcmp(funcname,'xop')
+   h= strrep(h,'xrename','xop');
+end
+uhelp([h]);
 
 function filterfilelist(e,e2)
 
@@ -2281,6 +2507,11 @@ if ~strcmp(task,'showimageinfo')
             'zscore:'                  '[zscore:] zsore over 4th dimension of 4D-NIFTI-file (4D NIFTI only) '
             'std:'                     '[std:]    std over 4th dimension of 4D-NIFTI-file (4D NIFTI only) '
             'var:'                     '[var:]    variance over 4th dimension of 4D-NIFTI-file (4D NIFTI only) '
+            'rHDR:'                    '[rHDR:]   replace NIFTI-header by reference file which is tagged with ''ref'''
+            'rmat:'                    '[rmat:]   replace NIFTI-mat by  mat of reference file which is tagged with ''ref'''
+            'gzip:'                    '[gzip:]   gzip NIFTI-file (saved as *.nii.gz)'
+            'gunzip:'                  '[gunzip:] gunzip (*.nii.gz) file (saved as *.nii) '
+            'niifun:myfun.m'           '[niifun: myfun.m] apply function "myfun" to NIFTIfile (see help)' 
             };
         
 
@@ -2699,8 +2930,15 @@ set(ht,'position',ht_pos2)
 function makebatch(z,p0)
 %% ===============================================
 
+stack = dbstack('-completenames');
+funcname=mfilename;
+% if strcmp({stack(end).name},'xop')
+if    ~isempty(find(strcmp({stack.name},'xop')))
+   funcname='xop'; 
+end
+
 try
-    hlp=help(mfilename);
+    hlp=help(funcname);
     hlp=hlp(1:min(strfind(hlp,char(10)))-1);
 catch
     hlp='';
@@ -2708,23 +2946,23 @@ end
 
 hh={};
 hh{end+1,1}=('% ======================================================');
-hh{end+1,1}=[ '% BATCH:        [' [mfilename '.m' ] ']' ];
-hh{end+1,1}=[ '% descr:' hlp];
+hh{end+1,1}=[ '% BATCH:        [' [funcname '.m' ] ']' ];
+% hh{end+1,1}=[ '% descr:' hlp];
 hh{end+1,1}=('% ======================================================');
 
 if ~isstruct(p0)
     
     if isempty(z.files{1})
-        hh(end+1,1)={[mfilename '(' '1'  ');' ]};
+        hh(end+1,1)={[funcname '(' '1'  ');' ]};
     elseif size(z.files,2)==2
         hh=[hh; 'z=[];' ];
         z.files=z.files(:,1:2);
         hh=[hh; struct2list(z)];
-        hh(end+1,1)={[mfilename '(' '1',  ',z.files(:,1),z.files(:,2)' ');' ]};
+        hh(end+1,1)={[funcname '(' '1',  ',z.files(:,1),z.files(:,2)' ');' ]};
     elseif size(z.files,2)==3
         hh=[hh; 'z=[];' ];
         hh=[hh; struct2list(z)];
-        hh(end+1,1)={[mfilename '(' '1',  ',z.files(:,1),z.files(:,2),z.files(:,3) ' ');' ]};
+        hh(end+1,1)={[funcname '(' '1',  ',z.files(:,1),z.files(:,2),z.files(:,3) ' ');' ]};
     end
     
     %===================================================================================================
@@ -2774,7 +3012,7 @@ elseif isstruct(p0)
             '''' z.files{3} '''' ...
           ];
     end
-    a2=[ mfilename '(' num2str(isDesktop)  ',' a1 ');' ];
+    a2=[ funcname '(' num2str(isDesktop)  ',' a1 ');' ];
     hh(end+1,1)={a2};
     
     

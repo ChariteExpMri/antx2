@@ -853,13 +853,39 @@ if isfield(z.params,'imgSize') && length(z.params.imgSize)==3
     res.imgSizeNew=val;
 end
 %% ====================[imgOrigin]===========================
-if isfield(z.params,'imgOrigin') && length(z.params.imgOrigin)==3
-    res.imgOrigin =get_ix(trafofile,'Origin');
-    val           =res.imgOrigin;
-    ixreplace     =find(~isnan(z.params.imgOrigin));
-    val(ixreplace)=z.params.imgOrigin(ixreplace);
-    set_ix(trafofile,'Origin'   , val );
-    res.imgOriginNew=val;
+if isfield(z.params,'imgOrigin')
+    if isnumeric(z.params.imgOrigin) && length(z.params.imgOrigin)==3
+        res.imgOrigin =get_ix(trafofile,'Origin');
+        val           =res.imgOrigin;
+        ixreplace     =find(~isnan(z.params.imgOrigin));
+        val(ixreplace)=z.params.imgOrigin(ixreplace);
+        set_ix(trafofile,'Origin'   , val );
+        res.imgOriginNew=val;
+    elseif ischar(z.params.imgOrigin) && strcmp(z.params.imgOrigin,'auto')
+        
+        %         res.imgOrigin =get_ix(trafofile,'Origin');
+        %         val           =res.imgOrigin;
+        %         ixreplace     =find(~isnan(z.params.imgOrigin));
+        %         val(ixreplace)=z.params.imgOrigin(ixreplace);
+        %         set_ix(trafofile,'Origin'   , val );
+        %         res.imgOriginNew=val;
+        %% ===============================================
+        
+        diff_vox=res.imgSizeNew-res.imgSize;
+        vx       =get_ix(trafofile,'Spacing');
+        orig_new =(diff_vox.*vx)/2 ;
+        orig_old =get_ix(trafofile,'Origin');
+        
+        %dorig=orig-vorig    , % 14.0050   15.4445  -16.9903
+        orig_new2=[orig_new(1:2)+orig_old(1:2) -orig_new(3)+orig_old(3)];
+        
+        res.imgOrigin =get_ix(trafofile,'Origin');
+        set_ix(trafofile,'Origin'   , orig_new2 );
+        res.imgOriginNew=orig_new2;
+        %% ===============================================
+        
+        
+    end
 end
 
 %% ===============================================
@@ -1068,7 +1094,11 @@ function makebatchTrafo(s)
 
 
 
-
+if isfield(s,'params') && isfield(s.params, 'showbatch'); %no batch-code
+    if s.params.showbatch==0
+        return
+    end
+end
 
 
 

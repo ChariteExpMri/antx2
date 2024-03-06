@@ -1327,9 +1327,16 @@ mh2 = uimenu(mh,'Label',' realign images (SPM, monomodal)'       , 'Callback',{@
 mh2 = uimenu(mh,'Label',' realign images (ELASTIX, multimodal)'  , 'Callback',{@menubarCB, 'realignImagesMultimodal'},...
      'userdata',[HSTART 'use ELATSIX to realign images' HEND  '...multimpodal approach']);
 
-mh2 = uimenu(mh,'Label',' manipulate files (rename/copy/delete/extract/expand)',       'Callback',{@menubarCB, 'renamefile_simple'},'Separator','on',...
+mh2 = uimenu(mh,'Label','[xrename] manipulate files (rename/copy/delete/extract/expand)',       'Callback',{@menubarCB, 'renamefile_simple'},'Separator','on',...
      'userdata',[HSTART 'to rename/copy/delete/extract or expand NIFTI-FILES' HEND ' ..or make simple file-operations (masking/thresholding/change voxel-size)']);
-mh2 = uimenu(mh,'Label',' delete files',                                                   'Callback',{@menubarCB, 'deletefiles'},...
+mh2 = uimenu(mh,'Label','<html><font color="blue">[xop]: NIFTI operation (same as xrename)',       'Callback',{@menubarCB, 'call_xop'},'Separator','off',...
+     'userdata',[HSTART 'similar to "xrename "... to rename/copy/delete/extract or expand NIFTI-FILES' HEND ' ..and make simple file-operations (masking/thresholding/change voxel-size)']);
+ 
+ mh2 = uimenu(mh,'Label','[xop]: flip left/right images',       'Callback',{@menubarCB, 'call_xflipLR'},'Separator','on',...
+     'userdata',[HSTART 'flip left/right images' HEND ' ']);
+ 
+ 
+mh2 = uimenu(mh,'Label',' delete files',                                                   'Callback',{@menubarCB, 'deletefiles'},'Separator','on',...
     'userdata',[HSTART 'delete selected files' ]);
 mh2 = uimenu(mh,'Label',' manipulate header',                                              'Callback',{@menubarCB, 'manipulateheader'},'Separator','on',...
      'userdata',[HSTART ' change the header of an image' HEND '...for instance by using a ref-image' HEND '..apply to other images']);
@@ -1371,6 +1378,8 @@ mh2 = uimenu(mh,'Label','<html><font color="black"> arbitrary single-slice 2D-re
 
 mh2 = uimenu(mh,'Label','<html><font color="black"> extract slice, preserve alignment<font color="blue"><i> preserve alignment with inputVolume',     'Callback',{@menubarCB, 'call_xextractslice_aligned'},...
     'userdata',[HSTART 'extract single slice from 3D/4D-volume, preserve alignment with inputVolume ' HEND ' '],'separator','on');
+mh2 = uimenu(mh,'Label','<html><font color="black"> insert slices back to 3D/4D-volume, preserve alignment<font color="blue"><i> preserve alignment with reference file',     'Callback',{@menubarCB, 'call_xinsertslice_aligned'},...
+    'userdata',[HSTART 'insert 2D slices back to 3D/4D-volume, based on a reference file, preserve alignment with reference file ' HEND ' '],'separator','off');
 
 %% ==========[menu:Allas & mask]=====================================
 mh = uimenu(f,'Label','atlas+masks');
@@ -2560,7 +2569,21 @@ elseif strcmp(task,'call_xextractslice_aligned')
     statusMsg(1,' extract slice (keep aligned)'); %% [exec]
     xextractslice_aligned(1);
     statusMsg(0)    
+        %________________________________________________
 
+elseif strcmp(task,'call_xinsertslice_aligned')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xinsertslice_aligned';
+        return ;
+    end
+    if strcmp(u.mousekey,'right')   %% [cmd]===========
+        hlpfun='xinsertslice_aligned.m';
+        showcmd(hlpfun);
+        return
+    end
+    statusMsg(1,' insert slices back to 3D/4D (keep aligned)'); %% [exec]
+    xinsertslice_aligned(1);
+    statusMsg(0) 
     %________________________________________________
 elseif strcmp(task,'xnewproject')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
@@ -2697,6 +2720,29 @@ elseif strcmp(task,'renamefile_simple')
     end
     %% ===============================================
     xrename(1);
+elseif strcmp(task,'call_xop')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xrename';
+        return ;
+    end
+    if strcmp(u.mousekey,'right') %=[cmd]===========
+        hlpfun='xrename.m';
+        showcmd(hlpfun);
+        return
+    end
+    xop(1);  %% [exec]  
+    %________________________________________________
+elseif strcmp(task,'call_xflipLR')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xflipLR';
+        return ;
+    end
+    if strcmp(u.mousekey,'right') %=[cmd]===========
+        hlpfun='xflipLR.m';
+        showcmd(hlpfun);
+        return
+    end
+    xflipLR(1);  %% [exec]
     %________________________________________________
 elseif strcmp(task,'renamefile')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
