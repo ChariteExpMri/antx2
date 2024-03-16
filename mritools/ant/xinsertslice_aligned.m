@@ -162,8 +162,9 @@ outname_opt={...
     '<html>referenceFile+suffix ($s+''string''):  <font color=fuchsia>, example: "_$sreconst"  &#x2192;  "t2_reconst.nii"'      , '_$sreconst';...
     '<html>prefix+referenceFile ($p+''string''):  <font color=fuchsia>, example: "$preconst_"  &#x2192;  "reconst_t2.nii"'      , '$preconst_';...
     };
+% ======[test]=========================================
 
-
+% ===============================================
 
 if exist('x')~=1;        x=[]; end
 p={...
@@ -193,6 +194,7 @@ end
 % ===============================================
 xmakebatch(z,p, mfilename);
 
+return
 
 %———————————————————————————————————————————————
 %%   SUB  PROCESS

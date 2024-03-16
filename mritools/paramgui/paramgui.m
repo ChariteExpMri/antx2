@@ -86,6 +86,24 @@
 %%   EXAMPLE: showing GUI with all options
 % ===============================================
 % 
+% multicell_opt={};
+% multicell_opt(end+1,:)={'test'  {@mean,rand(3,3),1}};
+% multicell_opt(end+1,:)={'test2_instantEXE'  cellfun(@(a,b){[ a '-'  b]}   ,{'s' 'sh'},{'ee' 'ff'} )};
+% multicell_opt(end+1,:)={'test2_deleaydEXE' {@cellfun,@(a,b){[ a '-'  b]} ,{'del' 'doh'},{'ee' 'ff'}} };
+% multicell_opt(end+1,:)={'color0 ' {@uisetcolor }};
+% multicell_opt(end+1,:)={'color1 with title ' {@uisetcolor,[1 0 0],'bla' }};
+% multicell_opt(end+1,:)={'mixed cell vert '  {{'ww' 'sss' 'www' 12}'  [1]  1:4}    };
+% multicell_opt(end+1,:)={'mixed cell horiz'  {{'ww' 'sss' 'www' 12}   [1]  1:4 'a'  'b' }    };
+% multicell_opt(end+1,:)={'open web'  {@web,'http://www.mathworks.com'   }};
+% multicell_opt(end+1,:)={'one num cell'   (magic(5)) };
+% multicell_opt(end+1,:)={'two num cells'  {rand(3,3) rand(4,4)  } };
+% multicell_opt(end+1,:)={'two cell lists cells'  {{'a' 'ab' 'c'}'  {'d' 'e' 'f'}}  };
+% multicell_opt(end+1,:)={'1-vertical list ' {'a' 'ab' 'c' 'd' 'e' 'f'}'  };
+% multicell_opt(end+1,:)={'two cell lists cell (directories)' { cellstr(ls)   flipud(cellstr(ls)) }  };
+% multicell_opt(end+1,:)={'<html><font color=blue>1-horizontal list ' {'a' 'ab' 'c' 'd' 'e' 'f'}  };
+% multicell_opt(end+1,:)={'<html><font color=red>multicolumn list ' {{'a' 'greta' 'c' } {'butter' 'ee' 'ff'} {'g' 'h' 'i'}} };
+% multicell_opt(end+1,:)={'open editor' {@edit}'  };
+% 
 % p={...
 %     'inf0'        '%______INPUTS____________<' '' ''
 %     'aO'    ''      'TYPE NAME HERE '                   ''
@@ -107,6 +125,7 @@
 %     'a10'           'gray'    'select cmap from default colormaps'                {'cmap',{}}
 %     'a11'           'parula'  'select cmap from specified colormap'               {'cmap',{'gray' 'parula'}}
 %     'a12'           'jet'     'select cmap from specified colormap (not colored)' {'gray' 'parula'}
+%     'multicell'     ''        'multicell input (see options)' multicell_opt
 %     }
 % [m z]=paramgui(p,'close',1,'figpos',[0.2 0.4 0.5 0.35],'info',{@uhelp, 'paramgui.m' },'title','GUI-123'); %%START GUI
 % ==============================================
@@ -3925,7 +3944,7 @@ end
 
 
 function pulldownBUTTONkeypress(h,e)
-'b'
+
 % '1318-pulldownBUTTONkeypress'
 hp=findobj(gcf,'tag','pulldown');
 n=length(get(hp,'string'));
@@ -4003,7 +4022,15 @@ if length(u.options)==2 && strcmp(u.options{1},'cmap') && iscell(u.options{2}) %
 else
     newtag=u.options{va};
 end
+%% =======[ evaluate function handle before going back to paramgui]=====
+if iscell(newtag)
+    if isa(newtag{1},'function_handle')
+       newtag= feval(newtag{1},newtag{2:end});
+    end
+end
+
 %% ===============================================
+
 
 % newtag=[3];
 % newtag=[3 4 5];
@@ -4034,35 +4061,45 @@ elseif isnumeric(newtag)
 %             n=c;
         end
     end
+elseif iscell(newtag)
+    %% ===============================================
+    
+    temp=cell2text(newtag);
+    %temp= [tb{1} [ [   temp  ] char(9) ';' ] ];
+    temp= [tb{1} [ [   temp  ]   ';' ] ];
+    inl=strfind(temp,char(10));
+    
+    %add comment add end of 1st line
+    try
+      temp=  [temp(1:inl(1)-1)  '      ' tb{3}  temp(inl(1):end) ];
+    catch
+      temp= [temp ' ' tb{3} ] ;     
+    end
+    
+    n=temp;
+    
+  
+    %% ===============================================
+    
 end
 
 % newtag
 
 %% ===============================================
-% if 0
-%     
-%     newtag=[ char(li(va)) ];
-%     if iscellmode==1
-%         n=[tb{1} [ '''' newtag '''' char(9) ';' ] tb{3}];
-%     elseif iscellmode==2
-%         n=[tb{1} [ ['[' newtag ']'] char(9) ';' ] tb{3}];
-%     end
-%     %% ===============================================
-%     if ~isempty(newtag)
-%         chk=str2num(newtag);
-%         try;
-%             str2num(chk)
-%         catch
-%             chk=''
-%         end
-%         
-%         if isempty(chk)%must be a string
-%             n=[tb{1} [ '''' newtag '''' char(9) ';' ] tb{3}];
-%         else
-%             n=[tb{1} [ ['[' newtag ']'] char(9) ';' ] tb{3}];
-%         end
-%     end
-% end
+% remove previsous selected cell-based multilines
+%% ===============================================
+
+iv1=regexpi2(tx3,tb{1});
+icmd=regexpi2(tx3,'^x.\w.*=');
+iv2=min(icmd(find(icmd>iv1)));
+if ~isempty(iv2)
+tx3(iv1+1:iv2-1)=[];
+else
+ tx3(iv1+1:end)=[];   
+end
+
+
+
 %% ===============================================
 % if size(n,1)==1
     tx3{val}=n;
@@ -4118,15 +4155,19 @@ end
 delete(findobj(gcf,'tag','pulldown'));
 % us.ispulldownON=0;
 set(gcf,'userdata',us);
+
 drawnow;
-pause(1)
+pause(.1); %this could be critical
 drawnow
+
 set(r,'CaretUpdateCallback',@showIcon);
+updateIconposition();
 updatehistory();
 % icon=findobj(gcf,'tag','open');
 % set(icon,'userdata',char(li(va)));
- us.jCodePane.setCaretPosition(curpos);
+us.jCodePane.setCaretPosition(curpos);
 us.jCodePane.requestFocus();
+
 
 function resizefun(he,e)
 
@@ -4717,25 +4758,36 @@ for i=1:size(fn,1)
         g=[ '''d'''];
         s2{end+1,1}=sprintf(['%s=' ntabs '''%s'';'],fn{i} , d);
     elseif iscell(d)
-        if  ~isempty(d)
-            d2=  (mat2clip(d));
-        else
-            d2='';
+        try
+            if  ~isempty(d)
+                d2=  (mat2clip(d));
+            else
+                d2='';
+            end
+            
+            s=sort([strfind(d2,char(10)) 0  length(d2)+1]);
+            g={};
+            for j=1: length(s)-1
+                g{end+1,1}=d2(s(j)+1:s(j+1)-1);
+            end
+            p1=sprintf(['%s=' ntabs '%s '],fn{i} ,  '{');
+            p0=repmat(' ',[1 length(p1)]);
+            
+            g=cellfun(@(g) {[ p0 g]}   ,g) ;%space
+            g{1,1}(1:length(p1))=p1       ;%start
+            g{end}=[g{end} '};']       ;      ;%end
+            %    uhelp(g);set(findobj(gcf,'tag','txt'),'fontname','courier')
+            s2=[s2;g];
+        catch
+            g=strsplit(regexprep(cell2text(d),char(10),'#mySEP2024#'),'#mySEP2024#')';
+            p1=sprintf(['%s=' ntabs '%s '],fn{i} , '' );
+            p0=repmat(' ',[1 length(p1)]);
+            g=cellfun(@(g) {[ p0 g]}   ,g) ;%space
+            g{1,1}(1:length(p1))=p1       ;%start
+            %g{end}=[g{end} '};']       ;      ;%end
+            s2=[s2;g];
         end
         
-        s=sort([strfind(d2,char(10)) 0  length(d2)+1]);
-        g={};
-        for j=1: length(s)-1
-            g{end+1,1}=d2(s(j)+1:s(j+1)-1);
-        end
-        p1=sprintf(['%s=' ntabs '%s '],fn{i} ,  '{');
-        p0=repmat(' ',[1 length(p1)]);
-        
-        g=cellfun(@(g) {[ p0 g]}   ,g) ;%space
-        g{1,1}(1:length(p1))=p1       ;%start
-        g{end}=[g{end} '};']       ;      ;%end
-        %    uhelp(g);set(findobj(gcf,'tag','txt'),'fontname','courier')
-        s2=[s2;g];
     end
 end
 

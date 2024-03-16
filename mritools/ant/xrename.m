@@ -2154,9 +2154,9 @@ if isFig==0
     jCombo.setToolTipText('file filter');
     %% ===============================================
     %% filefilter-txt
-    hv=uicontrol('style','text','units','pixels','position',[0 0 10 10 ],...
-        'string','file-filter','backgroundcolor','w');
-    set(hv,'position',[250 20 130 18],'horizontalalignment','left');
+%     hv=uicontrol('style','text','units','pixels','position',[0 0 10 10 ],...
+%         'string','file-filter','backgroundcolor','w');
+%     set(hv,'position',[250 20 130 18],'horizontalalignment','left');
     
     
     %% ===============================================

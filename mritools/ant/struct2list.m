@@ -151,19 +151,29 @@ for i=1:size(fn,1)
         if isempty(d)
             g= sprintf(['%s=' ntabs '{%s};'],fn{i} , '') ;
         else
+            try
+                d2= (mat2clip(d));
+                s=sort([strfind(d2,char(10)) 0  length(d2)+1]);
+                g={};
+                for j=1: length(s)-1
+                    g{end+1,1}=d2(s(j)+1:s(j+1)-1);
+                end
+                p1=sprintf(['%s=' ntabs '%s '],fn{i} ,  '{');
+                p0=repmat(' ',[1 length(p1)]);
+                
+                g=cellfun(@(g) {[ p0 g]}   ,g) ;%space
+                g{1,1}(1:length(p1))=p1       ;%start
+                g{end}=[g{end} '};']       ;      ;%end
+            catch
+                g=strsplit(regexprep(cell2text(d),char(10),'#mySEP2024#'),'#mySEP2024#')';
+                p1=sprintf(['%s=' ntabs '%s '],fn{i} , '' );
+                p0=repmat(' ',[1 length(p1)]);
+                g=cellfun(@(g) {[ p0 g]}   ,g) ;%space
+                g{1,1}(1:length(p1))=p1       ;%start
+                %g{end}=[g{end} '};']       ;      ;%end
             
-            d2= (mat2clip(d));
-            s=sort([strfind(d2,char(10)) 0  length(d2)+1]);
-            g={};
-            for j=1: length(s)-1
-                g{end+1,1}=d2(s(j)+1:s(j+1)-1);
+            
             end
-            p1=sprintf(['%s=' ntabs '%s '],fn{i} ,  '{');
-            p0=repmat(' ',[1 length(p1)]);
-            
-            g=cellfun(@(g) {[ p0 g]}   ,g) ;%space
-            g{1,1}(1:length(p1))=p1       ;%start
-            g{end}=[g{end} '};']       ;      ;%end
             %    uhelp(g);set(findobj(gcf,'tag','txt'),'fontname','courier')
         end
         s2=[s2;g];
