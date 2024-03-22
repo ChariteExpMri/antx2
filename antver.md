@@ -16,8 +16,7 @@
       -DSURQUE atlas warped to ABA-space. This allows to interchange 'DSURQE' and 'mouse_Allen2017HikishimaLR'  
        without a new registration  
       -0.07mm isovox resolution  
-    
-  &#8658; available via: <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
+  &#8658; atlases available via: <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
 <!---->
   &#x1F535;   <ins>**06 Mar 2024 (15:48:32)**</ins>  
    __[xflipLR]__ new  
@@ -29,7 +28,6 @@
    __[xinsertslice_aligned]__ new  
   insert 2d-slices into 3D/4D-volume, preserve alignment with reference file  
   &#8618; access via ANT-menu: &#8658; 2D/insert slices back to 3D/4D volume  
-    
     
 <!---->
   &#x1F535;   <ins>**29 Feb 2024 (10:44:56)**</ins>  

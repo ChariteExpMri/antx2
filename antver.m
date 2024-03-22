@@ -1036,7 +1036,6 @@
 % insert 2d-slices into 3D/4D-volume, preserve alignment with reference file
 % #gw --> access via ANT-menu: &#8658; 2D/insert slices back to 3D/4D volume
 % 
-% 
 % #ba 22 Mar 2024 (09:47:47)
 % new atlases/templates implemented
 % [1] DSURQUE-atlas  ("mouse_DSURQUE_vox07mm.zip")
@@ -1046,8 +1045,7 @@
 %     -DSURQUE atlas warped to ABA-space. This allows to interchange 'DSURQE' and 'mouse_Allen2017HikishimaLR'
 %      without a new registration
 %     -0.07mm isovox resolution
-% 
-% #b &#8658; available via: <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a> 
+% #b &#8658; atlases available via: <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a> 
 % 
 % 
 % 
