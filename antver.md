@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   06 Mar 2024 (15:48:32)  
+ &#x1F34E; last modification:   22 Mar 2024 (09:47:47)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,18 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**22 Mar 2024 (09:47:47)**</ins>  
+  new atlases/templates implemented  
+  __[1]__ DSURQUE-atlas  ("mouse_DSURQUE_vox07mm.zip")  
+      -atlas in DSURQUE-space   
+      -0.07 mm isovox resolution  
+  __[2]__ DSURQUE-atlas in ABA-space ("mouse_DSURQUE_ABAspace.zip")  
+      -DSURQUE atlas warped to ABA-space. This allows to interchange 'DSURQE' and 'mouse_Allen2017HikishimaLR'  
+       without a new registration  
+      -0.07mm isovox resolution  
+    
+  &#8658; available via: <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
+<!---->
   &#x1F535;   <ins>**06 Mar 2024 (15:48:32)**</ins>  
    __[xflipLR]__ new  
   flip left/right image in native or standard space  
@@ -17,6 +29,8 @@
    __[xinsertslice_aligned]__ new  
   insert 2d-slices into 3D/4D-volume, preserve alignment with reference file  
   &#8618; access via ANT-menu: &#8658; 2D/insert slices back to 3D/4D volume  
+    
+    
 <!---->
   &#x1F535;   <ins>**29 Feb 2024 (10:44:56)**</ins>  
    __[xextractslice_aligned]__ new  
