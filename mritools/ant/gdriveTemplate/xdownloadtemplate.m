@@ -539,11 +539,23 @@ end
 ID = '1ho4neve94q0qWuoG8I49xcYHkJUF8f3n7jnuvg6JMWo';
 url_name = sprintf('https://docs.google.com/spreadsheets/d/%s/gviz/tq?tqx=out:csv&sheet=1',...
     ID);
-s = webread(url_name);
 
-s     =table2cell(s);
-gid   =regexprep(s(:,end),{'open.*id=','"'},{''});
-gname=regexprep(s(:,1),{',"https:'},{''});
+try
+    s = webread(url_name);
+    s     =table2cell(s);
+    gid   =regexprep(s(:,end),{'open.*id=','"'},{''});
+    gname=regexprep(s(:,1),{',"https:'},{''});
+catch
+    s=urlread(url_name);
+    s=strsplit(s,{char(10)})';
+    s(1:regexpi2(s,'"ATLASES/TEMPLATES"'))=[];
+    for i=1:size(s,1)
+        [tx ]=strsplit(s{i},',');
+        gid{i,1}=regexprep(tx{2},{'.*open.*id=','"'},{''});
+        gname{i,1} =regexprep(tx{1},{'"'},{''});
+        
+    end
+end
 
 t=repmat({'-'},[ length(gid) 4 ]);
 t(:,3)=gid;
