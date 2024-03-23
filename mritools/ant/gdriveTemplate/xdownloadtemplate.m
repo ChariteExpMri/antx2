@@ -45,16 +45,35 @@
 function xdownloadtemplate
 
 warning off;
- p.paout=fullfile(fileparts(fileparts(which('antlink'))),'anttemplates'); %FINAL
-%p.paout=fullfile(fileparts(fileparts(which('antlink'))),'anttemplates_test'); %TEST
+p.paout=fullfile(fileparts(fileparts(which('antlink'))),'anttemplates'); %FINAL
+ p.paout=fullfile(fileparts(fileparts(which('antlink'))),'anttemplates_test'); %TEST
+% p.paout='D:\Paul\__dontKnow';
+
 
 % t=load('C:\paultest\rclone\gdrivetemplates.mat');
 t=load(which('gdrivetemplates.mat'));  %in TBX
 p.t=t.l2;
-
-
-
 makefig(p);
+
+pb_updateTable();
+
+% t2=downloadTable;
+% 
+% u=get(gcf,'userdata');
+% u.t=t2;
+% 
+% u.uit.Data=...
+% [repmat({false},[size(t2,1) 1])  [t2(:,[4 1 2 3])]  ]; 
+% set(gcf,'userdata',u);
+
+% %% ===============================================
+% 
+% https://drive.google.com/open?id=1ho4neve94q0qWuoG8I49xcYHkJUF8f3n7jnuvg6JMWo
+% 
+% %% ===============================================
+
+
+
 
 
 
@@ -87,6 +106,27 @@ return
 %     
 %     return
 % end
+
+function pb_updateTable(e,e2)
+%% ===============================================
+t=load(which('gdrivetemplates.mat'));  %in TBX
+
+msg='';
+try
+    t2 =downloadTable;
+    tab=[repmat({false},[size(t2,1) 1])  [t2(:,[4 1 2 3])]  ];
+    msg='..download of template list from googledrive successful';
+catch
+    t2=t.l2;
+    tab=[repmat({false},[size(t2,1) 1])  [t2(:,[4 1 2 3])]  ];
+    msg='..download of template list from googledrivet failed';
+end
+
+u=get(gcf,'userdata');
+u.t       =t2;
+u.uit.Data=tab; 
+set(gcf,'userdata',u);
+cprintf('[0 0 1]', [msg  '\n']);
 
 
 
@@ -285,14 +325,19 @@ end
 
 % dispay folders
 if strcmp(errmsg,'success')
-    cprintf([0 .5 0],['Done...' errmsg '.\n'  ]);
+    cprintf('*[0 0 1]',['Done...' errmsg '.\n'  ]);
     for i=1:length(idxall)
         name  =strrep(p.t{idxall(i),4},'.zip','');
         namefp=fullfile(p.paout,name);
-        disp([ '[' name ']-template .. downloading complete. Open '   '<a href="matlab: explorerpreselect(''' namefp ''');">' '[local folder]' '</a>' '.']);
+        %disp([ '[' name ']-template .. downloading complete. Open '   '<a href="matlab: explorerpreselect(''' namefp ''');">' '[local folder]' '</a>' '.']);
+        zipfileFP=fullfile(p.paout,p.t{idxall(i),4});
+        if exist(zipfileFP)==2; 
+            try; delete(zipfileFP); end
+        end
+        showinfo2(['.. download finished!'],namefp);
     end
 else
-    cprintf([1 0 1],['ERROR...' errmsg '.\n'  ]);
+    cprintf('*[1 0 1]',['ERROR...' errmsg '.\n'  ]);
 end
 
 
@@ -399,81 +444,35 @@ disp('..downloading file..');
 fiout      =fullfile(paout,pardownload.fileName);
 googleID   =t{idx,3};
 
-if ispc==1
-    getFileGdriveWin(googleID,fiout,p.http_proxy,p.https_proxy);
-    
-else
-    googleID_unix=['"' googleID '"'];
-    fiout_unix   =['"' fiout '"'];
-    http_proxy  =strrep(p.http_proxy,'http://','');
-    https_proxy =strrep(p.https_proxy,'https://','');
-    
-    shfile=fullfile(fileparts(which('xdownloadtemplate.m')),'getFileGdrive.sh');
-    fun   =[ 'sh ' shfile];
-    %     fun   =fullfile( 'sh ', 'getFileGdrive.sh')
-    %      fun   =['sh ' 'getFileGdrive.sh']
-    ms=['!' fun ' ' googleID_unix  ' ' fiout_unix ' ' http_proxy ' ' https_proxy ];
-    %ms=[ 'cd ' fileparts(which('xdownloadtemplate.m')) ';' ms]
-    ms=regexprep(ms,'\s*$','');
-    eval(ms);
-    
-    %     !sh /Users/skoch/Documents/mac_stuff/antx2/mritools/ant/gdriveTemplate/getFileGdrive.sh "1nX0g2DaMIPIVgQGead97dCdeNEflFN6h" "/Users/skoch/Documents/mac_stuff/anttemplates_test/mouse_Allen2017HikishimaLR.zip"
-    
-    %eval(['!ls -l ' shfile])
-    %eval(['!sudo chmod 666 ' shfile])
-    %eval(['!sudo chmod 777 ' shfile])
-end
+url=['https://drive.usercontent.google.com/download?id=' googleID '&export=download&authuser=0&confirm=t'];
+% s='https://drive.usercontent.google.com/download?id=1UlbnFOZzrUurq1-7B40jnTUoWCnwqjDZ&export=download&authuser=0&confirm=t'
+urlwrite(url,fiout   );
+% % % % 
+% % % % if 0
+% % % %     if ispc==1
+% % % %         getFileGdriveWin(googleID,fiout,p.http_proxy,p.https_proxy);
+% % % %         '*'
+% % % %     else
+% % % %         googleID_unix=['"' googleID '"'];
+% % % %         fiout_unix   =['"' fiout '"'];
+% % % %         http_proxy  =strrep(p.http_proxy,'http://','');
+% % % %         https_proxy =strrep(p.https_proxy,'https://','');
+% % % %         
+% % % %         shfile=fullfile(fileparts(which('xdownloadtemplate.m')),'getFileGdrive.sh');
+% % % %         fun   =[ 'sh ' shfile];
+% % % %         %     fun   =fullfile( 'sh ', 'getFileGdrive.sh')
+% % % %         %      fun   =['sh ' 'getFileGdrive.sh']
+% % % %         ms=['!' fun ' ' googleID_unix  ' ' fiout_unix ' ' http_proxy ' ' https_proxy ];
+% % % %         %ms=[ 'cd ' fileparts(which('xdownloadtemplate.m')) ';' ms]
+% % % %         ms=regexprep(ms,'\s*$','');
+% % % %         eval(ms);
+% % % %         %     !sh /Users/skoch/Documents/mac_stuff/antx2/mritools/ant/gdriveTemplate/getFileGdrive.sh "1nX0g2DaMIPIVgQGead97dCdeNEflFN6h" "/Users/skoch/Documents/mac_stuff/anttemplates_test/mouse_Allen2017HikishimaLR.zip"
+% % % %         %eval(['!ls -l ' shfile])
+% % % %         %eval(['!sudo chmod 666 ' shfile])
+% % % %         %eval(['!sudo chmod 777 ' shfile])
+% % % %     end
+% % % % end
 
-
-
-if 0 %OLD
-    if ispc==1
-        fileUrl = sprintf('https://drive.google.com/uc?export=download&id=%s', fileId);
-        request = matlab.net.http.RequestMessage();
-        
-        % First request will be redirected to information page about virus scanning
-        % We can get a confirmation code from an associated cookie file
-        [~, infos] = TemplateSendRequest(matlab.net.URI(fileUrl), request);
-        confirmCode = '';
-        for j = 1:length(infos('drive.google.com').cookies)
-            if ~isempty(strfind(infos('drive.google.com').cookies(j).Name, 'download'))
-                confirmCode = infos('drive.google.com').cookies(j).Value;
-                break;
-            end
-        end
-        newUrl = strcat(fileUrl, sprintf('&confirm=%s', confirmCode));
-        
-        % We now need to send another request to get the file.
-        % However, Matlab doesn't download the whole Tiff file, but only one frame.
-        [a, b, history] = TemplateSendRequest(matlab.net.URI(newUrl), request);
-        
-        b1=history(end).Response;
-        % fid = fopen('z4.zip', 'wb'); ; fwrite(fid, b1.Body.Data);fclose(fid);
-        fid = fopen(fileName, 'wb');
-        fwrite(fid, b1.Body.Data);
-        fclose(fid);
-    elseif ismac
-        %MAC without wget
-        % check if pip is installed
-        [e1,e2]=system('python -m pip');
-        if isempty(strfind(e2,'Run pip in an isolated mode'))==1
-            disp('..installing pip..');
-            !sudo easy_install pip
-            disp('..installing requests-module..');
-        end
-        evalc('!python -m pip install requests');
-        disp('..no waitbar available......be patient..');
-        system(['python dowloadGdrive.py 1nX0g2DaMIPIVgQGead97dCdeNEflFN6h ' fileName]);
-        
-    elseif isunix
-        % system(['wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id=1nX0g2DaMIPIVgQGead97dCdeNEflFN6h'' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id=1nX0g2DaMIPIVgQGead97dCdeNEflFN6h" -O HIKI.zip && rm -rf /tmp/cookies.txt'])
-        %     system(['wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf /tmp/cookies.txt']);
-        
-        cookiefile=fullfile(paout,'cookies.txt');
-        system(['wget --load-cookies ' cookiefile ' "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies ' cookiefile ' --keep-session-cookies --no-check-certificate ''https://docs.google.com/uc?export=download&id='  fileId   ''' -O- | sed -rn ''s/.*confirm=([0-9A-Za-z_]+).*/\1\n/p'')&id='  fileId  '" -O ' fileName ' && rm -rf ' cookiefile '']);
-    end
-    
-end% old
 
 
 % ==============================================
@@ -505,6 +504,92 @@ function pb_help(e,e2)
 uhelp(mfilename);
 
 
+% ==============================================
+%%   download table
+% ===============================================
+function t=downloadTable
+
+p.use_proxy  =get(findobj(gcf,'tag','use_proxy'),'value');
+
+hb=findobj(gcf,'tag','http_proxy');
+li=get(hb,'string'); va=get(hb,'value');
+str=li{va};
+if strcmp(str,'<empty>')==1; str=''; end
+p.http_proxy=str;
+
+hb=findobj(gcf,'tag','https_proxy');
+li=get(hb,'string'); va=get(hb,'value');
+str=li{va};
+if strcmp(str,'<empty>')==1; str=''; end
+p.https_proxy=str;
+
+if p.use_proxy==0
+    p.http_proxy='';
+    p.https_proxy='';
+end
+
+
+% ==============================================
+%%  [1] download spreadsheet
+% ===============================================
+% https://de.mathworks.com/matlabcentral/answers/496246-import-data-from-google-sheets-to-matlab
+% https://docs.google.com/spreadsheets/d/1ho4neve94q0qWuoG8I49xcYHkJUF8f3n7jnuvg6JMWo/edit?usp=sharing'
+
+
+ID = '1ho4neve94q0qWuoG8I49xcYHkJUF8f3n7jnuvg6JMWo';
+url_name = sprintf('https://docs.google.com/spreadsheets/d/%s/gviz/tq?tqx=out:csv&sheet=1',...
+    ID);
+s = webread(url_name);
+
+s     =table2cell(s);
+gid   =regexprep(s(:,end),{'open.*id=','"'},{''});
+gname=regexprep(s(:,1),{',"https:'},{''});
+
+t=repmat({'-'},[ length(gid) 4 ]);
+t(:,3)=gid;
+t(:,4)=gname;
+
+
+%% ==============================================
+% %%   download from google drive
+% % ===============================================
+% disp('..downloading file..');
+% 
+% 
+% fiout      =fullfile(pwd,'temtab.txt');
+%  googleID   ='1ho4neve94q0qWuoG8I49xcYHkJUF8f3n7jnuvg6JMWo';
+
+
+% if ispc==1
+%     getFileGdriveWin2(googleID,fiout,p.http_proxy,p.https_proxy);
+%     
+%     '*'
+%     
+%     
+% else
+%     googleID_unix=['"' googleID '"'];
+%     fiout_unix   =['"' fiout '"'];
+%     http_proxy  =strrep(p.http_proxy,'http://','');
+%     https_proxy =strrep(p.https_proxy,'https://','');
+%     
+%     shfile=fullfile(fileparts(which('xdownloadtemplate.m')),'getFileGdrive.sh');
+%     fun   =[ 'sh ' shfile];
+%     %     fun   =fullfile( 'sh ', 'getFileGdrive.sh')
+%     %      fun   =['sh ' 'getFileGdrive.sh']
+%     ms=['!' fun ' ' googleID_unix  ' ' fiout_unix ' ' http_proxy ' ' https_proxy ];
+%     %ms=[ 'cd ' fileparts(which('xdownloadtemplate.m')) ';' ms]
+%     ms=regexprep(ms,'\s*$','');
+%     eval(ms);
+%     
+%     %     !sh /Users/skoch/Documents/mac_stuff/antx2/mritools/ant/gdriveTemplate/getFileGdrive.sh "1nX0g2DaMIPIVgQGead97dCdeNEflFN6h" "/Users/skoch/Documents/mac_stuff/anttemplates_test/mouse_Allen2017HikishimaLR.zip"
+%     
+%     %eval(['!ls -l ' shfile])
+%     %eval(['!sudo chmod 666 ' shfile])
+%     %eval(['!sudo chmod 777 ' shfile])
+% end
+
+
+
 function makefig(p)
 
 
@@ -521,7 +606,7 @@ set(hk,'position',[0.3319    0.3900    0.4028    0.2811]);%[0.2986    0.4000    
 set(hk,'tag','plotconnections','NumberTitle','off',...
     'name',['Gdrive Templates' ' [' mfilename '.m]' ],...
     'tag','gdrive');
-
+% waitspin(1,'BUSY','wait')
 
 
 % ==============================================
@@ -689,7 +774,14 @@ hb=uicontrol('style','pushbutton','units','norm','string','Help');
 set(hb,'position',[.55 .95 .05 .03],'tag','pb_help','callback',@pb_help);
 set(hb,'tooltipstring','get some help',...
     'fontweight','bold');
-set(hb,'position',[.87 0.92 .1 .07]);
+set(hb,'position',[[0.89834 0.92296 0.1 0.07]]);
+
+%Update table
+hb=uicontrol('style','pushbutton','units','norm','string','update table');
+set(hb,'position',[.55 .95 .05 .03],'tag','pb_updateTable','callback',@pb_updateTable);
+set(hb,'tooltipstring','download of template list from googledrive',...
+    'fontweight','normal','fontsize',7,'backgroundcolor',[1.0000    0.8431         0]);
+set(hb,'position',[[0.79489 0.92296 0.1 0.07]]);
 
 %select all
 hb=uicontrol('style','radio','units','norm','string','select all');
@@ -701,7 +793,7 @@ set(hb,'position',[.013 .92 .13 .05],'backgroundcolor','w','value',0);
 %INFO
 hb=uicontrol('style','text','units','norm');
 set(hb,'tooltipstring','...',    'fontweight','bold');
-set(hb,'position',[.2 .92 .6 .05],'backgroundcolor','w');
+set(hb,'position',[0.14493 0.92691 0.6 0.05],'backgroundcolor','w');
 set(hb,'string','Available templates (gdrive). Select template(s) to download.');
 set(hb,'backgroundcolor',[1.0000    0.8157         0]);
 
@@ -772,6 +864,8 @@ hjLabel.setToolTipText(['<html><b>' 'Visit template on google drive ' '</b>' '<b
 % Set the mouse-click callback
 set(hjLabel, 'MouseClickedCallback', @(h,e)web([url], '-browser'));
 
+
+% waitspin(0,'BUSY','Done')
 
 
 
