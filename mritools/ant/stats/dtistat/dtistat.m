@@ -122,8 +122,8 @@
 % [use FDR]               (checkbox) : If selected, FDR correction is performed.
 % [qFDR]                  (edit)     : The desired false discovery rate (default: 0.05).
 % [show SIGS only]        (checkbox) : If selected, only significant results will be shown.
-% [sort Results]          (chckbox)  : if selected, results will be sorted by p-value.
-% [reverse contrast]      (chckbox)  : Default: group 'A' vs 'B'
+% [sort Results]          (checkbox)  : if selected, results will be sorted by p-value.
+% [reverse contrast]      (checkbox)  : Default: group 'A' vs 'B'
 %                                      If selected the order is reversed 'B' vs 'A'.
 %                                      -This option only changes the sign of the statistical TestValue
 %                                       (positive vs negative t-value) and does not change the direction
@@ -147,6 +147,9 @@
 %                                      #r For "DTI parameter" only.
 % [stat Connectivity]     (button)   : Calculate statistic for DTI-CONNECTIVITY FILES.
 %                                      DTI-CONNECTIVITY FILES must be loaded before.
+% [parallel proc]     (checkbox)     : use parallel processing for calculation {0|1}; default: 1
+%                                      -parallel processing is recommended for larger matrixes & more animals
+% 
 %                                      #r For "DTI connectivities" only.
 % [save calculation]      (button)   : Save a calculation (mat-file). This might be useful if statistical
 %                                      calculation for DTI connectivities is very time-consuming.
@@ -164,7 +167,7 @@
 %                                       or when using  [load calculation].
 % [plot data]             (button)   : plot data/results (use right pulldown to select the type of plotting)
 % [export data]           (button)   : Export results (excel-file).
-% 
+%
 % [export4xvol3d]         (button)   : Export (significant) connections as excel-file. Use this option to
 %                                      visualize connections via xvol3d.  #r For "DTI connectivities" only.
 %__________________________________________________________________________________________________
@@ -211,25 +214,25 @@
 %
 % dtistat('savecalc','__test1.mat');               % #g save calculations as '__test1.mat' in the current folder
 % dtistat('loadcalc','__test1.mat');               % #g load a previous calculations, here '__test1.mat' from the current folder as
-% 
-% 
+%
+%
 % dtistat('showresult');                           % #g show results
 % dtistat('showresult','ResultWindow',0);          % #g update setting without showing result-window
 %                                                  % can be used when exporting results (without poping windows)
-% 
+%
 % #g EXPORT
 % dtistat('export','_testExport3.xlsx');           % #g export results with default export option
-% dtistat('set','exportType',1);                   % set export type to '1': EXCEL file, sheet-wise results 
-% dtistat('export','test1.xlsx','exportType',1)    % #g save as EXCEL file, sheet-wise results 
+% dtistat('set','exportType',1);                   % set export type to '1': EXCEL file, sheet-wise results
+% dtistat('export','test1.xlsx','exportType',1)    % #g save as EXCEL file, sheet-wise results
 % dtistat('export','test2.xlsx','exportType',2)    % #g save as EXCEL file, results in single sheet
 % dtistat('export','test2.txt' ,'exportType',3)    % #g save as TXT-file, all results in single file
-% 
+%
 % #g EXPORT VOR vol3d
 % dtistat('export4xvol3d');                        % #g export connection for xvol3d-visualization; with GUI. #g For silent mode
 %                                                  % #g  see example below,
 % dtistat('export4xvol3d',[],'gui',1);             %default with open gui
 % dtistat('export4xvol3d',z,'gui',1);              % using parameter in z-struct with open gui
-% 
+%
 % %r COI-FILES
 % dtistat('loadcoi','coi_TEST1.xlsx');             % #g load a COI-file,connection-of-interest-file (excel-file); see GUI for more help
 % dtistat('makecoi','__COI_blanko.xlsx');          % #g save a COI-BLANKO-file (excel-file). Here, blanko '__COI_blanko.xlsx' is saved
@@ -255,19 +258,19 @@
 % dtistat('export4xvol3d');                                              % #g export data for xvol3d with GUI
 %__________________________________________________________________________________________________
 %% #ky example command line: Export DTI-connections for xvol3d
-% 
-% z=[];                                                                                                                                                                                                 
-% z.ano           = 'F:\data5\eranet_round2_statistic\DTI\PTSDatlas_01dec20\PTSDatlas.nii';                % % select corresponding DTI-Atlas (NIFTI-file); such as "ANO_DTI.nii"                       
-% z.hemi          = 'F:\data5\eranet_round2_statistic\DTI\templates\AVGThemi.nii';                         % % select corresponding Hemisphere Mask (Nifti-file); such as "AVGThemi.nii"                
-% z.cs            = 'diff';                                                                                % % connection strength (cs) or other parameter to export/display via xvol3d                 
-% z.sort          = [1];                                                                                   % % sort connection list: (0)no sorting ; (1)sort after CS-value; (2)sort after p-value;     
-% z.outDir        = 'F:\data5\eranet_round2_statistic\DTI\result_propTresh1\eranet_connectome_6vsAll';     % % output folder                                                                            
-% z.filePrefix    = 'e_';                                                                                  % % output filename prefix (string)                                                          
-% z.fileNameConst = '$filePrefix_$cs_$contrast_$keep';                                                     % % resulting fileName is constructed by...                                                  
-% z.contrast      = 'CTRL vs HR';                                                                          % % constrast to save (see list (string) or numeric index/indices)                           
+%
+% z=[];
+% z.ano           = 'F:\data5\eranet_round2_statistic\DTI\PTSDatlas_01dec20\PTSDatlas.nii';                % % select corresponding DTI-Atlas (NIFTI-file); such as "ANO_DTI.nii"
+% z.hemi          = 'F:\data5\eranet_round2_statistic\DTI\templates\AVGThemi.nii';                         % % select corresponding Hemisphere Mask (Nifti-file); such as "AVGThemi.nii"
+% z.cs            = 'diff';                                                                                % % connection strength (cs) or other parameter to export/display via xvol3d
+% z.sort          = [1];                                                                                   % % sort connection list: (0)no sorting ; (1)sort after CS-value; (2)sort after p-value;
+% z.outDir        = 'F:\data5\eranet_round2_statistic\DTI\result_propTresh1\eranet_connectome_6vsAll';     % % output folder
+% z.filePrefix    = 'e_';                                                                                  % % output filename prefix (string)
+% z.fileNameConst = '$filePrefix_$cs_$contrast_$keep';                                                     % % resulting fileName is constructed by...
+% z.contrast      = 'CTRL vs HR';                                                                          % % constrast to save (see list (string) or numeric index/indices)
 % z.keep          = 'FDR';                                                                                 % % connections to keep in file {'all' 'FDR' 'uncor' 'manual selection' 'p<0.001' 'p<0.0001'}
-% z.underscore    = [0];                                                                                   % % {0,1} underscores in atlas labels:  {0} remove or {1} keep                               
-% z.LRtag         = [1];                                                                                   % % {0,1} left/right hemispheric tag in atlas labels:  {0} remove or {1} keep                
+% z.underscore    = [0];                                                                                   % % {0,1} underscores in atlas labels:  {0} remove or {1} keep
+% z.LRtag         = [1];                                                                                   % % {0,1} left/right hemispheric tag in atlas labels:  {0} remove or {1} keep
 % dtistat('export4xvol3d',z,'gui',1);   % export to vol3d with open gui ('gui',1)
 %% the output will be an excel-file: 'e__diff_CTRL_vs_HR_FDR.xlsx'
 %_________________________________________________________________________________________________
@@ -291,11 +294,11 @@
 %_________________________________________________________________________________________________
 %% #ky example command line: MRTRIX
 %% short version (connectivity-files will be find within conpath-folder )
-% groupingfile = 'F:\data5\stat_Harms2020_Exp7_2020_Exp9_2021_Exp1_IntFasting\export_4stat_DTIconectome\groups\grp_f_alt_VS_m_alt.xlsx'; % % group-assignment File (Excel-file) 
+% groupingfile = 'F:\data5\stat_Harms2020_Exp7_2020_Exp9_2021_Exp1_IntFasting\export_4stat_DTIconectome\groups\grp_f_alt_VS_m_alt.xlsx'; % % group-assignment File (Excel-file)
 % conpath  ='F:\data5\stat_Harms2020_Exp7_2020_Exp9_2021_Exp1_IntFasting\export_4stat_DTIconectome\dat'; % % upper path containing connectivity files (csv)
 % confiles ='connectome_di_sy.csv'; % % short-name of the connectivity file (csv)
-% lutfile      = 'F:\data5\stat_Harms2020_Exp7_2020_Exp9_2021_Exp1_IntFasting\export_4stat_DTIconectome\dat\20200820CH_Exp7_M125\atlas_lut.txt'; % % LUT-File (txt-file) 
-% 
+% lutfile      = 'F:\data5\stat_Harms2020_Exp7_2020_Exp9_2021_Exp1_IntFasting\export_4stat_DTIconectome\dat\20200820CH_Exp7_M125\atlas_lut.txt'; % % LUT-File (txt-file)
+%
 % dtistat('set','inputsource','MRtrix' );
 % dtistat('group', groupingfile);                        % % LOAD groupAssignment (ExcelFile)
 % dtistat('conpath', conpath ,'confiles', confiles  ,'labelfile',lutfile); % % LOAD connectivity-Files & LUTfile
@@ -303,12 +306,12 @@
 % dtistat('set','FDR',1,'qFDR',0.05,'showsigsonly',1,'sort',1,'rc',0 );
 % dtistat('set','nseeds',1000000,'propthresh',1,'thresh','max','log',1 );
 % % __processing options___
-% % dtistat('calcconnectivity'); % % CALCULATION (uncomment line to execute) 
-% % dtistat('showresult');       % % SHOW RESULT (uncomment line to execute) 
+% % dtistat('calcconnectivity'); % % CALCULATION (uncomment line to execute)
+% % dtistat('showresult');       % % SHOW RESULT (uncomment line to execute)
 % % dtistat('savecalc','calc_test1.mat');  % %save calculation
 % % dtistat('export','test1.xlsx','exportType',1);  % %save Result as ExelFile
-% 
-% 
+%
+%
 %% b SUBFUNFTIONS
 % dti_changeMatrix.m   : change matrix (example: keep only left hemispheric connections)
 
@@ -388,7 +391,7 @@ if isfield(p,'set')
             set(hc,'value' ,val);
         end
     end
-    % --FDR----------------------------------------------
+    % --isFDR----------------------------------------------
     if isfield(p,'FDR')
         hc=findobj(hf,'tag','isfdr');
         set(hc,'value' ,p.FDR );
@@ -408,16 +411,22 @@ if isfield(p,'set')
         hc=findobj(hf,'tag','issort');
         set(hc,'value' ,p.sort );
     end
-    % --sort results----------------------------------------------
+    % --sort reversecontrast----------------------------------------------
     if isfield(p,'rc')
         hc=findobj(hf,'tag','reversecontrast');
         set(hc,'value' ,p.rc );
     end
-    % --sort results----------------------------------------------
+    % --sort noSeeds----------------------------------------------
     if isfield(p,'nseeds')
         hc=findobj(hf,'tag','noSeeds');
         set(hc,'string' , num2str(p.nseeds ));
     end
+    % --parallel processing----------------------------------------------
+    if isfield(p,'isparallel')
+        hc=findobj(hf,'tag','isparallel');
+        set(hc,'value' ,p.isparallel );
+    end
+    
     
     
     if isfield(p,'propthresh')
@@ -598,7 +607,7 @@ end
 function summaryplot(p)
 
 pptfile=p.pptfile;
-atlas  =p.atlas  ;  
+atlas  =p.atlas  ;
 if exist(pptfile)==2; delete(pptfile); end
 
 dtistat('plot','atlas',atlas,'thr',1,'p',0.1   ,'label',1,'value',1,'fs',4,'pptfile',pptfile);
@@ -632,6 +641,7 @@ us.qFDR        =0.05;
 us.outvar      =[];
 us.noSeeds     = 10^6;
 us.reversecontrast =0;
+us.isparallel  =1;
 us.props=props;
 
 us.isproportthreshold=1;
@@ -656,12 +666,12 @@ h=uicontrol('style','pushbutton','units','norm','position',[0 .85 .2 .05],...
     'backgroundcolor',[0.8392    0.9098    0.8510],...
     'tooltipstring',...
     ['<b> Load group-assignment (EXCEL-file) </b>' char(10)...
-        ...
+    ...
     '<b><font color="blue">command: </b>   "group"' char(10) ...
     '<font color="black">dtistat(''group'')                           ;<font color="green">% load group-assignment-via UI' char(10) ...
     '<font color="black">dtistat(''group'',''MyGroupAssignment.xlsx'');<font color="green">% load group-assignment-file "MyGroupAssignment.xlsx"' char(10) ...
-%     '<font color="black">dtistat(''confiles'',LIST);<font color="green">% load connectivity files, specified in LIST(cell-arry with fullpath-names) ' char(10) ...
-   
+    %     '<font color="black">dtistat(''confiles'',LIST);<font color="green">% load connectivity files, specified in LIST(cell-arry with fullpath-names) ' char(10) ...
+    
     ]);
 % ==============================================
 %%   DTI parameter &  DTI connectities
@@ -679,7 +689,7 @@ h=uicontrol('style','pushbutton','units','norm','position',[0 .85 .2 .05],...
 h=uicontrol('style','pushbutton','units','norm','position',[0.00098569 0.79759 0.2 0.05],...[0.2 .8 .2 .05],...
     'string','load DTI connectivities','tag','loaddata','callback',@loadDTIConnectivity,...
     'backgroundcolor',[0.8392    0.9098    0.8510],...
-     'tooltipstring',...
+    'tooltipstring',...
     ['<b>Load DTI-connectivity files </b>' char(10)...
     ...'This data deal with connections between regions.' char(10)...
     ...
@@ -698,12 +708,12 @@ h=uicontrol('style','popupmenu','units','norm','position',[0.20277 0.79282 0.18 
     '<font color="black"> Specify the data input type.' char(10) ...
     '<font color="red"> Only for DTI-connectivities data!' char(10) ...
     '<font color="black">' char(10) ...
-        ...
+    ...
     '<b><font color="blue">command: </b>   "inputsource"' char(10) ...
     '<font color="black">dtistat(''set'', ''inputsource'',1);             <font color="green">% use DSIstudio' char(10) ...
     '<font color="black">dtistat(''set'', ''inputsource'',''DSIstudio''); <font color="green">% use DSIstudio' char(10) ...
     '<font color="black">dtistat(''set'', ''inputsource'',2);             <font color="green">% use MRtrix' char(10) ...
-    '<font color="black">dtistat(''set'', ''inputsource'',''MRtrix'');    <font color="green">% use MRtrix' char(10) ...    
+    '<font color="black">dtistat(''set'', ''inputsource'',''MRtrix'');    <font color="green">% use MRtrix' char(10) ...
     ]);
 set(h,'value',2);
 
@@ -831,11 +841,11 @@ h=uicontrol('style','popup','units','norm','position',[0.30991 0.66426 0.1 0.03]
 h=uicontrol('style','checkbox','units','norm','position',[.01 .55 .2 .05],'string','use FDR',...
     'tag','isfdr','backgroundcolor','w','value',us.isfdr,'fontsize',7,...
     'tooltipstring',...
-   ['<b> use FDR for treatment of multiple comparisons (MCP). </b>' char(10) ...
+    ['<b> use FDR for treatment of multiple comparisons (MCP). </b>' char(10) ...
     '<b><font color="blue">command: </b>   "FDR"' char(10) ...
     '<font color="black">dtistat(''set'', ''FDR'',0); <font color="green">%do not use FDR</font>' char(10) ...
     '<font color="black">dtistat(''set'', ''FDR'',1); <font color="green">%       use FDR</font>' char(10) ...
-
+    
     
     ]);
 
@@ -847,7 +857,7 @@ h=uicontrol('style','checkbox','units','norm','position',[.15 .55 .2 .05],'strin
     '<b><font color="blue">command: </b>   "showsigsonly"' char(10) ...
     '<font color="black">dtistat(''set'', ''showsigsonly'',0); <font color="green">%show full result</font>' char(10) ...
     '<font color="black">dtistat(''set'', ''showsigsonly'',1); <font color="green">%show significant results</font>' char(10) ...
-
+    
     ]);
 
 %sort
@@ -858,7 +868,6 @@ h=uicontrol('style','checkbox','units','norm','position',[.32 .55 .2 .05],'strin
     '<b><font color="blue">command: </b>   "sort"' char(10) ...
     '<font color="black">dtistat(''set'', ''sort'',0); <font color="green">%do not sort result</font>' char(10) ...
     '<font color="black">dtistat(''set'', ''sort'',1); <font color="green">%sort results</font>' char(10) ...
-
     ]);
 
 %reverse contrast
@@ -871,16 +880,25 @@ h=uicontrol('style','checkbox','units','norm','position',[.47 .55 .2 .05],'strin
     '<b><font color="red"> This changes only the sign of the statistical test-value (t-value)! </font></b>' char(10) ...
     '<b><font color="blue">command: </b>   "rc"' char(10) ...
     '<font color="black">dtistat(''set'', ''rc'',1); <font color="green">%reverse group-order</font>' char(10) ...
-
     ]);
 
+
+%% parallel processing
+h=uicontrol('style','checkbox','units','norm','position',[0.30276 0.40238 0.2 0.05],'string','parallel proc.',...
+    'tag','isparallel','backgroundcolor','w','value',us.isparallel,'fontsize',7,...
+    'tooltipstring',...
+    ['<b>parallel processing </b>' char(10) ...
+    '<b><font color="blue">command: </b>   "isparallel"' char(10) ...
+    '<font color="black">dtistat(''set'', ''isparallel'',0); <font color="green">%do not use  parallel processing </font>' char(10) ...
+    '<font color="black">dtistat(''set'', ''isparallel'',1); <font color="green">% use  parallel processing</font>' char(10) ...
+    ]);
 
 
 %% qFDR-value
 tt=['<b> Desired false discovery rate. {default: 0.05}. </b>' char(10) ...
     '<b><font color="blue">command: </b>   "qFDR"' char(10) ...
     '<font color="black">dtistat(''set'', ''qFDR'',0.01); <font color="green">%set q-FDR to 0.01</font>' char(10) ...
-
+    
     ];
 %EDIT
 h=uicontrol('style','edit','units','norm','position',[.01 .52 .05 .03],'string',num2str(us.qFDR),...
@@ -932,7 +950,7 @@ tt= ['threshold value when use propotional threshold to threshold data'  ...
     '<b><font color="blue">command: </b>   "thresh"'  char(10) ... ...
     '<font color="black">dtistat(''set'',''thresh'',''max''); <font color="green">%use threshold with the maximal small worldness-score</font>' char(10) ...
     '<font color="black">dtistat(''set'',''thresh'',0.2); <font color="green">%keep 20% of data</font>' char(10) ...
-
+    
     ];
 
 h=uicontrol('style','text','units','norm','string','threshold',...
@@ -945,9 +963,9 @@ h=uicontrol('style','edit','units','norm','position',[0.85275 0.5238 0.07 0.03],
 % %% logarithmize
 h=uicontrol('style','checkbox','units','norm','position',[0.80453 0.47856 0.13 0.03],...
     'string','logarithmize',...
-    'tag','logarithmize','backgroundcolor','w','value',us.logarithmize,'fontsize',7); 
- set(h,'tooltipstr',...
-     ['<b>' 'logarithmize data' '</b>' char(10) ...
+    'tag','logarithmize','backgroundcolor','w','value',us.logarithmize,'fontsize',7);
+set(h,'tooltipstr',...
+    ['<b>' 'logarithmize data' '</b>' char(10) ...
     '<b><font color="blue">command: </b>   "log"' char(10) ...
     '<font color="black">dtistat(''set'', ''log'',0); <font color="green">%  use raw data</font>' char(10) ...
     '<font color="black">dtistat(''set'', ''log'',1); <font color="green">%  logarithmize data</font>' char(10) ...
@@ -978,7 +996,7 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.099197 0.40238 0.2
     'tag','statconnectivity','backgroundcolor',[0.8941    0.9412    0.9020],'callback',@statconnectivity,...
     'tooltipstring',...
     ['<b>' 'calculate statistic for connectivity data' '</b>' char(10) ...
-       ...
+    ...
     '<b><font color="blue">command: </b>   "calcconnectivity"' char(10) ...
     '<font color="black">dtistat(''calcconnectivity''); <font color="green">%  calculate the statistic</font>' char(10) ...
     ]);
@@ -1010,8 +1028,8 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.58 .4 .15 .05],...
     ['<b>' 'save a calculation' '</b> ' char(10)...
     '..useful for timeconsuming calculations' char(10) ...
     '<b><font color="blue">command: </b>   "savecalc"' char(10) ...
-   ...
-   '<font color="black">dtistat(''savecalc'',''myCalc.mat''); <font color="green">%  save calculation "myCalc.mat" </font>' char(10) ...
+    ...
+    '<font color="black">dtistat(''savecalc'',''myCalc.mat''); <font color="green">%  save calculation "myCalc.mat" </font>' char(10) ...
     ]);
 % ==============================================
 %%   Show results
@@ -1024,7 +1042,7 @@ set(h,'tooltipstring',...
     ['Show tabled results' char(10) ...
     '<b><font color="blue">command: </b>   "showresult"' char(10) ...
     '<font color="black">dtistat(''showresult''); <font color="green">%  show Results in extra window </font>' char(10) ...
-
+    
     ]);
 % ==============================================
 %%   plot results
@@ -1063,7 +1081,7 @@ h=uicontrol('style','popupmenu','units','norm','position',[0.27062 0.24763 0.15 
     '<b><font color="blue">command: </b>   "exportType"' char(10) ...
     '<font color="black">dtistat(''set'',''exportType'',1);<font color="green">%set exportType to "1"</font>' char(10) ...
     '<font color="black">dtistat(''export'',''test1.xlsx'',''exportType'',1);<font color="green">%set exportType to "1" and save Excelfile "test1.xlsx" </font>' char(10) ...
-...
+    ...
     ]);
 
 % ==============================================
@@ -1457,7 +1475,7 @@ if exist('file')==0 || isempty(ext)
     % ==============================================
     %%
     % ===============================================
-
+    
     file=char(t);
     if file==0
         cprintf([1 0 1],['process aborted.\n' ]);
@@ -1719,15 +1737,15 @@ else
         if exist(conpath)
             [csvfiles] = spm_select('FPListRec',conpath,['^' files '$']);
             if isempty(csvfiles)
-              msgbox(['file "' files  '" not found in "conpath" (main folder containing csv-files)...check spelling  CSV-file']); 
-           return  
+                msgbox(['file "' files  '" not found in "conpath" (main folder containing csv-files)...check spelling  CSV-file']);
+                return
             end
             files=cellstr(csvfiles);
             fi=files;
         else
-           msgbox('"conpath" (main folder containing csv-files) not specified'); 
-           return
-        end  
+            msgbox('"conpath" (main folder containing csv-files) not specified');
+            return
+        end
     end
     
     
@@ -1763,16 +1781,16 @@ if source==2
             lablist=(stradd(fileparts2(fi),[filesep fil extl],2));
             iuse=min(find(existn(lablist)==2));
             if isempty(iuse)
-               error([ 'lutfile: not found ...use fullpath-lutfile or check filename' ]) ;
+                error([ 'lutfile: not found ...use fullpath-lutfile or check filename' ]) ;
             else
-            labelfile=lablist(iuse);
+                labelfile=lablist(iuse);
             end
         end
     end
     
     
     
-     try
+    try
         t=readtable(char(labelfile));
         t=table2cell(t);
     catch
@@ -1784,7 +1802,7 @@ if source==2
             temp=  strsplit(t0{i});
             tt(i, 1:length(temp))=temp;
         end
-        if isempty(char(tt(:,1)))==1 %remove 1st-column if empty 
+        if isempty(char(tt(:,1)))==1 %remove 1st-column if empty
             tt(:,1)=[];
         end
         %remove header-row
@@ -1793,7 +1811,7 @@ if source==2
         end
         t=tt(:,1:6);
     end
-
+    
     
     
     % ==============================================
@@ -1851,7 +1869,7 @@ if isfield(us, 'groupfile') && exist(us.groupfile)==2
             cprintf('*[1 0 1]',['Excel-file contains the following animals\n...' ...
                 'but no corresponding DTI-data found for the following animals: '  '\n']);
             disp(a(find(isfound==0),:));
-           cprintf([.6 .6 .6],['..check if this needs to be resolved (these animals are skipped from the process)  ' '\n']);
+            cprintf([.6 .6 .6],['..check if this needs to be resolved (these animals are skipped from the process)  ' '\n']);
             
         end
         % sort "fi" and "namesMRtrix" according to excelfile
@@ -1876,9 +1894,9 @@ names={};
 for i=1:size(fi,1)
     
     if exist('namesMRtrix')==1
-      cprintf([.6 .6 .6],['[reading DTIdata]: '   strrep(fi{i},[filesep],[filesep filesep])  ]); 
-      cprintf([0 .5 0],[' [Excel]: '   a{i,1}  ' (' a{i,2}  ') '  ]); 
-      cprintf([.8 .8 .8],['..please check assignment ' '\n']);
+        cprintf([.6 .6 .6],['[reading DTIdata]: '   strrep(fi{i},[filesep],[filesep filesep])  ]);
+        cprintf([0 .5 0],[' [Excel]: '   a{i,1}  ' (' a{i,2}  ') '  ]);
+        cprintf([.8 .8 .8],['..please check assignment ' '\n']);
     else
         cprintf([.6 .6 .6],['[reading DTIdata]: '   strrep(fi{i},[filesep],[filesep filesep])  '\n']);
     end
@@ -1959,7 +1977,7 @@ set(hf,'userdata',us);
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -2030,17 +2048,27 @@ cprintf([0 0.45 0],[' ONSET: ' datestr(now,'HH:MM:SS') '; #ANIMAL: ' num2str(siz
 d2     = d; %FINAL
 label2 = us.con.label(1:size(d2,1));
 
-%==================================== Parallel PROC if [PCT] available  =============================================
-try
-    cpus=feature('numCores');
-    pp = gcp('nocreate');
-    if isempty(pp)
-        parpool( cpus);
-    else
-        %poolsize = p.NumWorkers
+%% ==================================== Parallel PROC if [PCT] available  =============================================
+if z.isparallel==1
+    try
+        cpus=feature('numCores');
+        pp = gcp('nocreate');
+        if isempty(pp)
+            parpool( cpus);
+        else
+            %poolsize = p.NumWorkers
+        end
+        % delete(gcp('nocreate'))
+    catch
+        z.isparallel=0; % parallel proc does not work
     end
-    % delete(gcp('nocreate'))
 end
+if  z.isparallel==1
+    cprintf([0.4941    0.4941    0.4941],[' parallel processing: yes \n' ]);
+else
+    cprintf([0.4941    0.4941    0.4941],[' parallel processing: no  \n' ]);
+end
+
 
 %===================================== ================================================
 % ==============================================
@@ -2078,29 +2106,40 @@ fprintf(1,'\n');
 %===================================== PARFOR LOOP================================================
 cprintf([0.9294 0.6941 0.1255],[' CURRENT STATE:  ' ]);
 
-np =[];
-npv=[];
-vectorMetriclabel={};
-scalarMetriclabel={};
-parfor i=1:N
-    % for i=1:N
-    fprintf('\b.|\n');%fprintf(1,['.|']);
-    dx=d2(:,:,i);
-    ws= calcConnMetrics(dx);
-    np(:,i)    =ws.sc;   %SCALAR
-    npv(:,:,i) =ws.vec;  %VEC
-    
-    k=i;
-    if k==1
-        vectorMetriclabel{i} = ws.veclabel;  %vectorMetriclabel
-        scalarMetriclabel{i} = ws.sclabel;   %scalarMetricLabel
+% np =[]; npv=[]; % vectorMetriclabel={}; scalarMetriclabel={};
+[np npv]                              =deal([]);
+[vectorMetriclabel scalarMetriclabel] =deal({});
+if z.isparallel==1
+    %% ==================[parfor]=============================
+    parfor i=1:N
+        fprintf('\b.|\n');%fprintf(1,['.|']);
+        dx=d2(:,:,i);
+        ws= calcConnMetrics(dx);
+        np(:,i)    =ws.sc;   %SCALAR
+        npv(:,:,i) =ws.vec;  %VEC
+        k=i;
+        if k==1
+            vectorMetriclabel{i} = ws.veclabel;  %vectorMetriclabel
+            scalarMetriclabel{i} = ws.sclabel;   %scalarMetricLabel
+        end
+    end
+else
+    %% ====================[for]===========================
+    for i=1:N
+        fprintf('\b.|\n');%fprintf(1,['.|']);
+        dx=d2(:,:,i);
+        ws= calcConnMetrics(dx);
+        np(:,i)    =ws.sc;   %SCALAR
+        npv(:,:,i) =ws.vec;  %VEC
+        k=i;
+        if k==1
+            vectorMetriclabel{i} = ws.veclabel;  %vectorMetriclabel
+            scalarMetriclabel{i} = ws.sclabel;   %scalarMetricLabel
+        end
     end
 end
 vectorMetriclabel=vectorMetriclabel{1};
 scalarMetriclabel=scalarMetriclabel{1}';
-% vecml     ={'efficiency_wei(dx,1)'  'modularity_und(dx)' 'clustering_coef_wu(dx)' 'degrees_und(dx)'};
-% paramlabel=['assortativity_wei(dx,0)'      'transitivity_wu(dx)'   'efficiency_wei(dx,0)'  vecml]';
-
 
 cprintf([0 0.45 0],[' calculation DONE (ET: ' sprintf('%2.2f',toc/60)  'min).\n' ]);
 
@@ -2337,6 +2376,8 @@ z.showsigsonly  =get(findobj(hfig,'tag','showsigsonly'),'value');
 z.qFDR          =str2num(get(findobj(hfig,'tag','qFDR'),'string'));
 z.vartype       =vartype;
 z.noSeeds       =str2num(get(findobj(hfig,'tag','noSeeds'),'string'));
+z.isparallel    =get(findobj(hfig,'tag','isparallel'),'value');
+
 
 hb=findobj(gcf,'tag','typeoftest1');
 z.Test         =hb.String{hb.Value};
@@ -2533,86 +2574,86 @@ if z.f1design==0 %between
                 [hv px]=ttest2(x',y');
                 ikeep=find(~isnan(hv));
                 %             [p,T,cr,al]=mult_comp_perm_t2_nan(x(ix,:)',y(ix,:)',5000,0,.05);
-             elseif z.typeoftest1==5 %BM
-                 if 1
-                     stattype='BM';
-                     
-                     if strcmp(z.tail,'both')~=1
+            elseif z.typeoftest1==5 %BM
+                if 1
+                    stattype='BM';
+                    
+                    if strcmp(z.tail,'both')~=1
                         msgbox( [ 'Brunner-Munzel-test' char(10) ....
                             'This test requires a two-tailed mode!' char(10)...
                             ' ... set "tail" to "both"  ']);
-                         return
-                         
-                     end
-                     
-                     
-                     
-                     res=nan(size(x,1),[3]);
-                     [out hout]=getMESD(x,y,vartype);
-                     
-                     
-                     %                  [p1 h st]=ranksum(x(1,:),y(1,:),'tail','both'); p1
-                     %                  [p2 h st]=ranksum(x(1,:),y(1,:),'tail','left'); p2
-                     %                  [p3 h st]=ranksum(x(1,:),y(1,:),'tail','right');p3
-                     %
-                     %
-                     %                  [h p1]=ttest2(x(1,:),y(1,:),'tail','both');p1
-                     %                  [h p2]=ttest2(x(1,:),y(1,:),'tail','left');p2
-                     %                  [h p3]=ttest2(x(1,:),y(1,:),'tail','right');p3
-                     
-                     for j=1:size(x,1)
-                         try
-                             %[p h st]=ranksum(x(j,:),y(j,:),'tail',z.tail);
-                             [p SS]=brunner_munzel(x(j,:),y(j,:));
-                             res(j,2:3)=[ p SS];
-                         end
-                     end
-                     res(:,1)=double(res(:,2)<0.05);
-                     res    =[ res          out];
-                     reshead=['H' 'p' 'Z' hout];
-                     
-                     %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
-                     ikeep=find(~isnan(res(:,1)));
-                 end
-                 
-%                  if 0
-%                      stattype='BM';
-%                      res=nan(size(x,1),[3]);
-%                      [out hout]=getMESD(x,y,vartype);
-%                      
-%                      if regexpi(us.props.wst_stat,'Z','ignorecase')==1    % Z-SCORE
-%                          for j=1:size(x,1)
-%                              
-%                              %                         d1=x(j,:); d2=y(j,:);
-%                              %                         tr=2.5;
-%                              %                         d1( find(d1>(mean(d1)+tr*std(d1)) | d1<(mean(d1)-tr*std(d1))  ) )=[];
-%                              %                         d2( find(d2>(mean(d2)+tr*std(d2)) | d2<(mean(d2)-tr*std(d2))  ) )=[];
-%                              %                        [p h st]=ranksum(d1,d2);
-%                              %                         disp([length(d1)  length(d2)]);
-%                              [p h st]=ranksum(x(j,:),y(j,:),'tail',z.tail);
-%                              try
-%                                  res(j,:)=[h p st.zval];
-%                              catch
-%                                  res(j,:)=[h p nan];
-%                              end
-%                          end
-%                          res    =[ res          out];
-%                          reshead=['H' 'p' 'zval' hout];
-%                      else                                                 % RS-SCORE
-%                          for j=1:size(x,1)
-%                              try
-%                                  [p h st]=ranksum(x(j,:),y(j,:),'tail',z.tail);
-%                                  res(j,:)=[h p st.ranksum];
-%                              end
-%                          end
-%                          res    =[ res          out];
-%                          reshead=['H' 'p' 'RS' hout];
-%                      end
-%                      
-%                      %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
-%                      ikeep=find(~isnan(res(:,1)));
-%                  end
-                 
+                        return
+                        
+                    end
+                    
+                    
+                    
+                    res=nan(size(x,1),[3]);
+                    [out hout]=getMESD(x,y,vartype);
+                    
+                    
+                    %                  [p1 h st]=ranksum(x(1,:),y(1,:),'tail','both'); p1
+                    %                  [p2 h st]=ranksum(x(1,:),y(1,:),'tail','left'); p2
+                    %                  [p3 h st]=ranksum(x(1,:),y(1,:),'tail','right');p3
+                    %
+                    %
+                    %                  [h p1]=ttest2(x(1,:),y(1,:),'tail','both');p1
+                    %                  [h p2]=ttest2(x(1,:),y(1,:),'tail','left');p2
+                    %                  [h p3]=ttest2(x(1,:),y(1,:),'tail','right');p3
+                    
+                    for j=1:size(x,1)
+                        try
+                            %[p h st]=ranksum(x(j,:),y(j,:),'tail',z.tail);
+                            [p SS]=brunner_munzel(x(j,:),y(j,:));
+                            res(j,2:3)=[ p SS];
+                        end
+                    end
+                    res(:,1)=double(res(:,2)<0.05);
+                    res    =[ res          out];
+                    reshead=['H' 'p' 'Z' hout];
+                    
+                    %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
+                    ikeep=find(~isnan(res(:,1)));
+                end
+                
+                %                  if 0
+                %                      stattype='BM';
+                %                      res=nan(size(x,1),[3]);
+                %                      [out hout]=getMESD(x,y,vartype);
+                %
+                %                      if regexpi(us.props.wst_stat,'Z','ignorecase')==1    % Z-SCORE
+                %                          for j=1:size(x,1)
+                %
+                %                              %                         d1=x(j,:); d2=y(j,:);
+                %                              %                         tr=2.5;
+                %                              %                         d1( find(d1>(mean(d1)+tr*std(d1)) | d1<(mean(d1)-tr*std(d1))  ) )=[];
+                %                              %                         d2( find(d2>(mean(d2)+tr*std(d2)) | d2<(mean(d2)-tr*std(d2))  ) )=[];
+                %                              %                        [p h st]=ranksum(d1,d2);
+                %                              %                         disp([length(d1)  length(d2)]);
+                %                              [p h st]=ranksum(x(j,:),y(j,:),'tail',z.tail);
+                %                              try
+                %                                  res(j,:)=[h p st.zval];
+                %                              catch
+                %                                  res(j,:)=[h p nan];
+                %                              end
+                %                          end
+                %                          res    =[ res          out];
+                %                          reshead=['H' 'p' 'zval' hout];
+                %                      else                                                 % RS-SCORE
+                %                          for j=1:size(x,1)
+                %                              try
+                %                                  [p h st]=ranksum(x(j,:),y(j,:),'tail',z.tail);
+                %                                  res(j,:)=[h p st.ranksum];
+                %                              end
+                %                          end
+                %                          res    =[ res          out];
+                %                          reshead=['H' 'p' 'RS' hout];
+                %                      end
+                %
+                %                      %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
+                %                      ikeep=find(~isnan(res(:,1)));
+                %                  end
+                
                 
                 
             end
@@ -2869,7 +2910,7 @@ for i=1:size(us.pw,2)
         ip=find(strcmp(head,'p'));
         [dat isort]= sortrows(dat,ip);
     end
-
+    
     
     % ----- showsigsonly  ----------------------------
     if z.showsigsonly==1
@@ -3640,61 +3681,61 @@ for jj=1:ntestchunks
         [hv px]=ttest2(x',y');
         ikeep=find(~isnan(hv));
         
-       elseif z.typeoftest1==5 %BM
-           if 1
-               stattype='BM';
-               res=nan(size(x,1),[3]);
-               [out hout]=getMESD(x,y,vartype);
-               
-               for j=1:size(x,1)
-                   %[p h st]=ranksum(x(j,:),y(j,:));
-                   [p SS]=brunner_munzel(x(j,:),y(j,:));
-                   res(j,2:3)=[ p SS];
-               end
-               res(:,1)=double(res(:,2)<0.05);
-               res    =[res           out];
-               reshead=['H' 'p' 'Z' hout];
-               inan=isnan(res(:,2));
-               res(inan,1)=nan;
-               ikeep=find(~isnan(res(:,1)));
-           end
-%            
-%            if 0
-%                stattype='WRS';
-%                res=nan(size(x,1),[3]);
-%                [out hout]=getMESD(x,y,vartype);
-%                
-%                if regexpi(us.props.wst_stat,'Z','ignorecase')==1    % Z-SCORE
-%                    for j=1:size(x,1)
-%                        [p h st]=ranksum(x(j,:),y(j,:));
-%                        try
-%                            res(j,:)=[h p st.zval];
-%                        catch
-%                            res(j,:)=[h p nan];
-%                        end
-%                    end
-%                    res    =[res           out];
-%                    reshead=['H' 'p' 'zval' hout];
-%                else                                                  % RS-SCORE
-%                    for j=1:size(x,1)
-%                        try
-%                            [p h st]=ranksum(x(j,:),y(j,:));
-%                            res(j,:)=[h p st.ranksum];
-%                        end
-%                    end
-%                    res    =[res           out];
-%                    reshead=['H' 'p' 'RS' hout];
-%                    %reshead={'H' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
-%                end
-%                
-%                ikeep=find(~isnan(res(:,1)));
-%                
-%            end
-
-          
-          
-          
-          
+    elseif z.typeoftest1==5 %BM
+        if 1
+            stattype='BM';
+            res=nan(size(x,1),[3]);
+            [out hout]=getMESD(x,y,vartype);
+            
+            for j=1:size(x,1)
+                %[p h st]=ranksum(x(j,:),y(j,:));
+                [p SS]=brunner_munzel(x(j,:),y(j,:));
+                res(j,2:3)=[ p SS];
+            end
+            res(:,1)=double(res(:,2)<0.05);
+            res    =[res           out];
+            reshead=['H' 'p' 'Z' hout];
+            inan=isnan(res(:,2));
+            res(inan,1)=nan;
+            ikeep=find(~isnan(res(:,1)));
+        end
+        %
+        %            if 0
+        %                stattype='WRS';
+        %                res=nan(size(x,1),[3]);
+        %                [out hout]=getMESD(x,y,vartype);
+        %
+        %                if regexpi(us.props.wst_stat,'Z','ignorecase')==1    % Z-SCORE
+        %                    for j=1:size(x,1)
+        %                        [p h st]=ranksum(x(j,:),y(j,:));
+        %                        try
+        %                            res(j,:)=[h p st.zval];
+        %                        catch
+        %                            res(j,:)=[h p nan];
+        %                        end
+        %                    end
+        %                    res    =[res           out];
+        %                    reshead=['H' 'p' 'zval' hout];
+        %                else                                                  % RS-SCORE
+        %                    for j=1:size(x,1)
+        %                        try
+        %                            [p h st]=ranksum(x(j,:),y(j,:));
+        %                            res(j,:)=[h p st.ranksum];
+        %                        end
+        %                    end
+        %                    res    =[res           out];
+        %                    reshead=['H' 'p' 'RS' hout];
+        %                    %reshead={'H' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
+        %                end
+        %
+        %                ikeep=find(~isnan(res(:,1)));
+        %
+        %            end
+        
+        
+        
+        
+        
     end
     
     
@@ -3877,11 +3918,11 @@ if exist('par')==1
             filename=par.export;
         end
     end
-     if isfield(par,'exportType')
-         hc=findobj(hf,'tag','exportType');
-         set(hc,'value',par.exportType);  
-         drawnow;
-     end
+    if isfield(par,'exportType')
+        hc=findobj(hf,'tag','exportType');
+        set(hc,'value',par.exportType);
+        drawnow;
+    end
 end
 
 
@@ -3947,7 +3988,7 @@ if exportType==1 %sheetwise EXCEL
     timex=datestr(now);
     
     
-      
+    
     
     %% for each PW   ============================================
     for i=1:pws
@@ -4059,7 +4100,7 @@ if exportType==1 %sheetwise EXCEL
         for j=1:size(dat,1)
             sheetname=dat{j};
             try
-               sheetname= regexprep(sheetname,'.*#','');
+                sheetname= regexprep(sheetname,'.*#','');
             end
             hd=dat{j,2}(1,:);
             try
@@ -4088,7 +4129,7 @@ if exportType==1 %sheetwise EXCEL
 elseif exportType==2 || exportType==3 %[2] SINLGE EXCELsheet %[3] SINLGE TXT-file
     
     if exportType==3 %as TXT-file
-       filename= fullfile(pax,[name,'.txt']);
+        filename= fullfile(pax,[name,'.txt']);
     end
     
     %=========================================================================
@@ -4200,32 +4241,32 @@ elseif exportType==2 || exportType==3 %[2] SINLGE EXCELsheet %[3] SINLGE TXT-fil
             npara=npara+1;
         end
         
-       if exportType==2
-        if ispc==1
-            %% write data
-            xlswrite(filename,d2, sheetname );
-            %  xlsAutoFitCol(filename,sheetname,'A:Z');
-            %% colorize cells
-            cellcol=lut(cellcolidx,:);
-            xlscolorizeCells(filename,sheetname, cellcolpos, cellcol);
-        else
-            %D2=d2(2:end,:);
-            %H2=d2(1,:);
-            D2=d2;
-            
-            %H2new=regexprep(H2,{'(' ,  ')' , ' ' '-' ,'#',':'},{ '_' ,'','','_','','_'});
-            %%T=cell2table(D2,'VariableNames',H2new);
-            T=cell2table(D2);
-            writetable(T,filename,'Sheet',sheetname );
-            
+        if exportType==2
+            if ispc==1
+                %% write data
+                xlswrite(filename,d2, sheetname );
+                %  xlsAutoFitCol(filename,sheetname,'A:Z');
+                %% colorize cells
+                cellcol=lut(cellcolidx,:);
+                xlscolorizeCells(filename,sheetname, cellcolpos, cellcol);
+            else
+                %D2=d2(2:end,:);
+                %H2=d2(1,:);
+                D2=d2;
+                
+                %H2new=regexprep(H2,{'(' ,  ')' , ' ' '-' ,'#',':'},{ '_' ,'','','_','','_'});
+                %%T=cell2table(D2,'VariableNames',H2new);
+                T=cell2table(D2);
+                writetable(T,filename,'Sheet',sheetname );
+                
+            end
+        elseif exportType==3 %TXT-file
+            hed=repmat({'',},[1 size(d2,2) ]); %header
+            hed{1}=sheetname;
+            txcell{s,1}=infox;
+            txcell{s,2}=hed;
+            txcell{s,3}=d2;
         end
-       elseif exportType==3 %TXT-file
-          hed=repmat({'',},[1 size(d2,2) ]); %header 
-          hed{1}=sheetname;
-          txcell{s,1}=infox;
-          txcell{s,2}=hed;
-          txcell{s,3}=d2;
-       end
         
         
     end
@@ -4261,11 +4302,11 @@ if exportType==3
     end
     
     
-%         uhelp(plog([],[txcell{1,1}],0,'SELECTION TABLE','d=1;al=1',''),1);
-        
-        
-
-
+    %         uhelp(plog([],[txcell{1,1}],0,'SELECTION TABLE','d=1;al=1',''),1);
+    
+    
+    
+    
 end
 
 
@@ -4832,10 +4873,10 @@ function export4xvol3d(x)
 %          into left and right hemishere. Example path of "AVGThemi.nii"'.
 % 'cs'   : Connection strength (cs) or another parameter to export and display via xvol3d.
 %          Default: 'diff' -paramter as this is the mean diff value between two groups.
-% 'sort': Sort the connection list in Excel-file 
-%         (0) no sorting 
+% 'sort': Sort the connection list in Excel-file
+%         (0) no sorting
 %         (1) sort after CS-value; ..this is sign-sensitive
-%         (2)sort after p-value;   
+%         (2)sort after p-value;
 % 'outputname' : A string served as outputname. Default 'DTIconnections'.
 % 'contrast' : The contrast to save. Chose one from the list or select 'all' to export all contrasts
 %              -also possible to use the index/indices such as [1] or [2 3] depending if contrasts exist
@@ -4849,8 +4890,8 @@ function export4xvol3d(x)
 %               in exported labels. Default: 0.
 % 'LRtag      : remove/keep left/right hemispheric tag in atlas label strings:  {0} remove or {1} keep
 %               left/right hemispheric tag
-% 
-% 
+%
+%
 % ##HELP_export4dvol3d_off
 
 cprintf([.7 .7 .7],['The exported excelfiles can be used for xvol3d (nodes&links)  .\n' ]);
@@ -4879,7 +4920,7 @@ contrastlist=['all' {us.pw.str}];
 %%   PARAMETER-gui
 % ===============================================
 showgui=1;
-if exist('x')==1   
+if exist('x')==1
     % USED FOR:  dtistat('export4xvol3d',z,'gui',1)
     if isstruct(x) && isfield(x,'gui')
         showgui=x.gui;
@@ -5046,9 +5087,9 @@ for i=num% pws/contrasts
         opstr=['res=' strrep(z.keep,'p','pvalue') ';'];
         pvalue=d(:,find(strcmp(hd,'p')));
         eval(opstr);
-        isurv=find(res==1); 
+        isurv=find(res==1);
         
-         d    = d(isurv,:);
+        d    = d(isurv,:);
         labm = labm(isurv,:);
     else
         %---------threshold
@@ -5063,45 +5104,45 @@ for i=num% pws/contrasts
         
     end
     
- % ==============================================
-%%   msgbox if empty
-% ===============================================
- if isempty(d)
-     outtag=export3dvol_getOutname(z);
-     outname=['_logfile_' outtag '__noSurvivers.s.txt'];
-     
-     msg={};
-     msg{end+1,1}=([  ' for "' z.contrast  '": no results survived..no excel-file written' ]);
-     msg{end+1,1}=([  '-logfile written to : ' z.outDir    ]);
-     msg{end+1,1}=([  '-logfile: ' outname   ]);
-     msg{end+1,1}=([  '-date  : ' timestr(now)]);
-     msg{end+1,1}=([  '______________________ ']);
-     if showgui==1
-         %msgbox(msg);
-         
-         fg; set(gcf,'units','norm');
-         msg2=[{[' <b><font color=blue>"' z.contrast '" ...no surviving results </b>']};
-             msg];
-         addNote([],'text',msg2',...
-             'state',2,'pos',[0 .08 1 .92],'figpos',[0.3799    0.3844    0.4000    0.2500],...
-             'IS',1,'dlg',1);
-     else
-         
-         cprintf([0.8706    0.4902         0],[ 'WARNING: for "' z.contrast  '" no results survived..no excel-file written\n'])
-         disp(char(msg));
-     end
-     
-     msg2=[msg; {''; '_input-parameter_'}; struct2list2(z,'z')];
-     
-     pa=z.outDir;
-     if isempty(pa); pa=pwd; end
-     mkdir(pa);
-     pwrite2file(fullfile(pa,outname ), msg2  );
-     
-     
-    return
- end
-  
+    % ==============================================
+    %%   msgbox if empty
+    % ===============================================
+    if isempty(d)
+        outtag=export3dvol_getOutname(z);
+        outname=['_logfile_' outtag '__noSurvivers.s.txt'];
+        
+        msg={};
+        msg{end+1,1}=([  ' for "' z.contrast  '": no results survived..no excel-file written' ]);
+        msg{end+1,1}=([  '-logfile written to : ' z.outDir    ]);
+        msg{end+1,1}=([  '-logfile: ' outname   ]);
+        msg{end+1,1}=([  '-date  : ' timestr(now)]);
+        msg{end+1,1}=([  '______________________ ']);
+        if showgui==1
+            %msgbox(msg);
+            
+            fg; set(gcf,'units','norm');
+            msg2=[{[' <b><font color=blue>"' z.contrast '" ...no surviving results </b>']};
+                msg];
+            addNote([],'text',msg2',...
+                'state',2,'pos',[0 .08 1 .92],'figpos',[0.3799    0.3844    0.4000    0.2500],...
+                'IS',1,'dlg',1);
+        else
+            
+            cprintf([0.8706    0.4902         0],[ 'WARNING: for "' z.contrast  '" no results survived..no excel-file written\n'])
+            disp(char(msg));
+        end
+        
+        msg2=[msg; {''; '_input-parameter_'}; struct2list2(z,'z')];
+        
+        pa=z.outDir;
+        if isempty(pa); pa=pwd; end
+        mkdir(pa);
+        pwrite2file(fullfile(pa,outname ), msg2  );
+        
+        
+        return
+    end
+    
     % ==============================================
     %% get coordinates
     % ===============================================
@@ -5189,12 +5230,12 @@ for i=num% pws/contrasts
     % ---------------------------------
     % sort after cs value
     % ---------------------------------
-   
+    
     if z.sort==1  %ascending;
-         icolSort=find(strcmp(h2,'cs'));
+        icolSort=find(strcmp(h2,'cs'));
         d2=sortrows(d2,icolSort);
     elseif z.sort==2 %descending
-         icolSort=find(strcmp(h2,'p'));
+        icolSort=find(strcmp(h2,'p'));
         d2= (sortrows(d2,icolSort));
     end
     
@@ -5278,7 +5319,7 @@ for i=num% pws/contrasts
         end
         
     end
-   
+    
     % ==============================================
     %%   exort EXCEL-file
     % ===============================================
@@ -5293,7 +5334,7 @@ for i=num% pws/contrasts
     % ==============================================
     %%
     % ===============================================
-
+    
     
     
 end% pws/contrasts
@@ -5302,32 +5343,32 @@ cprintf([1 0 1],['Done.\n' ]);
 %% ===============================================
 
 function outtag=export3dvol_getOutname(z);
-    if 1
-        cons=z.fileNameConst;
-        if isempty(cons)
-            cons='$filePrefix_$cs_$contrast_$keep';
-        end
-        
-        fn=fieldnames(z);
-        idx=zeros(length(fn),1);
-        for i=1:length(fn)
-            i0=regexpi(cons,['\$' fn{i} ]) ;
-            if ~isempty(i0);
-                idx(i,1)=i0 ;
-            end
-        end
-        ts=sortrows([fn num2cell(idx)],2);
-        vars=ts(find(cell2mat(ts(:,2))>0),1);
-        
-        outtagc='';
-        for i=1:length(vars)
-            dx=getfield(z,vars{i});
-            if isnumeric(dx);  dx=num2str(dx); end
-            outtagc{i}=dx;
-        end
-        outtag =strjoin(outtagc,'_');
-        outtag =regexprep(outtag,{' ' ,'<'},{'_',''});
+if 1
+    cons=z.fileNameConst;
+    if isempty(cons)
+        cons='$filePrefix_$cs_$contrast_$keep';
     end
+    
+    fn=fieldnames(z);
+    idx=zeros(length(fn),1);
+    for i=1:length(fn)
+        i0=regexpi(cons,['\$' fn{i} ]) ;
+        if ~isempty(i0);
+            idx(i,1)=i0 ;
+        end
+    end
+    ts=sortrows([fn num2cell(idx)],2);
+    vars=ts(find(cell2mat(ts(:,2))>0),1);
+    
+    outtagc='';
+    for i=1:length(vars)
+        dx=getfield(z,vars{i});
+        if isnumeric(dx);  dx=num2str(dx); end
+        outtagc{i}=dx;
+    end
+    outtag =strjoin(outtagc,'_');
+    outtag =regexprep(outtag,{' ' ,'<'},{'_',''});
+end
 
 % ==============================================
 %%   batch
@@ -5374,13 +5415,13 @@ try; confiles=us.con.files; catch; confiles={'''UNDEFINED'''}; end
 
 %% ===============================================
 
- ButtonName = questdlg(['confile: mode-1 or mode-2' char(10) ...
-                      'mode-1: long list of fullpath connectivity files ' char(10) ...
-                      'mode-2: path +short name of connectivity file ' char(10)  ...
-                      '...rerunning the batch should produce the same results for mode-1 and mode-2 '], ...
-                         'Batch mode for connectivity files', ...
-                         'mode-1', 'mode-2', 'mode-2');
-                  
+ButtonName = questdlg(['confile: mode-1 or mode-2' char(10) ...
+    'mode-1: long list of fullpath connectivity files ' char(10) ...
+    'mode-2: path +short name of connectivity file ' char(10)  ...
+    '...rerunning the batch should produce the same results for mode-1 and mode-2 '], ...
+    'Batch mode for connectivity files', ...
+    'mode-1', 'mode-2', 'mode-2');
+
 %% ===============================================
 %% ===============================================
 
@@ -5402,7 +5443,7 @@ else
     else
         e=cellfun(@(a){ [ sprintf('\t') '''' a '''' ]} , confiles);
         e=[ 'confiles     = {...     % % connectivity-Files '  ;e; [sprintf('\t') '};']];
-    end 
+    end
 end
 f={['lutfile      = ''' char(lutfile) '''; % % LUT-File (txt-file) ']};
 if strcmp(ButtonName, 'mode-1')
@@ -5438,17 +5479,17 @@ else
     e2{end+1,1}=['conpath      = ' '''' conpath      '''; % % upper path containing connectivity files (csv)' ];
     e2{end+1,1}=['confiles     = ' '''' confileName  '''; % % short-name of the connectivity file (csv)' ];
     %%%e2{end+1,1}=['labelfile=' '''' lutfile      '''; % % atlas-label file (txt-file)' ];
-       
     
-%     e2={....
-%         ['dtistat(''conpath''  ,''' conpath  ''' ,... ' ]
-%         ['        ''confiles'' ,''' confileName  ''',...']
-%         ['        ''labelfile'','''  lutfile ''');' ]
-%         };
-%     %code=  [code;  ;d; e2; f;{''}];
+    
+    %     e2={....
+    %         ['dtistat(''conpath''  ,''' conpath  ''' ,... ' ]
+    %         ['        ''confiles'' ,''' confileName  ''',...']
+    %         ['        ''labelfile'','''  lutfile ''');' ]
+    %         };
+    %     %code=  [code;  ;d; e2; f;{''}];
     code=  [code;  ;d; e2; f;{''}];
-
-% % % dtistat('confiles', confiles,'conpath',conpath  ,'labelfile',lutfile)
+    
+    % % % dtistat('confiles', confiles,'conpath',conpath  ,'labelfile',lutfile)
 end
 
 
@@ -5467,7 +5508,7 @@ code{end+1,1}=['dtistat(''group'', groupingfile);                        % % LOA
 if strcmp(ButtonName, 'mode-1')
     code{end+1,1}=['dtistat(''confiles'', confiles  ,''labelfile'',lutfile); % % LOAD connectivity-Files & LUTfile'];
 else
-   code{end+1,1}=['dtistat(''conpath'', conpath ,''confiles'', confiles  ,''labelfile'',lutfile); % % LOAD connectivity-Files & LUTfile'];
+    code{end+1,1}=['dtistat(''conpath'', conpath ,''confiles'', confiles  ,''labelfile'',lutfile); % % LOAD connectivity-Files & LUTfile'];
     
 end
 % ==============================================
@@ -5568,24 +5609,24 @@ figtitle='scripts: DTIstat';
 close(findobj(0,'name',figtitle));
 
 scripts={
-'STcript_b1_makeSubgroups.m'                            
-'STcript_b2_DTIstat.m'
-'STscript_subdivideGroups_pairwiseComparisons.m'
-'STscript_subdivideGroups_specific.m'
-'STscript_DTIstatistic_simple.m'
-'STscript_DTIstatistic_simple2.m'
-'STscript_DTIstatistic_diffDTImatrices.m'
-'STscript_DTIstatistic_diffDTImatrices_diffGroups.m'
-'STscript_export4vol3d_simple.m'
-'STscript_export4vol3d_manycalcs.m'
-'DTIscript_plotsummary.m'
-'DTIscript_plotsummary_severalCALCS.m'
-'DTIscript_reduceMatric_viaCOIfile.m'
-'DTIscript_DTIstatisticComplete1.m'
-% 'DTIscript_HPC_exportData_makeBatch.m' 
-% 'DTIscript_posthoc_makeHTML_QA.m'
-% 'DTIscript_posthoc_exportData4Statistic.m'
-};
+    'STcript_b1_makeSubgroups.m'
+    'STcript_b2_DTIstat.m'
+    'STscript_subdivideGroups_pairwiseComparisons.m'
+    'STscript_subdivideGroups_specific.m'
+    'STscript_DTIstatistic_simple.m'
+    'STscript_DTIstatistic_simple2.m'
+    'STscript_DTIstatistic_diffDTImatrices.m'
+    'STscript_DTIstatistic_diffDTImatrices_diffGroups.m'
+    'STscript_export4vol3d_simple.m'
+    'STscript_export4vol3d_manycalcs.m'
+    'DTIscript_plotsummary.m'
+    'DTIscript_plotsummary_severalCALCS.m'
+    'DTIscript_reduceMatric_viaCOIfile.m'
+    'DTIscript_DTIstatisticComplete1.m'
+    % 'DTIscript_HPC_exportData_makeBatch.m'
+    % 'DTIscript_posthoc_makeHTML_QA.m'
+    % 'DTIscript_posthoc_exportData4Statistic.m'
+    };
 
 
 scripts_gui([],'figpos',[.3 .2 .4 .4], 'pos',[0 0 1 1],'name',figtitle,'closefig',1,'scripts',scripts);
@@ -5597,21 +5638,21 @@ scripts_gui([],'figpos',[.3 .2 .4 .4], 'pos',[0 0 1 1],'name',figtitle,'closefig
 % ===============================================
 return
 
-% 
+%
 % scripts_process([],[],'close');
-% 
+%
 % h=uipanel('units','norm');
 % xpos=0.4;
 %  set(h,'position',[xpos 0  1-xpos 1 ],'title','scripts','tag','scripts_panel');
 % %set(h,'position',[xpos 0.1  1-xpos-.1 .5 ],'title','scripts','tag','scripts_panel');
-% 
+%
 % set(h,'ForegroundColor','b','fontweight','bold');
-% 
+%
 % % ###########################################################################################
 % % ==============================================
 % %%   script-names
 % % ===============================================
-% 
+%
 % scripts={
 % 'STscript_subdivideGroups_pairwiseComparisons.m'
 % 'STscript_subdivideGroups_specific.m'
@@ -5621,27 +5662,27 @@ return
 % 'STscript_DTIstatistic_diffDTImatrices_diffGroups.m'
 % 'STscript_export4vol3d_simple.m'
 % 'STscript_export4vol3d_manycalcs.m'
-% % 'DTIscript_HPC_exportData_makeBatch.m' 
+% % 'DTIscript_HPC_exportData_makeBatch.m'
 % % 'DTIscript_posthoc_makeHTML_QA.m'
 % % 'DTIscript_posthoc_exportData4Statistic.m'
 % };
 % % ###########################################################################################
-% 
+%
 % %% ========[controls]=======================================
-% 
+%
 % hb=uicontrol(h,'style','listbox','units','norm','tag','scripts_lbscriptName');
 % set(hb,'string',scripts);
 % set(hb,'position',[0 0.7 1.2 0.3]);
-% 
+%
 % set(hb,'callback',{@scripts_process, 'scriptname'} );
 % set(hb,'tooltipstring',['script/function name']);
-% 
-% 
+%
+%
 % c = uicontextmenu;
 % hb.UIContextMenu = c;
 % m1 = uimenu(c,'Label','show script','Callback',{@scripts_process, 'open'});
 % m1 = uimenu(c,'Label','<html><font style="color: rgb(255,0,0)">edit file (not prefered)','Callback',{@scripts_process, 'editOrigFile'});
-% 
+%
 % %% ====[addNote]===========================================
 % % hb=uicontrol(h,'style','text','units','norm','tag','scripts_TXTscriptHelp');
 % % set(hb,'string',{'eeee'},'backgroundcolor','w');
@@ -5652,7 +5693,7 @@ return
 % NotePos=[ 0 .085  1 .62];
 % msg='select <b>script/function</b> from <u>above</u> to obtain <font color="blue">help.<br>';
 % han=addNote(h,'text',msg,'pos',NotePos,'head','scripts/functions','mode','single','fs',20,'IS',1);
-% 
+%
 % %% =======[open script]========================================
 % hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_open');
 % set(hb,'string','show script');
@@ -5667,9 +5708,9 @@ return
 % set(hb,'callback',{@scripts_process, 'edit'} );
 % set(hb,'tooltipstring',['<html><b>open scripts/function in EDITOR</b><br> '...
 %     'the script can be copied and modified']);
-% 
+%
 % %% =========[close script panel]======================================
-% %% 
+% %%
 % hb=uicontrol(h,'style','pushbutton','units','norm','tag','scripts_close');
 % set(hb,'string','close panel');
 % set(hb,'position',[[0.73 0.0056 0.25 0.06]]);
@@ -5680,52 +5721,52 @@ return
 % u.NotePos=NotePos;
 % u.han    =han;
 % set(h,'userdata',u);
-% 
-% 
+%
+%
 % addResizebutton(gcf,h,'mode','L','moo',0,'restore',0);
-% 
-% 
-% 
+%
+%
+%
 % function scripts_process(e,e2,task)
 % hn=findobj(gcf,'tag','scripts_lbscriptName');
 % hh=findobj(gcf,'tag','scripts_panel');
 % u=get(hh,'userdata');
-% 
-% 
+%
+%
 % if strcmp(task,'close')
 %     delete(findobj(gcf,'tag','scripts_panel'));
 %     addNote(gcf,'note','close') ;
 %     addResizebutton('remove');
 % elseif strcmp(task,'scriptname')
-%     
+%
 %     file=hn.String{hn.Value};
-%     hlp=help(file); 
+%     hlp=help(file);
 %     hlp=strsplit(hlp,char(10));
 %     hlp=[hlp repmat('<br>',[1 2])];
-%     
-%     
-%     
+%
+%
+%
 %     NotePos=u.NotePos;
 %     %NotePos=[0.5 .085  .5 .58];
-%   
-%     
-%     
+%
+%
+%
 %     hs=addNote(u.han,'text',hlp);
 %     if isempty(hs)
 %         addNote(hh,'text',hlp,'pos',NotePos,'mode','single','fs',20,'IS',1);
 %     end
-%     
-%     
-%     
+%
+%
+%
 % elseif strcmp(task,'open')
 %     %% OPEN SCRIPT IN MATLAB-EDITOR
 %     file=hn.String{hn.Value};
-%     
-%     cont=preadfile(file); 
+%
+%     cont=preadfile(file);
 %     cont=cont.all;
 %     uhelp(cont,1,'name',['script: "' file '"']);
 %     h=findobj(gcf,'tag','scripts_lbscriptName');
-%     
+%
 %     msg={'-copy script to Matlab editor'
 %         '-change parameter accordingly'
 %         '-save script somewhere on your path'
@@ -5740,17 +5781,17 @@ return
 %     end
 % elseif strcmp(task,'edit')
 %     file=hn.String{hn.Value};
-%     
+%
 %     %% ===============================================
-%     cont=preadfile(file); 
+%     cont=preadfile(file);
 %     cont=cont.all;
-%     
+%
 %     str = strjoin(cont,char(10));
 %     editorService = com.mathworks.mlservices.MLEditorServices;
 %     editorApplication = editorService.getEditorApplication();
 %     editorApplication.newEditor(str);
 %     %% ===============================================
-%     
+%
 % end
 
 
