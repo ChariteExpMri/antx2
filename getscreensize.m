@@ -6,7 +6,7 @@ function [S1 S2]=getscreensize()
 
 S1=get(0, 'MonitorPositions');
 
-ScreenPixelsPerInch = java.awt.Toolkit.getDefaultToolkit().getScreenResolution()
+ScreenPixelsPerInch = java.awt.Toolkit.getDefaultToolkit().getScreenResolution();
 ScreenDevices = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 try
     MainScreen = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getScreen()+1;

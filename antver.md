@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   22 Mar 2024 (09:47:47)  
+ &#x1F34E; last modification:   27 Mar 2024 (16:11:12)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,11 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**27 Mar 2024 (16:11:12)**</ins>  
+   __[xstat]__ modified;  
+  the output of the 'fullreport' is a powerpoint file  or a  html-file  
+  xstat('fullreport', struct('format','html'));  
+<!---->
   &#x1F535;   <ins>**22 Mar 2024 (09:47:47)**</ins>  
   new atlases/templates implemented  
   __[1]__ DSURQUE-atlas  ("mouse_DSURQUE_vox07mm.zip")  
@@ -17,6 +22,7 @@
        without a new registration  
       -0.07mm isovox resolution  
   &#8658; atlases available via: <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
+    
 <!---->
   &#x1F535;   <ins>**06 Mar 2024 (15:48:32)**</ins>  
    __[xflipLR]__ new  

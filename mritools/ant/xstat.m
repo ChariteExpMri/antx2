@@ -335,8 +335,12 @@
 % xstat('fullreport',struct('method',[3],'con',[1],'xls',1,'nifti',1)) % same but write xls-file and nifti-file
 % xstat('fullreport',struct('method',[2],'con',[1:2],'xls',0,'nifti',0)); % clusterbased approch for contrast 1 & 2, do not save xls-file/NIfti-file
 % xstat('fullreport',struct('method',[2],'xls',0,'nifti',0)); % clusterbased approch for all contrast, do not save xls-file/NIfti-file
-
-
+% 
+% [make full report]: create summary HTML-file if powerpoint not available on machine
+% use 'format': 'html' instead of 'ppt': 
+% xstat('fullreport', struct('format','html'));  
+% xstat('fullreport',struct('method',[2],'xls',0,'nifti',0,'format','html'));
+% xstat('fullreport',struct('method',[1:3],'xls',1,'nifti',1,'format','html'));
 
 % ==============================================
 %%   
@@ -1258,6 +1262,10 @@ p.nifti =1   ;%write NIFTI-file
 if exist('pin')==1 && isstruct(pin)
     p=catstruct(p,pin);
 end
+if isfield(p,'format')==0
+    p.format='ppt';
+end
+p.format=lower(p.format);
 
 cons=p.con;
 
@@ -1273,10 +1281,14 @@ if ~isempty(find(p.method==1))
         
         xstat('set',struct('MCP','none','thresh',0.001,'clk',1,'con',con,'show',0)); % set PARAMETER
         [p2 nametag2 paramtag]=getparameter();% get mainParameter
-        PPTFILE=fullfile(outdir,['sum_UNCOR_'  paramtag '.pptx'   ]);
+        if strcmp(p.format,'ppt')
+            PPTFILE=fullfile(outdir,['sum_UNCOR_'  paramtag '.pptx'   ]);
+        elseif strcmp(p.format,'html')
+            PPTFILE=fullfile(outdir,['sum_UNCOR_'  paramtag  '.html'   ]);
+        end
         
-        xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  )); % save stat. table in PPT
-        xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+        xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol,'format',p.format  )); % save stat. table in PPT
+        %xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
         
         if p.nifti==1
             F1=fullfile(outdirData,[ nametag2 '.nii'   ]);
@@ -1287,7 +1299,7 @@ if ~isempty(find(p.method==1))
             xstat('export',F2);     % save stat. table as excelfile
         end
     end
-    cprintf('*[.0 0 1]',[ 'PPT-SUMMARY_UNCORRECTED' ]);
+    cprintf('*[.0 0 1]',[ 'SUMMARY_UNCORRECTED' ]);
     showinfo2('',PPTFILE);
 end
     
@@ -1308,10 +1320,17 @@ if ~isempty(find(p.method==2))
         [p2 nametag2 paramtag]=getparameter();% get mainParameter
         nametag2=strrep(nametag2,'none','CLUST');
         paramtag=strrep(paramtag,'none','CLUST');
-        PPTFILE=fullfile(outdir,['sum_CLUST_'  paramtag '.pptx'   ]);
+        
+        %PPTFILE=fullfile(outdir,['sum_CLUST_'  paramtag '.pptx'   ]);
+        if strcmp(p.format,'ppt')
+            PPTFILE=fullfile(outdir,['sum_CLUST_'  paramtag '.pptx'   ]);
+        elseif strcmp(p.format,'html')
+            PPTFILE=fullfile(outdir,['sum_CLUST_'  paramtag  '.html'   ]);
+        end
+        
         paramtag=[paramtag(1:max(strfind(paramtag,'k'))-1) '' ]; %remove clusterSize..as this might change over contrasts
-        xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  )); % save stat. table in PPT
-        xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+        xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol,'format',p.format  )); % save stat. table in PPT
+        %xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
         
         if p.nifti==1
             F1=fullfile(outdirData,[ nametag2 '.nii'   ]);
@@ -1322,7 +1341,7 @@ if ~isempty(find(p.method==2))
             xstat('export',F2);     % save stat. table as excelfile
         end
     end
-    cprintf('*[.0 0 1]',[ 'PPT-SUMMARY_CLUSTERBASED' ]);
+    cprintf('*[.0 0 1]',[ 'SUMMARY_CLUSTERBASED' ]);
     showinfo2('',PPTFILE);
 end
 
@@ -1340,10 +1359,16 @@ if ~isempty(find(p.method==3))
         [p2 nametag2 paramtag]=getparameter();% get mainParameter
         nametag2=strrep(nametag2,'none','CLUST');
         paramtag=strrep(paramtag,'none','CLUST');
-        PPTFILE=fullfile(outdir,['sum_FWE_'  paramtag '.pptx'   ]);
+       
+
+        if strcmp(p.format,'ppt')
+            PPTFILE=fullfile(outdir,['sum_FWE_'  paramtag '.pptx'   ]);
+        elseif strcmp(p.format,'html')
+            PPTFILE=fullfile(outdir,['sum_FWE_'  paramtag  '.html'   ]);
+        end
         
-        xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol  )); % save stat. table in PPT
-        xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+        xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol,'format',p.format  )); % save stat. table in PPT
+        %xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
         
         if p.nifti==1
             F1=fullfile(outdirData,[ nametag2 '.nii'   ]);
@@ -1354,7 +1379,7 @@ if ~isempty(find(p.method==3))
             xstat('export',F2);     % save stat. table as excelfile
         end
     end
-    cprintf('*[.0 0 1]',[ 'PPT-SUMMARY_FWE' ]);
+    cprintf('*[.0 0 1]',[ 'SUMMARY_FWE' ]);
     showinfo2('',PPTFILE);
 end
 
@@ -4164,6 +4189,9 @@ if isfield(s,'doc')==0;      s.doc ='new'; end % new doc
 if isfield(s,'bgcol')==0;    s.bgcol =[1 1 1]; end % new doc
 if isfield(s,'show')==0;     s.show='table'; end % show table
 
+if isfield(s,'format')==0
+   s.format='ppt';
+end
 
 
 paSPM=pwd;
@@ -4179,26 +4207,48 @@ lb=findobj(hg,'tag','loadothercontrast');
 
 cd(paPPT);
 %% Start new presentation
-isOpen  = exportToPPTX();
-if ~isempty(isOpen),
-    % If PowerPoint already started, then close first and then open a new one
-    exportToPPTX('close');
+if strcmp(s.format,'ppt')
+    isOpen  = exportToPPTX();
+    if ~isempty(isOpen),
+        % If PowerPoint already started, then close first and then open a new one
+        exportToPPTX('close');
+    end
+    try
+        %evalc('system(''taskkill /f /im powerpnt.exe'')');
+    end
+    %% =======new PPT/add to ppt ========================================
+    
+    if strcmp(s.doc,'add') && exist([pptfile,'.pptx'])
+        exportToPPTX('open',[pptfile,'.pptx'])
+    else
+        exportToPPTX('new','Dimensions',[12 6], ...
+            'Title','Example Presentation', ...
+            'Author','MatLab', ...
+            'Subject','Automatically generated PPTX file', ...
+            'Comments','This file has been automatically generated by exportToPPTX');
+    end
+    %% ===============================================
+elseif strcmp(s.format,'html')
+    if strcmp(s.doc,'add') && exist([pptfile,'.html'])
+        html=preadfile(fullfile([pptfile,'.html']));html=html.all; 
+        fhtml=[pptfile,'.html'];
+    else
+        html={['<html>']
+            ['<style>']
+            ['.div-1 {']
+            ['        background-color: rgb('  sprintf('%i,%i,%i', round(s.bgcol*255) )   ');']
+            ['}']
+            [' .div-2 {']
+            ['        background-color: rgb(' sprintf('%i,%i,%i', round([0.894 0.9412 0.9]*255) ) ');']
+            ['}']
+            ['</style>']
+            ['</html>']};
+        fhtml=[pptfile,'.html'];
+        pwrite2file(fhtml, html );
+        html=preadfile(fullfile([pptfile,'.html'])); html=html.all; 
+        html(strcmp(html,'</html>'))=[];
+    end
 end
-try
-    %evalc('system(''taskkill /f /im powerpnt.exe'')');
-end
-%% =======new PPT/add to ppt ========================================
-
-if strcmp(s.doc,'add') && exist([pptfile,'.pptx'])
-    exportToPPTX('open',[pptfile,'.pptx'])
-else
-    exportToPPTX('new','Dimensions',[12 6], ...
-        'Title','Example Presentation', ...
-        'Author','MatLab', ...
-        'Subject','Automatically generated PPTX file', ...
-        'Comments','This file has been automatically generated by exportToPPTX');
-end
-%% ===============================================
 
 % Additionally background color for all slides can be set as follows:
 % exportToPPTX('new','BackgroundColor',[0.5 0.5 0.5]);
@@ -4263,17 +4313,21 @@ for jj=1:length(cons)   %:   size(get(lb,'string'),1)   %1:1,
     
     %msp
     % ===============================================
+    % get analyzing map
+    qspm=load(fullfile(xspm.swd,'SPM.mat')); %get imageName;
+    [~,mapName, mapExt]=fileparts(qspm.SPM.xY.P{1});
     
     info=...
         {
         %['Contrast: ' lb.String{lb.Value} ]
-        ['Contrast-' [ num2str(cons(1)) ': '] mspm.title ]
-        ['MCP: ' get(findobj(hg,'tag','mcp'),'string')]
-        ['TR: ' get(findobj(hg,'tag','thresh'),'string')]
-        ['CLustersize: ' get(findobj(hg,'tag','clustersize'),'string')]
-        ['DIR: '         foldername]
-        ['statistic: '         mspm.stat]
-        ['no sign. voxel: '         num2str(mspm.nsigvox)]
+        ['Contrast:       '  [ '['  num2str(cons(1)) '] '] mspm.title ]
+        ['img:            '  '"' [mapName, mapExt] '"'  ]
+        ['MCP:            '  get(findobj(hg,'tag','mcp'),'string')]
+        ['TR:             '  get(findobj(hg,'tag','thresh'),'string')]
+        ['CLustersize:    '  get(findobj(hg,'tag','clustersize'),'string')]
+        ['DIR:            '  foldername]
+        ['statistic:      '  mspm.stat]
+        ['no sign. voxel: '  num2str(mspm.nsigvox)]
         };
     
    % disp(char(info))
@@ -4281,31 +4335,154 @@ for jj=1:length(cons)   %:   size(get(lb,'string'),1)   %1:1,
     %% ----------------------------
     
     cd(paPPT);
-    slideNum = exportToPPTX('addslide','BackgroundColor',s.bgcol);
-    %fprintf('Added slide %d\n',slideNum);
-    exportToPPTX('addpicture',figH);
-    %     exportToPPTX('addtext',lb.String{lb.Value});
-    exportToPPTX('addtext',[['C' num2str(cons(1))] ': '  lb.String{lb.Value}]);
-    %exportToPPTX('addtext',    [['C' num2str(cons(1))] ': '  lb.String{lb.Value}]   );
-    exportToPPTX('addtext',strjoin(info,char(10)),'FontSize',10,...
-        'Position',[0 1 3 3  ]);
     
-    %exportToPPTX('addnote',sprintf('Notes data: slide number %d',slideNum));
-    exportToPPTX('addnote',['source: '  pwd ]);
-    % Rotate mesh on each slide
-    %     view(18*islide,18*islide);
+    slideTitle=[ [['C' num2str(cons(1))] ': '  lb.String{lb.Value}]  ' [img: "' [mapName, mapExt] '"]'];
+    mapTitle=[' [img: "' [mapName, mapExt] '"]'];
+    col_title=[0.9412    0.7647    0.345 ];
+    col_map  =[0.8588    0.9333    0.9569];
+    
+    if strcmp(s.format,'ppt')
+        slideNum = exportToPPTX('addslide','BackgroundColor',s.bgcol);
+        %fprintf('Added slide %d\n',slideNum);
+        exportToPPTX('addpicture',figH);
+        %     exportToPPTX('addtext',lb.String{lb.Value});
+        %% [title]
+        exportToPPTX('addtext',slideTitle,'position', [0 0 12 0.35],...
+            'BackgroundColor',col_title);
+        %% [which image used ]
+        exportToPPTX('addtext',mapTitle,'position', [0 0.35 2.4 0.35],...
+            'BackgroundColor',col_map   );
+        
+        %% [add infoBox]
+        exportToPPTX('addtext',strjoin(info,char(10)),'FontSize',8,'FontName','Consolas',...
+          'FontWeight','bold',  'Position',[0 1 6 3  ]);
+        
+        %exportToPPTX('addnote',sprintf('Notes data: slide number %d',slideNum));
+        exportToPPTX('addnote',strjoin({['source:    '  pwd ]; ['sourceSPM: '  xspm.swd ];}, char(10))  );
+    elseif strcmp(s.format,'html')
+        %% ===============================================
+        slideNum=1; %dummy here for html
+        col_titleRGB=sprintf('%i,%i,%i', round(col_title*255) );
+        col_mapRGB  =sprintf('%i,%i,%i', round(col_map*255) );
+        slideTitle_Html=regexprep(slideTitle,{'>','<'},{'&gt;' '&lt;'});
+        
+        html2=[html ; ' '];
+        %--html_backgroundcolor
+        if mod(s.con,2)==1
+            html2{end+1,1}= ['<div class="div-1"> '];
+        else
+            html2{end+1,1}= ['<div class="div-2"> '];
+        end
+        % add title and map
+        html2{end+1,1}=[ '<h2 style="background-color: rgb(' col_titleRGB ');margin: 0; padding: 0; ">'  slideTitle_Html   '</h2>'];
+        html2{end+1,1}=[ '<h2 style="background-color: rgb(' col_mapRGB ');margin: 0; padding: 0; ">'    mapTitle   '</h2>'];
+
+        %__infoBox__
+        info2=[info; ['source:         '  pwd ]; ['sourceSPM:      '  xspm.swd ];  ];
+        
+        html_infobox=regexprep(strjoin(info2,char(10)),{'>','<'},{'&gt;' '&lt;'});
+        %html2{end+1,1}= ['<br>'];
+        col_infobox=sprintf('%i,%i,%i', round([ 0.9333    0.9333    0.9333]*255) ) ;
+        html2{end+1,1}= ['<pre style="font-family: Consolas,monospace; background-color: rgb(' col_infobox ');'...
+           'margin: 0; padding: 0;font-size: 9px;'   ' ">'];
+        html2{end+1,1}= [html_infobox];
+        html2{end+1,1}= ['</pre>'];
+        
+        %__img__
+        w=getframe(hfig);
+        htmlsubdir =[ '_html_' pptfile    ];
+        htmlimgName=['img_' '_con' pnum(s.con,2) '_' pptfile  '__table'  '.png'];
+        savePath=fullfile(paPPT,htmlsubdir );
+        f35=fullfile(savePath,htmlimgName);
+        if exist(savePath)~=7; mkdir(savePath); end
+        imwrite(w.cdata,f35);
+        imgline=['<img src="' strrep(fullfile(htmlsubdir, htmlimgName),'\','/') '" '...
+            ' alt="xx", height="600">'];
+        html2=[html2;imgline];
+        
+        
+        pwrite2file(fhtml, html2 );
+        %showinfo2(['.. html'],fhtml);
+        
+        %% ===============================================
+%         body { 
+%   margin: 0; padding: 0; 
+% }
+        
+    end
+    %% ===============================================
+    % orthoview on same page as table
+    if strcmp(s.show,'table')
+        lt=findobj(hg,'tag','showvolume');
+        hgfeval(get(lt,'callback'),lt);
+        drawnow;
+        
+        try   % go to local maximum
+           % spm_mip_ui('Jump',findobj(findobj(0,'tag','Graphics'),'tag','hMIPax'),'glmax');
+            evalc('spm_mip_ui(''Jump'',findobj(findobj(0,''tag'',''Graphics''),''tag'',''hMIPax''),''glmax'');');
+        end
+        
+        %% ===============================================
+        dd=findobj(figH,'type','image','tag','Transverse');
+        [S1 S2]=getscreensize();
+        resizefac=S2(3:4)/S1(3:4);
+        pos_orthimgs=[];
+        for i=1:length(dd)
+            oax=get(dd(i),'parent');
+            unit_prev=get(oax,'units');
+            set(oax,'units','pixels');
+            pos_orthimgs(i,:) =  get(oax,'position');
+            set(oax,'units',unit_prev);
+        end
+        mipo=min(pos_orthimgs,[],1);
+        mapo=max(pos_orthimgs,[],1);
+        marg=1;
+        pos_orthoimg=[mipo(1:2)-marg mapo(3:4)*resizefac+marg];
+        
+        w=getframe(figH,pos_orthoimg);
+        ido=round(squeeze(mean(mean(w.cdata,1),3))); %remove white right border
+        w.cdata=w.cdata(:,1:max(find(ido~=255))+1,:); 
+        % fg,image(w.cdata);
+        if strcmp(s.format,'ppt')
+            exportToPPTX('addpicture',w.cdata,'position',[8.64 0.18 3.35 2.56]);
+        elseif strcmp(s.format,'html')
+            %% ===============================================
+            htmlsubdir =[ '_html_' pptfile    ];
+            htmlimgName=['img_' '_con' pnum(s.con,2) '_' pptfile  '__volume'  '.png'];
+            savePath=fullfile(paPPT,htmlsubdir );
+            f35=fullfile(savePath,htmlimgName);
+            if exist(savePath)~=7; mkdir(savePath); end
+            imwrite(w.cdata,f35);
+            
+            imgline=['<img src="' strrep(fullfile(htmlsubdir, htmlimgName),'\','/') '" '...
+                ' alt="xx", height="300">'];
+            html2=[html2;imgline];
+            html2{end+1,1}= ['</div>'];
+            html2{end+1,1}= ['<br><br>'];
+            pwrite2file(fhtml, html2 );
+            %% ===============================================
+            
+            
+        end
+        %% =============================================== 
+    end
+    %% ===============================================
+
+    
+    
 end
 % close(figH)
 %% Check current presentation
 cd(paPPT);
-fileStats   = exportToPPTX('query');
-if ~isempty(fileStats),
-    %fprintf('Presentation size: %f x %f\n',fileStats.dimensions);
-   % fprintf('Number of slides: %d\n',fileStats.numSlides);
+if strcmp(s.format,'ppt')
+    fileStats   = exportToPPTX('query');
+    if ~isempty(fileStats),
+        %fprintf('Presentation size: %f x %f\n',fileStats.dimensions);
+        % fprintf('Number of slides: %d\n',fileStats.numSlides);
+    end
+    %% Save presentation and close presentation -- overwrite file if it already exists
+    % Filename automatically checked for proper extension
 end
-%% Save presentation and close presentation -- overwrite file if it already exists
-% Filename automatically checked for proper extension
-
 if exist('pptfile')==0
     pptfile='result';
 end
@@ -4320,9 +4497,11 @@ end
 %
 % end
 
-
-
-newFile = exportToPPTX('saveandclose',pptfile);
+if strcmp(s.format,'ppt')
+    newFile = exportToPPTX('saveandclose',pptfile);
+elseif  strcmp(s.format,'html')
+    newFile=fullfile(paPPT,fhtml) ;
+end
 % fprintf('New file has been saved: <a href="matlab:open(''%s'')">%s</a>\n',newFile,newFile);
 showinfo2('summary saved ',newFile);
 

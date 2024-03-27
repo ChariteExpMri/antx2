@@ -1047,6 +1047,10 @@
 %     -0.07mm isovox resolution
 % #b &#8658; atlases available via: <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a> 
 % 
+% #ba 27 Mar 2024 (16:11:12)
+% #k [xstat] #n modified;
+% the output of the 'fullreport' is a powerpoint file  or a  html-file
+% xstat('fullreport', struct('format','html'));
 % 
 % 
 
