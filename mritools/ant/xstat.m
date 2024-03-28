@@ -335,7 +335,7 @@
 % xstat('fullreport',struct('method',[3],'con',[1],'xls',1,'nifti',1)) % same but write xls-file and nifti-file
 % xstat('fullreport',struct('method',[2],'con',[1:2],'xls',0,'nifti',0)); % clusterbased approch for contrast 1 & 2, do not save xls-file/NIfti-file
 % xstat('fullreport',struct('method',[2],'xls',0,'nifti',0)); % clusterbased approch for all contrast, do not save xls-file/NIfti-file
-% 
+%% __HTML-output__ 
 % [make full report]: create summary HTML-file if powerpoint not available on machine
 % use 'format': 'html' instead of 'ppt': 
 % xstat('fullreport', struct('format','html'));  
