@@ -2,18 +2,18 @@
 
 
 
-% merge powerpoint files (pppt-files)
+% merge powerpoint files (ppt-files)
 %% INPUT:
 % 'fisoutname': resulting ppt-filename
 % 'fis': fullpath list (cell) of pwerpoints to merge (merge is done in that order)
 %% optinal pairwise-inputs
-% Use 'flt' in combination with 'dir' and 'dirflt' to seach for powerpointfiles.
+% Use 'flt' in combination with 'dir' and 'dirflt' to seach for powerpoint-files.
 % In this case the 'fis'-variable must be EMPTY!
 % ------------------------------------------------------
 % 'dir'    : single directory to search for powerpoint-files
 % 'flt'    : powerpoint file-filter to search for
 %            example: '^sum_CLUST_.*.pptx'
-%           NOTE: 'fis' must be empty when using 'flt' in combination with 'dir' and 'dirflt'!
+%            NOTE: 'fis' must be empty when using 'flt' in combination with 'dir' and 'dirflt'!
 % 'dirflt' : filter for directory-search (see spm_select)
 %           'FPList'    : find ppt-files in a single directory
 %           'FPListRec' : recursively find ppt-files in a single directory and subfolders
@@ -28,7 +28,7 @@
 % paSPM ='H:\Daten-2\Extern\AG_Schmid\ANALYSIS_connectome\voxstat_TP3_TEST';
 % pptmerge(F1,[],'dir',paSPM,'flt','^sum_CLUST_.*.pptx', 'dirflt','FPListRec');
 % 
-%% example using a list of powerpoint files to merge
+%% example using a list of powerpoint-files to merge
 % files={
 %     'H:\Daten-2\Extern\AG_Schmid\ANALYSIS_connectome\voxstat_TP3_TEST\res_vx_x_ad__gr_01_LN_Treat__vs__LN_ctrl\sum_CLUST_x_ad_CLUST0.001k178.pptx'
 %     'H:\Daten-2\Extern\AG_Schmid\ANALYSIS_connectome\voxstat_TP3_TEST\res_vx_x_ad__gr_02_LN_Treat__vs__LN_preTreat\sum_CLUST_x_ad_CLUST0.001k160.pptx'
