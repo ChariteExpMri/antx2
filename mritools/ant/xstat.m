@@ -3556,7 +3556,7 @@ lg(end+1:end+size(add,1),2 )=[add];
 % ======[1]WRITE INFO-sheet=========================================
 hlg=repmat({''},[1 size(lg,2) ]);
 hlg(1:2)={'Field' ,'value'};
-if length(lg)==4
+if size(lg,2)==4
    hlg(3:4)={'group1' ,'group2'}; 
 end
 pwrite2excel(fiout,{1 'info'},hlg,[],lg);
