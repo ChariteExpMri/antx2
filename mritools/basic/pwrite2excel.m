@@ -47,11 +47,153 @@ function pwrite2excel(filename,sheet,header,subheader,data)
 %     20     2    13     8     3     1     0     0     5   883     1     2     0];
 % pwrite2excel(filename,header,subheader,data);
 
+% ==============================================
+%%   
+% ===============================================
 if iscell(sheet)
     sheetname_old=sheet{1};
     sheetname_new=sheet{2};
     sheet=sheetname_old;
 end
+%% ==========[test xls-capability]=====================================
+[pa,name,ext] = fileparts(filename);
+if isempty(pa); 
+    pa=pwd; 
+end
+tempname='001122334455667788991011121314151617181920';
+f1=fullfile(pa,[tempname '.xlsx']);
+[status,message]=xlswrite(f1,'1');
+if isempty(message.message);
+    isexcel=1;
+else
+    isexcel=0;
+end
+delete(fullfile(pa,[tempname '*']));
+
+% isexcel=0
+%% ===============================================
+
+if isexcel==0;
+    %% ===============================================
+    %%   [1a] EXCEL DOES NOT EXIST
+    %% ===============================================
+    
+    global an
+    bkan5=an;
+    clear an;
+    
+    %clear an ;% cler global here, because an as global  is destroyed using javaddoath
+    %%  EXCEL not available
+    try
+        
+        pa2excel=fullfile(fileparts(which('xlwrite.m')),'poi_library');
+        javaaddpath(fullfile(pa2excel,'poi-3.8-20120326.jar'));
+        javaaddpath(fullfile(pa2excel,'poi-ooxml-3.8-20120326.jar'));
+        javaaddpath(fullfile(pa2excel,'poi-ooxml-schemas-3.8-20120326.jar'));
+        javaaddpath(fullfile(pa2excel,'xmlbeans-2.3.0.jar'));
+        javaaddpath(fullfile(pa2excel,'dom4j-1.6.1.jar'));
+        javaaddpath(fullfile(pa2excel,'stax-api-1.0.1.jar'));
+      
+        s = xlwrite(filename, header   , sheet, 'A1');
+        if ~isempty(subheader)
+            s = xlwrite(filename, subheader, sheet, 'A2');
+            s = xlwrite(filename, data,   sheet, 'A3');
+        else %no subheader
+            s = xlwrite(filename, data,   sheet, 'A2');
+        end
+        
+        %disp('..excel is not available..using package excelpackage from Alec de Zegher ');
+    catch
+       
+        %% ===============================================
+        
+        if iscell(data)==0
+            data2=num2cell(data);
+        else
+            data2=data;
+        end
+%         if ~isempty(subheader)
+%             data=[subheader(:)'; data]
+%         end
+         T=cell2table(data2,'VariableNames',header);
+         writetable(T,filename,'Sheet',sheet);
+         
+         %% ====[change xlssheetname]===========================================
+         try
+             [pa,name,ext] = fileparts(filename);
+             if isempty(pa); pa=pwd; end
+             
+             fzip=fullfile(pa,[name '.zip']);
+             movefile(filename,fzip);
+             pa_unzip=fullfile(pa,name);
+             filesZip=unzip(fzip,pa_unzip);
+             
+             f1=filesZip{regexpi2(filesZip,'workbook.xml$')};
+             a=preadfile(f1); a=a.all;
+             iline=regexpi2(a,[ 'sheetId="' num2str(sheet) '"']);
+             l=a{iline};
+             
+             isheet=regexpi(l,[ 'sheetId="' num2str(sheet) '"']);
+             isheetname=regexpi(l,[ '<sheet name="']);
+             isheetname=isheetname(max(find(isheetname<isheet)));
+             s1=l(1:isheetname-1) ;
+             s3=l(isheet:end) ;
+             inSheetName=regexprep([l(isheetname:isheet-1) '_lor'],{'<sheet name="' '".*'},{''});
+             s2=[regexprep(l(isheetname:isheet-1),'".*"',['"' sheetname_new  '"'])];
+             l2=[s1 s2 s3];
+             
+             a(iline)={l2};
+             pwrite2file(f1,a);
+             %-----
+             f1=filesZip{regexpi2(filesZip,'app.xml$')};
+             a=preadfile(f1); a=a.all;
+             a2=regexprep(a,inSheetName, sheetname_new);
+             pwrite2file(f1,a2);
+             
+             zip( fzip  ,'.',pa_unzip);
+             movefile(fzip,filename);
+             
+             try; rmdir(pa_unzip,'s'); end
+         end
+         
+         
+         
+      %% ===============================================
+
+        
+         %% ===============================================
+%          
+%         writetable(table(infox),fileout,'Sheet','INFO')
+%         for i=1:length(pp.paramname)
+%             tbx=[...
+%                 pp.Eheader
+%                 [pp.Elabel num2cell(squeeze(pp.tb(:,i,:)))]
+%                 ];
+%             try
+%                 T=cell2table(tbx(2:end,:),'VariableNames',tbx(1,:));
+%             catch
+%                 %issue with VariableNames 'first character must be char')
+%                 i_numeric=regexpi2(tbx(1,:),'^\d|_') ;%indicate if 1st letter is numeric or 'underscore'
+%                 tbx(1,i_numeric)=cellfun(@(a){['s' a ]},tbx(1,i_numeric));
+%                 T=cell2table(tbx(2:end,:),'VariableNames',tbx(1,:));
+%             end
+%             writetable(T,fileout,'Sheet',pp.paramname{i} );
+%         end
+%         % add SHEEET "atlas" WITH:  'Region'  'colHex'  'colRGB'  'ID'  'Children'
+%         try
+%             T=cell2table(z.atlasTB,'VariableNames',z.atlasTBH);
+%             writetable(T,fileout,'Sheet','atlas' );
+%         end
+%         disp('..excel is not available..using "writetable" ');
+
+    end
+    
+    global an
+    an=bkan5;
+    %% ===============================================
+    return
+end
+
 
 s = xlswrite(filename, header   , sheet, 'A1');
 if ~isempty(subheader)
@@ -63,13 +205,20 @@ else %no subheader
     nline2color=1;
 end
 
-numLines = size(data,1)+size(subheader,1)+size(header,1); %number of lines
 
+
+
+
+% ==============================================
+%%   actxserver
+% ===============================================
 try
 exc=actxserver('excel.application');
 catch
    return 
 end
+
+numLines = size(data,1)+size(subheader,1)+size(header,1); %number of lines
 
 [PATHSTR,NAME,EXT] = fileparts(filename);
 if isempty(PATHSTR)
