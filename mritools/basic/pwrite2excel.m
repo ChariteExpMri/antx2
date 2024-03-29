@@ -70,7 +70,7 @@ else
 end
 delete(fullfile(pa,[tempname '*']));
 
-% isexcel=0
+%  isexcel=0
 %% ===============================================
 
 if isexcel==0;
@@ -144,11 +144,14 @@ if isexcel==0;
              
              a(iline)={l2};
              pwrite2file(f1,a);
-             %-----
-             f1=filesZip{regexpi2(filesZip,'app.xml$')};
-             a=preadfile(f1); a=a.all;
-             a2=regexprep(a,inSheetName, sheetname_new);
-             pwrite2file(f1,a2);
+             %-----windows only
+             iapp=regexpi2(filesZip,'app.xml$');
+             if ~isempty(iapp)
+                 f1=filesZip{iapp};
+                 a=preadfile(f1); a=a.all;
+                 a2=regexprep(a,inSheetName, sheetname_new);
+                 pwrite2file(f1,a2);
+             end
              
              zip( fzip  ,'.',pa_unzip);
              movefile(fzip,filename);
