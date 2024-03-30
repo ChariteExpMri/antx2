@@ -117,8 +117,8 @@ try
   
   
 catch ME
-  errorMessage = sprintf('Error in function InsertComments.\n\nError Message:\n%s', ME.message);
-  fprintf(errorMessage);
-  uiwait(warndlg((errorMessage)));
+%   errorMessage = sprintf('Error in function InsertComments.\n\nError Message:\n%s', ME.message);
+%   fprintf(errorMessage);
+%   uiwait(warndlg((errorMessage)));
 end
 return; % from InsertComments
