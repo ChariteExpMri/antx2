@@ -2,17 +2,17 @@ function pwrite2excel(filename,sheet,header,subheader,data)
 % function pwrite2excel(filename,sheet,header,subheader,data)
 % ..freezes header (1st row) or header+subheader (1st+2nd row if subheader is not empty)
 % pwrite2excel(filename,sheet,header,subheader,data)
-% write data to styled excelfile 
-% 
+% write data to styled excelfile
+%
 % ## example 1:
 % pwrite2excel('_text.xlsx',{1 'RT'},{'time1' 'time2'},{'ms' 's'},rand(5,2))
-% 
+%
 % ## example 2:
 % filename='__muell3.xls';
 % header={'TrialNo' 'Condition' 'IMG_HighProb' 'IMG_LowProb' 'POS_HighProb'...
 %     'POS_LowProb' 'OUT_HighProb' 'OUT_LowProb'...
 %     'Key' 'Time' 'selecedPOS' 'selectedIMG' 'Outcome' };
-% 
+%
 % subheader={'' ['[1]condition1' char(10) '[2]condition2' char(10) '[3]condition3 (neutral)'] ...
 %     ['image-name: HIGH probability outcome' char(10)],[ 'image-name: LOW probability outcome' char(10)]...
 %     ['image-position: HIGH probability condition' char(10) '[1]topleft, [2]topright,'  char(10) '[3]bottomleft, [4]bottomright' ],...
@@ -48,7 +48,7 @@ function pwrite2excel(filename,sheet,header,subheader,data)
 % pwrite2excel(filename,header,subheader,data);
 
 % ==============================================
-%%   
+%%
 % ===============================================
 if iscell(sheet)
     sheetname_old=sheet{1};
@@ -57,8 +57,8 @@ if iscell(sheet)
 end
 %% ==========[test xls-capability]=====================================
 [pa,name,ext] = fileparts(filename);
-if isempty(pa); 
-    pa=pwd; 
+if isempty(pa);
+    pa=pwd;
 end
 tempname='001122334455667788991011121314151617181920';
 f1=fullfile(pa,[tempname '.xlsx']);
@@ -70,7 +70,8 @@ else
 end
 delete(fullfile(pa,[tempname '*']));
 
-%  isexcel=0
+%% =======[ test non excel-api]========================================
+% isexcel=0
 %% ===============================================
 
 if isexcel==0;
@@ -93,7 +94,7 @@ if isexcel==0;
         javaaddpath(fullfile(pa2excel,'xmlbeans-2.3.0.jar'));
         javaaddpath(fullfile(pa2excel,'dom4j-1.6.1.jar'));
         javaaddpath(fullfile(pa2excel,'stax-api-1.0.1.jar'));
-      
+        
         s = xlwrite(filename, header   , sheet, 'A1');
         if ~isempty(subheader)
             s = xlwrite(filename, subheader, sheet, 'A2');
@@ -104,7 +105,7 @@ if isexcel==0;
         
         %disp('..excel is not available..using package excelpackage from Alec de Zegher ');
     catch
-       
+        
         %% ===============================================
         
         if iscell(data)==0
@@ -112,83 +113,102 @@ if isexcel==0;
         else
             data2=data;
         end
-%         if ~isempty(subheader)
-%             data=[subheader(:)'; data]
-%         end
-         T=cell2table(data2,'VariableNames',header);
-         writetable(T,filename,'Sheet',sheet);
-         
-         %% ====[change xlssheetname]===========================================
-         try
-             [pa,name,ext] = fileparts(filename);
-             if isempty(pa); pa=pwd; end
-             
-             fzip=fullfile(pa,[name '.zip']);
-             movefile(filename,fzip);
-             pa_unzip=fullfile(pa,name);
-             filesZip=unzip(fzip,pa_unzip);
-             
-             f1=filesZip{regexpi2(filesZip,'workbook.xml$')};
-             a=preadfile(f1); a=a.all;
-             iline=regexpi2(a,[ 'sheetId="' num2str(sheet) '"']);
-             l=a{iline};
-             
-             isheet=regexpi(l,[ 'sheetId="' num2str(sheet) '"']);
-             isheetname=regexpi(l,[ '<sheet name="']);
-             isheetname=isheetname(max(find(isheetname<isheet)));
-             s1=l(1:isheetname-1) ;
-             s3=l(isheet:end) ;
-             inSheetName=regexprep([l(isheetname:isheet-1) '_lor'],{'<sheet name="' '".*'},{''});
-             s2=[regexprep(l(isheetname:isheet-1),'".*"',['"' sheetname_new  '"'])];
-             l2=[s1 s2 s3];
-             
-             a(iline)={l2};
-             pwrite2file(f1,a);
-             %-----windows only
-             iapp=regexpi2(filesZip,'app.xml$');
-             if ~isempty(iapp)
-                 f1=filesZip{iapp};
-                 a=preadfile(f1); a=a.all;
-                 a2=regexprep(a,inSheetName, sheetname_new);
-                 pwrite2file(f1,a2);
-             end
-             
-             zip( fzip  ,'.',pa_unzip);
-             movefile(fzip,filename);
-             
-             try; rmdir(pa_unzip,'s'); end
-         end
-         
-         
-         
-      %% ===============================================
-
+        %         if ~isempty(subheader)
+        %             data=[subheader(:)'; data]
+        %         end
+        try
+            %T=cell2table(data2,'VariableNames',header);
+             T=array2table(data2,'VariableNames',header);
+            issueWithCell2table=0;
+        catch
+            %T=cell2table(data2);
+            T=array2table(data2);
+            issueWithCell2table=1;
+            Theader=T.Properties.VariableNames;
+        end
+        writetable(T,filename,'Sheet',sheet);
         
-         %% ===============================================
-%          
-%         writetable(table(infox),fileout,'Sheet','INFO')
-%         for i=1:length(pp.paramname)
-%             tbx=[...
-%                 pp.Eheader
-%                 [pp.Elabel num2cell(squeeze(pp.tb(:,i,:)))]
-%                 ];
-%             try
-%                 T=cell2table(tbx(2:end,:),'VariableNames',tbx(1,:));
-%             catch
-%                 %issue with VariableNames 'first character must be char')
-%                 i_numeric=regexpi2(tbx(1,:),'^\d|_') ;%indicate if 1st letter is numeric or 'underscore'
-%                 tbx(1,i_numeric)=cellfun(@(a){['s' a ]},tbx(1,i_numeric));
-%                 T=cell2table(tbx(2:end,:),'VariableNames',tbx(1,:));
-%             end
-%             writetable(T,fileout,'Sheet',pp.paramname{i} );
-%         end
-%         % add SHEEET "atlas" WITH:  'Region'  'colHex'  'colRGB'  'ID'  'Children'
-%         try
-%             T=cell2table(z.atlasTB,'VariableNames',z.atlasTBH);
-%             writetable(T,fileout,'Sheet','atlas' );
-%         end
-%         disp('..excel is not available..using "writetable" ');
-
+        %% ====[change xlssheetname]===========================================
+        try
+            [pa,name,ext] = fileparts(filename);
+            if isempty(pa); pa=pwd; end
+            
+            fzip=fullfile(pa,[name '.zip']);
+            movefile(filename,fzip);
+            pa_unzip=fullfile(pa,name);
+            filesZip=unzip(fzip,pa_unzip);
+            
+            f1=filesZip{regexpi2(filesZip,'workbook.xml$')};
+            a=preadfile(f1); a=a.all;
+            iline=regexpi2(a,[ 'sheetId="' num2str(sheet) '"']);
+            l=a{iline};
+            
+            isheet=regexpi(l,[ 'sheetId="' num2str(sheet) '"']);
+            isheetname=regexpi(l,[ '<sheet name="']);
+            isheetname=isheetname(max(find(isheetname<isheet)));
+            s1=l(1:isheetname-1) ;
+            s3=l(isheet:end) ;
+            inSheetName=regexprep([l(isheetname:isheet-1) '_lor'],{'<sheet name="' '".*'},{''});
+            s2=[regexprep(l(isheetname:isheet-1),'".*"',['"' sheetname_new  '"'])];
+            l2=[s1 s2 s3];
+            
+            a(iline)={l2};
+            pwrite2file(f1,a);
+            %-----windows only
+            iapp=regexpi2(filesZip,'app.xml$');
+            if ~isempty(iapp)
+                f1=filesZip{iapp};
+                a=preadfile(f1); a=a.all;
+                a2=regexprep(a,inSheetName, sheetname_new);
+                pwrite2file(f1,a2);
+            end
+            if issueWithCell2table==1;
+                f1=filesZip{regexpi2(filesZip,'sharedStrings.xml$')};
+                a=preadfile(f1); a=a.all;
+                header2=header(:)';
+                if length(Theader)~=length(header2); %if less heaferfiles given
+                    header2=[header2 repmat({''},[1 length(Theader)-length(header2) ])  ];
+                end
+                a2=regexprep(a,cellfun(@(a) {['>' (a)  '<' ]},Theader) ,cellfun(@(a) {['>' (a)  '<' ]},header2));
+                pwrite2file(f1,a2);
+            end
+            
+            zip( fzip  ,'.',pa_unzip);
+            movefile(fzip,filename);
+            
+            try; rmdir(pa_unzip,'s'); end
+        end
+        
+        
+        
+        %% ===============================================
+        
+        
+        %% ===============================================
+        %
+        %         writetable(table(infox),fileout,'Sheet','INFO')
+        %         for i=1:length(pp.paramname)
+        %             tbx=[...
+        %                 pp.Eheader
+        %                 [pp.Elabel num2cell(squeeze(pp.tb(:,i,:)))]
+        %                 ];
+        %             try
+        %                 T=cell2table(tbx(2:end,:),'VariableNames',tbx(1,:));
+        %             catch
+        %                 %issue with VariableNames 'first character must be char')
+        %                 i_numeric=regexpi2(tbx(1,:),'^\d|_') ;%indicate if 1st letter is numeric or 'underscore'
+        %                 tbx(1,i_numeric)=cellfun(@(a){['s' a ]},tbx(1,i_numeric));
+        %                 T=cell2table(tbx(2:end,:),'VariableNames',tbx(1,:));
+        %             end
+        %             writetable(T,fileout,'Sheet',pp.paramname{i} );
+        %         end
+        %         % add SHEEET "atlas" WITH:  'Region'  'colHex'  'colRGB'  'ID'  'Children'
+        %         try
+        %             T=cell2table(z.atlasTB,'VariableNames',z.atlasTBH);
+        %             writetable(T,fileout,'Sheet','atlas' );
+        %         end
+        %         disp('..excel is not available..using "writetable" ');
+        
     end
     
     global an
@@ -216,9 +236,9 @@ end
 %%   actxserver
 % ===============================================
 try
-exc=actxserver('excel.application');
+    exc=actxserver('excel.application');
 catch
-   return 
+    return
 end
 
 numLines = size(data,1)+size(subheader,1)+size(header,1); %number of lines
@@ -226,12 +246,12 @@ numLines = size(data,1)+size(subheader,1)+size(header,1); %number of lines
 [PATHSTR,NAME,EXT] = fileparts(filename);
 if isempty(PATHSTR)
     try
-   wb=exc.Workbooks.Open([pwd '\' filename]);
+        wb=exc.Workbooks.Open([pwd '\' filename]);
     catch
-    wb=exc.Workbooks.Open( filename);     
+        wb=exc.Workbooks.Open( filename);
     end
-else 
-wb=exc.Workbooks.Open(filename);
+else
+    wb=exc.Workbooks.Open(filename);
 end
 
 % get(wb.Activesheet)
@@ -295,7 +315,7 @@ try
     es.Application.ActiveWindow.FreezePanes = true;
 end
 
-% 
+%
 wb.Worksheets.Item(1).Activate; %activate first sheet
 %---------------------------
 wb.Save();
@@ -304,6 +324,6 @@ exc.Quit();
 
 
 try;
-      xlsremovdefaultsheets(filename);
+    xlsremovdefaultsheets(filename);
 end
 
