@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   27 Mar 2024 (16:11:12)  
+ &#x1F34E; last modification:   08 Apr 2024 (14:56:54)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**08 Apr 2024 (14:56:54)**</ins>  
+   __[xstat]__ debugged;  
+<!---->
   &#x1F535;   <ins>**27 Mar 2024 (16:11:12)**</ins>  
    __[xstat]__ modified;  
   the output of the 'fullreport' is a powerpoint file  or a  html-file  

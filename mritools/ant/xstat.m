@@ -479,9 +479,9 @@ xvv={};
 xvv.fs=fs;
 
 
-%———————————————————————————————————————————————
+% ==============================================
 %%   PARAMS
-%———————————————————————————————————————————————
+% ==============================================
 if exist('showgui')==0 || isempty(showgui) ;    showgui=1                   ;end
 if exist('x')==0                           ;    x=[]                        ;end
 
@@ -606,9 +606,9 @@ if 0
     
 end
 
-%———————————————————————————————————————————————
+% ==============================================
 %%   BACKUP
-%———————————————————————————————————————————————
+% ==============================================
 
 
 if 0
@@ -801,8 +801,9 @@ set(h2, 'position',[.01 .595 .7 .03]);
 set(h2,'tooltipstring','view results','backgroundcolor','w','fontweight','bold',...
     'HorizontalAlignment','left','tag', 'txtpath');
 
-
-%% ———————— preselection ———————————————————————————————————————
+% ==============================================
+%%   preselection
+% ===============================================
 h2=uicontrol('style','popupmenu','units','norm') ;      %TXT
 set(h2, 'position',[0 .49 .15 .05]);
 set(h2, 'position',[0 .485 .19 .05],'fontsize',7);
@@ -828,8 +829,9 @@ set(h2,'string',lis(:,1));
 set(h2,'userdata',lis,'callback',@radio_selectStatCorect);
 %%
 
-
-%% ———————— MCP ———————————————————————————————————————
+% ==============================================
+%%    MCP
+% ===============================================
 ttip=['multiple comparison problem' char(10) 'adjust p value to control FWE,FDR or none'];
 h2=uicontrol('style','text','units','norm') ;      %TXT
 set(h2, 'position',[0.2 .5 .11 .05]);
@@ -842,8 +844,7 @@ h2=uicontrol('style','edit','units','norm') ;      %number ofT
 set(h2, 'position',[0.2 .5 .1 .03]);
 set(h2,'tooltipstring',ttip,'tag','mcp');
 
-
-%% ———————— thresh ———————————————————————————————————————
+%% ===========[thresh]====================================
 ttip=['sgnificance level' char(10) ' example: [0.05] or [0.001]'];
 h2=uicontrol('style','text','units','norm') ;      %TXT
 set(h2, 'position',[0.30 .5 .12 .05]);
@@ -856,8 +857,7 @@ h2=uicontrol('style','edit','units','norm') ;      %number ofT
 set(h2, 'position',[0.31 .5 .1 .03]);
 set(h2,'tooltipstring',ttip,'tag','thresh');
 
-
-%% ———————— clustersize ———————————————————————————————————————
+%% ===========[clustersize]====================================
 ttip=['clustersize (k)' char(10) ' minimum spatial extend of connected significant voxels '];
 h2=uicontrol('style','text','units','norm') ;      %TXT
 set(h2, 'position',[0.425 .5 .12 .05]);
@@ -865,29 +865,24 @@ set(h2,'tooltipstring',ttip);
 set(h2,'string','CL-K','fontsize',6,'backgroundcolor','w');
 set(h2,'HorizontalAlignment','left','fontweight','bold');
 
-
 h2=uicontrol('style','edit','units','norm') ;      %number ofT
 set(h2, 'position',[0.425 .5 .1 .03]);
 set(h2,'tooltipstring',ttip,'tag','clustersize');
 
-%•••••••••••••••••••••••••••••••••••••••••••••••••••%•••••••••••••••••••••••••••••••••••••••••••••••••••
-
-%% ———————— new contrast———————————————————————————————————
+%% ===========[new contrast]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %load spm-input
 set(h2, 'string','new contrast','callback',@loadSPMmat);
 set(h2, 'position',[.0 .55 .26 .05],'fontsize',7);
 set(h2,'tooltipstring','load Results ("SPM.mat"), addit. parameters have to be defined');
 set(h2,'foregroundcolor',[repmat(0.3,[1 3])]);
-%% ———————— load con-1 ———————————————————————————————————
-
+%% ===========[load con-1 ]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %load1st contrast
 set(h2, 'string','Load Con-1','callback',@loadSPMmatnoInput);
 set(h2, 'position',[.26 .55 .26 .05],'fontsize',7);
 set(h2,'tooltipstring','load the 1st contrast with standard parameters');
 set(h2,'foregroundcolor','b');
 
-%% ———————— contrasts (listbox)———————————————————————————————————
-
+%% ===========[contrasts (listbox)]====================================
 h2=uicontrol('style','text','units','norm');            %other contrasts -TXT
 set(h2, 'string','contrasts','ButtonDownFcn',@loadothercontrastini);
 set(h2, 'position',[0.55881 0.645 .3 0.03],'fontsize',6,'backgroundcolor','w',...
@@ -911,21 +906,19 @@ global xvv
 set(h2,'fontsize',xvv.fs);
 end
 
-%% ———————— delete contrasts———————————————————————————————————
+%% ===========[ delete contrasts ]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %show sections
 set(h2, 'string','deleteC','callback',@deleteContrasts,'tag','deleteContrasts');
 set(h2, 'position',[[0.85451 0.22258 0.15 0.03]],'fontsize',6);
 set(h2,'tooltipstring','delete contrasts');
 
-
-%% ———————— recreate———————————————————————————————————
+%% ===========[ recreate ]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %show sections
 set(h2, 'string','restore','callback',@restoreContrasts,'tag','restoreContrasts');
 set(h2, 'position',[0.84989 0.65112 0.15 0.03],'fontsize',6);
 set(h2,'tooltipstring','restore contrasts after closing this GUI');
 
-
-%% ———————— show VOLUME(section)———————————————————————————————————
+%% ===========[ show VOLUME(section) ]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %show sections
 set(h2, 'string','show volume','callback',@showSections,'tag','showvolume');
 set(h2, 'position',[.0 .4 .28 .05],'fontsize',7);
@@ -936,20 +929,19 @@ set(h2, 'string','show vol','fontsize',6,'value',1);
 set(h2, 'position',[.3 .405 .25 .05],'backgroundcolor','w',...
     'tooltipstring','always show volume','tag','showSectionstoggle');
 
-
-%% ———————— show table———————————————————————————————————————
+%% ===========[ show table ]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %show table
 set(h2, 'string','show table','callback',@showTable,'tag','showTable');
 set(h2, 'position',[0    .35 .28 .05]);
 set(h2,'tooltipstring',' show statistical table');
 
-%% ———————— show table-in CMD-WIN———————————————————————————————————————
+%% ===========[ show table-in CMD-WIN ]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %show table
 set(h2, 'string','table-2-CMD','callback',@showTable_CMD,'tag','showTable_CMD');
 set(h2, 'position',[-0.00025874 0.31543 0.28 0.03],'fontsize',7);
 set(h2,'tooltipstring',' show statistical table in command window');
 
-%% ———————— clusters distance ———————————————————————————————————————
+%% ===========[ clusterDistance ]====================================
 ttip=['cluster distance ' char(10) 'minimum distance between clusters [mm]'];
 h2=uicontrol('style','text','units','norm') ;      %TXT
 set(h2, 'position',[0.4 .355 .11 .05]);
@@ -957,12 +949,13 @@ set(h2,'tooltipstring',ttip);
 set(h2,'string','Cldist','fontsize',6,'backgroundcolor','w');
 set(h2,'HorizontalAlignment','left','fontweight','bold');
 
+%% ===========[ clusterDistance ]====================================
 
 h2=uicontrol('style','edit','units','norm') ;      %  clusterDistance
 set(h2, 'position',[0.4 .355 .1 .03]);
 set(h2,'tooltipstring',ttip,'tag','clustdist');
 
-%% ———————— number of clusters ———————————————————————————————————————
+%% ===========[ number of clusters ]====================================
 h2=uicontrol('style','text','units','norm') ;      %TXT
 set(h2, 'position',[0.29 .355 .11 .05]);
 set(h2,'tooltipstring','Number of Peaks per cluster');
@@ -974,45 +967,40 @@ h2=uicontrol('style','edit','units','norm') ;      %number of cluster EDIT
 set(h2, 'position',[0.29 .355 .1 .03]);
 set(h2,'tooltipstring','number of maxima per cluster','tag','nmaxclust');
 
-
-%% ———————— export table excel ———————————————————————————————————————
+%% ===========[ export table excel ]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %export table
 set(h2, 'string','export xlsx','callback',@exporttableXLS);
 set(h2, 'position',[0   .25 .28 .05]);
 set(h2,'tooltipstring','save statistical table as Excel-file','fontsize',7);
 
-%% ———————— export table txt ———————————————————————————————————————
+%% ===========[ export table txt ]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %export table
 set(h2, 'string','export txt','callback',@exporttable);
 set(h2, 'position',[0.28158 0.25 0.28 0.05]);
 set(h2,'tooltipstring','save statistical table as txt-file','fontsize',7);
 
-%% ———————— extract data ———————————————————————————————————————
+%% ===========[ extract data  ]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %export table
 set(h2, 'string','extract data','callback',@extractData_call);
 set(h2, 'position',[0 0.14878 0.28 0.05]);
 set(h2,'tooltipstring','extract animal''s -peak data and store as Excel-file','fontsize',7);
-
-%% ———————— save vol———————————————————————————————————————
+%% ===========[ save vol ]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %save volume table
 set(h2, 'string','save volume','callback',@save_threshvolume);
 set(h2, 'position',[0    .2 .28 .05]);
 set(h2,'tooltipstring','save thresholded volume as nifti-file','fontsize',7);
-
-%% ———————— show mricron ———————————————————————————————————————
+%% ===========[ show mricron ]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %show volume MRICRON
 set(h2, 'string','show MRicron','callback',@show_mricron);
 set(h2, 'position',[0.28 .2 .28 .05]);
 set(h2,'tooltipstring','show previously saved thresholded volume overlayed in MRICRON','fontsize',7);
-
-%% ———————— show vol in extraFigure ———————————————————————————————————————
+%% ===========[ show vol in extraFigure ]====================================
 h2=uicontrol('style','pushbutton','units','norm') ;      %show volume MRICRON
 set(h2, 'string','show VolOrtho','callback',@show_vol_extrafigure);
 set(h2, 'position',[0.56343 0.2 0.28 0.05]);
 set(h2,'tooltipstring','show previously saved thresholded volume in another figure','fontsize',6);
 
 %% ======= code posthoc ========================================
-
 h2=uicontrol('style','pushbutton','units','norm') ;      %show volume MRICRON
 set(h2, 'string','code posthoc','callback',@code_posthoc);
 set(h2, 'position',[0 0.058305 0.32 0.045],'fontsize',7);
@@ -1056,9 +1044,9 @@ set(h2,'tooltipstring','close this gui','fontsize',7);
 
 
 
-
-%% ——— set prefs————————————————————————————————————————————
-
+% ==============================================
+%%   set prefs
+% ===============================================
 prefs=getprefs;
 
 set(findobj(gcf,'tag','mcp'        ),'string',  prefs.mcp         ,'fontsize',6);
@@ -1069,7 +1057,7 @@ set(findobj(gcf,'tag','nmaxclust'  ),'string',  prefs.nmaxclust    ,'fontsize',6
 set(findobj(gcf,'tag','clustdist'  ),'string',  prefs.clustdist    ,'fontsize',6);
 
 
-%———————————————————————————————————————————————
+% ==============================================
 
 set(gcf,'userdata',s);
 drawnow
@@ -1186,9 +1174,9 @@ end
     
     
 
-%———————————————————————————————————————————————
+% ==============================================
 %%   subs
-%———————————————————————————————————————————————
+% ==============================================
 
 function posthoc(e,e2,task)
 
@@ -1619,9 +1607,9 @@ function loadothercontrastini(e,e2)
 loadothercontrast('initialize',[]);
 
 
-%———————————————————————————————————————————————
+% ==============================================
 %%   readexcel
-%———————————————————————————————————————————————
+% ==============================================
 
 function chkOK=readexcel(xtype)
 chkOK=0;
@@ -1646,9 +1634,9 @@ if ~isempty(an)
     v.mask       = fullfile(fileparts(an.datpath),'templates', 'AVGTmask.nii');
 end
 
-%———————————————————————————————————————————————
+% ==============================================
 %%   parmaeter
-%—————————————————————————————
+% ===============================================
 % stat test                    first comment in GUI
 stattests={...
     'twosamplettest'     '% TWO-SAMPLE-TTEST'
@@ -1783,9 +1771,9 @@ end
 
 global vxx
 
-%———————————————————————————————————————————————
+% ==============================================
 %%   working with 'x'
-%———————————————————————————————————————————————
+% ==============================================
 
 
 if iscell(x.excelfile);    x.excelfile  =char(x.excelfile); end
@@ -1851,9 +1839,10 @@ end
 %
 % s.out=fullfile(pwd,'res2perm'); mkdir(s.out)
 
-%———————————————————————————————————————————————
-%%   read excel
-%———————————————————————————————————————————————
+% ==============================================
+%%    read excel
+% ===============================================
+
 
 if exist(x.excelfile)~=2
     cprintf('*[1 0 .5]',['ERROR: group-assignmment-file does not exist ' '\n']);
@@ -2079,9 +2068,9 @@ s.d(:,1)=strrep(s.d(:,1),' ','');  %remove blanks
 try
     s.d(:,2)=strrep(s.d(:,2),' ','');
 end
-%———————————————————————————————————————————————
+% ==============================================
 %%   check existence of nifti-file
-%———————————————————————————————————————————————
+% ==============================================
 [files,~] = spm_select('FPListRec',x.data_dir,['^' x.inputimage '$']);  files=cellstr(files);
 
 if strcmp(xtype,'fullfactorial')
@@ -2156,9 +2145,9 @@ elseif strcmp(xtype,'onewayanova')
 end
 
 
-%———————————————————————————————————————————————
+% ==============================================
 %%   CLASSES AND SUBGROUPS
-%———————————————————————————————————————————————
+% ==============================================
 
 if  strcmp(xtype,'twosamplettest')
     s.classes=unique(s.d(:,2))';
@@ -2576,10 +2565,10 @@ xstat('loadspm',spmpath);
 
 %% ===============================================
 
+% ==============================================
+%%    loadSPMmat-input
+% ===============================================
 
-%———————————————————————————————————————————————
-%%   loadSPMmat-input
-%———————————————————————————————————————————————
 function loadSPMmat(e,e2)
 
 global lab; %remove previous cluster
@@ -2621,10 +2610,9 @@ set(findobj(hf,'tag','clustersize'),'string', num2str(w.k));
 
 ht=findobj(hf,'tag','loadothercontrast');
 set(ht,'value',w.con);
-
-%———————————————————————————————————————————————
-%%   loadSPMmat- fast
-%———————————————————————————————————————————————
+% ==============================================
+%%    loadSPMmat-fast
+% ===============================================
 function loadSPMmatnoInput(e,e2,spmfile)
 
 global lab; %remove previous cluster
@@ -2695,13 +2683,10 @@ hfig=findobj(0,'tag','vvstat');
 figure(hfig);
 uicontrol(findobj(hfig,'tag','loadothercontrast'));
 
-
-%———————————————————————————————————————————————
-%%  showSections
-%———————————————————————————————————————————————
+% ==============================================
+%%   showSections 
+% ===============================================
 function showSections(e,e2)
-
-
 spmsetup;
 global lab
 % if isem;pty(lab)
@@ -3837,46 +3822,46 @@ g.bgimg=lab.template;
 % ==============================================
 %%     MODELS
 % ===============================================
-%———————————————————————————————————————————————
+% ==============================================
 %%   userdefined
-%———————————————————————————————————————————————
+% ===============================================
 function userdefined(e,e2)
 spmsetup ;
 spm_jobman;
-%———————————————————————————————————————————————
+% ==============================================
 %%   paired-sample ttest
-%———————————————————————————————————————————————
+% ===============================================
 function pairedsampleTest(e,e2,varargin)
 voxstat_pairedsampleTest();
-%———————————————————————————————————————————————
+% ==============================================
 %%   onewayanova
-%———————————————————————————————————————————————
+% ==============================================
 function onewayanova(e,e2,varargin)
 voxstat_onewayANOVA();
-%———————————————————————————————————————————————
+% ==============================================
 %%   onewayanova-within
-%———————————————————————————————————————————————
+% ==============================================
 function onewayanova_within(e,e2,varargin)
 voxstat_onewayANOVAwithin();
-%———————————————————————————————————————————————
+% ==============================================
 %%   fullfactorial
-%———————————————————————————————————————————————
+% ==============================================
 function fullfactorial(e,e2,varargin)
 voxstat_multifactorial();
-%———————————————————————————————————————————————
+% ==============================================
 %%   flexfactorial
-%———————————————————————————————————————————————
+% ==============================================
 function flexfactorial(e,e2,varargin)
 voxstat_flexfactorial();
 
-%———————————————————————————————————————————————
+% ==============================================
 %%   twosampleTest
-%———————————————————————————————————————————————
+% ==============================================
 function twosampleTest(e,e2,varargin)
 voxstat_twosampleTest();
-%———————————————————————————————————————————————
+% ==============================================
 %%  %% multiple regression
-%———————————————————————————————————————————————
+% ==============================================
 function multipleregression(e,e2,varargin)
 voxstat_regression();
 
@@ -4426,26 +4411,43 @@ for jj=1:length(cons)   %:   size(get(lb,'string'),1)   %1:1,
         end
         
         %% ===============================================
-        dd=findobj(figH,'type','image','tag','Transverse');
-        [S1 S2]=getscreensize();
-        resizefac=S2(3:4)/S1(3:4);
-        pos_orthimgs=[];
-        for i=1:length(dd)
-            oax=get(dd(i),'parent');
-            unit_prev=get(oax,'units');
-            set(oax,'units','pixels');
-            pos_orthimgs(i,:) =  get(oax,'position');
-            set(oax,'units',unit_prev);
+        if 0
+            dd=findobj(figH,'type','image','tag','Transverse');
+            [S1 S2]=getscreensize();
+            resizefac=S2(3:4)/S1(3:4);
+            pos_orthimgs=[];
+            for i=1:length(dd)
+                oax=get(dd(i),'parent');
+                unit_prev=get(oax,'units');
+                set(oax,'units','pixels');
+                pos_orthimgs(i,:) =  get(oax,'position');
+                set(oax,'units',unit_prev);
+            end
+            mipo=min(pos_orthimgs,[],1);
+            mapo=max(pos_orthimgs,[],1);
+            marg=1;
+            pos_orthoimg=[mipo(1:2)-marg mapo(3:4)*resizefac+marg];
+            
+            w=getframe(figH,pos_orthoimg);
+            ido=round(squeeze(mean(mean(w.cdata,1),3))); %remove white right border
+            w.cdata=w.cdata(:,1:max(find(ido~=255))+1,:);
+            % fg,image(w.cdata);
         end
-        mipo=min(pos_orthimgs,[],1);
-        mapo=max(pos_orthimgs,[],1);
-        marg=1;
-        pos_orthoimg=[mipo(1:2)-marg mapo(3:4)*resizefac+marg];
         
-        w=getframe(figH,pos_orthoimg);
-        ido=round(squeeze(mean(mean(w.cdata,1),3))); %remove white right border
-        w.cdata=w.cdata(:,1:max(find(ido~=255))+1,:); 
-        % fg,image(w.cdata);
+        %% ======[get frade]=============================================
+        w=getframe(figH);
+        xs=w.cdata;
+        xs=xs(round(size(xs,1)/2):end,:,:);
+        vec=round(squeeze(mean(mean(xs,2),3)));
+        dow=[min(find(vec~=255)) max(find(vec~=255))];
+        vec=round(squeeze(mean(mean(xs,1),3)));
+        rig=[min(find(vec~=255)) max(find(vec~=255))];
+        marg=1;
+        xs=xs(dow(1)-marg:dow(2)+marg,rig(1)-marg:rig(2)+marg,:);
+        w.cdata=xs;
+        %% ===================================================
+        
+        
         if strcmp(s.format,'ppt')
             exportToPPTX('addpicture',w.cdata,'position',[8.64 0.18 3.35 2.56]);
         elseif strcmp(s.format,'html')
@@ -4528,9 +4530,9 @@ uhelp(mfilename,1);
 
 
 
-%———————————————————————————————————————————————
+% ==============================================
 %%   COPYNPASTE INTO GUI
-%———————————————————————————————————————————————
+% ==============================================
 if 0
     %% PAIRED TTEST
     x.excelfile=     { 'O:\data\voxelwise_Maritzen4tool\Maritzen_Animal_groups.xlsx' };	% [Excelfile]: this file contains two columns with mouseIDs (names) for timepoint T1 and T2, respectively

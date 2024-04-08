@@ -1051,7 +1051,8 @@
 % #k [xstat] #n modified;
 % the output of the 'fullreport' is a powerpoint file  or a  html-file
 % xstat('fullreport', struct('format','html'));
-% 
+% #ba 08 Apr 2024 (14:56:54)
+% #k [xstat] #n debugged;
 % 
 
 %% ===============================================
