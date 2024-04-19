@@ -165,8 +165,29 @@
 %  vs={  struct('file',f1,'fxy', [1 2])    struct('file',f2,'fxy', [1 10]) };
 %  img2ppt(pwd,[], fullfile(pwd,'test3.pptx'),'doc','add' ,'multifile',vs);
 % 
+% ======================================================
+%%   EXAMPLE: multiple images on several ppt-slides
+% =======================================================
+% paout =pwd;
+% paimg =fullfile(pwd,'barplot_img');
 % 
+% pptfile =fullfile(paout,'barplot.pptx');
+% titlem  =['barplots'  ];
+% [fis]   = spm_select('FPList',paimg,'^bar.*.png');    fis=cellstr(fis);
+% tx      ={['path: '  paimg ]};
 % 
+% nimg_per_page  =6;           %number of images per plot
+% imgIDXpage     =unique([1:nimg_per_page:length(fis) length(fis)+1 ]);
+% for i=1:length(imgIDXpage)-1
+%     if i==1; doc='new'; else; doc='add'; end
+%     img_perslice=fis([imgIDXpage(i):imgIDXpage(i+1)-1]);
+%     img2ppt(paout,img_perslice, pptfile,'size','A4','doc',doc,...
+%         'crop',0,'gap',[0 0 ],'columns',2,'xy',[0 1.5 ],'wh',[ 10.5 nan],...
+%         'title',titlem,'Tha','center','Tfs',10,'Tcol',[1 1 1],'Tbgcol',[1 .8 0],...
+%         'text',tx,'tfs',6,'txy',[0 28],'tbgcol',[1 1 1]);
+% end
+% 
+
 
 
 function img2ppt(indir,imfiles,pptfile,varargin)
