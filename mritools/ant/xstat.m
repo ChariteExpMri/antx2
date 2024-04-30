@@ -1932,8 +1932,18 @@ if isfield(x,'regress_col')
         s.m.isCovar   =1;
     end
 end
-
-[files,~] = spm_select('FPListRec',x.data_dir,['^' x.inputimage '$']);  files=cellstr(files);
+%% =========[get NIFTIs]======================================
+[dirs] = spm_select('FPList',x.data_dir,'dir');
+dirs=cellstr(dirs);
+files={};
+for i=1:length(dirs)
+    [filestmp,~] = spm_select('FPList',dirs{i},['^' x.inputimage '$']) ;
+    if ~isempty(filestmp)
+        files{end+1,1}=filestmp;
+    end
+end
+%[files,~] = spm_select('FPListRec',x.data_dir,['^' x.inputimage '$']);  files=cellstr(files);
+%% ===============================================
 if isempty(x.inputimage)
     msgbox('no image selected!!');
     error('image must be selected');
@@ -2071,7 +2081,7 @@ end
 % ==============================================
 %%   check existence of nifti-file
 % ==============================================
-[files,~] = spm_select('FPListRec',x.data_dir,['^' x.inputimage '$']);  files=cellstr(files);
+% [files,~] = spm_select('FPListRec',x.data_dir,['^' x.inputimage '$']);  files=cellstr(files);
 
 if strcmp(xtype,'fullfactorial')
     tbsize=1+length(s.dfactornames)+length(s.regressname);

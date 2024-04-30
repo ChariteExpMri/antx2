@@ -115,7 +115,9 @@ p={...
 'inf2' '' '' ''
 'inf3' '___ OUTPUT ___' '' ''
 'outputfolder'        outdir 'output folder for resulting EXCEL-file '    'd'
-'filenamePrefix'      ''        '<optional> enter filename prefix for resulting EXCEL-file' ''
+'filenamePrefix'      'values'  'enter filename prefix for resulting EXCEL-file' {'values' ''}
+'filenameSuffix'      ''        '<optional> enter filename suffix for resulting EXCEL-file' {'_params' ''}
+
 'addDate'              0   '<optional> at date to filename (suffix)' 'b'
 'addTime'              0   '<optional> at time to filename (suffix)' 'b'
 %
@@ -467,7 +469,8 @@ else
     
     
     %% [3] get images ===============================================
-    
+     if ischar(x.file);        x.file=cellstr(x.file) ;     end
+
     
     mdir=antcb('getsubjects');
     [~,animals]=fileparts2(mdir);
@@ -589,10 +592,14 @@ else
         outdir=fullfile(fileparts(an.datpath),'results');
     end
     mkdir(outdir);
+    
     prefix=char(z.filenamePrefix);
-    if ~isempty(prefix)
-        prefix=[prefix '_'];
-    end
+    if isempty(prefix);          prefix='values'; end
+    if ~isempty(prefix);         prefix=[prefix '_'];      end
+    
+    suffix=char(z.filenameSuffix);
+    if ~isempty(suffix);         suffix=['_' suffix ];      end
+    
     sdate='';
     if z.addDate==1
         sdate=['_' datestr(now,'dd_mmm_yy')];
@@ -602,13 +609,22 @@ else
         stime=['_Time_' datestr(now,'HH_MM_SS')];
     end
     
-    Fout=fullfile(outdir,['res_' prefix  'maskParameter' sdate stime '.xlsx']);
+    outname=[ prefix  suffix sdate stime ];
+    if strcmp(outname(end),'_'); outname(end)=[]; end
+    
+    Fout=fullfile(outdir,[outname '.xlsx']);
     disp(['..writing Excelfile: '  Fout ]);
     
     
     %% __write info__
     g={['# date: ' datestr(now)  ]};
-    g{end+1,1}=['# FILE   :' z.file{1}];
+    try
+        g{end+1,1}=['# FILE   :' z.file{1}  ];
+    catch
+        g{end+1,1}=['# FILE   :' z.file  ];
+    end
+
+    
     g{end+1,1}=['# MASK(S):' ];
     g=[g; z.masks(:) ];
     

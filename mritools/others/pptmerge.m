@@ -95,12 +95,22 @@ copyfile(fis{1},fisoutname,'f');
 if p.verbose==1
     fprintf([sprintf('%c', 8594) 'merging slides: ']);
 end
+%% ===============================================
 for i=2:length(fis)
     if p.verbose==1
         fprintf('%d,', i);
     end
-    mergefile(fisoutname,fis{i})
+    dorun=1;
+    while dorun
+        drawnow;
+        fclose('all');
+        try  
+            mergefile(fisoutname,fis{i})
+            dorun=0;
+        end
+    end           
 end
+%% ===============================================
 if p.verbose==1
     fprintf(['\b.'  'Done.\n']);
 end

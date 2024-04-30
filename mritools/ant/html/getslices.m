@@ -110,6 +110,10 @@ if exist('slicesnum') && ~isempty(slicesnum)
             slicenum=slicenum(2:end-1); %don't use 1 and last slice
             slicesmm=slices(slicenum);
             nslices=length(slicesmm);
+        elseif strcmp(slicesnum,'all') || strcmp(slicesnum,':')%all slices
+            slicenum=1:length(slices);
+            slicesmm=slices;
+            nslices=length(slicesmm);
         else
             str1=str2num(slicesnum); % stepwise
             if length(str1)==1
