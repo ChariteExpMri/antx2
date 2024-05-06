@@ -1021,7 +1021,7 @@ if strcmp(task,'getbtable')
         pdat=fullfile(d.studypath,'dat');
         mesg='select Btables from one Animal-folder, (please put RPE-files at the end)';
         %    [t,sts] = spm_select(n,typ,mesg,sel,wd,filt,frames)
-        [t,sts] = spm_select(2,'any',mesg,[],pdat,'.*.txt');
+        [t,sts] = spm_select(inf,'any',mesg,[],pdat,'.*.txt');
         if sts==0; return; end
         t=cellstr(t);
         

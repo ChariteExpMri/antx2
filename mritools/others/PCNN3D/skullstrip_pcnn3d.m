@@ -47,6 +47,10 @@ else
         pp=shrew;    
     elseif isfield(params,'species') && strcmp(params.species,'mouse')
         pp=pmouse;
+    elseif isfield(params,'species') && strcmp(params.species,'hamster')
+        pp.species      = params.species;
+        pp.brainSize    = [500 1300]; %
+        pp.scalefactor  = [1];
     else
         %warning('### unknown species ### --> ') ;
         pp=pmouse;
