@@ -8,7 +8,9 @@
     
 ------------------  
   &#x1F535;   <ins>**06 May 2024 (19:06:39)**</ins>  
-  minor changes  
+  minor changes    
+  -bug: DTIprep.m, line-1024  
+  -implementation of hamster-atlas  
 <!---->
   &#x1F535;   <ins>**08 Apr 2024 (14:56:54)**</ins>  
    __[xstat]__ debugged;  

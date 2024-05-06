@@ -1054,7 +1054,10 @@
 % #ba 08 Apr 2024 (14:56:54)
 % #k [xstat] #n debugged;
 % #ba 06 May 2024 (19:06:39)
-% minor changes
+% minor changes  
+% -bug: DTIprep.m, line-1024
+% -implementation of hamster-atlas
+% 
 % 
 
 %% ===============================================
