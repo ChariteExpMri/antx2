@@ -1396,6 +1396,23 @@ if strcmp(task,'deformfiles')
     %     end
     %____________________
     
+    
+    %-----create init-deformfield to StandardSpace
+    f_dormfieldInit = fullfile(d.dtipath, 'warpfield_SS.nii');
+    f_refimg          = fullfile(d.studypath,'templates','AVGT.nii');
+    makewarpfield(f_refimg,f_dormfieldInit,'dtype',16);
+    fis=doelastix(-1, mdirs,f_dormfieldInit ,1,'local' ,struct('source','extern'));
+    
+    %-----create init-deformfield to NativeSpace
+    for i=1:length(mdirs)
+        f_dormfieldInit   = fullfile(mdirs{i}, 'warpfield_NS.nii');
+        f_refimg          = fullfile(mdirs{i}, 't2.nii');
+        makewarpfield(f_refimg,f_dormfieldInit,'dtype',16);
+        fis=doelastix(1, mdirs(i),f_dormfieldInit ,1,'local' );
+        try; delete(f_dormfieldInit); end
+    end
+    
+    
     %______________________________________________________
     if isGUI==1
         updateLB();
@@ -1469,7 +1486,16 @@ if strcmp(task,'registerimages')
                 'c3t2.nii'};
             z.applyImg1= [z.applyImg1 ; TPMS];
         end
+        %------test---- displacementfield
+% % % % %         displaceField='displacefield_NS2DWI.nii';
+% % % % %         for i=1:length(mdirs)
+% % % % %             refimg =fullfile(mdirs{i},char(z.targetImg1));
+% % % % %             outfile=fullfile(mdirs{i},displaceField);
+% % % % %             makewarpfield(refimg,outfile);
+% % % % %         end
+% % % % %          z.applyImg1= [z.applyImg1 ; {displaceField}];
         
+        %----------------------------------
         
         z.cost_fun      =cc.cost_fun     ;% FORMERLY: 'nmi';
         z.sep           =cc.sep          ;% FORMERLY: [4  2  1  0.5  0.1  0.05];
@@ -1490,6 +1516,19 @@ if strcmp(task,'registerimages')
         
         
         xcoreg(0,z,mdirs);
+% % % %         %% ===inverse displacementfield ============================================
+% % % %         z2=z;
+% % % %         z2.targetImg1=z.sourceImg1;
+% % % %         z2.sourceImg1=z.targetImg1;
+% % % %         
+% % % %         displaceField='displacefield_DWI2NS.nii';
+% % % %         for i=1:length(mdirs)
+% % % %             refimg =fullfile(mdirs{i},char(z2.targetImg1));
+% % % %             outfile=fullfile(mdirs{i},displaceField);
+% % % %             makewarpfield(refimg,outfile);
+% % % %         end
+        
+        
         %% ===============================================
     end %new
     
@@ -1949,6 +1988,10 @@ if strcmp(task,'exportfiles')
         files= [files ; TPM_coreg];
         % files= [TPM_coreg; files  ];
     end
+    
+    %% --- add other imaged 
+    files= [files ; {'t2.nii' ;'AVGT.nii';...
+        'ix_warpfield_SS.nii' ; 'x_warpfield_NS.nii'}];%; 'rc_displacefield_NS2DWI.nii'
     
     
     %% ------for each animal

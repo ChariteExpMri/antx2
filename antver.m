@@ -1058,6 +1058,9 @@
 % -bug: DTIprep.m, line-1024
 % -implementation of hamster-atlas
 % 
+% #ba 15 May 2024 (15:49:21)
+% revision of DTIprep --> checks uncompleted...
+% 
 % 
 
 %% ===============================================
