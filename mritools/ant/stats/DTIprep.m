@@ -748,11 +748,23 @@ end
 %%   scripts-button
 % ===============================================
 hb=uicontrol('style','pushbutton','units','norm','string','scripts','tag','scripts_pb');
-set(hb,'position',[0.3678 0.025209 0.07 0.08],'fontsize',8);
+set(hb,'position',[0.35709 0.35859 0.07 0.08],'fontsize',8);
 set(hb,'callback',{@scripts_pb} );
 set(hb,'backgroundcolor',[1 1 1],'foregroundcolor',[0 0 1]);
 set(hb,'tooltipstring',[ '<html><b>collection of scripts</b><br>'...
     'some scripts that might be usefull']);
+
+% ==============================================
+%%   mrtrix-monitor-button
+% ===============================================
+hb=uicontrol('style','pushbutton','units','norm','string','MRtrix-monitor','tag','start_mrtrixmonitor');
+set(hb,'position',[0.35709 0.011508 0.14 0.08],'fontsize',8);
+set(hb,'callback',{@start_mrtrixmonitor} );
+set(hb,'backgroundcolor',[1 1 1],'foregroundcolor',[0 0 0]);
+set(hb,'tooltipstring',[ '<html><b>start MRtrix-monitor</b><br>'...
+    '-use MRtrix-monitor when MRtrix-processes are running<br>' ...
+    ' can be used to check the status of MRtrix-pipeline<br>' ...
+    'or run: mrtrix_monitor.m']);
 
 % ==============================================
 %% userdata +update
@@ -762,6 +774,9 @@ set(gcf,'userdata',u);
 if ~isempty(u.studypath)
     updateLB();
 end
+
+function start_mrtrixmonitor(e,e2)
+mrtrix_monitor();
 
 
 
@@ -3043,13 +3058,17 @@ DTIprep('check');
 
 function d=getdata()
 global an
-f1=fullfile(fileparts(an.datpath),'DTI','check.mat');
+f1='';
+try
+    f1=fullfile(fileparts(an.datpath),'DTI','check.mat');
+end
 if exist(f1)==2
     d=load(f1);
     d=d.d;
 else
-    error('ant-project not loaded or "DTIprep not initialized"');
+    error('ANTx-project not loaded or "DTIprep not initialized"');
 end
+
 function setdata(d)
 global an
 f1=fullfile(fileparts(an.datpath),'DTI','check.mat');
@@ -3506,10 +3525,11 @@ if exist('argin') && length(argin)>1
 end
 
 scripts={
+    'DTIscript_exportToHPC_makeBatch_19-05-2024.m'
     'DTIscript_exportToHPC_makeBatch_11-01-2024.m'
-    'DTIscript_exportToHPC_makeBatch_20-10-2023.m'
-    'DTIscript_exportToHPC_makeBatch_14-02-2023.m'
-    'DTIscript_exportToHPC_makeBatch_19-01-2023.m'
+%     'DTIscript_exportToHPC_makeBatch_20-10-2023.m'
+%     'DTIscript_exportToHPC_makeBatch_14-02-2023.m'
+%     'DTIscript_exportToHPC_makeBatch_19-01-2023.m'
     'DTIscript_makeQA_HTML_from_screenshots.m'
     'DTIscript_importFromHPC_allData.m'
     'DTIscript_importFromHPC_connectome.m'

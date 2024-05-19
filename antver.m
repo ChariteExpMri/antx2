@@ -1060,6 +1060,9 @@
 % 
 % #ba 15 May 2024 (15:49:21)
 % revision of DTIprep --> checks uncompleted...
+% #ba 19 May 2024 (14:38:08)
+% revision of DTIprep --> uploaded mrtrix-monitor and assoc. files... checks still uncompleted...
+% 
 % 
 % 
 

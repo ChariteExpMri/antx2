@@ -200,14 +200,14 @@ elseif status==0
     pause(.2);
     %job.getComponent.setVisible(false);
     %set(us.hwaitspin,'visible','off');
-    set(hv,'visible','off');
+   try; set(hv,'visible','off');end
 end
 
 drawnow;
 
 
 function contextCB(e,e2,task)
-task
+% task
 if strcmp(task,'close')
     waitspin(0);
 elseif strcmp(task,'transparent')

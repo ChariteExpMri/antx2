@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   15 May 2024 (15:49:21)  
+ &#x1F34E; last modification:   19 May 2024 (14:38:08)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**19 May 2024 (14:38:08)**</ins>  
+  revision of DTIprep --> uploaded mrtrix-monitor and assoc. files... checks still uncompleted...  
+<!---->
   &#x1F535;   <ins>**15 May 2024 (15:49:21)**</ins>  
   revision of DTIprep --> checks uncompleted...  
 <!---->
