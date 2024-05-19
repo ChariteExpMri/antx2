@@ -243,7 +243,7 @@ elseif strcmp(task,'srv_getstatus') || strcmp(task,'srv_listfiles')
         else
             set(hb,'value',length(ms));
         end
-        set(hb,'string',ms);
+        set(hb,'string',ms,'value',1);
     elseif strcmp(task,'srv_listfiles')
         %         o.files=
         m=arg.status;
