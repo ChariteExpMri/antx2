@@ -33,12 +33,13 @@ try
         end
     else
         hb=mi.hb;
+       
         
         p1=get(hb,'position');
         co=get(gcf,'CurrentPoint');
         hpar=get(hb,'parent');
         ;
-        if strcmp(get(hpar,'type'),'figure');
+        if strcmp(get(hpar,'type'),'figure') || strcmp(get(hpar,'type'),'uitab')
             upar0= get(hpar,'units');
             uhb0 = get(hb,'units');
             
@@ -74,6 +75,9 @@ ev=hittest(gcf);
 global mi
 hb=ev;
 mi.hb=hb;
+if strcmp(get(mi.hb,'type'),'image')
+    mi.hb=get(hb,'parent');
+end
 
 
 

@@ -31,7 +31,7 @@ threshold       = z2.threshold;
 stp = stepsize;
 dl  = d2;
 if logarithmize==1                  %logarithmize data
-    dl=log(d2);
+    dl=log(1+d2);
 end
 dl(isinf(dl))=0;
 dl(dl<0)     =0;

@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   19 May 2024 (14:38:08)  
+ &#x1F34E; last modification:   26 Aug 2024 (11:42:26)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**26 Aug 2024 (11:42:26)**</ins>  
+   __[orthoslice]__ modified, function to display nifti-files (overlay) orthogonal view or mosaic (slice-wise)  
+  help of orthoslice has to be modified..  
+<!---->
   &#x1F535;   <ins>**19 May 2024 (14:38:08)**</ins>  
   revision of DTIprep --> uploaded mrtrix-monitor and assoc. files... checks still uncompleted...  
 <!---->

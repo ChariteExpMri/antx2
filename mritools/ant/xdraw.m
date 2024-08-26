@@ -7,7 +7,7 @@
 % ________________________________________________________________________________
 % #lk *** [1] HOW TO DRAW A ROI ***
 % #ka *** Draw ROI ***
-% --> deselect [unpaint]-button (gray color)
+% --> deselect [unpaint]-button (gray color)oc
 % * Keep the left mouse-button pressed to draw .. colorize pixels below pointer.
 % * Double-click to fill a region (boundaries of region must be closed)
 % #ka *** REMOVE ROI ***

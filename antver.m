@@ -1062,7 +1062,9 @@
 % revision of DTIprep --> checks uncompleted...
 % #ba 19 May 2024 (14:38:08)
 % revision of DTIprep --> uploaded mrtrix-monitor and assoc. files... checks still uncompleted...
-% 
+% #ba 26 Aug 2024 (11:42:26)
+% #k [orthoslice] #n modified, function to display nifti-files (overlay) orthogonal view or mosaic (slice-wise)
+% help of orthoslice has to be modified..
 % 
 % 
 

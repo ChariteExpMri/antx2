@@ -144,7 +144,7 @@ if exist('slicesnum') && ~isempty(slicesnum)
     end
 else
     slicesnum=slicesix;
-    nslices=size(slicesmm,1);
+    nslices=length(slicesmm);
 end
 
 % Plane coordinates

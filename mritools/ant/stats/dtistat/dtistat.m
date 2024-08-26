@@ -2418,10 +2418,8 @@ if z.inputsource==2 && param==2  % MAtrix
         d2=smallwordnesswrapper(xx.mat,z2);
     else
         d2=xx.mat;
-        
-        d2=xx.mat;
         if z2.logarithmize==1
-            d2=log(d2);
+            d2=log(1+d2);
             d2(isinf(d2))=0;
         end
         

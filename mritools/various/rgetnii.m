@@ -16,14 +16,14 @@ function [h d xyz xyzind]=rgetnii(file,imgnum )
 %     fname=gunzip(file) 
 % end
 
-%---gunzip file
+%---gunzip file (not needed!)
 [pax filex extx]=fileparts(file);
-if strcmp(extx,'.gz')
-    if isempty(pax); pax=pwd; end
-    gzfile=fullfile(pax, [ filex extx ] );
-    f3=gunzip(gzfile,pax);
-    file=f3{1};
-end
+% if  strcmp(extx,'.gz')
+%     if isempty(pax); pax=pwd; end
+%     gzfile=fullfile(pax, [ filex extx ] );
+%     f3=gunzip(gzfile,pax);
+%     file=f3{1};
+% end
 %-------------
 
 

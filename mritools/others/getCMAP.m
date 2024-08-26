@@ -12,7 +12,8 @@
 % o=getCMAP(maps{2}); % get map of 2nd map
 % o=getCMAP('actc'); %get map of 'actc'
 % [o o2]=getCMAP({'actc' 'gray'}) ;%get arry of 'actc' 'gray'  ...output is of type cell
-% 
+%% -------get CMAP numeric
+% [table cmapname]=getCMAP(3)  %obtain table from 3rd mapname
 % 
 
 function [o o2]=getCMAP(arg1,arg2)
@@ -100,16 +101,23 @@ m=paramgui(p,'uiwait',0,'editorpos',[.03 0 1 1],'figpos',[.5 .3 .3 .5 ],'info',{
  [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .8 .6 ],...
         'title',['***COREGISTRATION***' '[' mfilename '.m]'],'info',{@uhelp, 'xcoreg.m'});
 
-else 
-    
-    arg1=cellstr(arg1);
-    for i=1:length(arg1)
-        if length(arg1)==1
-           o =getcolor(arg1{i});
-           o2=arg1{i}; 
-        else
-            o{i,1} =getcolor(arg1{i});
-            o2{i,1}=arg1{i};
+else
+    if isnumeric(arg1)
+        names=getCMAP('names');
+        colname=names{arg1};
+        o=getcolor(colname);
+        o2=colname;
+    else
+        
+        arg1=cellstr(arg1);
+        for i=1:length(arg1)
+            if length(arg1)==1
+                o =getcolor(arg1{i});
+                o2=arg1{i};
+            else
+                o{i,1} =getcolor(arg1{i});
+                o2{i,1}=arg1{i};
+            end
         end
     end
     
@@ -163,7 +171,7 @@ function cmaplist=getCmaplist()
 cmaplist={...
    'gray' 'parula','jet' 'hot' 'cool' 'summer' 'autumn' 'winter' 'gray' 'copper' 'pink' ...
     'parulaFLIP','jetFLIP' 'hotFLIP' 'coolFLIP' 'summerFLIP' 'autumnFLIP' 'winterFLIP' 'grayFLIP' 'copperFLIP' 'pinkFLIP' ...
-    '@yellow'  '@orange' '@red' '@green' '@blue'  'user'};
+    '@yellow'  '@orange' '@red' '@green' '@blue' 'SPMhot' };%'user'
 
 cnames{1,:}={'BrBG', 'PiYG', 'PRGn', 'PuOr', 'RdBu', 'RdGy', 'RdYlBu', 'RdYlGn', 'Spectral'};
 cnames{2,:}={'Blues','BuGn','BuPu','GnBu','Greens','Greys','Oranges','OrRd','PuBu','PuBuGn','PuRd',...
@@ -209,7 +217,9 @@ elseif strfind(cmap,'FLIP')
 %  elseif ~isempty(find(strcmp(othermaps(:,1),cmap)))           ;%OTHER MAPS (MRICRON ETC)
 %     inum=find(strcmp(othermaps(:,1),cmap));
 %     cmap2= othermaps{inum,2};
-     
+elseif strfind(cmap,'SPMhot')
+    cmap2=getmymap('SPMhot');
+
 elseif ~isempty(find(strcmp(cmaplist,cmap)))
     %iv=find(strcmp(cmaplist,cmap))
     %      F=cbrewer(ctypes{itype}, cnames{itype}{iname}, ncol);
@@ -256,11 +266,16 @@ Nspaces=2;%size(char(maps),1)+3;
 Ncol=9;
 for j=1:length(maps)
     cmapname=maps{j};
-    
-    try
-    map=sub_intensimg('getcolor',cmapname);
-    catch
-    map=lutmap(cmapname);    
+    if strcmp(cmapname,'SPMhot')
+        map=getmymap('SPMhot');
+    else
+        
+        try
+            map=sub_intensimg('getcolor',cmapname);
+        catch
+            map=lutmap(cmapname);
+        end
+        
     end
     %eval(['map=' cmapname ';']);
     ilin=round(linspace(1,size(map,1),Ncol));
@@ -284,6 +299,74 @@ end
 
 
 
+function map=getmymap(cm)
 
+if strcmp(cm,'SPMhot')
+  map=[  ...
+    0.0417         0         0
+    0.0833         0         0
+    0.1250         0         0
+    0.1667         0         0
+    0.2083         0         0
+    0.2500         0         0
+    0.2917         0         0
+    0.3333         0         0
+    0.3750         0         0
+    0.4167         0         0
+    0.4583         0         0
+    0.5000         0         0
+    0.5417         0         0
+    0.5833         0         0
+    0.6250         0         0
+    0.6667         0         0
+    0.7083         0         0
+    0.7500         0         0
+    0.7917         0         0
+    0.8333         0         0
+    0.8750         0         0
+    0.9167         0         0
+    0.9583         0         0
+    1.0000         0         0
+    1.0000    0.0417         0
+    1.0000    0.0833         0
+    1.0000    0.1250         0
+    1.0000    0.1667         0
+    1.0000    0.2083         0
+    1.0000    0.2500         0
+    1.0000    0.2917         0
+    1.0000    0.3333         0
+    1.0000    0.3750         0
+    1.0000    0.4167         0
+    1.0000    0.4583         0
+    1.0000    0.5000         0
+    1.0000    0.5417         0
+    1.0000    0.5833         0
+    1.0000    0.6250         0
+    1.0000    0.6667         0
+    1.0000    0.7083         0
+    1.0000    0.7500         0
+    1.0000    0.7917         0
+    1.0000    0.8333         0
+    1.0000    0.8750         0
+    1.0000    0.9167         0
+    1.0000    0.9583         0
+    1.0000    1.0000         0
+    1.0000    1.0000    0.0625
+    1.0000    1.0000    0.1250
+    1.0000    1.0000    0.1875
+    1.0000    1.0000    0.2500
+    1.0000    1.0000    0.3125
+    1.0000    1.0000    0.3750
+    1.0000    1.0000    0.4375
+    1.0000    1.0000    0.5000
+    1.0000    1.0000    0.5625
+    1.0000    1.0000    0.6250
+    1.0000    1.0000    0.6875
+    1.0000    1.0000    0.7500
+    1.0000    1.0000    0.8125
+    1.0000    1.0000    0.8750
+    1.0000    1.0000    0.9375
+    1.0000    1.0000    1.0000];
 
-
+    map(1:12,:)=[];
+end
