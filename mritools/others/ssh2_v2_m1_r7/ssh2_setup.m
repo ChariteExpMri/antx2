@@ -112,7 +112,10 @@ USE_CUSTOM_GANYMED_LIB = 1;
 
 
 if (USE_CUSTOM_GANYMED_LIB > 0)
-    ganymed_java_library = 'ganymed-ssh2-m1'; %included custom ganymed library
+    %ganymed_java_library = 'ganymed-ssh2-m1'; %included custom ganymed library
+	ganymed_java_library = 'ganymed-ssh2-263'; %new version from: https://github.com/SoftwareAG/ganymed-ssh-2/releases
+
+
      ganymed_java_library_zip = [ganymed_java_library '.zip'];
     ganymed_java_library_http = '';
 else

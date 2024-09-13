@@ -1065,6 +1065,11 @@
 % #ba 26 Aug 2024 (11:42:26)
 % #k [orthoslice] #n modified, function to display nifti-files (overlay) orthogonal view or mosaic (slice-wise)
 % help of orthoslice has to be modified..
+% #ba 13 Sep 2024 (13:14:49)
+% [ssh] ..update to newer ganymed_java_library ('ganymed-ssh2-263', the older library was 'ganymed-ssh2-m1'
+% 
+% 
+% 
 % 
 % 
 
