@@ -1,6 +1,7 @@
 
-%% <b> CHARITE-HPC (19-05-24), exported data to HPC for DTI-processing  storage </b>
-% Changes on our HPC: now works with SLURM-JOB-ARRAY (parallelize processes) due to restricted proc-time (max 48h) 
+%% <b> CHARITE-HPC (16-09-24), exported data to HPC for DTI-processing  storage </b>
+% Changes on our HPC: changed the cryptographic algorithms (hmac-sha2-512)
+% now works with SLURM-JOB-ARRAY (parallelize processes) due to restricted proc-time (max 48h) 
 % <font color="blue"> This script does the following:
 %     1) transfer necessary data to HPC-storage
 %     2) create bash-file. This is the starter file to run on the HPC-cluster
@@ -410,8 +411,8 @@ for ss=1:p.numBatchfiles
     % delete file
     cmd=['rm ' batchName];
     command_output = ssh2_simple_command(p.HPC_hostname,p.login,p.password,cmd);
-    % transfer file
-    msg=scp_simple_put(p.HPC_hostname,p.login,p.password,batchName,'',batchPath);
+    % transfer file via sftp_simple_put
+    msg=sftp_simple_put(p.HPC_hostname,p.login,p.password,batchName,'',batchPath);
     
     % --------------------------------
     % [4.3] verify tranfer
