@@ -2599,7 +2599,7 @@ set(hf,'AlphaData',alphadata);
 
 function makeOnePanel(p)
 if p.panel ==0; return; end
-
+drawnow
 hf=findobj(0,'tag','orthoview');
 u=get(hf,'userdata');
 p=u.p;

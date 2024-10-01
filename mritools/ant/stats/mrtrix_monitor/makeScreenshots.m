@@ -71,7 +71,7 @@ batchfilename  = fullfile(pwd,batchName);
 %write shellscript
 pwrite2file(batchfilename,g);
 % send shell-script to linux-workspace
-msg = scp_simple_put(p.host,p.uname,p.pw,batchName,'',batchPath);
+msg = sftp_simple_put(p.host,p.uname,p.pw,batchName,'',batchPath);
 % CHMOD script
 cmd = ['chmod 777 ' batchName];
 o   = ssh2_simple_command(p.host,p.uname,p.pw,cmd);
@@ -107,7 +107,7 @@ g2={'#!/bin/bash'
 %write shellscript
 pwrite2file(batchfilename,g2);
 % send shell-script to linux-workspace
-msg = scp_simple_put(p.host,p.uname,p.pw,batchName,'',batchPath);
+msg = sftp_simple_put(p.host,p.uname,p.pw,batchName,'',batchPath);
 
 %delete loeal shellscript
 try; delete(batchfilename); end

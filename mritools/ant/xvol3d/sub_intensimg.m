@@ -154,7 +154,9 @@ if 0
 end
 
 
-if     strcmp(task,'show');           show(v)
+if     strcmp(task,'show')
+    show(v);
+    setalpha(v);
 elseif strcmp(task,'setcmpa');     setcmap(v)
 elseif strcmp(task,'setalpha');     setalpha(v)
 elseif strcmp(task,'delete');      deletex(v)
