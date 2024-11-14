@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   13 Sep 2024 (13:14:49)  
+ &#x1F34E; last modification:   % 14 Nov 2024 (13:10:03)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,8 +7,14 @@
     
     
 ------------------  
+  % &#x1F535;   <ins>**14 Nov 2024 (13:10:03)**</ins>  
+  -xwarp3: segmentation: save tissue images as 32bit-images  
+  -plog: debugged: right alignment  
+<!---->
   &#x1F535;   <ins>**13 Sep 2024 (13:14:49)**</ins>  
   __[ssh]__ ..update to newer ganymed_java_library ('ganymed-ssh2-263', the older library was 'ganymed-ssh2-m1'  
+    
+    
 <!---->
   &#x1F535;   <ins>**26 Aug 2024 (11:42:26)**</ins>  
    __[orthoslice]__ modified, function to display nifti-files (overlay) orthogonal view or mosaic (slice-wise)  

@@ -767,16 +767,30 @@ if find(s.task==3)
        xsegment(s.t2,template,s); %
     end
     
+    % =========================================================================
+    %%   force segmentation-images datatype to 32bit (which is spm_type:16)
+    % ==========================================================================
+    segmimg={'c1t2.nii' 'c2t2.nii' 'c3t2.nii'};
+    for j=1:length(segmimg)
+        fi1=fullfile(s.pa, segmimg{j});
+        hse=spm_vol(fi1);
+        if hse.dt(1)<16
+           fi2=fullfile(s.pa, ['temp_' segmimg{j}  ]);
+           movefile(fi1,fi2,'f'); %first rename file
+           [hse se]=rgetnii(fi2);
+           rsavenii(fi1,hse,se,16);
+           delete(fi2);
+        end
+    end
     
-  
     
     
     
     
-    
-    
-    
-    
+    % ==============================================
+    %%   display
+    % ===============================================
+
     img2=fullfile(s.pa,'c1t2.nii');
     % DISPLAY_COMMAND_OUTPUT_IN_CMD-WINDOW
     if isDesktop==1

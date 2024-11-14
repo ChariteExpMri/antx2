@@ -316,6 +316,17 @@ end
              if length(e{j,i})~=si
                  % sic=(si-length(e{j,i}))/2 ;
                  % e{j,i}= [repmat(' ',[1  floor(sic)])    e{j,i}   repmat(' ',[1  ceil(sic)])  ];
+                 %-----------------
+                 et=fliplr(e{j,i});
+                 det=double(et);
+                 ispace=min(find(det~=32));
+                 if ~isempty(ispace)
+                     det=[ det(ispace:end) det(1:ispace-1) ];
+                 end
+                 e{j,i}= fliplr(char(det));
+                 %-----------------
+
+                 
                  
                  e{j,i}= [  repmat(' ',[1  (si-length(e{j,i})  )])   e{j,i}     ]; %LEFT ALLIGN
              end
@@ -355,16 +366,27 @@ for i=1:N
     s{end+1,1} = d1;
 end
 
-rep1={repmat( '¯'  ,[1 size(s{1,:},2)])};
+len_title=length(title);
+len_tab=size(s{1,:},2);
+max_len=max([len_title len_tab]);
+
+
+% rep1={repmat( char(8212)  ,[1 max_len])};%mac issue
+% rep1={repmat( '-'  ,[1 max_len])};
+rep1={repmat( '-'  ,[1 max_len])};
+% rep1={repmat( '_'  ,[1 max_len])};
+% rep1={repmat( '¯'  ,[1 max_len])};
 rep2=rep1;
 % rep2={repmat( '_'  ,[1 size(s{1,:},2)])};
-rep3={regexprep(s{1,:},'\S','¯')};
+% rep3={regexprep(s{1,:},'\S','¯')};
 
 sizt=(size(s{1,:},2)-length(title))/2;
 % title2={    [repmat(' ',[1  floor(sizt)])     (title)  repmat(' ',[1  ceil(sizt)])  ] ;  }; %CENTER TITLE
 if ischar(title)
-    title2={    [repmat(' ',[1 5])     (title)  repmat(' ',[1  ceil(sizt*2)-5])  ] ;  }; %LEFT TITLE
+    %     title2={    [repmat(' ',[1 1])     (title)  repmat(' ',[1  ceil(sizt*2)-5])  ] ;  }; %LEFT TITLE
+    title2={    [   (title)  repmat(' ',[1  ceil(sizt*2)-5])  ] ;  }; %LEFT TITLE
 else
+    
     title2=title;
 end
 

@@ -1729,10 +1729,10 @@ else
     fi=files;
     
     if isempty(conpath) %explicit names of each csv-file
-        fi=files
+        fi=files;
     else
-        conpath=char(conpath)
-        files  =char(files)
+        conpath=char(conpath);
+        files  =char(files);
         
         if exist(conpath)
             [csvfiles] = spm_select('FPListRec',conpath,['^' files '$']);

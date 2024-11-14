@@ -1069,8 +1069,9 @@
 % [ssh] ..update to newer ganymed_java_library ('ganymed-ssh2-263', the older library was 'ganymed-ssh2-m1'
 % 
 % 
-% 
-% 
+% % #ba 14 Nov 2024 (13:10:03)
+% -xwarp3: segmentation: save tissue images as 32bit-images
+% -plog: debugged: right alignment
 % 
 
 %% ===============================================
