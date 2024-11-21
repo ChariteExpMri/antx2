@@ -1071,7 +1071,7 @@
 % -xwarp3: segmentation: save tissue images as 32bit-images
 % -plog: debugged: right alignment
 % #ba 21 Nov 2024 (11:34:05)
-% #k [DTIscript_exportToHPC_makeBatch_21-11-2024.m] #n new starterscript for DTI-MRtrix-proceesing on HPC. 
+% #k [DTIscript_exportToHPC_makeBatch_21-11-2024] #n new starterscript for DTI-MRtrix-proceesing on HPC. 
 % Reason: HPC-peaple changed routine to initialice conda-environment --> availabel via DTIprep (scripts-button)
 % 
 % 

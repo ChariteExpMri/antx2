@@ -8,7 +8,7 @@
     
 ------------------  
   &#x1F535;   <ins>**21 Nov 2024 (11:34:05)**</ins>  
-   __[DTIscript_exportToHPC_makeBatch_21-11-2024.m]__ new starterscript for DTI-MRtrix-proceesing on HPC.   
+   __[DTIscript_exportToHPC_makeBatch_21-11-2024]__ new starterscript for DTI-MRtrix-proceesing on HPC.   
   Reason: HPC-peaple changed routine to initialice conda-environment --> availabel via DTIprep (scripts-button)  
 <!---->
   % &#x1F535;   <ins>**14 Nov 2024 (13:10:03)**</ins>  
