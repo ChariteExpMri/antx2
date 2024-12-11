@@ -3247,6 +3247,9 @@ for j=1:3
         % ### ALPHA #############
         %alphadata = p.alpha(i).*(F >= climF(1)); %prevous
         alphadata =ones(size(F))*p.alpha(i);
+        if i>1
+           alphadata=~isnan(F).*alphadata;    % issue with NAN --> become transparent
+        end
         if length(unique(Bm(:)))>1 %outer mask
             alphadata=alphadata.*Bm;
         end
