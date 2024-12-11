@@ -682,10 +682,12 @@ ht=text(0,0, msg);
 % end
 set(ht,'fontsize',v.tfs);
 try;set(ht,'fontname',v.tfn); end
+set(ht,'interpreter','none')
 set(ht,'units','inches');
 tbox=get(ht,'extent');
 texWH=tbox(3:4);
-texWH(1)=texWH(1)+1;
+% texWH(1)=texWH(1)+1;
+texWH(1)=texWH(1)+.1;
 texWH(2)=texWH(2)+0.2;
 delete(hf);
 % ===============================================
