@@ -1073,12 +1073,15 @@
 % #ba 21 Nov 2024 (11:34:05)
 % #k [DTIscript_exportToHPC_makeBatch_21-11-2024] #n new starterscript for DTI-MRtrix-proceesing on HPC. 
 % Reason: HPC-peaple changed routine to initialice conda-environment --> availabel via DTIprep (scripts-button)
+% #ba 12 Dec 2024 (16:07:05)
+% #k [orthoslice] #n modified 
+% #k [mergePPTfiles] #n new function to merge powerpoint files
 % 
 % 
 % 
 % 
 % 
-
+% 
 
 
 %% ===============================================

@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   21 Nov 2024 (11:34:05)  
+ &#x1F34E; last modification:   12 Dec 2024 (16:07:05)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**12 Dec 2024 (16:07:05)**</ins>  
+   __[orthoslice]__ modified   
+   __[mergePPTfiles]__ new function to merge powerpoint files  
+<!---->
   &#x1F535;   <ins>**21 Nov 2024 (11:34:05)**</ins>  
    __[DTIscript_exportToHPC_makeBatch_21-11-2024]__ new starterscript for DTI-MRtrix-proceesing on HPC.   
   Reason: HPC-peaple changed routine to initialice conda-environment --> availabel via DTIprep (scripts-button)  
