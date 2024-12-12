@@ -181,6 +181,11 @@ p.mcbarpos   =[-60  20 10 100];%mosaic: cbar-positon (pixels), 1st value is a x-
 p.mcbargap=70                ;% gap between cbars
 p.mcbarfs =10              ; %fontsize cbar
 p.mcbaralign=0  ;%mosaic: align cbar
+
+
+p.mcbarticks     =3;         %number of ticks/ticklabels in colorbar
+p.mcbardecimals  =2;         %number of decimals of ticklabels in colorbar 
+
 p.mplotwidth =0.89           ;%mosaic: width of plot to allow space for colorbar; default: 0.9 (normalized units)
 
 
@@ -194,10 +199,11 @@ p.figwidth=720; %orthoview figure-width (pixels)
 
 %---tests
 % p.axolperc   =-50   ;           %axoverlap in percent
-p.bgadjust   =1;
+p.bgadjust  =1;
+p.bgtransp  =0; %saving: transparent background: {0|1};   (1) transparent background; default: 0
+p.crop      =0; %saving: crop image {0|1};   (1) crop image; default: 0
 
-p.bgtransp=0; %saving: transparent background: {0|1};   (1) transparent background; default: 0
-p.crop    =0; %saving: crop image {0|1};   (1) crop image; default: 0
+
 
 
 
@@ -345,6 +351,17 @@ end
 function msosaic(p);
 
 sub_mosaic(p);
+%% ===============================================
+
+hf=findobj(0,'tag','orthoview');
+hcs=findobj(hf,'userdata','cbar');
+u=get(hf,'userdata');
+for i=1:length(hcs)
+%     num=str2num(regexprep( get(hcs(i),'tag'),'cbar',''))
+%     lims=p.clim(num,:);
+    set_cbarticks(hcs(i), hcs(i).YLim ,u.p);
+end
+%% ===============================================
 
 
 
@@ -772,6 +789,8 @@ elseif strcmp(item,'cmap')   || strcmp(item,'clims')  || strcmp(item,'thresh') |
             % colormap(jet);
             %colormap(map); drawnow;drawnow;
             hc=findobj(hf,'tag',['cbar' num2str(no)]);
+            %set(hc,'ytick',lims,'yticklabels',lims);  %issue yticks
+            set_cbarticks(hc, lims,u.p);
 %             b=himx.CData; b=b(:); b(isnan(b))=[];
 %             curlim=[nan nan];
 %             rmin=min(b);
@@ -1111,8 +1130,8 @@ tb={'1'  3
     '2'  '3'};
 tb=repmat(tb,[10,1]);
 tbh={'  parameter                       ' '  value                         '};
-shift=-0.08;
-% shift=-0.12;
+%shift=-0.08;
+ shift=-0.12;
 t = uitable('Parent', t0,'units','norm', 'Position', [shift 0.12 1-shift .4 ], 'Data', tb,...
     'tag','tb1',...
     'ColumnWidth','auto');
@@ -1365,7 +1384,6 @@ end
 pn=fieldnames(p);
 
 s=p;
-
 for i=1:length(pn)
     pn{i};
     a=getfield(p,pn{i});
@@ -1445,6 +1463,7 @@ set(hf,'userdata',u);
 fastupdate_table1(idx(1));
 
 function table1_updatestruct(e,e2)
+drawnow;
 hs=findobj(0,'tag','specs_gui');
 hf=findobj(0,'tag','orthoview');
 ht=findobj(hs,'tag','tb1');
@@ -1544,8 +1563,10 @@ elseif strcmp(fname,'axolperc')
         %     set(gca,'visible','on')
     end
     %% ===============================================
+ elseif strcmp(fname,'mcbarticks') ||  strcmp(fname,'mcbardecimals')   
     
-    
+     %prp_cb([],[], 'update_pstruct','thresh');
+     fast_update('clims');
     
 elseif strcmp(fname,'mcbarpos') ||  strcmp(fname,'mcbargap')
     %% ===============================================
@@ -2246,6 +2267,9 @@ tb={...
     'cbar-color'           ''   'labelcol'
     'cbar-gap'             ''   'mcbargap'
     'cbar-positon'         ''   'mcbarpos'
+    'cbar-No. ticks'       ''   'mcbarticks'
+    'cbar-No. decimals'    ''   'mcbardecimals'
+    
     'axis-overlapp'        ''   'axolperc'
     'figure-width'          ''   'figwidth'
     'figure-color'          ''   'bgcol'
@@ -2755,6 +2779,8 @@ for i=length(hcs):-1:1
     set(hc,'units','normalized');
     set(hc,'YColor',p.labelcol,'XColor',p.labelcol,'fontsize' , p.mcbarfs);
     %set([hc; get(hc,'children')],'visible','on')
+    %set(hc,'ytick',hc.YLim,'yticklabels',hc.YLim);  %issue yticks 2759
+    set_cbarticks(hc, hc.YLim,p);
     if ~isempty(p.mbarlabel{i})
         set(hc.YLabel,'string',p.mbarlabel{i});
     end
@@ -2763,6 +2789,58 @@ end
 % posb1=get(hc,'position');
 % posf=get(ha,'position');
 % set(ha,'position',[posf(1:2)  posb1(1)  posf(4) ]);
+
+
+
+function set_cbarticks(hc, lims,p)
+%% ===============================================
+
+
+% if 0
+%     p.mcbarticks  =5           %number of ticks/ticklabels in colorbar
+%     p.mcbardecimals=5           %number of decimals of ticklabels in colorbar
+%     % set(hc,'ytick',lims,'yticklabels',lims);  %issue yticks 2759
+%     lims=[-10 10]
+% end
+
+
+d=linspace(lims(1),lims(2),  p.mcbarticks );
+isinteg=d==round(d);
+if sum(isinteg)~=length(d)  % if there are number with fractions --> plot integers with fractions
+    isinteg=isinteg.*0;
+end
+isinteg(find(d==0))=1; %set zero allwais to integer
+
+
+% ===============================================
+
+% get smallest necessary number of deciamls to show the different values
+ds=cellfun(@(a) {[  regexprep(num2str(sign(a)),{'-1','1','0'},{'-','+','0'})  regexprep(sprintf('%1.10f',a ),'.*\.','') ]},num2cell(d) )';
+% dm=cell2mat(cellfun(@(a) {[ double(a) ]},ds))
+ndecim=p.mcbardecimals;
+for i=1:size(ds{1,1},2)-1
+    ndiffnumbers=length(unique(cellfun(@(a) {[ a(1:1+i) ]},ds)));
+    if length(d)==ndiffnumbers
+        ndecim=i+1;
+       break 
+    end
+    
+end
+% ===============================================
+%allign pos/neg numbers: https://de.mathworks.com/matlabcentral/answers/169007-how-can-i-align-pos-neg-numbers-with-fprintf
+s={};
+for i=1:length(d)
+    if isinteg(i)==1
+        s{i,1}= sprintf('% d',d(i));  
+    else
+   s{i,1}= sprintf(['% .' num2str(ndecim) 'f'],d(i));  
+    end
+end
+
+set(hc,'ytick',d,'yticklabels',s);  %issue yticks 2759
+
+
+%% ===============================================
 
 
 
