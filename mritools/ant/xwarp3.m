@@ -325,7 +325,8 @@ if find(s.task==1)
         fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: ' msg ' pcnn3d-tool ' ]);
 
         %if isfield(s,'species') && strcmp(s.species,'rat')  % ##-RAT-##
-        if isfield(s,'species') && (strcmp(s.species,'rat') || strcmp(s.species,'etruscianshrew') || strcmp(s.species,'hamster'))   
+        if isfield(s,'species') && (strcmp(s.species,'rat') || strcmp(s.species,'etruscianshrew') ...
+                              || strcmp(s.species,'hamster') || strcmp(s.species,'piglet4w')) 
             skparam.species = s.species;
             evalc(['skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip'' ,skparam  )']); ;
         else

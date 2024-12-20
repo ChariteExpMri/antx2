@@ -1076,12 +1076,17 @@
 % #ba 12 Dec 2024 (16:07:05)
 % #k [orthoslice] #n modified 
 % #k [mergePPTfiles] #n new function to merge powerpoint files
+% #ba 20 Dec 2024 (10:26:32)
+% new atlases/templates implemented ("piglet_4weeks_PIGMRI_V21.zip")
+% -piglet brain atlas 4weeks (Fil et al., 2021)
+% -https://www.sciencedirect.com/science/article/pii/S016502702100042X
+%     -0.5 mm isovox resolution
+% #b &#8658; atlases available via: <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a> 
+%  -->possible that still some parameter tuning for segmentation and registration as to follow
 % 
 % 
 % 
-% 
-% 
-% 
+
 
 
 %% ===============================================

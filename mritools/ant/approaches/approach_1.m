@@ -87,10 +87,27 @@ rsavenii(tpmMASK,ha,c,[16 0]);
 %%  [5]  copy & modify PARAMETERFILES
 %% % ===============================================  
 
-if isfield(s,'species') && strcmp(s.species,'rat')  %##RAT
+if isfield(s,'species') && strcmp(s.species,'rat')
+%     disp([ '...[' s.species ']..change MaximumStepLength']);
+    
     parafiles2=replacefilepath(parafiles(:),s.pa);
-    copyfilem(parafiles,parafiles2)
+    copyfilem(parafiles,parafiles2);
     set_ix2(parafiles2{1},'MaximumStepLength', 1); %
+elseif isfield(s,'species') && strcmp(s.species,'piglet4w') 
+%     disp([ '...[' s.species ']..change MaximumStepLength']);
+    
+    parafiles2=replacefilepath(parafiles(:),s.pa);
+    copyfilem(parafiles,parafiles2);
+    
+%     for i=1:length(parafiles2)
+%         disp(['file_1:' num2str(i) ]);
+%         try; disp(get_ix(parafiles2{i},'MaximumStepLength')); end
+%     end
+    try;   set_ix2(parafiles2{1},'MaximumStepLength', 1);  end
+    try;   set_ix2(parafiles2{2},'MaximumStepLength', .1); end % [default:  0.0150]
+    
+    % ===============================================
+    
     %%rm_ix2(parafiles2{2},'MaximumStepLength'); <# etwas schlechter
     %         //(MaximumStepLength 0.006)
     %         //(MaximumStepLength 0.145833)

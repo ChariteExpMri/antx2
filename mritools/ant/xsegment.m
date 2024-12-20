@@ -146,11 +146,11 @@ job.opts.msk     = {''};
 %%   check params (s-struct)
 % ===============================================
 if isfield(param,'species')==1
-    % ==============================================
-    %%  override parameter for "RAT"
-    % ===============================================
+    
     if strcmp(param.species,'rat')% override for "rat"
-        
+        % ==============================================
+        %%  override parameter for "RAT"
+        % ===============================================
         job.opts.warpco  = 3.75  ;
         job.opts.samp    = 0.25  ;
         
@@ -162,7 +162,12 @@ if isfield(param,'species')==1
             rsavenii(msk2, h,d>0,[2 0]);
             job.opts.msk=msk2;
         end
-    elseif strcmp(param.species,'cat')% override for "cat"
+        
+        
+    elseif strcmp(param.species,'piglet4w')% override for "piglet4w"
+        % ==============================================
+        %%   piglet4w
+        % ===============================================
         %         mouse:
         %          job.opts.warpco = 1.75
         %          job.opts.samp   = 0.1
@@ -175,13 +180,83 @@ if isfield(param,'species')==1
         %     biasfwhm: 5
         %         samp: 0.1000
         %          msk: {''}
-        % http://91.121.177.56/axon-4.5/en/processes/segment_SPM_noLinks.html    
-        disp('cat-parameter-new');
+        % http://91.121.177.56/axon-4.5/en/processes/segment_SPM_noLinks.html
+        disp('..using piglet4w-parameter');
+        
+        if 0
+            job.opts.warpco   =  25;% 6;% 10, 25  ;
+            job.opts.samp     =  2;% 0.7 ; %0.25*factor2.8  %3;%3, 2(no vis diff to 3)
+            job.opts.biasfwhm =  10; %10,  7.5 (7.5 slow >20min). 5: really slow (>4h)
+        end
+        
+        if 0
+            job.opts.warpco   =  5;% 6;% 10, 25  ;
+            job.opts.samp     =  .5;% 0.7 ; %0.25*factor2.8  %3;%3, 2(no vis diff to 3)
+            job.opts.biasfwhm =  20; %10,  7.5 (7.5 slow >20min). 5: really slow (>4h)
+        end
+        %% ===============[HUman-adapted]================================
+        if 1
+            %         job.opts.ngaus          = [2 2 2 4]'; % Gaussians per class   ,default: [2 2 2 4]';
+            job.opts.warpreg        = 1;          % Warping Regularisation  ,default: 1
+            job.opts.warpco         = 15;         % Warp Frequency Cutoff   ,default: 25
+            job.opts.biasreg        = 0.0001;     % Bias regularisation     ,default: 0.0001
+            job.opts.biasfwhm       = 10;         % Bias FWHM:              ,default: 60
+            %         job.opts.regtype        = 'mni';    % Affine Regularisation   ,default: 'mni'
+            job.opts.fudge          = .5;         % Fudge factor, can not be set in batch GUI; ,default: 5
+            job.opts.samp           = 1;          % Sampling distance      ,default: 3
+            %         job.opts.output.GM      = [0 0 1];
+            %         job.opts.output.WM      = [0 0 1];
+            %         job.opts.output.CSF     = [0 0 0];
+            %job.opts.output.biascor = 1;
+            %         job.opts.output.cleanup = 0;
+            %% ===============================================
+        end
+        
+        if 0
+            job.opts.warpco  = 10;% 10, 25  ;
+            job.opts.samp    = 3;%3, 2(no vis diff to 3)
+            job.opts.biasfwhm= 8 ; %10,  7.5 (7.5 slow >20min). 5: really slow (>4h)
+        end
+        
+        
+        %         job.opts.warpco  = 25  ;
+        %         job.opts.samp    = 3  ;
+        %         job.opts.biasfwhm=20
+        %
+        [t2pathorig subdir]=fileparts(fileparts(t2));
+        msk1=fullfile(t2pathorig,'_msk.nii');
+        if exist(msk1)==2
+            [h,d ]=rreslice2target(msk1, t2, [], 0,[2 0])  ;
+            msk2=fullfile(t2pathorig,subdir,[ '_mskBin.nii']);
+            rsavenii(msk2, h,d>0,[2 0]);
+            job.opts.msk=msk2;
+        end
+        
+        
+        
+    elseif strcmp(param.species,'cat')% override for "cat"
+        % ==============================================
+        %%   cat
+        % ===============================================
+        %         mouse:
+        %          job.opts.warpco = 1.75
+        %          job.opts.samp   = 0.1
+        %          tpm: {3x1 cell}
+        %        ngaus: [4x1 double]
+        %      regtype: 'animal'
+        %      warpreg: 1
+        %       warpco: 1.7500
+        %      biasreg: 1.0000e-04
+        %     biasfwhm: 5
+        %         samp: 0.1000
+        %          msk: {''}
+        % http://91.121.177.56/axon-4.5/en/processes/segment_SPM_noLinks.html
+        disp('..using cat-parameter');
         job.opts.warpco   =  25;% 6;% 10, 25  ;
         job.opts.samp     =  2;% 0.7 ; %0.25*factor2.8  %3;%3, 2(no vis diff to 3)
         job.opts.biasfwhm =  10; %10,  7.5 (7.5 slow >20min). 5: really slow (>4h)
         
-         if 0
+        if 0
             job.opts.warpco  = 10;% 10, 25  ;
             job.opts.samp    = 3;%3, 2(no vis diff to 3)
             job.opts.biasfwhm= 8 ; %10,  7.5 (7.5 slow >20min). 5: really slow (>4h)

@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   12 Dec 2024 (16:07:05)  
+ &#x1F34E; last modification:   20 Dec 2024 (10:26:32)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,14 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**20 Dec 2024 (10:26:32)**</ins>  
+  new atlases/templates implemented ("piglet_4weeks_PIGMRI_V21.zip")  
+  -piglet brain atlas 4weeks (Fil et al., 2021)  
+  -https://www.sciencedirect.com/science/article/pii/S016502702100042X  
+      -0.5 mm isovox resolution  
+  &#8658; atlases available via: <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a>   
+   -->possible that still some parameter tuning for segmentation and registration as to follow  
+<!---->
   &#x1F535;   <ins>**12 Dec 2024 (16:07:05)**</ins>  
    __[orthoslice]__ modified   
    __[mergePPTfiles]__ new function to merge powerpoint files  

@@ -51,6 +51,11 @@ else
         pp.species      = params.species;
         pp.brainSize    = [500 1300]; %
         pp.scalefactor  = [1];
+    elseif isfield(params,'species') && strcmp(params.species,'piglet4w')
+        pp.species      = params.species;
+        pp.brainSize    = [50e3 65e3]; %[60e3 65e3];
+        pp.scalefactor  = [1];
+        pp.resizeFactor =  3 ;%resize brain by this factor, for faster extraction --> i.e. working on smaller image 
     else
         %warning('### unknown species ### --> ') ;
         pp=pmouse;
@@ -58,15 +63,34 @@ else
 end
 
 % disp(['skullstripping with parameters of [' pp.species ']']);
-
-
-
 % brainSize=  [100 550]; %c57/B6- mouse
 % brainSize=  [2200 2800]; %rat
 % % % % % % % % % if 0
 % % % % % % % % %     disp('use CD1');
 % % % % % % % % %     brainSize=  [100 500];%CD1(31)
 % % % % % % % % % end
+if isfield(pp,'resizeFactor')==0 
+    pp.resizeFactor=0;
+end
+    
+% ==============================================
+%%   resize image for faster segmentation
+% ===============================================
+if pp.resizeFactor~=0
+    pp.t2file_orig = t2file;
+    [bb2 vox1 ]    = world_bb(t2file);
+    vox2           = vox1*pp.resizeFactor;
+    t2file_small   = fullfile(fileparts(t2file), 't2_small.nii')
+    resize_img5(t2file,t2file_small, vox2, bb, [], 1, 16);
+    pp.t2file_small=t2file_small;
+    %showinfo2('small file:',t2file_small);
+    
+    
+    t2file   =t2file_small;      %replace filename
+    [bb vox] =world_bb(t2file); %get vox and BB
+    [ha a]   =rgetnii(t2file);   %load data
+end
+
 
 
 %=============================================
@@ -155,8 +179,21 @@ elseif strcmp(mode, 'skullstrip')
 end
 
 
-% rsavenii('_msk',ha,m);
 rsavenii(fileout,ha,m);
-close(gcf);
 
+% ============================================================
+%%  back-resizeing image when used faster segmentation 
+% =============================================================
+if pp.resizeFactor~=0
+    
+    rreslice2target(fileout, pp.t2file_orig, fileout, 1,16)
+    %[hq q  ] =rgetnii(pp.t2file_orig);
+    %[hq2 q2] =rgetnii(fileout);
+    try; delete(pp.t2file_small); end
+    
+end
+% ==============================================
+%%   
+% ===============================================
+close(gcf);
 sfile=fileout;
