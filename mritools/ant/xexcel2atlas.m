@@ -211,16 +211,36 @@ cprintf('*[1 0 1]',['Done!'    '\n' ]);
 %===========================================
 %%   SUBS
 %===========================================
+
+
+function pathx=pwx()
+
+global an
+if isempty(an)
+    %% ===============================================
+    pax=pwd;
+    antxpath=fileparts(which('antver.m'));
+    if strfind(lower(pax), lower(antxpath))  % is within antx-path
+        pathx=regexprep(pax,'antx2.*','');
+    else
+        pathx=pax;
+    end
+    %% ===============================================
+else
+    pathx=fileparts(an.datpath);
+end
+
+
 function he= selectatlas(e,e2)
 he=[];
-[t,sts] = spm_select(1,'any','select atlas image (*.nii)','',pwd,'.*.nii','');
+[t,sts] = spm_select(1,'any','select atlas image (*.nii)','',pwx,'.*.nii','');
 if t==0; he='';
 else;     he=(t);
 end
 %% ________________________________________________________________________________________________
 function he= selectexcelfile(e,e2)
 he=[];
-[t,sts] = spm_select(1,'any','select modified ANO.xlsx file (*.xlsx)','',pwd,'.*.xlsx','');
+[t,sts] = spm_select(1,'any','select modified ANO.xlsx file (*.xlsx)','',pwx,'.*.xlsx','');
 if t==0; he='';
 else;     he=(t);
 end
@@ -237,8 +257,18 @@ z.outputDir  =char(z.outputDir);
 
 [pa pa2 ext]=fileparts(z.outputDir); % MAKKE DIR
 % if exist(z.outputDir)~=7
-    if isempty(pa) ; pa =pwd; end
-    if isempty(pa2); pa2='test1'; end
+    if isempty(pa) ; pa =pwx; end
+    if isempty(pa2); 
+        [paexcelpath ]=fileparts(z.excelfile);
+        [paexcelpath1 excelsubpath ]=fileparts(paexcelpath);
+        pa2='newDTIatlas';
+        global an
+        if ~isempty(an)
+            if strcmp(paexcelpath, fileparts(an.datpath))==0
+                pa2=excelsubpath;
+            end
+        end
+    end
     z.outputDir=fullfile(pa,pa2);
     mkdir(z.outputDir);
 % end

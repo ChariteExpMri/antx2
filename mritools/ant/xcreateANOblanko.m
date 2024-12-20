@@ -160,18 +160,18 @@ cprintf([0 0 1],['saving excelfile..']);
 if isempty(pamain)
     global an
     if isempty(sdir); sdir='atlas' ;end
-    pamain=fullfile(fileparts(an.datpath),sdir);
+    pamain=fullfile(fileparts(an.datpath));
 end
 [~, nameout]=fileparts(z.outname);
 
-
-if exist(pamain)~=7
-    mkdir(pamain);
+paout=fullfile(pamain, sdir);
+if exist(paout)~=7
+    mkdir(paout);
 end
 
 
 % [pa fis ext]=fileparts(xls)
-f2=fullfile(pamain,[ nameout '.xlsx']);
+f2=fullfile(paout,[ nameout '.xlsx']);
 copyfile(xls,f2,'f');
 
 pwrite2excel(f2,{1 'blanko'},hat2,{},at2);
