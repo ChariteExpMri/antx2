@@ -706,7 +706,7 @@ if isempty(pos)
 else
     tposInch=v.cm2inch*pos;
     if istext==1
-        pos   =[tposInch(1) tposInch(2) texWH(1)  texWH(2) ];
+        pos   =[tposInch(1) tposInch(2) ceil(texWH(1)+1)  texWH(2) ];
     else
         pos   =[tposInch(1) tposInch(2) v.pptsize(1)  texWH(2) ]; %title
     end
