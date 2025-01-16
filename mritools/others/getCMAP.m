@@ -1,8 +1,12 @@
 
 %% --------get CMAP-names ------------
 % maps=getCMAP('names')
-%  or 
+%  or
 % maps=getCMAP()
+% 
+%% show mapsnames and colorbar in help-figure
+% getCMAP('showmaps');
+% 
 %% --------get CMAP-HTML-code ------------
 % html=getCMAP('html')  ;%from all cmaps
 % html=getCMAP('html','actc')  ;%from "actc"
@@ -14,7 +18,7 @@
 % [o o2]=getCMAP({'actc' 'gray'}) ;%get arry of 'actc' 'gray'  ...output is of type cell
 %% -------get CMAP numeric
 % [table cmapname]=getCMAP(3)  %obtain table from 3rd mapname
-% 
+%
 
 function [o o2]=getCMAP(arg1,arg2)
 
@@ -22,40 +26,40 @@ function [o o2]=getCMAP(arg1,arg2)
 
 if 0
     % ==============================================
-%%   
-% ===============================================
-
-
-z=[];                                                                                                                                                                         
-z.backgroundImg = { 'x_t2.nii' };              % % [SELECT] Background/reference image (a single file)                                                                        
-z.overlayImg    = { 'AVGT.nii' };              % % [SELECT] Image to overlay (multiple files possible)                                                                        
-z.outputPath    = 'F:\data5\nogui\checks';     % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )
-z.outputstring  = '';                          % % optional Output string added (suffix) to the HTML-filename and image-directory                                             
-z.slices        = 'n6';                        % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image       
-z.dim           = [2];                         % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital                                 
-z.size          = [400];                       % % Image size in HTML file (in pixels)                                                                                        
-z.grid          = [1];                         % % Show line grid on top of image {0,1}                                                                                       
-z.gridspace     = [20];                        % % Space between grid lines (in pixels)                                                                                       
-z.gridcolor     = [1  0  0];                   % % Grid color                                                                                                                 
-z.cmapB         = 'gray';                  % % <optional> specify BG-color; otherwise leave empty                                                                         
-z.cmapF         = 'gold_inv';                % % <optional> specify FG-color; otherwise leave empty                                                                         
-z.showFusedIMG  = [0];                         % % <optional> show the fused image                                                                                            
-z.sliceadjust   = [0];                         % % intensity adjust slices separately; [0]no; [1]yes                                                                          
-xcheckreghtml(0,z);   
+    %%
+    % ===============================================
+    
+    
+    z=[];
+    z.backgroundImg = { 'x_t2.nii' };              % % [SELECT] Background/reference image (a single file)
+    z.overlayImg    = { 'AVGT.nii' };              % % [SELECT] Image to overlay (multiple files possible)
+    z.outputPath    = 'F:\data5\nogui\checks';     % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )
+    z.outputstring  = '';                          % % optional Output string added (suffix) to the HTML-filename and image-directory
+    z.slices        = 'n6';                        % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image
+    z.dim           = [2];                         % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital
+    z.size          = [400];                       % % Image size in HTML file (in pixels)
+    z.grid          = [1];                         % % Show line grid on top of image {0,1}
+    z.gridspace     = [20];                        % % Space between grid lines (in pixels)
+    z.gridcolor     = [1  0  0];                   % % Grid color
+    z.cmapB         = 'gray';                  % % <optional> specify BG-color; otherwise leave empty
+    z.cmapF         = 'gold_inv';                % % <optional> specify FG-color; otherwise leave empty
+    z.showFusedIMG  = [0];                         % % <optional> show the fused image
+    z.sliceadjust   = [0];                         % % intensity adjust slices separately; [0]no; [1]yes
+    xcheckreghtml(0,z);
 end
 if 0
     
-   
+    
     p={
         'color'          1     'BG-color head' {'cmap' 'list'}
         'c1'            1     'BG-color head' {'cmap' }
         'c2'            1     'BG-color head' {'cmap' [] 1 4 '' }
         'maps'          1     'BG-color head' {'cmap' cmapHTML}
         'maps2'          1     'BG-color head' {'cmap' {}}
-        }; 
+        };
 end
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -67,27 +71,27 @@ end
 
 [o o2]=deal([]);
 if exist('arg1')~=1  && exist('arg2')~=1
-     o=names();
-     o2=makeHTMLColorList(o);
-     return
+    o=names();
+    o2=makeHTMLColorList(o);
+    return
 end
 
 if strcmp(arg1,'names')
     o=names();
     return;
 elseif strcmp(arg1,'html')
-    if exist('arg2')==1 
-       o=cellstr(arg2);  
+    if exist('arg2')==1
+        o=cellstr(arg2);
     else
-       o=names();
+        o=names();
     end
-     o=makeHTMLColorList(o);
+    o=makeHTMLColorList(o);
     return;
 elseif strcmp(arg1,'example')
     
     cmaps=names();
     cmapHTML=makeHTMLColorList(cmaps);
-     
+    
     p={
         'color'          1     'BG-color head' {'cmap' 'list'}
         'c1'            1     'BG-color head' {'cmap' }
@@ -95,12 +99,14 @@ elseif strcmp(arg1,'example')
         'maps'          1     'BG-color head' {'cmap' cmapHTML}
         'maps2'          1     'BG-color head' {'cmap' {}}
         };
-m=paramgui(p,'uiwait',0,'editorpos',[.03 0 1 1],'figpos',[.5 .3 .3 .5 ],'info',{@doc,'paramgui.m'}); %%START GUI
-
-
- [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .8 .6 ],...
+    m=paramgui(p,'uiwait',0,'editorpos',[.03 0 1 1],'figpos',[.5 .3 .3 .5 ],'info',{@doc,'paramgui.m'}); %%START GUI
+    
+    
+    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .8 .6 ],...
         'title',['***COREGISTRATION***' '[' mfilename '.m]'],'info',{@uhelp, 'xcoreg.m'});
-
+elseif strcmp(arg1,'showmaps')
+    showmaps();
+    
 else
     if isnumeric(arg1)
         names=getCMAP('names');
@@ -121,12 +127,14 @@ else
         end
     end
     
-     
+    
 end
 
 
+% showmaps
+
 % ==============================================
-%%   
+%%
 % ===============================================
 
 return
@@ -136,11 +144,11 @@ return
 % [list1]=getCmaplist();
 % [list2]=lutmap('show');
 % maps=[list1;list2]
-% 
+%
 % list=makeHTMLColorList(maps)
-% 
+%
 % % ==============================================
-% %%   
+% %%
 % % ===============================================
 % p={
 %     'color'          1     'BG-color head' {'cmap' 'list'}
@@ -161,15 +169,50 @@ list=getCmaplist();
 % list=[list1;list2];
 [list1]=getCmaplist();
 [list2]=lutmap('show');
-maps=[list1;list2];
+[list3]=isocolMapNames();
+maps=[list1;list2; list3];
+
+function showmaps()
+% show maps in help-figure
+o=getCMAP('html');
+w=[' #yk ___ COLORSMAPS ___'; o; repmat({''},[5 1]) ];
+uhelp(w,1,'name',['colormaps [' mfilename ']']);
 
 
 
+function [cmaplist map]=isocolMapNames()
+map={
+    'isoBlack'	  '#000000'
+    'isoSilver'  '#c0c0c0'
+    'isoGray'	  '#808080'
+    'isoWhite'	  '#ffffff'
+    'isoMaroon'  '#800000'
+    'isoRed'	  '#ff0000'
+    'isoPurple'  '#800080'
+    'isoFuchsia' '#ff00ff'
+    'isoGreen'	  '#008000'
+    'isoLime'	  '#00ff00'
+    'isoOlive'	  '#808000'
+    'isoYellow'  '#ffff00'
+    'isoNavy'	  '#000080'
+    'isoBlue'	  '#0000ff'
+    'isoTeal'	  '#008080'
+    'isoCyan'	  '#00ffff'
+    };
+cmaplist=map(:,1);
+
+function map=isocol_getmap(cmapname)
+%% ===============================================
+[cmaplist map]=isocolMapNames();
+hexc=map{strcmp(cmaplist, cmapname),2};
+mapvec=reshape(sscanf(hexc(2:end)','%2x'),3,[]).'/255 ;
+map=[repmat(mapvec,[ 20 1])  ];
+%% ===============================================
 
 
 function cmaplist=getCmaplist()
 cmaplist={...
-   'gray' 'parula','jet' 'hot' 'cool' 'summer' 'autumn' 'winter' 'gray' 'copper' 'pink' ...
+    'gray' 'parula','jet' 'hot' 'cool' 'summer' 'autumn' 'winter' 'gray' 'copper' 'pink' ...
     'parulaFLIP','jetFLIP' 'hotFLIP' 'coolFLIP' 'summerFLIP' 'autumnFLIP' 'winterFLIP' 'grayFLIP' 'copperFLIP' 'pinkFLIP' ...
     '@yellow'  '@orange' '@red' '@green' '@blue' 'SPMhot' };%'user'
 
@@ -214,12 +257,14 @@ elseif strfind(cmap,'FLIP')
     cmap2=eval(strrep(cmap,'FLIP',''));
     cmap2=flipud(cmap2);
     
-%  elseif ~isempty(find(strcmp(othermaps(:,1),cmap)))           ;%OTHER MAPS (MRICRON ETC)
-%     inum=find(strcmp(othermaps(:,1),cmap));
-%     cmap2= othermaps{inum,2};
+    %  elseif ~isempty(find(strcmp(othermaps(:,1),cmap)))           ;%OTHER MAPS (MRICRON ETC)
+    %     inum=find(strcmp(othermaps(:,1),cmap));
+    %     cmap2= othermaps{inum,2};
 elseif strfind(cmap,'SPMhot')
     cmap2=getmymap('SPMhot');
-
+elseif strfind(cmap,'iso')==1
+    cmap2=isocol_getmap(cmap);
+    
 elseif ~isempty(find(strcmp(cmaplist,cmap)))
     %iv=find(strcmp(cmaplist,cmap))
     %      F=cbrewer(ctypes{itype}, cnames{itype}{iname}, ncol);
@@ -242,7 +287,7 @@ elseif ~isempty(find(strcmp(cmaplist,cmap)))
         if isempty(F)
             cmap2=eval(cmap);
         end
-       cmap2= flipud(cmap2);
+        cmap2= flipud(cmap2);
     end
     
 else
@@ -268,6 +313,13 @@ for j=1:length(maps)
     cmapname=maps{j};
     if strcmp(cmapname,'SPMhot')
         map=getmymap('SPMhot');
+    elseif strfind(cmapname,'iso')==1
+        
+        map=isocol_getmap(cmapname);
+        
+        
+        
+        
     else
         
         try
@@ -302,71 +354,71 @@ end
 function map=getmymap(cm)
 
 if strcmp(cm,'SPMhot')
-  map=[  ...
-    0.0417         0         0
-    0.0833         0         0
-    0.1250         0         0
-    0.1667         0         0
-    0.2083         0         0
-    0.2500         0         0
-    0.2917         0         0
-    0.3333         0         0
-    0.3750         0         0
-    0.4167         0         0
-    0.4583         0         0
-    0.5000         0         0
-    0.5417         0         0
-    0.5833         0         0
-    0.6250         0         0
-    0.6667         0         0
-    0.7083         0         0
-    0.7500         0         0
-    0.7917         0         0
-    0.8333         0         0
-    0.8750         0         0
-    0.9167         0         0
-    0.9583         0         0
-    1.0000         0         0
-    1.0000    0.0417         0
-    1.0000    0.0833         0
-    1.0000    0.1250         0
-    1.0000    0.1667         0
-    1.0000    0.2083         0
-    1.0000    0.2500         0
-    1.0000    0.2917         0
-    1.0000    0.3333         0
-    1.0000    0.3750         0
-    1.0000    0.4167         0
-    1.0000    0.4583         0
-    1.0000    0.5000         0
-    1.0000    0.5417         0
-    1.0000    0.5833         0
-    1.0000    0.6250         0
-    1.0000    0.6667         0
-    1.0000    0.7083         0
-    1.0000    0.7500         0
-    1.0000    0.7917         0
-    1.0000    0.8333         0
-    1.0000    0.8750         0
-    1.0000    0.9167         0
-    1.0000    0.9583         0
-    1.0000    1.0000         0
-    1.0000    1.0000    0.0625
-    1.0000    1.0000    0.1250
-    1.0000    1.0000    0.1875
-    1.0000    1.0000    0.2500
-    1.0000    1.0000    0.3125
-    1.0000    1.0000    0.3750
-    1.0000    1.0000    0.4375
-    1.0000    1.0000    0.5000
-    1.0000    1.0000    0.5625
-    1.0000    1.0000    0.6250
-    1.0000    1.0000    0.6875
-    1.0000    1.0000    0.7500
-    1.0000    1.0000    0.8125
-    1.0000    1.0000    0.8750
-    1.0000    1.0000    0.9375
-    1.0000    1.0000    1.0000];
-
+    map=[  ...
+        0.0417         0         0
+        0.0833         0         0
+        0.1250         0         0
+        0.1667         0         0
+        0.2083         0         0
+        0.2500         0         0
+        0.2917         0         0
+        0.3333         0         0
+        0.3750         0         0
+        0.4167         0         0
+        0.4583         0         0
+        0.5000         0         0
+        0.5417         0         0
+        0.5833         0         0
+        0.6250         0         0
+        0.6667         0         0
+        0.7083         0         0
+        0.7500         0         0
+        0.7917         0         0
+        0.8333         0         0
+        0.8750         0         0
+        0.9167         0         0
+        0.9583         0         0
+        1.0000         0         0
+        1.0000    0.0417         0
+        1.0000    0.0833         0
+        1.0000    0.1250         0
+        1.0000    0.1667         0
+        1.0000    0.2083         0
+        1.0000    0.2500         0
+        1.0000    0.2917         0
+        1.0000    0.3333         0
+        1.0000    0.3750         0
+        1.0000    0.4167         0
+        1.0000    0.4583         0
+        1.0000    0.5000         0
+        1.0000    0.5417         0
+        1.0000    0.5833         0
+        1.0000    0.6250         0
+        1.0000    0.6667         0
+        1.0000    0.7083         0
+        1.0000    0.7500         0
+        1.0000    0.7917         0
+        1.0000    0.8333         0
+        1.0000    0.8750         0
+        1.0000    0.9167         0
+        1.0000    0.9583         0
+        1.0000    1.0000         0
+        1.0000    1.0000    0.0625
+        1.0000    1.0000    0.1250
+        1.0000    1.0000    0.1875
+        1.0000    1.0000    0.2500
+        1.0000    1.0000    0.3125
+        1.0000    1.0000    0.3750
+        1.0000    1.0000    0.4375
+        1.0000    1.0000    0.5000
+        1.0000    1.0000    0.5625
+        1.0000    1.0000    0.6250
+        1.0000    1.0000    0.6875
+        1.0000    1.0000    0.7500
+        1.0000    1.0000    0.8125
+        1.0000    1.0000    0.8750
+        1.0000    1.0000    0.9375
+        1.0000    1.0000    1.0000];
+    
     map(1:12,:)=[];
 end

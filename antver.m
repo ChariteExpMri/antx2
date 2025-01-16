@@ -1084,7 +1084,8 @@
 % #b &#8658; atlases available via: <a href= "https://drive.google.com/drive/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9">googleDrive:animal templates</a> 
 %  -->possible that still some parameter tuning for segmentation and registration has to follow
 % 
-% 
+% #ba 16 Jan 2025 (14:11:46)
+% #k [getCMAP.m] #n modified, extended colormaps (isocolors) 
 % 
 
 
