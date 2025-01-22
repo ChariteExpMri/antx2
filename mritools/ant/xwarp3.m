@@ -312,13 +312,16 @@ if find(s.task==1)
     end
     
     %% SKULLSTRIP T2.nii
-    if s.usePriorskullstrip==1 || s.usePriorskullstrip==6
+    if s.usePriorskullstrip==1 || s.usePriorskullstrip==6 || s.usePriorskullstrip==7
         %disp('#check---skullstripp');
         if s.usePriorskullstrip==1
             F1=s.t2;
             msg='use';
         elseif s.usePriorskullstrip==6
             F1=removeTube(s.t2);
+            msg='remove tube & use';
+       elseif s.usePriorskullstrip==7
+            F1=removeTube2(s.t2);
             msg='remove tube & use';
         end
         
