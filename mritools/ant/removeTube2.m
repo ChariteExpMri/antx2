@@ -117,18 +117,45 @@ if ~isempty(dim2use)
     %     fg,plot(memax)
     
     %% ===============================================
-    ox=reshape(otsu(b(:),4),[ha.dim]);
-    ox2=permute(ox.*ri, [ (setdiff(1:3,dim2use))  dim2use])  ;
-    ox2=reshape(ox2, [ size(ox2,1)*size(ox2,2) size(ox2,3)  ]);
-    uni=unique(ox2); uni(uni==0)=[];
-    ta=[];
-    for i=1:length(uni)
-        ta(i,:)=sum(ox2==uni(i),1);
+    if 0
+        ox=reshape(otsu(b(:),4),[ha.dim]);
+        ox2=permute(ox.*ri, [ (setdiff(1:3,dim2use))  dim2use])  ;
+        ox2=reshape(ox2, [ size(ox2,1)*size(ox2,2) size(ox2,3)  ]);
+        uni=unique(ox2); uni(uni==0)=[];
+        ta=[];
+        for i=1:length(uni)
+            ta(i,:)=sum(ox2==uni(i),1);
+        end
+        
+        idel=find(uni==4);
+        if isempty(idel); idel=max(uni); end
+        cl2del=uni(idel);
     end
+    %% ===============================================
+      %% ===============================================
+      if 1
+          cl2del=[];
+          nclvec=[4 5 6];
+          for j=1:length(nclvec)
+              if isempty(cl2del)
+                  ox=reshape(otsu(b(:),nclvec(j)),[ha.dim]);
+                  ox2=permute(ox.*ri, [ (setdiff(1:3,dim2use))  dim2use])  ;
+                  ox2=reshape(ox2, [ size(ox2,1)*size(ox2,2) size(ox2,3)  ]);
+                  uni=unique(ox2); uni(uni==0)=[];
+%                   ta=[];
+%                   for i=1:length(uni)
+%                       ta(i,:)=sum(ox2==uni(i),1);
+%                   end
+                  
+                  idel=find(uni==max(uni));
+                  cl2del=uni(idel);
+              end
+          end
+      end
+    %% ===============================================
     
-    idel=find(uni==4);
-    cl2del=uni(idel);
     
+
     
     w=b;
     w(ox>=cl2del)=0;
