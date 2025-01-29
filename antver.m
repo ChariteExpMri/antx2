@@ -1086,6 +1086,10 @@
 % 
 % #ba 16 Jan 2025 (14:11:46)
 % #k [getCMAP.m] #n modified, extended colormaps (isocolors) 
+% #ba 29 Jan 2025 (16:00:03)
+% #k [xstatlabels.m] #n modified, now allow within-design (ttest, signrank, permutation), 
+% other changes: img2ppt.m, mergePPTfiles.m
+% 
 % 
 
 

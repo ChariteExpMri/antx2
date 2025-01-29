@@ -1,6 +1,7 @@
 
 % merge ppt-files
 % mergePPTfiles(pptfilename, pptfiles2merge)
+% mergePPTfiles(pptfilename, pptfiles2merge, varargin) ...varargin in pairwise args
 %  windows-OS only !!
 %% input
 % pptfilename: fullpath name of new ppt-file  (file does not exist before)
@@ -10,18 +11,88 @@
 % [fis] = spm_select('FPListRec',pares,'.*.pptx'); fis=cellstr(fis);
 % pptfilename=fullfile(pwd,'a1_JD.ppt')
 % mergePPTfiles(pptfilename, fis)
+% ==============================================
+%%   example-1:  merge ppt-files
+% ===============================================
+%     pax=fullfile('F:\data8\test_merge_ppt_andxlsx','data');
+%     [pptfiles] = spm_select('FPListRec',pax,'^circ.*.pptx'); pptfiles=cellstr(pptfiles);
+%     Fout=fullfile(pwd,'SUMMARY_ex1.pptx');
+%     [~,pptfileNames]=fileparts2(pptfiles);
+%     mergePPTfiles(Fout, pptfiles);
+%     showinfo2(['pptmain'],Fout);
+% ======================================================================================
+%%   example-2: insert slice with name of the ppt-file before appending ppt-file
+% =======================================================================================
+%     pax=fullfile('F:\data8\test_merge_ppt_andxlsx','data')
+%     [pptfiles] = spm_select('FPListRec',pax,'^circ.*.pptx'); pptfiles=cellstr(pptfiles);
+%     Fout=fullfile(pwd,'SUMMARY_ex2.pptx');
+%     [~,pptfileNames]=fileparts2(pptfiles);
+%     mergePPTfiles(Fout, pptfiles,'insertslide',pptfileNames);
+%     showinfo2(['pptmain'],Fout);
+% =======================================================================================
+%%   example-3: same as above, now with paras for the inserted slice (see: img2ppt.m)
+% =======================================================================================
+%     pax=fullfile('F:\data8\test_merge_ppt_andxlsx','data')
+%     [pptfiles] = spm_select('FPListRec',pax,'^circ.*.pptx'); pptfiles=cellstr(pptfiles);
+%     Fout=fullfile(pwd,'SUMMARY_ex3.pptx');
+%     [~,pptfileNames]=fileparts2(pptfiles);
+%     mergePPTfiles(Fout, pptfiles,'insertslide',pptfileNames,...
+%         'insertslideparas',struct('Tbgcol',[1 .84 0],'Tcol',[0 0 0], 'Tfs',30));
+%     showinfo2(['pptmain'],Fout);
+% 
+% 
+% 
 
 
-function mergePPTfiles(pptfilename, pptfiles2merge)
+
+
+function mergePPTfiles2(pptfilename, pptfiles2merge,varargin)
 %% ===============================================
-
+warning off;
+p.insertslide=[];
+insertsliceparas=[];
+if ~isempty(varargin)
+  pin=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+  p=catstruct(p,pin);
+  
+  try
+  fn=fieldnames(p.insertslideparas);
+  va=  struct2cell(p.insertslideparas);
+  insertsliceparas=[fn va]';
+  end
+  
+end
+    
 fis=cellstr(pptfiles2merge);
-copyfile(fis{1},pptfilename,'f'); %copy 1st ppt
-
+if isempty(p.insertslide)
+    copyfile(fis{1},pptfilename,'f'); %copy 1st ppt
+    addfis=fis(2:end);
+else
+    if isempty(insertsliceparas)
+    img2ppt(fileparts(pptfilename),[], pptfilename,'doc','new',...
+        'title',p.insertslide{1},'Tfs',15,'disp',0 );
+    else
+      img2ppt(fileparts(pptfilename),[], pptfilename,'doc','new',...
+        'title',p.insertslide{1},insertsliceparas{:} ,'disp',0);
+    end
+        
+    
+    addfis=fis(1:end);
+end
 
 %% ===============================================
-addfis=fis(2:end);
+
 for i=1:length(addfis)
+    if ~isempty(p.insertslide) && i>1
+      if isempty(insertsliceparas)  
+      img2ppt(fileparts(pptfilename),[], pptfilename,'doc','add',...
+        'title',p.insertslide{i},'Tfs',15,'disp',0 );  
+      else
+         img2ppt(fileparts(pptfilename),[], pptfilename,'doc','add',...
+        'title',p.insertslide{i},insertsliceparas{:} );  
+      end
+    
+    end
     
     filespec1 =addfis{i} ;%'D:\Copy_ppt.pptx';
     filespec2 =pptfilename ;% 'D:\Paste_ppt.pptx';
@@ -42,6 +113,7 @@ for i=1:length(addfis)
     invoke(op1,'Close');
     invoke(op2,'Close');
     invoke(ppt,'Quit');
+    
     
 end
 

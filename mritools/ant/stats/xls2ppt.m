@@ -33,6 +33,22 @@
 % 
 %% example[3]: same as example[2] but convert only sheets 2:4
 % xls2ppt('F:\data5\eranet_round2_statistic\regionwise','^statROI_SIG_.*.xlsx',[2:4],fullfile('F:\data5\eranet_round2_statistic\regionwise','_test4.pptx'),'append',0,'sort',1);
+% 
+%% example[4]: excelfiles to single ppt--all sheets
+%     Fout=fullfile(pwd,'SUMMARY_excelfiles.pptx');
+%     pax=fullfile('F:\data8\test_merge_ppt_andxlsx','data');
+%     [xlsfiles] = spm_select('FPListRec',pax,'.*.xlsx'); xlsfiles=cellstr(xlsfiles);
+%     xls2ppt(xlsfiles,'','all',Fout)
+% 
+%% example[5]:excelfiles to single ppt, sheet-2
+%     Fout=fullfile(pwd,'SUMMARY_excelfiles.pptx');
+%     pax=fullfile('F:\data8\test_merge_ppt_andxlsx','data');
+%     [xlsfiles] = spm_select('FPListRec',pax,'.*.xlsx'); xlsfiles=cellstr(xlsfiles);
+%     xls2ppt(xlsfiles,'',2,Fout)
+% 
+% 
+
+
 
 
 function xls2ppt(pabase,flt,sheetnum,pptfile,varargin)
@@ -61,7 +77,7 @@ else
 end
 
 % pabase='H:\Daten-2\Imaging\AG_Mueller_Mainz\stat_brainvol\result';
-if iscell(pabase) && size(pabase,1)>1
+if iscell(pabase) && size(pabase,1)>=1
     files=pabase;
 else
     [files]  = spm_select('FPList',pabase,flt); files=cellstr(files);
@@ -164,6 +180,33 @@ for i=1:size(tb,1)
     else
      exportToPPTX('open',[pptfile]);
     end
+    
+    %% =========[get width]======================================
+    m=plog([],a,0,[  fname ext ],'d=5;al=1');
+    %    clc
+    fs1=10;
+    fn1='Calibri';
+    
+    fs2=6;
+    fn2='Courier New';
+    
+    
+    warning off;
+    hff=figure('tag','getfontsize','units','inches','visible','off'); drawnow;
+    
+    te1=text(0,0,info,'FontName',fn1,'fontsize',fs1);
+    set(te1,'units','inches');
+    w1= ceil(te1.Extent(3))+1;
+    h1= ceil(te1.Extent(4))+.2;
+    
+    te2=text(0,0,m,'FontName',fn2,'fontsize',fs2);
+    set(te2,'units','inches');
+    w2= ceil(te2.Extent(3))+1;
+    %   w
+    delete(hff);
+    
+    %% ===============================================
+    
          
     % cd(paPPT);
     slideNum = exportToPPTX('addslide','BackgroundColor',s.bgcol);
@@ -171,14 +214,15 @@ for i=1:size(tb,1)
     fprintf('%d,',slideNum);
     % exportToPPTX('addpicture',figH);
     % exportToPPTX('addtext',lb.String{lb.Value});
-    exportToPPTX('addtext',strjoin(info,char(10)),'FontSize',10,...
-        'Position',[0 0 3 3  ]);
+    exportToPPTX('addtext',strjoin(info,char(10)),'FontSize',fs1,...
+       'FontName',fn1, 'Position',[0 0 w1 h1  ]); % [0 0 7 3  ]
     
-    m=plog([],a,0,[  fname ext ],'d=5;al=1');
+    
     % m=strjoin(m,char(10))
     
-    exportToPPTX('addtext',strjoin(m,char(10)),'FontSize',7,...
-        'FontName','Courier New','Position',[0 1 15 3  ])
+    
+    exportToPPTX('addtext',strjoin(m,char(10)),'FontSize',fs2,...
+        'FontName',fn2,'Position',[0 1 w2 3  ])
     
     
     %exportToPPTX('addnote',sprintf('Notes data: slide number %d',slideNum));
@@ -200,9 +244,9 @@ for i=1:size(tb,1)
     fileStats   = exportToPPTX('query');
     newFile = exportToPPTX('saveandclose',pptfile);
     catch
-        disp(lasterr)
-        disp(['error: maybe excel-file/ppt-file open?'  ])
-        rethrow(lasterr);
+        disp(lasterr);
+        disp(['ERROR: maybe excel-file/ppt-file open?'  ]);
+%         rethrow(lasterr);
     end
     
 end
