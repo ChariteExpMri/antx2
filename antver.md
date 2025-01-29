@@ -9,7 +9,7 @@
 ------------------  
   &#x1F535;   <ins>**29 Jan 2025 (16:00:03)**</ins>  
    __[xstatlabels.m]__ modified, now allow within-design (ttest, signrank, permutation),   
-  other changes: img2ppt.m, mergePPTfiles.m  
+  other changes: img2ppt.m, mergePPTfiles.m,xls2ppt.m  
 <!---->
   &#x1F535;   <ins>**16 Jan 2025 (14:11:46)**</ins>  
    __[getCMAP.m]__ modified, extended colormaps (isocolors)   
