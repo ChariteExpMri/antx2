@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   29 Jan 2025 (16:00:03)  
+ &#x1F34E; last modification:   12 Feb 2025 (15:56:18)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,9 +7,13 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**12 Feb 2025 (15:56:18)**</ins>  
+   __[xobj2nifti.m]__ modified, now allows to convert niftis from outside animal-folders  
+<!---->
   &#x1F535;   <ins>**29 Jan 2025 (16:00:03)**</ins>  
    __[xstatlabels.m]__ modified, now allow within-design (ttest, signrank, permutation),   
   other changes: img2ppt.m, mergePPTfiles.m,xls2ppt.m  
+    
 <!---->
   &#x1F535;   <ins>**16 Jan 2025 (14:11:46)**</ins>  
    __[getCMAP.m]__ modified, extended colormaps (isocolors)   

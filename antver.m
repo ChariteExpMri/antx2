@@ -1090,6 +1090,10 @@
 % #k [xstatlabels.m] #n modified, now allow within-design (ttest, signrank, permutation), 
 % other changes: img2ppt.m, mergePPTfiles.m,xls2ppt.m
 % 
+% #ba 12 Feb 2025 (15:56:18)
+% #k [xobj2nifti.m] #n modified, now allows to convert niftis from outside animal-folders
+% 
+% 
 % 
 
 
