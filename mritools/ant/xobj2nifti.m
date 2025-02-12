@@ -369,8 +369,9 @@ a=a(:,:,:,1);    ha=ha(1);
 b=b(:,:,:,1);    hb=hb(1);
 ivec=squeeze(sum(sum(b>0,1),2));
 islice=max(find(ivec==max(ivec)));
-if islice==size(a,3) || islice==1
-  islice=round(size(a,3)/2) ; %middle SLice
+islicemat=find(ivec==max(ivec));
+if length(islicemat)/size(a,3)>.9   % islice==size(a,3) || islice==1
+  islice=round(length(islicemat)/2) ; %middle SLice
 end
 
 a2=a(:,:, islice);
