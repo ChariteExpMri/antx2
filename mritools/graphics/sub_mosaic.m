@@ -234,10 +234,16 @@ for i=1:length(g)
 %     if i>1
 
 % # ALPHA #############
-        alphadata = p.alpha(i).*(F >= climF(1));
-        if length(unique(Bm(:)))>1 %outer mask
+    alphadata = p.alpha(i).*(F >= climF(1));
+    if length(unique(Bm(:)))>1 %outer mask
+        if i==1
             alphadata=alphadata.*Bm;
+        else
+            if p.usebrainmask==1
+                alphadata=alphadata.*Bm;
+            end
         end
+    end
 % # THRESHOLD ############
    athresh=(p.thresh(i,:));
    

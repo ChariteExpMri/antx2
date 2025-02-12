@@ -205,6 +205,7 @@ p.crop      =0; %saving: crop image {0|1};   (1) crop image; default: 0
 
 
 p.value0transp=1  ; %set zeros-value to nan, ie. make them transparent {0,1}; default
+p.usebrainmask=0  ; %use brainmask to hide outerbrain signals to rid [0,1]  ; default:,1 
 
 
 %% ========[varinpit]=======================================
@@ -2277,6 +2278,7 @@ tb={...
     'figure-color'          ''   'bgcol'
     
     'zeroValue-transparency'     ''   'value0transp'
+    'use brain mask'             '' 'usebrainmask'
     
     };
 
@@ -3335,9 +3337,21 @@ for j=1:3
         if i>1
            alphadata=~isnan(F).*alphadata;    % issue with NAN --> become transparent
         end
+        
+        
         if length(unique(Bm(:)))>1 %outer mask
-            alphadata=alphadata.*Bm;
+            if i==1
+                alphadata=alphadata.*Bm;
+            else
+                if p.usebrainmask==1
+                   alphadata=alphadata.*Bm; 
+                end
+                
+            end
         end
+        
+        
+        
         % ### THRESHOLD ############
         athresh=(p.thresh(i,:));
         
