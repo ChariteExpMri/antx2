@@ -202,7 +202,9 @@ set(ha,'YDir','reverse');
 hold on
 for i=1:length(g)
     F=g(i).d;
-    F(F==0)=nan;
+    if p.value0transp==1
+        F(F==0)=nan;
+    end
     
     climF=p.clim(i,:);
     Fvec=F(:);

@@ -204,7 +204,7 @@ p.bgtransp  =0; %saving: transparent background: {0|1};   (1) transparent backgr
 p.crop      =0; %saving: crop image {0|1};   (1) crop image; default: 0
 
 
-
+p.value0transp=1  ; %set zeros-value to nan, ie. make them transparent {0,1}; default
 
 
 %% ========[varinpit]=======================================
@@ -932,7 +932,7 @@ fg
 
 set(gcf,'units','normalized','menubar','none','name','settings','numbertitle','off');
 set(gcf,'tag','specs_gui');
-set(gcf,'position',[0.1333    0.1889    0.19   0.6433]);
+set(gcf,'position',[0.1333    0.1889    0.19   0.71]);
 
 h = uitabgroup(gcf);
 set(h,'tag','tabgroup')
@@ -1450,7 +1450,9 @@ vname=tbref{idx(1),3};
 fname=tbref{idx(1),3};
 chk={ 'labelcol' 'cursorcol' 'bgcol'};
 if idx(2)>1; return; end
-if isempty(find(strcmp(chk,fname))); return; end
+if isempty(find(strcmp(chk,fname)));
+    return; 
+end
 
 col=uisetcolor;
 col=regexprep(num2str(col),'\s+',' ');
@@ -2273,6 +2275,8 @@ tb={...
     'axis-overlapp'        ''   'axolperc'
     'figure-width'          ''   'figwidth'
     'figure-color'          ''   'bgcol'
+    
+    'zeroValue-transparency'     ''   'value0transp'
     
     };
 
@@ -3290,7 +3294,10 @@ for j=1:3
         x=g{i} ;% nifti
         w=x(ord(j)); %image-struct
         F=w.a;
-        F(F==0)=nan;
+        
+        if p.value0transp==1
+            F(F==0)=nan;
+        end
         
         climF=p.clim(i,:);
         %Fvec=F(:);

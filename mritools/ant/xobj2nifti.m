@@ -41,6 +41,22 @@
 % z.reorienttype = [1];                   % % select the reorientation type (rec. for mouse space data; click right icon for a preview)
 % z.renamestring = '';                    % % (optional) enter a new filename for the imported files (without extention)               
 % xobj2nifti(0,z,pa);  
+%% ------ example-3: convert multiple obj-files from another folder (new niftis will be stored in the obj-folder)
+% z.objfile      = {...
+%     'F:\data8\issue_obj_import_outsideAnimalDIr\dat\m1_obj_in_path\test_angio_3D.obj'
+%     'F:\data8\issue_obj_import_outsideAnimalDIr\dat\m1_obj_in_path\test_angio2_3D.obj'};	% one or more OBJ-files
+% z.refIMG       = {'F:\data8\issue_obj_import_outsideAnimalDIr\templates\AVGT.nii'};	% ref image such as "t2.nii" (header-information is used here)
+% z.reorienttype =  [1];	% select reorientation type; click left icon for preview
+% z.renamestring =  '';	% if empty: use original filenme or enter new filename or prefix ("$p:pref_") or suffix ("$s:_suff")
+% xobj2nifti(0,z);  
+%% ------ example-4: convert multiple obj-files studies animalfolder using local reference-image 
+% z=[];                                                                                                                                            
+% z.objfile      = { 'test_angio_3D.obj' 'test_angio2_3D.obj' };  % % one or more OBJ-files                                                                             
+% z.refIMG       = 'AVGT.nii';               % % ref image such as "t2.nii" (header-information is used here)                                      
+% z.reorienttype = [1];                      % % select reorientation type; click left icon for preview                                            
+% z.renamestring = '';                       % % if empty: use original filenme or enter new filename or prefix ("$p:pref_") or suffix ("$s:_suff")
+% xobj2nifti(0,z);                                                                                                                                 
+%         
 
 function xobj2nifti(showgui,x,pa)
 
@@ -105,9 +121,12 @@ if exist('x')~=1;        x=[]; end
 p={...
     'inf97'    ''  '*** CONVERT LOCAL ANALYZE FILES (*.obj)'    ''
     'objfile'     ''                'one or more OBJ-files' ...
-    {@selector2,obj,{'objectfile'},'out','list','selection','multi','position','auto','info','obj-file(s)'}
+     {@getfilex,obj,'obj'}
+    %{@selector2,obj,{'objectfile'},'out','list','selection','multi','position','auto','info','obj-file(s)'}
+    
     'refIMG'      't2.nii'        'ref image such as "t2.nii" (header-information is used here)' ...
-    {@selector2,li,{'TargetImage'},'out','list','selection','single','position','auto','info','reference-image'}
+    {@getfilex,li,'ref'}
+%     {@selector2,li,{'TargetImage'},'out','list','selection','single','position','auto','info','reference-image'}
     
     'reorienttype'   [1]       'select reorientation type; click left icon for preview'                              {@checkorientation,pa,ff}
     'renamestring'   ''        'if empty: use original filenme or enter new filename or prefix ("$p:pref_") or suffix ("$s:_suff")'            {'' '$p:bla_'  '$s:_bla'}
@@ -147,8 +166,21 @@ end
 %%   proc
 % ===============================================
 z.orient=ff;
-for i=1:length(pa)
-    proc(z,pa{i}) ;
+
+
+if ischar(z.objfile);  z.objfile =cellstr(z.objfile); end
+if ischar(z.refIMG);   z.refIMG  =cellstr(z.refIMG); end
+useAnimaldir=1;
+if exist(z.objfile{1})==2 && exist(z.refIMG{1})==2 
+   useAnimaldir=0;
+end
+
+if useAnimaldir==1;
+    for i=1:length(pa)
+        proc(z,pa{i}) ;
+    end
+else
+        proc(z,[]) ;
 end
 disp('Done!');
 
@@ -157,19 +189,29 @@ disp('Done!');
 function proc(z,pam)
 %% ===============================================
 z.objfile=cellstr(z.objfile);
-pam=char(pam);
 z.refIMG=char(z.refIMG);
+pam=char(pam);
+
+useAnimaldir=1;
+if exist(z.refIMG)==2 && exist(z.objfile{1})==2 
+    useAnimaldir=0;   
+end
 
 for i=1:length(z.objfile)
-    [~,animal]=fileparts(pam);
-    try; cprintf('*[0 0 1]',[ '[' animal ']' '\n'] );
-    catch; disp([ '[' animal ']' ] );
+    if useAnimaldir==1;
+        [~,animal]=fileparts(pam);
+        try; cprintf('*[0 0 1]',[ 'working on [' animal ']' '\n'] );  catch; disp([ 'working on [' animal ']' ] );        end
+        f1=fullfile(pam,z.refIMG) ;
+        f2=fullfile(pam,z.objfile{i});
+    elseif useAnimaldir==0;
+        f1=z.refIMG;
+        f2=z.objfile{i};
+        [pam,imgname,ext]=fileparts(f2);
+        try; cprintf('*[0 0 1]',[ 'working on [' [imgname,ext] ']' '\n'] );  catch; disp([ 'working on [' [imgname,ext] ']' ] );        end
+        
     end
     
-    f1=fullfile(pam,z.refIMG) ;
-    f2=fullfile(pam,z.objfile{i});
     if exist(f1)~=2 && exist(f2)~=2
-        
         if exist(f1)~=2 && exist(f2)==2
             disp([ '  !!!: refIMG: ' '"' z.refIMG '"' 'not found']);
         elseif exist(f1)==2 && exist(f2)~=2
@@ -219,6 +261,55 @@ end
 % ==============================================
 %%   subs
 % ===============================================
+function o=getfilex(im,imtype)
+%% ===============================================
+o='';
+if strcmp(imtype,'obj')
+    imtypeStr='obj-file';
+    para='x.objfile';
+    fmode='multi'; 
+    fmode2='on';
+    fmt='*.obj';
+else
+    imtypeStr='ref-file';
+    para='x.refIMG';
+    fmode='single';
+    fmode2='off';
+    fmt='*.nii';
+end
+ opts=struct('WindowStyle','modal','Interpreter','tex','Default','animalDir');
+    msg={
+        ['Please specify source of ' imtypeStr ':' ]
+        ['\color{blue}animalDir: \color{black}.. is in study''s animal-folder(s)']
+        ['\color{blue}other: \color{black} "' imtypeStr '" is in another folder']
+        };
+
+answer = questdlg(msg,[['Source of ' ] imtypeStr],...
+        'animalDir','other','cancel',opts);
+    
+if strcmp(answer,  'animalDir')  
+    list=selector2( im,{'objectfile'},'out','list','selection',fmode,'position','auto','info',['select:' imtypeStr  ]);  
+elseif strcmp(answer,  'other') 
+    [fi, pa] = uigetfile(fmt, ['select the ' imtypeStr ],'MultiSelect', fmode2);
+    if isnumeric(pa); 
+        return;
+    end
+    if ~iscell(fi)
+       fi=cellstr(fi);
+    end    
+        list=stradd(fi(:), [pa filesep],1);
+else
+    return 
+end
+
+% paramgui('setdata',para,list); % reset the other "reorienttype"
+o=list;
+return
+
+
+%% ===============================================
+
+
 function chk=checkorientation(pa,ff)
 us=get(gcf,'userdata');
 % paramgui('setdata','x.reorienttype2',[]); % reset the other "reorienttype"
@@ -241,11 +332,16 @@ reffile=reffile{1};
 % ==============================================
 %%
 % ===============================================
-for i=1:length(pa)
-    f1=fullfile(pa{i},reffile) ;
-    f2=fullfile(pa{i},objfile) ;
-    if exist(f1)==2 && exist(f2)==2
-        break
+if  exist(reffile)==2 && exist(objfile)==2
+    f1=reffile;
+    f2=objfile;
+else
+    for i=1:length(pa)
+        f1=fullfile(pa{i},reffile) ;
+        f2=fullfile(pa{i},objfile) ;
+        if exist(f1)==2 && exist(f2)==2
+            break
+        end
     end
 end
 
@@ -273,6 +369,9 @@ a=a(:,:,:,1);    ha=ha(1);
 b=b(:,:,:,1);    hb=hb(1);
 ivec=squeeze(sum(sum(b>0,1),2));
 islice=max(find(ivec==max(ivec)));
+if islice==size(a,3) || islice==1
+  islice=round(size(a,3)/2) ; %middle SLice
+end
 
 a2=a(:,:, islice);
 b2=b(:,:, islice);
