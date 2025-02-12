@@ -42,13 +42,13 @@
 % z.renamestring = '';                    % % (optional) enter a new filename for the imported files (without extention)               
 % xobj2nifti(0,z,pa);  
 %% ------ example-3: convert multiple obj-files from another folder (new niftis will be stored in the obj-folder)
-% z.objfile      = {...
-%     'F:\data8\issue_obj_import_outsideAnimalDIr\dat\m1_obj_in_path\test_angio_3D.obj'
-%     'F:\data8\issue_obj_import_outsideAnimalDIr\dat\m1_obj_in_path\test_angio2_3D.obj'};	% one or more OBJ-files
-% z.refIMG       = {'F:\data8\issue_obj_import_outsideAnimalDIr\templates\AVGT.nii'};	% ref image such as "t2.nii" (header-information is used here)
-% z.reorienttype =  [1];	% select reorientation type; click left icon for preview
-% z.renamestring =  '';	% if empty: use original filenme or enter new filename or prefix ("$p:pref_") or suffix ("$s:_suff")
-% xobj2nifti(0,z);  
+%    z.objfile      = {...
+%         'F:\data8\issue_obj_import_outsideAnimalDIr\objfile\test_angio_3D.obj'
+%         'F:\data8\issue_obj_import_outsideAnimalDIr\objfile\test_angio2_3D.obj'};	% one or more OBJ-files
+%     z.refIMG       = {'F:\data8\issue_obj_import_outsideAnimalDIr\templates\AVGT.nii'};	% ref image such as "t2.nii" (header-information is used here)
+%     z.reorienttype =  [1];	% select reorientation type; click left icon for preview
+%     z.renamestring =  '';	% if empty: use original filenme or enter new filename or prefix ("$p:pref_") or suffix ("$s:_suff")
+%     xobj2nifti(0,z);  
 %% ------ example-4: convert multiple obj-files studies animalfolder using local reference-image 
 % z=[];                                                                                                                                            
 % z.objfile      = { 'test_angio_3D.obj' 'test_angio2_3D.obj' };  % % one or more OBJ-files                                                                             
