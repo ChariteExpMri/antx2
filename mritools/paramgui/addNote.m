@@ -22,6 +22,7 @@
 % po.figpos    % adjust figure-Size (normalized, 4 values); if empty a default size is used
 % p0.wait      % modality of the figure: [0]no [1]yes.. wait to close figure
 % p0.name      % name of the figure (string; default: '')
+% p0.timer     % set a timer (secs) after this time the note is deleted ;default:0 
 % ===============================================
 %
 %
@@ -82,6 +83,8 @@
 %     'state',3,'dlg', 1,'wait',1);
 %% ===============================================
 %
+%% TIMER NOTE ..NOTE IS DELETED AFTER 2 SECs
+% addNote(gcf,'text','<b>self destructing note','fs',30,'col',[1 1 0],'pos',[[.3 .8 .3 .2]],'timer',2);
 %
 % ==============================================
 %% --- UPDATE NOTE ---
@@ -169,6 +172,7 @@ p0.dlg  =0       ;                        % make dialog: [0]no, [1]yes...dependi
 po.figpos=[]     ;                        % adjust figure-Size (normalized, 4 values)
 p0.wait  =0      ;                        % modality of the figure: [0]no [1]yes.. wait to close figure
 p0.name  =''     ;    % name of the figure (string; default: '')
+p0.timer =0      ;    % using timer for note..ie. selfclosing
 % ===============================================
 
 
@@ -594,15 +598,29 @@ u.text=text2;
 
 
 %===================================================================================================
+%% ====[timer function]===========================================
+if p.timer~=0
+    
+    %% ===============================================
+    t = timer('TimerFcn', {@timer_execute,pan2},...
+        'StartDelay',p.timer);
+    start(t);
+%% ===============================================
+
+    
+end
+
+%% ===============================================
 
 set(pan2,'userdata',u);
-
 if p.wait==1
     figure(hf);
     uiwait(hf);
 end
 
-
+function timer_execute(htimer,e2,pan2)
+try; fnote_close([],[],pan2); end
+try; delete(htimer); end
 
 function buttoncallback(e,e2,hp)
 uiresume(gcf);

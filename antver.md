@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   12 Feb 2025 (15:56:18)  
+ &#x1F34E; last modification:   18 Feb 2025 (11:32:30)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,8 +7,14 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**18 Feb 2025 (11:32:30)**</ins>  
+   __[xstat_chisquare.m]__ : run  vox-wise chi-square test for two independent groups on binary images (lesion masks)  
+   __[xstat_chisquarePlot.m]__ : create plots and a summary powerpoint-file after running __[xstat_chisquare]__  
+<!---->
   &#x1F535;   <ins>**12 Feb 2025 (15:56:18)**</ins>  
    __[xobj2nifti.m]__ modified, now allows to convert niftis from outside animal-folders  
+    
+    
 <!---->
   &#x1F535;   <ins>**29 Jan 2025 (16:00:03)**</ins>  
    __[xstatlabels.m]__ modified, now allow within-design (ttest, signrank, permutation),   

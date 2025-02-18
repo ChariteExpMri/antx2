@@ -598,23 +598,24 @@ end
 ax=axes('position',v.editorpos,'visible','off','tag','axe1');
 uistack(ax,'bottom');
 
-set(gcf,'units','pixels')
-figposp=get(gcf,'position');
+hf=findobj(0,'tag','paramgui');
+set(hf,'units','pixels')
+figposp=get(hf,'position');
 sizepixel=figposp(3:4);
 
-set(gcf,'units','norm')
-pos0=get(gcf,'position');
-set(gcf,'position',[0.01 pos0(2) 1  pos0(4)   ])
-set(gcf,'units','pixels');
+set(hf,'units','norm')
+pos0=get(hf,'position');
+set(hf,'position',[0.01 pos0(2) 1  pos0(4)   ])
+set(hf,'units','pixels');
 
 
 % posfig   =get(gcf,'position');
 pos2=[ pos(1:2).*sizepixel  pos(3:4).*sizepixel];
 
 if ~isempty(v.figpos)
-    set(gcf,'units','norm');
-    set(gcf,'position',v.figpos);
-    set(gcf,'units','pixels');
+    set(hf,'units','norm');
+    set(hf,'position',v.figpos);
+    set(hf,'units','pixels');
 end
 
 
@@ -633,13 +634,13 @@ jCodePane.setContentType(codeType)
 
 jCodePane.setText(b3);
 jScrollPane = com.mathworks.mwswing.MJScrollPane(jCodePane);
-[jhPanel,hContainer] = javacomponent(jScrollPane,round(pos2),gcf); %[10,10,500,200]
+[jhPanel,hContainer] = javacomponent(jScrollPane,round(pos2),hf); %[10,10,500,200]
 % jhPanel.setFont(java.awt.Font('Comic Sans MS',java.awt.Font.PLAIN,28))
-set(gcf,'position',figposp)
+set(hf,'position',figposp)
 
 
 
-set(gcf,'visible','off');  % #rp1
+set(hf,'visible','off');  % #rp1
 set(hContainer,'units','norm');
 
 
@@ -655,8 +656,8 @@ us.lastYscroll=inf;
 drawnow
 us.history{1}=b3;
 us.historyValue=1;
-set(gcf,'userdata',us);
-set(gcf,'units','normalized','KeyPressFcn',@figkey);
+set(hf,'userdata',us);
+set(hf,'units','normalized','KeyPressFcn',@figkey);
 
 
 
@@ -754,12 +755,12 @@ p6=uicontrol('style','pushbutton',       'tag','pb6',    'string','cancel','unit
 
 drawnow;
 if ~isempty(v.figpos)
-    figpos0=get(gcf,'position');
+    figpos0=get(hf,'position');
     if isnan(v.figpos(1))
         figpos0(3:4)=v.figpos(3:4);
-        set(gcf,'position',figpos0);
+        set(hf,'position',figpos0);
     else
-        set(gcf,'position',v.figpos);
+        set(hf,'position',v.figpos);
     end
     
     
@@ -771,13 +772,13 @@ catch
     jTextAreaWA = handle(us.jCodePane,'CallbackProperties');
     set(jTextAreaWA,'CaretUpdateCallback',@showIcon);
 end
-set(findobj(gcf,'tag','pb4'),'enable','off');
-set(findobj(gcf,'tag','pb3'),'enable','off');
+set(findobj(hf,'tag','pb4'),'enable','off');
+set(findobj(hf,'tag','pb3'),'enable','off');
 
 
 us.jhPanel.setHorizontalScrollBarPolicy(32);
-delete(findobj(gcf,'tag','pb5'));
-set(gcf,'Resizefcn',@resizefun);%32-always,31-needed,30-depends
+delete(findobj(hf,'tag','pb5'));
+set(hf,'Resizefcn',@resizefun);%32-always,31-needed,30-depends
 % set(us.hContainer,'units','pixels')
 
 
@@ -788,7 +789,7 @@ end
 set(us.jCodePane,'MouseReleasedCallback',@mouseReleased);
 
 drawnow;
-set(gcf,'visible','off');  % #rp1
+set(hf,'visible','off');  % #rp1
 
 % reformat; %reformat
 
@@ -1608,7 +1609,7 @@ drawnow
 
 function [varargout]=getdata
 drawnow
-hf=findobj(gcf,'tag','paramgui');
+hf=findobj(0,'tag','paramgui');
 us=  get(findobj(0,'tag','paramgui'),'userdata');
 v=us.v;
 
@@ -1638,7 +1639,7 @@ varargout{4}=params;
 
 function [varargout]=getdata2(varargin)
 drawnow
-hf=findobj(gcf,'tag','paramgui');
+hf=findobj(0,'tag','paramgui');
 us=  get(findobj(0,'tag','paramgui'),'userdata');
 v=us.v;
 
@@ -1801,7 +1802,8 @@ if ~isempty(filename) %exist(us.v.info{2})==2
     cp=[w0; w1;w2];
     cp=strjoin(cp,char(10));
     clipboard('copy',cp);
-    hs=addNote(gcf,'text','<b>parameter send to clipboard','fs',15,'col',[1 1 0],'pos',[[.3 .8 .3 .2]]);
+    hs=addNote(gcf,'text','<b>parameter send to clipboard','fs',20,'col',[1 1 0],'pos',[[.3 .8 .3 .15]],...
+        'timer',.3);
     %% ===============================================
     
 end
@@ -3818,7 +3820,7 @@ s2b=dum;
 
 
 function reformat
-us=get(findobj(gcf,'tag','paramgui'),'userdata');
+us=get(findobj(0,'tag','paramgui'),'userdata');
 txt=us.jCodePane.getText;
 txt=char(txt);
 b=regexp(txt, '\n', 'split')';
@@ -5465,7 +5467,7 @@ jEditPane.setText(htmlStr)
 function setdata(varargin);
 inp=varargin{1};
 
-hp=findobj(gcf,'tag','paramgui');
+hp=findobj(0,'tag','paramgui');
 us=get(hp,'userdata');
 r=us.jCodePane;
 tx=char(r.getText);

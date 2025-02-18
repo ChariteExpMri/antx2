@@ -1471,6 +1471,14 @@ mh2 = uimenu(mh,'Label',' obtain parameter from masks',                         
 mh2 = uimenu(mh,'Label',' label-based statistic',                                                  'Callback',{@menubarCB, 'xstatlabels0'},'separator','off',...
 'userdata',[HSTART 'perform regionwise statistic ' HEND '..for an image across animals']);
 
+mh2 = uimenu(mh,'Label','binary mask statistic',...
+'userdata',[HSTART 'stats for biare images' HEND '..']);
+  uimenu(mh2,'Label','RUN voxwise chi-square test ',                                                  'Callback',{@menubarCB, 'xstat_chisquare_call'},'separator','off',...
+'userdata',[HSTART 'perform voxelwise chisquare-tests on masks (example: lesion masks) ' HEND '']);
+  uimenu(mh2,'Label','PLOT chi-square test results ',                                                  'Callback',{@menubarCB, 'xstat_chisquarePlot_call'},'separator','off',...
+'userdata',[HSTART 'make images after running chisquare-tests ' HEND '']);
+
+
 mh2 = uimenu(mh,'Label',' SPM-statistic',                                                          'Callback',{@menubarCB, 'spm_statistic'},'separator','on',...
 'userdata',[HSTART 'perform voxelwise statistic ' HEND '..for an image across animals']);
 
@@ -3429,6 +3437,17 @@ elseif strcmp(task,'xstatlabels0')
     end
     %% ===============================================
     xstatlabels;
+    
+ elseif strcmp(task,'xstat_chisquare_call')
+     functioncall='xstat_chisquare';
+    if showhelpOnly==1;              hlpfun=functioncall;                              return;end
+    if strcmp(u.mousekey,'right');   hlpfun=[functioncall '.m'];    showcmd(hlpfun);   return;end
+    feval(functioncall);  
+elseif strcmp(task,'xstat_chisquarePlot_call')
+    functioncall='xstat_chisquarePlot';
+    if showhelpOnly==1;              hlpfun=functioncall;                              return;end
+    if strcmp(u.mousekey,'right');   hlpfun=[functioncall '.m'];    showcmd(hlpfun);   return;end
+    feval(functioncall);
     
  elseif strcmp(task,'makegroupassignmentFile')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
