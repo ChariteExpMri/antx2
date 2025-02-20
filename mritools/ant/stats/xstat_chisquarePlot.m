@@ -84,7 +84,7 @@
 
 function [z varargout] = xstat_chisquarePlot(showgui,x)
 warning off;
-clc
+
 
 if 0
     

@@ -4,49 +4,81 @@
 <dict>
 	<key>files</key>
 	<dict>
-		<key>Resources/README.rtf</key>
+		<key>Resources/Roboto.json</key>
 		<data>
-		VJvBrY6zWplx2FbzYRvP/Ln6Yqk=
+		/4A10k+PFISB+Q8QzC9Nkbfv+ZQ=
+		</data>
+		<key>Resources/Roboto.png</key>
+		<data>
+		/RocKXAXn/0WA+Rl757gcTqaYt8=
+		</data>
+		<key>Resources/atlas/AICHA.nii.gz</key>
+		<data>
+		Cc6vXvMk9x6v7kEO/eO1EDpqygc=
+		</data>
+		<key>Resources/atlas/aal.nii.gz</key>
+		<data>
+		HszsRMWK8e42H2Bux8QizB59/A0=
+		</data>
+		<key>Resources/atlas/natbrainlab.nii.gz</key>
+		<data>
+		7hwFJ9ZHwjhcjt7JCcfyLJxIHsY=
+		</data>
+		<key>Resources/atlas/spmSUIT.nii.gz</key>
+		<data>
+		yzDRjPEEOEPmBL3QRDL5IAnFr5A=
 		</data>
 		<key>Resources/dcm2niix</key>
 		<data>
-		pnRgDxFJ9qrDa9v9CnjaAQrc42w=
+		DtndB5dG2WanBh1ESneG2jgmdXo=
 		</data>
-		<key>Resources/lut/1hot.clut</key>
+		<key>Resources/lut/1red.clut</key>
+		<data>
+		/ap1Km6/oGoQgbvLmeZUbitcJJk=
+		</data>
+		<key>Resources/lut/2green.clut</key>
+		<data>
+		4OBuivTF/1MONNDfWP26n4DmZVs=
+		</data>
+		<key>Resources/lut/3blue.clut</key>
+		<data>
+		Dm0a0BLqtiDzweXVqWj1EGQeAfo=
+		</data>
+		<key>Resources/lut/4hot.clut</key>
 		<data>
 		AfK/vnXt+45RaEwsxIRzcd1eKmU=
 		</data>
-		<key>Resources/lut/2winter.clut</key>
+		<key>Resources/lut/5winter.clut</key>
 		<data>
 		A1LUwok1OOTFVxJyZySheSv8QPg=
-		</data>
-		<key>Resources/lut/3warm.clut</key>
-		<data>
-		xdMtZLWKZCLsF6/+dJEcvwJyb60=
-		</data>
-		<key>Resources/lut/4cool.clut</key>
-		<data>
-		CLfJusfHMcJ2GSDSsrtWI0AO8/4=
-		</data>
-		<key>Resources/lut/5redyell.clut</key>
-		<data>
-		pVHjWRApuuDZBusjGIHhyHiwWns=
 		</data>
 		<key>Resources/lut/6bluegrn.clut</key>
 		<data>
 		IL+KQZB+qWLDiYwWn4oVEunKgFA=
 		</data>
-		<key>Resources/lut/Arial.json</key>
+		<key>Resources/lut/6warm.clut</key>
 		<data>
-		XKEkesKkzcdTKdAVfy1FGWxrZ5s=
+		xdMtZLWKZCLsF6/+dJEcvwJyb60=
 		</data>
-		<key>Resources/lut/Arial.png</key>
+		<key>Resources/lut/7cool.clut</key>
 		<data>
-		YsBbarS2hLpVexauF1Pmr5B8anY=
+		CLfJusfHMcJ2GSDSsrtWI0AO8/4=
+		</data>
+		<key>Resources/lut/8redyell.clut</key>
+		<data>
+		pVHjWRApuuDZBusjGIHhyHiwWns=
+		</data>
+		<key>Resources/lut/CT_Airways.clut</key>
+		<data>
+		VvpyzLlfCcpBBaN41vhYcSFYBDs=
 		</data>
 		<key>Resources/lut/CT_Bones.clut</key>
 		<data>
-		K65XJeULTKbsGIp06jiJ6MiWtmQ=
+		mpD6wGKWttCuYdHf4DHldGc6eAE=
+		</data>
+		<key>Resources/lut/CT_Head.clut</key>
+		<data>
+		vv9G6+ZkyahcBIrVV57g+9csXFQ=
 		</data>
 		<key>Resources/lut/CT_Kidneys.clut</key>
 		<data>
@@ -56,25 +88,37 @@
 		<data>
 		3Rj7mmi23MUVeTx0RbO63rNnDkI=
 		</data>
-		<key>Resources/lut/CT_Lungs.clut</key>
-		<data>
-		22ZQLZTFDtjAZyWVCStN9V6gpY8=
-		</data>
 		<key>Resources/lut/CT_Muscles.clut</key>
 		<data>
 		upv6XvnhQVW3bFGyYKV4U9v3gLY=
 		</data>
-		<key>Resources/lut/CT_Skin.clut</key>
+		<key>Resources/lut/CT_Scalp.clut</key>
 		<data>
-		OLd9e7bMMiG5R4hMVRC0bKKHAt8=
+		0Uy44PODHdr2uUkuoHjHw6BME1c=
+		</data>
+		<key>Resources/lut/CT_Skull.clut</key>
+		<data>
+		d21rddLsYSlA15LAM+CgKOlTUiU=
+		</data>
+		<key>Resources/lut/CT_Soft.clut</key>
+		<data>
+		TEvagIR8Qjns3Pf0seU0liow6Jo=
 		</data>
 		<key>Resources/lut/CT_Soft_Tissue.clut</key>
 		<data>
-		wj8fPqGqTxfpDuUV8X1aRQ7qBjc=
+		a7gsQy5FUTsL6Maq2Y8+EmF33E4=
+		</data>
+		<key>Resources/lut/CT_Surface.clut</key>
+		<data>
+		EyR9q/ZPrtPI8LEabHZzIc4wSHo=
 		</data>
 		<key>Resources/lut/CT_Vessels.clut</key>
 		<data>
-		Pg1jfRQ9f07aDh4C1NFfWh9wN/E=
+		0tiSDK4C3wkBrVBslhPMXUqaUvY=
+		</data>
+		<key>Resources/lut/CT_w_Contrast.clut</key>
+		<data>
+		jA498Fov8f6IMwVtFK+UCCfGnXk=
 		</data>
 		<key>Resources/lut/GE_color.clut</key>
 		<data>
@@ -84,77 +128,53 @@
 		<data>
 		23dEQqURv9zYj66saUbRGxnPw6I=
 		</data>
-		<key>Resources/lut/MR_scalp.clut</key>
+		<key>Resources/lut/Inferno.clut</key>
 		<data>
-		TfWizIWHs9vlrrVzemYoygYdpK8=
+		VwV5a6MUqOj7RM7UbQkt32Wgb+E=
 		</data>
-		<key>Resources/lut/MR_surface.clut</key>
+		<key>Resources/lut/NIH.clut</key>
 		<data>
-		iFXyL4ULQP7uY2qe4zZy5DRdIpM=
+		s7WG6NAe7buX9+QiQPAWmJUXqzk=
 		</data>
-		<key>Resources/lut/Montserrat.json</key>
+		<key>Resources/lut/Plasma.clut</key>
 		<data>
-		y0ppx3r4824JPhFiXky/yE2FYk4=
+		SiUDUY4Fv4wg+sOsgae/cF2L938=
 		</data>
-		<key>Resources/lut/Montserrat.png</key>
+		<key>Resources/lut/Viridis.clut</key>
 		<data>
-		q4pZlS9352pZYUQ6bROuQsbYq/o=
-		</data>
-		<key>Resources/lut/OpenSans.json</key>
-		<data>
-		ObdS84yaSA5ZlKVakha/aDKjNyU=
-		</data>
-		<key>Resources/lut/OpenSans.png</key>
-		<data>
-		XLa3OnZ3OyYaQVTIIWMU/p9rCrU=
-		</data>
-		<key>Resources/lut/Oswald.json</key>
-		<data>
-		sSkyk6eo7HX0Mibg+85Tjgj0FRo=
-		</data>
-		<key>Resources/lut/Oswald.png</key>
-		<data>
-		9EMXFfg5Uy1fqETv6DJgj/gU4P0=
-		</data>
-		<key>Resources/lut/Oxygen.json</key>
-		<data>
-		zZkfj4wpv4Mt9H3jEF6NOxbcq+8=
-		</data>
-		<key>Resources/lut/Oxygen.png</key>
-		<data>
-		/YnGZtkGMcL8U3IwZbNQWwrBeug=
-		</data>
-		<key>Resources/lut/Rainramp.clut</key>
-		<data>
-		2IyS+2DzMGzQNppvkdhWjZSOWPw=
-		</data>
-		<key>Resources/lut/Roboto.json</key>
-		<data>
-		q2OI1Y7AJIkdfPaGiPDu7ETYxR8=
-		</data>
-		<key>Resources/lut/Roboto.png</key>
-		<data>
-		Sh8rvTRDID47thLmt4RT5mo2/70=
-		</data>
-		<key>Resources/lut/Ubuntu.json</key>
-		<data>
-		VOqjqb6sNFTV6fPxU2ofUBLFGf0=
-		</data>
-		<key>Resources/lut/Ubuntu.png</key>
-		<data>
-		1e50G4tJYWYCNC5OqsvGg2n5os8=
+		/sX54l8RggqeJzWD5KyVEe/e4sc=
 		</data>
 		<key>Resources/lut/actc.clut</key>
 		<data>
 		OpMbJb7bgE1A6akaxnybG5SCZXw=
 		</data>
+		<key>Resources/lut/blue2red.clut</key>
+		<data>
+		O1zEZNQgb70NR0Z4pO8C8Vtpoig=
+		</data>
 		<key>Resources/lut/bone.clut</key>
 		<data>
 		te9z6zpotLO3R31J69mqdHB/+Fk=
 		</data>
-		<key>Resources/lut/carp.clut</key>
+		<key>Resources/lut/bronze.clut</key>
 		<data>
-		U+5OF23pd3a0jiTuUz0I6ESX3hA=
+		PHG48qTLXsVawkZQ8kjzekAbxXs=
+		</data>
+		<key>Resources/lut/cividis.clut</key>
+		<data>
+		aTE8WZR4z33ZKC1NE7LF0zcuxUM=
+		</data>
+		<key>Resources/lut/copper.clut</key>
+		<data>
+		r5sQVSrGSMWoYmmiP3sPmJhTjdQ=
+		</data>
+		<key>Resources/lut/copper2.clut</key>
+		<data>
+		FU7a7ZRBgnTkLu5CuKWL22En6io=
+		</data>
+		<key>Resources/lut/cubehelix.clut</key>
+		<data>
+		6wI1+P2aUeZruiBNUWUKC0m2ECo=
 		</data>
 		<key>Resources/lut/electric_blue.clut</key>
 		<data>
@@ -166,182 +186,1126 @@
 		</data>
 		<key>Resources/lut/jet.clut</key>
 		<data>
-		1acsNog/D1i8V/20oJGgi6fesN8=
+		yCWvWTnmxft+HHUvgYkQaC4n+Cc=
 		</data>
-		<key>Resources/lut/powersurf.clut</key>
+		<key>Resources/lut/linspecer.clut</key>
 		<data>
-		AfK/vnXt+45RaEwsxIRzcd1eKmU=
+		Hz3LyMvauRvIU/CbPqxxBbj44w0=
 		</data>
-		<key>Resources/lut/random.clut</key>
+		<key>Resources/lut/magma.clut</key>
 		<data>
-		hzaHXS0nBNVrOAzIvlZ4odGRObE=
+		JRQE5X1ZI3l0jnxMwWJQ8mUJjMc=
 		</data>
-		<key>Resources/lut/red_yellow.clut</key>
+		<key>Resources/lut/mako.clut</key>
 		<data>
-		gXtmwqUZ2Cezqxsz4RbCUWWaWaI=
+		hoEibeLcgnTIu32oTfhhjPVfQgI=
 		</data>
-		<key>Resources/lut/revactc.clut</key>
+		<key>Resources/lut/rocket.clut</key>
 		<data>
-		dRShZNYpGIo4Svz6iy9v/yWPgfs=
+		1pN5XtbWcKPzoiRnZIREOstW65g=
 		</data>
 		<key>Resources/lut/surface.clut</key>
 		<data>
 		0e9o8O7afIiYPlOcX7KLzmjYdO8=
 		</data>
+		<key>Resources/lut/turbo.clut</key>
+		<data>
+		YkLkAB2OO+zdXv1FL8157eZO/sk=
+		</data>
+		<key>Resources/lut/turbo86.clut</key>
+		<data>
+		fdmtGxsgYX4JlUz2z6TJ3frRCN0=
+		</data>
 		<key>Resources/lut/x_rain.clut</key>
 		<data>
 		iJHm/rgPhmgOxBSu6pQgcztELJ8=
 		</data>
+		<key>Resources/matcap/00ShinyWhite.jpg</key>
+		<data>
+		ZxZxiCnbfSp3FWs6zsNhOnexTS4=
+		</data>
+		<key>Resources/matcap/01_fuzzy.jpg</key>
+		<data>
+		XXyunsNsIpruXs5hX63FmKupZM8=
+		</data>
+		<key>Resources/matcap/02_red_velvet.jpg</key>
+		<data>
+		aI1S0XdXwSyFO1V/YU/TWqXLZNc=
+		</data>
+		<key>Resources/matcap/03_blue_velvet.jpg</key>
+		<data>
+		PyznS7Wr2lWBPp+buDZrOpqU4U0=
+		</data>
+		<key>Resources/matcap/04_taupe.jpg</key>
+		<data>
+		atMwjSJAg71yVs9SwGY/AwDVk6E=
+		</data>
+		<key>Resources/matcap/06_clay.jpg</key>
+		<data>
+		bu2Gw+mDfQ6Hml5sQrZpQL2mDr4=
+		</data>
+		<key>Resources/matcap/07_blue.jpg</key>
+		<data>
+		tgASHGHB7fLXmV4lsviY7+FH6cE=
+		</data>
+		<key>Resources/matcap/12_red.jpg</key>
+		<data>
+		OaJ8jCiPRa+8nsuPCd3uyDp1cHQ=
+		</data>
+		<key>Resources/matcap/15_titanium.jpg</key>
+		<data>
+		d7lCV607ykREXldfsxwEOCNezIc=
+		</data>
+		<key>Resources/matcap/16_dull_gold.jpg</key>
+		<data>
+		lkrVUSGzFaQy0j/ki6roo1dag+Q=
+		</data>
+		<key>Resources/matcap/17_glossy_red.jpg</key>
+		<data>
+		WXcTVRw8slPGDqwxB9+0pqcPZik=
+		</data>
+		<key>Resources/matcap/18_wet_blue.jpg</key>
+		<data>
+		kfeOtzmTIBD7YD5T2raf7CmWudA=
+		</data>
+		<key>Resources/matcap/19_shiny_silver.jpg</key>
+		<data>
+		5xH6gt9xB3uo6oS+tYKln8NgOTM=
+		</data>
+		<key>Resources/matcap/20_shiny_gold.jpg</key>
+		<data>
+		fY3NKTEJfOzKmF4X4zHMfKSY4P8=
+		</data>
+		<key>Resources/matcap/Burgundy.jpg</key>
+		<data>
+		HpIuFKaqhgQJmAuic3uPBKP5my0=
+		</data>
+		<key>Resources/matcap/Cortex.jpg</key>
+		<data>
+		CU8ZLL5k9K+2wKEivmv/+181CAg=
+		</data>
+		<key>Resources/matcap/Cortex2.jpg</key>
+		<data>
+		RT5u4OiR5dadRK694M1mby1Ndjc=
+		</data>
+		<key>Resources/matcap/Fubax.jpg</key>
+		<data>
+		8DiKt2JNcRtk+DMyQo0kvWLZLdw=
+		</data>
+		<key>Resources/matcap/Gray_above.jpg</key>
+		<data>
+		Lw0FB+XIGbao3I5Tbil3L38r6fU=
+		</data>
+		<key>Resources/matcap/Gray_headon.jpg</key>
+		<data>
+		B0RB7RirSYjsJaN5NBaxzXtSvHc=
+		</data>
+		<key>Resources/matcap/Jade.jpg</key>
+		<data>
+		xn6QRYW7BczAvUblXOIX4f6ZNtY=
+		</data>
+		<key>Resources/matcap/LightBulb.jpg</key>
+		<data>
+		HVh1QTR0EhVB81pxYvEexnAstcQ=
+		</data>
+		<key>Resources/matcap/MetalDull.jpg</key>
+		<data>
+		hZQ599rHUEFWFnUGXSZH/QEePgE=
+		</data>
+		<key>Resources/matcap/MetalShiny.jpg</key>
+		<data>
+		UQodHoShBd0Qa9pJEN5HbIIvyXQ=
+		</data>
+		<key>Resources/matcap/Porcelain.jpg</key>
+		<data>
+		TbijhQuVELMWonV4W0dQn3mEWdM=
+		</data>
+		<key>Resources/matcap/RedPlastic.jpg</key>
+		<data>
+		vujseG51SxkawPMfQIvKO5d+9Ak=
+		</data>
+		<key>Resources/matcap/carpaint.jpg</key>
+		<data>
+		7CH9sHmaBtoB6MTBTez3Wlf5J5M=
+		</data>
+		<key>Resources/matcap/license.txt</key>
+		<data>
+		XqdGgReF8/Eezwj6/ifyjlpokw4=
+		</data>
 		<key>Resources/mricrogl.icns</key>
 		<data>
-		CFRf4Del+V7w4hmUwSiP4bGSgHw=
+		MqLfiFlAdnJFJWAc4Y56IRNon3U=
 		</data>
-		<key>Resources/pigz_mricron</key>
+		<key>Resources/mricrogl_doc.icns</key>
 		<data>
-		ClaekmZZRCqZlZVoxKnVI/NzkAY=
+		dp61errSli4nbh1zOoSt93qMZdA=
 		</data>
-		<key>Resources/script/basic.gls</key>
+		<key>Resources/python37/.DS_Store</key>
 		<data>
-		qekZb34OnoeA4m3y0tTkFaNhKM8=
+		eMcXJv10fDwcHU3P1X6gnAt/XlU=
 		</data>
-		<key>Resources/script/color.gls</key>
+		<key>Resources/python37/lib/.DS_Store</key>
 		<data>
-		qU09sVSK7H/NcDgRSYRNXezIsyA=
+		tFWo03Jaq5TSTAHZSinSguGDCc8=
 		</data>
-		<key>Resources/script/mra.gls</key>
+		<key>Resources/python37/lib/python3.7/.DS_Store</key>
 		<data>
-		eXr2QQl5oF6tCvRb5SX2B6FzrFU=
+		PR98EfpQXIzblFRg5VhRMr23muE=
 		</data>
-		<key>Resources/script/overlay_clipping.gls</key>
+		<key>Resources/python37/lib/python3.7/LICENSE.txt</key>
 		<data>
-		YmHw4t7xV5Jrt51OO/q2ul1tj+w=
+		+OyA4MT2fw9GD2kz3L6Z82qC8CM=
 		</data>
-		<key>Resources/script/overlay_cutout.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/_collections_abc.cpython-37.pyc</key>
 		<data>
-		Xx48/6KPcuM+XSL1/iuRNB9/7VQ=
+		ebLY7bUm1vDu9w4TkrJYvR93etA=
 		</data>
-		<key>Resources/script/overlay_glass.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/_sitebuiltins.cpython-37.pyc</key>
 		<data>
-		lm1G4GIIr09TLi292/l6vggMTkk=
+		CE/S7kGwVFLtE1r5Jt8V0HQneJQ=
 		</data>
-		<key>Resources/script/overlay_shell.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/abc.cpython-37.pyc</key>
 		<data>
-		OFTly6MVk0WxnxU8pxIEooeaiR8=
+		6vHgHumjAA49yMBDMPuloQeH8VI=
 		</data>
-		<key>Resources/script/shader.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/codecs.cpython-37.pyc</key>
 		<data>
-		uwgWcg1QQmE8JYaBiQAKTxbIUuc=
+		+ASqcwI0aj2ixe0kOzqHeVDq0Bo=
 		</data>
-		<key>Resources/script/wobble.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/genericpath.cpython-37.pyc</key>
 		<data>
-		CQDa7R/cgv368Tjvz0gW3KPUsBo=
+		vXfSZeyww1q3qiCvsFFrSkxYXto=
 		</data>
-		<key>Resources/shaders/default.txt</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/io.cpython-37.pyc</key>
 		<data>
-		cKW6U2+pHZ/R+1s2kKOx4J6PZ8s=
+		6qewpT2BwdPR1D5LlccE/8B+aV8=
 		</data>
-		<key>Resources/shaders/edge_phong.txt</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/os.cpython-37.pyc</key>
 		<data>
-		Bz60+OeLiwNMzb5vrsCrAe/QYmU=
+		/+jT7KTn8C9g8Xsq69aDYaFt6vY=
 		</data>
-		<key>Resources/shaders/gray_clip.txt</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/posixpath.cpython-37.pyc</key>
 		<data>
-		ErF5/QQXdldrzeiZgwPtznZMJek=
+		omSVHopjGMI6LjTr2yi9Zh1ek80=
 		</data>
-		<key>Resources/shaders/minimal.txt</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/site.cpython-37.pyc</key>
 		<data>
-		AVUnzI6VMFwIKUDMLTVLmD1E2os=
+		9Zjne5PPJfEtE4Fl3AFN6WakBjQ=
 		</data>
-		<key>Resources/shaders/mip.txt</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/stat.cpython-37.pyc</key>
 		<data>
-		BDiuMs+IkvMWv4QZmIIhLsmjQ1k=
+		iKZEGZJnSb57p8t9nAsuMAACDzo=
 		</data>
-		<key>Resources/shaders/occlusion.txt</key>
+		<key>Resources/python37/lib/python3.7/_collections_abc.py</key>
 		<data>
-		Efl0xyx9SzFA9bCTHsmiQ1b7ew0=
+		aeoNnG3Eg8Eb+ZQSmHqiBlEFFog=
 		</data>
-		<key>Resources/shaders/occlusion_sh.txt</key>
+		<key>Resources/python37/lib/python3.7/_osx_support.py</key>
 		<data>
-		TmV2RS7WQ4WJFRv4mljnCmn4BzE=
+		liMLN41zhtx4RxSnQ1kEOLHlOwQ=
 		</data>
-		<key>Resources/shaders/overlay.txt</key>
+		<key>Resources/python37/lib/python3.7/_py_abc.py</key>
 		<data>
-		VFUt7bAAM9qlWUflnQSb3A0auTk=
+		wx6QQ20NGKcCapoGZKYyqzlrYmY=
 		</data>
-		<key>Resources/shaders/overlay_emit.txt</key>
+		<key>Resources/python37/lib/python3.7/_sitebuiltins.py</key>
 		<data>
-		SzKCoQ8Z+UMnn83Qf1nN5GvHZn0=
+		6RGjU10eEKNJOzKX7p6YeKPpgoA=
 		</data>
-		<key>Resources/shaders/overlay_glass.txt</key>
+		<key>Resources/python37/lib/python3.7/abc.py</key>
 		<data>
-		G+YzYg2Ak9ABqvwCTN4XL0eW+R4=
+		VJ/aYVpL4PoTy/fz6fpZW7+t4uY=
 		</data>
-		<key>Resources/shaders/overlay_new.txt</key>
+		<key>Resources/python37/lib/python3.7/codecs.py</key>
 		<data>
-		XcZHjgyCbZIUdLpkl/TQhB4ZR/4=
+		cgHqLLBjLa/eh4u7cEYfnFtM0K8=
 		</data>
-		<key>Resources/shaders/overlay_shell.txt</key>
+		<key>Resources/python37/lib/python3.7/datetime.py</key>
 		<data>
-		1YeWQUYV83ovuE66HBeqLkUGQUo=
+		bjhxmlFJzdebPD6Fuy8fVEUN7cM=
 		</data>
-		<key>Resources/shaders/overlay_toon.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/__init__.py</key>
 		<data>
-		vEhH4yqZacRnoD5LbakGIH9pmpM=
+		9ejHWjR1nVnKdwoaMSIs5fpQutg=
 		</data>
-		<key>Resources/shaders/phong.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/__pycache__/__init__.cpython-37.pyc</key>
 		<data>
-		FBeqZCybGHL2TUEHwaMQ6WBjMug=
+		qc8bEgMiLjZKo90jFk3qXEXxy2c=
 		</data>
-		<key>Resources/shaders/phong_sh.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/__pycache__/aliases.cpython-37.pyc</key>
 		<data>
-		720WfIo2/94OAb5JSHD0Un4X4Iw=
+		Z4gvERmA1lWGQy69bxV4A6fcXKg=
 		</data>
-		<key>Resources/shaders/simple.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/__pycache__/latin_1.cpython-37.pyc</key>
 		<data>
-		LlGR9hDwkKDCzS+O6i6vz0XeY0Q=
+		foYE0ski/0+rvB5HTK5yxAvdCAM=
 		</data>
-		<key>Resources/shaders/special_effects.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/__pycache__/utf_8.cpython-37.pyc</key>
 		<data>
-		Vxxm+y14jDhciq6BXIzb9Zmsupo=
+		yGzE16GG/sAMsCBnGGyNhU+6WA8=
 		</data>
-		<key>Resources/shaders/unused/overlay_emit.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/aliases.py</key>
 		<data>
-		8BJ9GAifOCehvL6fWk3MbicnaL0=
+		c85wfNGBnhRQKBgqfWPfhzvWJ0A=
 		</data>
-		<key>Resources/shaders/unused/overlay_emit3 copy.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/ascii.py</key>
 		<data>
-		nBR7Siz9DPin/Vsx6qaajmB3qjU=
+		a0jswzP+h+9ky4kY9S/NQu5FokE=
 		</data>
-		<key>Resources/shaders/unused/overlay_emit3.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/base64_codec.py</key>
 		<data>
-		Q/11tUPBhJ7v6FX2Ld/jjC0iOGg=
+		v9RSzNxFcaXeYFqFINqvqZl7kHo=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/big5.py</key>
+		<data>
+		vFOcfn4MqfI8apZosQDkaGnZ9Sc=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/big5hkscs.py</key>
+		<data>
+		CIJnBaKjB5AIclHuPXgpkibxw6g=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/bz2_codec.py</key>
+		<data>
+		dlwUyCrwNMCW2c6fWTewnqSfSLw=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/charmap.py</key>
+		<data>
+		3Ai8iPlMR7Q6DGS6M72nne8RCWs=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp037.py</key>
+		<data>
+		oNJ1V28VhXbiNTtpndw381DZ0E8=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1006.py</key>
+		<data>
+		9VpNh0HNCdx7dixhqIbERy+RYFQ=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1026.py</key>
+		<data>
+		bg2FE6GQXWMXV6DDD9mx/VY6ZSU=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1125.py</key>
+		<data>
+		MJqKoIi7MXWGPgb/SKjF/Kw9UOY=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1140.py</key>
+		<data>
+		8K/HJ3/CA3BH6gabJ+7Pnhwmag8=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1250.py</key>
+		<data>
+		hg0o0V8o8cUjUqlmgJ9O2Ka4wfo=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1251.py</key>
+		<data>
+		xDMr62sDRk9qEcXdUsQ5Xpae2fk=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1252.py</key>
+		<data>
+		QayojSARk+pjltlUlvNXUCCd238=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1253.py</key>
+		<data>
+		hMWt0+qufAAQq1VbKh0b2RROMSo=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1254.py</key>
+		<data>
+		RzjpDr7/TrvIRPwMIIBXdVqVsrU=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1255.py</key>
+		<data>
+		bCwszA1MZlDm7/dbdXHagcqC1mM=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1256.py</key>
+		<data>
+		3uSHaydpz9HBviqSvMHbfl9rwLY=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1257.py</key>
+		<data>
+		ZqGtcZj1WTX94yDWxXMzNDT8aeo=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp1258.py</key>
+		<data>
+		pVwjeLwinhFGYQkN/+9fnETW+zA=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp273.py</key>
+		<data>
+		fKAHlc/x7T4efxV+pJCIbFOV21o=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp424.py</key>
+		<data>
+		D3tei9B5aXLcVzhv4ngrFArRfIM=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp437.py</key>
+		<data>
+		LEDFq9t9HNKRF3+4rTqN2QYyIPg=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp500.py</key>
+		<data>
+		tW4BDlY9/pNgbyypDUaYAQ9w0ik=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp65001.py</key>
+		<data>
+		QrAZHfQd55gKO/TOzG6I4qPkgsk=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp720.py</key>
+		<data>
+		60hCQP3rW+kwwSKDCBWGNPxV/OU=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp737.py</key>
+		<data>
+		o5Mu1gMDqtronVNxI29JMcNkBFM=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp775.py</key>
+		<data>
+		f3Zf0TwEcRTNxap6NLuye4IQYNI=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp850.py</key>
+		<data>
+		o3nPDvwibIxc3xjiwa9dkGZgu/M=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp852.py</key>
+		<data>
+		bYejSda2dEG7Aix9XFuZeY9W9ig=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp855.py</key>
+		<data>
+		BY3ziqDueCeMG8QoN2dk6d/croQ=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp856.py</key>
+		<data>
+		lXrKlM1Vnu3nT/Z29ou2ot3WWgo=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp857.py</key>
+		<data>
+		3LSBnEvOfdTrmHfjsnha3CC8094=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp858.py</key>
+		<data>
+		ItWE+0zvxwM36QyN2t8Kv0tCt4I=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp860.py</key>
+		<data>
+		dDWLVi5VXk7rSAaTTc+lmg5xLaQ=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp861.py</key>
+		<data>
+		c9bcIvnrodZ90PV4rCt5Na9rVIE=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp862.py</key>
+		<data>
+		3/01C2uEcbBCPXtR/0mmyJ/nx44=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp863.py</key>
+		<data>
+		xLUo5CufwQzKxKLpytisSLxlX0c=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp864.py</key>
+		<data>
+		uPGq34xpyXzDoslrPcdHVyv76AU=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp865.py</key>
+		<data>
+		QZoeh5eZzG8h/AapAoISBKh0z2o=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp866.py</key>
+		<data>
+		rT7TBKZpKSx6GRBjD/P5i7t7lW4=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp869.py</key>
+		<data>
+		pZPCZTpDEslF2d+raMEjuXxrbJk=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp874.py</key>
+		<data>
+		QAvvWMz5NXWljbEztwcLkyyYxpU=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp875.py</key>
+		<data>
+		0kwlzJnxfFOHT2a2ioF/7qVEmg8=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp932.py</key>
+		<data>
+		7JD7ItjrcS3GMiieX2uBWoHkv8w=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp949.py</key>
+		<data>
+		Y753Iy7a+SCOI8Af3GgQ3cKVueQ=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/cp950.py</key>
+		<data>
+		CVw01TQMzQ/lOAEqZUl79OzocXA=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/euc_jis_2004.py</key>
+		<data>
+		DwaulK4hJnUcV2QGac4oCaOKVSQ=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/euc_jisx0213.py</key>
+		<data>
+		bYgtuJ9wJyiNCOq+/VS4CajDJbM=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/euc_jp.py</key>
+		<data>
+		w5NwB9OsUtFO+/bAyGduwEXOWYY=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/euc_kr.py</key>
+		<data>
+		C0xI10IMNi6z/PZCArH5H96fXsE=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/gb18030.py</key>
+		<data>
+		d9JjIatygoYzwA1ZoVEjRhbuh+s=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/gb2312.py</key>
+		<data>
+		Vn4SWrTOTCZWtfuruEorjZFEyf8=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/gbk.py</key>
+		<data>
+		/iWnt13qo/qx+pG3F0rTJ3hLzv4=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/hex_codec.py</key>
+		<data>
+		Uxvl4rrPjCMW4p8TRHlkRQK8/9Y=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/hp_roman8.py</key>
+		<data>
+		IzrYeJJu1je9psJqzj4Y0EnBHwg=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/hz.py</key>
+		<data>
+		+OveIlcWdT++M5VuAA7T0KOFDQk=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/idna.py</key>
+		<data>
+		WqJEHFQKAKZk0bb+vJTaYTrqMdY=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_jp.py</key>
+		<data>
+		Da/4R0tdtmyYOOMrQo+K+3TFETE=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_jp_1.py</key>
+		<data>
+		PyFag8WGZTZSm4Iq3+w/C+1ONTY=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_jp_2.py</key>
+		<data>
+		6GhagefMKD/Y0edhXmKFEqp0ts8=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_jp_2004.py</key>
+		<data>
+		VyEjtu/8QqspAyM2Yy3xwWfZFkA=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_jp_3.py</key>
+		<data>
+		c3y9PhHPk6/ClE5rgE63uPIL3dY=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_jp_ext.py</key>
+		<data>
+		JUpmh5weJOClRd0RokKq8A+A8oQ=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_kr.py</key>
+		<data>
+		C4BcYaAP79p4F/+e09J+e+uYmbo=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_1.py</key>
+		<data>
+		5nk3yG6egJyXNc4u4nntNi3c1Pc=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_10.py</key>
+		<data>
+		GyUzysolTXSOyaJGd2j2NVBvUMs=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_11.py</key>
+		<data>
+		Xd5CUMQLo7DBD4f7DmHs+f9SrKA=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_13.py</key>
+		<data>
+		Z5DS56ZJ+uTLeUTtIPmEEyTodkw=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_14.py</key>
+		<data>
+		DIQvsR4t7RkcStwokcnl//D90uc=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_15.py</key>
+		<data>
+		m/45snyl/cf3aa7DuOqUCrizmsQ=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_16.py</key>
+		<data>
+		9hbgA6aAmBXV14I+JTV4XQmqQqQ=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_2.py</key>
+		<data>
+		sJ1LX+xU200/5bi/Y1vrW6YuUu0=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_3.py</key>
+		<data>
+		6rcRKpuSsrMPyzppR4mSmddSbZ4=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_4.py</key>
+		<data>
+		ot/o6cIuvgNMi6Ll2gTC1w7fV6A=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_5.py</key>
+		<data>
+		4XTSoiACM8H9bUliL30YjBgnc1w=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_6.py</key>
+		<data>
+		oeYlz9CwwdR3otiAE3aWiIZbWtI=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_7.py</key>
+		<data>
+		NHptqrSfxadO4Biz1xwdSbZDIyc=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_8.py</key>
+		<data>
+		f4iYbaIR8504UI1+ta0H2UtXa/c=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_9.py</key>
+		<data>
+		j+uNGtPLHKkrhiRMedabjVkjZ0Q=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/johab.py</key>
+		<data>
+		kgzYj3+6JGHHh9splnUJxpU31Z4=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/koi8_r.py</key>
+		<data>
+		JisDYTUMW3bjCxzL/MOaF2AfRIU=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/koi8_t.py</key>
+		<data>
+		FwR1DE7uKirfH+SAckG1HOJuBdw=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/koi8_u.py</key>
+		<data>
+		Mfx3YKBNgkqLsBNMV/easw7JaEo=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/kz1048.py</key>
+		<data>
+		cYztEF/DDOhBYQP1zs3EYXb3PfA=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/latin_1.py</key>
+		<data>
+		kUAJIspJ1hN53k0fdCVcrMuvjRs=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/mac_arabic.py</key>
+		<data>
+		rRBQspdXaBwWt4P0Wp5Gu71fCBs=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/mac_centeuro.py</key>
+		<data>
+		x3pEavUqrSVp4duqjYkXbXSIyDg=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/mac_croatian.py</key>
+		<data>
+		e+wG5IjF5y/I3Q7+UmhYPDSNW1g=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/mac_cyrillic.py</key>
+		<data>
+		Br34O02R3uWRFn1uE5c2a9fwS1U=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/mac_farsi.py</key>
+		<data>
+		kKSuRVkWUm27LEeU+x2wve3EaVs=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/mac_greek.py</key>
+		<data>
+		xzcSm8kfO4e8ZyfcSGzNU/WHRXA=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/mac_iceland.py</key>
+		<data>
+		/eQqwL2acJQXSoZ4n5zMYOOYzQg=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/mac_latin2.py</key>
+		<data>
+		WUsc4jg0zWpwwuG3ey3b3hOK/2w=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/mac_roman.py</key>
+		<data>
+		IhzNbimgUY3DcVRJt7XsAv/pAuU=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/mac_romanian.py</key>
+		<data>
+		sr+zgfy0ebAZSXan8qdiH+mp4Ec=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/mac_turkish.py</key>
+		<data>
+		JWKY9k/iAMZr9B/RvMeyXQouL38=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/mbcs.py</key>
+		<data>
+		HXDkvTa+HBU7XvPCHgYPTaEiEcg=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/oem.py</key>
+		<data>
+		x0JUWp6EZtum8sQmKdUCWqEVO/M=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/palmos.py</key>
+		<data>
+		IKMldtJvo1vtmb6sNlhoyA22l/M=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/ptcp154.py</key>
+		<data>
+		9aWY3D/uET+eQdjTwZN05D842FU=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/punycode.py</key>
+		<data>
+		1esbDiSVUErvOa7XdTdiVjHeA8U=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/quopri_codec.py</key>
+		<data>
+		L0nH3Caw7MWBnaOve7MgPkc5KFA=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/raw_unicode_escape.py</key>
+		<data>
+		N+6fLCWgPdSUMzF/9hT7CP/G5PI=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/rot_13.py</key>
+		<data>
+		guGyoewIdDoYd0LlmXGjhHtxkO8=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/shift_jis.py</key>
+		<data>
+		85BmHPSWE2ONWALbYtF91RQXZQA=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/shift_jis_2004.py</key>
+		<data>
+		PLnDcrKJjx0xqD0K52Zt9Ii1K70=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/shift_jisx0213.py</key>
+		<data>
+		0p3qjTNn0sDHndhGfx0RTAg8VSw=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/tis_620.py</key>
+		<data>
+		k7XSsmhX8sVlSNuQj+Zo5SeME/M=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/undefined.py</key>
+		<data>
+		Ty8eVq9i5mIknJBKAagdFqx3LLY=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/unicode_escape.py</key>
+		<data>
+		lm8tDeeQRH4cpbOSykaQZCGR7Po=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/unicode_internal.py</key>
+		<data>
+		hohuegQo4YIj15Hk1W9jPV19n14=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/utf_16.py</key>
+		<data>
+		t4MvQ8t83ffec8kUJ3suiPlh8fU=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/utf_16_be.py</key>
+		<data>
+		XZ5gq9+VyQwgn1cQd+969SqpH/4=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/utf_16_le.py</key>
+		<data>
+		fdJmcpmu0hJqLLehYbsqgdrzgsU=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/utf_32.py</key>
+		<data>
+		SIqlI2Tp4y+TjgrR7QIoqKZszMg=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/utf_32_be.py</key>
+		<data>
+		ncLwh5QF65uVSX0L5gMMYtWytwE=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/utf_32_le.py</key>
+		<data>
+		EIdnZH5zUHB9CnFwyzZa4fAQWmE=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/utf_7.py</key>
+		<data>
+		jDqE4Nsw4cnYIJ755mZXuyAjKV4=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/utf_8.py</key>
+		<data>
+		Xjt58pCN4iR3EGHviP9VcACK/eE=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/utf_8_sig.py</key>
+		<data>
+		2ugKDWe7fOHQyhQYF8tLQBiBOHc=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/uu_codec.py</key>
+		<data>
+		Yrqaii+fCczDjv/4rKt2KtZgCpY=
+		</data>
+		<key>Resources/python37/lib/python3.7/encodings/zlib_codec.py</key>
+		<data>
+		u1CXX745bYpCDep/4wOEq807WXw=
+		</data>
+		<key>Resources/python37/lib/python3.7/genericpath.py</key>
+		<data>
+		HBX+bs44XIeKRFZmOig8j8SEAkY=
+		</data>
+		<key>Resources/python37/lib/python3.7/io.py</key>
+		<data>
+		+Rv5DLyZBHZenHcPa3JUdcgdONw=
+		</data>
+		<key>Resources/python37/lib/python3.7/macpath.py</key>
+		<data>
+		UBZvRo5O0LH3SajmU3KBjFzfEvA=
+		</data>
+		<key>Resources/python37/lib/python3.7/numbers.py</key>
+		<data>
+		tX4T4u2n9dr1TgzPV6HxypTgPq4=
+		</data>
+		<key>Resources/python37/lib/python3.7/os.py</key>
+		<data>
+		JdjI08fkpVhXrvlmr/+ZJ/6NnTM=
+		</data>
+		<key>Resources/python37/lib/python3.7/pathlib.py</key>
+		<data>
+		Ca4ZjYLTZEIfURIKtELqyng9kiU=
+		</data>
+		<key>Resources/python37/lib/python3.7/posixpath.py</key>
+		<data>
+		gFeb5iQYE/9nZk/tfJ0sX1orFBs=
+		</data>
+		<key>Resources/python37/lib/python3.7/site.py</key>
+		<data>
+		MzJnQf5K4uMiCWn3U6bl5E9BXPU=
+		</data>
+		<key>Resources/python37/lib/python3.7/stat.py</key>
+		<data>
+		o8J1dfS+V/fmNDK3Sdbr4w3LbUE=
+		</data>
+		<key>Resources/script/basic.py</key>
+		<data>
+		CgC22Di4zK+6HN8MKTKEJMa9E+Q=
+		</data>
+		<key>Resources/script/clip.py</key>
+		<data>
+		xjI+qk5iIixjN+ekEIs7Qa8G8wc=
+		</data>
+		<key>Resources/script/cluster.py</key>
+		<data>
+		02WFsyeMiGOyGej3UM6bBb5TQdk=
+		</data>
+		<key>Resources/script/ct_abdomen.py</key>
+		<data>
+		qKgbpjrS0CZgq4M5Kq3GoJ/XaXg=
+		</data>
+		<key>Resources/script/ct_head.py</key>
+		<data>
+		+aO7i03Wo2jFYXeGMUdFoNBCdFQ=
+		</data>
+		<key>Resources/script/cutout.py</key>
+		<data>
+		6qoGc9M3766RoFKVE2LSxqwXbTc=
+		</data>
+		<key>Resources/script/explode.py</key>
+		<data>
+		zDIiXT2VNrSp/W95JU8djy3rrD0=
+		</data>
+		<key>Resources/script/explode2.py</key>
+		<data>
+		G3Keht+klDwkY9jCEFTqNXgLtrs=
+		</data>
+		<key>Resources/script/glass.py</key>
+		<data>
+		d4OfDGiLfRlYKQ++iC7gtU1Ki8w=
+		</data>
+		<key>Resources/script/help.py</key>
+		<data>
+		MLMw+qtdQXO0+SY8vc12TRh7PWM=
+		</data>
+		<key>Resources/script/hidezeros.py</key>
+		<data>
+		c2Nvodd4CWEQuQyCS/XjOvjTQmk=
+		</data>
+		<key>Resources/script/invert.py</key>
+		<data>
+		ARTImVgCcN2YYrHMXAmzOPWBABQ=
+		</data>
+		<key>Resources/script/jagged.py</key>
+		<data>
+		e7L3cNzMRi5kXyn6LE630FTOW4s=
+		</data>
+		<key>Resources/script/mask_atlas.py</key>
+		<data>
+		9sJI0AgmAuqUqyjCD5WXz0AynwE=
+		</data>
+		<key>Resources/script/mip.py</key>
+		<data>
+		hTFp+R+u/uq5J3it+1FYFMhcAdg=
+		</data>
+		<key>Resources/script/mosaic.py</key>
+		<data>
+		nZQasmZdBUL+iFD7j3N3/De4vBM=
+		</data>
+		<key>Resources/script/mosaic2.py</key>
+		<data>
+		eA2wsH8Iy4ij33WrIyUii+xm5dQ=
+		</data>
+		<key>Resources/shader/Default.glsl</key>
+		<data>
+		OiHlpwo3uxSQ8RpJbE+0/+apF+Y=
+		</data>
+		<key>Resources/shader/Edges.glsl</key>
+		<data>
+		W86OpUGNzhQtp3GIS0ZD/oO2Ovo=
+		</data>
+		<key>Resources/shader/Glass.glsl</key>
+		<data>
+		RzSltYYrezTenEkcC69+fXCN6Lw=
+		</data>
+		<key>Resources/shader/MIP.glsl</key>
+		<data>
+		VqwKqh1ffOm4guYAwURL0K0ofs8=
+		</data>
+		<key>Resources/shader/MatcapMix.glsl</key>
+		<data>
+		mLIZscWNl4xr/2W5jLJ9R+qjyF8=
+		</data>
+		<key>Resources/shader/Matte.glsl</key>
+		<data>
+		P9gjhlRDaJRC8Lta5fOsQkPGMWw=
+		</data>
+		<key>Resources/shader/Minimal.glsl</key>
+		<data>
+		OZQJdMvO9+d1vl++bANu53sUn9E=
+		</data>
+		<key>Resources/shader/Occlusion.glsl</key>
+		<data>
+		3eHtiuipv1jRooP3rAa1r/DPo3M=
+		</data>
+		<key>Resources/shader/OpacityPeeling.glsl</key>
+		<data>
+		/BFEVoyIlaNuPJId6IhiaY6ZP30=
+		</data>
+		<key>Resources/shader/OpacityPeeling2.glsl</key>
+		<data>
+		makcogqq5ofzihy3p6LtIzn+Iuo=
+		</data>
+		<key>Resources/shader/OverlaySurface.glsl</key>
+		<data>
+		CDrSe1qwO6KBWEuK+xoogj5pIXM=
+		</data>
+		<key>Resources/shader/Shell.glsl</key>
+		<data>
+		g4+pIy/6wjVVAwbePw2xT0kGSLE=
+		</data>
+		<key>Resources/shader/ShellEdges.glsl</key>
+		<data>
+		c9KOLYIVgHx+cnjMMpJFuO7CbD4=
+		</data>
+		<key>Resources/shader/Shiny.glsl</key>
+		<data>
+		HGnQBiIoPXMCEZmClF0F0C4yCWw=
+		</data>
+		<key>Resources/shader/ShinyEdge.glsl</key>
+		<data>
+		Rm704ASFE26urNwaeyO/76PaPOQ=
+		</data>
+		<key>Resources/shader/Slow.glsl</key>
+		<data>
+		3/jqljB01MQJ99jOlWUst59sTzU=
+		</data>
+		<key>Resources/shader/SpecialEffects.glsl</key>
+		<data>
+		Aw70xjvGQN9CpEhmSKtI/MBeI8g=
+		</data>
+		<key>Resources/shader/Standard.glsl</key>
+		<data>
+		5rfh6p3eZzxC5cl72BL6iV3lVEA=
+		</data>
+		<key>Resources/shader/Tomography.glsl</key>
+		<data>
+		GCrEr+FbuywMh/W2EVwS1ZbDIRk=
+		</data>
+		<key>Resources/shader/Tomography2.glsl</key>
+		<data>
+		ecvN58deppXRiHoVhqXeKTHAHg0=
+		</data>
+		<key>Resources/standard/CT_AVM.nii.gz</key>
+		<data>
+		zJ4vaJPGOeca4av63oFfYI7dnmE=
+		</data>
+		<key>Resources/standard/CT_Abdo.nii.gz</key>
+		<data>
+		/TaJAiSn2ewGrAK+Hl1O1Ut7CaU=
+		</data>
+		<key>Resources/standard/CT_Electrodes.nii.gz</key>
+		<data>
+		O4hDGfw6std1VNFISe5m7uEwQ6s=
+		</data>
+		<key>Resources/standard/CT_Philips.nii.gz</key>
+		<data>
+		6TX7MQVvav/Auo4SiohETupPBzM=
+		</data>
+		<key>Resources/standard/Iguana.nii.gz</key>
+		<data>
+		pAAEU32q88dKeqb7cTH9mWn/ApQ=
+		</data>
+		<key>Resources/standard/MR_Gd.nii.gz</key>
+		<data>
+		7/Q7phOuVo1+hDeJ6OWKlCyUYSY=
+		</data>
+		<key>Resources/standard/README.md</key>
+		<data>
+		6IH8Ms20YC4y1T6mp/1t/DZNx40=
+		</data>
+		<key>Resources/standard/chris_MRA.nii.gz</key>
+		<data>
+		VLbO0DQt3YavjnLh6k1n15J0SrE=
+		</data>
+		<key>Resources/standard/chris_PD.nii.gz</key>
+		<data>
+		tJpYh5rJjQeMrFWsE7h9pJEqhAw=
+		</data>
+		<key>Resources/standard/chris_PD.nii.txt</key>
+		<data>
+		s8Noo0F0v1DHQXAFD9X21qZYHXw=
+		</data>
+		<key>Resources/standard/chris_t1.nii.gz</key>
+		<data>
+		l/2dyh/5RrXhaGqs9tTfw9s+ew4=
+		</data>
+		<key>Resources/standard/chris_t2.nii.gz</key>
+		<data>
+		UVXHYccNwCufRGTL2rUVlI5efSM=
+		</data>
+		<key>Resources/standard/mni152.nii.gz</key>
+		<data>
+		x8/vRnbaIbE+Q59J0OWA/cljSDE=
+		</data>
+		<key>Resources/standard/pcasl.nii.gz</key>
+		<data>
+		FvwcxN+MWMTnNadQlGt22wRdBc8=
+		</data>
+		<key>Resources/standard/spm152.nii.gz</key>
+		<data>
+		4/itpVaDsDWUkIme7/0hiBSRHmM=
+		</data>
+		<key>Resources/standard/spmMotor.nii.gz</key>
+		<data>
+		K3c8RBU/pSgvL/FQ5hioBJCX4PU=
+		</data>
+		<key>Resources/standard/visiblehuman.nii.gz</key>
+		<data>
+		pGfiEeGkCqTxF3wzLCEmTUPB2gw=
 		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
-		<key>Resources/README.rtf</key>
+		<key>Resources/Roboto.json</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			VJvBrY6zWplx2FbzYRvP/Ln6Yqk=
+			/4A10k+PFISB+Q8QzC9Nkbfv+ZQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			cwUSAMwqe79KrDPb3A/BKUgecpJscnndhTHL7dp+zjQ=
+			yNQ7CXj9wszbPoGSij2O1o+dBRhn2hDDDkatmJBNh4Y=
+			</data>
+		</dict>
+		<key>Resources/Roboto.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			/RocKXAXn/0WA+Rl757gcTqaYt8=
+			</data>
+			<key>hash2</key>
+			<data>
+			x4rg+5hZA/hZKISVVr1Kv5t6VXXB5ntTPqiPbft7xlY=
+			</data>
+		</dict>
+		<key>Resources/atlas/AICHA.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Cc6vXvMk9x6v7kEO/eO1EDpqygc=
+			</data>
+			<key>hash2</key>
+			<data>
+			0Feoffi38gcHi3fXg0W9G1Zq8X320iO3nSAp7BPaSlo=
+			</data>
+		</dict>
+		<key>Resources/atlas/aal.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			HszsRMWK8e42H2Bux8QizB59/A0=
+			</data>
+			<key>hash2</key>
+			<data>
+			r5/LpJQglVAg5hxyzyirieEmYuLOZGWUVsEFkq2I+DQ=
+			</data>
+		</dict>
+		<key>Resources/atlas/natbrainlab.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			7hwFJ9ZHwjhcjt7JCcfyLJxIHsY=
+			</data>
+			<key>hash2</key>
+			<data>
+			CaHwJdH0yjvTAJ1QEcVEw2ydGeg082du9sGDNFr5vFY=
+			</data>
+		</dict>
+		<key>Resources/atlas/spmSUIT.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			yzDRjPEEOEPmBL3QRDL5IAnFr5A=
+			</data>
+			<key>hash2</key>
+			<data>
+			TRXQxC5KMeXDuuHrpSWjK+vZ34QfKMXTJwTpO45Nv4Y=
 			</data>
 		</dict>
 		<key>Resources/dcm2niix</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			pnRgDxFJ9qrDa9v9CnjaAQrc42w=
+			DtndB5dG2WanBh1ESneG2jgmdXo=
 			</data>
 			<key>hash2</key>
 			<data>
-			SlrtOxo+3I4HlbR87Ba8FiaeT7SkAOeJM+6Pcb7cEeI=
+			NblnG/dUX70/YO0hGdMIbKaj5c7l2obK0t1et98olxU=
 			</data>
 		</dict>
-		<key>Resources/lut/1hot.clut</key>
+		<key>Resources/lut/1red.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			/ap1Km6/oGoQgbvLmeZUbitcJJk=
+			</data>
+			<key>hash2</key>
+			<data>
+			qr8bGZqV1bGHcwK/nso7bi/eXiYXxhpVM3nOZMtVf9E=
+			</data>
+		</dict>
+		<key>Resources/lut/2green.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			4OBuivTF/1MONNDfWP26n4DmZVs=
+			</data>
+			<key>hash2</key>
+			<data>
+			4DcMnnPRmFo7m7RBQB2JW/2aBlanE/9ivnbXYCdAO+U=
+			</data>
+		</dict>
+		<key>Resources/lut/3blue.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Dm0a0BLqtiDzweXVqWj1EGQeAfo=
+			</data>
+			<key>hash2</key>
+			<data>
+			+gxDTs40hp7D24RG9kpD/7Nq42Wb0lHJUbAzRX3UEIU=
+			</data>
+		</dict>
+		<key>Resources/lut/4hot.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
@@ -352,7 +1316,7 @@
 			LdHsUmtPzaDdzOPssr6AfmP9Iie/KcruWDGoPFttDyI=
 			</data>
 		</dict>
-		<key>Resources/lut/2winter.clut</key>
+		<key>Resources/lut/5winter.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
@@ -361,39 +1325,6 @@
 			<key>hash2</key>
 			<data>
 			mhpzKXGkhN8Gw6Kwzbs0MoXLKaimDm6zGD38JwWMbuA=
-			</data>
-		</dict>
-		<key>Resources/lut/3warm.clut</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			xdMtZLWKZCLsF6/+dJEcvwJyb60=
-			</data>
-			<key>hash2</key>
-			<data>
-			wE4t80xEBTNqFWOIma92b6/pCCc/d4jXhq2XR4avdwY=
-			</data>
-		</dict>
-		<key>Resources/lut/4cool.clut</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			CLfJusfHMcJ2GSDSsrtWI0AO8/4=
-			</data>
-			<key>hash2</key>
-			<data>
-			qg9WnmEzrbZm0OjmRcxIfLw4D0cKWKbAsXoq7Flw1NU=
-			</data>
-		</dict>
-		<key>Resources/lut/5redyell.clut</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			pVHjWRApuuDZBusjGIHhyHiwWns=
-			</data>
-			<key>hash2</key>
-			<data>
-			Re9bxEp0pjuzkaMNcMgivKEhd1jvcgV6JtN7Rt4/8cY=
 			</data>
 		</dict>
 		<key>Resources/lut/6bluegrn.clut</key>
@@ -407,37 +1338,70 @@
 			HCBJF45f2C3Quh9+KHFtemOwhW4vSlVejnpUBdipWqE=
 			</data>
 		</dict>
-		<key>Resources/lut/Arial.json</key>
+		<key>Resources/lut/6warm.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			XKEkesKkzcdTKdAVfy1FGWxrZ5s=
+			xdMtZLWKZCLsF6/+dJEcvwJyb60=
 			</data>
 			<key>hash2</key>
 			<data>
-			XKYq31HkehIEG1U4WvJXatLjtv3NjZ2mbrInyCQ2RMU=
+			wE4t80xEBTNqFWOIma92b6/pCCc/d4jXhq2XR4avdwY=
 			</data>
 		</dict>
-		<key>Resources/lut/Arial.png</key>
+		<key>Resources/lut/7cool.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			YsBbarS2hLpVexauF1Pmr5B8anY=
+			CLfJusfHMcJ2GSDSsrtWI0AO8/4=
 			</data>
 			<key>hash2</key>
 			<data>
-			rUZ2pmPOEc9KhzqCKMUzfMZICaNDJPF4fCMkUyFYFRQ=
+			qg9WnmEzrbZm0OjmRcxIfLw4D0cKWKbAsXoq7Flw1NU=
+			</data>
+		</dict>
+		<key>Resources/lut/8redyell.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			pVHjWRApuuDZBusjGIHhyHiwWns=
+			</data>
+			<key>hash2</key>
+			<data>
+			Re9bxEp0pjuzkaMNcMgivKEhd1jvcgV6JtN7Rt4/8cY=
+			</data>
+		</dict>
+		<key>Resources/lut/CT_Airways.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			VvpyzLlfCcpBBaN41vhYcSFYBDs=
+			</data>
+			<key>hash2</key>
+			<data>
+			2Q7M29TZWqFg9THikbhrc8HsFq6vMfRkG4LRXHiITxU=
 			</data>
 		</dict>
 		<key>Resources/lut/CT_Bones.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			K65XJeULTKbsGIp06jiJ6MiWtmQ=
+			mpD6wGKWttCuYdHf4DHldGc6eAE=
 			</data>
 			<key>hash2</key>
 			<data>
-			R3lO2ux6FpObjVf3tyIqlNseRfxyy02Yepf5lxyvrIo=
+			SNXoWSvC7PVOkQJU3QSHOEMhXmM8YRQzthcmEcnv7AM=
+			</data>
+		</dict>
+		<key>Resources/lut/CT_Head.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			vv9G6+ZkyahcBIrVV57g+9csXFQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			qSLjKmAMwtJt4rrl1Hmjl4s1t6exS0jl9/AHAP5BwJI=
 			</data>
 		</dict>
 		<key>Resources/lut/CT_Kidneys.clut</key>
@@ -462,17 +1426,6 @@
 			0rTsx40XmV4gDbYRG5zMnhLKLesfpnQ3FzaCp0np4zY=
 			</data>
 		</dict>
-		<key>Resources/lut/CT_Lungs.clut</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			22ZQLZTFDtjAZyWVCStN9V6gpY8=
-			</data>
-			<key>hash2</key>
-			<data>
-			bDdoK6E0uKwXgUojLTiJKVWceW29f7YUxrayEorRrv0=
-			</data>
-		</dict>
 		<key>Resources/lut/CT_Muscles.clut</key>
 		<dict>
 			<key>hash</key>
@@ -484,37 +1437,81 @@
 			Xj+Jj9dW1hMC9m423k8riYx4vfQuJGD+SUKSeZRhHFc=
 			</data>
 		</dict>
-		<key>Resources/lut/CT_Skin.clut</key>
+		<key>Resources/lut/CT_Scalp.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			OLd9e7bMMiG5R4hMVRC0bKKHAt8=
+			0Uy44PODHdr2uUkuoHjHw6BME1c=
 			</data>
 			<key>hash2</key>
 			<data>
-			lPFSdNvzHkQ9aGQUaxtR2PhfaxM7tfSp8IuHmOFcKk4=
+			Rst1b078LfV7Ts9DxuOBqf3OSXvwmlHY3O3ZBVnB4A4=
+			</data>
+		</dict>
+		<key>Resources/lut/CT_Skull.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			d21rddLsYSlA15LAM+CgKOlTUiU=
+			</data>
+			<key>hash2</key>
+			<data>
+			+WBFhfGxH05NYmIDpbSpNIv0y1STcL9D+/P9iioR4GY=
+			</data>
+		</dict>
+		<key>Resources/lut/CT_Soft.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			TEvagIR8Qjns3Pf0seU0liow6Jo=
+			</data>
+			<key>hash2</key>
+			<data>
+			YWctXH8YQT+DK9VGIHoL3WuQNOv45cLFCwwvDVL5VAI=
 			</data>
 		</dict>
 		<key>Resources/lut/CT_Soft_Tissue.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			wj8fPqGqTxfpDuUV8X1aRQ7qBjc=
+			a7gsQy5FUTsL6Maq2Y8+EmF33E4=
 			</data>
 			<key>hash2</key>
 			<data>
-			13XLmXSaldtz27yWY+hy4XskhYHhwYnaKeBqjHjabUw=
+			MQD2HgNsmF30sSUKPDjr+8kfkgi68NWGJj8HCKeG7zA=
+			</data>
+		</dict>
+		<key>Resources/lut/CT_Surface.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			EyR9q/ZPrtPI8LEabHZzIc4wSHo=
+			</data>
+			<key>hash2</key>
+			<data>
+			GBw+KNeYfhEyMd1vmapVKX4CXtHLmqap+rmzjDeZZKw=
 			</data>
 		</dict>
 		<key>Resources/lut/CT_Vessels.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			Pg1jfRQ9f07aDh4C1NFfWh9wN/E=
+			0tiSDK4C3wkBrVBslhPMXUqaUvY=
 			</data>
 			<key>hash2</key>
 			<data>
-			LiJBlhF7zwR14zOHNebeEZP5pcR7OVBsvxWra5oV5bw=
+			yZZoa3kc0NCaJpuWSdKHbIvb3LVMUwcp7mAgceXmn6Y=
+			</data>
+		</dict>
+		<key>Resources/lut/CT_w_Contrast.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			jA498Fov8f6IMwVtFK+UCCfGnXk=
+			</data>
+			<key>hash2</key>
+			<data>
+			suOerhw5T/5mK5wc7e4ZS+PwcRlKEc/xZhr2AmE0FlQ=
 			</data>
 		</dict>
 		<key>Resources/lut/GE_color.clut</key>
@@ -539,169 +1536,48 @@
 			LquCjCgFiUqNxpkiXtBRGwIJTtlB+LcgWArr4vqTckU=
 			</data>
 		</dict>
-		<key>Resources/lut/MR_scalp.clut</key>
+		<key>Resources/lut/Inferno.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			TfWizIWHs9vlrrVzemYoygYdpK8=
+			VwV5a6MUqOj7RM7UbQkt32Wgb+E=
 			</data>
 			<key>hash2</key>
 			<data>
-			yZw5xiDf3GKs7BQ0j7d4BWZGiSM4saPCPDs4wPmNlZw=
+			C6oR9vPbjDOy51uADLPOFPVQryOr2xuSpMEilnTfgzs=
 			</data>
 		</dict>
-		<key>Resources/lut/MR_surface.clut</key>
+		<key>Resources/lut/NIH.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			iFXyL4ULQP7uY2qe4zZy5DRdIpM=
+			s7WG6NAe7buX9+QiQPAWmJUXqzk=
 			</data>
 			<key>hash2</key>
 			<data>
-			00t8BF50iOFemaAMq7kjMnIAbQF9OsQnt4ArkCF6sxk=
+			BtgvRqpM4Zqb+64zqtDrALphnPQlNrawlj/sfobSNZ0=
 			</data>
 		</dict>
-		<key>Resources/lut/Montserrat.json</key>
+		<key>Resources/lut/Plasma.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			y0ppx3r4824JPhFiXky/yE2FYk4=
+			SiUDUY4Fv4wg+sOsgae/cF2L938=
 			</data>
 			<key>hash2</key>
 			<data>
-			q7RkfCz49+1645hJamMWssbCFgTmFFM1r2/y+MknhsM=
+			Ql4yYcSpM6lQ8lNjFJPw8JmwYbgMkZBDFH14Qs2IHmI=
 			</data>
 		</dict>
-		<key>Resources/lut/Montserrat.png</key>
+		<key>Resources/lut/Viridis.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			q4pZlS9352pZYUQ6bROuQsbYq/o=
+			/sX54l8RggqeJzWD5KyVEe/e4sc=
 			</data>
 			<key>hash2</key>
 			<data>
-			jgEYJNsyx5XSnHZ4VqmzOH+JE5PRxFk2M3gna0vjxLI=
-			</data>
-		</dict>
-		<key>Resources/lut/OpenSans.json</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			ObdS84yaSA5ZlKVakha/aDKjNyU=
-			</data>
-			<key>hash2</key>
-			<data>
-			kKbdEYuwMmZvFxdI0JKhzbexCyssT4HKpMoH1LY+pAs=
-			</data>
-		</dict>
-		<key>Resources/lut/OpenSans.png</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			XLa3OnZ3OyYaQVTIIWMU/p9rCrU=
-			</data>
-			<key>hash2</key>
-			<data>
-			Y08CSFqziFjZ4tM0uI44cEIHk+g4TikMmT0J8SDQXgk=
-			</data>
-		</dict>
-		<key>Resources/lut/Oswald.json</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			sSkyk6eo7HX0Mibg+85Tjgj0FRo=
-			</data>
-			<key>hash2</key>
-			<data>
-			QDys4xQ07OBf+c4XwwREVavExnY7iptfE+ueWN/wpbM=
-			</data>
-		</dict>
-		<key>Resources/lut/Oswald.png</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			9EMXFfg5Uy1fqETv6DJgj/gU4P0=
-			</data>
-			<key>hash2</key>
-			<data>
-			Tek77FRoya9IdBKzmTPlNIsVKO4EOlCgNoVH8R4g4xA=
-			</data>
-		</dict>
-		<key>Resources/lut/Oxygen.json</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			zZkfj4wpv4Mt9H3jEF6NOxbcq+8=
-			</data>
-			<key>hash2</key>
-			<data>
-			pHZb9ojsh3XLMMxNeP236vJ6MaC9gE+dn3I5zaY/M9g=
-			</data>
-		</dict>
-		<key>Resources/lut/Oxygen.png</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			/YnGZtkGMcL8U3IwZbNQWwrBeug=
-			</data>
-			<key>hash2</key>
-			<data>
-			F69hw1q9gLkbjvssY7vkdLpyHxhBpO/H08n7N1u04Ns=
-			</data>
-		</dict>
-		<key>Resources/lut/Rainramp.clut</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			2IyS+2DzMGzQNppvkdhWjZSOWPw=
-			</data>
-			<key>hash2</key>
-			<data>
-			ZG4p1aDc9z63k0Rpjava80b11bMLD7opvaw2ug1spvA=
-			</data>
-		</dict>
-		<key>Resources/lut/Roboto.json</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			q2OI1Y7AJIkdfPaGiPDu7ETYxR8=
-			</data>
-			<key>hash2</key>
-			<data>
-			xE/zq5B5dey5+1XmHMRlxveUztFqJvTN2CsKKgttzBs=
-			</data>
-		</dict>
-		<key>Resources/lut/Roboto.png</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			Sh8rvTRDID47thLmt4RT5mo2/70=
-			</data>
-			<key>hash2</key>
-			<data>
-			/vV9aQ9IEsjrjSF9d+I0tyTvNnKst5UXAvjyHX5Jju8=
-			</data>
-		</dict>
-		<key>Resources/lut/Ubuntu.json</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			VOqjqb6sNFTV6fPxU2ofUBLFGf0=
-			</data>
-			<key>hash2</key>
-			<data>
-			4ppkFyzhu513+ovMCCM1LHDVvrBVC63VdJCwwPpdJAQ=
-			</data>
-		</dict>
-		<key>Resources/lut/Ubuntu.png</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			1e50G4tJYWYCNC5OqsvGg2n5os8=
-			</data>
-			<key>hash2</key>
-			<data>
-			tM3lJdo/ampcSMPTuydJJc48wL1gczsSx7P59hAk6wo=
+			6wl0vqzE+DKQbBAGH1Ol2qbuS4FB54QwrvmTF+2DaNo=
 			</data>
 		</dict>
 		<key>Resources/lut/actc.clut</key>
@@ -715,6 +1591,17 @@
 			WykK1Ml1o/ELYwe21Wq5cek0BsA0AlPiS/PEl5XaWGc=
 			</data>
 		</dict>
+		<key>Resources/lut/blue2red.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			O1zEZNQgb70NR0Z4pO8C8Vtpoig=
+			</data>
+			<key>hash2</key>
+			<data>
+			unYmEo3r81F4BtXB02lli4qjhojR6u/9NOEg4Ze8+80=
+			</data>
+		</dict>
 		<key>Resources/lut/bone.clut</key>
 		<dict>
 			<key>hash</key>
@@ -726,15 +1613,59 @@
 			VogPa9xWWu+2EGdKRIzwrcHoHchcWURkmh4ER4KAYyI=
 			</data>
 		</dict>
-		<key>Resources/lut/carp.clut</key>
+		<key>Resources/lut/bronze.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			U+5OF23pd3a0jiTuUz0I6ESX3hA=
+			PHG48qTLXsVawkZQ8kjzekAbxXs=
 			</data>
 			<key>hash2</key>
 			<data>
-			s+cJvE+jQUCVGnEz42PH0aaivAt2E4IKVXeyK8wcZAw=
+			fp4pmj74E07pDmrD+4apnCEfrJzl3JtXckAC1urqi7Q=
+			</data>
+		</dict>
+		<key>Resources/lut/cividis.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			aTE8WZR4z33ZKC1NE7LF0zcuxUM=
+			</data>
+			<key>hash2</key>
+			<data>
+			TTPnaj5gsF94liX5m669oPVjw/CVGQ+7QXexxJZccPY=
+			</data>
+		</dict>
+		<key>Resources/lut/copper.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			r5sQVSrGSMWoYmmiP3sPmJhTjdQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			ieL4bV5+rg0r2erloKPRHLPW3q1G8eliwiP7cvM59io=
+			</data>
+		</dict>
+		<key>Resources/lut/copper2.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			FU7a7ZRBgnTkLu5CuKWL22En6io=
+			</data>
+			<key>hash2</key>
+			<data>
+			2hj8fxrRuhCmlZ8gYVceMvd5ca1julASGh+pUoatcCc=
+			</data>
+		</dict>
+		<key>Resources/lut/cubehelix.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			6wI1+P2aUeZruiBNUWUKC0m2ECo=
+			</data>
+			<key>hash2</key>
+			<data>
+			t9xHtgnv2ZQEueSwoDpCNWnRPsLYLkRS9mLv3KQ35to=
 			</data>
 		</dict>
 		<key>Resources/lut/electric_blue.clut</key>
@@ -763,55 +1694,55 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			1acsNog/D1i8V/20oJGgi6fesN8=
+			yCWvWTnmxft+HHUvgYkQaC4n+Cc=
 			</data>
 			<key>hash2</key>
 			<data>
-			rpWQ0fWLa6PYA9IqRwzfJOTehN/5AxmJXlMzfcW0ad8=
+			n+Wx7L/uMgU6eKFvF+LD2QWbmB9V00N+pljBXvRbywI=
 			</data>
 		</dict>
-		<key>Resources/lut/powersurf.clut</key>
+		<key>Resources/lut/linspecer.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			AfK/vnXt+45RaEwsxIRzcd1eKmU=
+			Hz3LyMvauRvIU/CbPqxxBbj44w0=
 			</data>
 			<key>hash2</key>
 			<data>
-			LdHsUmtPzaDdzOPssr6AfmP9Iie/KcruWDGoPFttDyI=
+			s9HPM3HSjXbk3qv8+7svxjw99WTOgz6q/cwshP+GVqg=
 			</data>
 		</dict>
-		<key>Resources/lut/random.clut</key>
+		<key>Resources/lut/magma.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			hzaHXS0nBNVrOAzIvlZ4odGRObE=
+			JRQE5X1ZI3l0jnxMwWJQ8mUJjMc=
 			</data>
 			<key>hash2</key>
 			<data>
-			0Q8A/RJwzUGroGfVVrFA2ePgemRVoqjVDI6byxDg4Qg=
+			76BGbZu9LGae8yL7SH9q1sOPp9jS3lfIUchFHpAhj5U=
 			</data>
 		</dict>
-		<key>Resources/lut/red_yellow.clut</key>
+		<key>Resources/lut/mako.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			gXtmwqUZ2Cezqxsz4RbCUWWaWaI=
+			hoEibeLcgnTIu32oTfhhjPVfQgI=
 			</data>
 			<key>hash2</key>
 			<data>
-			Sshy9IA9H+uxNA4LiRH9S7qE+VzyE4zBeHqHfsuSezE=
+			rN9D3ftPpuT4DR/lhyKqa2zzT0I+yg/jaW1srYeQYkU=
 			</data>
 		</dict>
-		<key>Resources/lut/revactc.clut</key>
+		<key>Resources/lut/rocket.clut</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			dRShZNYpGIo4Svz6iy9v/yWPgfs=
+			1pN5XtbWcKPzoiRnZIREOstW65g=
 			</data>
 			<key>hash2</key>
 			<data>
-			kzMEFol95FNC/uwpYfoF+h5w+xPtC0Hr1G7Qhc9uJgU=
+			t18m0gSWr56ugMY21nkt9vdUeMh1Dr692J2AejeoTbI=
 			</data>
 		</dict>
 		<key>Resources/lut/surface.clut</key>
@@ -825,6 +1756,28 @@
 			NyL4yJ9nBeXCQi7liEVYyJxWozg6YEKEWkvyJxFJ5rA=
 			</data>
 		</dict>
+		<key>Resources/lut/turbo.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			YkLkAB2OO+zdXv1FL8157eZO/sk=
+			</data>
+			<key>hash2</key>
+			<data>
+			yXagYrXOU7zsppGeMrfIuQXjuyYq5D+IiLJiGwocE8Y=
+			</data>
+		</dict>
+		<key>Resources/lut/turbo86.clut</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			fdmtGxsgYX4JlUz2z6TJ3frRCN0=
+			</data>
+			<key>hash2</key>
+			<data>
+			gpTzmfWKN5QC7udnwTJmlZOEY1gFFrXzEfDOUMY1ahU=
+			</data>
+		</dict>
 		<key>Resources/lut/x_rain.clut</key>
 		<dict>
 			<key>hash</key>
@@ -836,345 +1789,2644 @@
 			fjaEQXTsdKUEfsKlhu1H4uaUGE7XSJjuii2JxIWrjW4=
 			</data>
 		</dict>
+		<key>Resources/matcap/00ShinyWhite.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ZxZxiCnbfSp3FWs6zsNhOnexTS4=
+			</data>
+			<key>hash2</key>
+			<data>
+			YdRG/HLxz6WHUQXIoBS5euonuyHPI0ymL1nrVeQOMUs=
+			</data>
+		</dict>
+		<key>Resources/matcap/01_fuzzy.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			XXyunsNsIpruXs5hX63FmKupZM8=
+			</data>
+			<key>hash2</key>
+			<data>
+			WJL7XdGzI9zG2OJD7DCDgjwdPDZPj2IYr70cPSdE3YI=
+			</data>
+		</dict>
+		<key>Resources/matcap/02_red_velvet.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			aI1S0XdXwSyFO1V/YU/TWqXLZNc=
+			</data>
+			<key>hash2</key>
+			<data>
+			c7E5XZVEw5VnzwCwts6eTiDVnJYxwm0I65tvew3/2zs=
+			</data>
+		</dict>
+		<key>Resources/matcap/03_blue_velvet.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			PyznS7Wr2lWBPp+buDZrOpqU4U0=
+			</data>
+			<key>hash2</key>
+			<data>
+			avdDrPaQoDjII+VCYohTFpv0Up4ciU+l6+BhrRZibwo=
+			</data>
+		</dict>
+		<key>Resources/matcap/04_taupe.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			atMwjSJAg71yVs9SwGY/AwDVk6E=
+			</data>
+			<key>hash2</key>
+			<data>
+			swZMifgDvFaw9J/VpMX+FofX7hYE4qPSviOu++5g01w=
+			</data>
+		</dict>
+		<key>Resources/matcap/06_clay.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			bu2Gw+mDfQ6Hml5sQrZpQL2mDr4=
+			</data>
+			<key>hash2</key>
+			<data>
+			zMmzNxDpgkSCjWjSL304ABpG2HoIt/1+ae9Dxtez2bY=
+			</data>
+		</dict>
+		<key>Resources/matcap/07_blue.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			tgASHGHB7fLXmV4lsviY7+FH6cE=
+			</data>
+			<key>hash2</key>
+			<data>
+			ESrWvfGUfAObu3TkvsuO9wkyZmxPxSQj2RddRSYBpOE=
+			</data>
+		</dict>
+		<key>Resources/matcap/12_red.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			OaJ8jCiPRa+8nsuPCd3uyDp1cHQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			Ja0Tju56DypVW9+jmAyFxktmTxJtmZ1mWiBdvDQeh9E=
+			</data>
+		</dict>
+		<key>Resources/matcap/15_titanium.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			d7lCV607ykREXldfsxwEOCNezIc=
+			</data>
+			<key>hash2</key>
+			<data>
+			c8l/gmX73Seu0t/r+7UqSzKASntfEfM/PuFvEd0WcXo=
+			</data>
+		</dict>
+		<key>Resources/matcap/16_dull_gold.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			lkrVUSGzFaQy0j/ki6roo1dag+Q=
+			</data>
+			<key>hash2</key>
+			<data>
+			5sYanxM/kWJk6I3sPlbjEJtQGV5Dif7YJA387Ky0RCQ=
+			</data>
+		</dict>
+		<key>Resources/matcap/17_glossy_red.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			WXcTVRw8slPGDqwxB9+0pqcPZik=
+			</data>
+			<key>hash2</key>
+			<data>
+			KJNkiR5RSV99l8ZGLGGEfC0N/kxKf6GoEWBDpXHkkxg=
+			</data>
+		</dict>
+		<key>Resources/matcap/18_wet_blue.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			kfeOtzmTIBD7YD5T2raf7CmWudA=
+			</data>
+			<key>hash2</key>
+			<data>
+			cO1UBiOgZ+z8LB8YEsgKD5fjeSEDlaCMYU+vlWZFd8o=
+			</data>
+		</dict>
+		<key>Resources/matcap/19_shiny_silver.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			5xH6gt9xB3uo6oS+tYKln8NgOTM=
+			</data>
+			<key>hash2</key>
+			<data>
+			dNcZuJu7bYrju6JpTWGyA0J5ozVq4ftTS2lThpVFx20=
+			</data>
+		</dict>
+		<key>Resources/matcap/20_shiny_gold.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			fY3NKTEJfOzKmF4X4zHMfKSY4P8=
+			</data>
+			<key>hash2</key>
+			<data>
+			I6JJgYcICoucCe1XA2PMZFsn/cWTrtf/8G/cgXj+XAQ=
+			</data>
+		</dict>
+		<key>Resources/matcap/Burgundy.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			HpIuFKaqhgQJmAuic3uPBKP5my0=
+			</data>
+			<key>hash2</key>
+			<data>
+			vh1YVmn3eLdyNXoca4snGZrN5GTaghy0pASKZkhw44M=
+			</data>
+		</dict>
+		<key>Resources/matcap/Cortex.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			CU8ZLL5k9K+2wKEivmv/+181CAg=
+			</data>
+			<key>hash2</key>
+			<data>
+			UaSGAdPYvsLjNwaD5Ixw//cP/y8L3BtErKrvd8yCczc=
+			</data>
+		</dict>
+		<key>Resources/matcap/Cortex2.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			RT5u4OiR5dadRK694M1mby1Ndjc=
+			</data>
+			<key>hash2</key>
+			<data>
+			hNSPvwCgoqlq0Kgq7GV1mE9yMOz4YH0MCv83MAOOFio=
+			</data>
+		</dict>
+		<key>Resources/matcap/Fubax.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			8DiKt2JNcRtk+DMyQo0kvWLZLdw=
+			</data>
+			<key>hash2</key>
+			<data>
+			dXKGXhp2W/tbV6sg01yKC0xVRKetT9xzbFogYshUeck=
+			</data>
+		</dict>
+		<key>Resources/matcap/Gray_above.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Lw0FB+XIGbao3I5Tbil3L38r6fU=
+			</data>
+			<key>hash2</key>
+			<data>
+			vXemG2Bmle1jKvg4FoVuW6UUFeVYQC3GDAnOpvXghcE=
+			</data>
+		</dict>
+		<key>Resources/matcap/Gray_headon.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			B0RB7RirSYjsJaN5NBaxzXtSvHc=
+			</data>
+			<key>hash2</key>
+			<data>
+			6ajtipKXjaXZ2CWpdneaQkh2yQ+z3r/jfbNdfwhEdqU=
+			</data>
+		</dict>
+		<key>Resources/matcap/Jade.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			xn6QRYW7BczAvUblXOIX4f6ZNtY=
+			</data>
+			<key>hash2</key>
+			<data>
+			/I6P5PjC9oZO2zIcGzXYj0DQYFlbpCzVDDJXUF/0Ouc=
+			</data>
+		</dict>
+		<key>Resources/matcap/LightBulb.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			HVh1QTR0EhVB81pxYvEexnAstcQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			9ARMHUvEkyyBb+gIJHFKJ5XUekXRCKXiX88CIlE3+gA=
+			</data>
+		</dict>
+		<key>Resources/matcap/MetalDull.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			hZQ599rHUEFWFnUGXSZH/QEePgE=
+			</data>
+			<key>hash2</key>
+			<data>
+			oDEfJx766sHkr+0fOxppOiAf0Rp5abREu0hq2jcSHWQ=
+			</data>
+		</dict>
+		<key>Resources/matcap/MetalShiny.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			UQodHoShBd0Qa9pJEN5HbIIvyXQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			iLpm8a2VqyMEmwKZMtqarQNG16yuyT8ty6XZMhfOBO0=
+			</data>
+		</dict>
+		<key>Resources/matcap/Porcelain.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			TbijhQuVELMWonV4W0dQn3mEWdM=
+			</data>
+			<key>hash2</key>
+			<data>
+			vxxRRpzQvVcgtawLtwI/UmPDH185LncQ96bKXfa0F7U=
+			</data>
+		</dict>
+		<key>Resources/matcap/RedPlastic.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			vujseG51SxkawPMfQIvKO5d+9Ak=
+			</data>
+			<key>hash2</key>
+			<data>
+			Sl0DIfTRTJ/coP0RbtGuw9QMNefwBSqPh7wcuLORpEc=
+			</data>
+		</dict>
+		<key>Resources/matcap/carpaint.jpg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			7CH9sHmaBtoB6MTBTez3Wlf5J5M=
+			</data>
+			<key>hash2</key>
+			<data>
+			gFD9VHFiDFBotH7AFJcaRqj7oJhNH6820Z3Cy5Q7VFA=
+			</data>
+		</dict>
+		<key>Resources/matcap/license.txt</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			XqdGgReF8/Eezwj6/ifyjlpokw4=
+			</data>
+			<key>hash2</key>
+			<data>
+			qUO1HZu9gDp8Z1AeoPpZLKbyouuWJ4aG7m/CBsGW3Y0=
+			</data>
+		</dict>
 		<key>Resources/mricrogl.icns</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			CFRf4Del+V7w4hmUwSiP4bGSgHw=
+			MqLfiFlAdnJFJWAc4Y56IRNon3U=
 			</data>
 			<key>hash2</key>
 			<data>
-			AnD2MXRmnT/2Dk9zIWlT8l7siPseaJs2jVLbx7En+Hc=
+			UpXPZzMJ41pfAUzLT4DC7ym0PlaTbbFXJ4rjRWZwUVo=
 			</data>
 		</dict>
-		<key>Resources/pigz_mricron</key>
+		<key>Resources/mricrogl_doc.icns</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			ClaekmZZRCqZlZVoxKnVI/NzkAY=
+			dp61errSli4nbh1zOoSt93qMZdA=
 			</data>
 			<key>hash2</key>
 			<data>
-			yTwAnNn2+/bqCDVPhJvwexfNnMFPWwi+TMoiC7xh9oM=
+			QudmeMqBeXtU3xd30udiL2TC8abuBO7AqBNr/uaqqMU=
 			</data>
 		</dict>
-		<key>Resources/script/basic.gls</key>
+		<key>Resources/python37/lib/python3.7/LICENSE.txt</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			qekZb34OnoeA4m3y0tTkFaNhKM8=
+			+OyA4MT2fw9GD2kz3L6Z82qC8CM=
 			</data>
 			<key>hash2</key>
 			<data>
-			kaCJkvuRHR1bqJLcr8Qlv+Mc5BEh0i+/dTC3sdqMEc8=
+			p31x1r5vkDLmtuXSz22mj57quQNu37wENjPIl5zV6Cw=
 			</data>
 		</dict>
-		<key>Resources/script/color.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/_collections_abc.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			qU09sVSK7H/NcDgRSYRNXezIsyA=
+			ebLY7bUm1vDu9w4TkrJYvR93etA=
 			</data>
 			<key>hash2</key>
 			<data>
-			TA9uEi6l/RqvjKB4RBd0NGif/BC5At4M/b9iJ7X3WMY=
+			HzLUpd5R6gwVXIM72/5+2+GMJNoqaojEElVWytmjnZA=
 			</data>
 		</dict>
-		<key>Resources/script/mra.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/_sitebuiltins.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			eXr2QQl5oF6tCvRb5SX2B6FzrFU=
+			CE/S7kGwVFLtE1r5Jt8V0HQneJQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			PCdhe4ZdyxOLuqeCbeSsG93ShhZpDk8qZJZJvDaF4gc=
+			0rlPXcmSSr8AuA5KGKBDaTk9kz7rKh866Z0Z++QDW4c=
 			</data>
 		</dict>
-		<key>Resources/script/overlay_clipping.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/abc.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			YmHw4t7xV5Jrt51OO/q2ul1tj+w=
+			6vHgHumjAA49yMBDMPuloQeH8VI=
 			</data>
 			<key>hash2</key>
 			<data>
-			cYvnenAyH/7dwKzWruEeHcARDh2nGTHA3+SJVFOytQA=
+			nTlD/EaduGVSvYHAbgDU/9hCnL1+SHiK6zF5BO0dsu8=
 			</data>
 		</dict>
-		<key>Resources/script/overlay_cutout.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/codecs.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			Xx48/6KPcuM+XSL1/iuRNB9/7VQ=
+			+ASqcwI0aj2ixe0kOzqHeVDq0Bo=
 			</data>
 			<key>hash2</key>
 			<data>
-			m7EZk4TK+UHH0WS6/y3smTHiVoo9kGZP3hdPDUyCioA=
+			JyduNRaxpxjgYnfVG/wD8NIhIQ/k36PZWzXIUN8/Q+Q=
 			</data>
 		</dict>
-		<key>Resources/script/overlay_glass.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/genericpath.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			lm1G4GIIr09TLi292/l6vggMTkk=
+			vXfSZeyww1q3qiCvsFFrSkxYXto=
 			</data>
 			<key>hash2</key>
 			<data>
-			KcrEYNmQCPwuO5YdfdbgvcjMtqEJi+p9ctAhW8DfBk0=
+			NKpENHHAJfZTuKjH0vHoXgbcAX9HcOQXxVrEeaLL/k4=
 			</data>
 		</dict>
-		<key>Resources/script/overlay_shell.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/io.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			OFTly6MVk0WxnxU8pxIEooeaiR8=
+			6qewpT2BwdPR1D5LlccE/8B+aV8=
 			</data>
 			<key>hash2</key>
 			<data>
-			sUOXnVrps+N5DSviXagiW5nOAUi2MqHK5ET38SxDGc0=
+			rRYgruKb66d7iUR58xqZBfy/tH8KnrpTKjJwudRlhBE=
 			</data>
 		</dict>
-		<key>Resources/script/shader.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/os.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			uwgWcg1QQmE8JYaBiQAKTxbIUuc=
+			/+jT7KTn8C9g8Xsq69aDYaFt6vY=
 			</data>
 			<key>hash2</key>
 			<data>
-			3Gu33EQIS7akRKoVOJxnvsF3h1spytZXbJS0m9HDbIQ=
+			o+ifg1sfiPZykCxYBWCzB3rNkxwlUSFwcphwxHuKxXo=
 			</data>
 		</dict>
-		<key>Resources/script/wobble.gls</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/posixpath.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			CQDa7R/cgv368Tjvz0gW3KPUsBo=
+			omSVHopjGMI6LjTr2yi9Zh1ek80=
 			</data>
 			<key>hash2</key>
 			<data>
-			LCkBCdc+RJxfrRa9e/wfDxc2tXov2NSLdmIqPJpaU2s=
+			z+DVcb3O/1oj4/GkHihaCuDXD3CgbIKBv+llQIeNdpw=
 			</data>
 		</dict>
-		<key>Resources/shaders/default.txt</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/site.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			cKW6U2+pHZ/R+1s2kKOx4J6PZ8s=
+			9Zjne5PPJfEtE4Fl3AFN6WakBjQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			l1ICKuS0G0kDPAFEYceuiBaCjF/VJdp4YmCRzMmXsWw=
+			m+dBdKtJP10SdeuJlyvQa8u8jiPqml6KFIG2n3Bacdc=
 			</data>
 		</dict>
-		<key>Resources/shaders/edge_phong.txt</key>
+		<key>Resources/python37/lib/python3.7/__pycache__/stat.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			Bz60+OeLiwNMzb5vrsCrAe/QYmU=
+			iKZEGZJnSb57p8t9nAsuMAACDzo=
 			</data>
 			<key>hash2</key>
 			<data>
-			/GQ4FmaqPVW3M3nJPMsI5piplf6Z5kavep2PVuo6Ai8=
+			OgtMrx0KxaUVnIoYXVDhOjZPgDSiBecX2v9lHCFGoxw=
 			</data>
 		</dict>
-		<key>Resources/shaders/gray_clip.txt</key>
+		<key>Resources/python37/lib/python3.7/_collections_abc.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			ErF5/QQXdldrzeiZgwPtznZMJek=
+			aeoNnG3Eg8Eb+ZQSmHqiBlEFFog=
 			</data>
 			<key>hash2</key>
 			<data>
-			Pqu4ubP5Y8zWbUWFOCNQBC90mS/GZqLMgPnj3Jf4DKc=
+			hvQMYvtQeEh1KG9paSLCz1LExT0ZPqUk9j6w4xXaR00=
 			</data>
 		</dict>
-		<key>Resources/shaders/minimal.txt</key>
+		<key>Resources/python37/lib/python3.7/_osx_support.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			AVUnzI6VMFwIKUDMLTVLmD1E2os=
+			liMLN41zhtx4RxSnQ1kEOLHlOwQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			xukdEtkfI0di27ae9f28BIGvUz7jPV8eijR7nVzu6EE=
+			7ItXJt4E5P4M84YTREdY06ZWkprlNyTU3645Wh6e7g0=
 			</data>
 		</dict>
-		<key>Resources/shaders/mip.txt</key>
+		<key>Resources/python37/lib/python3.7/_py_abc.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			BDiuMs+IkvMWv4QZmIIhLsmjQ1k=
+			wx6QQ20NGKcCapoGZKYyqzlrYmY=
 			</data>
 			<key>hash2</key>
 			<data>
-			TFCWPjuSlTqJKjLaGtQqtFAgpsrsuhPj5yUdAi5HLjI=
+			Z59EYUmpVIUdpJsTl7t09tXCBAOJbTHbdO/23k7ZnRI=
 			</data>
 		</dict>
-		<key>Resources/shaders/occlusion.txt</key>
+		<key>Resources/python37/lib/python3.7/_sitebuiltins.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			Efl0xyx9SzFA9bCTHsmiQ1b7ew0=
+			6RGjU10eEKNJOzKX7p6YeKPpgoA=
 			</data>
 			<key>hash2</key>
 			<data>
-			2DdlWDFniDtsWGW5mW4nB+3n7W+QBXirpnkIJRpRK4U=
+			6dN2HjmgSSA8GfTEzZJZ82NvEKLA9YzqV58EAPpFMpQ=
 			</data>
 		</dict>
-		<key>Resources/shaders/occlusion_sh.txt</key>
+		<key>Resources/python37/lib/python3.7/abc.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			TmV2RS7WQ4WJFRv4mljnCmn4BzE=
+			VJ/aYVpL4PoTy/fz6fpZW7+t4uY=
 			</data>
 			<key>hash2</key>
 			<data>
-			il3fItxUBswHzgikFshELEy8cw5LR7tL19OwzhOURm8=
+			RijFqqOmEwXNX6prS9e/ykfyVuKGv7I6WGjJx6N/Lfk=
 			</data>
 		</dict>
-		<key>Resources/shaders/overlay.txt</key>
+		<key>Resources/python37/lib/python3.7/codecs.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			VFUt7bAAM9qlWUflnQSb3A0auTk=
+			cgHqLLBjLa/eh4u7cEYfnFtM0K8=
 			</data>
 			<key>hash2</key>
 			<data>
-			Dv93Huj/8//EK/FxpmHYHOs4dax4DnsQbb/JdrhIaOE=
+			rZRVAJ6qeEASq0qHWa1MpEAIgz9XwCGjnrue8M8Zmo8=
 			</data>
 		</dict>
-		<key>Resources/shaders/overlay_emit.txt</key>
+		<key>Resources/python37/lib/python3.7/datetime.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			SzKCoQ8Z+UMnn83Qf1nN5GvHZn0=
+			bjhxmlFJzdebPD6Fuy8fVEUN7cM=
 			</data>
 			<key>hash2</key>
 			<data>
-			umdiDHFYg5yqLLb6cV8arINCYEM6UimAeFGD4ho+PBU=
+			Gm6FZVEOi+Hz9tSyg44aahB9VK+/6WOdSXQHlWtnpQY=
 			</data>
 		</dict>
-		<key>Resources/shaders/overlay_glass.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/__init__.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			G+YzYg2Ak9ABqvwCTN4XL0eW+R4=
+			9ejHWjR1nVnKdwoaMSIs5fpQutg=
 			</data>
 			<key>hash2</key>
 			<data>
-			aHyVmA3ur5dlQIFDz/3bCGO8uvpiv6UERXEA+V3buY4=
+			aE/rAGadpX8Befc2cnzEbxfoTlymOfbqEE6F4arKkwA=
 			</data>
 		</dict>
-		<key>Resources/shaders/overlay_new.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/__pycache__/__init__.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			XcZHjgyCbZIUdLpkl/TQhB4ZR/4=
+			qc8bEgMiLjZKo90jFk3qXEXxy2c=
 			</data>
 			<key>hash2</key>
 			<data>
-			kCqzzd+RKtbY6qrocx8OexN83DO577WBsJFdrZl8oQY=
+			81cAs+myFO4RfFQzL5Qa2nfKg+ElIo+jRMzuTCf0XBQ=
 			</data>
 		</dict>
-		<key>Resources/shaders/overlay_shell.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/__pycache__/aliases.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			1YeWQUYV83ovuE66HBeqLkUGQUo=
+			Z4gvERmA1lWGQy69bxV4A6fcXKg=
 			</data>
 			<key>hash2</key>
 			<data>
-			jRlOoOdQEbUNyn3N+utriPpwGwPLqUlSlp1SelPYI+U=
+			xEohokOBJIsbedn2EIF4wuhwN1Zy5o7qftnckka+jjg=
 			</data>
 		</dict>
-		<key>Resources/shaders/overlay_toon.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/__pycache__/latin_1.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			vEhH4yqZacRnoD5LbakGIH9pmpM=
+			foYE0ski/0+rvB5HTK5yxAvdCAM=
 			</data>
 			<key>hash2</key>
 			<data>
-			GQtxdHZuiOKYNUjDEXmbI9TEQfaOhfOfAc/lvqnaycI=
+			vfcLesIOdPrqdsihzwdZ9HYATFvmtyqBk9FcdONaj4k=
 			</data>
 		</dict>
-		<key>Resources/shaders/phong.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/__pycache__/utf_8.cpython-37.pyc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			FBeqZCybGHL2TUEHwaMQ6WBjMug=
+			yGzE16GG/sAMsCBnGGyNhU+6WA8=
 			</data>
 			<key>hash2</key>
 			<data>
-			TYHoeTcLDMbnLnvjAyTfZ8yqoQeZUh/JBbWjIvPQ0m4=
+			WJ88Y1qrHcAw5EULbzOsbOE8GgQ0zkDrBFOt85YRC7E=
 			</data>
 		</dict>
-		<key>Resources/shaders/phong_sh.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/aliases.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			720WfIo2/94OAb5JSHD0Un4X4Iw=
+			c85wfNGBnhRQKBgqfWPfhzvWJ0A=
 			</data>
 			<key>hash2</key>
 			<data>
-			a1w4sdQqvW9fMNhfG2wZi1APE2M6Uj52iaCc+fIMlWI=
+			sw0OdC5U1zvTWyYglolhFxPxBSlkhf+pf3nyBEHHIlA=
 			</data>
 		</dict>
-		<key>Resources/shaders/simple.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/ascii.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			LlGR9hDwkKDCzS+O6i6vz0XeY0Q=
+			a0jswzP+h+9ky4kY9S/NQu5FokE=
 			</data>
 			<key>hash2</key>
 			<data>
-			FChnGCclIFPe7vJ8tAhUm+N+gbcg6uLCMGclJkYRetg=
+			V4qhFz98xg2tKJUHEof+YYK9FHh7P79HpseYPf42deM=
 			</data>
 		</dict>
-		<key>Resources/shaders/special_effects.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/base64_codec.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			Vxxm+y14jDhciq6BXIzb9Zmsupo=
+			v9RSzNxFcaXeYFqFINqvqZl7kHo=
 			</data>
 			<key>hash2</key>
 			<data>
-			Ou/8lF1xmCFPEKFdXMMKWLl6+V+ucO17tGKz0MT+GZY=
+			z5rHpGT1QUkkhiQdG0vzPje0XGSZJ1zE1pxajlZOWXY=
 			</data>
 		</dict>
-		<key>Resources/shaders/unused/overlay_emit.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/big5.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			8BJ9GAifOCehvL6fWk3MbicnaL0=
+			vFOcfn4MqfI8apZosQDkaGnZ9Sc=
 			</data>
 			<key>hash2</key>
 			<data>
-			y7+5MhvBbzf8xxTCPm8+0GwzZ5A52jTswx9n/TRvAiU=
+			mPrG+Gog3QXaGX4gWBduv9R+3ucHTDJI9fSP4PtnLXw=
 			</data>
 		</dict>
-		<key>Resources/shaders/unused/overlay_emit3 copy.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/big5hkscs.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			nBR7Siz9DPin/Vsx6qaajmB3qjU=
+			CIJnBaKjB5AIclHuPXgpkibxw6g=
 			</data>
 			<key>hash2</key>
 			<data>
-			IDgswefUebeXWLg8aTaUlZFPKwogT4tIQzEHlTj/74A=
+			IdBRoA+1xqhroYfgxQ6BHWWc4AmR/V9bQI9x67LvDxY=
 			</data>
 		</dict>
-		<key>Resources/shaders/unused/overlay_emit3.txt</key>
+		<key>Resources/python37/lib/python3.7/encodings/bz2_codec.py</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			Q/11tUPBhJ7v6FX2Ld/jjC0iOGg=
+			dlwUyCrwNMCW2c6fWTewnqSfSLw=
 			</data>
 			<key>hash2</key>
 			<data>
-			mIGPZFsr5MiSe1YKNUY0Q/u4VUQVAeH9q+wAVLQwQAk=
+			EYGiqJECorHSsvH0RzI21dHs7N0L6P2qSYo9viGhhas=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/charmap.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			3Ai8iPlMR7Q6DGS6M72nne8RCWs=
+			</data>
+			<key>hash2</key>
+			<data>
+			G4tf2zbOO+zGKmEV7ZBKFwg5SeyKrvWoD3B4zsIy9Ds=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp037.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			oNJ1V28VhXbiNTtpndw381DZ0E8=
+			</data>
+			<key>hash2</key>
+			<data>
+			/abKmU1xDk4Mdg4CBMKaQnP8DxTr4xaTBtLrVMmVP1g=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1006.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			9VpNh0HNCdx7dixhqIbERy+RYFQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			6t7Ti0J4Qb3ygOh48eJtpQbnQ+qpQpB1Myr2DM5ClHM=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1026.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			bg2FE6GQXWMXV6DDD9mx/VY6ZSU=
+			</data>
+			<key>hash2</key>
+			<data>
+			9SJyN9185QBbFqjk2DQvDRkxk8h44881uTBdIrOxqvk=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1125.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			MJqKoIi7MXWGPgb/SKjF/Kw9UOY=
+			</data>
+			<key>hash2</key>
+			<data>
+			+Ex9MM4iLmpQz/GkyXNxc0EdoQjL0sm7V8hUSAEDxHA=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1140.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			8K/HJ3/CA3BH6gabJ+7Pnhwmag8=
+			</data>
+			<key>hash2</key>
+			<data>
+			M3nXiyRKqQX/4Rcaloyq9BuaAVTR3cdsBaKrrKKyif0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1250.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			hg0o0V8o8cUjUqlmgJ9O2Ka4wfo=
+			</data>
+			<key>hash2</key>
+			<data>
+			687BrfkWeGP7C6spcIxUYwDICnfvB4OMngQ3pZ4mWXA=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1251.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			xDMr62sDRk9qEcXdUsQ5Xpae2fk=
+			</data>
+			<key>hash2</key>
+			<data>
+			1X+M+jRJTFrLZpLdsx9hauLdiaB10q9tNrC37C/+evE=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1252.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			QayojSARk+pjltlUlvNXUCCd238=
+			</data>
+			<key>hash2</key>
+			<data>
+			Gapb7mZ/X7OHkkqBOuyfod2kd2nQnoSDp0i9sgK+aoQ=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1253.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			hMWt0+qufAAQq1VbKh0b2RROMSo=
+			</data>
+			<key>hash2</key>
+			<data>
+			jCdpbc+2iUs3iGm8ifETcD+9HpsTqDk0Rj1ZmbBV0eg=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1254.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			RzjpDr7/TrvIRPwMIIBXdVqVsrU=
+			</data>
+			<key>hash2</key>
+			<data>
+			BlF+wvdPHGVi0KGlAMSLpD8ubp0MPSg1bXR/J08aTI0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1255.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			bCwszA1MZlDm7/dbdXHagcqC1mM=
+			</data>
+			<key>hash2</key>
+			<data>
+			VKG1CHV4+njlvdCvpqnoDoxUZ8HkImz25YbP56Z0plM=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1256.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			3uSHaydpz9HBviqSvMHbfl9rwLY=
+			</data>
+			<key>hash2</key>
+			<data>
+			rTdorC/vKmRrMwHCCvcF9NShVE8i+oqEJButonq4QTM=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1257.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ZqGtcZj1WTX94yDWxXMzNDT8aeo=
+			</data>
+			<key>hash2</key>
+			<data>
+			2RSdKSWz9xmAnvIpflQUYQefFcZYryB6PkmL4xSrLGs=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp1258.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			pVwjeLwinhFGYQkN/+9fnETW+zA=
+			</data>
+			<key>hash2</key>
+			<data>
+			Zy4FtRlSqCyNvVYDdpGV/O31ZeRXu4bA1brgSVXQRjA=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp273.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			fKAHlc/x7T4efxV+pJCIbFOV21o=
+			</data>
+			<key>hash2</key>
+			<data>
+			bGrsOyE+o668LFJt1NEhyV1KJaL8koqHzYD4RImIGF8=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp424.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			D3tei9B5aXLcVzhv4ngrFArRfIM=
+			</data>
+			<key>hash2</key>
+			<data>
+			MEFMIYbqCAK789sDQSLd7B+KEAYbl8UIceFLdO420Mo=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp437.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			LEDFq9t9HNKRF3+4rTqN2QYyIPg=
+			</data>
+			<key>hash2</key>
+			<data>
+			XCpQFc02z39WEmnzPexMMjCT09iLBnOWmszavcuc4ss=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp500.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			tW4BDlY9/pNgbyypDUaYAQ9w0ik=
+			</data>
+			<key>hash2</key>
+			<data>
+			Yw9QP5EQ2Y6j4VKfL5ZevCdaL3jT3kf46badNViddks=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp65001.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			QrAZHfQd55gKO/TOzG6I4qPkgsk=
+			</data>
+			<key>hash2</key>
+			<data>
+			OzksNu9ZD0Cma6zm6z2G3LV4wfi+y2ug65/hFr3b3rI=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp720.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			60hCQP3rW+kwwSKDCBWGNPxV/OU=
+			</data>
+			<key>hash2</key>
+			<data>
+			OVSWABJxuS7+XfB/wK58NBDR3Svf670+TY6AbIFmvrA=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp737.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			o5Mu1gMDqtronVNxI29JMcNkBFM=
+			</data>
+			<key>hash2</key>
+			<data>
+			vjyheFo5cOxiMQcQ6vfegpMhgbBNBv5FKPitq6n7jEs=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp775.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			f3Zf0TwEcRTNxap6NLuye4IQYNI=
+			</data>
+			<key>hash2</key>
+			<data>
+			4NuoW5kynX8WkH5iCtraBr5SFqvLlkQGyCe1abLPGus=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp850.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			o3nPDvwibIxc3xjiwa9dkGZgu/M=
+			</data>
+			<key>hash2</key>
+			<data>
+			JX4p8jXiqHkN1ozuRWaHdmSLq4Cc6FhPiTzdj9AHmTw=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp852.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			bYejSda2dEG7Aix9XFuZeY9W9ig=
+			</data>
+			<key>hash2</key>
+			<data>
+			zG+qqdxKkzEn2gqqzR3HpEwJJmBRr1a/4yFf8ihja2s=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp855.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			BY3ziqDueCeMG8QoN2dk6d/croQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			eyXGHJ6MR7IY0/u4AVQaKGGSascShD0hE//5DiB09bo=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp856.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			lXrKlM1Vnu3nT/Z29ou2ot3WWgo=
+			</data>
+			<key>hash2</key>
+			<data>
+			LlLsXLHq+mc5tVabC5juid9fc1i4TM3I2mTobwF9NZ8=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp857.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			3LSBnEvOfdTrmHfjsnha3CC8094=
+			</data>
+			<key>hash2</key>
+			<data>
+			jRt2kFi/zNs8bHDEmhBPUIGi/Mn61o97XrPk9n8LM9o=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp858.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ItWE+0zvxwM36QyN2t8Kv0tCt4I=
+			</data>
+			<key>hash2</key>
+			<data>
+			okkwxKatD/Zt3ppp8gJ+S5LCycYdzaKZLpQGVMYGV3s=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp860.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			dDWLVi5VXk7rSAaTTc+lmg5xLaQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			Lfrn4x09mqMBPP9EpNethC8lesY3ZamZhDZwG2Kc2Go=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp861.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			c9bcIvnrodZ90PV4rCt5Na9rVIE=
+			</data>
+			<key>hash2</key>
+			<data>
+			cBkw13ohd0l1humbw/5g8tS+/7ZFYI8WfHaHSnL/QF4=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp862.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			3/01C2uEcbBCPXtR/0mmyJ/nx44=
+			</data>
+			<key>hash2</key>
+			<data>
+			FaKES27ZVExkAM9ymbQtDCvvk8m+5wqeifZrhhCtbW0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp863.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			xLUo5CufwQzKxKLpytisSLxlX0c=
+			</data>
+			<key>hash2</key>
+			<data>
+			o9V/YfzhuY/IHqjk6+uvQC+uQLvN011Lgpe5u0mnmqI=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp864.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			uPGq34xpyXzDoslrPcdHVyv76AU=
+			</data>
+			<key>hash2</key>
+			<data>
+			Fa2PH9/dhCx1IiQTcuft3affaH6BVpKokVfF8lbyGgg=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp865.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			QZoeh5eZzG8h/AapAoISBKh0z2o=
+			</data>
+			<key>hash2</key>
+			<data>
+			vbre2YckLtKo3nEz7C9h3cwcLp3ieBarfNCkxnijqQc=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp866.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			rT7TBKZpKSx6GRBjD/P5i7t7lW4=
+			</data>
+			<key>hash2</key>
+			<data>
+			nvzI6Fu9FocnKgmR9tBCmkwGZ52y0RSyrJXbJ6cPnRM=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp869.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			pZPCZTpDEslF2d+raMEjuXxrbJk=
+			</data>
+			<key>hash2</key>
+			<data>
+			Ulgtn7dpsk6scVTxjX2uhWWIKX1tqY83+179jaiDgm0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp874.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			QAvvWMz5NXWljbEztwcLkyyYxpU=
+			</data>
+			<key>hash2</key>
+			<data>
+			/kdS+i5ldB4IpWOjH/kU/nEGiULOnG9AcLHf17JeXn8=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp875.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			0kwlzJnxfFOHT2a2ioF/7qVEmg8=
+			</data>
+			<key>hash2</key>
+			<data>
+			L+cmMgFdssuiu0NnBVVR2m/iIFG5bRcMe5b6JxxGslc=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp932.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			7JD7ItjrcS3GMiieX2uBWoHkv8w=
+			</data>
+			<key>hash2</key>
+			<data>
+			mXSOKBE9LUn11ma0m3iszSxuEKeFL33W3s6bW3Gqg8Q=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp949.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Y753Iy7a+SCOI8Af3GgQ3cKVueQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			lQp9KUZ84FkLShE3gw1D2I2PIOQDXcqqiypcPD8d6WI=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/cp950.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			CVw01TQMzQ/lOAEqZUl79OzocXA=
+			</data>
+			<key>hash2</key>
+			<data>
+			J4EReLRQcx/JVbEkdlamBdBOXumODVheRZa5S3A6J/Y=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/euc_jis_2004.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			DwaulK4hJnUcV2QGac4oCaOKVSQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			n6QmzZ8XYp9jIHAO0YuqlIOTBM8byrvufttQF0fcBV0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/euc_jisx0213.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			bYgtuJ9wJyiNCOq+/VS4CajDJbM=
+			</data>
+			<key>hash2</key>
+			<data>
+			4oMVkQ2iAhja6LfVvs2B3h4oPf2LBBWkmA1nBl3nOgs=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/euc_jp.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			w5NwB9OsUtFO+/bAyGduwEXOWYY=
+			</data>
+			<key>hash2</key>
+			<data>
+			tFOkOXh7DvoDHkNBan2FKmvnBcmF4SAGk+uW2H6nnNw=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/euc_kr.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			C0xI10IMNi6z/PZCArH5H96fXsE=
+			</data>
+			<key>hash2</key>
+			<data>
+			YzoaVQS/rQSx7JyW1E1Ouzu5kGaiGDGOfWfYZuIIh6Y=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/gb18030.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			d9JjIatygoYzwA1ZoVEjRhbuh+s=
+			</data>
+			<key>hash2</key>
+			<data>
+			bBC03Em8Y3JOU5E37eaTYwT8yhyXwo0W2J84HhCElSE=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/gb2312.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Vn4SWrTOTCZWtfuruEorjZFEyf8=
+			</data>
+			<key>hash2</key>
+			<data>
+			PS1WfY0Hm3jz87Vm7VKtLzivYb+DK33CiFiwA5oDLWs=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/gbk.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			/iWnt13qo/qx+pG3F0rTJ3hLzv4=
+			</data>
+			<key>hash2</key>
+			<data>
+			7/m4y8mtLvLhDpavqD09sfd16gRK7SdbejVXSuDYZFs=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/hex_codec.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Uxvl4rrPjCMW4p8TRHlkRQK8/9Y=
+			</data>
+			<key>hash2</key>
+			<data>
+			/F8KMbWe/pkLhu+5iTZ2nzPdkdkSzlW0mlpM/FFs0Ec=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/hp_roman8.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			IzrYeJJu1je9psJqzj4Y0EnBHwg=
+			</data>
+			<key>hash2</key>
+			<data>
+			xDzOdj0S6PcaY9vBZkG9hxR+r1+dkFTqhWhkshayc1s=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/hz.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			+OveIlcWdT++M5VuAA7T0KOFDQk=
+			</data>
+			<key>hash2</key>
+			<data>
+			AlqVMeMEblLT4DnAvgT5padGUddoOhPHx+vUx9+1mWo=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/idna.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			WqJEHFQKAKZk0bb+vJTaYTrqMdY=
+			</data>
+			<key>hash2</key>
+			<data>
+			3M4N0IbyzM1hmEWKOa9nApF4azoUwAO6WYmBf3c6foQ=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_jp.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Da/4R0tdtmyYOOMrQo+K+3TFETE=
+			</data>
+			<key>hash2</key>
+			<data>
+			RhoOf3Lsy4sp81HE55Js+9pY4O3W0HcL2C4LNsX+vnc=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_jp_1.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			PyFag8WGZTZSm4Iq3+w/C+1ONTY=
+			</data>
+			<key>hash2</key>
+			<data>
+			Y7rK0TqXmlUZ/KpPHh4HssdBUAUWf6w6aJQIx9iG+r0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_jp_2.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			6GhagefMKD/Y0edhXmKFEqp0ts8=
+			</data>
+			<key>hash2</key>
+			<data>
+			XUJIGBVIsPyJqfXunPUuvssjVwi6h9R4lq0UEwiE758=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_jp_2004.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			VyEjtu/8QqspAyM2Yy3xwWfZFkA=
+			</data>
+			<key>hash2</key>
+			<data>
+			tNFGi81gi0bzjLDG7xFVENz5qg9x5ZB5L0B+/G4WUWQ=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_jp_3.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			c3y9PhHPk6/ClE5rgE63uPIL3dY=
+			</data>
+			<key>hash2</key>
+			<data>
+			Os6qVmGQneFOKGHYZEQ7hHJGDOObmczlxpZTRtR6paw=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_jp_ext.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			JUpmh5weJOClRd0RokKq8A+A8oQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			9MntjzAxmV+qIkvLEBU9K2FElER30fJ9GmzEqHn6w0w=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso2022_kr.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			C4BcYaAP79p4F/+e09J+e+uYmbo=
+			</data>
+			<key>hash2</key>
+			<data>
+			HIY2LheUTwvPaNsC9Jlb3upgWGd5X/96tAeQc/lnBeQ=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_1.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			5nk3yG6egJyXNc4u4nntNi3c1Pc=
+			</data>
+			<key>hash2</key>
+			<data>
+			tc69UV4FfWcL9U4QuKbxYu89qn8hsUau4ySRYMrzwy0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_10.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			GyUzysolTXSOyaJGd2j2NVBvUMs=
+			</data>
+			<key>hash2</key>
+			<data>
+			VMiGtBgZ67f0+zS4264cRfT8CGTwGezXcmdsz6xfrns=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_11.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Xd5CUMQLo7DBD4f7DmHs+f9SrKA=
+			</data>
+			<key>hash2</key>
+			<data>
+			7VqWRHCiQbTaemz7cY5BSdCWRJM6848El2ArqrblY+8=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_13.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Z5DS56ZJ+uTLeUTtIPmEEyTodkw=
+			</data>
+			<key>hash2</key>
+			<data>
+			cxIjfo5dIB2SC0Ew8FfP3xsL6bqvqiRoJubZMgT8wgY=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_14.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			DIQvsR4t7RkcStwokcnl//D90uc=
+			</data>
+			<key>hash2</key>
+			<data>
+			gneLmVoO6HxfEYD8xSkANZ7uFb2abjoOJfDZY+Cyo0M=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_15.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			m/45snyl/cf3aa7DuOqUCrizmsQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			AZdqgYEYc9yaDHnbn8ANHDAQNIfzxrw6bYG0BDzUjgI=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_16.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			9hbgA6aAmBXV14I+JTV4XQmqQqQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			tayPWl2PhMD5A7K3w0IYR1jVkNi8+BDVYflC/ls3LWY=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_2.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			sJ1LX+xU200/5bi/Y1vrW6YuUu0=
+			</data>
+			<key>hash2</key>
+			<data>
+			K1fKthEcrpAhUF464bKtu/w0TsSBZf2jIvawafuxitw=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_3.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			6rcRKpuSsrMPyzppR4mSmddSbZ4=
+			</data>
+			<key>hash2</key>
+			<data>
+			T/34kAS/DFIwyqcHn3yjFC/BEvi5I92yxzWDadLTwkI=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_4.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ot/o6cIuvgNMi6Ll2gTC1w7fV6A=
+			</data>
+			<key>hash2</key>
+			<data>
+			h70TDaoOrvPky0ZeEM/7K80ZT/dAl+DBhrS463vkGsU=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_5.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			4XTSoiACM8H9bUliL30YjBgnc1w=
+			</data>
+			<key>hash2</key>
+			<data>
+			mWHZbMe5/fAR68qursp7ULhnD629e3X95mGS+MH2jzA=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_6.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			oeYlz9CwwdR3otiAE3aWiIZbWtI=
+			</data>
+			<key>hash2</key>
+			<data>
+			SEDmgBQ0ZRdoD1k8oi9nEzw5un5G80ub5iyYCnKESMY=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_7.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			NHptqrSfxadO4Biz1xwdSbZDIyc=
+			</data>
+			<key>hash2</key>
+			<data>
+			s1Lso7gZSI9k+zM4/ZPznB4w8yuxPy+cV3kl5Y8pYOQ=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_8.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			f4iYbaIR8504UI1+ta0H2UtXa/c=
+			</data>
+			<key>hash2</key>
+			<data>
+			TPnoqLvgSsyxwagIU++xmuB3LRj4HicK3vwbI4bLNo4=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/iso8859_9.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			j+uNGtPLHKkrhiRMedabjVkjZ0Q=
+			</data>
+			<key>hash2</key>
+			<data>
+			hNmxUmPoFoX3UTxatFyvgLL3PDAcaOZZ9xYsGxiC01k=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/johab.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			kgzYj3+6JGHHh9splnUJxpU31Z4=
+			</data>
+			<key>hash2</key>
+			<data>
+			lYZhWRev09hIwcQyhlZgOyg0r2EV8q7JMvzMk14aYPs=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/koi8_r.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			JisDYTUMW3bjCxzL/MOaF2AfRIU=
+			</data>
+			<key>hash2</key>
+			<data>
+			TU41Ou6AObtx4hRabmj+HmgzobQlC3DuCsXscLu4xR0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/koi8_t.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			FwR1DE7uKirfH+SAckG1HOJuBdw=
+			</data>
+			<key>hash2</key>
+			<data>
+			nJBDgUq9vn3Dn/mPOFfV0RCoTJeK0jBBWNgQpOnqzvE=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/koi8_u.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Mfx3YKBNgkqLsBNMV/easw7JaEo=
+			</data>
+			<key>hash2</key>
+			<data>
+			1En5hY41f6jC7b1Ln+c5M36fIBysPe0g+Zv87NSXD/c=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/kz1048.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			cYztEF/DDOhBYQP1zs3EYXb3PfA=
+			</data>
+			<key>hash2</key>
+			<data>
+			dr6zDpipEfcvl2CaI3N4JXPBfIil+zU32zOKo4KXn/w=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/latin_1.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			kUAJIspJ1hN53k0fdCVcrMuvjRs=
+			</data>
+			<key>hash2</key>
+			<data>
+			t1UD5TKifGNkdzlshVIJ/18wNlNtKkvt4KV2yJOCtgw=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/mac_arabic.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			rRBQspdXaBwWt4P0Wp5Gu71fCBs=
+			</data>
+			<key>hash2</key>
+			<data>
+			Xq/ZoxNqv72O1S35yQIDx6KD50Ke1gUCqHoCUR4Pt3c=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/mac_centeuro.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			x3pEavUqrSVp4duqjYkXbXSIyDg=
+			</data>
+			<key>hash2</key>
+			<data>
+			dukO9YahD/z8WZExcmb2IsZbPs3TgrUcnnlCHhsywPU=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/mac_croatian.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			e+wG5IjF5y/I3Q7+UmhYPDSNW1g=
+			</data>
+			<key>hash2</key>
+			<data>
+			qIDNBcgqjRGinGXuhqOW3vM0RGXdcUQbC7SnOCYCSVM=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/mac_cyrillic.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Br34O02R3uWRFn1uE5c2a9fwS1U=
+			</data>
+			<key>hash2</key>
+			<data>
+			g2FnhqHGMIsDoNyCU2kI0k0JdLIkjWc5PWE/5VjOpL0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/mac_farsi.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			kKSuRVkWUm27LEeU+x2wve3EaVs=
+			</data>
+			<key>hash2</key>
+			<data>
+			9XY8OPtKsEI/r+L9yjTW+ZMqx/GnTAzYEJ1gI0x9xiQ=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/mac_greek.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			xzcSm8kfO4e8ZyfcSGzNU/WHRXA=
+			</data>
+			<key>hash2</key>
+			<data>
+			YwFqMj3fmMs6qc+njzurR2i+2/6aUmKjalrssT0pH24=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/mac_iceland.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			/eQqwL2acJQXSoZ4n5zMYOOYzQg=
+			</data>
+			<key>hash2</key>
+			<data>
+			dTzBrGNcqn4bRjD7zr74242zMsCYFUpbEfZSkSv2Tzc=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/mac_latin2.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			WUsc4jg0zWpwwuG3ey3b3hOK/2w=
+			</data>
+			<key>hash2</key>
+			<data>
+			MWcNoYzotTlM1T/mvyFiaOfo6uTAJHUy5CDi4QNyfVA=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/mac_roman.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			IhzNbimgUY3DcVRJt7XsAv/pAuU=
+			</data>
+			<key>hash2</key>
+			<data>
+			IwNn2Wrvjo1/GFtKz7hJI3FPOd28v5zziga/b11iHCI=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/mac_romanian.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			sr+zgfy0ebAZSXan8qdiH+mp4Ec=
+			</data>
+			<key>hash2</key>
+			<data>
+			SWMM8DXBnolqEj7W5f7hi15IUSPa8vFdo4v3J/84e+4=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/mac_turkish.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			JWKY9k/iAMZr9B/RvMeyXQouL38=
+			</data>
+			<key>hash2</key>
+			<data>
+			mXWKXK0oJcs74/pdAx4IIeTrqRCkb0F/2JAge5tr53s=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/mbcs.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			HXDkvTa+HBU7XvPCHgYPTaEiEcg=
+			</data>
+			<key>hash2</key>
+			<data>
+			9u1EXtU3yfhW2N7+i1ZQVydzfQ3JNI0Kh3q+2rS92GQ=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/oem.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			x0JUWp6EZtum8sQmKdUCWqEVO/M=
+			</data>
+			<key>hash2</key>
+			<data>
+			SBZW06NfeS0OUQnj+CHm2/zwlxY6GbDN/L/zs9uZKS8=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/palmos.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			IKMldtJvo1vtmb6sNlhoyA22l/M=
+			</data>
+			<key>hash2</key>
+			<data>
+			7M90GK3vzCpZ6aB/xONDY71i9+h41IyKAnMKjtHFhMg=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/ptcp154.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			9aWY3D/uET+eQdjTwZN05D842FU=
+			</data>
+			<key>hash2</key>
+			<data>
+			DqvLLCh9M16GtxsKvlcYvW3cmq7iNPDw8jY4RdKSbY0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/punycode.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			1esbDiSVUErvOa7XdTdiVjHeA8U=
+			</data>
+			<key>hash2</key>
+			<data>
+			Dhscri/Rp2Q3wPIiSQdVysxfjlX+IdMGNfZYhXGHghU=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/quopri_codec.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			L0nH3Caw7MWBnaOve7MgPkc5KFA=
+			</data>
+			<key>hash2</key>
+			<data>
+			UCohPDTAWpTtBj7gP0doC9bvuzUDbgb7TcgJvzmM+mQ=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/raw_unicode_escape.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			N+6fLCWgPdSUMzF/9hT7CP/G5PI=
+			</data>
+			<key>hash2</key>
+			<data>
+			1hcJ6iJEI8eQ0jBp/o/7hVFGHpSnh7xUF6Jj6V9AjGg=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/rot_13.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			guGyoewIdDoYd0LlmXGjhHtxkO8=
+			</data>
+			<key>hash2</key>
+			<data>
+			FHZ/R1rNwL9I5icigN0VuA767K+5PAa+IRNvg90e5+Q=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/shift_jis.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			85BmHPSWE2ONWALbYtF91RQXZQA=
+			</data>
+			<key>hash2</key>
+			<data>
+			rUrFDr9YKUME5BLMDxsSmAmI3W7cQU5BEAKcChq76WY=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/shift_jis_2004.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			PLnDcrKJjx0xqD0K52Zt9Ii1K70=
+			</data>
+			<key>hash2</key>
+			<data>
+			0hxZMPIQY+p4/qOw9237j9koWNKkogAGSlISakPdGpk=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/shift_jisx0213.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			0p3qjTNn0sDHndhGfx0RTAg8VSw=
+			</data>
+			<key>hash2</key>
+			<data>
+			LI0Lk7s27fMcEjaxtNHAAIVThovS/JE3VwEVuWuDTy4=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/tis_620.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			k7XSsmhX8sVlSNuQj+Zo5SeME/M=
+			</data>
+			<key>hash2</key>
+			<data>
+			ZHxHGeLBpzdRBeFaibN3xm9raZl33Ku7cdkjpGB7eQI=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/undefined.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Ty8eVq9i5mIknJBKAagdFqx3LLY=
+			</data>
+			<key>hash2</key>
+			<data>
+			hbulxeEAfNjBreXAIUvMglOW0rvQIFTmKp8WIQR0i2Q=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/unicode_escape.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			lm8tDeeQRH4cpbOSykaQZCGR7Po=
+			</data>
+			<key>hash2</key>
+			<data>
+			F9WYJ8uMBUBdhrALxpSTFtF5OV41VrPekNHpTPfWfJM=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/unicode_internal.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			hohuegQo4YIj15Hk1W9jPV19n14=
+			</data>
+			<key>hash2</key>
+			<data>
+			UjDgccPN0C7QHhI3ZUnjDeDqmltqGHn1Sa0kuRmyO/s=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/utf_16.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			t4MvQ8t83ffec8kUJ3suiPlh8fU=
+			</data>
+			<key>hash2</key>
+			<data>
+			bDYlf3uNIURzVg0ZXnG8zvDGmlPh5S0oALeniQqtflg=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/utf_16_be.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			XZ5gq9+VyQwgn1cQd+969SqpH/4=
+			</data>
+			<key>hash2</key>
+			<data>
+			M1cZbz+lJDMyamYmiA40lk4AxVcK7lDpoKCnxthvbk8=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/utf_16_le.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			fdJmcpmu0hJqLLehYbsqgdrzgsU=
+			</data>
+			<key>hash2</key>
+			<data>
+			Ou2vPrSXaSgtrvHq7f1PocMf5e6+/2f+IwfIncLi/YA=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/utf_32.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			SIqlI2Tp4y+TjgrR7QIoqKZszMg=
+			</data>
+			<key>hash2</key>
+			<data>
+			IHLuzl9gJq0tNUmrGTqeOIlOoVyp1bPNQI/WsRaswMI=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/utf_32_be.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ncLwh5QF65uVSX0L5gMMYtWytwE=
+			</data>
+			<key>hash2</key>
+			<data>
+			y7og4fbQh5x8QpNEbDcan3nnyQvzx4p3qbj8crGJFd0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/utf_32_le.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			EIdnZH5zUHB9CnFwyzZa4fAQWmE=
+			</data>
+			<key>hash2</key>
+			<data>
+			kTS5EEfYW0QomNWe/+I+fgz0FnyjQa4xEZpzHb+ICns=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/utf_7.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			jDqE4Nsw4cnYIJ755mZXuyAjKV4=
+			</data>
+			<key>hash2</key>
+			<data>
+			n/MjFPTx+gdPIGu/f9uFFQTlMTEoY21ztL91uIbkqH0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/utf_8.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Xjt58pCN4iR3EGHviP9VcACK/eE=
+			</data>
+			<key>hash2</key>
+			<data>
+			ugysBgJpWDUjypUGRzp1UgMDfFfUZqEaqJowpfZ1bz0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/utf_8_sig.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			2ugKDWe7fOHQyhQYF8tLQBiBOHc=
+			</data>
+			<key>hash2</key>
+			<data>
+			HvPajYqggUnn8nTcZNv84hVdqBLlJYyo6PgyQo07XC0=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/uu_codec.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Yrqaii+fCczDjv/4rKt2KtZgCpY=
+			</data>
+			<key>hash2</key>
+			<data>
+			mR9NIXkAiCinWckfvrGVjLYj4MmTr4N7NauJ9I1UzYo=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/encodings/zlib_codec.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			u1CXX745bYpCDep/4wOEq807WXw=
+			</data>
+			<key>hash2</key>
+			<data>
+			bvAejTpf4cxS97WuAI3xLx285zBBEb+NR1jxv8ARV1k=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/genericpath.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			HBX+bs44XIeKRFZmOig8j8SEAkY=
+			</data>
+			<key>hash2</key>
+			<data>
+			+uH2J7XIQIxfeX+fcXDZD+5V+vF4tqZd+TSuEOgd7Kk=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/io.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			+Rv5DLyZBHZenHcPa3JUdcgdONw=
+			</data>
+			<key>hash2</key>
+			<data>
+			hXYct1uJBGFkW7SjI17kCr0T9PjZyAtAeL8mG8fYEow=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/macpath.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			UBZvRo5O0LH3SajmU3KBjFzfEvA=
+			</data>
+			<key>hash2</key>
+			<data>
+			4OIDeOQILr16fkUkswT4TkJEZONujwhYTKgl+t93sG8=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/numbers.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			tX4T4u2n9dr1TgzPV6HxypTgPq4=
+			</data>
+			<key>hash2</key>
+			<data>
+			B38AY1PmuUhu3Lt9OCCqJ6T//rv97gmKgV0xcSnZKho=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/os.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			JdjI08fkpVhXrvlmr/+ZJ/6NnTM=
+			</data>
+			<key>hash2</key>
+			<data>
+			yxbu/WLKaV+2whLn7SQ/76Ok8syxqb9/SZFN6SCqlDc=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/pathlib.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Ca4ZjYLTZEIfURIKtELqyng9kiU=
+			</data>
+			<key>hash2</key>
+			<data>
+			3X9q/iTChbH23vwYTcGgOcJXOoo7nMfu4kE/SbVx5BE=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/posixpath.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			gFeb5iQYE/9nZk/tfJ0sX1orFBs=
+			</data>
+			<key>hash2</key>
+			<data>
+			J53WaUFRIyLixxFV80oPaZPooza/OlzVgRLtmpK16+w=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/site.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			MzJnQf5K4uMiCWn3U6bl5E9BXPU=
+			</data>
+			<key>hash2</key>
+			<data>
+			XV1dA9v4V+y4bHFVABWUeCQYe0RWjxMEm6n308aC8TI=
+			</data>
+		</dict>
+		<key>Resources/python37/lib/python3.7/stat.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			o8J1dfS+V/fmNDK3Sdbr4w3LbUE=
+			</data>
+			<key>hash2</key>
+			<data>
+			NdlKEw1Kk0rx7qAqWOlwETXOiGGJOsMQDwONk5gHkik=
+			</data>
+		</dict>
+		<key>Resources/script/basic.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			CgC22Di4zK+6HN8MKTKEJMa9E+Q=
+			</data>
+			<key>hash2</key>
+			<data>
+			Mq0oG/Y1p4nh7ogodIGrxxANQMZHO9vgLK1mvirlntU=
+			</data>
+		</dict>
+		<key>Resources/script/clip.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			xjI+qk5iIixjN+ekEIs7Qa8G8wc=
+			</data>
+			<key>hash2</key>
+			<data>
+			RMdaet96XHviLsu3dDKkV0nbBzi69jLsRcJhdRIOsfw=
+			</data>
+		</dict>
+		<key>Resources/script/cluster.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			02WFsyeMiGOyGej3UM6bBb5TQdk=
+			</data>
+			<key>hash2</key>
+			<data>
+			3cHnSHT7o7kOUnK/csr0HeaQcU5Cwz4vpplKODYFBEs=
+			</data>
+		</dict>
+		<key>Resources/script/ct_abdomen.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			qKgbpjrS0CZgq4M5Kq3GoJ/XaXg=
+			</data>
+			<key>hash2</key>
+			<data>
+			J/9ATEdeUVeDxL9dwYrneWk235+fEcyiOLDa1LxC0Fs=
+			</data>
+		</dict>
+		<key>Resources/script/ct_head.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			+aO7i03Wo2jFYXeGMUdFoNBCdFQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			TCnrbHpOw+UQyeZun/Bl37wK7g2ddMcmVjyrtpqFknk=
+			</data>
+		</dict>
+		<key>Resources/script/cutout.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			6qoGc9M3766RoFKVE2LSxqwXbTc=
+			</data>
+			<key>hash2</key>
+			<data>
+			BHdN/PvRjq+42Kj4bbXTU6SH79XLoj2lfkfxoAQa0GM=
+			</data>
+		</dict>
+		<key>Resources/script/explode.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			zDIiXT2VNrSp/W95JU8djy3rrD0=
+			</data>
+			<key>hash2</key>
+			<data>
+			t6q1qWQsdrvF2IaePJ7OCfhnP4mu8qKCX1ppuSHQT0U=
+			</data>
+		</dict>
+		<key>Resources/script/explode2.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			G3Keht+klDwkY9jCEFTqNXgLtrs=
+			</data>
+			<key>hash2</key>
+			<data>
+			z81NT3lBJTmymm1b/fe2h1SZwyLuFSJenr+kJ/0DO5g=
+			</data>
+		</dict>
+		<key>Resources/script/glass.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			d4OfDGiLfRlYKQ++iC7gtU1Ki8w=
+			</data>
+			<key>hash2</key>
+			<data>
+			N6oM22yjM3/rB9UXPHXT+6kgZh78OPoW4eIChwp0A+U=
+			</data>
+		</dict>
+		<key>Resources/script/help.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			MLMw+qtdQXO0+SY8vc12TRh7PWM=
+			</data>
+			<key>hash2</key>
+			<data>
+			OAZChOriKyIbOn3Et4SmiCp0ayASkxlKtzqXp/rLX30=
+			</data>
+		</dict>
+		<key>Resources/script/hidezeros.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			c2Nvodd4CWEQuQyCS/XjOvjTQmk=
+			</data>
+			<key>hash2</key>
+			<data>
+			sfsfAKg5goFB5zikM/y43AQtrfv1WrXQISwA0tY8wgE=
+			</data>
+		</dict>
+		<key>Resources/script/invert.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ARTImVgCcN2YYrHMXAmzOPWBABQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			xLRitM9u2RhkuJb/kcslk7C3K8OMagzQZsHa8XZvnME=
+			</data>
+		</dict>
+		<key>Resources/script/jagged.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			e7L3cNzMRi5kXyn6LE630FTOW4s=
+			</data>
+			<key>hash2</key>
+			<data>
+			onGAqXgxcWFXaURagKoVclgRUBiMeo1BpFGJDkxRMEs=
+			</data>
+		</dict>
+		<key>Resources/script/mask_atlas.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			9sJI0AgmAuqUqyjCD5WXz0AynwE=
+			</data>
+			<key>hash2</key>
+			<data>
+			rAeh+JiMVs5WGBpsb4ygHBSZkaYOgqB3wDupP9OTXKQ=
+			</data>
+		</dict>
+		<key>Resources/script/mip.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			hTFp+R+u/uq5J3it+1FYFMhcAdg=
+			</data>
+			<key>hash2</key>
+			<data>
+			WQ9zlXssGcch89JjYdLPwtqUMHcIzCRFkKW2crE0++0=
+			</data>
+		</dict>
+		<key>Resources/script/mosaic.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			nZQasmZdBUL+iFD7j3N3/De4vBM=
+			</data>
+			<key>hash2</key>
+			<data>
+			fjZodcKA8vgorRkdb9+AVKBhdiqyL48Mgl0QLJPoloQ=
+			</data>
+		</dict>
+		<key>Resources/script/mosaic2.py</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			eA2wsH8Iy4ij33WrIyUii+xm5dQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			EN+nIwEfxSnpNHhunGuyHJnk+HMexNX7WQmp7dT2Dqg=
+			</data>
+		</dict>
+		<key>Resources/shader/Default.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			OiHlpwo3uxSQ8RpJbE+0/+apF+Y=
+			</data>
+			<key>hash2</key>
+			<data>
+			OzFIrNMT3f2UZbN5blAmK3D+RWaBaeob+h9uzBZSyN8=
+			</data>
+		</dict>
+		<key>Resources/shader/Edges.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			W86OpUGNzhQtp3GIS0ZD/oO2Ovo=
+			</data>
+			<key>hash2</key>
+			<data>
+			LBMkG8i1c9yvVTjyiG4ATLh3HmInrrp0sLpFK56T3Og=
+			</data>
+		</dict>
+		<key>Resources/shader/Glass.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			RzSltYYrezTenEkcC69+fXCN6Lw=
+			</data>
+			<key>hash2</key>
+			<data>
+			4P9mSMrIsdjqRXp3rO2zDoPN2P5RReg8VJ/g0cWlVcA=
+			</data>
+		</dict>
+		<key>Resources/shader/MIP.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			VqwKqh1ffOm4guYAwURL0K0ofs8=
+			</data>
+			<key>hash2</key>
+			<data>
+			mOmRSr8DG17bYSRZdGT8Af+3B6RgYf8TDTfvucBzKsE=
+			</data>
+		</dict>
+		<key>Resources/shader/MatcapMix.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			mLIZscWNl4xr/2W5jLJ9R+qjyF8=
+			</data>
+			<key>hash2</key>
+			<data>
+			ti1HNRoZP9kZqgKnRXOxZYne0fE0nccaQCIFFYsOpNU=
+			</data>
+		</dict>
+		<key>Resources/shader/Matte.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			P9gjhlRDaJRC8Lta5fOsQkPGMWw=
+			</data>
+			<key>hash2</key>
+			<data>
+			gI1/b/z0aCQSST7VD+R0QuCvZkJRqsQurji9PWjJ2g8=
+			</data>
+		</dict>
+		<key>Resources/shader/Minimal.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			OZQJdMvO9+d1vl++bANu53sUn9E=
+			</data>
+			<key>hash2</key>
+			<data>
+			y5SPwLL2k/SdEBlN9HBMCPduG8VNmdQF/rYpEGbygkM=
+			</data>
+		</dict>
+		<key>Resources/shader/Occlusion.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			3eHtiuipv1jRooP3rAa1r/DPo3M=
+			</data>
+			<key>hash2</key>
+			<data>
+			Mh4Ix+lpVOn3K+YtyvycLZQK7Cq3f4JoOtcroJ/Uz04=
+			</data>
+		</dict>
+		<key>Resources/shader/OpacityPeeling.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			/BFEVoyIlaNuPJId6IhiaY6ZP30=
+			</data>
+			<key>hash2</key>
+			<data>
+			KhroBXQo6x3rgngvghkuYFZ0rBu1eO0Ry0/L1uOOyqc=
+			</data>
+		</dict>
+		<key>Resources/shader/OpacityPeeling2.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			makcogqq5ofzihy3p6LtIzn+Iuo=
+			</data>
+			<key>hash2</key>
+			<data>
+			WwnLbSxpdkCXCjau5vo6UQrnOBZz47YdY0950EOqJ4w=
+			</data>
+		</dict>
+		<key>Resources/shader/OverlaySurface.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			CDrSe1qwO6KBWEuK+xoogj5pIXM=
+			</data>
+			<key>hash2</key>
+			<data>
+			fHT3Y+vYV+gb/k2UzYrxE6oXKAcFalGZwNMDB/gyaTA=
+			</data>
+		</dict>
+		<key>Resources/shader/Shell.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			g4+pIy/6wjVVAwbePw2xT0kGSLE=
+			</data>
+			<key>hash2</key>
+			<data>
+			gJQfz0cSsdyQLuud2jrdWz8uqmb6mPk4EGGjqg8xMZQ=
+			</data>
+		</dict>
+		<key>Resources/shader/ShellEdges.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			c9KOLYIVgHx+cnjMMpJFuO7CbD4=
+			</data>
+			<key>hash2</key>
+			<data>
+			cKG0an65bvt3WZe96whekdrzgUOHbS6X7ZinAHLQGoc=
+			</data>
+		</dict>
+		<key>Resources/shader/Shiny.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			HGnQBiIoPXMCEZmClF0F0C4yCWw=
+			</data>
+			<key>hash2</key>
+			<data>
+			IL7yLoUCBh16U9n8ut/NnmTB0t/ha+2gpYnr4E28zW0=
+			</data>
+		</dict>
+		<key>Resources/shader/ShinyEdge.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Rm704ASFE26urNwaeyO/76PaPOQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			eHh9MCoqzpl0oaN5jJBrs4zqnujr8qBayifTQ2ewuig=
+			</data>
+		</dict>
+		<key>Resources/shader/Slow.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			3/jqljB01MQJ99jOlWUst59sTzU=
+			</data>
+			<key>hash2</key>
+			<data>
+			UlM+aennQJYpgBDcCNIjPxn/1Fd2G+PbrBFezpFFX2o=
+			</data>
+		</dict>
+		<key>Resources/shader/SpecialEffects.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Aw70xjvGQN9CpEhmSKtI/MBeI8g=
+			</data>
+			<key>hash2</key>
+			<data>
+			FBT/tsYkljNhNZRxRW8kFgnpTv+f8lIIZjFIVsQebLc=
+			</data>
+		</dict>
+		<key>Resources/shader/Standard.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			5rfh6p3eZzxC5cl72BL6iV3lVEA=
+			</data>
+			<key>hash2</key>
+			<data>
+			yLXwe41LChgGtSJobU9xPbAFzFVjet8IpEV48V4705M=
+			</data>
+		</dict>
+		<key>Resources/shader/Tomography.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			GCrEr+FbuywMh/W2EVwS1ZbDIRk=
+			</data>
+			<key>hash2</key>
+			<data>
+			GsKpn4Sw0rDkmYyeTuXx2qfnfLoEO4VLMPur+iZZ41g=
+			</data>
+		</dict>
+		<key>Resources/shader/Tomography2.glsl</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ecvN58deppXRiHoVhqXeKTHAHg0=
+			</data>
+			<key>hash2</key>
+			<data>
+			MBdKvI0m4Z5zxPxO7Hq8lo2Oycm/uqYvYjWN0ZHAeO8=
+			</data>
+		</dict>
+		<key>Resources/standard/CT_AVM.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			zJ4vaJPGOeca4av63oFfYI7dnmE=
+			</data>
+			<key>hash2</key>
+			<data>
+			+Rl2RY4W88M5Lf/ZUEQ11VPGr1i/Az5wR1eSEvL1jzI=
+			</data>
+		</dict>
+		<key>Resources/standard/CT_Abdo.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			/TaJAiSn2ewGrAK+Hl1O1Ut7CaU=
+			</data>
+			<key>hash2</key>
+			<data>
+			z6MIHij9zWOS2cY95EhRdpmD3ybJMUNFKa5zXDbqsLM=
+			</data>
+		</dict>
+		<key>Resources/standard/CT_Electrodes.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			O4hDGfw6std1VNFISe5m7uEwQ6s=
+			</data>
+			<key>hash2</key>
+			<data>
+			BWaUJwj/RRRY0P2x9hxGERh7tcwO+lFshQDx/zwULlc=
+			</data>
+		</dict>
+		<key>Resources/standard/CT_Philips.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			6TX7MQVvav/Auo4SiohETupPBzM=
+			</data>
+			<key>hash2</key>
+			<data>
+			a26/lYv+KXLyfD+NwGvTdj63ZGGGvS5SUfN/mqehaXE=
+			</data>
+		</dict>
+		<key>Resources/standard/Iguana.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			pAAEU32q88dKeqb7cTH9mWn/ApQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			M/Us/a+JPCyeNj3sT1kJXyh/PgnZw87w1vIDfi49vMY=
+			</data>
+		</dict>
+		<key>Resources/standard/MR_Gd.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			7/Q7phOuVo1+hDeJ6OWKlCyUYSY=
+			</data>
+			<key>hash2</key>
+			<data>
+			Zc+M/2AaQovoh0g6BuQi+h2HkkbMb6UKBKvX1gtDe4w=
+			</data>
+		</dict>
+		<key>Resources/standard/README.md</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			6IH8Ms20YC4y1T6mp/1t/DZNx40=
+			</data>
+			<key>hash2</key>
+			<data>
+			mMy2mEKzigjRsD5qzf3b+l4twHoa1FgdK5nfDx6sFb8=
+			</data>
+		</dict>
+		<key>Resources/standard/chris_MRA.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			VLbO0DQt3YavjnLh6k1n15J0SrE=
+			</data>
+			<key>hash2</key>
+			<data>
+			1L9DHEtCI+PqNoxcJup5BMI9nVlJbhQCLjKjilJwtj8=
+			</data>
+		</dict>
+		<key>Resources/standard/chris_PD.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			tJpYh5rJjQeMrFWsE7h9pJEqhAw=
+			</data>
+			<key>hash2</key>
+			<data>
+			1tf8vVwv7mZa1SFKijlsbtEKNm9mPAVCj1Q3vnqgxfw=
+			</data>
+		</dict>
+		<key>Resources/standard/chris_PD.nii.txt</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			s8Noo0F0v1DHQXAFD9X21qZYHXw=
+			</data>
+			<key>hash2</key>
+			<data>
+			ULwmNMYZqdy72RJPWmBXuMzQ8J/Ei16iea68EuYi/iE=
+			</data>
+		</dict>
+		<key>Resources/standard/chris_t1.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			l/2dyh/5RrXhaGqs9tTfw9s+ew4=
+			</data>
+			<key>hash2</key>
+			<data>
+			U0okDR1BiBvTOuW0isIgUYNpaHdSdfEmHEEV3KAJlkk=
+			</data>
+		</dict>
+		<key>Resources/standard/chris_t2.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			UVXHYccNwCufRGTL2rUVlI5efSM=
+			</data>
+			<key>hash2</key>
+			<data>
+			i3Y/yt16muZ31MXKuGsygxwDzd8UZQQpHnpQgv2f7uE=
+			</data>
+		</dict>
+		<key>Resources/standard/mni152.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			x8/vRnbaIbE+Q59J0OWA/cljSDE=
+			</data>
+			<key>hash2</key>
+			<data>
+			271FQoI8HisSJlybfjz5We4C/3gpu/Bc3PvswAE6APo=
+			</data>
+		</dict>
+		<key>Resources/standard/pcasl.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			FvwcxN+MWMTnNadQlGt22wRdBc8=
+			</data>
+			<key>hash2</key>
+			<data>
+			pzvJyNk8zZUtgSD11P59+xFKuj/iGwZJdzGfrUYFD7o=
+			</data>
+		</dict>
+		<key>Resources/standard/spm152.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			4/itpVaDsDWUkIme7/0hiBSRHmM=
+			</data>
+			<key>hash2</key>
+			<data>
+			3ROUnB7xFBFOR8kCGrAa61u8GcEIfTAO8oOcQ1gbmYw=
+			</data>
+		</dict>
+		<key>Resources/standard/spmMotor.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			K3c8RBU/pSgvL/FQ5hioBJCX4PU=
+			</data>
+			<key>hash2</key>
+			<data>
+			hEy1eZBdMkUlB5MZwlTaWRw6S5dNJJYJaIpaJbP0pX4=
+			</data>
+		</dict>
+		<key>Resources/standard/visiblehuman.nii.gz</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			pGfiEeGkCqTxF3wzLCEmTUPB2gw=
+			</data>
+			<key>hash2</key>
+			<data>
+			Pwyhu1IPx8wvYwa72kMIQ+UfDaWg1xk/hzLR5d93Rkc=
 			</data>
 		</dict>
 	</dict>
@@ -1195,6 +4447,11 @@
 			<true/>
 			<key>weight</key>
 			<real>1100</real>
+		</dict>
+		<key>^Resources/Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
 		</dict>
 		<key>^version.plist$</key>
 		<true/>
@@ -1254,6 +4511,11 @@
 			<true/>
 			<key>weight</key>
 			<real>1100</real>
+		</dict>
+		<key>^Resources/Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
 		</dict>
 		<key>^[^/]+$</key>
 		<dict>
