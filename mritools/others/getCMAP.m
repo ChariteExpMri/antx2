@@ -3,10 +3,10 @@
 % maps=getCMAP('names')
 %  or
 % maps=getCMAP()
-% 
+%
 %% show mapsnames and colorbar in help-figure
 % getCMAP('showmaps');
-% 
+%
 %% --------get CMAP-HTML-code ------------
 % html=getCMAP('html')  ;%from all cmaps
 % html=getCMAP('html','actc')  ;%from "actc"
@@ -289,7 +289,9 @@ elseif ~isempty(find(strcmp(cmaplist,cmap)))
         end
         cmap2= flipud(cmap2);
     end
-    
+elseif ~isempty(regexpi(cmap,'.clut$'))  %CLUT-FILE
+    palut=(fullfile((fileparts(fileparts(fileparts(which('ant.m'))))),'mricron','MRIcroGL.app/Contents','Resources','lut'));
+    cmap2=clutmap(fullfile(palut,cmap));
 else
     try
         cmap2=eval(cmap);
@@ -317,9 +319,9 @@ for j=1:length(maps)
         
         map=isocol_getmap(cmapname);
         
-        
-        
-        
+    elseif exist(cmapname) && ~isempty(strfind(cmapname,'.clut'))   %clutmap
+        map=clutmap(cmapname);
+        %        CJECK find(isnan(sum(map,2)))
     else
         
         try
@@ -422,3 +424,97 @@ if strcmp(cm,'SPMhot')
     
     map(1:12,:)=[];
 end
+
+
+function colorbar_rgb=clutmap(filename)
+% Function to read a CLUT file, interpolate RGB values, and plot a smooth colorbar.
+% Compatible with MATLAB 2016 (no startsWith).
+%
+% INPUT:
+%   filename - Path to the CLUT file (.clut format)
+%
+% OUTPUT:
+%   Displays an interpolated colorbar.
+
+% Open the file
+fid = fopen(filename, 'r');
+if fid == -1
+    error('Could not open the CLUT file.');
+end
+
+% Initialize variables
+node_intensities = [];
+rgb_nodes = [];
+num_colors = 256;  % Default number of colors in final colormap
+
+% Read file line by line
+while ~feof(fid)
+    line = strtrim(fgetl(fid));
+    
+    % Read the number of nodes (numnodes)
+    if strncmp(line, 'numnodes', 8)
+        num_nodes = sscanf(line, 'numnodes=%d');
+    end
+    
+    % Read node intensity indices
+    if strncmp(line, 'nodeintensity', 13)
+        values = sscanf(line, 'nodeintensity%d=%d');
+        if numel(values) == 2
+            node_idx = values(1) + 1;  % MATLAB 1-based index
+            node_intensities(node_idx) = values(2) + 1;  % Store intensity index
+        end
+    end
+    
+    % Read RGBA values
+    if strncmp(line, 'nodergba', 8)
+        values = sscanf(line, 'nodergba%d=%d|%d|%d|%d');
+        if numel(values) == 5
+            node_idx = values(1) + 1;  % MATLAB 1-based index
+            rgb_nodes(node_idx, :) = values(2:4);  % Extract R, G, B (ignore Alpha)
+        end
+    end
+end
+
+% Close file
+fclose(fid);
+
+% Ensure node intensity and RGB values match
+if length(node_intensities) ~= size(rgb_nodes, 1)
+    error('Mismatch between node intensities and RGB nodes.');
+end
+
+% Step 1: Create an empty (n,3) colormap
+colorbar_rgb = zeros(num_colors, 3);
+
+% Step 2: Place RGB values at the specified node intensities
+for i = 1:length(node_intensities)
+    idx = node_intensities(i); % Get the color index
+    if idx > 0 && idx <= num_colors
+        colorbar_rgb(idx, :) = rgb_nodes(i, :);
+    end
+end
+
+% Step 3: Interpolate missing colors
+x_original = node_intensities; % Known intensity positions
+x_interp = 1:num_colors; % Full range
+
+% Interpolating R, G, B separately
+colorbar_rgb(:,1) = interp1(x_original, rgb_nodes(:,1), x_interp, 'linear', 'extrap');
+colorbar_rgb(:,2) = interp1(x_original, rgb_nodes(:,2), x_interp, 'linear', 'extrap');
+colorbar_rgb(:,3) = interp1(x_original, rgb_nodes(:,3), x_interp, 'linear', 'extrap');
+% colorbar_rgb(:,1) = interp1(x_original, rgb_nodes(:,1), x_interp, 'linear');
+% colorbar_rgb(:,2) = interp1(x_original, rgb_nodes(:,2), x_interp, 'linear');
+% colorbar_rgb(:,3) = interp1(x_original, rgb_nodes(:,3), x_interp, 'linear');
+
+% Normalize RGB values to [0, 1] for MATLAB colormap
+colorbar_rgb = colorbar_rgb / 255;
+colorbar_rgb(colorbar_rgb>1)=1;
+colorbar_rgb(colorbar_rgb<0)=0;
+
+% Step 4: Plot the interpolated colorbar
+%     figure;
+%     colormap(colorbar_rgb);
+%     caxis([1, num_colors]);
+%     colorbar;
+%     title('Interpolated Colorbar from CLUT');
+

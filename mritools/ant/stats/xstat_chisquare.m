@@ -115,9 +115,9 @@ p={...
     
     
     'useUnionMask'   1           '[1] use union of all image-files as mask, [0] use AVGTmask from templates-dir'  'b'
-    'hthresh'      0.001         'high-threshold such as 0.05'                                                      {0.05  0.01 0.005 0.001}
+    'hthresh'      0.05          'high-threshold such as 0.05'                                                      {0.05  0.01 0.005 0.001}
     'blocksize'     5            'if value above 0: use block-shuffling approach(less conservative) with this blocksize, must be integer'  {0 3 5 10}
-    'nperms'       100           'number of permutations'  {100 1000 5000}
+    'nperms'       5000          'number of permutations'  {100 1000 5000}
     
     'inf33'      ' '                 '' ''
     'isparfor'     1              'use pararellel processing {0|1} ; default: [1] '  'b'
@@ -199,6 +199,8 @@ useUnionMask =z.useUnionMask;  %[0|1]
 hthresh      =z.hthresh;
 blocksize    =z.blocksize;
 nperms       =z.nperms;
+suffix       =char(z.suffix;
+
 
 % % tail=1;
 % % hthresh   =0.05;
@@ -212,7 +214,7 @@ if isempty(outdir);
     outdir= fullfile(pastudy,'results');
 end
 [~,filenameShort, ext]=fileparts(file);
-dirname=[ 'stat_' filenameShort '_blk' num2str(blocksize) '_p' num2str(hthresh) z.suffix ];
+dirname=[ 'stat_' filenameShort '_blk' num2str(blocksize) '_p' num2str(hthresh) suffix ];
 paout=fullfile(outdir, dirname);
 
 if nargout>1
