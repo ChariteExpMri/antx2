@@ -1420,8 +1420,16 @@ mh2 = uimenu(mh,'Label',' GUI overlay image',                                   
      'userdata',[HSTART 'overlay images' HEND 'old version...needs to be modified']);
 mh2 = uimenu(mh,'Label',' GUI overlay image2',                                             'Callback',{@menubarCB, 'overlayimageGui2'},...
          'userdata',[HSTART 'overlay images' HEND 'really-old version...needs to be modified']);
+     
+     
+ mh2 = uimenu(mh,'Label','<html><font color=blue><b>MRicon</b> slice overlay <font color=black>(WINDOWS only)',                                             'Callback',{@menubarCB, 'xplotslices_mricron_call'},...
+         'userdata',[HSTART 'slice-wise overlay using MRicron ' HEND ''],'Separator','on');
+ mh2 = uimenu(mh,'Label','<html><font color=fuchsia><b>MRicoGL</b> slice overlay',                                             'Callback',{@menubarCB, 'xplotslices_mricrogl_call'},...
+         'userdata',[HSTART 'slice-wise overlay using MRicroGL ' HEND ''],'Separator','off');    
+     
+     
 mh2 = uimenu(mh,'Label',' fastviewer',                                                     'Callback',{@menubarCB, 'fastviewer'},...
-        'userdata',[HSTART 'overlay images' HEND 'old version...needs to be modified']);
+        'userdata',[HSTART 'overlay images' HEND 'old version...needs to be modified'],'Separator','on');
 mh2 = uimenu(mh,'Label',' Atlas viewer',                                                   'Callback',{@menubarCB, 'xatlasviewer'},'Separator','on',...
      'userdata',[HSTART 'display an atlas (ANO.nii)' HEND '...inspect regions']);
 mh2 = uimenu(mh,'Label',' 3D-volume',                                                      'Callback',{@menubarCB, 'x3dvolume'},....
@@ -3270,6 +3278,23 @@ elseif strcmp(task,'overlayimageGui2')
     end
     %% ===============================================
     xoverlay;
+    
+elseif strcmp(task,'xplotslices_mricrogl_call')
+    fun='xplotslices_mricrogl';
+    if showhelpOnly==1;              hlpfun=fun;                              return ;    end
+    if strcmp(u.mousekey,'right');   hlpfun=[fun '.m'];       showcmd(hlpfun);       return
+    end
+    feval(fun);
+ elseif strcmp(task,'xplotslices_mricron_call')
+    fun='xplotslices_mricron';
+    if showhelpOnly==1;              hlpfun=fun;                              return ;    end
+    if strcmp(u.mousekey,'right');   hlpfun=[fun '.m'];       showcmd(hlpfun);       return
+    end
+    feval(fun);   
+    
+    
+    
+    
     %________________________________________________
 elseif strcmp(task,'fastviewer')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
