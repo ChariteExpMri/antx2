@@ -241,13 +241,13 @@ end
 
 
 % exefile     =fullfile(fileparts(fileparts(fileparts(which('ant.m')))),'mricron','mricron.exe' );
-if ispc==1
-    exefile='C:\paulprogramme\MRIcroGL\MRIcroGL.exe';
-else % mac
-    exefile='/Applications/MRIcroGL.app/Contents/MacOS/MRIcroGL';
-end
+% if ispc==1
+%     exefile='C:\paulprogramme\MRIcroGL\MRIcroGL.exe';
+% else % mac
+%     exefile='/Applications/MRIcroGL.app/Contents/MacOS/MRIcroGL';
+% end
 
-% exefile=getExecutable();
+exefile=getExecutable();
 
 % ==============================================
 %%   PARAMETER-gui
