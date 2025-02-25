@@ -663,7 +663,9 @@ for i=1:length(ovl)
     
     cm2=strjoin(cm,'^');
     %  cmd=([pa_mricrongl ' -s ''' cm2 ''' &']);
-    cmd=([exefile ' -s ' cm2 '" &']);
+    %cmd=([exefile ' -s ' cm2 '" &']);
+    cmd=(['"' exefile '"' ' -s ' cm2 '" &']);
+
     %     disp(char(cmd))
     system(cmd );
     % gl.mosaic("C 20 -50 S 0 20 S X R 0");
