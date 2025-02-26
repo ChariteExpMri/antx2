@@ -1,37 +1,70 @@
 
-% PLOT SLICE OVERLAYS USING MRicroGL 
-% #r *** OS-INDEPENDENT
-% #r IMPORTANT - MRicroGL must be installed before using this function
-%  in case ofnon-standard installation path is used: 
+% PLOT SLICE OVERLAYS USING MRicroGL
+% #r this function is *** OS-INDEPENDENT
 % 
-%% #wb *** PARAMETER *** 
+%% #wb *** MRICROGL-INSTALLATION ***
+% #r IMPORTANT - MRicroGL must be installed before using this function
+% 
+% ---------------------------------------------------------
+% [WINDOWS]:  options
+% ---------------------------------------------------------
+% [A] MRicroGL must be installed using predefined path (must be installed here)
+%  'C:\Program Files\MRIcroGL\'
+%   or
+%  'C:\Users\YourUsername\AppData\Local\MRIcroGL\'
+% ..or..
+% [B] MRicroGL is installed somewhere else, than...
+%  set MRicroGL as permanent environmental variable via:
+%  (a) WIN CMD-window as administrator
+%    setx PATH "%PATH%;<path_to_MRIcroGL>" /M
+%    where '<path_to_MRIcroGL>' is the path to MRIcroGL.exe
+%    example:  setx PATH "%PATH%;C:\paulprogramme\MRIcroGL" /M
+%  (b) use  PowerShell as administrator
+%    execute the following:
+%    $oldPath = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+%    $newPath = $oldPath + ";<path_to_MRIcroGL>"
+%    [System.Environment]::SetEnvironmentVariable("Path", $newPath, [System.EnvironmentVariableTarget]::Machine)
+%    where '<path_to_MRIcroGL>' is the path to MRIcroGL.exe
+% ..or..
+% [c] fullpath MRicroGL.exe must be specified in parameter 'mricroGL' (see below)
+%
+% ---------------------------------------------------------
+% [2] MAC:  options
+% ---------------------------------------------------------
+% [A] copy MRIcroGL.app in the APP's-folder  (than path is: "/Applications/MRIcroGL.app")
+% ..or..
+% [B] fullpath MRicroGL.app must be specified in parameter 'mricroGL' (see below)
+%
+%
+%
+%% #wb *** PARAMETER ***
 % 'bg_image'     background image, if empty, than "AVGT.nii" from template-folder is used
 % 'ovl_images'   one/more images to separately overlay onto bg_image
 % 'view'         view: [1] sagittal; [2] coronal;[3]axial ;  {1,2,3}
 %                   default: [2]
 % 'slices'       slices to plot
 %                      [1] as numeric array to use slice-indices
-%                         -AVGT-coronal:[60,73,86,99,112,125,138]            -->  [60,73,86,99,112,125,138] 
-%                         -AVGT-coronal:[80,95,110,125,140,155,170,185,200]  -->  [80,95,110,125,140,155,170,185,200] 
-%                         -AVGT-coronal:[80,95,110,125,140,155,170,185,200]  -->  [80,95,110,125,140,155,170,185,200] 
+%                         -AVGT-coronal:[60,73,86,99,112,125,138]            -->  [60,73,86,99,112,125,138]
+%                         -AVGT-coronal:[80,95,110,125,140,155,170,185,200]  -->  [80,95,110,125,140,155,170,185,200]
+%                         -AVGT-coronal:[80,95,110,125,140,155,170,185,200]  -->  [80,95,110,125,140,155,170,185,200]
 %                         -AVGT-coronal:[50,62,74,87,99,111,123,136,148,160] -->  [50,62,74,87,99,111,123,136,148,160]
-%                         -AVGT-coronal:[50,83,115,148,180]                  -->  [50,83,115,148,180]   
-%                         -slices index: from 50 to 150, 6 slices            -->[50:6:150]  
+%                         -AVGT-coronal:[50,83,115,148,180]                  -->  [50,83,115,148,180]
+%                         -slices index: from 50 to 150, 6 slices            -->[50:6:150]
 %                      [2] as string to work with voxel-milimeters (mm)
 %                         -slices in mm: 0mm,1.1mm,2.135mm,-0.1mm            -->  '0,1.1,2.135,-0.1'   defined as string
 %                      [3] as string to obtain a defined number of slices
-%                         -5 equidistant slices      -->   'n5'  
-%                         -8 equidistant slices'     -->   'n8'  
-%                         -10 equidistant slices'    -->   'n10'  
-%                         -cut 20% left and right (=40%)  and plot 12 equidistant slices --> 'cut40n12' 
-%                         -cut 35% left and right (=70%)  and plot 6 equidistant slices  --> 'cut70n6'  
-%                         -cut 45% left and right (=90%)  and plot 6 equidistant slices  --> 'cut90n6'  
-%                         -cut 50% left and plot 5 equidistant slices                    --> 'cutL50n5'  
-%                         -cut 50% right and plot 5 equidistant slices                   --> 'cutR50n5' 
-% 
+%                         -5 equidistant slices      -->   'n5'
+%                         -8 equidistant slices'     -->   'n8'
+%                         -10 equidistant slices'    -->   'n10'
+%                         -cut 20% left and right (=40%)  and plot 12 equidistant slices --> 'cut40n12'
+%                         -cut 35% left and right (=70%)  and plot 6 equidistant slices  --> 'cut70n6'
+%                         -cut 45% left and right (=90%)  and plot 6 equidistant slices  --> 'cut90n6'
+%                         -cut 50% left and plot 5 equidistant slices                    --> 'cutL50n5'
+%                         -cut 50% right and plot 5 equidistant slices                   --> 'cutR50n5'
+%
 % 'bg_clim'        background-image: intensity limits [min,max], if [nan nan]..automatically defined
 %                      examples: [0 200 ] or [nan nan]
-% 'ovl_cmap'       overlay-image: colormap --> see icon for colormap 
+% 'ovl_cmap'       overlay-image: colormap --> see icon for colormap
 % 'ovl_clim'       overlay-image: intensity limits [min,max], if [nan nan]..automatically defined
 %                      examples: [0 200 ] or [nan nan]
 % 'opacity'        opacity of the overlayed image : 0,20,40,50,60,80,100
@@ -41,180 +74,185 @@
 %                    is not recomended because fontsize is not adjustable
 % 'nrows'        number of rows to plot;  a numeric value
 %                    default: [1]
-% 'sliceOverlapp'  horizontal slice overlapp (left-right); chose one value from range: [-1:0.1:1]  
+% 'sliceOverlapp'  horizontal slice overlapp (left-right); chose one value from range: [-1:0.1:1]
 %                    default: [0]
-% 'rowOverlapp'   vertical overlapp of rows; chose one value from range: [-1:0.1:1]  
+% 'rowOverlapp'   vertical overlapp of rows; chose one value from range: [-1:0.1:1]
 %                    default: [0]
-% 
+%
 % 'cbar_label'     colorbar-label, if empty cbar has no label, type string
 %                    examples:  'lesion [%]' or 'intensity [a.u.]'
 % 'cbar_fs'        colorbar-fonsize
 %                     default: [12]
 % 'cbar_fontname'  colorbar-fontName  --> see icon for fonts
 %                    example: 'arial','consolas' or 'Helvetica'
-% 
+%
 % 'cbar_fcol'      colorbar-fontcolor, (3 values) --> select color from icon
 %                    example:  [1 1 1] (white)
-% 
+%
 % 'sliceplot'     show orthogonal plot where brain is sliced; {0|1}
 %                    default: [1]
-% 'sliceplotDir'  change direction of sliceplot {1,-1}, 
+% 'sliceplotDir'  change direction of sliceplot {1,-1},
 %                   this changes the view of the sliceplot,i.e  back vs front; left vs right; up vs down
 %                   default: [1]
 % 'sliceplotDim'  dimension of the orthogonal sliceplot to display  {1,2,3}
 %                   if [1] or [2]: the sliceplot is orthogonally to the slices
 %                   if [3]: sliceplot is in the same perspective as the slices
-%                   default: [1]  
+%                   default: [1]
 % 'linewidth'     linewidht of lines in the sliceplot representing the location of the slices
 %                   default: [1]
 % 'linecolor'     line color of  of lines in the sliceplot representing the location of the slices
 %                    default:  [1 1 1] (white)
-
-% 'outdir'         output-directory, if empty plots/ppt-file is stored in the DIR of the "ovl_images" 
+% 
+% 'outdir'         output-directory, if empty plots/ppt-file is stored in the DIR of the "ovl_images"
 % 'ppt_filename'   powerpoint-filename tha tis created
 %                   example: 'lesion'
-% 'plotdir_suffix' 'a SUBDIR that contains the created png-files(located in "outdir"), DIR-name is defined by "ppt_filename"+"plotdir_suffix" 
-% 
+% 'plotdir_suffix' 'a SUBDIR that contains the created png-files(located in "outdir"), DIR-name is defined by "ppt_filename"+"plotdir_suffix"
+%
 % 'closeMricroGL'  close MricroGl afterwards; {0,1}
 %                    default: [1]
 % 'makePPT'        make powerpoint-file with image(s) and infos; {0,1}
 %                    default: [1]
-%% #wb *** RUN *** 
-% xplotslices_mricrogl(1) or  xplotslices_mricrogl    ... open PARAMETER_GUI 
-% xplotslices_mricrogl(0,z)             ...NO-GUI,  z is the predefined struct 
-% xplotslices_mricrogl(1,z)             ...WITH-GUI z is the predefined struct 
+% 'mricroGL'       '<optional> specify fullpath name of MRicroGL-exe/app if not otherwise found 
+%                  -see MRIcro-installation (above)
+%                   win-example: 'C:\paulprogramme\MRIcroGL3\MRIcroGL.exe';                                       % % <optional> specify fullpath name of MRicroGL-exe/app if not otherwise found (SEE HELP)              
+%                   mac-example: '/Users/klausmaus/MRIcroGL.app
 % 
-% 
-%% #wb *** EXAMPLES ***  
+%% #wb *** RUN ***
+% xplotslices_mricrogl(1) or  xplotslices_mricrogl    ... open PARAMETER_GUI
+% xplotslices_mricrogl(0,z)             ...NO-GUI,  z is the predefined struct
+% xplotslices_mricrogl(1,z)             ...WITH-GUI z is the predefined struct
+%
+%
+%% #wb *** EXAMPLES ***
 %% EXAMPLE: coronal-1 ===============================================
-%     z=[];                                                                                                                                                                                                       
-%     z.bg_image       = 'F:\data8\mricron_makeSlices_plots\AVGT.nii';                                    % % background image, if empty, than "AVGT.nii" from template-folder is used                            
-%     z.ovl_images     = { 'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_HET.nii' 
-%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_KO.nii'                                                                                                                 
-%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_WT.nii' };      % % get one/more images to separately overlay onto bg_image                                             
-%     z.view           = [1];                                                                             % % view: [1]sagittal; [2]coronal;[3]axial                                                              
-%     z.slices         = [60  73  86  99  112  125  138];                                                 % % slices to plot                                                                                      
-%     z.bg_clim        = [50  200];                                                                        % % background-image: intensity limits [min,max], if [nan nan]..automatically defined                   
-%     z.ovl_cmap       = 'actc.lut';                                                                      % % overlay-image: colormap                                                                             
-%     z.ovl_clim       = [0  100];                                                                        % % overlay-image: intensity limits [min,max], if [nan nan]..automatically defined                      
-%     z.opacity        = [70];                                                                            % % overlay opacity range: 0-100                                                                        
-%     z.slicelabel     = [0];                                                                             % % add slice label  (rounded mm); {0|1}                                                                
-%     z.nrows          = [1];                                                                             % % number of rows to plot; default: 1                                                                  
-%     z.sliceOverlapp  = [0];                                                                             % % slice overlapp horizontally (left-right)                                                            
-%     z.rowOverlapp    = [0];                                                                             % % rows overlapp (vertical overlap of rows)                                                            
-%     z.cbar_label     = 'lesion [%]';                                                                    % % colorbar: label, if empty cbar has no label                                                         
-%     z.cbar_fs        = [12];                                                                            % % colorbar: fonsize                                                                                   
-%     z.cbar_fontname  = 'Helvetica';                                                                     % % fontName example: arial/consolas/Helvetica                                                          
-%     z.cbar_fcol      = [1  1  1];                                                                       % % colorbar: fontcolor a color                                                                         
-%     z.sliceplot      = [1];                                                                             % % show orthogonal plot where brain is sliced; {0|1}                                                   
-%     z.sliceplotDir   = [1];                                                                             % % change direction of sliceplot                                                                       
-%     z.sliceplotDim   = [1];                                                                             % % dimension of the orthogonal sliceplot                                                               
-%     z.linewidth      = [1];                                                                             % % linewidht of slices                                                                                 
-%     z.linecolor      = [1  1  1];                                                                       % % line color of clices                                                                                
-%     z.outdir         = '';                                                                              % % output-dir, if empty plots/ppt-file in the DIR of the ovl_images                                    
-%     z.ppt_filename   = 'lesion_view1_oth';                                                                        % % PPT-filename                                                                                        
-%     z.plotdir_suffix = '_plots';                                                                        % % DIR contains png-files(located in "outdir"), DIR-name is defined by "ppt_filename"+"plotdir_suffix" 
-%     z.closeMricroGL  = [1];                                                                             % % close MricroGl afterwards                                                                           
-%     z.makePPT        = [1];                                                                             % % make powerpoint with image and infos                                                                
+%     z=[];
+%     z.bg_image       = 'F:\data8\mricron_makeSlices_plots\AVGT.nii';                                    % % background image, if empty, than "AVGT.nii" from template-folder is used
+%     z.ovl_images     = { 'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_HET.nii'
+%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_KO.nii'
+%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_WT.nii' };      % % get one/more images to separately overlay onto bg_image
+%     z.view           = [1];                                                                             % % view: [1]sagittal; [2]coronal;[3]axial
+%     z.slices         = [60  73  86  99  112  125  138];                                                 % % slices to plot
+%     z.bg_clim        = [50  200];                                                                        % % background-image: intensity limits [min,max], if [nan nan]..automatically defined
+%     z.ovl_cmap       = 'actc.lut';                                                                      % % overlay-image: colormap
+%     z.ovl_clim       = [0  100];                                                                        % % overlay-image: intensity limits [min,max], if [nan nan]..automatically defined
+%     z.opacity        = [70];                                                                            % % overlay opacity range: 0-100
+%     z.slicelabel     = [0];                                                                             % % add slice label  (rounded mm); {0|1}
+%     z.nrows          = [1];                                                                             % % number of rows to plot; default: 1
+%     z.sliceOverlapp  = [0];                                                                             % % slice overlapp horizontally (left-right)
+%     z.rowOverlapp    = [0];                                                                             % % rows overlapp (vertical overlap of rows)
+%     z.cbar_label     = 'lesion [%]';                                                                    % % colorbar: label, if empty cbar has no label
+%     z.cbar_fs        = [12];                                                                            % % colorbar: fonsize
+%     z.cbar_fontname  = 'Helvetica';                                                                     % % fontName example: arial/consolas/Helvetica
+%     z.cbar_fcol      = [1  1  1];                                                                       % % colorbar: fontcolor a color
+%     z.sliceplot      = [1];                                                                             % % show orthogonal plot where brain is sliced; {0|1}
+%     z.sliceplotDir   = [1];                                                                             % % change direction of sliceplot
+%     z.sliceplotDim   = [1];                                                                             % % dimension of the orthogonal sliceplot
+%     z.linewidth      = [1];                                                                             % % linewidht of slices
+%     z.linecolor      = [1  1  1];                                                                       % % line color of clices
+%     z.outdir         = '';                                                                              % % output-dir, if empty plots/ppt-file in the DIR of the ovl_images
+%     z.ppt_filename   = 'lesion_view1_oth';                                                                        % % PPT-filename
+%     z.plotdir_suffix = '_plots';                                                                        % % DIR contains png-files(located in "outdir"), DIR-name is defined by "ppt_filename"+"plotdir_suffix"
+%     z.closeMricroGL  = [1];                                                                             % % close MricroGl afterwards
+%     z.makePPT        = [1];                                                                             % % make powerpoint with image and infos
 %     xplotslices_mricrogl(0,z);
-% 
-% 
+%
+%
 %% EXAMPLE: coronal-2 ===============================================
-%     z=[];                                                                                                                                                                                                       
-%     z.bg_image       = 'F:\data8\mricron_makeSlices_plots\AVGT.nii';                                    % % background image, if empty, than "AVGT.nii" from template-folder is used                            
-%     z.ovl_images     = { 'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_HET.nii' 
-%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_KO.nii'                                                                                                                 
-%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_WT.nii' };      % % get one/more images to separately overlay onto bg_image                                             
-%     z.view           = [1];                                                                             % % view: [1]sagittal; [2]coronal;[3]axial                                                              
-%     z.slices         = 'cut50n6';                                                 % % slices to plot                                                                                      
-%     z.bg_clim        = [50  200];                                                                        % % background-image: intensity limits [min,max], if [nan nan]..automatically defined                   
-%     z.ovl_cmap       = 'actc.lut';                                                                      % % overlay-image: colormap                                                                             
-%     z.ovl_clim       = [0  100];                                                                        % % overlay-image: intensity limits [min,max], if [nan nan]..automatically defined                      
-%     z.opacity        = [70];                                                                            % % overlay opacity range: 0-100                                                                        
-%     z.slicelabel     = [0];                                                                             % % add slice label  (rounded mm); {0|1}                                                                
-%     z.nrows          = [1];                                                                             % % number of rows to plot; default: 1                                                                  
-%     z.sliceOverlapp  = [0];                                                                             % % slice overlapp horizontally (left-right)                                                            
-%     z.rowOverlapp    = [0];                                                                             % % rows overlapp (vertical overlap of rows)                                                            
-%     z.cbar_label     = 'lesion [%]';                                                                    % % colorbar: label, if empty cbar has no label                                                         
-%     z.cbar_fs        = [12];                                                                            % % colorbar: fonsize                                                                                   
-%     z.cbar_fontname  = 'Helvetica';                                                                     % % fontName example: arial/consolas/Helvetica                                                          
-%     z.cbar_fcol      = [1  1  1];                                                                       % % colorbar: fontcolor a color                                                                         
-%     z.sliceplot      = [1];                                                                             % % show orthogonal plot where brain is sliced; {0|1}                                                   
-%     z.sliceplotDir   = [1];                                                                             % % change direction of sliceplot                                                                       
-%     z.sliceplotDim   = [1];                                                                             % % dimension of the orthogonal sliceplot                                                               
-%     z.linewidth      = [1];                                                                             % % linewidht of slices                                                                                 
-%     z.linecolor      = [1  1  1];                                                                       % % line color of clices                                                                                
-%     z.outdir         = '';                                                                              % % output-dir, if empty plots/ppt-file in the DIR of the ovl_images                                    
-%     z.ppt_filename   = 'lesion_view1';                                                                        % % PPT-filename                                                                                        
-%     z.plotdir_suffix = '_plots';                                                                        % % DIR contains png-files(located in "outdir"), DIR-name is defined by "ppt_filename"+"plotdir_suffix" 
-%     z.closeMricroGL  = [1];                                                                             % % close MricroGl afterwards                                                                           
-%     z.makePPT        = [1];                                                                             % % make powerpoint with image and infos                                                                
+%     z=[];
+%     z.bg_image       = 'F:\data8\mricron_makeSlices_plots\AVGT.nii';                                    % % background image, if empty, than "AVGT.nii" from template-folder is used
+%     z.ovl_images     = { 'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_HET.nii'
+%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_KO.nii'
+%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_WT.nii' };      % % get one/more images to separately overlay onto bg_image
+%     z.view           = [1];                                                                             % % view: [1]sagittal; [2]coronal;[3]axial
+%     z.slices         = 'cut50n6';                                                 % % slices to plot
+%     z.bg_clim        = [50  200];                                                                        % % background-image: intensity limits [min,max], if [nan nan]..automatically defined
+%     z.ovl_cmap       = 'actc.lut';                                                                      % % overlay-image: colormap
+%     z.ovl_clim       = [0  100];                                                                        % % overlay-image: intensity limits [min,max], if [nan nan]..automatically defined
+%     z.opacity        = [70];                                                                            % % overlay opacity range: 0-100
+%     z.slicelabel     = [0];                                                                             % % add slice label  (rounded mm); {0|1}
+%     z.nrows          = [1];                                                                             % % number of rows to plot; default: 1
+%     z.sliceOverlapp  = [0];                                                                             % % slice overlapp horizontally (left-right)
+%     z.rowOverlapp    = [0];                                                                             % % rows overlapp (vertical overlap of rows)
+%     z.cbar_label     = 'lesion [%]';                                                                    % % colorbar: label, if empty cbar has no label
+%     z.cbar_fs        = [12];                                                                            % % colorbar: fonsize
+%     z.cbar_fontname  = 'Helvetica';                                                                     % % fontName example: arial/consolas/Helvetica
+%     z.cbar_fcol      = [1  1  1];                                                                       % % colorbar: fontcolor a color
+%     z.sliceplot      = [1];                                                                             % % show orthogonal plot where brain is sliced; {0|1}
+%     z.sliceplotDir   = [1];                                                                             % % change direction of sliceplot
+%     z.sliceplotDim   = [1];                                                                             % % dimension of the orthogonal sliceplot
+%     z.linewidth      = [1];                                                                             % % linewidht of slices
+%     z.linecolor      = [1  1  1];                                                                       % % line color of clices
+%     z.outdir         = '';                                                                              % % output-dir, if empty plots/ppt-file in the DIR of the ovl_images
+%     z.ppt_filename   = 'lesion_view1';                                                                        % % PPT-filename
+%     z.plotdir_suffix = '_plots';                                                                        % % DIR contains png-files(located in "outdir"), DIR-name is defined by "ppt_filename"+"plotdir_suffix"
+%     z.closeMricroGL  = [1];                                                                             % % close MricroGl afterwards
+%     z.makePPT        = [1];                                                                             % % make powerpoint with image and infos
 %     xplotslices_mricrogl(0,z);
-% 
+%
 %% EXAMPLE: sagittal ===============================================
-%     z=[];                                                                                                                                                                                                       
-%     z.bg_image       = 'F:\data8\mricron_makeSlices_plots\AVGT.nii';                                    % % background image, if empty, than "AVGT.nii" from template-folder is used                            
-%     z.ovl_images     = { 'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_HET.nii' 
-%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_KO.nii'                                                                                                                 
-%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_WT.nii' };      % % get one/more images to separately overlay onto bg_image                                             
-%     z.view           = [2];                                                                             % % view: [1]sagittal; [2]coronal;[3]axial                                                              
-%     z.slices         = 'cutR50n6';                                                 % % slices to plot                                                                                      
-%     z.bg_clim        = [50  200];                                                                        % % background-image: intensity limits [min,max], if [nan nan]..automatically defined                   
-%     z.ovl_cmap       = 'actc.lut';                                                                      % % overlay-image: colormap                                                                             
-%     z.ovl_clim       = [0  100];                                                                        % % overlay-image: intensity limits [min,max], if [nan nan]..automatically defined                      
-%     z.opacity        = [70];                                                                            % % overlay opacity range: 0-100                                                                        
-%     z.slicelabel     = [0];                                                                             % % add slice label  (rounded mm); {0|1}                                                                
-%     z.nrows          = [1];                                                                             % % number of rows to plot; default: 1                                                                  
-%     z.sliceOverlapp  = [0];                                                                             % % slice overlapp horizontally (left-right)                                                            
-%     z.rowOverlapp    = [0];                                                                             % % rows overlapp (vertical overlap of rows)                                                            
-%     z.cbar_label     = 'lesion [%]';                                                                    % % colorbar: label, if empty cbar has no label                                                         
-%     z.cbar_fs        = [12];                                                                            % % colorbar: fonsize                                                                                   
-%     z.cbar_fontname  = 'Helvetica';                                                                     % % fontName example: arial/consolas/Helvetica                                                          
-%     z.cbar_fcol      = [1  1  1];                                                                       % % colorbar: fontcolor a color                                                                         
-%     z.sliceplot      = [1];                                                                             % % show orthogonal plot where brain is sliced; {0|1}                                                   
-%     z.sliceplotDir   = [-1];                                                                             % % change direction of sliceplot                                                                       
-%     z.sliceplotDim   = [1];                                                                             % % dimension of the orthogonal sliceplot                                                               
-%     z.linewidth      = [1];                                                                             % % linewidht of slices                                                                                 
-%     z.linecolor      = [1  1  1];                                                                       % % line color of clices                                                                                
-%     z.outdir         = '';                                                                              % % output-dir, if empty plots/ppt-file in the DIR of the ovl_images                                    
-%     z.ppt_filename   = 'lesion_view2';                                                                        % % PPT-filename                                                                                        
-%     z.plotdir_suffix = '_plots';                                                                        % % DIR contains png-files(located in "outdir"), DIR-name is defined by "ppt_filename"+"plotdir_suffix" 
-%     z.closeMricroGL  = [1];                                                                             % % close MricroGl afterwards                                                                           
-%     z.makePPT        = [1];                                                                             % % make powerpoint with image and infos                                                                
+%     z=[];
+%     z.bg_image       = 'F:\data8\mricron_makeSlices_plots\AVGT.nii';                                    % % background image, if empty, than "AVGT.nii" from template-folder is used
+%     z.ovl_images     = { 'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_HET.nii'
+%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_KO.nii'
+%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_WT.nii' };      % % get one/more images to separately overlay onto bg_image
+%     z.view           = [2];                                                                             % % view: [1]sagittal; [2]coronal;[3]axial
+%     z.slices         = 'cutR50n6';                                                 % % slices to plot
+%     z.bg_clim        = [50  200];                                                                        % % background-image: intensity limits [min,max], if [nan nan]..automatically defined
+%     z.ovl_cmap       = 'actc.lut';                                                                      % % overlay-image: colormap
+%     z.ovl_clim       = [0  100];                                                                        % % overlay-image: intensity limits [min,max], if [nan nan]..automatically defined
+%     z.opacity        = [70];                                                                            % % overlay opacity range: 0-100
+%     z.slicelabel     = [0];                                                                             % % add slice label  (rounded mm); {0|1}
+%     z.nrows          = [1];                                                                             % % number of rows to plot; default: 1
+%     z.sliceOverlapp  = [0];                                                                             % % slice overlapp horizontally (left-right)
+%     z.rowOverlapp    = [0];                                                                             % % rows overlapp (vertical overlap of rows)
+%     z.cbar_label     = 'lesion [%]';                                                                    % % colorbar: label, if empty cbar has no label
+%     z.cbar_fs        = [12];                                                                            % % colorbar: fonsize
+%     z.cbar_fontname  = 'Helvetica';                                                                     % % fontName example: arial/consolas/Helvetica
+%     z.cbar_fcol      = [1  1  1];                                                                       % % colorbar: fontcolor a color
+%     z.sliceplot      = [1];                                                                             % % show orthogonal plot where brain is sliced; {0|1}
+%     z.sliceplotDir   = [-1];                                                                             % % change direction of sliceplot
+%     z.sliceplotDim   = [1];                                                                             % % dimension of the orthogonal sliceplot
+%     z.linewidth      = [1];                                                                             % % linewidht of slices
+%     z.linecolor      = [1  1  1];                                                                       % % line color of clices
+%     z.outdir         = '';                                                                              % % output-dir, if empty plots/ppt-file in the DIR of the ovl_images
+%     z.ppt_filename   = 'lesion_view2';                                                                        % % PPT-filename
+%     z.plotdir_suffix = '_plots';                                                                        % % DIR contains png-files(located in "outdir"), DIR-name is defined by "ppt_filename"+"plotdir_suffix"
+%     z.closeMricroGL  = [1];                                                                             % % close MricroGl afterwards
+%     z.makePPT        = [1];                                                                             % % make powerpoint with image and infos
 %     xplotslices_mricrogl(0,z);
-% 
+%
 %% EXAMPLE: axial ===============================================
-%     z=[];                                                                                                                                                                                                       
-%     z.bg_image       = 'F:\data8\mricron_makeSlices_plots\AVGT.nii';                                    % % background image, if empty, than "AVGT.nii" from template-folder is used                            
-%     z.ovl_images     = { 'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_HET.nii' 
-%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_KO.nii'                                                                                                                 
-%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_WT.nii' };      % % get one/more images to separately overlay onto bg_image                                             
-%     z.view           = [3];                                                                             % % view: [1]sagittal; [2]coronal;[3]axial                                                              
-%     z.slices         = 'cut50n8';                                                 % % slices to plot                                                                                      
-%     z.bg_clim        = [50  200];                                                                        % % background-image: intensity limits [min,max], if [nan nan]..automatically defined                   
-%     z.ovl_cmap       = 'actc.lut';                                                                      % % overlay-image: colormap                                                                             
-%     z.ovl_clim       = [0  100];                                                                        % % overlay-image: intensity limits [min,max], if [nan nan]..automatically defined                      
-%     z.opacity        = [70];                                                                            % % overlay opacity range: 0-100                                                                        
-%     z.slicelabel     = [0];                                                                             % % add slice label  (rounded mm); {0|1}                                                                
-%     z.nrows          = [1];                                                                             % % number of rows to plot; default: 1                                                                  
-%     z.sliceOverlapp  = [0];                                                                             % % slice overlapp horizontally (left-right)                                                            
-%     z.rowOverlapp    = [0];                                                                             % % rows overlapp (vertical overlap of rows)                                                            
-%     z.cbar_label     = 'lesion [%]';                                                                    % % colorbar: label, if empty cbar has no label                                                         
-%     z.cbar_fs        = [12];                                                                            % % colorbar: fonsize                                                                                   
-%     z.cbar_fontname  = 'Helvetica';                                                                     % % fontName example: arial/consolas/Helvetica                                                          
-%     z.cbar_fcol      = [1  1  1];                                                                       % % colorbar: fontcolor a color                                                                         
-%     z.sliceplot      = [1];                                                                             % % show orthogonal plot where brain is sliced; {0|1}                                                   
-%     z.sliceplotDir   = [-1];                                                                             % % change direction of sliceplot                                                                       
-%     z.sliceplotDim   = [1];                                                                             % % dimension of the orthogonal sliceplot                                                               
-%     z.linewidth      = [1];                                                                             % % linewidht of slices                                                                                 
-%     z.linecolor      = [1  1  1];                                                                       % % line color of clices                                                                                
-%     z.outdir         = '';                                                                              % % output-dir, if empty plots/ppt-file in the DIR of the ovl_images                                    
-%     z.ppt_filename   = 'lesion_view3';                                                                        % % PPT-filename                                                                                        
-%     z.plotdir_suffix = '_plots';                                                                        % % DIR contains png-files(located in "outdir"), DIR-name is defined by "ppt_filename"+"plotdir_suffix" 
-%     z.closeMricroGL  = [1];                                                                             % % close MricroGl afterwards                                                                           
-%     z.makePPT        = [1];                                                                             % % make powerpoint with image and infos                                                                
+%     z=[];
+%     z.bg_image       = 'F:\data8\mricron_makeSlices_plots\AVGT.nii';                                    % % background image, if empty, than "AVGT.nii" from template-folder is used
+%     z.ovl_images     = { 'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_HET.nii'
+%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_KO.nii'
+%                          'F:\data8\mricron_makeSlices_plots\MAPpercent_x_masklesion_24h_WT.nii' };      % % get one/more images to separately overlay onto bg_image
+%     z.view           = [3];                                                                             % % view: [1]sagittal; [2]coronal;[3]axial
+%     z.slices         = 'cut50n8';                                                 % % slices to plot
+%     z.bg_clim        = [50  200];                                                                        % % background-image: intensity limits [min,max], if [nan nan]..automatically defined
+%     z.ovl_cmap       = 'actc.lut';                                                                      % % overlay-image: colormap
+%     z.ovl_clim       = [0  100];                                                                        % % overlay-image: intensity limits [min,max], if [nan nan]..automatically defined
+%     z.opacity        = [70];                                                                            % % overlay opacity range: 0-100
+%     z.slicelabel     = [0];                                                                             % % add slice label  (rounded mm); {0|1}
+%     z.nrows          = [1];                                                                             % % number of rows to plot; default: 1
+%     z.sliceOverlapp  = [0];                                                                             % % slice overlapp horizontally (left-right)
+%     z.rowOverlapp    = [0];                                                                             % % rows overlapp (vertical overlap of rows)
+%     z.cbar_label     = 'lesion [%]';                                                                    % % colorbar: label, if empty cbar has no label
+%     z.cbar_fs        = [12];                                                                            % % colorbar: fonsize
+%     z.cbar_fontname  = 'Helvetica';                                                                     % % fontName example: arial/consolas/Helvetica
+%     z.cbar_fcol      = [1  1  1];                                                                       % % colorbar: fontcolor a color
+%     z.sliceplot      = [1];                                                                             % % show orthogonal plot where brain is sliced; {0|1}
+%     z.sliceplotDir   = [-1];                                                                             % % change direction of sliceplot
+%     z.sliceplotDim   = [1];                                                                             % % dimension of the orthogonal sliceplot
+%     z.linewidth      = [1];                                                                             % % linewidht of slices
+%     z.linecolor      = [1  1  1];                                                                       % % line color of clices
+%     z.outdir         = '';                                                                              % % output-dir, if empty plots/ppt-file in the DIR of the ovl_images
+%     z.ppt_filename   = 'lesion_view3';                                                                        % % PPT-filename
+%     z.plotdir_suffix = '_plots';                                                                        % % DIR contains png-files(located in "outdir"), DIR-name is defined by "ppt_filename"+"plotdir_suffix"
+%     z.closeMricroGL  = [1];                                                                             % % close MricroGl afterwards
+%     z.makePPT        = [1];                                                                             % % make powerpoint with image and infos
 %     xplotslices_mricrogl(0,z);
-% 
+%
 
 
 
@@ -247,7 +285,7 @@ end
 %     exefile='/Applications/MRIcroGL.app/Contents/MacOS/MRIcroGL';
 % end
 
-exefile=getExecutable();
+% exefile=getExecutable();
 
 % ==============================================
 %%   PARAMETER-gui
@@ -326,6 +364,7 @@ p={
     'inf5'  '___misc___' '' ''
     'closeMricroGL'  1  'close MricroGl afterwards'  'b'
     'makePPT'        1  'make powerpoint with image and infos'  'b'
+    'mricroGL'   '' '<optional> specify fullpath name of MRicroGL-exe/app if not otherwise found (SEE HELP)'  {@get_mrigroglPath}
     
     };
 % [m z]=paramgui(p,'close',1,'figpos',[0.2 0.4 0.5 0.35],'info',{@uhelp, 'paramgui.m' },'title','GUI-123'); %%START GUI
@@ -384,6 +423,14 @@ z_bk=z;
 %%  proc
 % https://people.cas.sc.edu/rorden/mricron/bat.html
 % ===============================================
+%% ====get executable ===========================================
+z.mricroGL=char(z.mricroGL);
+if ~isempty(z.mricroGL) && exist(z.mricroGL)==2
+    exefile=z.mricroGL;
+else
+    exefile=getExecutable();
+end
+
 
 %% ====define parameter===========================================
 z.bg_image   =char(   z.bg_image);
@@ -665,7 +712,7 @@ for i=1:length(ovl)
     %  cmd=([pa_mricrongl ' -s ''' cm2 ''' &']);
     %cmd=([exefile ' -s ' cm2 '" &']);
     cmd=(['"' exefile '"' ' -s ' cm2 '" &']);
-
+    
     %     disp(char(cmd))
     system(cmd );
     % gl.mosaic("C 20 -50 S 0 20 S X R 0");
@@ -1000,16 +1047,107 @@ elseif ispc
         q=path;
         q=strsplit(path,';')';
         ix=regexpi2(q,'MRIcroGL');
-        if isempty(ix);
-            error('MRIcroGL not found in path');
+        if ~isempty(ix);
+            pagl=q{ix};
+            %%error('MRIcroGL not found in path');
         end
-        pagl=q{ix};
-%         [p1,p2,ext]=fileparts(pagl);
-%         if strcmp([p2,ext],'MRIcroGL.app')
-%             pagl=fullfile(pagl,'Contents','MacOS');
-%         end
-       
     end
-     executable=fullfile(pagl,'MRIcroGL.exe');
+    % check if in in enviroment vars
+    if isempty(pagl)
+        [q1 q2]=system('where MRIcroGL.exe');
+        q2=cellstr(q2);
+        if exist(q2{1})==2
+            pagl=fileparts(q2{1});
+        end
+    end
+    
+    % search C-drive
+    if isempty(pagl)
+        disp('..searching drive for "MRIcroGL.exe" ');
+            tic1=tic;
+        exec = findMRIcroGL();
+        if exist(exec)==2   
+            pagl=fileparts(exec);
+            % This adds the new path temporarily to the current MATLAB session.
+            setenv('PATH', [getenv('PATH') [';' pagl]]);
+            disp(['MRIcroGL.exe found: "'  pagl  '" (searchtime:' sprintf('%2.1fs',toc(tic1)) ') ']);
+            disp('temporally added to matlab''s env-paths');
+        else
+            error(['MRIcroGL.exe not found--> see help of '  mfilename '.m']);
+        end
+        
+        
+    end
+    executable=fullfile(pagl,'MRIcroGL.exe');
+    
 end
 % system(executable)
+
+
+
+function filepath = findMRIcroGL()
+searchFile = 'MRIcroGL.exe';   % Set the file to search for
+startDir = 'c:\';              % Set the starting directory (modify as needed)
+% Convert to Java File object
+startFolder = java.io.File(startDir);
+
+% Perform recursive search
+filepath = searchInDirectory(startFolder, searchFile);
+
+% Display results
+if isempty(filepath)
+    disp('File not found.');
+else
+    disp(['Found: ', filepath]);
+end
+
+function filepath = searchInDirectory(directory, targetFile)
+% List all files and directories
+files = directory.listFiles();
+
+% If directory is empty, return empty
+if isempty(files)
+    filepath = '';
+    return;
+end
+
+% Iterate over each file/folder
+for i = 1:length(files)
+    fileObj = files(i);
+    
+    if fileObj.isDirectory()
+        % Recursive search in subdirectories
+        filepath = searchInDirectory(fileObj, targetFile);
+        if ~isempty(filepath)
+            return; % Stop searching once we find the first occurrence
+        end
+    elseif strcmpi(char(fileObj.getName()), targetFile)
+        % File found, return its absolute path
+        filepath = char(fileObj.getAbsolutePath());
+        return;
+    end
+end
+
+% If no match found
+filepath = '';
+
+
+function o=get_mrigroglPath()
+%% ===============================================
+o='';
+if     ispc  ;    fmt='*.exe';
+elseif ismac ;    fmt='*.app';  disp([['....select MRicroGL-executable (' fmt ') ']]);
+else   isunix;   fmt='*.*';
+end
+
+[fi, pa] = uigetfile(fmt, ['select MRicroGL-executable (' fmt ') ']);
+if isnumeric(fi); return ;end
+exec=fullfile(pa,fi);
+if ismac;     exec=fullfile(exec, 'Contents','MacOS','MRIcroGL');  end
+if exist(exec)==2
+    o=exec;
+end
+return
+%% ===============================================
+
+
