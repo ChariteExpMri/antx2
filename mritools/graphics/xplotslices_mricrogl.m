@@ -324,6 +324,7 @@ sliceopt(end+1,:)={'cut 45% left and right (=90%)  and plot 6 equidistant slices
 
 
 p={
+    'inf0' '__IMAGES__' '' ''
     'bg_image'      ''              'background image, if empty, than "AVGT.nii" from template-folder is used' 'f'
     'ovl_images'   {''}             'get one/more images to separately overlay onto bg_image' 'mf'
     'view'         2                'view: [1]sagittal; [2]coronal;[3]axial '   viewopt
@@ -389,7 +390,7 @@ p=paramadd(p,x);%add/replace parameter
 
 % %% show GUI
 if showgui==1
-    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .3 .6 .55 ],...
+    [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .2 .6 .6 ],...
         'title',[ '[' mfilename '.m]'],'info',{@uhelp, [mfilename '.m']});
     if isempty(m);
         return;
@@ -891,7 +892,7 @@ if z.makePPT==1
     
     img2ppt([],[], pptfile,'doc','add',...
         'title',titlem,'Tha','center','Tfs',25,'Tcol',[0 0 0],'Tbgcol',[0.8706    0.9216    0.9804],...
-        'text',paralist,'tfs',8,'txy',[0 8],'tcol', [0 0 0],'tbgcol',[0.9451    0.9686    0.9490], 'tfn','consolas',...
+        'text',paralist,'tfs',8,'txy',[0 6],'tcol', [0 0 0],'tbgcol',[0.9451    0.9686    0.9490], 'tfn','consolas',...
         'multitext',vs,'disp',1 );
     
 end
