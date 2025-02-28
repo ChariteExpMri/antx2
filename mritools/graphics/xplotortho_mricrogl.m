@@ -301,7 +301,7 @@ p={
     'ovl_images'   {''}              'overlay one or more images onto bg_image'                      'mf'
     'bg_clim'      [50 200 ]         'background image intensity limits [min,max]; [nan nan] = auto'    {[0 200 ]; [nan nan]}
     'ovl_clim'     [0 100 ]          'overlay image intensity limits [min,max]; [nan nan] = auto'       {[0 200 ]; [nan nan]}
-    'ovl_cmap'     'NIH_fire.lut'    'overlay colormap'          {'cmap',htmllist}
+    'ovl_cmap'     'actc.lut'        'overlay colormap'          {'cmap',htmllist}
     'opacity'      70                'overlay opacity (0-100)'     {0,20,40,50,60,80,100}
     'linewidth'    [5]               'crosshair line width'        num2cell(0:10)
     'linecolor'    [1 1 1]           'crosshair color (RGB, range 0-1)'  'col'
@@ -738,7 +738,7 @@ if z.makePPT==1
     else
         ncols=2;
         nimg_per_page  =2;           %number of images per plot
-        wh=[ nan 12.25]; %width/Hight
+        wh=[ 25.4/ncols nan]; %width/Hight
     end
     
     pptfile =fullfile(outdirplot,[z.ppt_filename '.pptx']);
@@ -891,56 +891,60 @@ end
 
 
 
-
 function png_makeSingleRow(z, f2,f4 )
 %% ===============================================
-if z.png_SingleRow==0; return; end
+% if z.png_SingleRow==0; return; end
 if ischar(f4); f4=cellstr(f4); end
 for j=1:length(f4)
     file=f4{j};
     x1=imread(file);
-    h=spm_vol(f2);
-    dims=h.dim;
-    vi=round(dims(1)/(dims(1)+dims(2))*size(x1,2)); %vertical split index
-    hi=round(dims(3)/(dims(3)+dims(2))*size(x1,1)); %horizontal split index
+    c=rgb2gray(x1);
+    %get real image
+    [x2, y2] = ind2sub(size(c), find(c~=c(end,end))); % Get all nonzero indices
+    x_min = min(x2);
+    x_max = max(x2);
+    y_min = min(y2);
+    y_max = max(y2);
+    bb = [x_min, x_max; y_min, y_max;];
+    x1=x1(bb(1,1):bb(1,2),bb(2,1):bb(2,2),: );
     
-    %     if 0
-    %         % Display the split
-    %         figure;imshow(x1);hold on;
-    %         plot([vi vi], [1 size(x1,1)], 'r', 'LineWidth', 2); % Draw  line
-    %         plot([1 size(x1,2)], [hi hi] , 'm', 'LineWidth', 2); % Draw  line
-    %     end
-    s1=x1(1:hi,1:vi,:);
-    s2=x1(1:hi,vi:end,:);
-    s3=x1(hi+1:end,1:vi,:);  s3=rot90(s3,3);
-    %==[same size] ==================================
-    maxi=max([size(s1,1) size(s2,1) size(s3,1)]);
-    w={s1 s2 s3};
-    w2={};
-    for i=1:length(w)
-        v1= cast(zeros(maxi,  size(w{i},2),3),'like',x1);
-        if (size(v1,1)-size(w{i},1))==0
-            v1=w{i};
-            w2{i}=v1;
-        else
-            do=ceil((size(v1,1)-size(w{i},1))/2);
-            v1(do:do+size(w{i},1)-1,:,:)=w{i};
-            w2{i}=v1;
+    if z.png_SingleRow==0;
+        fout=file;%fullfile(pwd,'map1row.png')
+        imwrite(x1, fout);
+    elseif z.png_SingleRow==1;
+        h=spm_vol(f2);
+        dims=h.dim;
+        vi=round(dims(1)/(dims(1)+dims(2))*size(x1,2)); %vertical split index
+        hi=round(dims(3)/(dims(3)+dims(2))*size(x1,1)); %horizontal split index
+        s1=x1(1:hi,1:vi,:);
+        s2=x1(1:hi,vi:end,:);
+        s3=x1(hi+1:end,1:vi,:);  s3=rot90(s3,3);
+        %==[same size] ==================================
+        maxi=max([size(s1,1) size(s2,1) size(s3,1)]);
+        w={s1 s2 s3};
+        w2={};
+        for i=1:length(w)
+            v1= cast(zeros(maxi,  size(w{i},2),3),'like',x1);
+            if (size(v1,1)-size(w{i},1))==0
+                v1=w{i};
+                w2{i}=v1;
+            else
+                do=ceil((size(v1,1)-size(w{i},1))/2);
+                v1(do:do+size(w{i},1)-1,:,:)=w{i};
+                w2{i}=v1;
+            end
         end
+        % ==[extract used views and attach] ==========================
+        % z.png_views=[1 2 3];
+        w3=w2(z.png_views);
+        w4 = cat(2, w3{:});
+        % fg,imagesc(w4)
+        % ==[save]===============================
+        fout=file;%fullfile(pwd,'map1row.png')
+        imwrite(w4, fout);
+        %     showinfo2(['png:'],fout);
     end
-    % ==[extract used views and attach] ==========================
-    % z.png_views=[1 2 3];
-    w3=w2(z.png_views);
-    w4 = cat(2, w3{:});
-    % fg,imagesc(w4)
-    % ==[save]===============================
-    fout=file;%fullfile(pwd,'map1row.png')
-    imwrite(w4, fout);
-    %     showinfo2(['png:'],fout);
-    
 end
-
-
 
 
 
