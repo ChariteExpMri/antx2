@@ -1422,11 +1422,15 @@ mh2 = uimenu(mh,'Label',' GUI overlay image2',                                  
          'userdata',[HSTART 'overlay images' HEND 'really-old version...needs to be modified']);
      
      
- mh2 = uimenu(mh,'Label','<html><font color=blue><b>MRicon</b> slice overlay <font color=black>(WINDOWS only)',                                             'Callback',{@menubarCB, 'xplotslices_mricron_call'},...
+ mh2 = uimenu(mh,'Label','<html><font color=blue><b>MRicon</b> slices-overlay <font color=black>(WINDOWS only)',                                             'Callback',{@menubarCB, 'xplotslices_mricron_call'},...
          'userdata',[HSTART 'slice-wise overlay using MRicron ' HEND ''],'Separator','on');
- mh2 = uimenu(mh,'Label','<html><font color=fuchsia><b>MRicoGL</b> slice overlay',                                             'Callback',{@menubarCB, 'xplotslices_mricrogl_call'},...
-         'userdata',[HSTART 'slice-wise overlay using MRicroGL ' HEND ''],'Separator','off');    
-     
+ mh2 = uimenu(mh,'Label','<html><font color=fuchsia><b>MRicoGL</b> slices-overlay',                  'Callback',{@menubarCB, 'xplotslices_mricrogl_call'},...
+     'userdata',[HSTART 'slice-wise overlay using MRicroGL ' HEND ''],'Separator','off');
+ 
+ mh2 = uimenu(mh,'Label','<html><font color=fuchsia><b>MRicoGL</b> orthoview-overlay',               'Callback',{@menubarCB, 'xplotortho_mricrogl_call'},...
+     'userdata',[HSTART 'orthoview plot(coronal, sagittal, axial) using MRicroGL ' HEND ''],'Separator','off');
+ 
+ 
      
 mh2 = uimenu(mh,'Label',' fastviewer',                                                     'Callback',{@menubarCB, 'fastviewer'},...
         'userdata',[HSTART 'overlay images' HEND 'old version...needs to be modified'],'Separator','on');
@@ -3279,20 +3283,25 @@ elseif strcmp(task,'overlayimageGui2')
     %% ===============================================
     xoverlay;
     
-elseif strcmp(task,'xplotslices_mricrogl_call')
-    fun='xplotslices_mricrogl';
-    if showhelpOnly==1;              hlpfun=fun;                              return ;    end
-    if strcmp(u.mousekey,'right');   hlpfun=[fun '.m'];       showcmd(hlpfun);       return
-    end
-    feval(fun);
+
  elseif strcmp(task,'xplotslices_mricron_call')
     fun='xplotslices_mricron';
     if showhelpOnly==1;              hlpfun=fun;                              return ;    end
     if strcmp(u.mousekey,'right');   hlpfun=[fun '.m'];       showcmd(hlpfun);       return
     end
     feval(fun);   
-    
-    
+elseif strcmp(task,'xplotslices_mricrogl_call')
+    fun='xplotslices_mricrogl';
+    if showhelpOnly==1;              hlpfun=fun;                              return ;    end
+    if strcmp(u.mousekey,'right');   hlpfun=[fun '.m'];       showcmd(hlpfun);       return
+    end
+    feval(fun);    
+ elseif strcmp(task,'xplotortho_mricrogl_call')
+    fun='xplotortho_mricrogl';
+    if showhelpOnly==1;              hlpfun=fun;                              return ;    end
+    if strcmp(u.mousekey,'right');   hlpfun=[fun '.m'];       showcmd(hlpfun);       return
+    end
+    feval(fun);    
     
     
     %________________________________________________

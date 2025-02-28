@@ -1,10 +1,10 @@
 
 % PLOT SLICE OVERLAYS USING MRicroGL
 % #r this function is *** OS-INDEPENDENT
-% 
+%
 %% #wb *** MRICROGL-INSTALLATION ***
 % #r IMPORTANT - MRicroGL must be installed before using this function
-% 
+%
 % ---------------------------------------------------------
 % [WINDOWS]:  options
 % ---------------------------------------------------------
@@ -61,6 +61,16 @@
 %                         -cut 45% left and right (=90%)  and plot 6 equidistant slices  --> 'cut90n6'
 %                         -cut 50% left and plot 5 equidistant slices                    --> 'cutL50n5'
 %                         -cut 50% right and plot 5 equidistant slices                   --> 'cutR50n5'
+%                     [4] "ovl_n#": Equidistant slices within the region boundaries of 'ovl_images'.
+%                         - All 'ovl_images' are loaded, combined, and treated as a mask (values ~= 0).
+%                         - Based on the mask boundaries, n equidistant slices are extracted.
+%                         - Useful for displaying MCAO lesions or large clusters/masks.
+%                         - 5 slices within overlay --> "ovl_n5"
+%                         - 7 slices within overlay --> "ovl_n7"
+%                     [5] "ovledge_n#": Same as "ovl_n#", but the first and last slices are at the exact mask boundaries.
+%                         - The first and last slices may appear empty or contain only a few pixels.
+%                         - 5 slices within overlay (edge-based)  --> "ovledge_n5"
+%                         - 7 slices within overlay (edge-based)  --> "ovledge_n7"
 %
 % 'bg_clim'        background-image: intensity limits [min,max], if [nan nan]..automatically defined
 %                      examples: [0 200 ] or [nan nan]
@@ -102,7 +112,7 @@
 %                   default: [1]
 % 'linecolor'     line color of  of lines in the sliceplot representing the location of the slices
 %                    default:  [1 1 1] (white)
-% 
+%
 % 'outdir'         output-directory, if empty plots/ppt-file is stored in the DIR of the "ovl_images"
 % 'ppt_filename'   powerpoint-filename tha tis created
 %                   example: 'lesion'
@@ -112,11 +122,11 @@
 %                    default: [1]
 % 'makePPT'        make powerpoint-file with image(s) and infos; {0,1}
 %                    default: [1]
-% 'mricroGL'       '<optional> specify fullpath name of MRicroGL-exe/app if not otherwise found 
+% 'mricroGL'       '<optional> specify fullpath name of MRicroGL-exe/app if not otherwise found
 %                  -see MRIcro-installation (above)
-%                   win-example: 'C:\paulprogramme\MRIcroGL3\MRIcroGL.exe';                                       % % <optional> specify fullpath name of MRicroGL-exe/app if not otherwise found (SEE HELP)              
+%                   win-example: 'C:\paulprogramme\MRIcroGL3\MRIcroGL.exe';                                       % % <optional> specify fullpath name of MRicroGL-exe/app if not otherwise found (SEE HELP)
 %                   mac-example: '/Users/klausmaus/MRIcroGL.app
-% 
+%
 %% #wb *** RUN ***
 % xplotslices_mricrogl(1) or  xplotslices_mricrogl    ... open PARAMETER_GUI
 % xplotslices_mricrogl(0,z)             ...NO-GUI,  z is the predefined struct
@@ -258,7 +268,6 @@
 
 function [z]=xplotslices_mricrogl(showgui,x,pa)
 
-% clc
 %===========================================
 %%   PARAMS
 %===========================================
@@ -266,7 +275,6 @@ isExtPath=0; % external path
 if exist('pa')==1 && ~isempty(pa)
     isExtPath=1;
 end
-
 if exist('showgui')==0 || isempty(showgui) ;    showgui=1                ;end
 if exist('x')==0                          ;    x=[]                     ;end
 if isExtPath==0      ;    pa=antcb('getsubjects')  ;end
@@ -276,17 +284,6 @@ if isempty(x) || ~isstruct(x)  ;  %if no params spezified open gui anyway
     showgui  =1   ;
     x=[]          ;
 end
-
-
-% exefile     =fullfile(fileparts(fileparts(fileparts(which('ant.m')))),'mricron','mricron.exe' );
-% if ispc==1
-%     exefile='C:\paulprogramme\MRIcroGL\MRIcroGL.exe';
-% else % mac
-%     exefile='/Applications/MRIcroGL.app/Contents/MacOS/MRIcroGL';
-% end
-
-% exefile=getExecutable();
-
 % ==============================================
 %%   PARAMETER-gui
 % ===============================================
@@ -294,8 +291,6 @@ if exist('x')~=1;        x=[]; end
 palut=(fullfile((fileparts(fileparts(fileparts(which('ant.m'))))),'mricron','MRIcroGL.app/Contents','Resources','lut'));
 htmllist=getclut(palut);
 
-
-% clipboard('copy',['[' regexprep(num2str(80:15:200),'\s+',',') ']'])
 
 viewopt={};
 viewopt(end+1,:)={'coronal'             2 };
@@ -305,7 +300,6 @@ viewopt(end+1,:)={'axial'               3  };
 sliceopt={};
 sliceopt(end+1,:)={'AVGT-coronal:[60,73,86,99,112,125,138]'             [60,73,86,99,112,125,138] };
 sliceopt(end+1,:)={'AVGT-coronal:[80,95,110,125,140,155,170,185,200]'   [80,95,110,125,140,155,170,185,200]   };
-sliceopt(end+1,:)={'AVGT-coronal:[80,95,110,125,140,155,170,185,200]'   [80,95,110,125,140,155,170,185,200]   };
 sliceopt(end+1,:)={'AVGT-coronal:[50,62,74,87,99,111,123,136,148,160]'  [50,62,74,87,99,111,123,136,148,160]   };
 sliceopt(end+1,:)={'AVGT-coronal:[50,83,115,148,180]]'                  [50,83,115,148,180]   };
 sliceopt(end+1,:)={'slices index: from 50 to 150, 6 slices [50:6:150]'        '50:6:150'   };
@@ -314,13 +308,15 @@ sliceopt(end+1,:)={'slices in mm: 0mm,1.1mm,2.135mm,-0.1mm'              '0,1.1,
 sliceopt(end+1,:)={'5 equidistant slices'              'n5'   };
 sliceopt(end+1,:)={'8 equidistant slices'              'n8'   };
 sliceopt(end+1,:)={'10 equidistant slices'             'n10'  };
-sliceopt(end+1,:)={'cut 20% left and right (=40%)  and plot 12 equidistant slices'            'cut40n12'  };
-sliceopt(end+1,:)={'cut 35% left and right (=70%)  and plot 6 equidistant slices'             'cut70n6'  };
-sliceopt(end+1,:)={'cut 45% left and right (=90%)  and plot 6 equidistant slices'             'cut90n6'  };
-
-% exefile     =fullfile(fileparts(fileparts(fileparts(which('ant.m')))),'mricron','mricron.exe' );
-% lutdir=(fullfile(fileparts(exefile),'lut'));
-% [luts] = spm_select('List',lutdir,'.lut'); luts=cellstr(luts);
+sliceopt(end+1,:)={'cut 20% left and right (=40%)  and plot 12 equidistant slices "cut40n12"'        'cut40n12'  };
+sliceopt(end+1,:)={'cut 35% left and right (=70%)  and plot 6 equidistant slices "cut70n6"'          'cut70n6'  };
+sliceopt(end+1,:)={'cut 45% left and right (=90%)  and plot 6 equidistant slices "cut90n6"'          'cut90n6'  };
+sliceopt(end+1,:)={'cut 50% left and plot 6 equidistant slices "cutL90n6"'              'cutL90n6'  };
+sliceopt(end+1,:)={'cut 50% right and plot 6 equidistant slices "cutR90n6"'             'cutR90n6'  };
+sliceopt(end+1,:)={'5 slices within overlay (values~=0), "ovl_n5" (for MCAO)'            'ovl_n5'  };
+sliceopt(end+1,:)={'7 slices within overlay (values~=0), "ovl_n7" (for MCAO)'            'ovl_n7'  };
+sliceopt(end+1,:)={'5 slices within overlay (values~=0), 1st/last slice at the ovl-edge, "ovledge_n5" (for MCAO)'            'ovledge_n5'  };
+sliceopt(end+1,:)={'7 slices within overlay (values~=0), 1st/last slice at the ovl-edge, "ovledge_n7" (for MCAO)'            'ovledge_n7'  };
 
 
 p={
@@ -330,11 +326,11 @@ p={
     'view'         2                'view: [1]sagittal; [2]coronal;[3]axial '   viewopt
     'slices'       '-2.5,-2,1,2.3'  'slices to plot'   sliceopt  %[60,73,86,99,112,125,138]
     'inf1'  '' '' ''
-    'bg_clim'           [50 200 ]        'background-image: intensity limits [min,max], if [nan nan]..automatically defined' {[0 200 ]; [nan nan]}
-    'ovl_cmap'         'NIH_fire.lut'   'overlay-image: colormap ' {'cmap',htmllist}
-    'ovl_clim'          [0 100 ]        'overlay-image: intensity limits [min,max], if [nan nan]..automatically defined' {[0 200 ]; [nan nan]}
-    'opacity'              70          'overlay opacity range: 0-100 '  {0,20,40,50,60,80,100}'
-    'slicelabel'   [0]  'add slice label  (rounded mm); {0|1}'    'b'
+    'bg_clim'          [50 200 ]        'background-image: intensity limits [min,max], if [nan nan]..automatically defined' {[0 200 ]; [nan nan]}
+    'ovl_cmap'         'actc.lut'   'overlay-image: colormap ' {'cmap',htmllist}
+    'ovl_clim'         [0 100 ]         'overlay-image: intensity limits [min,max], if [nan nan]..automatically defined' {[0 200 ]; [nan nan]}
+    'opacity'          70               'overlay opacity range: 0-100 '  {0,20,40,50,60,80,100}'
+    'slicelabel'       [0]              'add slice label  (rounded mm); {0|1}'    'b'
     
     'inf2' '__ROWS & COLUMNS__ ' '' ''
     'nrows'          1    'number of rows to plot; default: 1'         num2cell(1:4)
@@ -369,25 +365,7 @@ p={
     
     };
 % [m z]=paramgui(p,'close',1,'figpos',[0.2 0.4 0.5 0.35],'info',{@uhelp, 'paramgui.m' },'title','GUI-123'); %%START GUI
-%% ====[test]===========================================
-% if 1
-%     cprintf('*[1 0 1]',[ '   TESTDATA'  '\n'] );
-%     pa='F:\data8\mricron_makeSlices_plots';
-%     f1=fullfile(pa,'AVGT.nii');
-%     % f2=fullfile(pa,'MAPpercent_x_masklesion_24h_KO.nii')
-%     [ovl] = spm_select('FPList',pa,'^MAP.*.nii');
-%     ovl=cellstr(ovl);
-%     ovl=ovl(1);
-%     p(find(strcmp(p(:,1),'bg_image')),2)={f1};
-%     p(find(strcmp(p(:,1),'ovl_images')),2)={ovl};
-% end
-%% ===============================================
-
-% NIH_ice.lut'
-
 p=paramadd(p,x);%add/replace parameter
-%     [m z]=paramgui(p,'uiwait',0,'close',0,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .7 .5 ],'title','PARAMETERS: LABELING');
-
 % %% show GUI
 if showgui==1
     [m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.15 .2 .6 .6 ],...
@@ -417,10 +395,6 @@ end
 
 
 %% ===============================================
-
-z_bk=z;
-
-% ==============================================
 %%  proc
 % https://people.cas.sc.edu/rorden/mricron/bat.html
 % ===============================================
@@ -440,8 +414,6 @@ z.outdir     =char(   z.outdir);
 [~, z.ppt_filename] =fileparts(z.ppt_filename);
 if isempty(z.ppt_filename); z.ppt_filename='test123'; end
 
-
-
 global an
 if isempty(an)
     studydir=fileparts(z.ovl_images{1});
@@ -459,12 +431,6 @@ viewtb={...
     'coronal'   3    's'   'c'   'a'
     'sagittal'  2    'c'   'a'   's'
     'axial'     1    's'   'a'   'c'};
-% if isnumeric(z.view)
-%     if z.view==1;     z.view=2;
-%     elseif z.view==2; z.view=1;
-%     end
-% end
-
 if ischar(z.view)
     if ~isempty(find(strcmp(viewtb(:,1),z.view)))
         z.view=viewtb{strcmp(viewtb(:,1),z.view),2};
@@ -476,70 +442,65 @@ end
 viewgl=viewtb{z.view,1}(1);
 % disp(['dim: ' num2str(find(cell2mat(viewtb(:,2))== z.view) )]);
 viewssliceblock=viewtb{  find(cell2mat(viewtb(:,2))== z.view)  ,2+z.sliceplotDim};
-
+% ==============================================
+%%   slice
+% ===============================================
 hb       =spm_vol(z.bg_image);
 [bb vox] =world_bb(z.bg_image);
+orderdim=[2 1 3];  % because 1st and 2nd dim are flipped!
+dim= hb.dim(orderdim);
+bb  =bb(:,orderdim);;
+vox =vox(orderdim);
+clear hb 
 if ischar(z.slices)
     if ~isempty(strfind(z.slices,':'))  %from-to
         eval(['slices=' z.slices ';']);
     elseif ~isempty(strfind(z.slices,'n'))  %n-slices
-        if ~isempty(strfind(z.slices,'cutR'))
-            cut     =str2num(regexprep(z.slices,{'n\d+' ,'\D'},''));
-            numslices=str2num(regexprep(z.slices,{'cutR\d+' ,'\D'},''));
-            cutidx=round((cut*hb.dim/100)); %onesided
-            if z.view==3
-                slices=round(linspace(2,hb.dim([2])-cutidx(2),numslices));
-            elseif z.view==2
-                slices=round(linspace(2,hb.dim([1])-cutidx(1),numslices));
-            elseif z.view==1
-                slices=round(linspace(2,hb.dim([3])-cutidx(3),numslices));
+        if ~isempty(strfind(z.slices,'cut'))
+            %% ===============================================
+            numslices=str2num(regexprep(z.slices,'^.*n',''))
+            cut     =str2num(regexprep(z.slices,{'n\d+' ,'\D'},''))
+            if  ~isempty(strfind(z.slices,'cutL'))
+                cutidx=round((cut*dim/100)); %onesided
+                slices=round(linspace(2,dim([z.view])-cutidx(z.view),numslices));
+            elseif ~isempty(strfind(z.slices,'cutR'))
+                cutidx=round((cut*dim/100)); %onesided
+                slices=round(linspace(2,dim([z.view])-cutidx(z.view),numslices));
+            else
+                cutidx=round((cut*dim/100/2)); %twosided
+                slices=round(linspace(cutidx(z.view),dim([z.view])-cutidx(z.view),numslices)); 
             end
-        elseif ~isempty(strfind(z.slices,'cutL'))
-            cut     =str2num(regexprep(z.slices,{'n\d+' ,'\D'},''));
-            numslices=str2num(regexprep(z.slices,{'cutL\d+' ,'\D'},''));
-            cutidx=round((cut*hb.dim/100)); %onesided
-            if z.view==3
-                slices=round(linspace(cutidx(2),hb.dim([2]),numslices));
-            elseif z.view==2
-                slices=round(linspace(cutidx(1),hb.dim([1]),numslices));
-            elseif z.view==1
-                slices=round(linspace(cutidx(3),hb.dim([3]),numslices));
+        elseif ~isempty(strfind(z.slices,'ovl'))
+            %% ===============================================
+            for i=1:length(z.ovl_images)
+                [ha a]=rgetnii(z.ovl_images{i});
+                if i==1
+                    d=zeros(size(a));
+                end
+                d=d+a;
             end
-        elseif ~isempty(strfind(z.slices,'cut'))
-            cut     =str2num(regexprep(z.slices,{'n\d+' ,'\D'},''));
-            numslices=str2num(regexprep(z.slices,{'cut\d+' ,'\D'},''));
-            cutidx=round((cut*hb.dim/100/2)); %twosided
-            if z.view==3
-                slices=round(linspace(cutidx(2),hb.dim([2])-cutidx(2),numslices));
-            elseif z.view==2
-                slices=round(linspace(cutidx(1),hb.dim([1])-cutidx(1),numslices));
-            elseif z.view==1
-                slices=round(linspace(cutidx(3),hb.dim([3])-cutidx(3),numslices));
+            [rows, cols, sl] = ind2sub(size(d), find(d));% Find indices where the mask is nonzero
+            start_idx = [min(rows), min(cols), min(sl)];% Determine the start and end indices in each dimension
+            end_idx   = [max(rows), max(cols), max(sl)];
+            ss=[start_idx; end_idx]'; % indices when mask start/stops in each dim
+            ss=ss(orderdim,:);
+            numslices=str2double(regexp(z.slices, '_n(\d+)', 'tokens', 'once'));
+            if ~isempty(strfind(z.slices,'ovl_'))
+                numslices=numslices+2; % take two more
             end
-            
+            slices=round(linspace( ss(z.view,1)+1,ss(z.view,2)-1,numslices));
+            if ~isempty(strfind(z.slices,'ovl_'))
+                slices([1 end])=[]; % remove the two which was added
+            end
+            %% ===============================================
         else
             numslices=str2num(strrep(z.slices,'n',''));
-            if z.view==3
-                slices=round(linspace(2,hb.dim([2])-1,numslices));
-            elseif z.view==2
-                slices=round(linspace(2,hb.dim([1])-1,numslices));
-            elseif z.view==1
-                slices=round(linspace(2,hb.dim([3])-1,numslices));
-            end
+            slices=round(linspace(2,dim([z.view])-1,numslices));
         end
     else  % mm-approach
-        
-        slicemm=str2num(z.slices);
-        if z.view==3
-            mm=linspace(bb(1,[2]),bb(2,[2]),hb.dim([2]));
-            slices=vecnearest2(mm, slicemm);
-        elseif z.view==2
-            mm=linspace(bb(1,[1]),bb(2,[1]),hb.dim([1]));
-            slices=vecnearest2(mm, slicemm);
-        elseif z.view==1
-            mm=linspace(bb(1,[3]),bb(2,[3]),hb.dim([3]));
-            slices=vecnearest2(mm, slicemm);
-        end
+        slicemm =str2num(z.slices);
+        mm      =linspace(bb(1,[z.view]),bb(2,[z.view]),dim([z.view]));
+        slices  =vecnearest2(mm, slicemm);
     end
 else
     slices=z.slices ;
@@ -547,50 +508,28 @@ end
 slices=slices(:)';
 
 %get mm-cords
-if z.view==3
-    mm=linspace(bb(1,[2]),bb(2,[2]),hb.dim([2]));
-    slicemm_str=['[' regexprep(num2str(mm(slices)),'\s+',',') ']'];
-    slices_gl=slices./hb.dim([2]);
-elseif z.view==2
-    mm=linspace(bb(1,[1]),bb(2,[1]),hb.dim([1]));
-    slicemm_str=['[' regexprep(num2str(mm(slices)),'\s+',',') ']'];
-    slices_gl=slices./hb.dim([1]);
-elseif z.view==1
-    mm=linspace(bb(1,[2]),bb(2,[2]),hb.dim([2]));
-    slicemm_str=['[' regexprep(num2str(mm(slices)),'\s+',',') ']'];
-    slices_gl=slices./hb.dim([2]);
-end
-
-
-% slices    =regexprep(num2str(z.slices(:)'),'\s+',',');
+mm              =linspace(bb(1,[z.view]),bb(2,[z.view]),dim([z.view]));
+slicemm_str     =['[' regexprep(num2str(mm(slices)),'\s+',',') ']'];
+slices_gl       =slices./dim([z.view]);
 slice_index_str =['[' regexprep(num2str(slices),'\s+',',') ']'];
+slices_insert   =regexprep(num2str(slices),'\s+',',');
+% debug=1;
+% if debug==1
+%     disp(['fov[mm] :[' regexprep(num2str([mm([1 end])]),'\s+',',')  ']'   ]);
+%     disp(bb);
+% end
 
-
-
-
-
+%% ==============================================
+%%   outdir
+%% ===============================================
 outdir=z.outdir;
 outdirplot=fullfile(outdir, [ [z.ppt_filename z.plotdir_suffix]]);
 if exist(outdirplot)~=7; mkdir(outdirplot); end
 delete(fullfile(outdirplot ,'*.png'));
 
-
-%
-% inifilebase =fullfile(fileparts(exefile),'mricron.ini');
-% inifile     =fullfile(outdirplot,'mricron.ini');
-% copyfile(inifilebase,inifile,'f');
-
-
-slices_insert=regexprep(num2str(slices),'\s+',',');
-
-
-
-% lutdir=(fullfile(fileparts(exefile),'lut'));
 lutdir=(fullfile(fileparts(exefile),'Resources','lut'));
 [luts] = spm_select('List',lutdir,'.lut'); luts=cellstr(luts);
-% luttb=[num2cell([1:length(luts)]'-1)  luts];
 cmapname=z.ovl_cmap;
-% cmapnum =find(strcmp(luttb(:,2), cmapname));
 [o o2]=getCMAP(cmapname);
 call='';
 endtag=' &';
@@ -598,18 +537,10 @@ if exist(exefile)==2
     call=[call  exefile  ' '];
 end
 [~,lutname]=fileparts(cmapname);
-
 trans=z.opacity;
-if ~isempty(trans)
-    if trans<=1
-        trans=trans*100;
-    end
-else
-    trans=50;
-end
-% ==============================================
-%%   loop over images
-% ===============================================
+if ~isempty(trans);    if trans<=1;  trans=trans*100;   end
+else                    trans=50; end
+
 ovl=z.ovl_images;
 f1 =z.bg_image;
 sp='';
@@ -638,16 +569,14 @@ else
     end
     slices_gl_str=w;
 end
-%% ===============================================
 
-
-
-
+% ==============================================
+%%   loop over images
+% ===============================================
 pnglist={};
 for i=1:length(ovl)
     f2=ovl{i};
     [~, name,ext]=fileparts(f2);
-    
     if any(isnan(z.bg_clim))
         bglims='';
     else
@@ -659,28 +588,17 @@ for i=1:length(ovl)
         %         ovlims =[ num2str(z.ovl_clim(1)) ',' num2str(z.ovl_clim(2))];
         ovlims =['gl.minmax(1,'  num2str(z.ovl_clim(1)) ',' num2str(z.ovl_clim(2)) ')' ];
     end
-    
-    
-    
-    
-    f4   =fullfile(outdirplot,[ 'p_' pnum(i,2) '_' name  '.png']);
-    ftemp=fullfile(pwd,[ '_temp123'   '.png']);
-    
+    %% ===============================================
+    f4   =fullfile(outdirplot,[ 'p_' pnum(i,2) '_' name  '.png']);   
     cm={['"import gl']
         %['gl.resetdefaults()']
-        ['gl.loadimage('''   f1 ''')']
+        ['gl.loadimage('''     strrep(f1,filesep,[filesep filesep]) ''')']
         %     ['gl.overlayloadsmooth(1)']
-        ['gl.overlayload('''   f2 ''')']
-        %['gl.colorname(2, "actc")' ];
-        %     ['gl.colorname (0,"grayscale")']
+        ['gl.overlayload('''   strrep(f2,filesep,[filesep filesep]) ''')']
         [bglims]
         [ovlims]
-        
-        %         ['gl.minmax(0, 50, 200)']
-        %         ['gl.minmax(1, 2, 70)']
         ['gl.colorname (1,''' lutname ''')']
-        
-        %     ['gl.backcolor(0, 0, 0)']
+        % ['gl.backcolor(0, 0, 0)']
         %['gl.SHADERNAME(''overlay'')']
         ['gl.opacity(1,' num2str(trans) ')']
         %   ['gl.mosaic(''C 20 -50 S 0 20 S X R 0'')']
@@ -689,16 +607,11 @@ for i=1:length(ovl)
         ['gl.mosaic(''' viewgl ' ' slicelabel ' H ' olapp ' V ' rowlapp ' '  slices_gl_str ' '  sp ''')']
         ['gl.linewidth (' num2str(z.linewidth) ')']
         ['gl.linecolor(' linecolStr ')']
-        
         ['gl.colorbarposition(0)']  % 0,1,2
-        
         %  ['gl.colorbarsize(1)']    % single value
-        ['gl.savebmp(''' ftemp ''')']
+        ['gl.savebmp(''' strrep(f4,filesep,[filesep filesep]) ''')']
         [gl_quit]
         };
-    
-    
-    
     % "savebmp('test.png')"
     %   ['gl.mosaic(''C L+ H 0.1 V -0.9 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 S X R 0.5'')']
     % 1st arg, C,S,A vor view
@@ -710,40 +623,13 @@ for i=1:length(ovl)
     % R  -1, or R 1 change from L/R ot S/A -view, back/top
     
     cm2=strjoin(cm,'^');
-    %  cmd=([pa_mricrongl ' -s ''' cm2 ''' &']);
-    %cmd=([exefile ' -s ' cm2 '" &']);
-    cmd=(['"' exefile '"' ' -s ' cm2 '" &']);
-    
-    %     disp(char(cmd))
+    cmd=(['"' exefile '"' ' -S ' cm2 '" &']);
     system(cmd );
-    % gl.mosaic("C 20 -50 S 0 20 S X R 0");
-    
-    % "MRIcroGL -s "import gl|
-    % gl.backcolor(255, 255,255)^gl.loadimage('CT_Abdo')"".
-    % WOrks::
-    % worked=[['C:\paulprogramme\MRIcroGL\MRIcroGL.exe -s "import gl^gl.loadimage(''F:\data8\mricron_makeSlices_plots\AVGT.nii'')"']];
-    % system(['C:\paulprogramme\MRIcroGL\MRIcroGL.exe -s "import gl^gl.loadimage(''F:\data8\mricron_makeSlices_plots\AVGT.nii'')"'])
-    %     % ===============================================
-    fis='';
-    n=0;
-    while exist(fis)~=2
-        [fis] = spm_select('FPList',pwd,'_temp123.png');
-        if isnumeric(fis); fis=''; end
-        n=n+1;
-    end
-    pause(.5);
-    
-    movefile(ftemp, f4,'f');
+    %% ===============================================
+    check_filepermission(f4);
     showinfo2(['png:'],f4);
     pnglist(end+1,1)={f4};
-    %% ===============================================
-    %     if z.closeMricroGL==1
-    %         rcloseMricroGL
-    %     end
-    %% ===============================================
 end
-
-
 
 % ==============================================
 %%   colorbar
@@ -754,7 +640,6 @@ delete(findobj(0,'tag','colorbarTemp'));
 hf=figure('visible','off');
 set(hf,'tag','colorbarTemp');
 set(gcf,'position',[ 585   421   100   189] );
-
 
 ax = axes;
 c = colorbar(ax);
@@ -774,18 +659,14 @@ c.Label.FontSize=z.cbar_fs;
 pos=get(c,'position');
 set(c,'position',[pos(1)-.5 pos(2) pos(3)+0.05 pos(4) ]);
 set(c, 'YAxisLocation','right');
-
-%% ===============================================
-
-set(gca,'units','pixels')
-set(hf,'units','pixels')
+set(gca,'units','pixels');
+set(hf,'units','pixels');
 %% ===============================================
 clear p
 p.bgtransp =0;
 p.saveres  =200;
 p.crop     =0;
 file_legend=fullfile(outdirplot,'legend.png');
-
 if p.bgtransp==1; set(hf,'InvertHardcopy','on' );
 else ;            set(hf,'InvertHardcopy','off');
 end
@@ -828,23 +709,14 @@ end
 close(hf);
 delete(findobj(0,'tag','colorbarTemp'));
 % showinfo2(['saved png(resolution:' num2str(p.saveres)  ')'],file_legend);
-% ===============================================
 
 %% ===============================================
 %%   PPT
 %% ===============================================
-if z.makePPT==1
-    % paout =pa;
-    % paimg =fullfile(pa);
-    % [~, pptname]=fileparts(p.ppt_filename);
-    % if isempty(pptname); pptname='test1'; end
-    % [fis]   = spm_select('FPList',paimg,'p_.*.png');    fis=cellstr(fis);
-    % tx      ={['path: '  paimg ]};
-    
-    
+if z.makePPT==1   
     pptfile =fullfile(outdirplot,[z.ppt_filename '.pptx']);
     titlem  =z.ppt_filename ;%['lesion'  ];
-    fis=pnglist;
+    fis     =pnglist;
     
     nimg_per_page  =6;           %number of images per plot
     imgIDXpage     =unique([1:nimg_per_page:length(fis) length(fis)+1 ]);
@@ -855,8 +727,7 @@ if z.makePPT==1
         tx=cellfun(@(a,b) {[ a b ]},namex,ext);
         [~,namelegend, ext]=fileparts(file_legend);
         tx(end+1,1)={[ namelegend ext ]};
-        
-        
+         
         img2ppt([],img_perslice, pptfile,'doc',doc,...%,'size','A4'
             'crop',0,'gap',[0 0 ],'columns',1,'xy',[0.02 1.5 ],'wh',[ nan 3.5],...
             'title',titlem,'Tha','center','Tfs',25,'Tcol',[0 0 0],'Tbgcol',[0.8706    0.9216    0.9804],...
@@ -865,8 +736,6 @@ if z.makePPT==1
         legendfile={file_legend};
         img2ppt([],legendfile, pptfile,'doc','same',...%,'size','A4'
             'crop',0,'gap',[0 0 ],'columns',1,'xy',[21.5 15 ],'wh',[ 2 nan],'disp',0 );
-        
-        
     end
     %% ===============================================
     [ ~, studyName]=fileparts(studydir);
@@ -879,14 +748,10 @@ if z.makePPT==1
     info(end+1,:)={' '     '  '} ;
     info= plog([],[info],0,'INFO','plotlines=0;al=1');
     %===============================================
-    
     v1=struct('txy', [0 1.5 ], 'tcol', [0 0 0],'tfs',11, 'tbgcol',[0.9843    0.9686    0.9686],...
         'tfn','consolas');
     v1.text=info;
     vs={v1};
-    % paralist= struct2list2(z_bk,'z');
-    % paralist=[{' PARAMETER'}; {'z={};'}; paralist; {[mfilename '(1,z) ;% RUN FUNCTION ']}];
-    
     paralist=batch(max(regexpi2(batch,'^z=\[\];')):end);
     paralist=[{' *** PARAMETER/BATCH ***   '}; paralist ];
     
@@ -948,12 +813,10 @@ num_colors = 256;  % Default number of colors in final colormap
 % Read file line by line
 while ~feof(fid)
     line = strtrim(fgetl(fid));
-    
     % Read the number of nodes (numnodes)
     if strncmp(line, 'numnodes', 8)
         num_nodes = sscanf(line, 'numnodes=%d');
     end
-    
     % Read node intensity indices
     if strncmp(line, 'nodeintensity', 13)
         values = sscanf(line, 'nodeintensity%d=%d');
@@ -962,7 +825,6 @@ while ~feof(fid)
             node_intensities(node_idx) = values(2) + 1;  % Store intensity index
         end
     end
-    
     % Read RGBA values
     if strncmp(line, 'nodergba', 8)
         values = sscanf(line, 'nodergba%d=%d|%d|%d|%d');
@@ -972,18 +834,13 @@ while ~feof(fid)
         end
     end
 end
-
-% Close file
-fclose(fid);
-
+fclose(fid);% Close file
 % Ensure node intensity and RGB values match
 if length(node_intensities) ~= size(rgb_nodes, 1)
     error('Mismatch between node intensities and RGB nodes.');
 end
-
 % Step 1: Create an empty (n,3) colormap
 colorbar_rgb = zeros(num_colors, 3);
-
 % Step 2: Place RGB values at the specified node intensities
 for i = 1:length(node_intensities)
     idx = node_intensities(i); % Get the color index
@@ -991,7 +848,6 @@ for i = 1:length(node_intensities)
         colorbar_rgb(idx, :) = rgb_nodes(i, :);
     end
 end
-
 % Step 3: Interpolate missing colors
 x_original = node_intensities; % Known intensity positions
 x_interp = 1:num_colors; % Full range
@@ -1017,7 +873,6 @@ colorbar_rgb(colorbar_rgb<0)=0;
 %     title('Interpolated Colorbar from CLUT');
 
 function executable=getExecutable()
-
 %% ===============================================
 if ismac
     pagl='/Applications/MRIcroGL.app/Contents/MacOS';
@@ -1065,9 +920,9 @@ elseif ispc
     % search C-drive
     if isempty(pagl)
         disp('..searching drive for "MRIcroGL.exe" ');
-            tic1=tic;
+        tic1=tic;
         exec = findMRIcroGL();
-        if exist(exec)==2   
+        if exist(exec)==2
             pagl=fileparts(exec);
             % This adds the new path temporarily to the current MATLAB session.
             setenv('PATH', [getenv('PATH') [';' pagl]]);
@@ -1151,4 +1006,26 @@ end
 return
 %% ===============================================
 
-
+function check_filepermission(f4)
+max_attempts = 100; % Maximum number of retries
+if ~iscell(f4);     f4=cellstr(f4);end
+for i=1:length(f4)
+    filename     = f4{i};
+    attempt = 0;
+    success = false;
+    while ~success && attempt < max_attempts
+        attempt = attempt + 1;
+        fid = fopen(filename, 'r'); % Try opening the file for reading
+        if fid ~= -1  % If opening succeeds
+            fclose(fid); % Close the file
+            success = true;
+        else
+            pause(0.2); % Wait 200 ms before retrying
+        end
+    end
+    %     if success
+    %         %     disp(['File is ready for reading after ', num2str(attempt), ' attempts!']);
+    %     else
+    %         %     disp('File was not accessible after maximum attempts.');
+    %     end
+end

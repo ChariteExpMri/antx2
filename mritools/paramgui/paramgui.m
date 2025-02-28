@@ -521,6 +521,17 @@ end
 
 
 if size(qw,2)>2
+    
+    % Find unique words and their counts
+    [uniqueWords, ~, idx] = unique(qw(:,1));
+    counts = accumarray(idx, 1);
+    % Find words that appear more than once
+    duplicates = uniqueWords(counts > 1);
+    if ~isempty(duplicates)
+        cprintf('*[1 0 1]',['DOUPLICATES FOUND: "' strjoin(duplicates,'","') '"\n']);
+        error(['fieldnames appear more than once!!! ' ]);
+    end
+    
     idinfo=regexpi2(qw2(:,1),'^\w');
     info=repmat({''},size(qw2,1), 1);
     info(idinfo)= cellfun(@(a) {[ '% '  a]},qw(:,3));
@@ -4095,9 +4106,14 @@ iv1=regexpi2(tx3,tb{1});
 icmd=regexpi2(tx3,'^x.\w.*=');
 iv2=min(icmd(find(icmd>iv1)));
 if ~isempty(iv2)
-tx3(iv1+1:iv2-1)=[];
+    idel=[iv1+1:iv2-1];
+    del=regexprep(tx3(idel),'\s+',''); % beware of removing empty-lines
+    idel(regexpi2(del,'^%'))=[];
+    idel(find(cellfun(@isempty,del)))=[]; % beware of removing comment-lines
+    tx3(idel)=[];
+    % tx3(iv1+1:iv2-1)=[];
 else
- tx3(iv1+1:end)=[];   
+    tx3(iv1+1:end)=[];
 end
 
 
