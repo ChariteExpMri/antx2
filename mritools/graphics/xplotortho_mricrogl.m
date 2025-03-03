@@ -1,6 +1,6 @@
 
 % PLOT ORTHOVIEW OVERLAYS USING MRicroGL
-% #r this function is *** OS-INDEPENDENT
+% #r This function supports Windows and macOS. Unix/Linux support is not yet implemented.
 %
 %% #wb *** MRICROGL-INSTALLATION ***
 % #r IMPORTANT - MRicroGL must be installed before using this function
