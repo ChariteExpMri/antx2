@@ -1,6 +1,6 @@
 
 % PLOT SLICE OVERLAYS USING MRICRON
-% *** WINDOWS ONLY ***
+% This function supports Windows onlyS.
 %
 %% #wb *** PARAMETERS ***
 %     'bg_image'      Background image. If empty, "AVGT.nii" from the template folder is used.
