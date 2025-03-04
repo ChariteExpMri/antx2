@@ -13,6 +13,9 @@
 % #b OUTPUT: #n The output is one EXCELFILE containing sheets for each paramter.
 %            each column contains the data for one of the selected animals
 % #m The output (excelfile) can be analyzed with MENU/STATISTIC/"label based statistic"
+% 
+% #r When 'file' contains binary masks (0|1): please set 'minTreshold' to 0.5 or 1
+% 
 %
 % #r -----------------------------------------------------------
 % #r CURRENTLY ONY PROVIDED FOR IMAGES/MASKS IN STANDARD-SPACE
@@ -104,9 +107,9 @@ outdir=fullfile(fileparts(an.datpath),'results');
 
 p={...
     
-'file'      ''        'images used to extract paramters' ,  {@selectfile,v,'single'} ;%'mf'
-'masks'      {}       'select one/several masks to apply on the image', {@selectfileMask,v,'multi'} % ,'mf' ...
-'minTreshold'        []   'minimum threshold image value' {0:5}
+'file'      ''            'images used to extract paramters' ,  {@selectfile,v,'single'} ;%'mf'
+'masks'      {}           'select one/several masks to apply on the image', {@selectfileMask,v,'multi'} % ,'mf' ...
+'minTreshold'        []   'minimum threshold image value, values below are not considered; for binary masks use [1]' {0:5}
 'minTresholdReplace' nan  'values below "minTreshold" will be replaced by this value or removed if field is empty' {nan 0 []}
 'maxTreshold'        []   'maximum threshold image value' {5:15}
 'maxTresholdReplace' []   'values above "maxTreshold" will be replaced by this value or removed if field is empty' {5 10 []}
@@ -302,8 +305,8 @@ if isempty(pam) % no paths in the mask--->mask located in the animal path
                 sd   =std(v);
                 med  =median(v);
                 %inde = vol.*me ; %integrated density
-                %inde = sum(v); % integrated density --not correct
-                inde = abs(det(ha.mat(1:3,1:3)))*sum(v); %integrated density
+                inde = sum(v); % integrated density --philipp's approach 
+                %inde = abs(det(ha.mat(1:3,1:3)))*sum(v); %integrated density 
                 
                 mi   =min(v);  if isempty(mi); mi=0; end
                 ma   =max(v);  if isempty(ma); ma=0; end
@@ -470,7 +473,7 @@ else
     
     
     %% [3] get images ===============================================
-     if ischar(x.file);        x.file=cellstr(x.file) ;     end
+     if ischar(z.file);        z.file=cellstr(z.file) ;     end
 
     
     mdir=antcb('getsubjects');
@@ -481,7 +484,7 @@ else
     errIDX=[];
     for m=1:length(mdir)
         try
-            f1=fullfile(mdir{m},x.file{1} );
+            f1=fullfile(mdir{m},z.file{1} );
             [~,animal]=fileparts(mdir{m});
             
             %--------
@@ -546,8 +549,8 @@ else
                 sd   =std(v);
                 med  =median(v);
                 %inde = vol.*me ; %integrated density
-                %inde = sum(v); % integrated density --not correct
-                inde = abs(det(ha.mat(1:3,1:3)))*sum(v); %integrated density 
+                inde = sum(v); % integrated density --philipp's approach 
+                %inde = abs(det(ha.mat(1:3,1:3)))*sum(v); %integrated density 
                 
                 mi   =min(v);  if isempty(mi); mi=0; end
                 ma   =max(v);  if isempty(ma); ma=0; end
