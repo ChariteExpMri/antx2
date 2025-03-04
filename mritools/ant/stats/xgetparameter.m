@@ -302,7 +302,8 @@ if isempty(pam) % no paths in the mask--->mask located in the animal path
                 sd   =std(v);
                 med  =median(v);
                 %inde = vol.*me ; %integrated density
-                inde = sum(v); % integrated density --new
+                %inde = sum(v); % integrated density --not correct
+                inde = abs(det(ha.mat(1:3,1:3)))*sum(v); %integrated density
                 
                 mi   =min(v);  if isempty(mi); mi=0; end
                 ma   =max(v);  if isempty(ma); ma=0; end
@@ -545,7 +546,8 @@ else
                 sd   =std(v);
                 med  =median(v);
                 %inde = vol.*me ; %integrated density
-                inde = sum(v); % integrated density --new
+                %inde = sum(v); % integrated density --not correct
+                inde = abs(det(ha.mat(1:3,1:3)))*sum(v); %integrated density 
                 
                 mi   =min(v);  if isempty(mi); mi=0; end
                 ma   =max(v);  if isempty(ma); ma=0; end
