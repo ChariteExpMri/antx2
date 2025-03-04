@@ -924,7 +924,7 @@ hfig=findobj(0,'tag','stat');
 if isfield(in,'data');     getdatafile([],[],in.data) ; end
 if isfield(in,'dataSheet');
     hh=findobj(hfig,'tag','popdatasheet');
-    set(hh,'value',  regexpi2(get(hh,'string'),in.dataSheet));
+    set(hh,'value',  find(strcmp(get(hh,'string'),in.dataSheet)));
     hgfeval( get(hh,'callback')  ,hh);
 end
 if isfield(in,'aux');     getauxfile([],[],in.aux) ; end
