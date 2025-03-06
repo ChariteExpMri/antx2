@@ -30,9 +30,9 @@
 %% ---PLOT OPTIONS---'
 % 'OR_cmap'       used colormap of overlay, ie. to plot the OddsRatio-map; example: 'NIH_ice.lut'  or 'jet'
 % 'OR_range'      intensity range of OddsRatio-map for plotting; 2 values [min max]; example:[3 20]
-% 'plot_uncorrected' additionally create+display the uncorrected image; {0|1} 
+% 'plot_uncorrected' additionally create+display the uncorrected image; {0|1}
 %                   default: [1]
-% 
+%
 %% OUTPUT-variables
 % [z2]      : struct with variables to rerun this function
 % 2nd output: optional, output-path were ppt and 'plots'-dir is located (same as inputpath 'dir')
@@ -49,30 +49,30 @@
 % defualt result-dir as upper-dir, use union of all mask to obtain data, high-threshold p<0.05, and bock-sample approach
 % with blocksize of 5, 5000 permutation, use parfor, if signif clusters found report the first 3 with max. distance of 2mm
 % for plotting use colormap 'isoFuchsia'. Addionally create and add in powerpoint the uncorrected image with cmap 'winterFLIP'
-%     z=[];                                                                                                                                                                                                         
-%     z.image                = 'x_c_angiomask.nii';                                                       % % binary image to make statistic on                                                                     
-%     z.groupfile            = 'F:\data8\2024_Stefanie_ORC1_24h_postMCAO\animal_groups_24hMCAO.xlsx';     % % groupfile(excelfile) with animmals and group                                                          
-%     z.atlas                = '';              % % nifti-atlas, if empty the default template-atlas is used                                              
-%     z.outdir               = '';              % % output-dir, if empty the default results-folder is used as upper-dir                                  
-%     z.suffix               = '';              % % add suffix-string to final output-dir                                                                 
-%     z.useUnionMask         = [1];             % % [1] use union of all image-files as mask, [0] use AVGTmask from templates-dir                         
-%     z.hthresh              = [0.05];          % % high-threshold such as 0.05                                                                           
+%     z=[];
+%     z.image                = 'x_c_angiomask.nii';                                                       % % binary image to make statistic on
+%     z.groupfile            = 'F:\data8\2024_Stefanie_ORC1_24h_postMCAO\animal_groups_24hMCAO.xlsx';     % % groupfile(excelfile) with animmals and group
+%     z.atlas                = '';              % % nifti-atlas, if empty the default template-atlas is used
+%     z.outdir               = '';              % % output-dir, if empty the default results-folder is used as upper-dir
+%     z.suffix               = '';              % % add suffix-string to final output-dir
+%     z.useUnionMask         = [1];             % % [1] use union of all image-files as mask, [0] use AVGTmask from templates-dir
+%     z.hthresh              = [0.05];          % % high-threshold such as 0.05
 %     z.blocksize            = [5];             % % if value above 0: use block-shuffling approach(less conservative) with this blocksize, must be integer
-%     z.nperms               = [5000];          % % number of permutations                                                                                
-%     z.isparfor             = [1];             % % use pararellel processing {0|1} ; default: [1]  
+%     z.nperms               = [5000];          % % number of permutations
+%     z.isparfor             = [1];             % % use pararellel processing {0|1} ; default: [1]
 %     % %  ---CLUSTER-PEAKS---
-%     z.CLpeak_num           = [3];             % % number of peaks per signif. cluster to report                                                         
-%     z.CLpeak_dist          = [2];             % % minimum distance between clusterPeaks                                                                 
+%     z.CLpeak_num           = [3];             % % number of peaks per signif. cluster to report
+%     z.CLpeak_dist          = [2];             % % minimum distance between clusterPeaks
 %     % ---PLOT OPTIONS---
-%     z.OR_cmap              = 'isoFuchsia';    % % used colormap of overlay, ie. to plot the OddsRatio-map                                               
-%     z.OR_range             = [1  5];          % % intensity range of OddsRatio-map for plotting                                                         
-%     z.plot_uncorrected     = [1];             % % additionally create+display the uncorrected image                                                     
-%     z.OR_cmap_uncorrected  = 'winterFLIP';    % % uncorrected image: colormap of overlay for plotting                                                   
-%     z.OR_range_uncorrected = [1  5];          % % uncorrected image: intensity range for plotting                                                       
-%     xstat_chisquare(1,z);                                                                                                                                                                                         
-%                         
-% 
-% 
+%     z.OR_cmap              = 'isoFuchsia';    % % used colormap of overlay, ie. to plot the OddsRatio-map
+%     z.OR_range             = [1  5];          % % intensity range of OddsRatio-map for plotting
+%     z.plot_uncorrected     = [1];             % % additionally create+display the uncorrected image
+%     z.OR_cmap_uncorrected  = 'winterFLIP';    % % uncorrected image: colormap of overlay for plotting
+%     z.OR_range_uncorrected = [1  5];          % % uncorrected image: intensity range for plotting
+%     xstat_chisquare(1,z);
+%
+%
+%
 
 
 function [z varargout]=xstat_chisquare(showgui,x,pa)
@@ -139,7 +139,7 @@ p={...
     'plot_uncorrected'       1             'additionally create+display the uncorrected image' 'b'
     'OR_cmap_uncorrected'   'winterFLIP'   'uncorrected image: colormap of overlay for plotting'       {'cmap',{}}
     'OR_range_uncorrected'  [1 5]          'uncorrected image: intensity range for plotting'   {[1 5];[0 20]; [3 20]}
-
+    
     };
 % NIH_ice.lut'
 
@@ -541,38 +541,40 @@ for c=combs2analyize;
         end
         %uhelp(plog([],[ t1 ],0,'paired ttest , maually calc'),1)
         
-    end
-    
-    %% ===[save oddsRatio image]============================================
-    
-    %---oddsRatio
-    %nameout2=['s_' pnum(c,2) '_' compStr2  '_oddsR_' filenameShort ''   '.nii' ];
-    nameout2=strrep(nameout,'_oddsR_SIGNIF_','_oddsR_UNCOR_');
-    Fo1=fullfile(paout,nameout2);
-    rsavenii(Fo1, hm,reshape(OR2,hm.dim));
-    showinfo2([ 'img_OR' ] ,avgtfile,Fo1,13);
-    
-    % ==============================================
-    %%   save info
-    % ===============================================
-    
-    
-    v={};
-    v={...
-        ['comp-index: ' num2str(c)]
-        ['comparison: ' compStr1]
-        ['file: '    file]
-        ['test: '  'chi-square']
-        ['nperms: '  num2str(nperms)]
-        ['blocksize: ' num2str(blocksize)]
-        ['hthresh: '  num2str(hthresh)]
         
-        ['expected clustersize: ' num2str(cluster_size_threshold)]
-        ['survived clusters: '    num2str(length(ic))]
-        };
-    
-    t2=[];
-    if ~isempty(ic)
+        
+        %% ===[save oddsRatio image]============================================
+        
+        %---oddsRatio
+        %nameout2=['s_' pnum(c,2) '_' compStr2  '_oddsR_' filenameShort ''   '.nii' ];
+        nameout2=strrep(nameout,'_oddsR_SIGNIF_','_oddsR_UNCOR_');
+        Fo1=fullfile(paout,nameout2);
+        rsavenii(Fo1, hm,reshape(OR2,hm.dim));
+        showinfo2([ 'img_OR' ] ,avgtfile,Fo1,13);
+        
+        % ==============================================
+        %%   save info
+        % ===============================================
+        
+        
+        v={};
+        v={...
+            ['comp-index: ' num2str(c)]
+            ['comparison: ' compStr1]
+            ['file: '    file]
+            ['test: '  'chi-square']
+            ['nperms: '  num2str(nperms)]
+            ['blocksize: ' num2str(blocksize)]
+            ['hthresh: '  num2str(hthresh)]
+            
+            ['expected clustersize: ' num2str(cluster_size_threshold)]
+            ['survived clusters: '    num2str(length(ic))]
+            };
+        
+        t2=[];
+        
+        
+        
         vc= ['survived clustersSizes: '...
             regexprep(strjoin(cellstr(num2str(sort(unique(t1(:,2)),'descend'))),','),'\s+','')];
         
@@ -612,66 +614,66 @@ for c=combs2analyize;
         v=[v; vc];
         
         
+        
+        
+        iw1=find(animalvec==0);
+        iw2=find(animalvec==1);
+        va={['']
+            ['#GROUP-INFO: ']
+            [ 'group-1 : ' comp{1} '  (n=' num2str(group.n(1)) ')']
+            [ 'group-2 : ' comp{2} '  (n=' num2str(group.n(2)) ')']
+            [ 'missings: n=' num2str(size(group.missdata,1)) ]
+            ['']};
+        
+        v1={' '};
+        v1{end+1,1}=[ comp{1} '-ANIMALS (grp1, n=' num2str(group.n(1)) ')' ];
+        v1=[v1; cellfun(@(a){ [ '    ' a]} ,group.animals{1})];
+        v1{end+1,1}=' ';
+        v1{end+1,1}=[ comp{2} '-ANIMALS (grp2, n=' num2str(group.n(2)) ')' ];
+        v1=[ v1; cellfun(@(a){ [ '    ' a]} ,group.animals{2})];
+        v1{end+1,1}=' ';
+        
+        v1{end+1,1}=[ 'missing data (' num2str(size(group.missdata,1)) ')' ];
+        dum={'none'};
+        if size(group.missdata,1)>0
+            dum=plog([],[group.hmissdata; group.missdata],0,'','plotlines=0;al=1');
+        end
+        v1=[ v1; dum];
+        
+        paras=z;
+        paras.atlas  =Fatlas;
+        paras.outdir =paout;
+        paralist=struct2list2(paras,'z');
+        v1=[ v1;' '; '***PARAMETER***' ;paralist];
+        
+        v1=[ v1;' '; '***BATCH***' ;batch(max(regexpi2(batch,'z=\[\];')):end)];
+        
+        vs={''
+            ['#GOLBAL-INFO: ']
+            ['study: ' pastudy]
+            ['date: ' datestr(now)]
+            ['caller: ' mfilename]
+            };
+        
+        v=[v; va; v1; vs];
+        %     nameout=['s_' pnum(c,2) '_' compStr2  '_oddsR_' filenameShort ''   '.txt' ];
+        %     Fo2=fullfile(paout,nameout);
+        %pwrite2file(Fo2,v);
+        %showinfo2([ 'txtFile' ] ,Fo2);
+        
+        %uhelp(plog([],[ v ],0,'','al=1'),1)
+        
+        %% ===[write excelfile]============================================
+        
+        %nameout3=['s_' pnum(c,2) '_' compStr2  '_oddsR_' filenameShort ''   '.xlsx' ];
+        nameout3=regexprep(nameout,'.nii$','.xlsx');
+        Fo3=fullfile(paout,nameout3);
+        pwrite2excel(Fo3,{1 'info'}   , {'info'},[],v);
+        if ~isempty(t2)
+            pwrite2excel(Fo3,{2 'cluster'}, ht2,[],t2);
+            showinfo2([ 'xlsfile' ] ,Fo3);
+        end
     end
-    
-    iw1=find(animalvec==0);
-    iw2=find(animalvec==1);
-    va={['']
-        ['#GROUP-INFO: ']
-        [ 'group-1 : ' comp{1} '  (n=' num2str(group.n(1)) ')']
-        [ 'group-2 : ' comp{2} '  (n=' num2str(group.n(2)) ')']
-        [ 'missings: n=' num2str(size(group.missdata,1)) ]
-        ['']};
-    
-    v1={' '};
-    v1{end+1,1}=[ comp{1} '-ANIMALS (grp1, n=' num2str(group.n(1)) ')' ];
-    v1=[v1; cellfun(@(a){ [ '    ' a]} ,group.animals{1})];
-    v1{end+1,1}=' ';
-    v1{end+1,1}=[ comp{2} '-ANIMALS (grp2, n=' num2str(group.n(2)) ')' ];
-    v1=[ v1; cellfun(@(a){ [ '    ' a]} ,group.animals{2})];
-    v1{end+1,1}=' ';
-    
-    v1{end+1,1}=[ 'missing data (' num2str(size(group.missdata,1)) ')' ];
-    dum={'none'};
-    if size(group.missdata,1)>0
-        dum=plog([],[group.hmissdata; group.missdata],0,'','plotlines=0;al=1');
-    end
-    v1=[ v1; dum];
-    
-    paras=z;
-    paras.atlas  =Fatlas;
-    paras.outdir =paout;
-    paralist=struct2list2(paras,'z');
-    v1=[ v1;' '; '***PARAMETER***' ;paralist];
-    
-    v1=[ v1;' '; '***BATCH***' ;batch(max(regexpi2(batch,'z=\[\];')):end)];
-    
-    vs={''
-        ['#GOLBAL-INFO: ']
-        ['study: ' pastudy]
-        ['date: ' datestr(now)]
-        ['caller: ' mfilename]
-        };
-    
-    v=[v; va; v1; vs];
-    %     nameout=['s_' pnum(c,2) '_' compStr2  '_oddsR_' filenameShort ''   '.txt' ];
-    %     Fo2=fullfile(paout,nameout);
-    %pwrite2file(Fo2,v);
-    %showinfo2([ 'txtFile' ] ,Fo2);
-    
-    %uhelp(plog([],[ v ],0,'','al=1'),1)
-    
-    %% ===[write excelfile]============================================
-    
-    %nameout3=['s_' pnum(c,2) '_' compStr2  '_oddsR_' filenameShort ''   '.xlsx' ];
-    nameout3=regexprep(nameout,'.nii$','.xlsx');
-    Fo3=fullfile(paout,nameout3);
-    pwrite2excel(Fo3,{1 'info'}   , {'info'},[],v);
-    if ~isempty(t2)
-        pwrite2excel(Fo3,{2 'cluster'}, ht2,[],t2);
-        showinfo2([ 'xlsfile' ] ,Fo3);
-    end
-    
     %% ===============================================
     fprintf([' Done! (%2.1fmin, %dperms) \n'], toc(timex)/60,nperms);
     %% ===============================================
@@ -919,7 +921,7 @@ for j=1:length(co)
         png(cellfun(@isempty,png))=[]; % remove empties..this is the case when no uncorrected files are created
         pngFP   =stradd(png,[paoutplot filesep],1);
         pnglist =[{'Files:'}; png];
-
+        
         condName=regexprep(co{j},{'__lt__','__gt__' },{'<', '>'});
         info2= plog([],[hb3;x3],0,'Contrast','plotlines=0;al=1;');
         v2=struct('txy', [0.01 16 ], 'tcol', [0 0 0],'tfs',8, ...
