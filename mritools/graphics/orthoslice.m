@@ -823,7 +823,6 @@ elseif strcmp(item,'cmap')   || strcmp(item,'clims')  || strcmp(item,'thresh') |
             set(hba,'cdata', map3);
             set(hba,'ydata' ,lims);
             set(hc,'ylim'   ,lims);
-         
         
         
         
@@ -2825,10 +2824,12 @@ ds=cellfun(@(a) {[  regexprep(num2str(sign(a)),{'-1','1','0'},{'-','+','0'})  re
 % dm=cell2mat(cellfun(@(a) {[ double(a) ]},ds))
 ndecim=p.mcbardecimals;
 for i=1:size(ds{1,1},2)-1
-    ndiffnumbers=length(unique(cellfun(@(a) {[ a(1:1+i) ]},ds)));
+    ndiffnumbers=length(   unique(cellfun(@(a) {[ a(1:1+i) ]},ds))    );
     if length(d)==ndiffnumbers
-        ndecim=i+1;
+        ndecim=ndecim+i-1;
        break 
+    else
+        
     end
     
 end

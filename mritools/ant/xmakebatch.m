@@ -8,6 +8,8 @@ function varargout=xmakebatch(z,p, callerfile,execCMD,mdirs)
 %          default: empty to obtain following execution command: dummy(1,z);
 %            with: -1st arg: 0/1 to show the gui
 %                  -2nd art: the struct with paramter
+% varargout{1}: complete history (anth)
+% varargout{2}: current function (+settings)
 
 if isempty(callerfile)
    hlp='';  
@@ -144,6 +146,5 @@ end
 v=[v; hh; {'                '}];
 assignin('base','anth',v);
 
-if nargout==1
-    varargout{1}=v;
-end
+if nargout==1 ;    varargout{1}=v ;end
+if nargout==2 ;    varargout{2}=hh;end

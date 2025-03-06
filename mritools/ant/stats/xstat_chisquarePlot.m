@@ -58,6 +58,23 @@
 % z.usebrainmask  = [0];                           % % use brainMask to get rid off outerbrain activity {0|1}
 % xstat_chisquarePlot(0,z);
 % 
+%% ===EXAMPLE: WITH TWO OVERLAYS ============================================
+% other colors and colorlimits
+% pares='F:\data8\2024_Stefanie_ORC1_24h_postMCAO\results\stat_x_c_angiomask_blk5_p0.05';
+% z=[];
+% z.numOverlays   = [2];         % % number of overlays, {1 or 2}
+% z.dir           = pares;       % % folder with chisquareResults
+% z.suffix        = '_ovl2';     % % add suffix to powerpoint to not overwrite previous files
+% z.alpha         = [1  .8  1];  % % transparency [images:1,2,3]
+% z.cbarvisible   = [0  1  0];   % % colorbar visibility  [images:1,2,3]
+% z.clim          = [0 200; 1 3; 0 3];                         % % color-limits, [images:1,2,3]:[[min max];[min max];[min max]]
+% z.cmap          = { 'gray' 	'winter' 	'isoFuchsia' };    % % colormaps, [images:1,2,3] see: dummyColormap
+% z.mbarlabel     = { '' 'OR' '' };                % % cbarlabels, [images:1,2,3]
+% z.mcbarticks    = [2];                           % % number of ticks in barlabel
+% z.visible       = [1  1  1];                     % % image visibility,[images:1,2,3]
+% z.usebrainmask  = [0];                           % % use brainMask to get rid off outerbrain activity {0|1}
+% xstat_chisquarePlot(0,z);
+% 
 %% ===EXAMPLE: WITH ONE OVERLAY ============================================
 % displax only structural BG-image (using gray-cmap) and map of signif. clusters (cool-cmap)
 % 
@@ -83,50 +100,8 @@
 
 
 function [z varargout] = xstat_chisquarePlot(showgui,x)
+
 warning off;
-
-
-if 0
-    
-    %% ===[ plot with 1ovl]============================================
-    z=[];
-    z.numOverlays   = [1];                                                                                                             % % number of overlays, {1 or 2}
-    z.dir           = 'H:\Daten-2\Imaging\AG_Harms\2024_Stefanie_ORC1\24h_postMCAO\results\TESTER__stat_x_c_angiomask_blk5_p0.05';     % % folder with chisquareResults
-    z.suffix        = '_oneOverlay';                                                                                                        % % add suffix to powerpoint to not overwrite previous files
-    z.alpha         = [1  1];                                                                                                          % % transparency, [img1,img2]
-    z.cbarvisible   = [0  1];                                                                                                          % % colorbar visibility,  [img1, img2]
-    z.clim          = [          0        200                                                                                          % % color-limits, img1&img2: [[min max];[min max]]
-        2          5  ];
-    z.cmap          = { 'gray' 	'cool' };                                                                                               % % colormaps,    img1&img2 see: dummyColormap
-    z.mbarlabel     = { '' 	'OR' };                                                                                                  % % cbarlabels,   img1&img2
-    z.mcbarticks    = [2];                                                                                                             % % number of ticks in colorbar
-    z.visible       = [1  1];                                                                                                          % % image visibility, [img1, img2]
-    z.usebrainmask  = [1];                                                                                                             % % use brainMask to get rid off outerbrain activity {0|1}
-    z.dummyColormap = 'cool';                                                                                                          % % get colormap for visualization--> enter in "cmap"
-    xstat_chisquarePlot(0,z);
-    %% ===[ plot with 2ovls]============================================
-    z=[];
-    z.numOverlays   = [2];                                                                                                             % % number of overlays, {1 or 2}
-    z.dir           = 'H:\Daten-2\Imaging\AG_Harms\2024_Stefanie_ORC1\24h_postMCAO\results\TESTER__stat_x_c_angiomask_blk5_p0.05';     % % folder with chisquareResults
-    z.suffix        = '_ovl2';                                                                                                        % % add suffix to powerpoint to not overwrite previous files
-    z.alpha         = [1  1  1];                                                                                                       % % transparency [images:1,2,3]
-    z.cbarvisible   = [0  1  0];                                                                                                       % % colorbar visibility  [images:1,2,3]
-    z.clim          = [          0        200                                                                                          % % color-limits, [images:1,2,3]:[[min max];[min max];[min max]]
-        0         2
-        0          3  ];
-    z.cmap          = { 'gray' 	'Reds' 	'isoLime'  }; % 'isoFuchsia'    'isoBlue'                                                                  % % colormaps, [images:1,2,3] see: dummyColormap
-    z.mbarlabel     = { '' 	'OR' 	'' };                                                                                        % % cbarlabels, [images:1,2,3]
-    z.mcbarticks    = [2];                                                                                                             % % number of ticks in barlabel
-    z.visible       = [1  1  1];                                                                                                       % % image visibility,[images:1,2,3]
-    z.usebrainmask  = [0];                                                                                                             % % use brainMask to get rid off outerbrain activity {0|1}
-    z.dummyColormap = 'isoFuchsia';                                                                                                    % % get colormap for visualization--> enter in "cmap"
-    xstat_chisquarePlot(1,z);
-    %% ===============================================
-    
-end
-
-%====================================================================================================
-
 if exist('showgui')~=1;  showgui=1; end
 if exist('x')~=1;        x=[]; end
 if isempty(x); showgui=1; end
@@ -180,11 +155,11 @@ else
 end
 
 disp('..read mask-based paramter from images..');
-xmakebatch(z,p, mfilename); % ## BATCH
+[qq,batch]=xmakebatch(z,p, mfilename); % ## BATCH
 
 %% ==[run stuff]=======================================
 
-[varargout{1:nargout-1}]=proc(z);
+[varargout{1:nargout-1}]=proc(z,batch);
 
 
 % ==============================================
@@ -194,7 +169,7 @@ xmakebatch(z,p, mfilename); % ## BATCH
 % ==============================================
 %%   func proc
 % ===============================================
-function varargout=proc(z0)
+function varargout=proc(z0,batch)
 warning off
 clc
 %% ======[extract values]=========================================
@@ -227,8 +202,15 @@ timex=tic;
 % ==============================================
 %%   make plots
 % ===============================================
-[fi_nii] = spm_select('FPList',paout,'^s_.*_signif.*.nii');
-if isempty(fi_nii); return; end
+% [fi_nii] = spm_select('FPList',paout,'^s_.*_signif.*.nii')
+[fi_nii] = spm_select('FPList',paout,'^s_.*_signif.*.nii|^s_.*_SIGNIF.*.nii');
+
+
+
+if isempty(fi_nii); 
+    disp(['..no NIFTIs found in: ' paout ]);
+    return;
+end
 fi_nii=cellstr(fi_nii);
 
 paoutplot=fullfile(paout,'plots');
@@ -240,7 +222,7 @@ if exist(paoutplot)~=7; mkdir(paoutplot); end
 name=regexprep(dum,{'\[' '\]','_signif'},{''});
 fi_xls=(cellfun(@(a){ [ paout filesep a '.xlsx']} ,name)); % XLS-files
 
-plotpeaks='first' ; %'first' or 'all'
+% plotpeaks='first' ; %'first' or 'all'
 plotpeaks='all' ; %'first' or all
 
 
@@ -332,8 +314,12 @@ for i=1:length(fi_xls)
             
         else
             %% ===============================================
-            
-            img1=regexprep(fi_nii{i},{'_signif','\]','\['},{''}) ;
+            if ~isempty(strfind(fi_nii{i},'_signif'))
+                img1=regexprep(fi_nii{i},{'_signif','\]','\['},{''}) ;%old version
+            else
+                img1=   regexprep(fi_nii{i},'_SIGNIF_','_UNCOR_')  ; %newer version
+            end
+                
             cf;
             ce=cell2mat(b(j,c_x:c_x+2));
             files={z.avgtfile img1  fi_nii{i}  };
@@ -413,7 +399,10 @@ v2=struct('txy', [0.5 6 ], 'tcol', [0 0 0],'tfs',8, ...
     'tbgcol',[1    0.96    0.92],  'tfn','consolas');
 v2.text=info2;
 
-plotparar=struct2list2(r,'r');
+
+% plotparameter via batch
+plotparar=batch(min(regexpi2(batch,'^\s*z\s*=\s*\[\s*\];\s*')): end);
+% plotparar=struct2list2(r,'r');
 plotparar=regexprep(plotparar,'^\s+',repmat(char(9),[1 3]));
 % info2= plog([],[{'PLOT PARAMETER'};plotparar],0,'','plotlines=0;al=1;');
 plotparar=[{'PLOT PARAMETER'}; plotparar];
@@ -435,13 +424,14 @@ img2ppt(paout,[], pptfile2,'doc','new',...
 %% ===============================================
 
 % ======[make all other slides]=========================================
-[fiplotFP] = spm_select('FPList',paoutplot,'^p.*.png');
-fiplotFP=cellstr(fiplotFP);
-[fiplot] = spm_select('List',paoutplot,'^p.*.png');
-if isempty(fiplot); return; end
-fiplot=cellstr(fiplot);
-condshort=regexprep(fiplot,{'_oddsR.*' ,'p\d\d_s_\d\d_'},{''});
-uni_condshort=unique(condshort,'stable');
+% [fiplotFP] = spm_select('FPList',paoutplot,'^p.*.png');fiplotFP=cellstr(fiplotFP);
+
+% get only signif. plots (without the uncorrected plots)
+[fiplotFP] = spm_select('FPList',paoutplot,'^p(?!.*_UNCOR_).*\.png$');fiplotFP=cellstr(fiplotFP);
+fiplot     = cellfun(@(x) x(max(strfind(x, filesep))+1:end), fiplotFP, 'UniformOutput', false);
+
+condshort     =regexprep(fiplot,{'_oddsR.*' ,'p\d\d_s_\d\d_'},{''});
+uni_condshort =unique(condshort,'stable');
 
 % ===[2nd slide: add table]============================================
 condshortHR=regexprep(condshort,{'__lt__','__gt__' },{'<', '>'});
@@ -556,9 +546,9 @@ bl2(end+1,:)={['<empty> & "overlapp [%]" "sign."' ]  {''        'overlapp [%]' '
 if isempty(x) ||  x.numOverlays==1
     p={
         'numOverlays'     1                       'number of overlays, {1 or 2}'     {@numOverlays,x0}
-        'alpha'          [1  0.7]                 'transparency, [img1,img2]'        {[1 1]; [1 0.5]}
+        'alpha'          [1  1]                   'transparency, [img1,img2]'        {[1 1]; [1 0.5]}
         'cbarvisible'    [0  1  ]                 'colorbar visibility,  [img1, img2]'      {[1 1]; [0 1]}
-        'clim'           [  0 200;  [3  10] ]     'color-limits, img1&img2: [[min max];[min max]]'      ''
+        'clim'           [  0 200;  [1  3] ]     'color-limits, img1&img2: [[min max];[min max]]'      ''
         'cmap'           { 'gray' 	'jet' }       'colormaps,    img1&img2 see: dummyColormap'      ''%'NIH_fire_inv.lut'
         'mbarlabel'      { '' 	'OR' }            'cbarlabels,   img1&img2'    bl1
         'mcbarticks'     [2]                      'number of ticks in colorbar'      [2 3 4]
@@ -570,10 +560,10 @@ else
     
     p={
         'numOverlays'   2                                         'number of overlays, {1 or 2}' {@numOverlays,x0}
-        'alpha'         [1  0.9  1]                               'transparency [images:1,2,3]'        {[1 1 1] [1 0.5 1] [1 0.5 .5]}
-        'cbarvisible'   [0  1  0  ]                               'colorbar visibility  [images:1,2,3]'      {[1 1 1] [0 1 1] [0 1 0] [0 1 1]}
-        'clim'          [ 0 200; 0  10;  0  3  ]                  'color-limits, [images:1,2,3]:[[min max];[min max];[min max]]'      ''
-        'cmap'          { 'gray' 	'YlOrRd_flip' 	'isoBlue' }   'colormaps, [images:1,2,3] see: dummyColormap'      ''
+        'alpha'         [1  0.8  1 ]                              'transparency [images:1,2,3]'        {[1 1 1] [1 0.5 1] [1 0.5 .5]}
+        'cbarvisible'   [0  1    0 ]                              'colorbar visibility  [images:1,2,3]'      {[1 1 1] [0 1 1] [0 1 0] [0 1 1]}
+        'clim'          [ 0 200; 1 3;  1  3  ]                    'color-limits, [images:1,2,3]:[[min max];[min max];[min max]]'      ''
+        'cmap'          { 'gray' 'winterFLIP' 'isoFuchsia' }      'colormaps, [images:1,2,3] see: dummyColormap'      ''
         'mbarlabel'     { '' 	'OR' 	'' }                      'cbarlabels, [images:1,2,3]'    bl2
         'mcbarticks'    [2]                                       'number of ticks in barlabel'      [2 3 4]
         'visible'       [1  1  1]                                 'image visibility,[images:1,2,3]'      {[1 1 1] [1 1 1]  [0 1 1] [1 1 0]}

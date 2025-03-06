@@ -3,7 +3,7 @@
 % images must be binary such as lesion-masks
 % permutation test is used to deal with the multiple comparison problem
 % [z varargout]=xstat_chisquare(showgui,x,pa)
-%  
+%
 %% PARAMETER
 % 'image'         select the binary image, on this image the statistic is perfomred
 % 'groupfile'     groupfile(excelfile) with animmals and group
@@ -13,61 +13,66 @@
 % 'atlas'         nifti-atlas, if empty the default template-atlas is used
 % 'outdir'        output-dir, if empty the default results-folder is used as upper-dir
 % 'suffix'        add suffix-string to final output-dir
-% 
+%
 % 'useUnionMask'  [1] use union of all image-files as mask, [0] use AVGTmask from templates-dir
 %                 default: [1]
-% 'hthresh'      'high-threshold such as 0.05                                              
-% 'blocksize'     if value above 0: use block-shuffling approach (less conservative) with this blocksize, must be integer' 
+% 'hthresh'      'high-threshold such as 0.05
+% 'blocksize'     if value above 0: use block-shuffling approach (less conservative) with this blocksize, must be integer'
 %                 if [0]: conventional approach, i..e no block-wise shuffling
 %                 otherise : a number >0, this vaule defined the blocksize in x-y-z direction (cube) which is coherently shuffled
-% 
+%
 % 'nperms'       number of permutations (default: 5000)
 % 'isparfor'     use pararellel processing {0|1}; default: [1]
-% 
-%% '---CLUSTER-PEAKS---'  
+%
+%% '---CLUSTER-PEAKS---'
 % 'CLpeak_num'    number of peaks per signif. cluster to report; default: [3]
 % 'CLpeak_dist'   minimum distance between clusterPeaks; default: [2]
-%% ---PLOT OPTIONS---'  
+%% ---PLOT OPTIONS---'
 % 'OR_cmap'       used colormap of overlay, ie. to plot the OddsRatio-map; example: 'NIH_ice.lut'  or 'jet'
 % 'OR_range'      intensity range of OddsRatio-map for plotting; 2 values [min max]; example:[3 20]
+% 'plot_uncorrected' additionally create+display the uncorrected image; {0|1} 
+%                   default: [1]
 % 
 %% OUTPUT-variables
 % [z2]      : struct with variables to rerun this function
 % 2nd output: optional, output-path were ppt and 'plots'-dir is located (same as inputpath 'dir')
-% 
-% 
+%
+%
 %% batch
 % xstat_chisquare; 	    % open GUI for parameter settings and run.. same as: xstat_chisquare(1)
 % xstat_chisquare(1,z);	% RUN with GUI and defined struct
 % xstat_chisquare(0,z);	% RUN without GUI and defined struct
 % type char(anth) in CMD-WIN to obtain the code after execution of the function
-% 
+%
 %% === example-1
 % run chisquare test over image 'x_c_angiomask.nii', groups defined in z.groupfile, use default atlas and
 % defualt result-dir as upper-dir, use union of all mask to obtain data, high-threshold p<0.05, and bock-sample approach
 % with blocksize of 5, 5000 permutation, use parfor, if signif clusters found report the first 3 with max. distance of 2mm
-% for plotting use colormap 'NIH_ice.lut' in in intensity rang [3 10]
-%     z=[];
-%     z.image        =  'x_c_angiomask.nii';	% % binary image to make statistic on
-%     z.groupfile    =  'F:\data8\2024_Stefanie_ORC1_24h_postMCAO\animal_groups_24hMCAO.xlsx';	% % groupfile(excelfile) with animmals and group
-%     z.atlas        =  '';	% % nifti-atlas, if empty the default template-atlas is used
-%     z.outdir       =  '';	% % output-dir, if empty the default results-folder is used as upper dir
-%     z.suffix       =  '';	% % add suffix-string to final output-dir
-%     z.useUnionMask =  [1];	% % [1] use union of all image-files as mask, [0] use AVGTmask from templates-dir
-%     z.hthresh      =  [0.05];	% % high-threshold such as 0.05
-%     z.blocksize    =  [5];	% % if value above 0 use block-shuffling approach (less conservative), must be integer
-%     z.nperms       =  [5000];	% % number of permutations
-%     z.isparfor     =  [1];	% % use pararellel processing {0|1} ; default: [1]
+% for plotting use colormap 'isoFuchsia'. Addionally create and add in powerpoint the uncorrected image with cmap 'winterFLIP'
+%     z=[];                                                                                                                                                                                                         
+%     z.image                = 'x_c_angiomask.nii';                                                       % % binary image to make statistic on                                                                     
+%     z.groupfile            = 'F:\data8\2024_Stefanie_ORC1_24h_postMCAO\animal_groups_24hMCAO.xlsx';     % % groupfile(excelfile) with animmals and group                                                          
+%     z.atlas                = '';              % % nifti-atlas, if empty the default template-atlas is used                                              
+%     z.outdir               = '';              % % output-dir, if empty the default results-folder is used as upper-dir                                  
+%     z.suffix               = '';              % % add suffix-string to final output-dir                                                                 
+%     z.useUnionMask         = [1];             % % [1] use union of all image-files as mask, [0] use AVGTmask from templates-dir                         
+%     z.hthresh              = [0.05];          % % high-threshold such as 0.05                                                                           
+%     z.blocksize            = [5];             % % if value above 0: use block-shuffling approach(less conservative) with this blocksize, must be integer
+%     z.nperms               = [5000];          % % number of permutations                                                                                
+%     z.isparfor             = [1];             % % use pararellel processing {0|1} ; default: [1]  
 %     % %  ---CLUSTER-PEAKS---
-%     z.CLpeak_num   =  [3];	% % number of clusterPeaks to report
-%     z.CLpeak_dist  =  [2];	% % minimum distance between clusterPeaks
+%     z.CLpeak_num           = [3];             % % number of peaks per signif. cluster to report                                                         
+%     z.CLpeak_dist          = [2];             % % minimum distance between clusterPeaks                                                                 
 %     % ---PLOT OPTIONS---
-%     z.OR_cmap      =  'NIH_ice.lut';	% % cmap of signif. OddsRatio-map for plotting
-%     z.OR_range     =  [3  10];	    % % intensity range of OddsRatio-map for plotting
-%     xstat_chisquare(0,z);	% % RUN
+%     z.OR_cmap              = 'isoFuchsia';    % % used colormap of overlay, ie. to plot the OddsRatio-map                                               
+%     z.OR_range             = [1  5];          % % intensity range of OddsRatio-map for plotting                                                         
+%     z.plot_uncorrected     = [1];             % % additionally create+display the uncorrected image                                                     
+%     z.OR_cmap_uncorrected  = 'winterFLIP';    % % uncorrected image: colormap of overlay for plotting                                                   
+%     z.OR_range_uncorrected = [1  5];          % % uncorrected image: intensity range for plotting                                                       
+%     xstat_chisquare(1,z);                                                                                                                                                                                         
+%                         
 % 
 % 
-
 
 
 function [z varargout]=xstat_chisquare(showgui,x,pa)
@@ -128,8 +133,13 @@ p={...
     'CLpeak_dist'   2              'minimum distance between clusterPeaks'  { 0.5 1 2 3}
     
     'inf2'  '---PLOT OPTIONS---'   '' ''
-    'OR_cmap'       'NIH_ice.lut'  'used colormap of overlay, ie. to plot the OddsRatio-map'       {'cmap',{}}
-    'OR_range'      [3 20]         'intensity range of OddsRatio-map for plotting'   {[0 20]; [3 20]}
+    'OR_cmap'               'isoFuchsia'   'used colormap of overlay, ie. to plot the OddsRatio-map'       {'cmap',{}}
+    'OR_range'               [1 5]         'intensity range of OddsRatio-map for plotting'   {[1 5];[0 20]; [3 20]}
+    
+    'plot_uncorrected'       1             'additionally create+display the uncorrected image' 'b'
+    'OR_cmap_uncorrected'   'winterFLIP'   'uncorrected image: colormap of overlay for plotting'       {'cmap',{}}
+    'OR_range_uncorrected'  [1 5]          'uncorrected image: intensity range for plotting'   {[1 5];[0 20]; [3 20]}
+
     };
 % NIH_ice.lut'
 
@@ -157,9 +167,9 @@ try
     isDesktop=usejava('desktop');
     % xmakebatch(z,p, mfilename,isDesktop)
     if isExtPath==0
-        batch=  xmakebatch(z,p, mfilename,[mfilename '(' num2str(isDesktop) ',z);' ]);
+        [qq,batch]=  xmakebatch(z,p, mfilename,[mfilename '(' num2str(isDesktop) ',z);' ]);
     else
-        batch=  xmakebatch(z,p, mfilename,[mfilename '(' num2str(isDesktop) ',z,mdirs);' ],pa);
+        [qq,batch]=  xmakebatch(z,p, mfilename,[mfilename '(' num2str(isDesktop) ',z,mdirs);' ],pa);
     end
 end
 
@@ -199,7 +209,7 @@ useUnionMask =z.useUnionMask;  %[0|1]
 hthresh      =z.hthresh;
 blocksize    =z.blocksize;
 nperms       =z.nperms;
-suffix       =char(z.suffix;
+suffix       =char(z.suffix);
 
 
 % % tail=1;
@@ -284,8 +294,10 @@ m2=m(:);
 % ==============================================
 %%   proc
 % ===============================================
+combs2analyize=1:size(combs,1);
+%  combs2analyize=1;
 
-for c=1:size(combs,1)
+for c=combs2analyize;
     missdata={};
     ig1 =combs(c,1);
     ig2 =combs(c,2);
@@ -482,7 +494,7 @@ for c=1:size(combs,1)
         o1=reshape(o1,hd.dim);
         %[v vn]=bwlabeln((o1>0)); vn
         %% ----save sign clustered OddsRatio
-        nameout=['s_' pnum(c,2) '_[' compStr2  ']_oddsR_signif_[' filenameShort ']'   '.nii' ];
+        nameout=['s_' pnum(c,2) '_' compStr2  '_oddsR_SIGNIF_' filenameShort ''   '.nii' ];
         Fo1=fullfile(paout,nameout);
         ORsig=OR2.*(o1>0);
         rsavenii(Fo1, hm, ORsig );
@@ -534,8 +546,9 @@ for c=1:size(combs,1)
     %% ===[save oddsRatio image]============================================
     
     %---oddsRatio
-    nameout=['s_' pnum(c,2) '_' compStr2  '_oddsR_' filenameShort ''   '.nii' ];
-    Fo1=fullfile(paout,nameout);
+    %nameout2=['s_' pnum(c,2) '_' compStr2  '_oddsR_' filenameShort ''   '.nii' ];
+    nameout2=strrep(nameout,'_oddsR_SIGNIF_','_oddsR_UNCOR_');
+    Fo1=fullfile(paout,nameout2);
     rsavenii(Fo1, hm,reshape(OR2,hm.dim));
     showinfo2([ 'img_OR' ] ,avgtfile,Fo1,13);
     
@@ -641,8 +654,8 @@ for c=1:size(combs,1)
         };
     
     v=[v; va; v1; vs];
-    nameout=['s_' pnum(c,2) '_' compStr2  '_oddsR_' filenameShort ''   '.txt' ];
-    Fo2=fullfile(paout,nameout);
+    %     nameout=['s_' pnum(c,2) '_' compStr2  '_oddsR_' filenameShort ''   '.txt' ];
+    %     Fo2=fullfile(paout,nameout);
     %pwrite2file(Fo2,v);
     %showinfo2([ 'txtFile' ] ,Fo2);
     
@@ -650,8 +663,9 @@ for c=1:size(combs,1)
     
     %% ===[write excelfile]============================================
     
-    nameout=['s_' pnum(c,2) '_' compStr2  '_oddsR_' filenameShort ''   '.xlsx' ];
-    Fo3=fullfile(paout,nameout);
+    %nameout3=['s_' pnum(c,2) '_' compStr2  '_oddsR_' filenameShort ''   '.xlsx' ];
+    nameout3=regexprep(nameout,'.nii$','.xlsx');
+    Fo3=fullfile(paout,nameout3);
     pwrite2excel(Fo3,{1 'info'}   , {'info'},[],v);
     if ~isempty(t2)
         pwrite2excel(Fo3,{2 'cluster'}, ht2,[],t2);
@@ -668,16 +682,23 @@ end %c
 % ==============================================
 %%   make plots
 % ===============================================
-[fi_nii] = spm_select('FPList',paout,'^s_.*_signif.*.nii');
+plot_uncorrected=z.plot_uncorrected;
+
+
+[fi_nii] = spm_select('FPList',paout,'^s_.*_SIGNIF_.*.nii');
 if isempty(fi_nii); return; end
-fi_nii=cellstr(fi_nii);
+fi_nii     =cellstr(fi_nii);                         %signif NII
+fiuncor_nii=regexprep(fi_nii,'_SIGNIF_', '_UNCOR_'); %uncorrected NII
+
+fi_xls     =regexprep(fi_nii,'.nii$','.xlsx');        %excelfile
+
 
 paoutplot=fullfile(paout,'plots');
 try; mkdir(paoutplot); end
 
-[~, dum,~]=fileparts2(fi_nii);
-name=regexprep(dum,{'\[' '\]','_signif'},{''});
-fi_xls=(cellfun(@(a){ [ paout filesep a '.xlsx']} ,name));
+% [~, dum,~]=fileparts2(fi_nii);
+% name=regexprep(dum,{'\[' '\]','_signif'},{''});
+% fi_xls=(cellfun(@(a){ [ paout filesep a '.xlsx']} ,name));
 
 plotpeaks='first' ; %'first' or 'all'
 plotpeaks='all' ; %'first' or all
@@ -686,7 +707,8 @@ plotpeaks='all' ; %'first' or all
 % ===============================================
 b2={};
 num=1;
-for i=1:length(fi_xls)
+for i=1:length(fi_xls)  %over excelfiles
+    [~,name]=fileparts(fi_xls{i});
     [~,~,b0]=xlsread(fi_xls{i},2);
     b0=xlsprunesheet(b0);
     hb=b0(1,:);
@@ -717,7 +739,7 @@ for i=1:length(fi_xls)
         % ===============================================
         cf;
         ce=cell2mat(b(j,c_x:c_x+2));
-        files={avgtfile  fi_nii{i}  };
+        
         r=[];
         r.ce=ce;
         r.alpha       =  [1  0.7];
@@ -734,32 +756,59 @@ for i=1:length(fi_xls)
             NaN        NaN  ];
         r.visible     =  [1  1];
         r.usebrainmask =  [0];
-        orthoslice(files,r); drawnow; drawnow; drawnow
         
+        regname=regexprep(b{j,c_region},{'\s+','(' ')' ,'/'},{'_','','','or'});
         
+        dx=b(j,:);
         disp(['..saving png-' num2str(num)]);
-        % SAVE PNG
-        if 1
-            regname=regexprep(b{j,c_region},{'\s+','(' ')' ,'/'},{'_','','','or'});
-            outname=['p' pnum(num,2) '_' name{i} '_CL' num2str(b{j,c_clustNo}) ...
+        if plot_uncorrected==1
+            r2=r;
+            r2.cmap{2}   =z.OR_cmap_uncorrected;
+            r2.clim(2,:) =z.OR_range_uncorrected;
+            
+            %__uncorrected plot
+            files={avgtfile  fiuncor_nii{i}  };
+            orthoslice(files,r2); drawnow; drawnow; drawnow
+            nameUncor=regexprep(name,'_SIGNIF_','_UNCOR_');
+            outname1=['p' pnum(num,2) '_' nameUncor '_CL' num2str(b{j,c_clustNo}) ...
                 '_MAX' num2str(peakno(j)) ...
                 '_' regname '.png' ];
-            Fo4=fullfile(paoutplot,outname);
+            Fo4=fullfile(paoutplot,outname1);
             orthoslice('post','saveas',Fo4,'dosave',1);
+        else
+            Fo4={''};
         end
-        b2(end+1,:)=b(j,:);
+        
+        
+        %___signif plot
+        cf;
+        files={avgtfile  fi_nii{i}  };
+        orthoslice(files,r); drawnow; drawnow; drawnow
+        outname2=['p' pnum(num,2) '_' name '_CL' num2str(b{j,c_clustNo}) ...
+            '_MAX' num2str(peakno(j)) ...
+            '_' regname '.png' ];
+        Fo5=fullfile(paoutplot,outname2);
+        orthoslice('post','saveas',Fo5,'dosave',1);
+        
+        
+        b2(end+1,:)=[dx outname1 outname2];
+        
+        
+        
         
         
         % ===============================================
         num=num+1;
     end
 end
+hb2=[ hb  'uncor_png'  'sig_png' ];
 
 % ==============================================
 %%   make PPT
 % ===============================================
+
+%% ===[make 1st slide]============================================
 disp(['..creating powerpointfile']);
-% ===[make 1st slide]============================================
 [ ~, studyName]=fileparts(pastudy);
 info={};
 info(end+1,:)={'study:'      [studyName]} ;
@@ -772,28 +821,15 @@ info(end+1,:)={'Hthresh: '     ['p<' num2str(hthresh)]} ;
 info(end+1,:)={'nperms:  '     [num2str(nperms)]} ;
 info(end+1,:)={'blocksize:  '     [num2str(blocksize)]} ;
 
-
 info= plog([],[info],0,'Contrast','plotlines=0;al=1');
-
 v1=struct('txy', [0 1.5 ], 'tcol', [0 0 1],'tfs',11, 'tbgcol',[1 1 1],...
     'tfn','consolas');
 v1.text=info;
-
-
 info2= plog([],[{'PARAMETER'};paralist],0,'','plotlines=0;al=1;');
 v2=struct('txy', [1 10 ], 'tcol', [0 0 0],'tfs',7, ...
     'tbgcol',[1    0.96    0.92],  'tfn','consolas');
 v2.text=info2;
-
 vs={v1 v2};
-
-% try
-%     info2= plog([],[hs3;s3],0,'Contrast','plotlines=0;al=1');
-%     v2=struct('txy', [0.5 4 ], 'tcol', [0 0 0],'tfs',7, ...
-%         'tbgcol',[0.894 0.941 0.902],  'tfn','consolas');
-%     v2.text=info2;
-%     vs{1,end+1}=v2;
-% end
 titlesufx='';
 titcol=[0 0 0];
 % ===============================================
@@ -805,22 +841,38 @@ pptnameShort=[dirname '.pptx'];
 pptfile2=fullfile(paout, pptnameShort );
 img2ppt(paout,[], pptfile2,'doc','new',...
     'title',['chiSquareTest: [' studyName '], file: ' file  ],...
-    'multitext',vs,'disp',1 );
-%% ===============================================
+    'multitext',vs,'disp',0 );
 
+% =======[ 2nd slide]======================
 % ======[make all other slides]=========================================
-[fiplotFP] = spm_select('FPList',paoutplot,'^p.*.png');
-fiplotFP=cellstr(fiplotFP);
-[fiplot] = spm_select('List',paoutplot,'^p.*.png');
+ic_sig_png=find(strcmp(hb2,'sig_png'));
+fiplot=b2(:,ic_sig_png);
 if isempty(fiplot); return; end
-fiplot=cellstr(fiplot);
+
+fiplotFP=stradd(fiplot,[  paoutplot filesep ],1);
+% [~, fiplot ]=fileparts2(fiplotFP);
+%  fiplot=stradd(fiplot,'.png',2);
 condshort=regexprep(fiplot,{'_oddsR.*' ,'p\d\d_s_\d\d_'},{''});
 uni_condshort=unique(condshort,'stable');
 
+% [fiplotFP] = spm_select('FPList',paoutplot,'^p.*.*.png');
+% fiplotFP=cellstr(fiplotFP);
+% % [fiplot] = spm_select('List',paoutplot,'^p.*.png');
+% [~, fiplot ]=fileparts2(fiplotFP);
+% fiplot=stradd(fiplot,'.png',2);
+%
+%
+% if isempty(fiplot); return; end
+% fiplot=cellstr(fiplot);
+% condshort=regexprep(fiplot,{'_oddsR.*' ,'p\d\d_s_\d\d_'},{''});
+% uni_condshort=unique(condshort,'stable');
+
+% ===============================================
+
 % ===[2nd slide: add table]============================================
 condshortHR=regexprep(condshort,{'__lt__','__gt__' },{'<', '>'});
-b3 =[ num2cell([1:size(b2,1)])'  condshortHR    b2   fiplot     ];
-hb3=[ 'idx'                      'condition'  hb   'PNG-file'  ];
+b3 =[ num2cell([1:size(b2,1)])'  condshortHR    b2           ];
+hb3=[ 'idx'                      'condition'    hb2          ];
 
 b3=cellfun(@(a){ [ num2str(a)]} ,b3);
 
@@ -829,87 +881,61 @@ v2=struct('txy', [0.01 1.3 ], 'tcol', [0 0 0],'tfs',7, ...
     'tbgcol',[1    0.96    0.92],  'tfn','consolas');
 v2.text=info2;
 vs={}; vs{1}=v2;
-img2ppt(paout,[], pptfile2,'doc','add',...
-    'crop',0,'gap',[1 0],'columns',1,'xy',[0.02 1 ],'wh',[ nan 3.6],...
-    'title',[' [' 'Cluster-table' ']'  titlesufx ],...
-    'Txy',[0 0],'Tha','left','Tcol',titcol ,...
-    'multitext',vs,'disp',0 );
 
+if 1
+    img2ppt(paout,[], pptfile2,'doc','add',...
+        'crop',0,'gap',[1 0],'columns',1,'xy',[0.02 1 ],'wh',[ nan 3.6],...
+        'title',[' [' 'Cluster-table' ']'  titlesufx ],...
+        'Txy',[0 0],'Tha','left','Tcol',titcol ,...
+        'multitext',vs,'disp',0 );
+end
 
-% ===============================================
+%% ===[other slides grouped by contrast]============================================
+fiplot_sig    = b2(:, end);
+% condshort     = regexprep(fiplot,{'_oddsR.*' ,'p\d\d_s_\d\d_'},{''});
+condshort_sig =regexprep(fiplot_sig,{'_oddsR.*' ,'p\d\d_s_\d\d_'},{''});
+co            = uni_condshort;
 
-% ===[other slides grouped by contrast]============================================
-co=uni_condshort;
-
-for j=1:length(co);
+if plot_uncorrected==1  ;   nimg_per_page  =2;           %number of images per plot
+else                        nimg_per_page  =4;           %number of images per plot
+end
+for j=1:length(co)
     if mod(j,2)==1; titcol=[0 0 1]; else titcol=[0 0 0]; end
+    imgnosig      = find(strcmp(condshort_sig ,co{j} ));
+    x2            = b3(imgnosig,:);
+    plotSlideNo   = ceil((1:size(x2,1))./nimg_per_page);
+    nslides       = max(plotSlideNo);
     
-    imgno=find(strcmp(condshort,co{j} ));
-    fi2plot     =fiplotFP(imgno);
-    fi2plotshort=fiplot(imgno);
-    
-    nimg_per_page  =4;           %number of images per plot
-    imgIDXpage     =unique([1:nimg_per_page:length(fi2plot) length(fi2plot)+1 ]);
-    x2=b3(imgno,:);
-    for i=1:length(imgIDXpage)-1
-        titlesufx='';
-        if i>1; titlesufx=' ..continued';
-        end
-        iv=[imgIDXpage(i):imgIDXpage(i+1)-1];
-        x3=x2(iv,:);
+    for i=1:nslides
+        titlesufx='';  if i>1; titlesufx=' ..continued';   end
+        ix=find(plotSlideNo==i);
+        x3=x2(ix,:); %TABLE
         
-        pnglist={'Files:'};
-        pnglist=[pnglist; fi2plotshort(iv)];
-        %png=stradd(x3(:,c_pngfile), [outdir filesep] );
-        png=fi2plot(iv);
+        %PNG-images to display
+        if     plot_uncorrected==1    dum   =[x3(:,end-1) x3(:,end)]';
+        else                          dum   =[ x3(:,end)]';
+        end
+        png     =dum(:);
+        png(cellfun(@isempty,png))=[]; % remove empties..this is the case when no uncorrected files are created
+        pngFP   =stradd(png,[paoutplot filesep],1);
+        pnglist =[{'Files:'}; png];
+
         condName=regexprep(co{j},{'__lt__','__gt__' },{'<', '>'});
-        
-        if 1
-            info2= plog([],[hb3;x3],0,'Contrast','plotlines=0;al=1;');
-            v2=struct('txy', [0.01 16 ], 'tcol', [0 0 0],'tfs',8, ...
-                'tbgcol',[1    0.96    0.92],  'tfn','consolas');
-            v2.text=info2;
-            vs={}; vs{1}=v2;
-            img2ppt(paout,png, pptfile2,'doc','add',...
-                'crop',0,'gap',[1 0],'columns',1,'xy',[0.02 1 ],'wh',[ nan 3.6],...
-                'title',['condition-' num2str(j)  ': [' condName ']'  titlesufx ],...
-                'Txy',[0 0],'Tha','left','Tcol',titcol ,...
-                'text',pnglist,'txy', [15 3 ],'tcol', [0 0 1],'tbgcol', [1 1 1],...
-                'tfs',9,...
-                'multitext',vs,'disp',0 );
-        end
+        info2= plog([],[hb3;x3],0,'Contrast','plotlines=0;al=1;');
+        v2=struct('txy', [0.01 16 ], 'tcol', [0 0 0],'tfs',8, ...
+            'tbgcol',[1    0.96    0.92],  'tfn','consolas');
+        v2.text=info2;
+        vs={}; vs{1}=v2;
+        img2ppt(paout,pngFP, pptfile2,'doc','add',...
+            'crop',0,'gap',[1 0],'columns',1,'xy',[0.02 1 ],'wh',[ nan 3.6],...
+            'title',['condition-' num2str(j)  ': [' condName ']'  titlesufx ],...
+            'Txy',[0 0],'Tha','left','Tcol',titcol ,...
+            'text',pnglist,'txy', [15 3 ],'tcol', [0 0 1],'tbgcol', [1 1 1],...
+            'tfs',9,...
+            'multitext',vs,'disp',0 );
     end
 end
-%  ======[add parameter slide]====================
-% info2= plog([],[{'PARAMETER'};paralist],0,'','plotlines=0;al=1;');
-% v2=struct('txy', [0.01 1.3 ], 'tcol', [0 0 0],'tfs',7, ...
-%     'tbgcol',[1    0.96    0.92],  'tfn','consolas');
-% v2.text=info2;
-% vs={}; vs{1}=v2;
-% img2ppt(paout,[], pptfile2,'doc','add',...
-%     'crop',0,'gap',[1 0],'columns',1,'xy',[0.02 1 ],'wh',[ nan 3.6],...
-%     'title',[' [' 'PARAMETER' ']'  titlesufx ],...
-%     'Txy',[0 0],'Tha','left','Tcol',titcol ,...
-%     'multitext',vs,'disp',1 );
-
-
-
-% ===============================================
-
 showinfo2(['PPTfile2'],pptfile2);
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 %% ===============================================
 

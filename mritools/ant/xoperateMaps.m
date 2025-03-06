@@ -230,6 +230,8 @@ if isempty(z.outDir)
     [paout]=fileparts(z.maps{1});
     z.outDir=paout;
 end
+z.outDir=char(z.outDir);
+if exist(z.outDir)~=7; mkdir(z.outDir); end
 
 %mask
 z.mask=char(z.mask);
