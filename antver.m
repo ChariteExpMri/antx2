@@ -1093,7 +1093,6 @@
 % #ba 12 Feb 2025 (15:56:18)
 % #k [xobj2nifti.m] #n modified, now allows to convert niftis from outside animal-folders
 % 
-% 
 % #ba 18 Feb 2025 (11:32:30)
 % #k [xstat_chisquare.m] #n : run  vox-wise chi-square test for two independent groups on binary images (lesion masks)
 % #k [xstat_chisquarePlot.m] #n : create plots and a summary powerpoint-file after running [xstat_chisquare]
@@ -1103,6 +1102,10 @@
 % #k [xplotslices_mricrogl.m] #n : PLOT ORTHOVIEW OVERLAYS USING MRicroGL
 % #k [xplotortho_mricrogl.m] #n : PLOT ORTHOVIEW OVERLAYS USING MRicroGL
 % #gw --> access via ANT-menu: &#8658; Graphics
+% #ba 06 Mar 2025 (17:55:16)
+% % #k [xstat_chisquare.m] #n : modified, outputs also the uncorrected map
+% 
+% 
 % 
 
 

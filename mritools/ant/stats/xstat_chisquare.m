@@ -470,7 +470,11 @@ for c=combs2analyize;
     %disp(['maxCLuster_real: '  num2str(max(cluster_sizes)) ]);
     disp(['..found max clustersize: ' num2str(max(cluster_sizes))]);
     disp(['..expected clustersize : ' num2str(cluster_size_threshold)]);
-    cprintf('[1 0 1]',['..survived clusters    : '  num2str(length(corrected_clusters))  '\n']);
+    if length(corrected_clusters)==0
+        cprintf('[1 0 1]',['..survived clusters    : '  num2str(length(corrected_clusters))  '\n']);
+    else
+        cprintf('*[0.4667    0.6745    0.1882]',['..survived clusters    : '  num2str(length(corrected_clusters))  '\n']);
+    end
     if 0
         fg,plot([1:length((maxcl))  ],sort(maxcl),'.r-');
         hold on
