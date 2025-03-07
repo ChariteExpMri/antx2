@@ -168,7 +168,7 @@ end
 % ===============================================
 x.aot=0;
 x.evntModifier=0;
-
+x.linenumbers=1;
 x.lastinput={fun,varargin};
 
 % ==============================================
@@ -660,13 +660,78 @@ if nargout==0
 end
 
 
+%% ======[ line numbers ]=========================================
+if 0
+    % Initialize SyntaxTextPane and add to the GUI
+    jCodePane = com.mathworks.widgets.SyntaxTextPane;
+    jScrollPane = javax.swing.JScrollPane(jCodePane);
+    %     [jScrollPane, container] = javacomponent(jScrollPane, [150, 50, 600, 500], fig);
+    
+    % Access jScrollPane from the listbox (example of accessing the Java layer)
+    % This is theoretical as jScrollPane is not part of listBox
+    %     jScrollPaneJava = findjobj(listBox); %
+    
+    jScrollPane = findjobj(tx); % get the scroll-pane object
+    jListbox = jScrollPane.getViewport.getComponent(0)
+    lineNumbers = addLineNumbers(jCodePane, jScrollPane);
+end
 
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%% •••••••••••••••••••••••••••••  SUBFUNS      •••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-%%%••••••••••••••••••••••••••••••••••••••••••••••
-% embedded functions
-%%%••••••••••••••••••••••••••••••••••••••••••••••
+% ==============================================
+%%   embedded functions
+% ===============================================
+
+
+function lineNumPanel = addLineNumbers(textPane, jScrollPane)
+lineNumPanel = javax.swing.JPanel();
+lineNumPanel.setLayout(javax.swing.BoxLayout(lineNumPanel, javax.swing.BoxLayout.Y_AXIS));
+lineNumPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 5));  % Adjust padding as needed
+jScrollPane.setRowHeaderView(lineNumPanel);
+updateLineNumbers(lineNumPanel, textPane);
+doc = textPane.getDocument();
+
+% Attach document listener to update line numbers
+listener = handle(doc, 'CallbackProperties');
+set(listener, 'InsertUpdateCallback', @(src, evt) updateLineNumbers(lineNumPanel, textPane));
+set(listener, 'RemoveUpdateCallback', @(src, evt) updateLineNumbers(lineNumPanel, textPane));
+set(listener, 'ChangedUpdateCallback', @(src, evt) updateLineNumbers(lineNumPanel, textPane));
+
+function updateLineNumbers(panel, textPane)
+tx = findobj(Huhelp,'tag','txt');
+doc = textPane.getDocument();
+rootElement = doc.getDefaultRootElement();
+% numLines = rootElement.getElementCount();
+numLines=length(get(tx,'string'));
+u=get(gcf,'userdata');
+if u.linenumbers==1
+    % Calculate necessary width
+    maxDigits = length(num2str(numLines))+1;
+else
+    maxDigits = 0;
+end
+%% ===============================================
+hj=findjobj(tx);
+FontName = get(tx,'Fontname');
+javaLangString = java.lang.String(FontName);
+javaAwtFont = java.awt.Font(javaLangString,0, 2.2*get(tx,'Fontsize'));
+
+newWidth = maxDigits * 10 + 10;  % Approximation of width needed per digit plus some padding
+% Adjust panel width
+panel.setPreferredSize(java.awt.Dimension(newWidth, textPane.getHeight()));
+% Clear previous content and add new labels
+panel.removeAll();
+for i = 1:numLines
+    lineNumberLabel = javax.swing.JLabel(sprintf('%d', i));
+    lineNumberLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+%     lineNumberLabel.setFont(textPane.getFont());  % Match font size with text pane
+     lineNumberLabel.setFont(javaAwtFont);  % Match font size with text pane
+    panel.add(lineNumberLabel);
+end
+
+panel.revalidate();
+panel.repaint();
+%% ===============================================
+
+
 
 function closeFig(e,e2)
 
