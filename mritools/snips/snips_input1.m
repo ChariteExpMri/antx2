@@ -5,41 +5,34 @@ return
 
 
 %% #################################################
-% start
-% open Antx-GUI
+% cmd
+% open Antx-GUI and load project
 ant;
 antcb('load',  fullfile(pwd,'proj.m'  ))  ;
+
+% close Antx-GUI
+antcb('close')
+
+% close Antx-GUI & exit
+antcb('close'); exit
+
+% update Antx-GUI from github
+updateantx(2);
+
+
 %% #################################################
-% start
+% cmd
 % open Antx-history
 
 uhelp(anth) ;
 %% #################################################
-% start
+% cmd
 % costumize matlab-session
 
 antcb('cwcol',[1 .94 .87]); 
 antcb('cwname','paul works here');
 
-%% #################################################
-% test
-% this is test2
-a=113
-b=213
-c=d
 
-%% #################################################
-% test
-% this is test3
-a=11
-b=21
-c=d
-%% #################################################
-% test
-% this is test4
-a=11
-b=21
-c=d
 %% #################################################
 % mricron
 % display volumes in mricron
@@ -457,6 +450,51 @@ for i=1:size(pars,1)
     plot_uncorrected=1;
     xstat_chisquare(0,z);
 end
+
+
+
+% ==============================================
+%%   using angiomask
+% ===============================================
+cf;clear
+pastudy='H:\Daten-2\Imaging\AG_Harms\2024_Stefanie_ORC1\d7_postMCAO';
+groupfile=fullfile(pastudy,'animal_groups_d7.xlsx');
+ 
+cd(pastudy);
+antcb('close');
+ant; antcb('load',fullfile(pastudy,'proj_d7.m')); drawnow;
+antcb('close');
+% blocksize x hthresh
+pars=[...
+    5   0.001
+    0   0.001
+    5   0.05
+    0   0.05
+    ];
+for i=1:size(pars,1)
+    z=[];
+    z.image        = { 'x_c_angiomask.nii' };                                                                       % % binary image to make statistic on
+    z.groupfile    = groupfile;     % % groupfile(excelfile) with animmals and group
+    z.atlas        = '';                                                                                           % % nifti-atlas, if empty the default template-atlas is used
+    z.outdir       = '';                                                                                           % % output-dir, if empty the default results-folder is used as upper dir
+    z.suffix       = '_v2';                                                                                           % % add suffix-string to final output-dir
+    z.useUnionMask = [1];                                                                                          % % [1] use union of all image-files as mask, [0] use AVGTmask from templates-dir
+    z.hthresh      = pars(i,2);%[0.05];                                                                                      % % high-threshold such as 0.05
+    z.blocksize    = pars(i,1) ;%blocksize(i);%[5];                                                                                          % % if value above 0 use block-shuffling approach (less conservative), must be integer
+    z.nperms       = [5000];                                                                                        % % number of permutations
+    z.isparfor             = [1];             % % use pararellel processing {0|1} ; default: [1]
+    % %  ---CLUSTER-PEAKS---
+    z.CLpeak_num           = [3];             % % number of peaks per signif. cluster to report
+    z.CLpeak_dist          = [2];             % % minimum distance between clusterPeaks
+    % ---PLOT OPTIONS---
+    z.OR_cmap              = 'isoFuchsia';    % % used colormap of overlay, ie. to plot the OddsRatio-map
+    z.OR_range             = [1  5];          % % intensity range of OddsRatio-map for plotting
+    z.plot_uncorrected     = [1];             % % additionally create+display the uncorrected image
+    z.OR_cmap_uncorrected  = 'winterFLIP';    % % uncorrected image: colormap of overlay for plotting
+    z.OR_range_uncorrected = [1  5];          % % uncorrected image: intensity range for plotting
+    xstat_chisquare(0,z); 
+end
+
 
 %% #################################################
 %  registration to standardspace
