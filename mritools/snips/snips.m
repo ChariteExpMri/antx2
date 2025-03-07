@@ -312,7 +312,7 @@ numLines = rootElement.getElementCount();
 u=get(gcf,'userdata');
 if u.linenumbers==1
     % Calculate necessary width
-    maxDigits = length(num2str(numLines))+1;
+    maxDigits = length(num2str(numLines))+2;
 else
     maxDigits = 0;
 end
