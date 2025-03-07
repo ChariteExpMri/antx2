@@ -1,6 +1,6 @@
 % [snips.m] : code snippets/matlab code
 % use context-menu to copy/evaluate code
-% 
+%
 
 function snips
 warning off;
@@ -242,7 +242,7 @@ set(gcf,'SizeChangedFcn',@SizeChangedFcn)
 %%   controls
 % ===============================================
 hp = uipanel('Title','','FontSize',6, 'BackgroundColor','white',...
-             'units','pixels','Position',[0 0 400 21]);
+    'units','pixels','Position',[0 0 400 21]);
 
 
 % =====finder ==========================================
@@ -273,7 +273,7 @@ set(hb,'tooltipstring','show/hide line numbers','value', us.linenumbers);
 hb=uicontrol(gcf,'style','pushbutton','units','pixels','tag','showhelp');
 set(hb,'position',[350+21 0 21 21]);
 set(hb,'callback',@showhelp,'string','','fontsize',7,'backgroundcolor',[1 1 1]);
-set(hb,'tooltipstring','help','value', us.linenumbers);  
+set(hb,'tooltipstring','help','value', us.linenumbers);
 icon = fullfile(matlabroot,'/toolbox/matlab/icons/demoicon.gif');
 if ~isempty(regexpi(icon,'.gif$'))
     [e map]=imread(icon)  ;     e=ind2rgb(e,map);    e(e<=0.01)=nan;
@@ -441,18 +441,18 @@ elseif strcmp(task,'helpfun_uhelp')
 elseif strcmp(task,'copy')
     clipboard('copy',txt);
 elseif strcmp(task,'copy2editor')
-    clipboard('copy',txt); 
+    clipboard('copy',txt);
     
-   
-% Get clipboard content
-txt = clipboard('paste');
-txt=[repmat(char(10),[1 2]) txt   char(10)];
- clipboard('copy',txt);
-
- editorDoc = matlab.desktop.editor.newDocument('');
-editorDoc.Text = txt;
-% Bring the Editor to the front (optional)
-% editorDoc.Visible = true;
+    
+    % Get clipboard content
+    txt = clipboard('paste');
+    txt=[repmat(char(10),[1 2]) txt   char(10)];
+    clipboard('copy',txt);
+    
+    editorDoc = matlab.desktop.editor.newDocument('');
+    editorDoc.Text = txt;
+    % Bring the Editor to the front (optional)
+    % editorDoc.Visible = true;
     
 elseif strcmp(task,'show_linenumbers')
     hb=findobj(gcf,'tag','bt_linenumbers');
@@ -741,3 +741,24 @@ set(ax  ,'units',units_ho);
 % get(ax,'position')
 drawnow
 
+
+function expandAllNodes(tree)
+warning off
+% Get Java tree handle
+jTree = tree.getTree;
+
+% Manually expand all rows
+javaMethodEDT('expandRow', jTree, 0); % Expand root row
+rowCount = javaMethodEDT('getRowCount', jTree);
+
+% Use a while loop to expand all nodes dynamically
+row = 0;
+while row < rowCount
+    javaMethodEDT('expandRow', jTree, row);
+    newRowCount = javaMethodEDT('getRowCount', jTree);
+    if newRowCount == rowCount
+        row = row + 1; % Only increment if no new rows were expanded
+    else
+        rowCount = newRowCount; % Update count, keep expanding
+    end
+end
