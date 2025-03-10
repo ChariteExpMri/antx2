@@ -39,7 +39,7 @@ for j=1:length(fileList)
     ix=regexpi2(a,['^%% ' repmat('#',[1 20]) ]);
     s=[ix+1 [ix(2:end)-1; length(a) ]];
     
-    
+    [~, fname]=fileparts(f1);
     
     for i=1:size(s,1)
         l=s(i,1):s(i,2);
@@ -53,7 +53,7 @@ for j=1:length(fileList)
         %         cprintf('*[0 0 1]',[regexprep(h2,'%','%%')  '\n']);
         %         disp(t);
         %     end
-        c(end+1,:)={h h2 t   j};
+        c(end+1,:)={h h2 t   j fname};
     end
 end
 
@@ -237,13 +237,21 @@ val=1;
 for i=1:max(s2)
     c2=c(find(s2==i),:);
     
-  if mod(c2{1,end},2)==1;   col='blue'   ;
+    if mod(c2{1,4},2)==1  ;   col='blue'   ;
     else                  ;   col='green'  ;
-  end
-    nn = ['<html><b><u><i>'  '<b><font color="' col '">' c2{1,1} '</html>'];
+    end
     
-%     nn = ['<html><b><u><i>'  '<b><font color="blue">' c2{1,1} '</html>'];
-    dx = uitreenode('v0',  c2{1,1},nn, iconPath1, false);
+    if c2{1,4}>1
+        fnameInfo=[' ...from ' c2{1,5} '.m'];
+        nn = ['<html><b><u><i>'  '<b><font color="' col '">' [c2{1,1} '</u></b><font color="gray">' fnameInfo] '</html>'];  
+    else
+       nn = ['<html><b><u><i>'  '<b><font color="' col '">' [c2{1,1} ] '</html>'];  
+    end
+   
+    
+    
+    dx = uitreenode('v0',  'bummy',nn, iconPath1, false);
+    % dx = uitreenode('v0',  c2{1,1},nn, iconPath1, false);
     for j=1:size(c2,1)
         dum=uitreenode('v0', c2{j,2},  c2{j,2},  iconPath2, true);
         dum.setValue(val);
@@ -532,15 +540,30 @@ if 0
     nodeName = node(1).getName;
     nodeName=regexprep(char(nodeName), '<.*?>', '');
     % fprintf('Node selected: %s\n', nodeName);
-   
+    
     ix=find(strcmp(c(:,2), nodeName));
 end
 
-hn=get(eventData,'CurrentNode');
-ix=hn.getValue;
+try
+    hn=get(eventData,'CurrentNode');
+    ix=hn.getValue;
+catch
+    node = tree.getSelectedNodes;
+    nodeName = node(1).getName;
+    nodeName=regexprep(char(nodeName), '<.*?>', '');
+    % fprintf('Node selected: %s\n', nodeName);
+    
+    ix=find(strcmp(c(:,2), nodeName));
+    
+end
+
+
+
+
+
 if isnumeric(ix)==0;
-     % u.jCodePane.setText('');
-       return;
+    % u.jCodePane.setText('');
+    return;
 else
     %% ===============================================
     if ~isempty(ix)
