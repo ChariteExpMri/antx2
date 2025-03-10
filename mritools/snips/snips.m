@@ -4,28 +4,57 @@
 
 function snips
 warning off;
-f1=which('snips_input1.m');
-
-a=preadfile(f1);
-a=a.all;
-ix=regexpi2(a,['^%% ' repmat('#',[1 20]) ]);
-s=[ix+1 [ix(2:end)-1; length(a) ]];
 
 
+%% ===============================================
+
+% tic
+% Get the full MATLAB path and split it into individual paths
+paths = strsplit(path, pathsep);
+paths(end+1)={pwd};
+% Initialize a cell array to store the full paths of the files
+fileList = {};
+% Loop over each path in the MATLAB path
+for i = 1:length(paths)
+    currentPath = paths{i};
+    % Check if the path exists
+    if exist(currentPath, 'dir')
+        % Get all files that start with 'test_' in the current path
+        files = dir(fullfile(currentPath, 'snips_input*.m'));
+        % Append full path to the files found
+        for j = 1:length(files)
+            fileList{end+1} = fullfile(currentPath, files(j).name); % Store full path
+        end
+    end
+end
+fileList';
+% toc
+%% ===============================================
 c={};
-for i=1:size(s,1)
-    l=s(i,1):s(i,2);
-    t=a(l);
-    h =t{1};
-    h2=t{2};
-    h  =regexprep(h,'^%+\s+|^%+','');
-    h2 =regexprep(h2,'^%+\s+|^%+','');
-    %     if 0
-    %         cprintf('*[1 0 1]',[regexprep(h,'%','%%')  '\n']);
-    %         cprintf('*[0 0 1]',[regexprep(h2,'%','%%')  '\n']);
-    %         disp(t);
-    %     end
-    c(end+1,:)={h h2 t};
+for j=1:length(fileList)
+    %f1=which('snips_input1.m');
+    f1=fileList{j};
+    a=preadfile(f1);
+    a=a.all;
+    ix=regexpi2(a,['^%% ' repmat('#',[1 20]) ]);
+    s=[ix+1 [ix(2:end)-1; length(a) ]];
+    
+    
+    
+    for i=1:size(s,1)
+        l=s(i,1):s(i,2);
+        t=a(l);
+        h =t{1};
+        h2=t{2};
+        h  =regexprep(h,'^%+\s+|^%+','');
+        h2 =regexprep(h2,'^%+\s+|^%+','');
+        %     if 0
+        %         cprintf('*[1 0 1]',[regexprep(h,'%','%%')  '\n']);
+        %         cprintf('*[0 0 1]',[regexprep(h2,'%','%%')  '\n']);
+        %         disp(t);
+        %     end
+        c(end+1,:)={h h2 t   j};
+    end
 end
 
 
@@ -61,6 +90,9 @@ end
 ax=axes('position',v.editorpos,'visible','off','tag','axe1');
 uistack(ax,'bottom');
 
+set(gcf, 'WindowKeyPressFcn', @key_press);
+set(gcf, 'WindowKeyReleaseFcn', @key_release);
+
 %% ===============================================
 
 
@@ -94,10 +126,6 @@ end
 jCodePane = com.mathworks.widgets.SyntaxTextPane;
 codeType = com.mathworks.widgets.text.mcode.MLanguage.M_MIME_TYPE;
 jCodePane.setContentType(codeType);
-
-
-
-
 
 % t2=strjoin(t,char(10))
 jCodePane.setText('% SELECT SNIPS');
@@ -187,14 +215,39 @@ uni=unique(c(:,1),'stable');
 iconPath1 = '';fullfile(matlabroot,'/toolbox/matlab/icons/book_mat.gif');
 iconPath2 = '';fullfile(matlabroot,'/toolbox/matlab/icons/unknownicon.gif');
 hc={};
+%% ===============================================
+n=1;
+s2=zeros(size(c,1),1);
+s2(1)=1;
+tmp=regexprep( c{1,1},'\s+$','');
+for i=2:size(c,1)
+    if ~strcmp(regexprep( c{i,1},'\s+$',''),tmp);
+        n=n+1;
+        tmp=regexprep( c{i,1},'\s+$','');
+    end
+    s2(i,1)=n ;
+end
 
-for i=1:length(uni)
-    c2=c(strcmp(c(:,1),uni{i}),:);
+
+
+%% ===============================================
+% for i=1:length(uni)
+%     c2=c(strcmp(c(:,1),uni{i}),:);
+val=1;
+for i=1:max(s2)
+    c2=c(find(s2==i),:);
     
-    nn = ['<html><b><u><i>'  '<b><font color="blue">' c2{1,1} '</html>'];
+  if mod(c2{1,end},2)==1;   col='blue'   ;
+    else                  ;   col='green'  ;
+  end
+    nn = ['<html><b><u><i>'  '<b><font color="' col '">' c2{1,1} '</html>'];
+    
+%     nn = ['<html><b><u><i>'  '<b><font color="blue">' c2{1,1} '</html>'];
     dx = uitreenode('v0',  c2{1,1},nn, iconPath1, false);
     for j=1:size(c2,1)
         dum=uitreenode('v0', c2{j,2},  c2{j,2},  iconPath2, true);
+        dum.setValue(val);
+        val=val+1; %use value as medium to obtain from table
         %         if j==2;
         %             set(dum,'name', ['<html><font color="gray">' char( dum.getName) '</html>']);
         %         end
@@ -231,7 +284,7 @@ addResizebutton(hf,ht,'mode','UR','hd',hContainer);
 
 
 ht.setSelectedNode([dxFirst]);  %
-nodeSelectedCallback();
+% nodeSelectedCallback();
 
 
 
@@ -312,7 +365,11 @@ numLines = rootElement.getElementCount();
 u=get(gcf,'userdata');
 if u.linenumbers==1
     % Calculate necessary width
-    maxDigits = length(num2str(numLines))+2;
+    if isunix;
+        maxDigits = length(num2str(numLines))+1;
+    else
+        maxDigits = length(num2str(numLines))+2;
+    end
 else
     maxDigits = 0;
 end
@@ -380,6 +437,7 @@ close(hf);
 function find_clear(e,e2)
 hb=findobj(gcf,'tag','find');
 hb.String='';
+finder();
 
 function finder(e,e2)
 %% ===============================================
@@ -467,22 +525,32 @@ function nodeSelectedCallback(tree, eventData)
 u=get(gcf,'userdata');
 tree=u.ht;
 % Callback function to handle node selection
-node = tree.getSelectedNodes;
-nodeName = node(1).getName;
-nodeName=regexprep(char(nodeName), '<.*?>', '');
-% fprintf('Node selected: %s\n', nodeName);
 u=get(gcf,'userdata');
 c=u.c;
-ix=find(strcmp(c(:,2), nodeName));
-%% ===============================================
-if~isempty(ix)
-    t=c{ix,3};
-    t2=strjoin(t,char(10));
-    %t2=char(strjoin(t,char(10)))
-    u.jCodePane.setText(t2);
+if 0
+    node = tree.getSelectedNodes;
+    nodeName = node(1).getName;
+    nodeName=regexprep(char(nodeName), '<.*?>', '');
+    % fprintf('Node selected: %s\n', nodeName);
+   
+    ix=find(strcmp(c(:,2), nodeName));
 end
-%% ===============================================
 
+hn=get(eventData,'CurrentNode');
+ix=hn.getValue;
+if isnumeric(ix)==0;
+     % u.jCodePane.setText('');
+       return;
+else
+    %% ===============================================
+    if ~isempty(ix)
+        t=c{ix,3};
+        t2=strjoin(t,char(10));
+        %t2=char(strjoin(t,char(10)))
+        u.jCodePane.setText(t2);
+    end
+    %% ===============================================
+end
 
 
 
