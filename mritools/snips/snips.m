@@ -90,8 +90,8 @@ end
 ax=axes('position',v.editorpos,'visible','off','tag','axe1');
 uistack(ax,'bottom');
 
-set(gcf, 'WindowKeyPressFcn', @key_press);
-set(gcf, 'WindowKeyReleaseFcn', @key_release);
+% set(gcf, 'WindowKeyPressFcn', @key_press);
+% set(gcf, 'WindowKeyReleaseFcn', @key_release);
 
 %% ===============================================
 
