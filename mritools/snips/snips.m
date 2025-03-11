@@ -1,9 +1,26 @@
 % [snips.m] : code snippets/matlab code
-% use context-menu to copy/evaluate code
+%  read and display code snippets stored in file 'snips_input1.m' and file)s) with name
+% prefix 'snips_input**.m' (lokated in pwd or in maltab-path)
 %
 
-function snips
+% use context-menu to copy/evaluate code
+%
+% snips('close');   close snips
+
+function snips(varargin)
 warning off;
+
+
+if nargin>0
+    if ischar(varargin{1}) && strcmp(varargin{1},'close')
+        hf=findobj(0,'tag','snips');
+        set(hf,'CloseRequestFcn','closereq');
+        close(hf);
+        return
+    end
+    
+    
+end
 
 
 %% ===============================================
@@ -85,6 +102,7 @@ else
     figure(v.hfig)
     set(v.hfig,'tag','snips');
 end
+hf=findobj('tag','snips');
 
 
 ax=axes('position',v.editorpos,'visible','off','tag','axe1');
@@ -94,9 +112,7 @@ uistack(ax,'bottom');
 % set(gcf, 'WindowKeyReleaseFcn', @key_release);
 
 %% ===============================================
-
-
-hf=findobj(0,'tag','snips');
+% hf=findobj(0,'tag','snips');
 set(hf,'units','pixels')
 figposp=get(hf,'position');
 sizepixel=figposp(3:4);
@@ -105,19 +121,13 @@ set(hf,'units','norm')
 pos0=get(hf,'position');
 set(hf,'position',[0.01 pos0(2) 1  pos0(4)   ]);
 set(hf,'units','pixels');
-
 pos=v.editorpos;%[0.001 0.001 1 1];
-% posfig   =get(gcf,'position');
 pos2=[ pos(1:2).*sizepixel  pos(3:4).*sizepixel];
-
 if ~isempty(v.figpos)
     set(hf,'units','norm');
     set(hf,'position',v.figpos);
     set(hf,'units','pixels');
 end
-
-% set(gcf,'units','normalized');
-
 %% ===============================================
 
 
@@ -243,11 +253,11 @@ for i=1:max(s2)
     
     if c2{1,4}>1
         fnameInfo=[' ...from ' c2{1,5} '.m'];
-        nn = ['<html><b><u><i>'  '<b><font color="' col '">' [c2{1,1} '</u></b><font color="gray">' fnameInfo] '</html>'];  
+        nn = ['<html><b><u><i>'  '<b><font color="' col '">' [c2{1,1} '</u></b><font color="gray">' fnameInfo] '</html>'];
     else
-       nn = ['<html><b><u><i>'  '<b><font color="' col '">' [c2{1,1} ] '</html>'];  
+        nn = ['<html><b><u><i>'  '<b><font color="' col '">' [c2{1,1} ] '</html>'];
     end
-   
+    
     
     
     dx = uitreenode('v0',  'bummy',nn, iconPath1, false);
@@ -269,7 +279,7 @@ for i=1:max(s2)
     root.add(dx);
 end
 
-set(gcf,'units','normalized');
+set(hf,'units','normalized');
 ht = uitree('v0', 'Root', root);
 set(ht,'units','normalized')
 up=0.05;
@@ -282,7 +292,7 @@ us.linenumbers=1;
 us.ht=ht;
 us.c=c;
 us.hc=hc;
-set(gcf,'userdata', us);
+set(hf,'userdata', us);
 set(hf,'position',v.figpos);
 
 
@@ -296,7 +306,7 @@ ht.setSelectedNode([dxFirst]);  %
 
 
 
-set(gcf,'SizeChangedFcn',@SizeChangedFcn)
+set(hf,'SizeChangedFcn',@SizeChangedFcn)
 % set(ht,'units','pixels');
 
 % ==============================================
@@ -307,32 +317,32 @@ hp = uipanel('Title','','FontSize',6, 'BackgroundColor','white',...
 
 
 % =====finder ==========================================
-hb=uicontrol(gcf,'style','edit','units','pixels','tag','find');
+hb=uicontrol(hf,'style','edit','units','pixels','tag','find');
 set(hb,'position',[0 0 134 21]);
 set(hb,'callback',@finder,'string','<search>');
 set(hb,'backgroundcolor',[0.9608    0.9765    0.9922],'tooltipstring','search');
 
 % =====clear finder ==========================================
-hb=uicontrol(gcf,'style','pushbutton','units','pixels','tag','find_clear');
+hb=uicontrol(hf,'style','pushbutton','units','pixels','tag','find_clear');
 set(hb,'position',[134 0 21 21]);
 set(hb,'callback',@find_clear,'string','x');
 set(hb,'tooltipstring','clear search field');
 
 % =====close ==========================================
-hb=uicontrol(gcf,'style','pushbutton','units','pixels','tag','close_fig');
+hb=uicontrol(hf,'style','pushbutton','units','pixels','tag','close_fig');
 set(hb,'position',[300 0 40 21]);
 set(hb,'callback',@close_fig,'string','close');
 set(hb,'tooltipstring','close GUI');
 
 % =====line numbers==========================================
-hb=uicontrol(gcf,'style','togglebutton','units','pixels','tag','bt_linenumbers');
-set(hb,'position',[350 0 21 21]);
+hb=uicontrol(hf,'style','togglebutton','units','pixels','tag','bt_linenumbers');
+set(hb,'position',[174 0 21 21]);
 set(hb,'callback',@bt_linenumbers,'string','ln','fontsize',7,'foregroundcolor',[0 0 1]);
 set(hb,'tooltipstring','show/hide line numbers','value', us.linenumbers);
 
-% =====line numbers==========================================
-hb=uicontrol(gcf,'style','pushbutton','units','pixels','tag','showhelp');
-set(hb,'position',[350+21 0 21 21]);
+% =====helps==========================================
+hb=uicontrol(hf,'style','pushbutton','units','pixels','tag','showhelp');
+set(hb,'position',[174+21 0 21 21]);
 set(hb,'callback',@showhelp,'string','','fontsize',7,'backgroundcolor',[1 1 1]);
 set(hb,'tooltipstring','help','value', us.linenumbers);
 icon = fullfile(matlabroot,'/toolbox/matlab/icons/demoicon.gif');
@@ -350,6 +360,49 @@ SizeChangedFcn()
 
 % Add line numbers
 lineNumbers = addLineNumbers(jCodePane, jScrollPane);
+uitree_contextmenu(ht);
+
+
+% menuItem1 = javax.swing.JMenuItem('<html><b>collapse tree nodes');
+% menuItem2 = javax.swing.JMenuItem('<html><b>expand tree nodes');
+% set(menuItem1,'ActionPerformedCallback',{@tree_context,'collapse'});
+% set(menuItem2,'ActionPerformedCallback',{@tree_context,'expand'});
+
+
+
+function uitree_contextmenu(ht)
+% Get Java Tree Handle
+hTree = handle(ht.getTree, 'CallbackProperties');
+
+% Prepare the context menu (using HTML labels for styling)
+menuItem1 = javax.swing.JMenuItem('<html><b>collapse tree nodes');
+menuItem2 = javax.swing.JMenuItem('<html><b>expand tree nodes');
+set(menuItem1, 'ActionPerformedCallback', {@uitree_contextCB, 'collapse'});
+set(menuItem2, 'ActionPerformedCallback', {@uitree_contextCB, 'expand'}); 
+jmenu = javax.swing.JPopupMenu;
+jmenu.add(menuItem1);
+jmenu.add(menuItem2);
+% Set the tree right-click callback
+set(hTree, 'MousePressedCallback', {@mousePressedCallback, jmenu});
+
+% Define the mouse-press callback function
+function mousePressedCallback(hTree, event, jmenu)
+if event.isMetaDown  % Right-click (context menu trigger)
+    jmenu.show(hTree, event.getX(), event.getY());
+end
+
+function uitree_contextCB(e,e2,task)
+hf=findobj('tag','snips');
+u=get(hf,'userdata');
+ht=u.ht;
+if strcmp(task,'collapse')
+    collapseAllNodes(u.ht);
+elseif strcmp(task,'expand')
+    expandAllNodes(u.ht);
+end
+
+
+
 
 
 function lineNumPanel = addLineNumbers(textPane, jScrollPane)
@@ -362,52 +415,57 @@ doc = textPane.getDocument();
 
 % Attach document listener to update line numbers
 listener = handle(doc, 'CallbackProperties');
-set(listener, 'InsertUpdateCallback', @(src, evt) updateLineNumbers(lineNumPanel, textPane));
-set(listener, 'RemoveUpdateCallback', @(src, evt) updateLineNumbers(lineNumPanel, textPane));
-set(listener, 'ChangedUpdateCallback', @(src, evt) updateLineNumbers(lineNumPanel, textPane));
+try;set(listener, 'InsertUpdateCallback', @(src, evt) updateLineNumbers(lineNumPanel, textPane)); end
+try;set(listener, 'RemoveUpdateCallback', @(src, evt) updateLineNumbers(lineNumPanel, textPane));end
+try;set(listener, 'ChangedUpdateCallback', @(src, evt) updateLineNumbers(lineNumPanel, textPane));end
 
 function updateLineNumbers(panel, textPane)
-doc = textPane.getDocument();
-rootElement = doc.getDefaultRootElement();
-numLines = rootElement.getElementCount();
-u=get(gcf,'userdata');
-if u.linenumbers==1
-    % Calculate necessary width
-    if isunix;
-        maxDigits = length(num2str(numLines))+0;
+try
+    doc = textPane.getDocument();
+    rootElement = doc.getDefaultRootElement();
+    numLines = rootElement.getElementCount();
+    hf=findobj('tag','snips');
+    u=get(hf,'userdata');
+    if u.linenumbers==1
+        % Calculate necessary width
+        if isunix;
+            maxDigits = length(num2str(numLines))+0;
+        else
+            maxDigits = length(num2str(numLines))+2;
+        end
     else
-        maxDigits = length(num2str(numLines))+2;
+        maxDigits = 0;
     end
-else
-    maxDigits = 0;
+    newWidth = maxDigits * 10 + 10;  % Approximation of width needed per digit plus some padding
+    % Adjust panel width
+    panel.setPreferredSize(java.awt.Dimension(newWidth, textPane.getHeight()));
+    
+    % Clear previous content and add new labels
+    panel.removeAll();
+    for i = 1:numLines
+        lineNumberLabel = javax.swing.JLabel(sprintf('%d', i));
+        lineNumberLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lineNumberLabel.setFont(textPane.getFont());  % Match font size with text pane
+        panel.add(lineNumberLabel);
+    end
+    
+    panel.revalidate();
+    panel.repaint();
 end
-newWidth = maxDigits * 10 + 10;  % Approximation of width needed per digit plus some padding
-% Adjust panel width
-panel.setPreferredSize(java.awt.Dimension(newWidth, textPane.getHeight()));
-
-% Clear previous content and add new labels
-panel.removeAll();
-for i = 1:numLines
-    lineNumberLabel = javax.swing.JLabel(sprintf('%d', i));
-    lineNumberLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-    lineNumberLabel.setFont(textPane.getFont());  % Match font size with text pane
-    panel.add(lineNumberLabel);
-end
-
-panel.revalidate();
-panel.repaint();
-
 
 
 function bt_linenumbers(e,e2)
-u=get(gcf,'userdata');
+hf=findobj('tag','snips');
+u=get(hf,'userdata');
 hb=findobj(gcf,'tag','bt_linenumbers');
 u.linenumbers=hb.Value;
 set(gcf,'userdata',u);
 nodeSelectedCallback()
 
 function SizeChangedFcn(e,e2)
-u=get(gcf,'userdata');
+hf=findobj('tag','snips');
+u=get(hf,'userdata');
+
 uni_ht =get(u.ht,'units');
 set(u.ht,'units','pixels');
 px    =get(u.ht,'position');
@@ -419,14 +477,14 @@ set(hf,'units','pixels');
 poshf=get(hf,'position');
 set(hf,'units',uni_hf);
 
-hb=findobj(gcf,'tag','find');
+hb=findobj(hf,'tag','find');
 poshb=get(hb,'position');
 % px(4)=poshf(4)-poshb(4)-1
 set(u.ht,'position',[ px(1)  21 px(3)  poshf(4)-poshb(4)-1]);
 set(u.ht,'units',uni_ht);
 
 % shifter
-hb=findobj(gcf,'tag','BUT_resizeControl');
+hb=findobj(hf,'tag','BUT_resizeControl');
 hb=hb(1);
 uni_hb =get(hb,'units');
 set(hb,'units','pixels');
@@ -443,14 +501,16 @@ close(hf);
 
 
 function find_clear(e,e2)
-hb=findobj(gcf,'tag','find');
+hf=findobj('tag','snips');
+hb=findobj(hf,'tag','find');
 hb.String='';
 finder();
 
 function finder(e,e2)
 %% ===============================================
-u=get(gcf,'userdata');
-hb=findobj(gcf,'tag','find');
+hf=findobj('tag','snips');
+u=get(hf,'userdata');
+hb=findobj(hf,'tag','find');
 s=hb.String;
 li=zeros(size(u.c,1),1);
 if ~isempty(s)
@@ -474,7 +534,7 @@ pause(.2)
 for i=1:length(li)
     str = regexprep(char(u.hc{i}.getName), '<.*?>', '');
     if li(i)==1
-        str=['<html><b><mark><font color="Purple">' str '</font></html>'];
+        str=['<html><b><mark><font color="fuchsia">' str '</font></html>'];
         %     str=['<html><body style="color: blue;">' str '</body></html>']
     end
     %    str2 = ['<html><b><u><i>'  '<b><font color="red">' 'bla' '</html>'];
@@ -493,7 +553,8 @@ function showhelp(e,e2)
 uhelp([mfilename '.m']);
 
 function context(e,e2,task)
-u=get(gcf,'userdata');
+hf=findobj('tag','snips');
+u=get(hf,'userdata');
 txt=char(u.jCodePane.getSelectedText());
 if strcmp(task,'run')
     disp(['Selected Text: ', txt]);
@@ -521,7 +582,7 @@ elseif strcmp(task,'copy2editor')
     % editorDoc.Visible = true;
     
 elseif strcmp(task,'show_linenumbers')
-    hb=findobj(gcf,'tag','bt_linenumbers');
+    hb=findobj(hf,'tag','bt_linenumbers');
     hb.Value=~hb.Value;
     bt_linenumbers();
 end
@@ -530,10 +591,9 @@ end
 
 
 function nodeSelectedCallback(tree, eventData)
-u=get(gcf,'userdata');
+hf=findobj('tag','snips');
+u=get(hf,'userdata');
 tree=u.ht;
-% Callback function to handle node selection
-u=get(gcf,'userdata');
 c=u.c;
 if 0
     node = tree.getSelectedNodes;
@@ -562,7 +622,7 @@ end
 
 
 if isnumeric(ix)==0;
-    % u.jCodePane.setText('');
+    u.jCodePane.setText('');
     return;
 else
     %% ===============================================
@@ -836,6 +896,8 @@ drawnow
 function expandAllNodes(tree)
 warning off
 % Get Java tree handle
+%% ===============================================
+
 jTree = tree.getTree;
 
 % Manually expand all rows
@@ -853,3 +915,16 @@ while row < rowCount
         rowCount = newRowCount; % Update count, keep expanding
     end
 end
+
+
+function collapseAllNodes(tree)
+% Get total number of rows (nodes)
+%% ===============================================
+jTree = tree.getTree;
+rowCount = jTree.getRowCount();
+
+% Collapse nodes from bottom to top
+for i = rowCount-1:-1:1
+    jTree.collapseRow(i);
+end
+

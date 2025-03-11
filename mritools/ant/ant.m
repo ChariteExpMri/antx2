@@ -1509,6 +1509,10 @@ mh = uimenu(f,'Label','Snips');
 mh2 = uimenu(mh,'Label','<html><font color="blue">scripts collection',                                  'Callback',{@menubarCB, 'scripts_call'},...
     'userdata',[HSTART 'show collection of scripts' HEND ' scripts can be modified and applied']);
 
+mh2 = uimenu(mh,'Label','<html><font color="blue"><html><b>snips',  'Callback',{@menubarCB, 'snips_call'},...
+    'userdata',[HSTART 'show collection of snippets/scripts' HEND ' scripts can be modified and applied']);
+
+
 mh2 = uimenu(mh,'Label','get corrected lesion volume',                                  'Callback',{@menubarCB, 'getlesionvolume'},...
  'userdata',[HSTART 'obtain corrected lesion volume' HEND '..the output is an Excel-file']);
 
@@ -3624,6 +3628,11 @@ elseif strcmp(task,'scripts_call')
     scripts_collection();
     statusMsg(0);
     
+elseif strcmp(task,'snips_call')
+    fun='snips';
+    if showhelpOnly==1;   hlpfun=fun;      return;end
+    if strcmp(u.mousekey,'right');      hlpfun=[fun '.m'];   showcmd(hlpfun);return;end
+    statusMsg(1,'snips');   feval(fun);    statusMsg(0);
 elseif strcmp(task,'getlesionvolume')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xgetlesionvolume';
@@ -4232,12 +4241,10 @@ summary_export();
 
 
 function showCommandHistory(e,e2)
-
 his={''; '<empty>'};
 try
     his=evalin('base','anth');
 end
-
 % hf=findobj(0,'tag','uhelp','-and','name','[anth] command history');
 % if ~isempty(hf)
 %     close(hf);
