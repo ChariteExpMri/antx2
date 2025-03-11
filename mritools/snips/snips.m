@@ -330,8 +330,8 @@ set(hb,'tooltipstring','clear search field');
 
 % =====close ==========================================
 hb=uicontrol(hf,'style','pushbutton','units','pixels','tag','close_fig');
-set(hb,'position',[300 0 40 21]);
-set(hb,'callback',@close_fig,'string','close');
+set(hb,'position',[300 0 40 21],'backgroundcolor',[0.9451    0.9686    0.9490]);
+set(hb,'callback',@close_fig,'string','close','fontweight','bold');
 set(hb,'tooltipstring','close GUI');
 
 % =====line numbers==========================================
