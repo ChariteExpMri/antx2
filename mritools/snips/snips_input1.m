@@ -13,7 +13,8 @@ antcb('load',  fullfile(pwd,'proj.m'  ))  ;
 % close Antx-GUI
 antcb('close')
 
-% close Antx-GUI & exit
+% close Antx-GUI & exit from snips-GUI
+snips('close');
 antcb('close'); exit
 
 % update Antx-GUI from github
@@ -525,6 +526,21 @@ end
       doelastix(1   , [],      files                      ,3 ,'local' );
 
 
+  
+%% #################################################
+% MPM
+% Bruker import
+
+% DISPLAY all Bruker-files from 'raw'-folder
+w1=xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0,'show',1);
+
+% DISPLAY a list of Bruker files where the protocol name contains 'MPM_3D
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol','MPM_3D'},...
+    'paout',fullfile(pwd,'dat'),'ExpNo_File',1);
+
+% IMPORT Bruker files where the protocol name contains 'MPM_3D
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol','MPM_3D'},...
+    'paout',fullfile(pwd,'dat'),'ExpNo_File',1);
 
 %% #################################################
 % regexp

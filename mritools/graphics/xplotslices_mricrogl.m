@@ -263,7 +263,8 @@
 %     z.makePPT        = [1];                                                                             % % make powerpoint with image and infos
 %     xplotslices_mricrogl(0,z);
 %
-
+% use this function to get path of mricrogl:
+% z=xplotslices_mricrogl('path_mricrogl')
 
 
 function [z]=xplotslices_mricrogl(showgui,x,pa)
@@ -276,6 +277,14 @@ if exist('pa')==1 && ~isempty(pa)
     isExtPath=1;
 end
 if exist('showgui')==0 || isempty(showgui) ;    showgui=1                ;end
+
+if ischar(showgui)  % get path of MRICROGL
+    if strcmp(showgui,'path_mricrogl')
+        z=getExecutable();
+        return
+    end
+end
+
 if exist('x')==0                          ;    x=[]                     ;end
 if isExtPath==0      ;    pa=antcb('getsubjects')  ;end
 

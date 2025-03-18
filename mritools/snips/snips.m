@@ -1,11 +1,12 @@
 % [snips.m] : code snippets/matlab code
-%  read and display code snippets stored in file 'snips_input1.m' and file)s) with name
-% prefix 'snips_input**.m' (lokated in pwd or in maltab-path)
+%  read and display code snippets stored in file 'snips_input1.m' and file(s) with
+%  prefix 'snips_input*.m' (located in pwd or in maltab-path)
 %
-
 % use context-menu to copy/evaluate code
 %
 % snips('close');   close snips
+% 
+% 
 
 function snips(varargin)
 warning off;
@@ -238,6 +239,9 @@ for i=2:size(c,1)
     s2(i,1)=n ;
 end
 
+% us.tooltipManager = javax.swing.ToolTipManager.sharedInstance();
+% us.tooltipManager.setInitialDelay(0);  % Show tooltip immediately
+% us.tooltipManager.setDismissDelay(2000);  % Tooltip disappears after 5 sec
 
 
 %% ===============================================
@@ -288,6 +292,7 @@ expandAllNodes(ht);
 
 set(ht, 'NodeSelectedCallback', @nodeSelectedCallback);
 
+us.tooltips=0;
 us.linenumbers=1;
 us.ht=ht;
 us.c=c;
@@ -317,11 +322,25 @@ hp = uipanel('Title','','FontSize',6, 'BackgroundColor','white',...
 
 
 % =====finder ==========================================
-hb=uicontrol(hf,'style','edit','units','pixels','tag','find');
-set(hb,'position',[0 0 134 21]);
-set(hb,'callback',@finder,'string','<search>');
-set(hb,'backgroundcolor',[0.9608    0.9765    0.9922],'tooltipstring','search');
+if 1
+    hb=uicontrol(hf,'style','edit','units','pixels','tag','find');
+    set(hb,'position',[0 0 134 21]);
+    set(hb,'callback',@finder,'string','<search>');
+    set(hb,'backgroundcolor',[0.9608    0.9765    0.9922],'tooltipstring','search');
+    set(hb,'visible','on')
+end
 
+
+
+
+
+% =====pop words ==========================================
+
+hb=uicontrol(hf,'style','popu','units','pixels','tag','find_words');
+set(hb,'position',[134+13 -1 21 21]);
+set(hb,'callback',@find_words,'string',{'ddd' 'vvv' 'www'});
+set(hb,'tooltipstring','words');
+setWordlist();
 % =====clear finder ==========================================
 hb=uicontrol(hf,'style','pushbutton','units','pixels','tag','find_clear');
 set(hb,'position',[134 0 21 21]);
@@ -356,36 +375,272 @@ set(hb,'cdata',e);
 
 
 
-SizeChangedFcn()
+SizeChangedFcn();
 
 % Add line numbers
 lineNumbers = addLineNumbers(jCodePane, jScrollPane);
 uitree_contextmenu(ht);
 
 
-% menuItem1 = javax.swing.JMenuItem('<html><b>collapse tree nodes');
-% menuItem2 = javax.swing.JMenuItem('<html><b>expand tree nodes');
-% set(menuItem1,'ActionPerformedCallback',{@tree_context,'collapse'});
-% set(menuItem2,'ActionPerformedCallback',{@tree_context,'expand'});
+% Get the Java tree object
+jTree = handle(ht.getTree, 'CallbackProperties'); %TOOLTIPS
+% Attach MouseMoved callback
+set(jTree, 'MouseMovedCallback', @(src, event) nodeHoverCallback(jTree, event));
 
+jTree.setFocusable(true);% keyboard
+jTree.requestFocus();
+set(jTree, 'KeyPressedCallback', @(src, event) keyPressedCallback_tree(event, jTree));
+
+% -------------------
+% jp=handle(us.jCodePane, 'CallbackProperties');
+% jp.setFocusable(true);
+% jp.requestFocus();
+% set(jp, 'KeyPressedCallback', @(src, event) keyPressedCallback_pane(event, jp));
+
+
+
+% % Create the SearchTextField component (after the hidden combo was created)
+% jAssetChooser = com.mathworks.widgets.SearchTextField('Enter search:');
+% jAssetComponent = jAssetChooser.getComponent;
+% [jhAssetComponent, hContainer] = javacomponent(jAssetComponent,[0,0,134,21],gcf);
+% % Set callbacks:
+% % 1) search icon mouse-click
+% % hjSearchButton = handle(jAssetComponent.getComponent(1), 'CallbackProperties');
+% % set(hjSearchButton, 'MouseClickedCallback', {@updateSearch,jAssetChooser});
+% % % 2) search textbox key-click
+% 
+%  hjSearchButton = handle(jAssetComponent.getComponent(1), 'CallbackProperties');
+% set(hjSearchButton, 'ActionPerformedCallback', {@updateSearch,[],jAssetChooser});
+% % set(handle(jAssetChooser,'callbackproperties'), 'ActionPerformedCallback', @myMatlabCallbackFunc);
+% 
+% 
+% function bb(e,e2,e3)
+% 'ss'
+% 
+% % jPanelObj = com.mathworks.widgets.SearchTextField('Enter search term:');
+% % [jhPanelE,hContainerE] = javacomponent(jPanelObj.getComponent, [0,0,134,21], gcf);
+% % % set(handle(jhPanel, 'CallbackProperties'), 'ActionPerformedCallback', {@context,'helpfun_uhelp'});
+% %  hande = handle(jhPanelE, 'CallbackProperties');
+% % set(hande, 'KeyPressedCallback', @fg);
+% % 
+% % 
+% % set(hande, 'KeyPressedCallback', @(src, event) bla(event, jhPanelE));
+% % function bla(event, jp)
+% % 
+% % 'aa'
+
+% popup_panel()
+
+function popup_panel
+%% ===============================================
+% cf;fg
+% Create the popup-panel in the specified figure
+hPopupPanel = ctrluis.PopupPanel(gcf);  % use gcf or any figure handle
+% hPopupPanel.setPosition([0,0,.2,.1]);  % set panel position (normalized units)
+hPopupPanel.setPosition([0.2 0.2 .2 .1]);
+% Alternative #1: set popup-panel's contents to some HTML-formatted message
+% note: createMessageTextPane() has optional input args FontName (arg #2), FontSize (#3)
+jPanel = ctrluis.PopupPanel.createMessageTextPane('testing <b><i>123</i></b> ...')
+hPopupPanel.setPanel(jPanel);
+
+% % Alternative #2: set popup-panel's contents to a webpage URL
+% url = 'http://undocumentedmatlab.com/files/sample-webpage.html';
+% url='https://en.wikipedia.org/wiki/United_Kingdom'
+% 
+% options = weboptions('ContentType','text', 'Timeout', 30);
+% data = webread(url, options);
+% % Convert plain text to HTML format (optional, for better formatting)
+%  formattedData = sprintf('<html><body><pre>%s</pre></body></html>', data);
+%  jPanel = ctrluis.PopupPanel.createMessageTextPane(formattedData);
+%  
+% % jPanel = javaObjectEDT(javax.swing.JEditorPane(url));
+% hPopupPanel.setPanel(jPanel);
+% % jPanel = ctrluis.PopupPanel.createMessageTextPan(data)
+% 
+% % hPopupPanel.setPanel(jPanel);
+ hPopupPanel.hidePanel;
+%% ===============================================
+% cf;
+% fg
+% hPopupPanel = ctrluis.PopupPanel(gcf);  % use gcf or any figure handle
+% hPopupPanel.setPosition([.1,.1,.9,.8]);  % set panel position (normalized units)
+% 
+% 
+% jObject = com.mathworks.mlwidgets.html.HTMLBrowserPanel;
+% 
+% % url='www.bbc.co.uk'
+% url='https://www.google.com/'
+% [browser,container] = javacomponent(jObject, [], gcf);
+% % set(container, 'Units','norm', 'Pos',[0.3,0.05,0.65,0.9]);
+% % strs = get(gcbo,'string'); 
+% % url = strs{get(gcbo,'value')};
+% % browser = get(gcbo,'userdata'); 
+% msg=['<html><h2>Loading ' url ' - please wait'];
+% browser.setHtmlText(msg); pause(0.1); 
+% drawnow;
+% browser.setCurrentLocation(url);
+% 
+% 
+% hPopupPanel.setPanel(jObject);
+% hPopupPanel.hidePanel;
+
+%% ===============================================
+
+% % Create a blank figure window
+% f=figure('Name','Browser GUI demo','Units','norm');
+% % Add the browser object on the right
+% jObject = com.mathworks.mlwidgets.html.HTMLBrowserPanel;
+% [browser,container] = javacomponent(jObject, [], f);
+% set(container, 'Units','norm', 'Pos',[0.3,0.05,0.65,0.9]);
+% % Add the URLs listbox on the left
+% urls = {'www.cnn.com','www.bbc.co.uk','myLocalwebpage.html',...
+%         'www.Mathworks.com', 'undocumentedmatlab.com'};
+% hListbox = uicontrol('style','listbox', 'string',urls, ...
+%         'units','norm', 'pos',[0.05,0.05,0.2,0.9], ...
+%         'userdata',browser);
+% % Set the listbox's callback to update the browser contents
+% cbStr=['strs = get(gcbo,''string''); ' ...
+%       'url = strs{get(gcbo,''value'')};' ...
+%       'browser = get(gcbo,''userdata''); ' ...
+%       'msg=[''<html><h2>Loading '' url '' - please wait''];'...  % no need for </h2></html>
+%       'browser.setHtmlText(msg); pause(0.1); drawnow;'...
+%       'browser.setCurrentLocation(url);'];
+% set(hListbox,'Callback',cbStr);
+
+%% ===============================================
+
+
+
+function setWordlist()
+u=get(gcf,'userdata');
+nc=u.c(:,3);
+flatCellArray = vertcat(nc{:});
+allText = strjoin(flatCellArray, ' '); % Join all sentences into a single string
+words = regexp(allText, '\w+', 'match'); % Extract words (ignores punctuation)
+% words = lower(words);
+
+minLength=5;
+words = words(cellfun(@(x) length(x) >= minLength, words));
+words=words(regexpi2(words,'^\D'));
+words=words(cellfun(@(w) numel(unique(w)) > 1, words));
+words = unique(words');
+
+hp=findobj(gcf,'tag','find_words');
+set(hp,'string',words);
+
+
+function find_words(e,e2)
+
+hp=findobj(gcf,'tag','find_words');
+he=findobj(gcf,'tag','find');
+he.String=hp.String{hp.Value};
+finder();
+
+
+function keyPressedCallback_pane(event, jp)
+%% ===============================================
+
+% event.getKeyChar
+% if strcmp(event.getKeyChar,'+')
+% event.isControlDown==1
+task='+'
+fn=jp.getFont;
+fs=fn.getSize;
+if strcmp(task,'+'); fs=fs+1;
+else;                fs=fs-1;
+end
+if fs<2; fs=2; end
+% newFont = java.awt.Font('Arial', java.awt.Font.PLAIN, newFontSize);
+newFont = java.awt.Font(fn.getFontName,java.awt.Font.PLAIN,fs);
+jp.setFont(newFont);
+jp.repaint();% Apply the new font immediately
+%% ===============================================
+
+
+
+function keyPressedCallback_tree(event, jTree)
+% keyCode = event.getKeyCode()
+if strcmp(event.getKeyChar,'+');
+    tree_font(jTree,'+');
+elseif strcmp(event.getKeyChar,'-');
+    tree_font(jTree,'-');
+end
+
+function tree_font(jTree,task);
+%% ===============================================
+fn=jTree.getFont;
+fs=fn.getSize;
+if strcmp(task,'+'); fs=fs+1;
+else;                fs=fs-1;
+end
+if fs<2; fs=2; end
+% newFont = java.awt.Font('Arial', java.awt.Font.PLAIN, newFontSize);
+newFont = java.awt.Font(fn.getFontName,java.awt.Font.PLAIN,fs);
+jTree.setFont(newFont);
+jTree.repaint();% Apply the new font immediately
+%% ===============================================
+
+
+
+function nodeHoverCallback(jTree, event)
+try
+    treePath = jTree.getPathForLocation(event.getX(), event.getY());
+    if ~isempty(treePath)
+        %         nodeName = char(treePath.getLastPathComponent.toString());
+        %         disp(['Hovered node: ', nodeName]); % Display node name
+        
+        u=get(gcf,'userdata');
+        if u.tooltips==0;
+            jTree.ToolTipText='';
+            return; 
+        end
+        
+        v=treePath.getLastPathComponent;
+        id=v.getValue;
+        
+        tx=u.c{id,3};
+        nl=4;
+        tx(1)=[];
+        if size(tx,1)>nl; tx=tx(1:nl); end
+        tx = ['<html>' strjoin(tx, '<br>') '</html>'];
+        jTree.ToolTipText=char(tx);
+        
+        %              mouseX = event.getX();
+        %             mouseY = event.getY();
+        % %         tooltipManager = javax.swing.ToolTipManager.sharedInstance();
+        %         u.tooltipManager.mouseMoved(java.awt.event.MouseEvent(...
+        %                     jTree, java.awt.event.MouseEvent.MOUSE_MOVED, 0, 0, 220, mouseY + 0, 0, false));
+        %
+        
+    else
+        %         disp('No node under mouse');
+    end
+catch
+end
 
 
 function uitree_contextmenu(ht)
-% Get Java Tree Handle
 hTree = handle(ht.getTree, 'CallbackProperties');
-
-% Prepare the context menu (using HTML labels for styling)
 menuItem1 = javax.swing.JMenuItem('<html><b>collapse tree nodes');
 menuItem2 = javax.swing.JMenuItem('<html><b>expand tree nodes');
+menuItem3 = javax.swing.JMenuItem('<html>show/hide tooltips');
+menuItem4 = javax.swing.JMenuItem('<html>increase fontsize [+]');
+menuItem5 = javax.swing.JMenuItem('<html>decrease fontsize [-]');
+
 set(menuItem1, 'ActionPerformedCallback', {@uitree_contextCB, 'collapse'});
 set(menuItem2, 'ActionPerformedCallback', {@uitree_contextCB, 'expand'}); 
+set(menuItem3, 'ActionPerformedCallback', {@uitree_contextCB, 'showtooltips'}); 
+set(menuItem4, 'ActionPerformedCallback', {@uitree_contextCB, 'increaseFS'}); 
+set(menuItem5, 'ActionPerformedCallback', {@uitree_contextCB, 'decreaseFS'}); 
 jmenu = javax.swing.JPopupMenu;
 jmenu.add(menuItem1);
 jmenu.add(menuItem2);
-% Set the tree right-click callback
+jmenu.add(javax.swing.JSeparator());
+jmenu.add(menuItem3);
+jmenu.add(javax.swing.JSeparator());
+jmenu.add(menuItem4);
+jmenu.add(menuItem5);
 set(hTree, 'MousePressedCallback', {@mousePressedCallback, jmenu});
-
-% Define the mouse-press callback function
 function mousePressedCallback(hTree, event, jmenu)
 if event.isMetaDown  % Right-click (context menu trigger)
     jmenu.show(hTree, event.getX(), event.getY());
@@ -399,6 +654,15 @@ if strcmp(task,'collapse')
     collapseAllNodes(u.ht);
 elseif strcmp(task,'expand')
     expandAllNodes(u.ht);
+elseif strcmp(task,'showtooltips')
+     u.tooltips=~u.tooltips;
+     set(hf,'userdata',u);
+elseif strcmp(task,'increaseFS')
+    jTree = handle(ht.getTree, 'CallbackProperties'); %TOOLTIPS
+    tree_font(jTree,'+');
+elseif strcmp(task,'decreaseFS')
+     jTree = handle(ht.getTree, 'CallbackProperties'); %TOOLTIPS
+    tree_font(jTree,'-');
 end
 
 
@@ -595,18 +859,38 @@ hf=findobj('tag','snips');
 u=get(hf,'userdata');
 tree=u.ht;
 c=u.c;
-if 0
-    node = tree.getSelectedNodes;
-    nodeName = node(1).getName;
-    nodeName=regexprep(char(nodeName), '<.*?>', '');
-    % fprintf('Node selected: %s\n', nodeName);
-    
-    ix=find(strcmp(c(:,2), nodeName));
-end
+% if 0
+%     node = tree.getSelectedNodes;
+%     nodeName = node(1).getName;
+%     nodeName=regexprep(char(nodeName), '<.*?>', '');
+%     % fprintf('Node selected: %s\n', nodeName);
+%     
+%     ix=find(strcmp(c(:,2), nodeName));
+% end
+
+% if exist('eventData')==0
+%     t=snips_intro();
+%         t2=strjoin(t,char(10));
+%         u.jCodePane.setText(t2);
+%         return
+% end
 
 try
     hn=get(eventData,'CurrentNode');
     ix=hn.getValue;
+    if ischar(ix) && strcmp(ix,'SNIPS')
+        t=snips_intro();
+        t2=strjoin(t,char(10));
+        u.jCodePane.setText(t2);
+        return
+    elseif ischar(ix) && strcmp(ix,'SNIPS')
+        t={' ' ' '}';
+        t2=strjoin(t,char(10));
+        u.jCodePane.setText(t2);
+        return
+        
+    end
+    
 catch
     node = tree.getSelectedNodes;
     nodeName = node(1).getName;
@@ -622,21 +906,63 @@ end
 
 
 if isnumeric(ix)==0;
-    u.jCodePane.setText('');
+    u.jCodePane.setText(' ');
     return;
 else
     %% ===============================================
     if ~isempty(ix)
         t=c{ix,3};
         t2=strjoin(t,char(10));
-        %t2=char(strjoin(t,char(10)))
         u.jCodePane.setText(t2);
+    else
+        if strcmp(nodeName,'SNIPS')
+            t=snips_intro();
+        else
+            t={' ' ' '}';
+        end
+        t2=strjoin(t,char(10));
+        u.jCodePane.setText(t2);
+        
     end
     %% ===============================================
 end
 
+function tx=snips_intro()
+%% ===============================================
+a=preadfile(which('snips.m')); a=a.all;
+i1=regexpi2(a,[repmat('#',[1 20]) ' ANKER123s']);
+i2=regexpi2(a,[repmat('#',[1 20]) ' ANKER123e']);
+tx=a(i1+1:i2-1);
 
-
+% 
+%% ################################################# ANKER123s
+%                                             .__                      __          
+%   __________   _____   ____     ______ ____ |__|_____ ______   _____/  |_  ______
+%  /  ___/  _ \ /     \_/ __ \   /  ___//    \|  \____ \\____ \_/ __ \   __\/  ___/
+%  \___ (  <_> )  Y Y  \  ___/   \___ \|   |  \  |  |_> >  |_> >  ___/|  |  \___ \ 
+% /____  >____/|__|_|  /\___  > /____  >___|  /__|   __/|   __/ \___  >__| /____  >
+%      \/            \/     \/       \/     \/   |__|   |__|        \/          \/ 
+%            ____
+%        .-'&    '-.
+%       /           \
+%      :   o    o    ;
+%     (      (_       )
+%      :             ;
+%       \    __     /
+%        `-._____.-'
+%          /`"""`\
+%         /    ,  \
+%        /|/\/\/\ _\
+%       (_|/\/\/\\__)
+%         |_______|
+%        __)_ |_ (__
+%  jgs  (_____|_____)
+% 
+% ------------------------------------------------
+% Thank you for visiting https://asciiart.website/
+% This ASCII pic can be found at
+% https://asciiart.website/index.php?art=comics/peanuts
+%% ################################################# ANKER123e
 
 
 
