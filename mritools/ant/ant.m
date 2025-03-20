@@ -1430,6 +1430,9 @@ mh2 = uimenu(mh,'Label',' GUI overlay image2',                                  
  mh2 = uimenu(mh,'Label','<html><font color=fuchsia><b>MRicoGL</b> orthoview-overlay',               'Callback',{@menubarCB, 'xplotortho_mricrogl_call'},...
      'userdata',[HSTART 'orthoview plot(coronal, sagittal, axial) using MRicroGL ' HEND ''],'Separator','off');
  
+  mh2 = uimenu(mh,'Label','<html><font color=fuchsia><b>MRicoGL</b> colorize atlas region ',               'Callback',{@menubarCB, 'xcolorregion_mricrogl_call'},...
+     'userdata',[HSTART 'colorize atlas region using MRicroGL ' HEND ''],'Separator','off');
+ 
  
      
 mh2 = uimenu(mh,'Label',' fastviewer',                                                     'Callback',{@menubarCB, 'fastviewer'},...
@@ -3306,6 +3309,13 @@ elseif strcmp(task,'xplotslices_mricrogl_call')
     if strcmp(u.mousekey,'right');   hlpfun=[fun '.m'];       showcmd(hlpfun);       return
     end
     feval(fun);    
+    
+ elseif strcmp(task,'xcolorregion_mricrogl_call')
+    fun='xcolorregion_mricrogl';
+    if showhelpOnly==1;              hlpfun=fun;                              return ;    end
+    if strcmp(u.mousekey,'right');   hlpfun=[fun '.m'];       showcmd(hlpfun);       return
+    end
+    feval(fun);  
     
     
     %________________________________________________

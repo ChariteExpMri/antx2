@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   06 Mar 2025 (17:55:16)  
+ &#x1F34E; last modification:   20 Mar 2025 (12:26:59)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,13 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**20 Mar 2025 (12:26:59)**</ins>  
+   __[xcolorregion_mricrogl.m]__ : colorize brain region from atlas using mricrogl, save as  png, create ppt-file  
+  &#8618; access via ANT-menu: &#8658; Graphics  
+   __[snips.m]__ : code snippets/usefull matlab code  
+  &#8618; access via ANT-menu: &#8658; Snips/snips	  
+      .. The content from snips will be filled in subsequently ..  
+<!---->
   &#x1F535;   <ins>**06 Mar 2025 (17:55:16)**</ins>  
   %  __[xstat_chisquare.m]__ : modified, outputs also the uncorrected map  
 <!---->

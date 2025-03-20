@@ -384,6 +384,81 @@ xplotortho_mricrogl(0,z);
   r.visible     =  [1  1  1  1]; %bg/overlay-images-visible                                                                                                                                          
   orthoslice(files,r)
   
+%% #################################################
+% mricroGL-colorize brain region from atlas
+% save as  png, create ppt-file
+
+%% =============================================================
+%% EXAMPLE-1: ANTx-projext is already loaded: no need to specify 'bg_image','bg_mask' and 'atlas_image', because
+%% the study's template files are used : 'AVGT.nii', 'AVGTmask.nii' and 'ANO.nii'  
+%% For regions specified in 'regions' create PNG-files and a PPT-file,region-color is red
+%% =============================================================
+    z=[];                                                                                                                                                                                                                                   
+    z.bg_image     = '';                    % % background image, if empty, "AVGT.nii" from template-folder is used                                                                                
+    z.bg_mask      = '';                    % % image mask, if empty, "AVGTmask.nii" from template-folder is used                                                                                  
+    z.atlas_image  = '';                    % % atlas (NIFTI), if empty, "ANO.nii" from template-folder is used                                                                                    
+    z.regions      = { 'L_Prelimbic area'   % % enter regons or select regionfile (Excelfile with regions,1st column) or select regions from Atlas (Excelfile such as "ANO.xlsx")                  
+                       'R_Prelimbic area' 
+                       'L_Orbital area' 
+                       'Caudoputamen'};                                                                                                                                                                                                  
+    z.bg_clim      = [50  200];             % % background-image: intensity limits [min,max], if [nan nan]..automatically defined                                                                  
+    z.ovl_cmap     = '1red.clut';           % % overlay-image: colormap                                                                                                                            
+    z.ovl_clim     = [0  1];                % % overlay-image: intensity limits [min,max], if [nan nan]..automatically defined                                                                     
+    z.opacity      = [30];                  % % overlay opacity range: 0-100                                                                                                                       
+    z.linewidth    = [5];                   % % linewidth of slice cutting line                                                                                                                    
+    z.linecolor    = [0  0  0];             % % line color of slice cutting line                                                                                                                   
+    z.outdir       = '';                    % % output-dir, if empty plots/ppt-file in current directory                                                                                           
+    z.subdir       = 'test5';               % % subdir in outdir, contains created png-files, can be <empty>                                                                                       
+    z.ppt_filename = 'regions';             % % PPT-filename                                                                                                                                       
+    z.cleanup      = [1];                   % % remove temporarily created NIFTIs,{0|1}                                                                                                            
+    z.makePPT      = [1];                   % % make Powerpoint-file with image and infos, {0|1}                                                                                                   
+    z.mricroGL     = '';                    % % <optional> specify fullpath name of MRicroGL-exe/app if not otherwise found (SEE HELP)                                                             
+    xcolorregion_mricrogl(0,z);
+%% =============================================================
+%% EXAMPLE-2: ANTx-projext is already loaded, SHORTEST VERSION
+% Antx-project must be loaded before, create colored regions using default parameter
+% output (png-images and pptfile) is saved in <study>\results\regioncolorized
+% using default AVGT.nii, AVGTmask and ANO.nii from template folder
+% Although not explicitely occuring in the corresponding region-file 'ANO.xlsx', we can separately display the
+% left and right hemispheric regions when adding the prefix 'L_' and 'R_' in the region-names (example:
+% 'L_Primary motor area' or 'R_Primary motor area')
+%% =============================================================    
+    z=[];
+    z.regions= {...
+        'L_Primary motor area'        % % enter regons or select regionfile (Excelfile with regions,1st column) or select regions from Atlas (Excelfile such as "ANO.xlsx")
+        'R_Primary motor area'
+        'Primary motor area'
+        'L_Caudoputamen'
+        'R_Caudoputamen'
+        'Caudoputamen'
+        };                                                                                                                                                                            % % <optional> specify fullpath name of MRicroGL-exe/app if not otherwise found (SEE HELP)
+    xcolorregion_mricrogl(0,z);
+
+  
+%% =============================================================
+%% EXAMPLE-3: independent from loaded ANTx-project 
+%% =============================================================
+    pastudy='F:\data8\sarah\sarah_plots_26jan24';
+    z=[];
+    z.bg_image     = fullfile(pastudy,'templates','AVGT.nii');        % % background image, if empty, "AVGT.nii" from template-folder is used
+    z.bg_mask      = fullfile(pastudy,'templates','AVGTmask.nii');    % % image mask, if empty, "AVGTmask.nii" from template-folder is used
+    z.atlas_image  = fullfile(pastudy,'templates','ANO.nii');         % % atlas (NIFTI), if empty, "ANO.nii" from template-folder is used
+    z.regions      = {'Caudoputamen' 'L_Primary motor area'}          % % enter regons or select regionfile (Excelfile with regions,1st column) or select regions from Atlas (Excelfile such as "ANO.xlsx")
+    z.bg_clim      = [NaN  NaN];                                      % % background-image: intensity limits [min,max], if [nan nan]..automatically defined
+    z.ovl_cmap     = '3blue.clut';                                    % % overlay-image: colormap
+    z.ovl_clim     = [NaN  NaN];                                      % % overlay-image: intensity limits [min,max], if [nan nan]..automatically defined
+    z.opacity      = [40];                                            % % overlay opacity range: 0-100
+    z.linewidth    = [1];                                             % % linewidth of slice cutting line
+    z.linecolor    = [0  0  0];                                       % % line color of slice cutting line
+    z.outdir       = fullfile(pastudy,'results','___colRegsTest')     % % output-dir, if empty plots/ppt-file in current directory
+    z.subdir       = '';                                              % % subdir in outdir, contains created png-files, can be <empty>
+    z.ppt_filename = 'test2';                                         % % PPT-filename
+    z.cleanup      = [1];                                             % % remove temporarily created NIFTIs,{0|1}
+    z.makePPT      = [1];                                             % % make Powerpoint-file with image and infos, {0|1}
+    z.mricroGL     = '';                                              % % <optional> specify fullpath name of MRicroGL-exe/app if not otherwise found (SEE HELP)
+    xcolorregion_mricrogl(0,z);
+
+  
  
 %% #################################################
 % chisquaretest

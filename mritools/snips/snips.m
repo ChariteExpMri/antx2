@@ -1,4 +1,4 @@
-% [snips.m] : code snippets/matlab code
+% [snips.m] : code snippets/usefull matlab code
 %  read and display code snippets stored in file 'snips_input1.m' and file(s) with
 %  prefix 'snips_input*.m' (located in pwd or in maltab-path)
 %

@@ -1104,10 +1104,16 @@
 % #gw --> access via ANT-menu: &#8658; Graphics
 % #ba 06 Mar 2025 (17:55:16)
 % % #k [xstat_chisquare.m] #n : modified, outputs also the uncorrected map
+% #ba 20 Mar 2025 (12:26:59)
+% #k [xcolorregion_mricrogl.m] #n : colorize brain region from atlas using mricrogl, save as  png, create ppt-file
+% #gw --> access via ANT-menu: &#8658; Graphics
+% #k [snips.m] #n : code snippets/usefull matlab code
+% #gw --> access via ANT-menu: &#8658; Snips/snips	
+%     .. The content from snips will be filled in subsequently ..
 % 
 % 
 % 
-
+% 
 
 
 %% ===============================================
