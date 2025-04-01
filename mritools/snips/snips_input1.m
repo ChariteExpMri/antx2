@@ -29,10 +29,24 @@ uhelp(anth) ;
 %% #################################################
 % cmd
 % costumize matlab-session
-
 antcb('cwcol',[1 .94 .87]); 
 antcb('cwname','paul works here');
 
+%% #################################################
+% cmd
+% Convert an IMG/HDR file to NIfTI format, and replace the header of a mask image
+% with the header from the corresponding structural image
+
+pa=pwd
+fi1=fullfile(pa,'20250313MO_SCI_Ko01_sag.img');
+fi2=fullfile(pa,'20250313MO_SCI_Ko01_sag_masklesion.img');
+[ha a]=rgetnii(fi1);
+[hb b]=rgetnii(fi2);
+
+fo1=fullfile(pa,'t2.nii');
+fo2=fullfile(pa,'mask.nii');
+rsavenii(fo1, ha, a, 64);  %safe 'fi1' as NIFTI
+rsavenii(fo2, ha, b, 64);  %safe 'fi2' as NIFTI & replace header, using [ha] from 'fi1'
 
 %% #################################################
 % mricron
@@ -458,7 +472,242 @@ xplotortho_mricrogl(0,z);
     z.mricroGL     = '';                                              % % <optional> specify fullpath name of MRicroGL-exe/app if not otherwise found (SEE HELP)
     xcolorregion_mricrogl(0,z);
 
-  
+%% #################################################
+% mricroGL-diverse
+% run mricrogl-script (explicit mricrogl-path)
+system(['"C:\paulprogramme\MRIcroGL\MRIcroGL.exe" "F:\data9\susanne_imghdr\my_xt2_nosaveBPM.py" &'])
+
+% run mricrogl-script (automatically obtain mricrogl-path)
+system(['"' xplotslices_mricrogl('path_mricrogl') '" "F:\data9\susanne_imghdr\my_xt2_nosaveBPM.py" &'])
+
+
+% ==============================================
+%%  overlay mask onto BG-image, and rotate 
+% ===============================================
+F1='F:\data9\susanne_imghdr\20250313MO_SCI_Ko01_sag.nii'  ;%BG-image
+F2='F:\data9\susanne_imghdr\mask.nii'                     ;%FG-image
+cm={
+ 'import gl'
+ 'gl.resetdefaults()'
+ 'gl.scriptformvisible(0)'
+ 'ktime= 60'
+ 'ksteps= 72'
+ 'gl.resetdefaults()'
+ ['gl.loadimage('''     strrep(F1,filesep,[filesep filesep]) ''')']
+ ['gl.overlayload('''   strrep(F2,filesep,[filesep filesep]) ''')']
+ 'gl.minmax(0, 0.5,2.6)'
+ 'gl.minmax(1, 0, 2)'
+ 'gl.opacity(1,90)'
+ 'gl.colorname(1,''actc'')'
+ 'gl.colorbarposition(0)'
+ 'gl.backcolor(255,255,255)'
+ '#gl.cameradistance(1)'
+ 'for x in range(1, ksteps):'
+ '  #gl.azimuthelevation(160+(x*5),30)'
+ '  gl.azimuthelevation(90,120+(x*5))'
+ '  gl.wait(ktime)'
+ '#adjust color scheme to show kidneys'
+ 'gl.colorname(0,''bone'')'
+ 'gl.shadername(''Tomography'')'
+ '#gl.shaderadjust(''brighten'', 1.2)'
+ 'for x in range(1, ksteps):'
+ '  gl.azimuthelevation(160+(x*5),30)'
+ '  gl.wait(ktime)'
+ 'gl.scriptformvisible(1)'
+};
+cm2=strjoin(cm,'^');
+exefile=xplotslices_mricrogl('path_mricrogl')
+cmd=(['"' exefile '"' ' -s "' cm2 '" &']);
+system(cmd );
+
+%% #################################################
+% mricroGL-diverse
+% make animated GIF using mricroGL
+%% ===============================================
+
+F1    ='F:\data9\susanne_imghdr\20250313MO_SCI_Ko01_sag.nii'; %BG-image
+F2    ='F:\data9\susanne_imghdr\mask.nii'                   ; %FG-image
+rotations=[1 1]; %[pitch yaw]-rotation,  each{0|1}; [1 1]:pitch&yaw rotation; [1 0]:pitch only; [0 1]:yaw only 
+ktime = 60; %pause between rotations [ms]
+ksteps= 10; %rotational steps
+outdir='F:\data9\susanne_imghdr\img4';  %PATH WERE IMAGES ARE STORED (used to created animGIF)
+dosave    =1;  %save BMP {0|1}; [0]: no PNG-files created & no animGIF created
+outputGIF = fullfile('F:\data9\susanne_imghdr', 'rotation_movie4.gif'); %animGIF: filename
+delayTime = 0.2;  %animGIF: seconds between frames (e.g., 0.1 = 10 fps)
+% ===============================================
+cm={
+ ['ktime=  ' num2str(ktime)]
+ ['ksteps= ' num2str(ksteps)]
+ ['dosave='  num2str(dosave)]
+ ['output_folder = ''' strrep(outdir,filesep,[filesep filesep])  '''']
+ ['rotations = [' num2str(rotations(1)) ',' num2str(rotations(2)) ']']
+ 'import gl'
+ 'import os'
+ 'import glob'
+ 'gl.resetdefaults()'
+ 'gl.scriptformvisible(0)'
+ ['gl.loadimage('''     strrep(F1,filesep,[filesep filesep]) ''')']
+ ['gl.overlayload('''   strrep(F2,filesep,[filesep filesep]) ''')']
+ 'gl.minmax(0, 0.5,2.6)'
+ 'gl.minmax(1, 0, 2)'
+ 'gl.opacity(1,90)'
+ 'gl.colorname(1,''actc'')'
+ 'gl.colorbarposition(0)'
+ 'gl.backcolor(255,255,255)'
+ 'if not os.path.exists(output_folder):'
+ '    os.makedirs(output_folder)'
+ 'else:'
+ '    if dosave==1:'
+ '    	[os.remove(f) for f in glob.glob(output_folder+''\\/*.png'')]'
+ 'x=0'
+ 'if rotations[0] == 1:'
+ '   for x in range(1, ksteps):'
+ '       gl.azimuthelevation(90,120+(x*5))'
+ '       gl.wait(ktime)'
+ '       if dosave==1:'
+ '          gl.savebmp(output_folder+''\\''+str(x)+''.png'')'
+ ''
+ 'if rotations[1] == 1:'
+ '   for y in range(1, ksteps):'
+ '       gl.azimuthelevation(160+(y*5),30)'
+ '       gl.wait(ktime)'
+ '       if dosave==1:'
+ '          gl.savebmp(output_folder+''\\''+str(x+y)+''.png'')'
+ ''
+ 'gl.scriptformvisible(1)'
+ 'gl.wait(2000)'
+ 'gl.quit()' 
+};
+cm2=strjoin(cm,'^');
+exefile=xplotslices_mricrogl('path_mricrogl')
+cmd=(['"' exefile '"' ' -s "' cm2 '" ']);
+system(cmd );
+showinfo2(['imagePath:'],outdir);
+% ====[SAVE AS NIMATED GIF]===========================================
+imgFiles = dir(fullfile(outdir, '*.png'));
+if isempty(imgFiles);  error('No PNG files found in %s', outdir);end
+imgFiles = natsort({imgFiles(:).name}');% Sort files alphabetically
+for k = 1:length(imgFiles)
+    imgPath = fullfile(outdir, imgFiles{k});
+    [img, cmap] = imread(imgPath);
+    img = imresize(img, 0.5);
+    if size(img, 3) == 3  % RGB image , % Convert to indexed image with colormap if needed
+         [imgInd, cmap] = rgb2ind(img, 128);
+    else
+        imgInd = img; cmap = gray(256); % already grayscale
+    end
+    if k == 1 % First frame — create the GIF file
+        imwrite(imgInd, cmap, outputGIF, 'gif', 'LoopCount', Inf, 'DelayTime', delayTime);
+    else % Append subsequent frames
+        imwrite(imgInd, cmap, outputGIF, 'gif', 'WriteMode', 'append', 'DelayTime', delayTime);
+    end
+end
+fprintf('Animated GIF saved to:\n%s\n', outputGIF);
+showinfo2(['gif:'],outputGIF); 
+
+%% #################################################
+% mricroGL-diverse
+% make animated GIF (AVGT & ANO) using mricroGL
+F1    ='F:\data9\region_redering_mricrogl\templates\x_t2.nii'; %BG-image
+F2    ='F:\data9\region_redering_mricrogl\templates\ANO.nii' ; %FG-image
+rotations=[1 1]; %[pitch yaw]-rotation,  each{0|1}; [1 1]:pitch&yaw rotation; [1 0]:pitch only; [0 1]:yaw only 
+ktime = 60; %pause between rotations [ms]
+ksteps= 10; %rotational steps
+outdir='F:\data9\susanne_imghdr\img5';  %PATH WERE IMAGES ARE STORED (used to created animGIF)
+dosave    =1;  %save BMP {0|1}; [0]: no PNG-files created & no animGIF created
+outputGIF = fullfile('F:\data9\susanne_imghdr', 'rotation_movie5.gif'); %animGIF: filename
+delayTime = 0.2;  %animGIF: seconds between frames (e.g., 0.1 = 10 fps)
+% ===============================================
+cm={
+ ['ktime=  ' num2str(ktime)]
+ ['ksteps= ' num2str(ksteps)]
+ ['dosave='  num2str(dosave)]
+ ['output_folder = ''' strrep(outdir,filesep,[filesep filesep])  '''']
+ ['rotations = [' num2str(rotations(1)) ',' num2str(rotations(2)) ']']
+ 'import gl'
+ 'import os'
+ 'import glob'
+ 'gl.resetdefaults()'
+ 'gl.scriptformvisible(0)'
+ ['gl.loadimage('''     strrep(F1,filesep,[filesep filesep]) ''')']
+ ['gl.overlayload('''   strrep(F2,filesep,[filesep filesep]) ''')']
+ 
+ 'gl.minmax(0, 10,100)'
+ 'gl.minmax(1, 1, 1000)'
+ 'gl.opacity(  0, 100)'
+ 'gl.opacity(  1 ,90)'
+ 'gl.colorname(1 ,''actc'')'
+ 'gl.cameradistance(2)'
+ 'gl.colorname(0,''bone'')'
+ '#gl.shadername(''Tomography'')'
+ '#gl.shaderadjust(''brighten'', 3)'
+ 'gl.cutout(0,0,0,.5,1,1)'
+ 'gl.colorname(1,''actc'')'
+ 
+ 'gl.colorbarposition(0)'
+ 'gl.backcolor(255,255,255)'
+ 'if not os.path.exists(output_folder):'
+ '    os.makedirs(output_folder)'
+ 'else:'
+ '    if dosave==1:'
+ '    	[os.remove(f) for f in glob.glob(output_folder+''\\/*.png'')]'
+ 'x=0'
+ 'if rotations[0] == 1:'
+ '   for x in range(1, ksteps):'
+ '       gl.azimuthelevation(90,120+(x*5))'
+ '       gl.wait(ktime)'
+ '       if dosave==1:'
+ '          gl.savebmp(output_folder+''\\''+str(x)+''.png'')'
+ ''
+ 'if rotations[1] == 1:'
+ '   for y in range(1, ksteps):'
+ '       gl.azimuthelevation(160+(y*5),30)'
+ '       gl.wait(ktime)'
+ '       if dosave==1:'
+ '          gl.savebmp(output_folder+''\\''+str(x+y)+''.png'')'
+ ''
+ 'gl.scriptformvisible(1)'
+ 'gl.wait(2000)'
+ 'gl.quit()' 
+};
+cm2=strjoin(cm,'^');
+exefile=xplotslices_mricrogl('path_mricrogl')
+cmd=(['"' exefile '"' ' -s "' cm2 '" ']);
+system(cmd );
+showinfo2(['imagePath:'],outdir);
+% ====[SAVE AS NIMATED GIF]===========================================
+imgFiles = dir(fullfile(outdir, '*.png'));
+if isempty(imgFiles);  error('No PNG files found in %s', outdir);end
+imgFiles = natsort({imgFiles(:).name}');% Sort files alphabetically
+for k = 1:length(imgFiles)
+    imgPath = fullfile(outdir, imgFiles{k});
+    [img, cmap] = imread(imgPath);
+    img = imresize(img, 0.5);
+    if size(img, 3) == 3  % RGB image , % Convert to indexed image with colormap if needed
+         [imgInd, cmap] = rgb2ind(img, 128);
+    else
+        imgInd = img; cmap = gray(256); % already grayscale
+    end
+    if k == 1 % First frame — create the GIF file
+        imwrite(imgInd, cmap, outputGIF, 'gif', 'LoopCount', Inf, 'DelayTime', delayTime);
+    else % Append subsequent frames
+        imwrite(imgInd, cmap, outputGIF, 'gif', 'WriteMode', 'append', 'DelayTime', delayTime);
+    end
+end
+fprintf('Animated GIF saved to:\n%s\n', outputGIF);
+showinfo2(['gif:'],outputGIF); 
+
+
+
+
+
+
+
+
+
+
+
+   
  
 %% #################################################
 % chisquaretest
