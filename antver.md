@@ -22,7 +22,7 @@
       .. The content from snips will be filled in subsequently ..  
 <!---->
   &#x1F535;   <ins>**06 Mar 2025 (17:55:16)**</ins>  
-  %  __[xstat_chisquare.m]__ : modified, outputs also the uncorrected map  
+   __[xstat_chisquare.m]__ : modified, outputs also the uncorrected map  
 <!---->
   &#x1F535;   <ins>**03 Mar 2025 (10:33:38)**</ins>  
    __[xplotslices_mricron.m]__ : PLOT SLICE OVERLAYS USING MRICRON  
@@ -64,7 +64,7 @@
    __[DTIscript_exportToHPC_makeBatch_21-11-2024]__ new starterscript for DTI-MRtrix-proceesing on HPC.   
   Reason: HPC-peaple changed routine to initialice conda-environment --> availabel via DTIprep (scripts-button)  
 <!---->
-  % &#x1F535;   <ins>**14 Nov 2024 (13:10:03)**</ins>  
+  &#x1F535;   <ins>**14 Nov 2024 (13:10:03)**</ins>  
   -xwarp3: segmentation: save tissue images as 32bit-images  
   -plog: debugged: right alignment  
 <!---->

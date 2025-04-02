@@ -1067,7 +1067,7 @@
 % help of orthoslice has to be modified..
 % #ba 13 Sep 2024 (13:14:49)
 % [ssh] ..update to newer ganymed_java_library ('ganymed-ssh2-263', the older library was 'ganymed-ssh2-m1'
-% % #ba 14 Nov 2024 (13:10:03)
+% #ba 14 Nov 2024 (13:10:03)
 % -xwarp3: segmentation: save tissue images as 32bit-images
 % -plog: debugged: right alignment
 % #ba 21 Nov 2024 (11:34:05)
@@ -1103,7 +1103,7 @@
 % #k [xplotortho_mricrogl.m] #n : PLOT ORTHOVIEW OVERLAYS USING MRicroGL
 % #gw --> access via ANT-menu: &#8658; Graphics
 % #ba 06 Mar 2025 (17:55:16)
-% % #k [xstat_chisquare.m] #n : modified, outputs also the uncorrected map
+% #k [xstat_chisquare.m] #n : modified, outputs also the uncorrected map
 % #ba 20 Mar 2025 (12:26:59)
 % #k [xcolorregion_mricrogl.m] #n : colorize brain region from atlas using mricrogl, save as  png, create ppt-file
 % #gw --> access via ANT-menu: &#8658; Graphics
