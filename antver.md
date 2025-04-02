@@ -10,7 +10,9 @@
   &#x1F535;   <ins>**02 Apr 2025 (16:53:48)**</ins>  
    __[snips.m]__ : added pipeline "from Bruker-import to standard-space"  which shows a  
    pure comandline workflow (make ANTx-project, import Bruker data, rename file,   
-   get & set pre-orientation, transform to standard-space  )  
+   get & set pre-orientation, obtain transformation from/to standard-space, transform images from native to  
+   standard space and vice versa, atlas region-based parameter readout from images in standard-space and  
+   native-space)  
 <!---->
   &#x1F535;   <ins>**20 Mar 2025 (12:26:59)**</ins>  
    __[xcolorregion_mricrogl.m]__ : colorize brain region from atlas using mricrogl, save as  png, create ppt-file  

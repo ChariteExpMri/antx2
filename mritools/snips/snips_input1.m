@@ -79,8 +79,8 @@ end
 
 %% ==============================================
 %% 1.  make ANTx-project
-%% CREATE A PROJECT-FILE WITHOUT GUI: HERE THE PROJECTFILE "proj2.m" IS CREATED USING A VOXELSIZE
-%% OF [.07 .07 .07] mm, and the ANIMAL-TEMPLATE "mouse_Allen2017HikishimaLR" is used, with species 'mouse'
+%%     CREATE A PROJECT-FILE WITHOUT GUI: HERE THE PROJECTFILE "proj2.m" IS CREATED USING A VOXELSIZE
+%%     OF [.07 .07 .07] mm, and the ANIMAL-TEMPLATE "mouse_Allen2017HikishimaLR" is used, with species 'mouse'
 % ===============================================
 makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[.07 .07 .07],...
     'wa_refpath','D:\MATLAB\anttemplates\mouse_Allen2017HikishimaLR',...
@@ -105,22 +105,22 @@ w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol',protocol},...
 
 %% ========================================================================================
 %%   3. copy and rename structural image as "t2.nii"
-%%       "t2.nii" will be used for transformation to standard space
+%%      "t2.nii" will be used for transformation to standard space
 %% =========================================================================================
 antcb('selectdirs','all');   % select all animal-folders
 xrename(0,'2_1_T2_ax_mousebrain_3.nii','t2.nii',':');% copy file and name it 't2.nii'
 
 %% ========================================================================================
 %%   4. get HTML-file with pre-orientations 
-%% please inspect the HTML-file. Use the best-matching rotation index from the HTML file 
-%% to update the orientType variable in the project file (proj.m).
+%%      please inspect the HTML-file. Use the best-matching rotation index from the HTML file 
+%%      to update the orientType variable in the project file (proj.m).
 %% ========================================================================================
 antcb('getpreorientation','selectdirs',1);% GET HTMLFILE WITH PRE-ORIENTATION FOR TRAFO TO STANDARD-SPACE from 1st animal
 
 %% ========================================================================================
 %%   5. change 'orientType' variable in project-file
-%% BASED ON HTML-file best orientation is [1] which is set in 'orientType' variable in project-file,
-%% projectfile is saved and reloaded
+%%      When inspecting the HTML-file best orientation is [1] which is set in 'orientType' variable 
+%%      in project-file, projectfile is saved and reloaded
 %% ========================================================================================
 global an
 an.wa.orientType=1   ;% set orientType to [1]
@@ -128,11 +128,57 @@ antcb('saveproject') ;% save projfile
 antcb('reload')      ;% reload projfile
 clear an
 
-%% ========================================================================================
-%%   6. transform 't2.nii' to standard-space  (using parallel-processing)
-%% =========================================================================================
+%% ========================================================================================================================
+%%   6. calculate transformation & back-transformation (native-space (NS) -- standard-space (SS))
+%%      using parallel-processing
+%% =======================================================================================================================
 antcb('selectdirs','all');   % select all animal-folders
 xwarp3('batch','task',[1:4],'autoreg',1,'parfor',1);
+
+ 
+%% ================================================================
+%%  7. transform images from native to standard-space (SS)
+%% =================================================================
+ 
+antcb('selectdirs','all'); %select all animals
+% transform bias-corrected t2.nii ('mt2.nii') to SS using B-spline interpolation
+doelastix(1, [], 'mt2.nii'  ,3 ,'local' );
+ 
+% transform GrayMatter and WhiteMatter Imaget to SS using linear interpolation
+doelastix(1, [], {'c1t2.nii' 'c2t2.nii'}  ,1 ,'local' ); 
+ 
+%% ================================================================
+%%  8. transform images from standard-space to native-space  (NS)
+%% =================================================================
+% transform brain-hemisphere mask from standard-space to native-space using NN-interpolation
+doelastix(-1, [], {'AVGThemi.nii'}  ,0 ,'local' );
+ 
+%% ====================================================================================
+%%  9. region-based image readout from image in standard-space
+%%     get region-based paramers of GrayMatter-image in SS using AllenBrain atlas
+%% =====================================================================================
+z=[];                                                                                                                                                                              
+z.files        = { 'x_c1t2.nii' };            % % files used for calculation                                                                                                                
+z.fileNameOut  = 'paras_grayMatter_SS';       % % <optional> specific name of the output-file. EMPTY FIELD: use timestamp+paramter for file name                                            
+xgetlabels4(0,z);  
+ 
+%% ====================================================================================
+%%  10. region-based image readout from image in native-space (NS)
+%%      get region-based paramers of GrayMatter-image in NS using AllenBrain atlas
+%% =====================================================================================
+z=[];
+z.files        = {'c1t2.nii'};  % files used for calculation     
+z.space        =  'native'  ;% use images from "standard","native" or "other" space 
+z.hemisphere   =  'both';   % hemisphere used: "left","right","both" (united)  or "seperate" (left and right separated)
+z.fileNameOut  = 'paras_grayMatter_NS';            % % <optional> specific name of the output-file. EMPTY FIELD: use timestamp+paramter for file name                                            
+xgetlabels4(0,z);
+ 
+ 
+ 
+ 
+
+
+
 
 
 
