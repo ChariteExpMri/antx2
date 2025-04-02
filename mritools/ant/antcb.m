@@ -6,6 +6,8 @@
 % antcb('getallsubjects') % get all subjects  --> all from list
 % antcb('makeproject')    % create a new project -->for HELP see antcb('makeproject','?')
 % antcb('saveproject')    % save/modify projectfile -->for HELP see antcb('saveproject?')
+% antcb('getpreorientation');  %get HTML with preorientations for trafo to standard space
+%                               -->for HELP see antcb('getpreorientation?')
 % antcb('load','proj_Harms3_lesionfill_20stack.m')   %load this project
 % antcb('reload')         % reload gui with project and previous mice-selection
 % antcb('version');       % get the last package version (1st output arg)
@@ -151,14 +153,19 @@ if strcmp(do, 'getsubdirs?')
       disp(help(['antcb' filemarker 'getsubdirs'])); 
 end
 %% ===============================================
+if strcmp(do,'getpreorientation')
+    try ;    varargout{1}=getpreorientation(input);
+    catch;   disp('* type    antcb(''getpreorientation'',''?'')     for help');
+    end
+end
+if strcmp(do,'getpreorientation?');    help antcb>getpreorientation;end
+%% ===============================================
 if strcmp(do,'saveproject')
     try ;    varargout{1}=saveproject(input);
     catch;   disp('* type    antcb(''saveproject'',''?'')     for help');
     end
 end
 if strcmp(do,'saveproject?');    help antcb>saveproject;end
-
-
 %% ===============================================
 if strcmp(do,'makeproject')
     try ;    varargout{1}=makeproject(input);
@@ -2044,6 +2051,56 @@ end
 
 v.tb =[li cellstr(num2str(ncount)) tb];
 v.tbh=[{'Unique-Files-In-Study', '#found'} tbh];
+
+
+%% ===============================================
+function  o=getpreorientation(par0)
+% # obtain HTML-file with possible pre-orientations of 't2.nii' to 'AVGT.nii' from 'templates'-folder
+% this is a shortcut of 'xgetpreorientationHTML'
+% templates must be already imported to study-folder
+% per default the 1st animal is used to obtain the pre-orientations
+% Use the best-matching rotation index from the HTML file to update the orientType variable
+% in the project file.
+% USAGE:
+% antcb('getpreorientation');               %get the pre-orientation (use implicitly 1st animal)
+% antcb('getpreorientation','selectdirs',1); %use 1st animal from animal-listbox to get the pre-orientation
+% antcb('getpreorientation','selectdirs',3); %use 3rd animal from animal-listbox to get the pre-orientation
+% antcb('getpreorientation','selectdirs','20250318MO_SCI_Ko02_exvivo');  %use this animal to get the pre-orientation
+% 
+% 
+o=[];
+par=par0;
+if length(par)==1  && strcmp(par{1},'?');         help antcb>getpreorientation;     return    ;     end
+if isempty(par)
+    s=struct();
+else
+    s=cell2struct(par(2:2:end),par(1:2:end),2);
+end
+%% ===============================================
+if isfield(s,'selectdirs')==1
+    antcb('selectdirs',s.selectdirs)
+else
+    antcb('selectdirs',1) ; %select first animal
+end
+mdirs= antcb('getsubjects'); %get path of this animal
+global an
+z=[];                                                                                                                                  
+z.target       = fullfile(fileparts(an.datpath), 'templates' ,'AVGT.nii')    ;% target-image                                             % % reference image        
+z.source       = fullfile(mdirs{1}, 't2.nii')                                ;% source image           
+z.outputstring = 'Reorient'                                                  ;%prefix of HTML-fileName
+
+if exist(z.target)~=2
+    %% COPY TEMPLATES TO STUDY-FOLDER
+    antcb('copytemplates');  %copy templates
+end
+if exist(z.source)~=2
+    msg={['[t2.nii] not found in: "' z.source '"']
+        ['..rename file to "t2.nii" before running this function' ]};
+    error( strjoin(msg,char(10)));
+end
+
+xgetpreorientationHTML(0,z); 
+
 
 
 %% ===============================================

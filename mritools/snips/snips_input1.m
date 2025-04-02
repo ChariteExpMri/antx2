@@ -73,6 +73,68 @@ for i=1:size(t,1)
     rsavenii(Fo2, ha,o2, 16);
     showinfo2([ 'file' ] ,Fo1,Fo2,13);
 end
+%% #################################################
+% pipeline
+% from Bruker import to standardspace
+
+%% ==============================================
+%% 1.  make ANTx-project
+%% CREATE A PROJECT-FILE WITHOUT GUI: HERE THE PROJECTFILE "proj2.m" IS CREATED USING A VOXELSIZE
+%% OF [.07 .07 .07] mm, and the ANIMAL-TEMPLATE "mouse_Allen2017HikishimaLR" is used, with species 'mouse'
+% ===============================================
+makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[.07 .07 .07],...
+    'wa_refpath','D:\MATLAB\anttemplates\mouse_Allen2017HikishimaLR',...
+    'wa_species','mouse')
+
+antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+
+%% ==============================================
+%%   2. IMPORT BRUKER-DATA (use all steps here)
+%% ===============================================
+% DISPLAY all Bruker-files from 'raw'-folder, PLEASE INSPECT THE TABLE BEFORE DOING THE NEXT STEP
+w1=xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0,'show',1);
+ 
+% FILTER and DISPLAY a list of Bruker files where the protocol name contains 'T2_ax_mousebrain'
+protocol='T2_ax_mousebrain'
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol',protocol});
+ 
+% IMPORT Bruker files where the protocol name contains 'T2_ax_mousebrain'
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol',protocol},...
+    'paout',fullfile(pwd,'dat'),'ExpNo_File',1);
+
+
+%% ========================================================================================
+%%   3. copy and rename structural image as "t2.nii"
+%%       "t2.nii" will be used for transformation to standard space
+%% =========================================================================================
+antcb('selectdirs','all');   % select all animal-folders
+xrename(0,'2_1_T2_ax_mousebrain_3.nii','t2.nii',':');% copy file and name it 't2.nii'
+
+%% ========================================================================================
+%%   4. get HTML-file with pre-orientations 
+%% please inspect the HTML-file. Use the best-matching rotation index from the HTML file 
+%% to update the orientType variable in the project file (proj.m).
+%% ========================================================================================
+antcb('getpreorientation','selectdirs',1);% GET HTMLFILE WITH PRE-ORIENTATION FOR TRAFO TO STANDARD-SPACE from 1st animal
+
+%% ========================================================================================
+%%   5. change 'orientType' variable in project-file
+%% BASED ON HTML-file best orientation is [1] which is set in 'orientType' variable in project-file,
+%% projectfile is saved and reloaded
+%% ========================================================================================
+global an
+an.wa.orientType=1   ;% set orientType to [1]
+antcb('saveproject') ;% save projfile
+antcb('reload')      ;% reload projfile
+clear an
+
+%% ========================================================================================
+%%   6. transform 't2.nii' to standard-space  (using parallel-processing)
+%% =========================================================================================
+antcb('selectdirs','all');   % select all animal-folders
+xwarp3('batch','task',[1:4],'autoreg',1,'parfor',1);
+
+
 
 
 %% #################################################
