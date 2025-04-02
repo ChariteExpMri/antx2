@@ -1442,7 +1442,15 @@ elseif strcmp(sorter,'default')
     [~,isort ]=sort(mdirs);
 end
 mdirsS=mdirs(isort);
-liS   =li(isort);
+if isempty(li)
+    [~,mdirsShort]=fileparts2(mdirsS);
+     liS   =mdirsShort;
+else
+    liS   =li(isort);
+end
+
+
+
 sel=1;
 try
     selC=zeros(size(mdirsS,1) ,1); % find selected files
