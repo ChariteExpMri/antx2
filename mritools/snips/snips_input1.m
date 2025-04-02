@@ -75,7 +75,7 @@ for i=1:size(t,1)
 end
 %% #################################################
 % pipeline
-% from Bruker import to standardspace
+% from Bruker-import to standardspace
 
 %% ==============================================
 %% 1.  make ANTx-project
