@@ -31,12 +31,18 @@
 % not finished project, mosts functions needs to be adapted
 % ...not done yet..
 % ===============================================
-% -CREATE A PROJECT-FILE WITHOUT GUI: HERE THE PROJECTFILE "proj2.m" IS CREATED USING A VOXELSIZE
-%  OF [.07 .07 .07] mm, and the ANIMAL-TEMPLATE "mouse_Allen2017HikishimaLR" is used, with species 'mouse'
-%  makeproject('projectname',fullfile(pwd,'proj2.m'), 'voxsize',[.07 .07 .07],'wa_refpath','F:\anttemplates\mouse_Allen2017HikishimaLR','wa_species','mouse')
-% -LOAD A PROJECT-FILE "proj.m" WITHOUT GUI:
+%% CREATE A PROJECT-FILE WITHOUT GUI
+%% HERE THE PROJECTFILE "proj2.m" IS CREATED USING A VOXELSIZE
+%%   OF [.07 .07 .07] mm, and the ANIMAL-TEMPLATE "mouse_Allen2017HikishimaLR" is used, with species 'mouse'
+% 
+%  makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[.07 .07 .07],'wa_refpath','F:\anttemplates\mouse_Allen2017HikishimaLR','wa_species','mouse')
+% 
+%% LOAD A PROJECT-FILE "proj.m" WITHOUT GUI:
+% 
 %  loadconfig(fullfile(pwd,'proj.m'));
-% -CHECK GLOBAL VARAIBLE "an"
+% 
+%% CHECK GLOBAL VARAIBLE "an"
+% 
 %  global an
 %
 %

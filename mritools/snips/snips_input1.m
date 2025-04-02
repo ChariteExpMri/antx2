@@ -33,8 +33,8 @@ antcb('cwcol',[1 .94 .87]);
 antcb('cwname','paul works here');
 
 %% #################################################
-% cmd
-% Convert an IMG/HDR file to NIfTI format, and replace the header of a mask image
+% file-conversion
+% convert an IMG/HDR file to NIfTI format, and replace the header of a mask image
 % with the header from the corresponding structural image
 
 pa=pwd
@@ -47,6 +47,33 @@ fo1=fullfile(pa,'t2.nii');
 fo2=fullfile(pa,'mask.nii');
 rsavenii(fo1, ha, a, 64);  %safe 'fi1' as NIFTI
 rsavenii(fo2, ha, b, 64);  %safe 'fi2' as NIFTI & replace header, using [ha] from 'fi1'
+
+%% #################################################
+% file-conversion
+% convert all obj-files file from folder 'path_files' and it's source (img/hdr) to NIFTI
+path_files='H:\Daten-2\Imaging\AG_Eickholt_SCI\segmentation'
+suffix='_mask';
+cd(path_files);
+[t,sts] = spm_select(inf,'any','Select analyze-files to convert to NIFTI ',[],path_files,...
+    '.*.obj');
+t=cellstr(t);
+if isempty(t); return; end
+for i=1:size(t,1)
+    objfile   = t{i};
+    [pam name ext]=fileparts(objfile);
+    [ho o]    = obj2nifti(objfile);
+    imgfile   = fullfile(pam, [name '.img' ]);
+    [ha a]    = rgetnii(imgfile);
+    a         = flipud(a);
+    Fo1       = fullfile(pam, [name '.nii' ]);
+    rsavenii(Fo1, ha,a, 16);
+    %showinfo2([ 'file' ] ,Fo1);
+    Fo2       = fullfile(pam, [name suffix '.nii' ]);
+    o2        = flipdim(flipdim(o,1),2);
+    rsavenii(Fo2, ha,o2, 16);
+    showinfo2([ 'file' ] ,Fo1,Fo2,13);
+end
+
 
 %% #################################################
 % mricron
@@ -604,6 +631,104 @@ for k = 1:length(imgFiles)
 end
 fprintf('Animated GIF saved to:\n%s\n', outputGIF);
 showinfo2(['gif:'],outputGIF); 
+
+%% #################################################
+% mricroGL-diverse
+% make several animated GIFs using mricroGL
+% animated gifs created from all '.*Ko.*_mask.nii'-files in folder 'path_files'
+path_files='H:\Daten-2\Imaging\AG_Eickholt_SCI\segmentation'
+[fi] = spm_select('FPList',path_files,'.*Ko.*_mask.nii')
+fi=cellstr(fi);
+for i=1:length(fi)
+    name0=fi{i};
+    [~,namemask]=fileparts(name0);
+    name=strrep(namemask,'_mask','');
+    
+    F1=fullfile(path_files,[name '.nii']);%BG-image
+    F2=fi{i};%FG-image
+    rotations=[1 1]; %[pitch yaw]-rotation,  each{0|1}; [1 1]:pitch&yaw rotation; [1 0]:pitch only; [0 1]:yaw only
+    ktime = 30; %pause between rotations [ms]
+    ksteps= 100; %rotational steps
+    outdir=fullfile(path_files,['imgs_' name])  ;  %PATH WERE IMAGES ARE STORED (used to created animGIF)
+    dosave    =1;  %save BMP {0|1}; [0]: no PNG-files created & no animGIF created
+    outputGIF = fullfile(path_files,['movie_' name '.gif' ]); %animGIF: filename
+    delayTime = 0.2;  %animGIF: seconds between frames (e.g., 0.1 = 10 fps)
+    % ===============================================
+    cm={
+        ['ktime=  ' num2str(ktime)]
+        ['ksteps= ' num2str(ksteps)]
+        ['dosave='  num2str(dosave)]
+        ['output_folder = ''' strrep(outdir,filesep,[filesep filesep])  '''']
+        ['rotations = [' num2str(rotations(1)) ',' num2str(rotations(2)) ']']
+        'import gl'
+        'import os'
+        'import glob'
+        'gl.resetdefaults()'
+        'gl.scriptformvisible(0)'
+        ['gl.loadimage('''     strrep(F1,filesep,[filesep filesep]) ''')']
+        ['gl.overlayload('''   strrep(F2,filesep,[filesep filesep]) ''')']
+        'gl.minmax(0, 0.5,2.6)'
+        'gl.minmax(1, 0, 2)'
+        'gl.opacity(1,90)'
+        'gl.colorname(1,''actc'')'
+        'gl.colorbarposition(0)'
+        'gl.backcolor(255,255,255)'
+        'if not os.path.exists(output_folder):'
+        '    os.makedirs(output_folder)'
+        'else:'
+        '    if dosave==1:'
+        '    	[os.remove(f) for f in glob.glob(output_folder+''\\/*.png'')]'
+        'x=0'
+        'if rotations[0] == 1:'
+        '   for x in range(1, ksteps):'
+        '       gl.azimuthelevation(90,120+(x*5))'
+        '       gl.wait(ktime)'
+        '       if dosave==1:'
+        '          gl.savebmp(output_folder+''\\''+str(x)+''.png'')'
+        ''
+        'if rotations[1] == 1:'
+        '   for y in range(1, ksteps):'
+        '       gl.azimuthelevation(160+(y*5),30)'
+        '       gl.wait(ktime)'
+        '       if dosave==1:'
+        '          gl.savebmp(output_folder+''\\''+str(x+y)+''.png'')'
+        ''
+        'gl.scriptformvisible(1)'
+        'gl.wait(2000)'
+        'gl.quit()'
+        };
+    cm2=strjoin(cm,'^');
+    exefile=xplotslices_mricrogl('path_mricrogl')
+    % exefile='D:\software\MRIcroGL\MRIcroGL\MRIcroGL.exe'
+    cmd=(['"' exefile '"' ' -s "' cm2 '" ']);
+    system(cmd );
+    showinfo2(['imagePath:'],outdir);
+    % ====[SAVE AS NIMATED GIF]===========================================
+    imgFiles = dir(fullfile(outdir, '*.png'));
+    if isempty(imgFiles);  error('No PNG files found in %s', outdir);end
+    imgFiles = natsort({imgFiles(:).name}');% Sort files alphabetically
+    for k = 1:length(imgFiles)
+        imgPath = fullfile(outdir, imgFiles{k});
+        [img, cmap] = imread(imgPath);
+        img = imresize(img, 0.5);
+        if size(img, 3) == 3  % RGB image , % Convert to indexed image with colormap if needed
+            [imgInd, cmap] = rgb2ind(img, 128);
+        else
+            imgInd = img; cmap = gray(256); % already grayscale
+        end
+        if k == 1 % First frame — create the GIF file
+            imwrite(imgInd, cmap, outputGIF, 'gif', 'LoopCount', Inf, 'DelayTime', delayTime);
+        else % Append subsequent frames
+            imwrite(imgInd, cmap, outputGIF, 'gif', 'WriteMode', 'append', 'DelayTime', delayTime);
+        end
+    end
+    fprintf('Animated GIF saved to:\n%s\n', outputGIF);
+    showinfo2(['gif:'],outputGIF);
+    
+end
+
+
+
 
 %% #################################################
 % mricroGL-diverse

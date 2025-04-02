@@ -5,6 +5,7 @@
 % antcb('getsubjects')    % get selected subjects-->only those selected from [ANT] Mouse-listbox
 % antcb('getallsubjects') % get all subjects  --> all from list
 % antcb('makeproject')    % create a new project -->for HELP see antcb('makeproject','?')
+% antcb('saveproject')    % save/modify projectfile -->for HELP see antcb('saveproject?')
 % antcb('load','proj_Harms3_lesionfill_20stack.m')   %load this project
 % antcb('reload')         % reload gui with project and previous mice-selection
 % antcb('version');       % get the last package version (1st output arg)
@@ -150,8 +151,15 @@ if strcmp(do, 'getsubdirs?')
       disp(help(['antcb' filemarker 'getsubdirs'])); 
 end
 %% ===============================================
+if strcmp(do,'saveproject')
+    try ;    varargout{1}=saveproject(input);
+    catch;   disp('* type    antcb(''saveproject'',''?'')     for help');
+    end
+end
+if strcmp(do,'saveproject?');    help antcb>saveproject;end
 
 
+%% ===============================================
 if strcmp(do,'makeproject')
     try ;    varargout{1}=makeproject(input);
     catch;   disp('* type    antcb(''makeproject'',''?'')     for help');
@@ -160,7 +168,7 @@ end
 if strcmp(do,'makeproject?')
     help makeproject
 end
-
+%% ===============================================
 if strcmp(do, 'selectimageviagui')
     varargout{1}=selectimageviagui(input);
 end
@@ -2038,8 +2046,76 @@ v.tb =[li cellstr(num2str(ncount)) tb];
 v.tbh=[{'Unique-Files-In-Study', '#found'} tbh];
 
 
+%% ===============================================
+function  projectfile=saveproject(par0)
+% # MODIFY AND SAVE CURRENT CONFIG-FILE (AKA PROJECT-FILE/projfile)
+% projfile=antcb('saveproject') ; overwrite current projfile
+% projfile=antcb('saveproject','saveas',<fullfpath to projfile>);
+% ________________________________________________________________________________
+% EXAMPLE: save project as 'projC1.m'
+% antcb('saveproject','saveas',fullfile(pwd,'projC1.m'));
+% ________________________________________________________________________________
+% EXAMPLE: MODIFY AND OVERWRITE currcent project
+% global an
+% an.wa.orientType=3   ;% set orientType to [2] 
+% antcb('saveproject') ;% save projfile 
+% antcb('reload')      ;% reload projfile
+% ________________________________________________________________________________
+% EXAMPLE: MODIFY AND OVERWRITE currcent project
+% global an
+% an.project='projectA'   ;% set orientType to [2] 
+% antcb('saveproject') ;% save projfile 
+% antcb('reload')      ;% reload projfile
 
 
+%% ===============================================
+projectfile=[];
+par=par0;
+if length(par)==1  && strcmp(par{1},'?');         help antcb>saveproject;     return    ;     end
+%% ===============================================
+global an;
+x=an;
+configfile0=x.configfile;
+
+try; x=rmfield(x,'configfile'  ); end
+try; x=rmfield(x,'templatepath'); end
+try; x=rmfield(x,'mdirs'       ); end
+try; x=rmfield(x,'ls'          ); end
+fn=fieldnames(x);
+x=rmfield(x,fn(regexpi2(fn,'^inf\d+')));
+w2=struct2list(x);
+w2=makenicer2(w2);
+w2=[w2; repmat({''},[5 1])];
+
+if isempty(par)
+    s=struct();
+else
+    s=cell2struct(par(2:2:end),par(1:2:end),2);
+end
+if isfield(s,'saveas')==1
+    configfile=s.saveas;
+else
+    configfile=configfile0;
+end
+[pa name ext]=fileparts(configfile);
+if isempty(pa) ;  pa  =pwd      ; end
+if isempty(ext);  ext ='.m'     ; end
+if isempty(ext);  name ='proj.m'; end
+configfile=fullfile(pa,[name ext]);
+
+pwrite2file(configfile,w2);
+projectfile=configfile;
+fprintf(['.. save/update project file [' [name ext] ']  ']);
+disp(['<a href="matlab:edit('''  projectfile ''')">'  'inspect'     '</a>']);
+%% ===============================================
+
+% makeproject('projectname',fullfile(pwd,'projC.m'), w(:) );
+% 
+
+%% ===============================================
+
+
+%% ===============================================
 
 
 function  projectfile=makeproject(par0);
@@ -2094,8 +2170,12 @@ ix=regexpi2(h, ['##.*' subfun]);
 try
     disp(char(h(ix(1)+1:ix(2)-1)));
 end
-
-
+% ##  saveproject
+% save modified project file
+% bla
+% ##  saveproject
+% 
+% 
 % ##  makeproject
 % creates a new project file (*.m)
 % antcb('makeproject',pariwaise parameters...)
