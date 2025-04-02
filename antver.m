@@ -1111,8 +1111,9 @@
 % #gw --> access via ANT-menu: &#8658; Snips/snips	
 %     .. The content from snips will be filled in subsequently ..
 % #ba 02 Apr 2025 (16:53:48)
-% #k [snips.m] #n : added pipeline "from Bruker-import to standardspace"  which shows the
-%  pure comandline workflow 
+% #k [snips.m] #n : added pipeline "from Bruker-import to standard-space"  which shows a
+%  pure comandline workflow (make ANTx-project, import Bruker data, rename file, 
+%  get & set pre-orientation, transform to standard-sapce  ) 
 % 
 % 
 
