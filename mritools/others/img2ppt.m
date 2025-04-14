@@ -643,7 +643,7 @@ end
 function [o]=addTexts(p,task);
 o=[];
 istext=1;
-if exist('task')==0
+if exist('task')~=1
     istext=1;
     v=p;
 elseif strcmp(task,'title')
