@@ -73,10 +73,17 @@ p.img=f1;
 p.ref=f2;
 
 
-
+%% ===============================================
 % p.slices=5;
-
+% [arg,rot]=evalc(['' 'findrotation2' '']);
+if p.rottable==1
+    global rottable; rottable=1;
+elseif p.rottable==2
+    global rottable; rottable=2;
+end
 [arg,rot]=evalc(['' 'findrotation2' '']);
+%% ===============================================
+
 p.rot=rot;
 p.rotlist=arg;
 

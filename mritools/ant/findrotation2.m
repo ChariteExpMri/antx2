@@ -68,6 +68,24 @@ otc={...
    % 'pi  pi/2 0' %8: 'pi pi/2 0'
     };
 
+global rottable
+if isempty(rottable)
+   rottable=1;
+end
+ %% ===============================================
+ 
+ if rottable==2  % long rottable
+     n=4;
+     rots=linspace(-180,180,n+1).*-1;
+     rots=sort(rots(1:n));
+     rots=deg2rad(rots);
+     rots=num2cell(allcomb(rots,rots,rots));
+     rot22=cellfun(@(a,b,c) {[ num2str(a) ' ' num2str(b) ' ' num2str(c)]},rots(:,1),rots(:,2),rots(:,3));
+     otc=[otc; rot22];
+ end
+%% ===============================================
+
+
 orientTable=cell2mat(cellfun(@(a){str2num(a)},otc));
 % orientTable=[...                ORIENTATIONTABLE
 %     pi/2 pi pi%berlin-->ALLEN

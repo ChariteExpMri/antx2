@@ -85,6 +85,7 @@ p={...
     'inf1'     [ '_create HTML-file with pre-orientations of source-file(' mfilename '.m)']                         '' ''
     'target'      f1                    'reference image'        {@dialog_whichpath,v,'x.target'} %    {@selectFile,v}
     'source'      f2                    'source image'           {@dialog_whichpath,v,'x.source'} %    {@selectFile,v}
+    'rottable'    1                     'table with rotations: [1]small table [2] extended table(more rotations)' {1 2}
     'inf2'       ''      '' ''
     'inf3'       'other inputs'      '' ''
     'outputstring'   'Reorient'  'prefix of HTML-fileName' {'Reorient' 'pre-align'}
@@ -141,7 +142,7 @@ end
 if exist(f1)==2 && exist(f2)==2
     cprintf('*[0 .5 0]',[ 'Create HTML-file please inspect [checks]-folder'   '\n'] );
     % getorientationHtml(f1,f2);
-    htmlfile=getorientationHtml(f1,f2,'outputstring',z.outputstring);
+    htmlfile=getorientationHtml(f1,f2,'outputstring',z.outputstring,'rottable', z.rottable);
 else
     %% ===============================================
     cprintf('*[1 0 1]',[ 'Could not create HTML-file, reason: '   '\n'] );

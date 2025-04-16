@@ -54,6 +54,9 @@ p={...
 %---------
 'parameterFile'   parameterFile 'Elastix-3D-RIGID-paramer-file'  {@getparmfiles }
 
+'rottable'    1    'table with rotations: [1]small table [2] extended table(more rotations)' {1 2}
+
+
 'verbose'       [1]       'display info in cmd-windows {0|1}'  'b'
 'plotMetric'    [1]       'bar-plot, display metric across rotations; [0|1]'   'b'
 'plotOvleray'   [2]       'plot overlay of best rotation [0|1|2], [1] and [2] are different visualizations'   {0 1 2}
@@ -252,6 +255,14 @@ end
 %     '0 pi/2 -pi'
 %     % 'pi  pi/2 0' %8: 'pi pi/2 0'
 %     };
+
+if z.rottable==1
+    global rottable; rottable=1;
+elseif z.rottable==2
+    global rottable; rottable=2;
+end
+
+
 [arg,rot]=evalc(['' 'findrotation2' '']);
 otc=rot;
 
