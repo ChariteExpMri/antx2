@@ -178,6 +178,185 @@ xgetlabels4(0,z);
  
 
 
+%% #################################################
+% pipeline
+% PIG-atlas: from Bruker-import to standardspace ( use donwsampled volume)
+
+%% ==============================================
+%% 1.  make ANTx-project
+%%     CREATE A PROJECT-FILE WITHOUT GUI: HERE THE PROJECTFILE "proj.m" IS CREATED USING A VOXELSIZE
+%%     OF [0.5 0.5 0.5] mm, and the ANIMAL-TEMPLATE "piglet_4weeks_PIGMRI_V21" is used, with species 'piglet4w'
+% ===============================================
+makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[0.5 0.5 0.5],...
+    'wa_refpath','F:\anttemplates\piglet_4weeks_PIGMRI_V21',...
+    'wa_species','piglet4w')
+ant
+antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+
+%% ==============================================
+%%   2. IMPORT BRUKER-DATA (use all steps here)
+%% ===============================================
+% DISPLAY all Bruker-files from 'raw'-folder, PLEASE INSPECT THE TABLE BEFORE DOING THE NEXT STEP
+w1=xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0,'show',1);
+ 
+% FILTER and DISPLAY a list of Bruker files where the protocol name contains 'RARE_8_PigBrain5'
+% If more than 1 volume should be imported use vertical bar ('|') and strings contained in the protocol-column
+% examples; protocol='RARE_8_PigBrain5|Network-DTI';  (will import 'RARE_8_PigBrain5_Cdkl5' and 'Network-DTI_SE_3D_20dir-Piglet4-Cdkl5')
+protocol='RARE_8_PigBrain5';
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol',protocol});
+ 
+% IMPORT Bruker files with the specific protocol names
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol',protocol},...
+    'paout',fullfile(pwd,'dat'),'ExpNo_File',1);
+
+dispfiles();% check files and folders
+
+%% ========================================================================================
+%%   3. downsample and rename structural image ('RARE_8_PigBrain5_Cdkl5_6.nii') as "t2.nii"
+%% REASON: 'RARE_8_PigBrain5_Cdkl5_6.nii' is super large/much larger than the atlas
+%%      "t2.nii" will be used for transformation to standard space
+%% NOTE: for registration we use a donwsampled version, because image is to large (840MB)!!!!
+%% =========================================================================================
+antcb('selectdirs','all');   % select all animal-folders
+xrename(0,'RARE_8_PigBrain5_Cdkl5_6.nii','t2.nii','vr: 0.5 0.5 0.5');% downsample file and name it 't2.nii' (voxelresoulution: 0.5, 0.5,0.5)
+
+%% ========================================================================================
+%%   4. get HTML-file with pre-orientations 
+%%      please inspect the HTML-file. Use the best-matching rotation index from the HTML file 
+%%      to update the orientType variable in the project file (proj.m).
+%%  !!NOTE THAT THIS STEP DOES NOT WORK HERE BECAUSE BRAINS OF THAT STUDY ARE RANDOMLY DROPPED INTO THE MR-BORE!!
+%% ========================================================================================
+antcb('getpreorientation','selectdirs',1);% GET HTMLFILE WITH PRE-ORIENTATION FOR TRAFO TO STANDARD-SPACE from 1st animal
+% all brains have a different pre-orientation (don't know why??)--> so we have to obtain the pre-orientation for each animal
+% see step-5
+
+
+%% ========================================================================================
+%%   5. because step [4] does not work here...
+%%      for each animal use 'examine orientation via HTML-file'  and/or 'get orientation via 3-point selection'  to
+%%      obtain a proper preorientation --> make a table (animal x preorientation)
+%%     Now; for each animal the  project-file is modified, reloaded, and the first two steps (ini and coreg) are performed
+%% ========================================================================================
+
+ % table with animal-names and specific pre-orientations
+tb1={    %ANIMAL                            PREORIENTATION
+    'YW24_1229_4-weekWTpiglet'              '2.5708 0 0'
+    'YW25_0103_4-weekWTpigmale174-7'        '-2.7 4.1 0.15'
+    'YW25_0308_4-wk-pig-WT'                 '1.5708 6.1232e-17 -1.570'
+};
+
+for i=1:size(tb1,1)
+    
+    global an
+    an.wa.orientType          =tb1{i,2};    % set orientType..this is different for each animal
+    an.wa.usePriorskullstrip  =[0];         % brains are already skullstripped
+    antcb('saveproject');                   % save projfile
+    antcb('reload');                        % reload projfile
+    clear an
+    drawnow
+    
+    antcb('selectdirs', tb1{i,1}); drawnow;  %select specific animal
+    
+    % do only the fisrt 2 steps (ini & coreg)
+    xwarp3('batch','task',[1:2],'autoreg',1,'parfor',0);
+    
+end
+
+
+%% ========================================================================================================================
+%%   6. SEGEMTANTATION (STEP-3) & NONLINEAR REGISTRATION (STEP 4)
+%%      calculate transformation & back-transformation (native-space (NS) -- standard-space (SS))
+%%      using parallel-processing
+%% =======================================================================================================================
+antcb('selectdirs','all');   % select all animal-folders
+xwarp3('batch','task',[3:4],'autoreg',1,'parfor',1);
+
+ 
+%% ================================================================
+%%  7. transform images from native to standard-space (SS)
+%% =================================================================
+ 
+antcb('selectdirs','all'); %select all animals
+% transform bias-corrected t2.nii ('mt2.nii') to SS using B-spline interpolation
+doelastix(1, [], 'mt2.nii'  ,3 ,'local' );
+ 
+% transform GrayMatter and WhiteMatter Imaget to SS using linear interpolation
+doelastix(1, [], {'c1t2.nii' 'c2t2.nii'}  ,1 ,'local' ); 
+ 
+%% ================================================================
+%%  8. transform images from standard-space to native-space  (NS)
+%% =================================================================
+% transform brain-hemisphere mask from standard-space to native-space using NN-interpolation
+doelastix(-1, [], {'AVGThemi.nii'}  ,0 ,'local' );
+ 
+%% ====================================================================================
+%%  9. region-based image readout from image in standard-space
+%%     get region-based paramers of GrayMatter-image in SS using AllenBrain atlas
+%% =====================================================================================
+z=[];                                                                                                                                                                              
+z.files        = { 'x_c1t2.nii' };            % % files used for calculation                                                                                                                
+z.fileNameOut  = 'paras_grayMatter_SS';       % % <optional> specific name of the output-file. EMPTY FIELD: use timestamp+paramter for file name                                            
+xgetlabels4(0,z);  
+ 
+%% ====================================================================================
+%%  10. region-based image readout from image in native-space (NS)
+%%      get region-based paramers of GrayMatter-image in NS using AllenBrain atlas
+%% =====================================================================================
+z=[];
+z.files        = {'c1t2.nii'};  % files used for calculation     
+z.space        =  'native'  ;% use images from "standard","native" or "other" space 
+z.hemisphere   =  'both';   % hemisphere used: "left","right","both" (united)  or "seperate" (left and right separated)
+z.fileNameOut  = 'paras_grayMatter_NS';            % % <optional> specific name of the output-file. EMPTY FIELD: use timestamp+paramter for file name                                            
+xgetlabels4(0,z);
+ 
+ 
+ 
+ % ============================================================================================
+%% [11.1] BIG_VOLUME:  trafo ANO.nii from standardspace to native space ('ix_ANO_big.nii')
+%%  with the same size as the orig. big image 'RARE_8_PigBrain5_Cdkl5_6.nii' (super large: 840MB)
+% =============================================================================================
+tic
+mdirs=antcb('getsubjects') ;
+fref=fullfile(mdirs{1},'RARE_8_PigBrain5_Cdkl5_6.nii');
+h=spm_vol(fref);
+
+%-use explicit files:
+% files = {'F:\data9\devin_pigRegistation\dat\YW24_1229_4-weekWTpiglet\ANO.nii'};
+%-or use filename and selected animals from GUI-listbox: 
+files='ANO.nii';
+pp.resolution     = h.dim  ;% [520  850  256];                                          
+pp.source         =  'intern';                                                 
+pp.fileNameSuffix =  '_big0';     % creates 'ix_ANO_big.nii'                                             
+fis=doelastix(-1, [],files,0,'local' ,pp);                                                                                                                      
+toc
+
+% ===FIX issue off different spaces of  'RARE_8_PigBrain5_Cdkl5_6.nii' and 'ix_ANO_big0.nii'
+mdirs=antcb('getsubjects') ;
+for i=1:length(mdirs)
+    fref=fullfile(mdirs{i},'RARE_8_PigBrain5_Cdkl5_6.nii');
+    f1=fullfile(mdirs{i},'ix_ANO_big0.nii');
+    f2=fullfile(mdirs{i},'ix_ANO_big.nii');
+    rreslice2target(f1, fref, f2, 0);
+    try; delete(f1); end
+    
+    %PLOT OVERLAY OF WITH 10 SLICES (BIG-IMAGE & AND 'ix_ANO_big2.nii')
+    slice='n10'; % 10 slices
+    [d ] = getslices( fref    ,2,[slice],[],0 );
+    [o ] = getslices({fref f2},2,[slice],[],0 );
+    d2=imadjust(mat2gray(montageout(permute(d,[1 2 4 3]))));
+    o2=imadjust(mat2gray(montageout(permute(o,[1 2 4 3]))));
+    imoverlay2(d2,o2);  hfig=gcf;
+    addNote(hfig,'text',['____  mdir: <b>' mdirs{i} '</b><br>'],'pos',[0 0  1 .05],'mode','multi');
+    set(hfig,'menubar','none');
+end
+toc
+
+
+
+
+
+
+
 
 
 

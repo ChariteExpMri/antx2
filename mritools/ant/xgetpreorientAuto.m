@@ -55,7 +55,7 @@ p={...
 'parameterFile'   parameterFile 'Elastix-3D-RIGID-paramer-file'  {@getparmfiles }
 
 'verbose'       [1]       'display info in cmd-windows {0|1}'  'b'
-'plotMetric'    [0]       'bar-plot, display metric across rotations; [0|1]'   'b'
+'plotMetric'    [1]       'bar-plot, display metric across rotations; [0|1]'   'b'
 'plotOvleray'   [2]       'plot overlay of best rotation [0|1|2], [1] and [2] are different visualizations'   {0 1 2}
 
 'inf4000' '' '' ''
@@ -261,7 +261,6 @@ otc=rot;
 % otc=otc([1 7]);
 
 tb=cell2mat(cellfun(@(a){str2num(a)},otc));
-
 metvec=[];
 ovl={};
 tic
@@ -281,89 +280,89 @@ for i=1:size(tb,1)
     [arg, rmovs,tfile] =evalc('run_elastix(f1,f3,paout,parameterfile,[],[],  [],[],[])');
     
     
-    if 0
-        %% ===============================================
-        %% —————————————————————————————————————————————————————————————————————————————————————————————————
-        %% run Elastix : backWardDirection
-        %% —————————————————————————————————————————————————————————————————————————————————————————————————
-        %% copy PARAMfiles
-        
-        % fprintf('calc backward..','%s');
-        parafilesinv=char(stradd(parameterfile,'inv',1));
-        copyfile(char(parameterfile),parafilesinv,'f');
-        pause(.01)
-        rm_ix(parafilesinv,'Metric'); pause(.1) ;
-        set_ix3(parafilesinv,'Metric','DisplacementMagnitudePenalty'); %SET DisplacementMagnitudePenalty
-        
-        
-        trafofile=tfile;%dir(fullfile(z.outforw,'TransformParameters*.txt')); %get Forward TRAFOfile
-        % trafofile=fullfile(z.outforw,trafofile(end).name);
-        paoutINV=fullfile(z.mdir,'rigid_getINI','inv');
-        if  exist(paoutINV)~=7
-            mkdir(paoutINV);
-        end
-        parafilesinv=cellstr(parafilesinv);
-        
-        
-        % [im3,trfile3] =      run_elastix(z.movimg,z.movimg,    z.outbackw  ,parafilesinv,[], []       ,   trafofile   ,[],[]);
-        [~,im3,trfile3]=evalc('run_elastix(f3,f3,    paoutINV ,parafilesinv,[], []       ,   trafofile   ,[],[])');
-        
-        
-        trfile3=cellstr(trfile3);
-        %set "NoInitialTransform" in TransformParameters.0.txt.
-        set_ix(trfile3{1},'InitialTransformParametersFileName','NoInitialTransform');%% orig
-        
-        trfile3=char(trfile3);
-        
-        
-        
-        [arg,wim,wps] = evalc('run_transformix(f1,[],trfile3,paoutINV,[])');
-        % [hx x]=rgetnii(wim);
-        wim2=stradd(wim,'reor_',1);
-        
-        
-        %% ===============================================
-        copyfile(wim,wim2,'f');
-        BvecInv=spm_imatrix(inv(spm_matrix(Bvec)));
-        %     fsetorigin({wim2}, BvecInv);
-        Bvec2      = [ -[preorient]  1 1 1 0 0 0];  %wenig slices
-        fsetorigin({wim2}, BvecInv);  %ANA
-        %      [hx x]=rgetnii(wim2);
-        %      hx.mat=hx.mat*inv(spm_matrix(Bvec));
-        %      rsavenii(wim2,hx, x,64);
-        rmricron([],f1,wim2,0)
-        %% ===============================================
-        
-        
-        f50=fullfile(fileparts(fileparts(z.mdir)),'templates','AVGThemi.nii');
-        % rmricron([],f50,wim2,0)
-        
-        [hx x]=rgetnii(wim2);
-        x2=flipdim(x,1);
-        rsavenii(wim2,hx, x2,64);
-        
-        f70=wim;
-        f7=fullfile(paout,'flipped.nii');
-        copyfile(f70,f7,'f');
-        fsetorigin({f7}, Bvec);  %ANA
-        set_ix(tfile, 'FinalBSplineInterpolationOrder',0);
-        %[wim,wps] = run_transformix(f5,[],tfile,paout,'');
-        [arg,wim,wps] = evalc('run_transformix(f7,[],tfile,paout,[])');
-        
-        rmricron([],f1,wim,0)
-        
-        %[hx x]=rgetnii(wim);
-        
-        
-        %met=calcMI(x,x2);
-        met=rand(1);%corr(x(:),x2(:));
-        met=met*-1;
-        metvec(i,1)=met;
-    end
+%     if 0
+%         %% ===============================================
+%         %% —————————————————————————————————————————————————————————————————————————————————————————————————
+%         %% run Elastix : backWardDirection
+%         %% —————————————————————————————————————————————————————————————————————————————————————————————————
+%         %% copy PARAMfiles
+%         
+%         % fprintf('calc backward..','%s');
+%         parafilesinv=char(stradd(parameterfile,'inv',1));
+%         copyfile(char(parameterfile),parafilesinv,'f');
+%         pause(.01)
+%         rm_ix(parafilesinv,'Metric'); pause(.1) ;
+%         set_ix3(parafilesinv,'Metric','DisplacementMagnitudePenalty'); %SET DisplacementMagnitudePenalty
+%         
+%         
+%         trafofile=tfile;%dir(fullfile(z.outforw,'TransformParameters*.txt')); %get Forward TRAFOfile
+%         % trafofile=fullfile(z.outforw,trafofile(end).name);
+%         paoutINV=fullfile(z.mdir,'rigid_getINI','inv');
+%         if  exist(paoutINV)~=7
+%             mkdir(paoutINV);
+%         end
+%         parafilesinv=cellstr(parafilesinv);
+%         
+%         
+%         % [im3,trfile3] =      run_elastix(z.movimg,z.movimg,    z.outbackw  ,parafilesinv,[], []       ,   trafofile   ,[],[]);
+%         [~,im3,trfile3]=evalc('run_elastix(f3,f3,    paoutINV ,parafilesinv,[], []       ,   trafofile   ,[],[])');
+%         
+%         
+%         trfile3=cellstr(trfile3);
+%         %set "NoInitialTransform" in TransformParameters.0.txt.
+%         set_ix(trfile3{1},'InitialTransformParametersFileName','NoInitialTransform');%% orig
+%         
+%         trfile3=char(trfile3);
+%         
+%         
+%         
+%         [arg,wim,wps] = evalc('run_transformix(f1,[],trfile3,paoutINV,[])');
+%         % [hx x]=rgetnii(wim);
+%         wim2=stradd(wim,'reor_',1);
+%         
+%         
+%         %% ===============================================
+%         copyfile(wim,wim2,'f');
+%         BvecInv=spm_imatrix(inv(spm_matrix(Bvec)));
+%         %     fsetorigin({wim2}, BvecInv);
+%         Bvec2      = [ -[preorient]  1 1 1 0 0 0];  %wenig slices
+%         fsetorigin({wim2}, BvecInv);  %ANA
+%         %      [hx x]=rgetnii(wim2);
+%         %      hx.mat=hx.mat*inv(spm_matrix(Bvec));
+%         %      rsavenii(wim2,hx, x,64);
+%         rmricron([],f1,wim2,0)
+%         %% ===============================================
+%         
+%         
+%         f50=fullfile(fileparts(fileparts(z.mdir)),'templates','AVGThemi.nii');
+%         % rmricron([],f50,wim2,0)
+%         
+%         [hx x]=rgetnii(wim2);
+%         x2=flipdim(x,1);
+%         rsavenii(wim2,hx, x2,64);
+%         
+%         f70=wim;
+%         f7=fullfile(paout,'flipped.nii');
+%         copyfile(f70,f7,'f');
+%         fsetorigin({f7}, Bvec);  %ANA
+%         set_ix(tfile, 'FinalBSplineInterpolationOrder',0);
+%         %[wim,wps] = run_transformix(f5,[],tfile,paout,'');
+%         [arg,wim,wps] = evalc('run_transformix(f7,[],tfile,paout,[])');
+%         
+%         rmricron([],f1,wim,0)
+%         
+%         %[hx x]=rgetnii(wim);
+%         
+%         
+%         %met=calcMI(x,x2);
+%         met=rand(1);%corr(x(:),x2(:));
+%         met=met*-1;
+%         metvec(i,1)=met;
+%     end
     
     
     if 1
-        %% ===============================================
+        % ===============================================
         if 0
             f50=fullfile(fileparts(fileparts(z.mdir)),'templates','AVGT.nii');
             f5=fullfile(paout,'AVGT.nii');
@@ -389,19 +388,20 @@ for i=1:size(tb,1)
         [hx x]=rgetnii(rmovs);
         y=x>0; %msk
          [ht t]=rgetnii(f1);
-        %% ===============================================
-        x=x.*(y>0);
-        t=t.*(y>0);   
+        % ===============================================
+%         x=x.*(y>0);
+%         t=t.*(y>0);   
         
-%         x=reshape(otsu(x(:),4),[hx.dim]);
-%         t=reshape(otsu(t(:),4),[ht.dim]);
+         x=reshape(otsu(x(:),3),[hx.dim]);
+         t=reshape(otsu(t(:),3),[ht.dim]);
 %         sd_trs=1.5;
-%         x=imgaussfilt3(x,sd_trs);
-%         t=imgaussfilt3(t,sd_trs);
-        met=corr(x(:),t(:));
+       sd_trs=3;
+       x=imgaussfilt3(x,sd_trs);
+       t=imgaussfilt3(t,sd_trs);
+      met=corr(x(:),t(:));
         
         
-%    met=calcMI(x,t);
+  %     met=calcMI(x,t);
 %          met=([sum((x(:)-t(:)).^2)]./length(x(:)));
          
         met=met*-1;
@@ -410,109 +410,109 @@ for i=1:size(tb,1)
     end
     
     
-    if 0
-        %% ===============================================
-        f50=fullfile(fileparts(fileparts(z.mdir)),'templates','AVGThemi.nii');
-        f5=fullfile(paout,'AVGThemi.nii');
-        copyfile(f50,f5,'f');
-        fsetorigin({f5}, Bvec);  %ANA
-        set_ix(tfile, 'FinalBSplineInterpolationOrder',0);
-        %[wim,wps] = run_transformix(f5,[],tfile,paout,'');
-        [arg,wim,wps] = evalc('run_transformix(f5,[],tfile,paout,[])');
-        [hx x]=rgetnii(wim);
-        
-        f60=fullfile(fileparts(fileparts(z.mdir)),'templates','ANO.nii');
-        f6=fullfile(paout,'ANO.nii');
-        copyfile(f60,f6,'f');
-        fsetorigin({f6}, Bvec);  %ANA
-        set_ix(tfile, 'FinalBSplineInterpolationOrder',0);
-        [arg,wim,wps] = evalc('run_transformix(f6,[],tfile,paout,[])');
-        [hy y]=rgetnii(wim);
-        
-        % ===============================================
-        uniid=unique(y); uniid(uniid==0)=[];
-        co= histcounts(y(:), uniid);
-        co=co(:);
-        minx=min([length(co) length(uniid)]);
-        uniid=uniid(1:minx);
-        co=co(1:minx);
-        tw=flipud(sortrows([uniid,co],2));
-        perc=10;
-        tw=tw(1:round(size(tw,1)*perc/100),:);
-        
-        yl=y(:).*(x(:)==1);
-        yr=y(:).*(x(:)==2);
-        [ha a]=rgetnii(f1);
-        
-        tab=zeros(size(tw,1),2);
-        for j=1:size(tw,1)
-            is1=find(yl==tw(j,1));
-            is2=find(yr==tw(j,1));
-            v1=a(is1);
-            v2=a(is2);
-            %         tab(j,:)=[median(v1) median(v2)];
-            tab(j,:)=[mean(v1) mean(v2)];
-            % tab(j,:)=[std(v1) std(v2)];
-        end
-        %met=corr(tab(:,1),tab(:,2));
-        %     met=sum(abs(tab(:,1)-tab(:,2)));
-        met=std(tab(:,1)-tab(:,2));
-        met=met*-1;
-        metvec(i,1)=met;
-        
-    end
-    %% ===============================================
-    if 0
-        %     rmricron([],f1,rmovs,0)
-        
-        fl=fullfile(paout,'elastix.log');
-        l=preadfile(fl);
-        l=l.all;
-        ix=regexpi2(l,'Final metric value');
-        metstr=l{max(ix)};
-        [ ~,met]=strtok(metstr,'='); met=str2num(strrep(met,'=',''));
-        %disp(['metric: ' num2str(met)]);
-        
-        metvec(i,1)=met;
-    end
-    %% ===============================================
-    if 0
-        f10=f1;%fullfile(pwd,'AVGT.nii')
-        f11=rmovs ;%fullfile(pwd,'x_t2.nii');
-        hb=spm_vol(f10);
-        slic=[1:2:hb.dim(3)];
-        [g1 g1s]=getslices(f10      ,3,slic ); %backgroundImage
-        [g2 g2s]=getslices({f10 f11},3,slic ); %overlayedImage in reference to bgImage
-        
-        g1=imgaussfilt3(g1,1);
-        g2=imgaussfilt3(g2,1);
-        
-        met=corr(g1(:),g2(:));  %not working
-        %met=calcMI(g1(:),g2(:)); %works
-        
-        
-        if 0
-            msk=g2>0;
-            
-            v1=g1(msk==1);
-            v2=g2(msk==1);
-            %met=corr(v1,v2);
-            met=calcMI(v1,v2); %works
-        end
-        
-        
-        met=met*-1;
-        metvec(i,1)=met;
-    end
-    %% ===============================================
-    
+%     if 0
+%         %% ===============================================
+%         f50=fullfile(fileparts(fileparts(z.mdir)),'templates','AVGThemi.nii');
+%         f5=fullfile(paout,'AVGThemi.nii');
+%         copyfile(f50,f5,'f');
+%         fsetorigin({f5}, Bvec);  %ANA
+%         set_ix(tfile, 'FinalBSplineInterpolationOrder',0);
+%         %[wim,wps] = run_transformix(f5,[],tfile,paout,'');
+%         [arg,wim,wps] = evalc('run_transformix(f5,[],tfile,paout,[])');
+%         [hx x]=rgetnii(wim);
+%         
+%         f60=fullfile(fileparts(fileparts(z.mdir)),'templates','ANO.nii');
+%         f6=fullfile(paout,'ANO.nii');
+%         copyfile(f60,f6,'f');
+%         fsetorigin({f6}, Bvec);  %ANA
+%         set_ix(tfile, 'FinalBSplineInterpolationOrder',0);
+%         [arg,wim,wps] = evalc('run_transformix(f6,[],tfile,paout,[])');
+%         [hy y]=rgetnii(wim);
+%         
+%         % ===============================================
+%         uniid=unique(y); uniid(uniid==0)=[];
+%         co= histcounts(y(:), uniid);
+%         co=co(:);
+%         minx=min([length(co) length(uniid)]);
+%         uniid=uniid(1:minx);
+%         co=co(1:minx);
+%         tw=flipud(sortrows([uniid,co],2));
+%         perc=10;
+%         tw=tw(1:round(size(tw,1)*perc/100),:);
+%         
+%         yl=y(:).*(x(:)==1);
+%         yr=y(:).*(x(:)==2);
+%         [ha a]=rgetnii(f1);
+%         
+%         tab=zeros(size(tw,1),2);
+%         for j=1:size(tw,1)
+%             is1=find(yl==tw(j,1));
+%             is2=find(yr==tw(j,1));
+%             v1=a(is1);
+%             v2=a(is2);
+%             %         tab(j,:)=[median(v1) median(v2)];
+%             tab(j,:)=[mean(v1) mean(v2)];
+%             % tab(j,:)=[std(v1) std(v2)];
+%         end
+%         %met=corr(tab(:,1),tab(:,2));
+%         %     met=sum(abs(tab(:,1)-tab(:,2)));
+%         met=std(tab(:,1)-tab(:,2));
+%         met=met*-1;
+%         metvec(i,1)=met;
+%         
+%     end
+%     %% ===============================================
+%     if 0
+%         %     rmricron([],f1,rmovs,0)
+%         
+%         fl=fullfile(paout,'elastix.log');
+%         l=preadfile(fl);
+%         l=l.all;
+%         ix=regexpi2(l,'Final metric value');
+%         metstr=l{max(ix)};
+%         [ ~,met]=strtok(metstr,'='); met=str2num(strrep(met,'=',''));
+%         %disp(['metric: ' num2str(met)]);
+%         
+%         metvec(i,1)=met;
+%     end
+%     %% ===============================================
+%     if 0
+%         f10=f1;%fullfile(pwd,'AVGT.nii')
+%         f11=rmovs ;%fullfile(pwd,'x_t2.nii');
+%         hb=spm_vol(f10);
+%         slic=[1:2:hb.dim(3)];
+%         [g1 g1s]=getslices(f10      ,3,slic ); %backgroundImage
+%         [g2 g2s]=getslices({f10 f11},3,slic ); %overlayedImage in reference to bgImage
+%         
+%         g1=imgaussfilt3(g1,1);
+%         g2=imgaussfilt3(g2,1);
+%         
+%         met=corr(g1(:),g2(:));  %not working
+%         %met=calcMI(g1(:),g2(:)); %works
+%         
+%         
+%         if 0
+%             msk=g2>0;
+%             
+%             v1=g1(msk==1);
+%             v2=g2(msk==1);
+%             %met=corr(v1,v2);
+%             met=calcMI(v1,v2); %works
+%         end
+%         
+%         
+%         met=met*-1;
+%         metvec(i,1)=met;
+%     end
+%     %% ===============================================
+%     
     
     if z.verbose==1
         cprintf('[0 .5 0]',['animal:"' animal '";IDX:[' num2str(i) '];ROT:[' otc{i,:} '];'  repmat(' ',[1 12-length(otc{i,:})]) 'metric:[' num2str(met) ']\n'] );
     end
     
     
-    %% ===========[ovl-plot-1]====================================
+    % ===========[ovl-plot-1]====================================
     
     if z.plotOvleray==2
         f10=f1;%fullfile(pwd,'AVGT.nii')
@@ -538,7 +538,7 @@ for i=1:size(tb,1)
             fg,imagesc(q2); title([ num2str(i) '] ROT:[' otc{i,:} ']']);drawnow;
         end
     end
-    %% ===========[ovl-plot-2]====================================
+    % ===========[ovl-plot-2]====================================
     if z.plotOvleray==1
         f10=f1;%fullfile(pwd,'AVGT.nii')
         f11=rmovs ;%fullfile(pwd,'x_t2.nii');
@@ -554,7 +554,7 @@ for i=1:size(tb,1)
         ovl{i}={g1 g2};
     end
     
-    %% ===============================================
+    % ===============================================
     
     
     

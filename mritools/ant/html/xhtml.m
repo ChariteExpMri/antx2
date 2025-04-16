@@ -204,14 +204,17 @@ m1=hreplace(m1,'>last performed process','</font>',[' " ' upper(ps.section) '" '
 
 
 
+slice='n16';
+
 if strcmp(ps.section,'initialization')
     
     f1 = fullfile(pa,'t2.nii');
     f2 = fullfile(pa,'_msk.nii');
     [filesOKbool mi]=checkfiles({},{f1 f2});
     if filesOKbool==1
-        [d ds] = getslices(f1     ,1,['2'],[],0 );
-        [o os] = getslices({f1 f2},1,['2'],[],0 );
+        [d ds] = getslices(f1     ,1,[slice],[],0 );
+        [o os] = getslices({f1 f2},1,[slice],[],0 );
+        [o d]=adjustContrast(o,d);
         gifs   = saveslices_gif({d,ds},{o os}, 1,ps.outpath);
         msg=[' overlay: [' gifs{1} '] and [' gifs{2} '] '] ;
         mi{1,1}=['<b><font size="2"><span style="background-color:rgb(255,215,0);"> ' msg  '</span></font></b><br>'];
@@ -224,8 +227,9 @@ elseif strcmp(ps.section,'coregistration')
     f2 = fullfile(pa,'_b1grey.nii');
     [filesOKbool mi]=checkfiles({},{f1 f2});
     if filesOKbool==1
-        [d ds] = getslices(f1     ,1,['2'],[],0 );
-        [o os] = getslices({f1 f2},1,['2'],[],0 );
+        [d ds] = getslices(f1     ,1,[slice],[],0 );
+        [o os] = getslices({f1 f2},1,[slice],[],0 );
+        [o d]=adjustContrast(o,d);
         gifs   = saveslices_gif({d,ds},{o os}, 1,ps.outpath);
         msg=[' overlay: [' gifs{1} '] and [' gifs{2} '] '] ;
         mi{1,1}=['<b><font size="2"><span style="background-color:rgb(255,215,0);"> ' msg  '</span></font></b><br>'];
@@ -244,8 +248,9 @@ elseif strcmp(ps.section,'segmentation')
     f2 = fullfile(pa,'c1t2.nii');
     [filesOKbool mi]=checkfiles({},{f1 f2});
     if filesOKbool==1
-        [d ds] = getslices(f1     ,1,['2'],[],0 );
-        [o os] = getslices({f1 f2},1,['2'],[],0 );
+        [d ds] = getslices(f1     ,1,[slice],[],0 );
+        [o os] = getslices({f1 f2},1,[slice],[],0 );
+        [o d]=adjustContrast(o,d);
         gifs   = saveslices_gif({d,ds},{o os}, 1,ps.outpath);
         msg=[' overlay: [' gifs{1} '] and [' gifs{2} '] '] ;
         mi{1,1}=['<b><font size="2"><span style="background-color:rgb(255,215,0);"> ' msg  '</span></font></b><br>'];
@@ -260,15 +265,17 @@ elseif strcmp(ps.section,'warping')
     f2=fullfile(pa,'x_t2.nii');
     [filesOKbool mi]=checkfiles({},{f1 f2});
     if filesOKbool==1
-        try
-        [d ds]=getslices(f1     ,2,['12 20 20'],[],0 );
-        [o os]=getslices({f1 f2},2,['12 20 20'],[],0 );
-        catch
-        [d ds]=getslices(f1     ,2,['3'],[],0 );
-        [o os]=getslices({f1 f2},2,['3'],[],0 );    
-        end
+%         try
+%         [d ds]=getslices(f1     ,2,['12 20 20'],[],0 );
+%         [o os]=getslices({f1 f2},2,['12 20 20'],[],0 );
+%         catch
+%         [d ds]=getslices(f1     ,2,['3'],[],0 );
+%         [o os]=getslices({f1 f2},2,['3'],[],0 );    
+%         end
         
-        
+        [d ds] = getslices(f1     ,2,[slice],[],0 );
+        [o os] = getslices({f1 f2},2,[slice],[],0 );
+        [o d]=adjustContrast(o,d);
         gifs   = saveslices_gif({d,ds},{o os}, 1,ps.outpath);
         msg=[' overlay: [' gifs{1} '] and [' gifs{2} '] '] ;
         mi{1,1}=['<b><font size="2"><span style="background-color:rgb(255,215,0);"> ' msg  '</span></font></b><br>'];
@@ -279,8 +286,13 @@ elseif strcmp(ps.section,'warping')
     f2 = fullfile(pa,'ix_AVGT.nii');
     [filesOKbool2 mi2]=checkfiles({},{f1 f2});
     if filesOKbool2==1
-        [d ds] = getslices(f1     ,1,['2'],[],0 );
-        [o os] = getslices({f1 f2},1,['2'],[],0 );
+%         [d ds] = getslices(f1     ,1,['2'],[],0 );
+%         [o os] = getslices({f1 f2},1,['2'],[],0 );
+        
+        [d ds] = getslices(f1     ,1,[slice],[],0 );
+        [o os] = getslices({f1 f2},1,[slice],[],0 );
+        [o d]=adjustContrast(o,d);
+        
         gifs   = saveslices_gif({d,ds},{o os}, 1,ps.outpath);
         msg=[' overlay: [' gifs{1} '] and [' gifs{2} '] '] ;
         mi2{1,1}=['<b><font size="2"><span style="background-color:rgb(255,215,0);"> ' msg  '</span></font></b><br>'];
@@ -313,11 +325,17 @@ end
 %% glue
 
 m=[m1; [ms; mi;minfo ;me]; m2 ];
-
-
-
-
 hsave(ps.page,m)
+
+function [o2 d2]=adjustContrast(o,d)
+o2=o;
+for i=1:size(o2,3)
+    o2(:,:,i)=imadjust(mat2gray(o2(:,:,i)));
+end
+d2=d;
+for i=1:size(d2,3)
+    d2(:,:,i)=imadjust(mat2gray(d2(:,:,i)));
+end
 
 function  mi=addimage1(mi,gifs,outpath )
 
