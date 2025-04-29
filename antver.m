@@ -1116,6 +1116,9 @@
 %  get & set pre-orientation, obtain transformation from/to standard-space, transform images from native to
 %  standard space and vice versa, atlas region-based parameter readout from images in standard-space and
 %  native-space) 
+% #ba 29 Apr 2025 (15:51:45)
+% #k [dtistat.m] #n : modified, added anima's single values to excelsheet
+% 
 % 
 % 
 

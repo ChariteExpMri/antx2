@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   02 Apr 2025 (16:53:48)  
+ &#x1F34E; last modification:   29 Apr 2025 (15:51:45)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**29 Apr 2025 (15:51:45)**</ins>  
+   __[dtistat.m]__ : modified, added anima's single values to excelsheet  
+<!---->
   &#x1F535;   <ins>**02 Apr 2025 (16:53:48)**</ins>  
    __[snips.m]__ : added pipeline "from Bruker-import to standard-space"  which shows a  
    pure comandline workflow (make ANTx-project, import Bruker data, rename file,   

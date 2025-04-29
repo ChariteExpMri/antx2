@@ -115,10 +115,15 @@
 %                                       [x] paired-design (repeated measures)
 % [tests]                 (pulldown) : Select the prefered test. Tests are design-dependend. So first
 %                                      select the Statisitcal design.
-%                                      *Tests for between-design: One of the following tests:
-%                                          ttest2 (2sample ttest), WST(Wilcoxon rank sum test),
-%                                          permutation,permutation2
-%                                      *Tests for within-design: #r not implemented yet.
+%                                      *TEST FOR BETWEEN DESIGN, i.e. two independent groups: One of the following tests:
+%                                          'ttest2'  -2-sample ttest
+%                                          'WST'     -Wilcoxon rank sum test,
+%                                          'permutation'   -permutation test 
+%                                          'permutation2'  -another permutation test
+%                                          'BM'            -Brunner–Munzel test
+% 
+%                                      **TEST FOR BETWEEN DESIGN,: #r not implemented yet.
+% 
 % [use FDR]               (checkbox) : If selected, FDR correction is performed.
 % [qFDR]                  (edit)     : The desired false discovery rate (default: 0.05).
 % [show SIGS only]        (checkbox) : If selected, only significant results will be shown.
@@ -2499,18 +2504,24 @@ if z.f1design==0 %between
             end
             grouplabel=comb(i,:);
             
+            
+            para.i1=i1;
+            para.i2=i2;
+            para.animals=xx.mousename;
+            
             if z.typeoftest1==1
                 stattype='ttest2';
                 [h p ci st]=ttest2(x',y','tail',z.tail);
-                [out hout]=getMESD(x,y,vartype);
-                res    =[ h'   p'  st.tstat'   out   st.df'     ] ;
+                [out hout]=getMESD(x,y,vartype,para);
+                %res    =[ h'   p'  st.tstat'   out   num2cell(st.df'     ] ;
+                res    =[num2cell([h' p' st.tstat']) out num2cell(st.df')];
                 reshead=['H'  'p'    'T'      hout     'df'     ];
                 % reshead={'hyp' 'p' 'T' 'ME' 'SD' 'SE'  'n1' 'n2' 'df'};
-                ikeep=find(~isnan(res(:,1)));
+                ikeep=find(~isnan(cell2mat(res(:,1))));
             elseif z.typeoftest1==2
                 stattype='WRS';
                 res=nan(size(x,1),[3]);
-                [out hout]=getMESD(x,y,vartype);
+                [out hout]=getMESD(x,y,vartype,para);
                 
                 if regexpi(us.props.wst_stat,'Z','ignorecase')==1    % Z-SCORE
                     for j=1:size(x,1)
@@ -2528,7 +2539,7 @@ if z.f1design==0 %between
                             res(j,:)=[h p nan];
                         end
                     end
-                    res    =[ res          out];
+                    res    =[ num2cell(res)          out];
                     reshead=['H' 'p' 'zval' hout];
                 else                                                 % RS-SCORE
                     for j=1:size(x,1)
@@ -2537,18 +2548,18 @@ if z.f1design==0 %between
                             res(j,:)=[h p st.ranksum];
                         end
                     end
-                    res    =[ res          out];
+                    res    =[ num2cell(res)         out];
                     reshead=['H' 'p' 'RS' hout];
                 end
                 
                 %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
-                ikeep=find(~isnan(res(:,1)));
+                ikeep=find(~isnan(cell2mat(res(:,1))));
             elseif z.typeoftest1==3
                 stattype='perm';
                 px= permtestmat(x',y',1000,'approximate');
                 h=px<0.05;
-                [out hout]=getMESD(x,y,vartype);
-                res    =[ h  px    out];
+                [out hout]=getMESD(x,y,vartype,para);
+                res    =[ num2cell([h  px ])   out];
                 reshead=['H' 'p'  hout];
                 %reshead={'H' 'p' 'ME' 'SD' 'SE' 'n1' 'n2'};
                 [hv px]=ttest2(x',y','tail',z.tail);
@@ -2564,8 +2575,8 @@ if z.f1design==0 %between
                 [p,T,cr,al]=mult_comp_perm_t2_nan(x',y',5000,tail,.05);
                 p(find(isnan(T)))=1;
                 h=p<0.05;
-                [out hout]=getMESD(x,y,vartype);
-                res    =[ h'  p'  T'  out ] ;
+                [out hout]=getMESD(x,y,vartype,para);
+                res    =[ num2cell([ h'  p'  T'  ])    out ] ;
                 reshead=['H' 'p' 'T' hout ];
                 %reshead={'hyp' 'p' 'T'    'ME' 'SD' 'SE' 'n1' 'n2'   };
                 
@@ -2587,7 +2598,7 @@ if z.f1design==0 %between
                     
                     
                     res=nan(size(x,1),[3]);
-                    [out hout]=getMESD(x,y,vartype);
+                    [out hout]=getMESD(x,y,vartype,para);
                     
                     
                     %                  [p1 h st]=ranksum(x(1,:),y(1,:),'tail','both'); p1
@@ -2607,11 +2618,11 @@ if z.f1design==0 %between
                         end
                     end
                     res(:,1)=double(res(:,2)<0.05);
-                    res    =[ res          out];
+                    res    =[ num2cell(res)          out];
                     reshead=['H' 'p' 'Z' hout];
                     
                     %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
-                    ikeep=find(~isnan(res(:,1)));
+                    ikeep=find(~isnan(cell2mat(res(:,1))));
                 end
                 
                 %                  if 0
@@ -2868,10 +2879,20 @@ if doexport==1
 end
 
 for i=1:size(us.pw,2)
-    
-    dat=[[ us.pw(i).lab] num2cell(us.pw(i).tb) ];
+    tb0=us.pw(i).tb;
+    if isnumeric(tb0); 
+        tb0=num2cell(tb0);
+    end
+    %dat=[[ us.pw(i).lab] num2cell(us.pw(i).tb) ];
+     dat=[[ us.pw(i).lab] tb0 ];
     head=['Label' us.pw(i).tbhead];
     
+    %remove singlesubjectData
+    if 0
+        i_del=regexpi2([ head],'singleValues1|singleValues2|animals1|animals2');
+        dat(:,i_del)=[];
+        head(i_del) =[];
+    end
     
     % -----isFDR ----------------------------
     if z.isfdr==1
@@ -3125,10 +3146,7 @@ end%ntestchunks
 
 
 
-
-
-
-function [out head]=getMESD(x,y,vartype)
+function [out head]=getMESD(x,y,vartype,para)
 
 % vartype=1
 
@@ -3164,8 +3182,69 @@ if vartype == 1 % equal variances
     se = sPooled .* sqrt(1./nx + 1./ny);
     %ratio = difference ./ se;
 end
-out =[diffxy   M1    M2    sd1 sd2     sPooled   se        sum(~isnan(x),2) sum(~isnan(y),2)  Med1 Med2];
-head={'diff'  'ME1' 'ME2'  'SD1' 'SD2' 'Var(p)' 'SE(p)'    'n1' 'n2'                         'Med1' 'Med2' };
+
+%% single values
+%C = arrayfun(@(row) strjoin(arrayfun(@num2str, A(row,:), 'UniformOutput', false), ';'), (1:size(A,1))', 'UniformOutput', false);
+xsingd = arrayfun(@(a) strjoin(arrayfun(@num2str, x(a,:), 'UniformOutput', false), ';'), (1:size(x,1))', 'UniformOutput', false);
+ysingd = arrayfun(@(a) strjoin(arrayfun(@num2str, y(a,:), 'UniformOutput', false), ';'), (1:size(y,1))', 'UniformOutput', false);
+
+
+
+
+out0  =[diffxy   M1    M2    sd1 sd2     sPooled   se        sum(~isnan(x),2) sum(~isnan(y),2)  Med1 Med2];
+head0 ={'diff'  'ME1' 'ME2'  'SD1' 'SD2' 'Var(p)' 'SE(p)'    'n1' 'n2'                         'Med1' 'Med2' };
+
+
+xanim=strjoin(para.animals(para.i1),';');%anuimals
+yanim=strjoin(para.animals(para.i2),';');
+xanimals=repmat({xanim},[size(xsingd,1) 1]);
+yanimals=repmat({yanim},[size(ysingd,1) 1]);
+
+
+out =[num2cell(out0) xanimals   xsingd           yanimals   ysingd];
+head=[head0          'animals1' 'singleValues1'  'animals2' 'singleValues2' ];
+
+
+
+
+% function [out head]=getMESD(x,y,vartype)
+% 
+% % vartype=1
+% 
+% s2x = nanvar(x,[],2);
+% s2y = nanvar(y,[],2);
+% % difference = nanmean(x,2) - nanmean(y,2);
+% 
+% M1  =nanmean(x,2) ;
+% M2  =nanmean(y,2);
+% sd1 =nanstd(x,[],2) ;
+% sd2 =nanstd(y,[],2);
+% diffxy=M1-M2;
+% 
+% Med1  =nanmedian(x,2);
+% Med2  =nanmedian(y,2);
+% 
+% xnans = isnan(x);
+% if any(xnans(:))
+%     nx = sum(~xnans,2);
+% else
+%     nx = size(x,2); % a scalar, => a scalar call to tinv
+% end
+% ynans = isnan(y);
+% if any(ynans(:))
+%     ny = sum(~ynans,2);
+% else
+%     ny = size(y,2); % a scalar, => a scalar call to tinv
+% end
+% 
+% if vartype == 1 % equal variances
+%     dfe = nx + ny - 2;
+%     sPooled = sqrt(((nx-1) .* s2x + (ny-1) .* s2y) ./ dfe);
+%     se = sPooled .* sqrt(1./nx + 1./ny);
+%     %ratio = difference ./ se;
+% end
+% out =[diffxy   M1    M2    sd1 sd2     sPooled   se        sum(~isnan(x),2) sum(~isnan(y),2)  Med1 Med2];
+% head={'diff'  'ME1' 'ME2'  'SD1' 'SD2' 'Var(p)' 'SE(p)'    'n1' 'n2'                         'Med1' 'Med2' };
 
 
 function plotresults(pp)%parser for CMD
@@ -3578,6 +3657,265 @@ uhelp([mfilename '.m']);
 % ==============================================
 %%   [subs]
 % ===============================================
+% function [lg expo]=indepstat_nwparameter(nw, z)
+% hf=findobj(0,'tag','dtistat');
+% vartype=z.vartype;
+% us=get(hf,'userdata');
+% 
+% 
+% 
+% i1=find(nw.grpidx==1);
+% i2=find(nw.grpidx==2);
+% % x=nw.np(:,i1)
+% % y=nw.np(:,i2)
+% 
+% 
+% ntestchunks= [size(nw.npv,2)+1 ];
+% lg={};
+% for jj=1:ntestchunks
+%     if jj==1
+%         dr    =nw.np  ; % nw-parameters scalar
+%         %         label =nw.nplabel;
+%         %         para  ='scalar parameter'
+%     else   % nw-parameters vector
+%         %          para  ='vector parameter'
+%         dr=squeeze((nw.npv(:,jj-1 ,:)) ) ; %data label x pbn
+%         %         region =
+%         %         head=nw.npvlabel{jj-1}
+%         
+%     end
+%     
+%     
+%     
+%     
+%     x=dr(:,i1);
+%     y=dr(:,i2);
+%     
+%     
+%     if z.typeoftest1==1
+%         stattype='ttest2';
+%         [h p ci st]=ttest2(x',y');
+%         [out hout]=getMESD(x,y,vartype);
+%         res=    [h'   p' st.tstat'   out  st.df'  ] ;
+%         reshead=['H' 'p' 'T'        hout    'df'  ];
+%         %reshead={'H' 'p' 'T' 'ME' 'SD' 'SE'  'n1' 'n2' 'df'};
+%         ikeep=find(~isnan(res(:,1)));
+%         
+%     elseif z.typeoftest1==2
+%         stattype='WRS';
+%         res=nan(size(x,1),[3]);
+%         [out hout]=getMESD(x,y,vartype);
+%         
+%         if regexpi(us.props.wst_stat,'Z','ignorecase')==1    % Z-SCORE
+%             for j=1:size(x,1)
+%                 [p h st]=ranksum(x(j,:),y(j,:));
+%                 try
+%                     res(j,:)=[h p st.zval];
+%                 catch
+%                     res(j,:)=[h p nan];
+%                 end
+%             end
+%             res    =[res           out];
+%             reshead=['H' 'p' 'zval' hout];
+%         else                                                  % RS-SCORE
+%             for j=1:size(x,1)
+%                 try
+%                     [p h st]=ranksum(x(j,:),y(j,:));
+%                     res(j,:)=[h p st.ranksum];
+%                 end
+%             end
+%             res    =[res           out];
+%             reshead=['H' 'p' 'RS' hout];
+%             %reshead={'H' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
+%         end
+%         
+%         ikeep=find(~isnan(res(:,1)));
+%     elseif z.typeoftest1==3
+%         stattype='perm';
+%         px= permtestmat(x',y',1000,'approximate');
+%         
+%         [out hout]=getMESD(x,y,vartype);
+%         h=px<0.05;
+%         res    =[ h   px  out ];
+%         reshead=['H' 'p' hout ];
+%         %reshead={'H' 'p' 'ME' 'SD' 'SE' 'n1' 'n2'};
+%         [hv px]=ttest2(x',y');
+%         ikeep=find(~isnan(hv));
+%     elseif z.typeoftest1==4
+%         stattype='perm2';
+%         %tic;[pv,to,cr,al]=mult_comp_perm_t2_nan(x',y',5000,0,.05); toc
+%         [p,T,cr,al]=mult_comp_perm_t2_nan(x',y',5000,0,.05);
+%         p(find(isnan(T)))=1;
+%         
+%         h=p<0.05;
+%         
+%         [out hout]=getMESD(x,y,vartype);
+%         res    =[ h'  p'  T'    out  ] ;
+%         reshead=['H' 'p' 'T'   hout  ];
+%         %reshead={'H' 'p' 'T'    'ME' 'SD' 'SE' 'n1' 'n2'   };
+%         
+%         [hv px]=ttest2(x',y');
+%         ikeep=find(~isnan(hv));
+%         
+%     elseif z.typeoftest1==5 %BM
+%         if 1
+%             stattype='BM';
+%             res=nan(size(x,1),[3]);
+%             [out hout]=getMESD(x,y,vartype);
+%             
+%             for j=1:size(x,1)
+%                 %[p h st]=ranksum(x(j,:),y(j,:));
+%                 [p SS]=brunner_munzel(x(j,:),y(j,:));
+%                 res(j,2:3)=[ p SS];
+%             end
+%             res(:,1)=double(res(:,2)<0.05);
+%             res    =[res           out];
+%             reshead=['H' 'p' 'Z' hout];
+%             inan=isnan(res(:,2));
+%             res(inan,1)=nan;
+%             ikeep=find(~isnan(res(:,1)));
+%         end
+%         %
+%         %            if 0
+%         %                stattype='WRS';
+%         %                res=nan(size(x,1),[3]);
+%         %                [out hout]=getMESD(x,y,vartype);
+%         %
+%         %                if regexpi(us.props.wst_stat,'Z','ignorecase')==1    % Z-SCORE
+%         %                    for j=1:size(x,1)
+%         %                        [p h st]=ranksum(x(j,:),y(j,:));
+%         %                        try
+%         %                            res(j,:)=[h p st.zval];
+%         %                        catch
+%         %                            res(j,:)=[h p nan];
+%         %                        end
+%         %                    end
+%         %                    res    =[res           out];
+%         %                    reshead=['H' 'p' 'zval' hout];
+%         %                else                                                  % RS-SCORE
+%         %                    for j=1:size(x,1)
+%         %                        try
+%         %                            [p h st]=ranksum(x(j,:),y(j,:));
+%         %                            res(j,:)=[h p st.ranksum];
+%         %                        end
+%         %                    end
+%         %                    res    =[res           out];
+%         %                    reshead=['H' 'p' 'RS' hout];
+%         %                    %reshead={'H' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
+%         %                end
+%         %
+%         %                ikeep=find(~isnan(res(:,1)));
+%         %
+%         %            end
+%         
+%         
+%         
+%         
+%         
+%     end
+%     
+%     
+%     % FDR
+%     idxkeep=ikeep;
+%     res1=res(idxkeep,:);
+%     if isempty(res1)
+%         res2=[];
+%     else
+%         %idxkeep=find(~isnan(sum(out(:,1:3),2)));
+%         %     Hfdr=fdr_bh(res(inonan,2) ,z.qFDR,'pdep','yes');
+%         [Hfdr, crit_p, adj_ci_cvrg, adj_p]=fdr_bh(res1(:,2) ,z.qFDR,'pdep','yes');
+%         res2      =[Hfdr res1 adj_p];
+%     end
+%     reshead2  =[ {'Hfdr' 'Huncor' } reshead(2:end) 'adj_pFDR'] ;
+%     
+%     
+%     
+%     
+%     
+%     
+%     
+%     
+%     if jj==1
+%         label=nw.nplabel(idxkeep);
+%         str=['SCALAR NETWORK METRICS'];
+%         metric=str;
+%         
+%     else
+%         label=nw.label(idxkeep);
+%         metric=upper( nw.npvlabel{jj-1} );
+%         str=[ ' #  [' metric ']' '         ..network metric  '];
+%     end
+%     
+%     
+%     
+%     %
+%     % % z.issort       =1
+%     % % z.showsigsonly =1
+%     % % dat=res2
+%     % %
+%     
+%     
+%     d= [label num2cell(res2)];
+%     if ~isempty(d)
+%         if z.issort      ==1;
+%             d=sortrows(d,[4 ]);
+%         end
+%         %     if z.showsigsonly==1;
+%         %         %         d=d(find([d{:,3}]==33),:);
+%         %         d=d(find([d{:,3}]==1),:);
+%         %     end
+%         
+%         
+%         %% SIGN
+%         %d(:,4)=cellfun(@(a){sprintf(' %5.4g',a)},d(:,4)) ;   % p-values other format
+%         isnum=cellfun(@isnumeric,d);
+%         d2      =d;
+%         reshead3=reshead2;
+%         for i=1:size(d,2)
+%             if isempty(   find(isnum(:,i) )); continue; end
+%             if any((sign(cell2mat(d(find(isnum(:,i) ),i))))==-1) == 1   %negativ values
+%                 d2(:,i)= cellfun(@(a){sprintf('% .5g',a)},d2(:,i));
+%                 reshead3{i}=[' ' reshead3{i}];
+%             else %positiv values
+%                 d2(:,i)= cellfun(@(a){sprintf('%.5g',a)},d2(:,i));
+%             end
+%         end
+%         
+%         % d= [d(:,1)  cellfun(@(a){sprintf('% .5g',a)},d(:,2:end))];
+%         
+%         if jj==1
+%             col1name='PARAMETER ';
+%             %             ds=[['PARAMETER ' reshead3];d2 ];
+%         else
+%             col1name='REGION ';
+%             
+%             %             ds=[['REGION ' reshead3];d2 ];
+%         end
+%         ds=[[col1name reshead3];d2 ];
+%         
+%         df=plog([],ds,0,str,'s=0;upperline=0;a=1');
+%         
+%         
+%         %% export NWdata (data exist)
+%         expo(jj,:)={metric   [col1name reshead2; d ]   };
+%     else
+%         lin=repmat('=',[1 length(str)+15]);
+%         df={lin; [str  ' --> ns.'];lin};
+%         
+%         %% export NWdata (data do not exist)
+%         expo(jj,:)={metric  {'Result';'ns.'}};
+%     end
+%     
+%     % uhelp(df,1);
+%     % [~,sz]=plog(sz,sx,0,[us.pw(i).str],'s=0','plotlines=0');
+%     %
+%     lg =[lg; df];%log results
+%     
+%     %% export
+%     
+%     
+% end%ntestchunks
+% % function  [log2 logthis]=listresults(res2,reshead2, nw,j, z, log2)
 
 function [lg expo]=indepstat_nwparameter(nw, z)
 hf=findobj(0,'tag','dtistat');
@@ -3585,13 +3923,13 @@ vartype=z.vartype;
 us=get(hf,'userdata');
 
 
-
 i1=find(nw.grpidx==1);
 i2=find(nw.grpidx==2);
-% x=nw.np(:,i1)
-% y=nw.np(:,i2)
 
-
+para.i1=i1;
+para.i2=i2;
+para.animals=us.con.mousename;
+    
 ntestchunks= [size(nw.npv,2)+1 ];
 lg={};
 for jj=1:ntestchunks
@@ -3606,27 +3944,24 @@ for jj=1:ntestchunks
         %         head=nw.npvlabel{jj-1}
         
     end
-    
-    
-    
-    
     x=dr(:,i1);
     y=dr(:,i2);
-    
     
     if z.typeoftest1==1
         stattype='ttest2';
         [h p ci st]=ttest2(x',y');
-        [out hout]=getMESD(x,y,vartype);
-        res=    [h'   p' st.tstat'   out  st.df'  ] ;
+        [out hout]=getMESD(x,y,vartype,para);
+                
+        %res=    [h'   p' st.tstat'   out  st.df'  ] ;
+        res    =[num2cell([h' p' st.tstat']) out num2cell(st.df')];
         reshead=['H' 'p' 'T'        hout    'df'  ];
-        %reshead={'H' 'p' 'T' 'ME' 'SD' 'SE'  'n1' 'n2' 'df'};
-        ikeep=find(~isnan(res(:,1)));
+        %ikeep=find(~isnan(res(:,1)));
+        ikeep=find(~isnan(cell2mat(res(:,1))));
         
     elseif z.typeoftest1==2
         stattype='WRS';
         res=nan(size(x,1),[3]);
-        [out hout]=getMESD(x,y,vartype);
+        [out hout]=getMESD(x,y,vartype,para);
         
         if regexpi(us.props.wst_stat,'Z','ignorecase')==1    % Z-SCORE
             for j=1:size(x,1)
@@ -3637,7 +3972,7 @@ for jj=1:ntestchunks
                     res(j,:)=[h p nan];
                 end
             end
-            res    =[res           out];
+            res    =[num2cell(res)   out];
             reshead=['H' 'p' 'zval' hout];
         else                                                  % RS-SCORE
             for j=1:size(x,1)
@@ -3646,19 +3981,18 @@ for jj=1:ntestchunks
                     res(j,:)=[h p st.ranksum];
                 end
             end
-            res    =[res           out];
+            res    =[num2cell(res)   out];
             reshead=['H' 'p' 'RS' hout];
             %reshead={'H' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
         end
+        ikeep=find(~isnan(cell2mat(res(:,1))));
         
-        ikeep=find(~isnan(res(:,1)));
     elseif z.typeoftest1==3
         stattype='perm';
         px= permtestmat(x',y',1000,'approximate');
-        
-        [out hout]=getMESD(x,y,vartype);
+        [out hout]=getMESD(x,y,vartype,para);
         h=px<0.05;
-        res    =[ h   px  out ];
+        res    =[ num2cell([h   px ]) out ];
         reshead=['H' 'p' hout ];
         %reshead={'H' 'p' 'ME' 'SD' 'SE' 'n1' 'n2'};
         [hv px]=ttest2(x',y');
@@ -3670,9 +4004,9 @@ for jj=1:ntestchunks
         p(find(isnan(T)))=1;
         
         h=p<0.05;
-        
-        [out hout]=getMESD(x,y,vartype);
-        res    =[ h'  p'  T'    out  ] ;
+        [out hout]=getMESD(x,y,vartype,para);
+        %res    =[ h'  p'  T'    out  ] ;
+        res    =[num2cell([h' p' T']) out ];
         reshead=['H' 'p' 'T'   hout  ];
         %reshead={'H' 'p' 'T'    'ME' 'SD' 'SE' 'n1' 'n2'   };
         
@@ -3683,7 +4017,7 @@ for jj=1:ntestchunks
         if 1
             stattype='BM';
             res=nan(size(x,1),[3]);
-            [out hout]=getMESD(x,y,vartype);
+            [out hout]=getMESD(x,y,vartype,para);
             
             for j=1:size(x,1)
                 %[p h st]=ranksum(x(j,:),y(j,:));
@@ -3691,11 +4025,11 @@ for jj=1:ntestchunks
                 res(j,2:3)=[ p SS];
             end
             res(:,1)=double(res(:,2)<0.05);
-            res    =[res           out];
+            res    =[num2cell(res)     out];
             reshead=['H' 'p' 'Z' hout];
-            inan=isnan(res(:,2));
-            res(inan,1)=nan;
-            ikeep=find(~isnan(res(:,1)));
+            inan=isnan(cell2mat(res(:,2)));
+            res(inan,1)={nan};
+            ikeep=find(~isnan(  cell2mat(res(:,1))  ));
         end
         %
         %            if 0
@@ -3745,8 +4079,8 @@ for jj=1:ntestchunks
     else
         %idxkeep=find(~isnan(sum(out(:,1:3),2)));
         %     Hfdr=fdr_bh(res(inonan,2) ,z.qFDR,'pdep','yes');
-        [Hfdr, crit_p, adj_ci_cvrg, adj_p]=fdr_bh(res1(:,2) ,z.qFDR,'pdep','yes');
-        res2      =[Hfdr res1 adj_p];
+        [Hfdr, crit_p, adj_ci_cvrg, adj_p]=fdr_bh(  cell2mat(res1(:,2))  ,z.qFDR,'pdep','yes');
+        res2      =[num2cell(Hfdr) res1 num2cell(adj_p)];
     end
     reshead2  =[ {'Hfdr' 'Huncor' } reshead(2:end) 'adj_pFDR'] ;
     
@@ -3777,7 +4111,8 @@ for jj=1:ntestchunks
     % %
     
     
-    d= [label num2cell(res2)];
+    %d= [label num2cell(res2)];
+    d= [label     (res2)];
     if ~isempty(d)
         if z.issort      ==1;
             d=sortrows(d,[4 ]);
@@ -3790,12 +4125,17 @@ for jj=1:ntestchunks
         
         %% SIGN
         %d(:,4)=cellfun(@(a){sprintf(' %5.4g',a)},d(:,4)) ;   % p-values other format
-        isnum=cellfun(@isnumeric,d);
+        
         d2      =d;
         reshead3=reshead2;
-        for i=1:size(d,2)
+        i_del=regexpi2([ reshead2],'singleValues1|singleValues2|animals1|animals2');
+        reshead3(i_del)=[];
+        d2(:,i_del+1)=[];
+        isnum=cellfun(@isnumeric,d2);
+        
+        for i=1:size(d2,2)
             if isempty(   find(isnum(:,i) )); continue; end
-            if any((sign(cell2mat(d(find(isnum(:,i) ),i))))==-1) == 1   %negativ values
+            if any((sign(cell2mat(d2(find(isnum(:,i) ),i))))==-1) == 1   %negativ values
                 d2(:,i)= cellfun(@(a){sprintf('% .5g',a)},d2(:,i));
                 reshead3{i}=[' ' reshead3{i}];
             else %positiv values
@@ -3838,8 +4178,6 @@ for jj=1:ntestchunks
     
 end%ntestchunks
 % function  [log2 logthis]=listresults(res2,reshead2, nw,j, z, log2)
-
-
 
 %% REDUNDATNT
 % function out=getMESD(x,y,vartype)
