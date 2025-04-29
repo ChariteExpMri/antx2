@@ -8,7 +8,7 @@
     
 ------------------  
   &#x1F535;   <ins>**29 Apr 2025 (15:51:45)**</ins>  
-   __[dtistat.m]__ : modified, added anima's single values to excelsheet  
+   __[dtistat.m]__ : modified, added animal single values to excelsheet  
 <!---->
   &#x1F535;   <ins>**02 Apr 2025 (16:53:48)**</ins>  
    __[snips.m]__ : added pipeline "from Bruker-import to standard-space"  which shows a  

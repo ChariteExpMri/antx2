@@ -1117,7 +1117,7 @@
 %  standard space and vice versa, atlas region-based parameter readout from images in standard-space and
 %  native-space) 
 % #ba 29 Apr 2025 (15:51:45)
-% #k [dtistat.m] #n : modified, added anima's single values to excelsheet
+% #k [dtistat.m] #n : modified, added animal single values to excelsheet
 % 
 % 
 % 
