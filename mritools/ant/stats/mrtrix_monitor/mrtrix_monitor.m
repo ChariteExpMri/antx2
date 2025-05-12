@@ -818,10 +818,11 @@ elseif strcmp(task,'bash_saveas') || strcmp(task,'bash_save')
      %% ========[write bfile to HPC]=======================================
      global mpw
      tmpdir2=strrep(tmpdir,filesep,[filesep filesep]);
-     msg = scp_simple_put(p.HPC_hostname,mpw.login,mpw.password,...
+        %      msg = scp_simple_put(p.HPC_hostname,mpw.login,mpw.password,...
+        %          bfileNew,'',tmpdir);
+      msg=sftp_simple_put(p.HPC_hostname,mpw.login,mpw.password,...
          bfileNew,'',tmpdir);
-     % msg = scp_simple_put(p.host,p.uname,p.pw,...
-     %     batchName,'',batchPath);
+
      cmd=['chmod 777 ' bfileNew];
      o=getHPCstatus(p,'cmd',cmd);
      delete(f1);
