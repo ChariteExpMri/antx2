@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   29 Apr 2025 (15:51:45)  
+ &#x1F34E; last modification:   % 14 Jul 2025 (07:38:17)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,8 +7,17 @@
     
     
 ------------------  
+  % &#x1F535;   <ins>**14 Jul 2025 (07:38:17)**</ins>  
+  mouse_kim_umba_v2 (Unified mouse brain atlas v2; Yongsoo Kim) added to google-drive  
+  &#8618;  access via link : https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9  
+  paper: https://www.nature.com/articles/s41467-019-13057-w  
+  The atlas was modified!! Atlas was warped to match the mouse_Allen2017HikishimaLR-template, i.e.   
+  same Space (0.07mm isovoxel), thus atlases can be exchanged without another registration. Special characters  
+  were removed from original region labels.  
+<!---->
   &#x1F535;   <ins>**29 Apr 2025 (15:51:45)**</ins>  
    __[dtistat.m]__ : modified, added animal single values to excelsheet  
+    
 <!---->
   &#x1F535;   <ins>**02 Apr 2025 (16:53:48)**</ins>  
    __[snips.m]__ : added pipeline "from Bruker-import to standard-space"  which shows a  
