@@ -1126,11 +1126,12 @@
 % The atlas was modified!! Atlas was warped to match the mouse_Allen2017HikishimaLR-template, i.e. 
 % same Space (0.07mm isovoxel), thus atlases can be exchanged without another registration. Special characters
 % were removed from original region labels.
+% % #ba 22 Jul 2025 (14:58:43)
+% #k [xrename.m/xop.m] #n : modified, wildcard support, (see help), NIFTIs or other files can be open via contextmenu
 % 
 % 
 % 
 % 
-
 
 %% ===============================================
 %----- EOF

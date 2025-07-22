@@ -502,6 +502,14 @@
 % xrename(1,'anatomy_axial.*.nii','t2.nii','1s'); %extract 1st volume
 % xrename(1,'^B0Map'      ,'NEW.nii',':');   %copyNrename NIFTI(s) starting with "B0Map"
 % xrename(1,'sat_4_1.nii$','NEW.nii',':');   %copyNrename NIFTI(s) ending with "sat_4_1.nii"
+% 
+%% copy and rename all files containg '.*_pd_.*1.nii' to  'PD_mag.nii' and files containing
+%% '.*_pd_.*3.nii' to 'PD_phase.nii'
+% xrename(0,{'.*_pd_.*1.nii' '.*_pd_.*3.nii'},{'PD_mag.nii' 'PD_phase.nii'},':');
+%% delete all files containing '.*_mag.nii' or '.*_phase.nii'
+% xrename(0,{'.*_mag.nii' '.*_phase.nii'},{'##','##'});
+%% shrter version: delete all files containing '.*_mag.nii' or '.*_phase.nii' 
+% xrename(0,'.*_mag.nii|.*_phase.nii','##')
 % ==============================================
 %%    optional pairwise inputs
 % ===============================================
@@ -512,7 +520,9 @@
 %       xrename(1,{},{},{},'flt','.*.xlsx|.*xls');
 %    ! please use no file-filter if you have a preselection of files!
 %
-%
+%% SHOW ALL FILES IN GUI
+% xrename(1,'.*','','')  
+% xrename(1,'.*')   ; % same
 % __________________________________________________________________________________________________________________
 %
 %% #yg BATCH EXAMPLE-II   [xrename.m]
@@ -586,9 +596,11 @@ if exist('fi')~=1;
 else
     if ischar(fi)
         he{1,1}=fi;
+        if exist('finew')~=1; finew=''; end
         he{1,2}=finew;
     else
         he(:,1)=fi(:);
+        if exist('finew')~=1; finew=repmat({''},[length(fi)  1]); end
         if isempty(finew(:)) %empty
             he(:,2)={''};
         else
@@ -778,20 +790,40 @@ end
 % ===============================================
 
 
-
-
-
-%  return
-% xrename(1,{'c1t2.nii' 'c2t2.nii'}, {'p:V_' 'p:M_'},{':' ':'});
-% xrename(1,{'c1t2.nii' 'c2t2.nii'}, {'$pV_' '$pM_'},{':' ':'}); % idential..
-% xrename(1,{'c1t2.nii' 'c2t2.nii'}, {'p:V_' 'p:M_'},{':' ':'});
-% xrename(0,{'c1t2.nii' 'c2t2.nii'}, {'s:_as' 's:bs'},{':' ':'});
-% xrename(0,{'c1t2.nii' 'c2t2.nii'}, {'$s_as' '$sbs'},{':' ':'});% idential..
 %% ===============================================
+
+% using wildcards without GUI
+% example: xrename(0,{'.*_pd_.*1.nii' '.*_pd_.*3.nii'},{'PD_mag.nii' 'PD_phase.nii'},':');
+% xrename(0,{'.*_mag.nii' '.*_phase.nii'},{'##','##'});
+% xrename(0,'.*_mag.nii|.*_phase.nii','##')
+is_wildcard=1;
+if showgui==0
+    if ~isempty(regexpi2(fi,strjoin({ '*','\^','\$','?' },'|')))
+      % create new list (he, v)
+      tn={};
+      for i=1:size(he,1)
+        is=regexpi2(v.tb(:,1),he{i,1});
+         tn=[tn;       [v.tb(is,1) repmat(he(i,2:3),[length(is) 1])]    ];
+      end
+      fi    =tn(:,1);
+      finew =tn(:,2);
+      volnum=tn(:,3);      
+    end
+end
+
+
+
+
+%% ===============================================
+
+
 
 for i=1:length(pa)      %PATH
     [~,Z.animalDir]=fileparts(pa{i});
     Z.animalDirFP  =pa{i};
+    
+    
+    
     
     for j=1:length(fi)  %FILE
         s1=fullfile(pa{i},fi{j}); %OLD FILENAME
@@ -813,7 +845,9 @@ for i=1:length(pa)      %PATH
             else % RENAME FILE  /extract volume
                 [pax0 fix0 ex0]=fileparts(s1);
                 [pax fix ex]=fileparts(finew{j});
-                s2=fullfile(pa{i},[fix ex0 ]);
+                if isempty(ex);  s2=fullfile(pa{i},[fix ex0 ]);
+                else             s2=fullfile(pa{i},[fix ex ]);
+                end
                 %                 if 1
                 %                     disp('---rename-test--');
                 %                     disp(['old: ' s1]);
@@ -2317,8 +2351,8 @@ hs = uimenu(cmenu,'label','delete file'           ,         'Callback',{@hcontex
 hs = uimenu(cmenu,'label','<html><font color=blue>replace header'           ,      'Callback',{@hcontext, 'replaceHeader'},'separator','on');
 
 
-hs = uimenu(cmenu,'label','<html><font color=green>  show file info'           ,         'Callback',{@hcontext, 'showimageinfo'},'separator','on');
-
+hs = uimenu(cmenu,'label','<html><font color=green>  show file info'        ,         'Callback',{@hcontext, 'showimageinfo'},'separator','on');
+hs = uimenu(cmenu,'label','<html><font color=green>  open file'             ,         'Callback',{@hcontext, 'openfile'},'separator','on');
 
 
 % hs = uimenu(cmenu,'label','show current image using MRICRON',         'Callback',{@hcontext, 'showMRICRON'},'separator','off');
@@ -2364,7 +2398,10 @@ end
 
 function hcontext(e,e2,task)
 us=get(gcf,'userdata');
-if ~strcmp(task,'showimageinfo')
+
+
+
+if ~strcmp(task,'showimageinfo') && ~strcmp(task,'openfile')
     % if strcmp(task,'enter2and3') || strcmp(task,'copyNrename') || strcmp(task,'rename') ||...
     %         strcmp(task,'deleteFile') ||  strcmp(task,'enter2and3_extended') ||  strcmp(task,'clearfields')
     e=us.hj;
@@ -2679,11 +2716,23 @@ if ~strcmp(task,'showimageinfo')
     end
     
 else
+    if strcmp(task,'openfile')
+        %% ===============================================
+        e=us.hj;
+        iselrows=get(e,'SelectedRows')+1;
+        files=us.tb(iselrows,1);
+        show_file(files);
+        out=[];
+        %% ===============================================
+        
+        
+    else
     % elseif strcmp(task,'showimageinfo')
     e=us.hj;
     iselrows=get(e,'SelectedRows')+1;
     files=us.tb(iselrows,1);
     show_imageinfo(files);
+    end
 end
 
 %% ===============================================
@@ -2720,12 +2769,58 @@ if 1%try
     end
 end
 %% ===============================================
+function show_file(files);
+
+%% ===============================================
+us=get(gcf,'userdata');
+pa=us.s.pa;
+t2={};
+for j=1:length(files)
+    for i=1:size(pa,1)
+        fn=fullfile(pa{i},files{j});
+        [~,animal]=fileparts(pa{i});
+       t2(end+1,:)= { animal files{j} double(exist(fn)==2)  fn}; 
+    end
+end
+htb={'animal' 'image'  'exist'}
+t2=cellfun(@(a) {[  num2str(a) ]},t2);
+id=selector2(t2(:,1:3),htb,'iswait',1,'position',[0.0903    0.1561    0.3767    0.6211],...
+    'title','select files to open');
+if isempty(id) || id(1)==-1
+   return
+end
+t2=t2(id,:);
+for i=1:size(t2,1)
+    fis=t2{i,4};
+    if exist(fis)==2
+        [~,~, ext]=fileparts(fis)
+        if ~isempty(regexpi2({ext},'.nii|.gz|.hdr|.img'))
+        rmricron([], fis,[],1);
+        else
+            if ispc
+                winopen(fis);  % Windows: uses the default program
+            elseif ismac
+                system(['open "', fis, '" &']);  % macOS: open with default
+            elseif isunix
+                system(['xdg-open "', fis, '" &']);  % Linux: open with default
+%             else
+%                 error('Unsupported OS');
+            end
+            
+        end
+    end
+    drawnow
+end
+
+
+
+
+
+%% ===============================================
+
 
 
 function show_imageinfo(files);
-% ==============================================
-%%
-% ===============================================
 us=get(gcf,'userdata');
 pa=us.s.pa;
 %———————————————————————————————————————————————
