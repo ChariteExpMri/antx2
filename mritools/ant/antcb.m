@@ -4,6 +4,10 @@
 % #yk EXAMPLES
 % antcb('getsubjects')    % get selected subjects-->only those selected from [ANT] Mouse-listbox
 % antcb('getallsubjects') % get all subjects  --> all from list
+% 
+% antcb('countfiles', flt); % search and count specific files in animal-folders 
+%                           % HELP: antcb('countfiles?')
+% 
 % antcb('makeproject')    % create a new project -->for HELP see antcb('makeproject','?')
 % antcb('saveproject')    % save/modify projectfile -->for HELP see antcb('saveproject?')
 % antcb('getpreorientation');  %get HTML with preorientations for trafo to standard space
@@ -197,6 +201,17 @@ end
 if strcmp(do, 'fontsize?') 
     disp(help(['antcb' filemarker 'fontsize']));
 end
+
+%% ===============================================
+if strcmp(do,'countfiles')
+    try ;    varargout{1}=countfiles(input2);
+    catch;   
+        %disp('* type    antcb(''countfiles'',''?'')     for help');
+        do='countfiles?';
+    end
+end
+if strcmp(do,'countfiles?');    help antcb>countfiles;end
+%% ===============================================
 
 
 
@@ -2059,6 +2074,89 @@ end
 
 v.tb =[li cellstr(num2str(ncount)) tb];
 v.tbh=[{'Unique-Files-In-Study', '#found'} tbh];
+
+
+%% ===============================================
+function  o=countfiles(pp)
+% # search and count specific files in animal-folders 
+% o=antcb('countfiles', flt);
+% o=antcb('countfiles', flt,'disp');  %display in cmd
+% o=antcb('countfiles', flt,'win');   %display in extra window
+% 
+%-INPUT---
+% flt   : filter (string or cell) files based on filename 
+%         use regular expressions such as: ^,$,.*   
+% 'disp': display animals with found files in cmd-window
+% 'win': display animals with found files in separate-window (figure)
+% 
+%-OUTPUT---
+% vector with filecounts (length:  mdirs x 1)
+% vector corresponds to animal-dirs ..see: mdirs=antcb('getallsubjects');
+% 
+% #examples
+% -- count all nifti-files containing 'MPM_3D_0p15'
+% o=antcb('countfiles','MPM_3D_0p15.*.nii');
+% ---same but show in cmd-window
+% o=antcb('countfiles','MPM_3D_0p15.*.nii', 'disp');
+% -- count all niftis that are 'c1t2.nii', c2t2.nii, and c3t2.nii and display in cmd-window
+% o=antcb('countfiles',{'^c1t2.nii$' '^c2t2.nii$' '^c3t2.nii$'},'disp');
+% -- count all *.png or *.jpg-files and display in cmd-window
+% [o ]=antcb('countfiles','.*.png|.*.jpg','disp');
+% -- count all nifti-files
+% [o ]=antcb('countfiles','.*.nii');
+% -- count all nifti-files and display in extra window
+% [o ]=antcb('countfiles','.*.nii','win');
+
+o=[];
+%% ===============================================
+pp=pp(2:end);
+flt=pp{1};   flt=cellstr(flt);
+displayfile=0;
+if length(pp)>1
+   if ~isempty(regexpi2(pp(2:end),'disp'))
+       displayfile=1;
+   elseif ~isempty(regexpi2(pp(2:end),'win'))
+       displayfile=2;
+   end
+end
+
+mdirs=antcb('getallsubjects');
+% flt='MPM_3D_0p15.*.nii';
+% flt={'^c1t2.nii$' '^c2t2.nii$' '^c3t2.nii$'};
+nc=zeros(length(mdirs),1);
+g={};
+g{end+1,1}=['filter: ' strjoin(flt,',')];
+g{end+1,1}='=============================';
+g{end+1,1}='  found files ';
+g{end+1,1}='=============================';
+
+for i=1:length(mdirs)
+    md=mdirs{i};
+    [fis] = spm_select('List',md,flt);
+    if isempty(fis);
+        n=0;
+    else
+        fis=cellstr(fis);
+        n=length(fis);
+        if displayfile==1;
+           % showinfo2('animal', md);
+           % disp([   '  ..contains: "'  strjoin(fis,'" , "') '"']);
+            showinfo2([ pnum(i,3) ') ' ], md,'','', '..contains:');
+            disp(char(cellfun(@(a) {[  repmat(' ',[1 10]) a ]},fis)));
+        elseif displayfile==2;
+            [~,animal]=fileparts(md);
+            g{end+1,1}= [[ pnum(i,3) ') [' animal ']  ..fullpath:"' md  '"'  ]];
+            g=[g; cellfun(@(a) {[  repmat(' ',[1 10]) a ]},fis)];
+        end
+    end
+    nc(i,1)=n;
+end
+o=nc;
+
+if displayfile==2;
+    uhelp(g,0,'name','found files');
+end
+
 
 
 %% ===============================================
