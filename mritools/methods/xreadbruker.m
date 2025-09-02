@@ -1286,7 +1286,9 @@ for ii=1:length(CC)
 	else
 		value = regexp(str,'=\s*(.*)','tokens','once');
 		value = value{1};
+        try
 		value = l_CheckValue(value);
+        end    
 	end
 	
 	% Add to structure

@@ -868,10 +868,11 @@ switch cmenutask
             [~, animal]=fileparts(d1);
             v=rdir(fullfile(d1,'**\*'));
             mb=sum([v.bytes])/(1024*1024);
-            nf=sum(find([v.isdir]==0));
+            nf=length(find([v.isdir]==0)); %num files
+            nf_nii=length(regexpi2({v.name}','.nii.gz$|.nii$'));
             %hlink=showinfo2('', d1);
             hlink=[ '<a href="matlab: explorer(''' d1 ''');">' animal '</a>'];
-            fprintf(['[animal] %s' repmat(' ',[1 space-length(animal) ])  ' [files]%6.0d ,[Size] %8.2fMB\n'],hlink,nf,mb);
+            fprintf(['%s' repmat(' ',[1 space-length(animal) ])  ' |files:%6d |nii:%6d |size: %8.2fMB\n'],hlink,nf,nf_nii,mb);
             
             %             cprintf('*[0 0 1]',['-----------------------------------------------\n']);
             %             showinfo2('animal:', d1);
