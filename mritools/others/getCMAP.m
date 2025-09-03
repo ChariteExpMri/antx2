@@ -71,25 +71,25 @@ end
 
 [o o2]=deal([]);
 if exist('arg1')~=1  && exist('arg2')~=1
-    o=names();
+    o=colnames();
     o2=makeHTMLColorList(o);
     return
 end
 
 if strcmp(arg1,'names')
-    o=names();
+    o=colnames();
     return;
 elseif strcmp(arg1,'html')
     if exist('arg2')==1
         o=cellstr(arg2);
     else
-        o=names();
+        o=colnames();
     end
     o=makeHTMLColorList(o);
     return;
 elseif strcmp(arg1,'example')
     
-    cmaps=names();
+    cmaps=colnames();
     cmapHTML=makeHTMLColorList(cmaps);
     
     p={
@@ -163,7 +163,7 @@ return
 
 
 
-function maps=names
+function maps=colnames
 list=getCmaplist();
 % list2=lutmap('show')
 % list=[list1;list2];
