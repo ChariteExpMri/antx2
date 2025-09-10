@@ -351,11 +351,367 @@ for i=1:length(mdirs)
 end
 toc
 
+%% #################################################
+% PLOTS
+% make plots/save as PNG-file
+%% ==========================================================================================
+%%  single image
+%% ==========================================================================================
+%  show AVGT as coronar slices (2nd dim)
+f2=fullfile(pwd,'AVGT.nii')
+slice2png(f2,'dim',2,'showonly',1);
+
+% sliced along dim-2, 8 eqzidistant slices displayed in 1 row ..saved as 'AVGT.png'
+slice2png(f2,'dim',2,'nslices',8,'sb',[1 nan]);
+
+% or use explizit slice-numbers (100,120,150,170) --> only shown, not saved
+slice2png(f2,'sb',[1 nan],'dim',2,'slice',[100 120 150 170],'showonly',1)
+
+% or use slices based on mm-unit --> display slices with -5mm,-2.01mm,0mm,0.5mm
+slice2png(f2,'sb',[1 nan],'dim',2,'slicemm',[-5 -2.01 0 0.5],'showonly',1)
+% more plots in more contrained mm-block (20 slices within -1mm and 0mm)
+slice2png(f2,'sb',[nan nan],'dim',2,'slicemm',[linspace(-1,0,20)],'showonly',1)
+
+%% ==========================================================================================
+%%  using pseudocolor for large dynamic ranges as in the Allen brain atlas (ABA)
+%% ==========================================================================================
+%% only pseudocolorized ABA with contour:
+f1=fullfile(pwd,'ANO.nii');
+slice2png({f1},'alpha',[0.5],'sb',[ 2 nan],'dim',2,'nslices',8,'showonly',1,'cbarvisible',[0 0],'contour',{1,{'color','k','linewidth',.1,'levels',5}},'pcolor',[1]);
+
+%% AVGT with overlay of pseudocolorized ABA:
+f1=fullfile(pwd,'AVGT.nii');
+f2=fullfile(pwd,'ANO.nii');
+slice2png({f1,f2},'alpha',[1 .6 ],'sb',[ 2 nan],'dim',2,'nslices',8,'showonly',1,'cbarvisible',[0 0],'brighter',1,'pcolor',[2]);
+
+%% AVGT with overlay of pseudocolorized ABA with contour:
+f1=fullfile(pwd,'AVGT.nii');
+f2=fullfile(pwd,'ANO.nii');
+slice2png({f1,f2},'alpha',[1 0.6],'sb',[ 2 nan],'dim',2,'nslices',8,'showonly',1,'cbarvisible',[0 0],'contour',{2,{'color','k','linewidth',.1,'levels',5}},'brighter',1,'pcolor',[2]);
+
+
+%% ==========================================================================================
+%%  overlay
+%% ==========================================================================================
+f1=fullfile(pwd,'AVGT.nii')
+f2=fullfile(pwd,'ANO.nii')
+ff={f1;f2};
+slice2png(ff,'clims',[nan nan; 0 1000],'dim',2);
+
+%overlay, atlas is semitransparent, 1-column-layout, dim-2 is sliced, 5 slices, cbar of atlas is show, image is saved with 100DPI-resolution
+slice2png(ff,'clims',[0 200; 0 1000],'alpha',[1 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cbarvisible',[0 1],'res',100)
+
+%as above but displayed (not saved)
+slice2png(ff,'clims',[0 200; 0 1000],'alpha',[1 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cbarvisible',[0 1],'showonly',1)
+
+%automatic layout of 10 slices, with additional title and auto-message
+slice2png(ff(1:2),'clims',[0 200; 0 1000],'alpha',[1 .7],'sb',[nan nan],'dim',2,'nslices',10,'cbarvisible',[1 1],'showonly',0,'title',{pwd},'titlefs',9,'msg',1,'show',1)
+
+%as above but with specific message
+slice2png(ff(1:2),'clims',[0 200; 0 1000],'alpha',[1 .7],'sb',[nan nan],'dim',2,'nslices',10,'cbarvisible',[1 1],'showonly',0,'title',{pwd},'titlefs',9,'msg',{'kohl','kopf'},'show',1)
+
+%as above but with explitic name for PNG-file
+slice2png(ff(1:2),'clims',[0 200; 0 1000],'alpha',[1 .7],'dim',2,'savename','dum.png')
+
+% no transparency, black background, white text
+slice2png(ff(1:2),'clims',[0 200; 0 1000],'alpha',[1 .7],'dim',2,'bgcol','k','fgcol','w','bgtransp',0)
+
+% other colormap
+slice2png(ff,'clims',[0 200; 0 1000],'alpha',[1 .5],'sb',[ 2 nan],'dim',2,'nslices',6,'cbarvisible',[0 1],'showonly',1,'cmap',{'gray','jet'})
+
+%% ==========================================================================================
+%%   DISPLAY MASKLESION IN  STANDARD SPACE
+%% ==========================================================================================
+f1=fullfile(pwd,'AVGT.nii');
+f2=fullfile(pwd,'x_masklesion.nii');
+
+slice2png({f1,f2},'showonly',1); %sagittal, only shown           
+slice2png({f1,f2},'dim',2,'showonly',1); %coronar view
+
+% with contout and specific cmpas---see getCMAP('showmaps');
+slice2png({f1,f2},'dim',2,'showonly',1,'cmap',{'gray','isoFuchsia'},'contour',{2}); % other cmaps
+% specific cmpas---see getCMAP('showmaps');
+slice2png({f1,f2},'dim',2,'showonly',1,'cmap',{'gray','Greens'});     % other cmaps
+
+% contour only with masklesion
+slice2png({f1,f2},'dim',2,'showonly',1,'cmap',{'gray','isoFuchsia'},'contour',{2,{};1 {}},'alpha',[0 1]);
+
+
+%% ==============================================
+%%   add contour for masklesion
+%% ===============================================
+f1=fullfile(pwd,'AVGT.nii');
+f2=fullfile(pwd,'x_masklesion.nii');
+%add contour for masklesion
+slice2png({f1,f2},'dim',2,'showonly',1,'contour',{2}); %coronar view
+%add red contour 
+slice2png({f1,f2},'dim',2,'showonly',1,'contour',{2,{'color','r','linewidth',1}}); %coronar view
+
+
+%% ==========================================================================================
+%% 3 IMAGES: add mask-lesion contour on top of ANO
+%% ==========================================================================================
+f1=fullfile(pwd,'AVGT.nii');
+f2=fullfile(pwd,'ANO.nii');
+f3=fullfile(pwd,'x_masklesion.nii')
+
+ff={f1;f2; f3};
+slice2png(ff,'clims',[nan nan;nan 1000; nan nan],'alpha',[1 .6 .1],'sb',[ 3 nan],...
+    'dim',2,'nslices',10,'cmap',{'gray', 'parula', 'isoFuchsia'},'showonly',1,...
+    'cbarvisible',[0 0 0],'contour',{3,{'color','r','linewidth',1}})
+
+%% ====[same in native space]===========================================
+f1=fullfile(pwd,'t2.nii');
+f2=fullfile(pwd,'ix_ANO.nii');
+f3=fullfile(pwd,'masklesion.nii')
+
+ff={f1;f2; f3};
+slice2png(ff,'clims',[nan nan;nan 1000; nan nan],'alpha',[1 .6 .1],'sb',[ 3 nan],...
+    'dim',1,'nslices',10,'cmap',{'gray', 'parula', 'isoFuchsia'},'showonly',1,...
+    'cbarvisible',[0 0 0],'contour',{3,{'color','r','linewidth',1}},'brighter',10)
+
+
+%% ====[AVGT as contour to check registration ]===========================================
+f1=fullfile(pwd,'x_t2.nii');
+f2=fullfile(pwd,'AVGT.nii');
+slice2png({f1,f2},'alpha',[1 0 ],'sb',[ 2 nan],'dim',2,'nslices',8,'showonly',1,'cbarvisible',[0 0],'contour',{2,{'color','y','linewidth',.1,'levels',5}},'brighter',1);
+
+%% ====[ANO as contour to check registration ]===========================================
+f1=fullfile(pwd,'x_t2.nii');
+f2=fullfile(pwd,'ANO.nii');
+slice2png({f1,f2},'alpha',[1 0 ],'sb',[ 2 nan],'dim',2,'nslices',8,'showonly',1,'cbarvisible',[0 0],'contour',{2,{'color','y','linewidth',.1,'levels',5}},'brighter',1);
+
+
+%% ====[gray matter  as contour ]===========================================
+f1=fullfile(pwd,'t2.nii');
+f2=fullfile(pwd,'c1t2.nii');
+slice2png({f1,f2},'alpha',[1 0 ],'sb',[ 1 nan],'dim',1,'nslices',5,'showonly',1,'cbarvisible',[0 0],'contour',{1,{'color','y','linewidth',.1,'levels',3}},'brighter',1);
+
+
+%% ====[gray matter as contour and masklesion]===========================================
+f1=fullfile(pwd,'t2.nii');
+f2=fullfile(pwd,'c1t2.nii');
+f3=fullfile(pwd,'masklesion.nii')
+
+ff={f1;f2; f3};
+slice2png(ff,'alpha',[1 0 .2],'sb',[ 3 nan], 'dim',1,'nslices',10,'cmap',{'gray', 'parula', 'isoFuchsia'},'showonly',1, 'cbarvisible',[0 0 0],'contour',{2,{'color','y','linewidth',.1,'levels',1}},'brighter',1)
+
+
+%% ====[gray and white matter as contour ]===========================================
+f1=fullfile(pwd,'t2.nii');
+f2=fullfile(pwd,'c1t2.nii');
+f3=fullfile(pwd,'c2t2.nii');
+ff={f1;f2; f3};
+slice2png(ff,'alpha',[1 0 0],'sb',[ 3 nan], 'dim',1,'nslices',10,'showonly',1,'cbarvisible',[0 0 0],'contour',{2,{'color','y','linewidth',.1,'levels',1}; 3,{'color','r','linewidth',.1,'levels',1}},'brighter',1);
+
+%% ==========================================================================================
+%%    NATIVE SPACE
+%% ==========================================================================================
+ % using NIFTI in native space, assume no mask is available, using implicit mask via Otsu-method
+ f1=fullfile(pwd,'t2.nii');
+ f2=fullfile(pwd,'ix_ANO.nii');
+ 
+ % less compact view because no implicit mask is used
+ slice2png({f1 f2},'clims',[nan nan; 0 1000],'alpha',[1 .7],'sb',[4 nan],'dim',1,'nslices',16,'usemask',0,'bgtransp',1,'usemaskotsu',0)
+ 
+ % more compact view because implicit mask is used
+ slice2png({f1 f2},'clims',[nan nan; 0 1000],'alpha',[1 .7],'sb',[4 nan],'dim',1,'nslices',16,'usemask',0,'bgtransp',1)
+ 
+ 
+ %% -  --plot tissue compartments
+ f1=fullfile(pwd,'t2.nii');
+f2=fullfile(pwd,'c1t2.nii');
+f3=fullfile(pwd,'c2t2.nii');
+f4=fullfile(pwd,'c3t2.nii');
+ff={f1;f2;f3;f4};
+slice2png(ff,'clims',[nan nan],'showonly',1,'dim',1,'cmap',{'gray','isoRed','isoBlue','isoGreen'},'alpha',[1 .3 .3 .3],'cbarvisible',[0 0 0 0])
+%same but with increaded brightness
+slice2png(ff,'clims',[nan nan],'showonly',1,'dim',1,'cmap',{'gray','isoRed','isoBlue','isoGreen'},'alpha',[1 .3 .3 .3],'cbarvisible',[0 0 0 0],'brighter',10)
+
+
+
+ %% ==========================================================================================
+ %% overlay with Jacobian
+ %% ==========================================================================================
+
+f1=fullfile(pwd,'AVGT.nii');
+f2=fullfile(pwd,'JD.nii');
+ff={f1;f2};
+
+%overlay, JD is semitransparent, 1-column-layout, dim-2 is sliced,5 slices, only shown (not saved) 
+slice2png(ff,'clims',[0 200; 0.5 1.5],'alpha',[1 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cmap',{'gray','jet'},'showonly',1)
+
+%as above, but for JD only values above 1.0 are shown (see thresh)
+slice2png(ff,'clims',[0 200; 0.5 1.5],'alpha',[1 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cmap',{'gray','jet'},'showonly',1,'thresh',[nan nan; 1 nan])
+
+%as above, but for JD only values below 0.5 are shown (see thresh)
+slice2png(ff,'clims',[0 200; 0.5 1.5],'alpha',[1 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cmap',{'gray','jet'},'showonly',1,'thresh',[nan nan; nan 0.5])
+
+%as above, but for JD only values in the range 0.8 and 1.2 are shown (see thresh)
+slice2png(ff,'clims',[0 200; 0.5 1.5],'alpha',[1 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cmap',{'gray','jet'},'showonly',1,'thresh',[nan nan; 0.8 1.2])
+
+%% ==========================================================================================
+%% USING 2 IMAGES: THRESHOLD INTENSITY MAPS
+%% ==========================================================================================
+%  for JD only values above 1.0 are shown (see thresh)
+f1=fullfile(pwd,'AVGT.nii');
+f2=fullfile(pwd,'JD.nii');
+ff={f1;f2};
+slice2png(ff,'clims',[0 200; 0.5 1.5],'alpha',[1 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cmap',{'gray','hot'},'showonly',1,'thresh',[nan nan; 1 nan])
+
+%% ===============================================
+%% USING 3 IMAGES: THRESHOLD INTENSITY MAPS  (as a workaround we use 'JD.nii' twice)
+f1=fullfile(pwd,'AVGT.nii');
+f2=fullfile(pwd,'JD.nii');
+ff={f1;f2; f2};
+slice2png(ff,'clims',[0 200; 0.5 1.5; 0.5 1.5],'alpha',[1 .5 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cmap',{'gray','hot', 'cool'},'showonly',1,'thresh',[nan nan; 1 nan; nan 0.5])
+
+%as above but here we use the same 'clims' as for the 'thresh'
+slice2png(ff,'clims',[0 200; 1 nan; nan 0.5],'alpha',[1 .5 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cmap',{'gray','hot', 'winter'},'showonly',1,'thresh',[nan nan; 1 nan; nan 0.5])
+
+
+%% ==========================================================================================
+%% USING 3 IMAGES: THRESHOLD INTENSITY MAP 
+%% ==========================================================================================
+f1=fullfile(pwd,'AVGT.nii');
+f2=fullfile(pwd,'x_masklesion.nii')
+f3=fullfile(pwd,'JD.nii');
+ff={f1;f2; f3};
+slice2png(ff,'clims',[0 200;nan nan; 0.5 1.5],'alpha',[1 .5 .5],'sb',[ 2 nan],'dim',2,'nslices',6,'cmap',{'gray','isoLime', 'RdYlBu_flip'},'showonly',1)
+
+% save with black background
+slice2png(ff,'clims',[0 200;nan nan; 0.5 1.5],'alpha',[1 .5 .5],'sb',[ 2 nan],'dim',2,'nslices',6,'cmap',{'gray','isoLime', 'RdYlBu_flip'},'showonly',0,'bgcol','k','bgtransp',0)
+
+
+
+%% ==========================================================================================
+%% USING 4 IMAGES: THRESHOLD INTENSITY MAPS  (as a workaround we use 'JD.nii' 2 times)
+%% ==========================================================================================
+f1=fullfile(pwd,'AVGT.nii');
+f2=fullfile(pwd,'x_masklesion.nii')
+f3=fullfile(pwd,'JD.nii');
+ff={f1;f2; f3; f3};
+slice2png(ff,'clims',[nan nan;nan nan; 1 nan; nan 0.5],'alpha',[1 .5 .5 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cmap',{'gray', 'isoLime','Oranges', 'Blues_flip'},'showonly',1,'thresh',[nan nan;nan nan; 1 nan; nan 0.5])
+
+% show specific colorbars only
+slice2png(ff,'clims',[nan nan;nan nan; 1 nan; nan 0.5],'alpha',[1 .5 .5 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cmap',{'gray', 'isoLime','Oranges', 'Blues_flip'},'showonly',1,'thresh',[nan nan;nan nan; 1 nan; nan 0.5],'cbarvisible',[0 0 1 1])
+
+% other cmaps
+slice2png(ff,'clims',[nan nan;nan nan; 1 nan; nan 0.5],'alpha',[1 .5 .5 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cmap',{'gray', 'isoLime','isoRed', 'isoBlue'},'showonly',1,'thresh',[nan nan;nan nan; 1 nan; nan 0.5],'cbarvisible',[0 0 1 1])
+
+
+%% ==========================================================================================
+%%  overlay atlas  and color specic IDs
+%% ==========================================================================================
+f1=fullfile(pwd,'AVGT.nii')
+f2=fullfile(pwd,'ANO.nii')
+ff={f1;f2};
+slice2png(ff,'clims',[nan nan; 0 1000],'dim',2);
+
+%overlay, atlas is semitransparent, 1-column-layout, dim-2 is sliced, 5 slices, cbar of atlas is show, image is saved with 100DPI-resolution
+slice2png(ff,'clims',[0 200],'alpha',[1 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cbarvisible',[0 1],'res',100,'keepvalue',{2,[ 672   ]} ,'showonly',1,'cmap',{'gray','isoRed'})
+
+% more ids
+slice2png(ff,'clims',[0 200],'alpha',[1 .5],'sb',[ 1 nan],'dim',2,'nslices',5,'cbarvisible',[0 1],'res',100,'keepvalue',{2,[ 201 672 500 733 1047 1070  ]},'showonly',1,'cmap',{'gray','jet'})
+
+%% ==========================================================================================
+%%  overlay atlas  and color specic IDs  with specific colors
+%% ==========================================================================================
+f1=fullfile(pwd,'AVGT.nii')
+f2=fullfile(pwd,'ANO.nii')
+ff={f1;f2;f2;f2};
+
+keepvalue={2,[672 500 733] ;...
+    3 [ 1047 ]; ....
+    4,[  1020  ]}
+slice2png(ff,'clims',[0 200],'alpha',[1 .5 .5 .5 ],'sb',[ 2 nan],'dim',2,'nslices',10,'cbarvisible',[0 1],'keepvalue',keepvalue,'showonly',1,'cmap',{'gray','isoRed'  'isoBlue' 'isoYellow'})
+
+
+%adjustment of colorbar
+keepvalue={2,[672] ;...
+    3 [ 1047 ]; ....
+    4,[  1020  ]}
+slice2png(ff,'clims',[0 200],'alpha',[1 .5 .5 .5 ],'sb',[ 2 nan],'dim',2,'nslices',10,'cbarvisible',[0 1],'keepvalue',keepvalue,'showonly',1,'cmap',{'gray','isoRed'  'isoBlue' 'isoYellow'},'cbarpos',[nan nan 0.02 .02])
+
+%% ==========================================================================================
+%%  show left or right hemisphere only
+%% ==========================================================================================
+f1=fullfile(pwd,'AVGT.nii');
+f2=fullfile(pwd,'ANO.nii');
+f3=fullfile(pwd,'x_masklesion.nii')
+mask=fullfile(pwd,'AVGThemi.nii');
+ff={f1;f2; f3};
+
+% left hemisphere
+slice2png(ff,'clims',[nan nan;nan 1000; nan nan],'alpha',[1 .6 .1],'sb',[ 3 nan],...
+    'dim',2,'nslices',10,'cmap',{'gray', 'parula', 'isoFuchsia'},'showonly',1,...
+    'cbarvisible',[0 0 0],'contour',{3,{'color','r','linewidth',1}},'mask',mask,'maskvalue',1);
+% right hemisphere
+slice2png(ff,'clims',[nan nan;nan 1000; nan nan],'alpha',[1 .6 .1],'sb',[ 3 nan],...
+    'dim',2,'nslices',10,'cmap',{'gray', 'parula', 'isoFuchsia'},'showonly',1,...
+    'cbarvisible',[0 0 0],'contour',{3,{'color','r','linewidth',1}},'mask',mask,'maskvalue',2);
+
+% ==============================================
+%%   show first 400 regions of the ABA-atlas 
+% ===============================================
+f1=fullfile(pwd,'AVGT.nii');
+f2=fullfile(pwd,'ANO.nii');
+mask=fullfile(pwd,'ANO.nii');
+ff={f1;f2};
+slice2png(ff,'clims',[nan nan;nan 1000],'alpha',[1 0],'sb',[ 4 nan],...
+    'dim',2,'nslices',20,'cmap',{'gray', 'parula'},'showonly',1,...
+    'cbarvisible',[0 0],'mask',mask,'maskvalue',[ 1:1400 ]);
 
 
 
 
 
+
+
+
+%% #################################################
+% powerpoint
+% make global PPT with images from animal-folders
+
+%% ==============================================
+%%  1) make global PPT with images from animal-folders
+%% ===============================================
+mdirs=antcb('getsubjects');
+paout =pwd;
+pptfile =fullfile(paout,'chimaps.pptx');
+for j=1:length(mdirs)
+    pam   =mdirs{j};
+    [~,animal]=fileparts(pam);
+    titlem  =['chimaps: ' animal ];
+    [pngs]   = spm_select('FPList',pam,'^chimap_.*.png');    pngs=cellstr(pngs);
+    tx=[ ['ANIMAL: '  pam ]; pngs];
+    if j==1; doc='new'; else; doc='add'; end
+    img2ppt(paout,pngs, pptfile,'size','A4l','doc',doc,...
+        'crop',0,'gap',[0 0 ],'columns',1,'xy',[0 1 ],'wh',[ 25 5.9],...
+        'title',titlem,'Tha','center','Tfs',20,'Tcol',[0 0 0],'Tbgcol',[0.3 0.74 0.93],...
+        'text',tx,'tfs',8,'txy',[0 19],'tbgcol',[1 1 1],'disp',0);  
+end
+showinfo2(['pptfile'],pptfile);
+%% #################################################
+% powerpoint
+% make PPT with multiple images on several ppt-slides
+paout   =pwd;
+paimg   =fullfile(pwd,'barplot_img');
+pptfile =fullfile(paout,'barplot.pptx');
+titlem  =['barplots'  ];
+[fis]   = spm_select('FPList',paimg,'^bar.*.png');    fis=cellstr(fis);
+tx      ={['path: '  paimg ]};
+
+nimg_per_page  =6;           %number of images per plot
+imgIDXpage     =unique([1:nimg_per_page:length(fis) length(fis)+1 ]);
+for i=1:length(imgIDXpage)-1
+    if i==1; doc='new'; else; doc='add'; end
+    img_perslice=fis([imgIDXpage(i):imgIDXpage(i+1)-1]);
+    img2ppt(paout,img_perslice, pptfile,'size','A4','doc',doc,...
+        'crop',0,'gap',[0 0 ],'columns',2,'xy',[0 1.5 ],'wh',[ 10.5 nan],...
+        'title',titlem,'Tha','center','Tfs',10,'Tcol',[1 1 1],'Tbgcol',[1 .8 0],...
+        'text',tx,'tfs',6,'txy',[0 28],'tbgcol',[1 1 1]);
+end
 
 
 

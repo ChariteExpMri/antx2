@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   % 22 Jul 2025 (14:58:43)  
+ &#x1F34E; last modification:   11 Sep 2025 (15:24:01)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,8 +7,13 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**11 Sep 2025 (15:24:01)**</ins>  
+   __[slice2png.m]__ : slice to display/save NIFTI's as PNGfiles  
+  &#8618;for list of examples type 'snips': &#8658; and inspect: PLOTS/"plots/save as PNG-file"  
+<!---->
   % &#x1F535;   <ins>**22 Jul 2025 (14:58:43)**</ins>  
    __[xrename.m/xop.m]__ : modified, wildcard support, (see help), NIFTIs or other files can be open via contextmenu  
+    
 <!---->
   % &#x1F535;   <ins>**14 Jul 2025 (07:38:17)**</ins>  
   mouse_kim_umba_v2 (Unified mouse brain atlas v2; Yongsoo Kim) added to google-drive  

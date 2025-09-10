@@ -30,6 +30,13 @@ end
 % Get the full MATLAB path and split it into individual paths
 paths = strsplit(path, pathsep);
 paths(end+1)={pwd};
+paths(regexpi2(paths,[filesep 'MATLAB' filesep]))=[];
+paths(find(cellfun(@isempty,strfind(paths,fileparts(which('antlink.m'))))==0))=[];
+paths(end+1)={fileparts(which('snips_input1.m'))  };
+
+%     'f:\antx2\mritools\snips\snips_input1.m'
+
+    
 % Initialize a cell array to store the full paths of the files
 fileList = {};
 % Loop over each path in the MATLAB path

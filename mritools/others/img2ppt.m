@@ -35,6 +35,9 @@
 % gap        [W H] gap between plots (cm); default: [.5 .5]
 % columns    number of columns of images to plot
 %            if empty..obtain the optimal number of rows-and-columns
+% 
+% disp       show message on screen, [0] or[1]
+% 
 %
 % __TEXT___________________________________________
 % text    text (-box): 'string' or cell of strings such as {'bla ','bob'};
