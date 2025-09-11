@@ -1119,19 +1119,19 @@
 % #ba 29 Apr 2025 (15:51:45)
 % #k [dtistat.m] #n : modified, added animal single values to excelsheet
 % 
-% % #ba 14 Jul 2025 (07:38:17)
+% #ba 14 Jul 2025 (07:38:17)
 % mouse_kim_umba_v2 (Unified mouse brain atlas v2; Yongsoo Kim) added to google-drive
 % #gw -->  access via link : https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
 % paper: https://www.nature.com/articles/s41467-019-13057-w
 % The atlas was modified!! Atlas was warped to match the mouse_Allen2017HikishimaLR-template, i.e. 
 % same Space (0.07mm isovoxel), thus atlases can be exchanged without another registration. Special characters
 % were removed from original region labels.
-% % #ba 22 Jul 2025 (14:58:43)
+% #ba 22 Jul 2025 (14:58:43)
 % #k [xrename.m/xop.m] #n : modified, wildcard support, (see help), NIFTIs or other files can be open via contextmenu
 % 
-% #ba 11 Sep 2025 (15:24:01)
-% #k [slice2png.m] #n : slice to display/save NIFTI's as PNGfiles
-% #gw -->for list of examples type 'snips': &#8658; and inspect: PLOTS/"plots/save as PNG-file"
+% ba 11 Sep 2025 (15:24:01)
+% #k [slice2png.m] #n : display NIFTI-slices and save as PNGfiles
+% #gw &#8658 to get a list of examples type 'snips' in cmd-window and inspect 'PLOTS-"plots/save as PNG-file' in the snips-window
 % 
 % 
 % 
