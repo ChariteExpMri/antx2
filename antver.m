@@ -1129,7 +1129,7 @@
 % #ba 22 Jul 2025 (14:58:43)
 % #k [xrename.m/xop.m] #n : modified, wildcard support, (see help), NIFTIs or other files can be open via contextmenu
 % 
-% ba 11 Sep 2025 (15:24:01)
+% #ba 11 Sep 2025 (15:24:01)
 % #k [slice2png.m] #n : display NIFTI-slices and save as PNGfiles
 % #gw &#8658 to get a list of examples type 'snips' in cmd-window and inspect 'PLOTS-"plots/save as PNG-file' in the snips-window
 % 
