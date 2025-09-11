@@ -9,7 +9,7 @@
 ------------------  
   &#x1F535;   <ins>**11 Sep 2025 (15:24:01)**</ins>  
    __[slice2png.m]__ : display NIFTI-slices and save as PNGfiles  
-  &#8658 to get a list of examples type 'snips' in cmd-window and inspect 'PLOTS-"plots/save as PNG-file' in the snips-window  
+  &#8618; to get a list of examples type 'snips' in cmd-window and inspect 'PLOTS-"plots/save as PNG-file' in the snips-window  
 <!---->
   &#x1F535;   <ins>**22 Jul 2025 (14:58:43)**</ins>  
    __[xrename.m/xop.m]__ : modified, wildcard support, (see help), NIFTIs or other files can be open via contextmenu  
