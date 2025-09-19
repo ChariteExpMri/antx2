@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   11 Sep 2025 (15:24:01)  
+ &#x1F34E; last modification:   19 Sep 2025 (11:15:33)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**19 Sep 2025 (11:15:33)**</ins>  
+   __[antcb.m]__ : updated, contains no antcb('set') to  modify specifc parameters of projectfile  
+   for HELP type antcb('set?')  
+<!---->
   &#x1F535;   <ins>**11 Sep 2025 (15:24:01)**</ins>  
    __[slice2png.m]__ : display NIFTI-slices and save as PNGfiles  
   &#8618; to get a list of examples type 'snips' in cmd-window and inspect 'PLOTS-"plots/save as PNG-file' in the snips-window  

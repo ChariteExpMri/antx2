@@ -118,6 +118,7 @@ for V=vols'
 %             VO.fname      = suffix;
 %         end
 %     end
+% try; delete(outname); end
 VO.fname=outname;
 
 

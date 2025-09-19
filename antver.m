@@ -1132,8 +1132,9 @@
 % #ba 11 Sep 2025 (15:24:01)
 % #k [slice2png.m] #n : display NIFTI-slices and save as PNGfiles
 % #gw --> to get a list of examples type 'snips' in cmd-window and inspect 'PLOTS-"plots/save as PNG-file' in the snips-window
-% 
-% 
+% #ba 19 Sep 2025 (11:15:33)
+% #k [antcb.m] #n : updated, contains no antcb('set') to  modify specifc parameters of projectfile
+%  for HELP type antcb('set?')
 % 
 
 %% ===============================================

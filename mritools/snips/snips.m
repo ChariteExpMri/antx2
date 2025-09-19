@@ -4,7 +4,8 @@
 %
 % use context-menu to copy/evaluate code
 %
-% snips('close');   close snips
+% snips('close');   %close snips
+% snips('update');  %update snips (move to last open node)
 % 
 % 
 
@@ -18,6 +19,31 @@ if nargin>0
         set(hf,'CloseRequestFcn','closereq');
         close(hf);
         return
+    elseif ischar(varargin{1}) && strcmp(varargin{1},'update')
+        
+        hf=findobj(0,'tag','snips');         us=get(hf,'userdata');
+        t=us.ht;
+        t2=t.getTree;
+        nodenum=t2.getSelectionRows;
+        pos=get(hf,'position');
+        
+        %node=us.ht.getSelectedNodes;
+        drawnow
+        
+        snips('close');
+        snips
+        %drawnow;
+        hf=findobj(0,'tag','snips');         us=get(hf,'userdata');
+        t=us.ht;
+        t2=t.getTree;
+        try
+            t2.setSelectionRows(nodenum);
+        catch
+            t2.setSelectionRows(1);
+        end
+        set(hf,'position',pos);
+        return
+        
     end
     
     

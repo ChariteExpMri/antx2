@@ -19,6 +19,22 @@ antcb('close'); exit
 
 % update Antx-GUI from github
 updateantx(2);
+%% #################################################
+% cmd
+% set specifc parameters of projectfile
+%EXAMPLES: 
+%---------------
+% [1]: change name of the project-file ('project')
+antcb('set','project','project_123');
+
+% [2]: set 'orienttype'-parameter to [12]
+antcb('set','wa.orientType',12);
+
+% [3]: set 'fastSegment'-parameter to [7]
+antcb('set','fastSegment',7);
+
+% [4]: set 'orienttype'-parameter to [12] and 'fastSegment' to 7
+antcb('set','wa.orientType',1,'wa.fastSegment',7);
 
 
 %% #################################################
@@ -1651,7 +1667,24 @@ matches = regexp(filtered_files, pattern, 'match');
 % remove paths from fullpath-filelist
 filenameOnlyList = cellfun(@(x) x(max(strfind(x, filesep))+1:end), cellList, 'UniformOutput', false);
 
+%  check which elements of B contain any element of A as a substring (not exact match) 
+A = {'cat', 'dog'};
+B = {'bigdoghouse', 'wildcat123', 'mouse'};
+matches = cellfun(@(b) any(cellfun(@(a) ~isempty(strfind(b,a)), A)), B);
+B(matches)   % {'bigdoghouse', 'wildcat123'}
 
+
+
+%% #################################################
+% forgotten things
+% error: create hyperlink to a specific line (use in function/scripts not directly in cmd-window)
+
+%save below lines to function or saved script before running!
+st= dbstack('-completenames');  % full stack info
+stf=st(find(strcmp({st.name},mfilename)));
+disp(['ERROR in file: <a href="matlab:gol(' num2str(stf.line) ')">' [ stf.name '.m  >> line-' num2str(stf.line) '' ] '</a>']);
+
+    
 
 
 

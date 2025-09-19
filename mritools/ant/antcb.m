@@ -8,10 +8,12 @@
 % antcb('countfiles', flt); % search and count specific files in animal-folders 
 %                           % HELP: antcb('countfiles?')
 % 
-% antcb('makeproject')    % create a new project -->for HELP see antcb('makeproject','?')
-% antcb('saveproject')    % save/modify projectfile -->for HELP see antcb('saveproject?')
+% antcb('makeproject')    % create a new project -->for HELP type antcb('makeproject','?')
+% antcb('saveproject')    % save/modify projectfile -->for HELP type antcb('saveproject?')
+% antcb('set')            % set specifc parameters of projectfile -->for HELP type antcb('set?')
+% 
 % antcb('getpreorientation');  %get HTML with preorientations for trafo to standard space
-%                               -->for HELP see antcb('getpreorientation?')
+%                               -->for HELP type antcb('getpreorientation?')
 % antcb('load','proj_Harms3_lesionfill_20stack.m')   %load this project
 % antcb('reload')         % reload gui with project and previous mice-selection
 % antcb('version');       % get the last package version (1st output arg)
@@ -212,7 +214,15 @@ if strcmp(do,'countfiles')
 end
 if strcmp(do,'countfiles?');    help antcb>countfiles;end
 %% ===============================================
-
+if strcmp(do,'set')
+    try ;    varargout{1}=setparams(input2);
+    catch;   
+        %disp('* type    antcb(''setparams'',''?'')     for help');
+        do='setparams?';
+    end
+end
+if strcmp(do,'set?');    help antcb>setparams;end
+%% ===============================================
 
 
 if strcmp(do, 'load__OLD_vers_21_12_23');
@@ -427,6 +437,19 @@ if strcmp(do, 'updateParameterLB');
         an.ls =[{''}; an.ls];%move project to 2nd line
         iproject=2;
     end
+    
+    %%  --remove mdirs from list (an.ls)
+    try
+        %A = {'cat', 'dog'};
+        %B = {'bigdoghouse', 'wildcat123', 'mouse'};
+        A =an.mdirs;
+        B =an.ls;
+        matches = cellfun(@(b) any(cellfun(@(a) ~isempty(strfind(b,a)), A)), B);
+        %B(matches)
+        an.ls(matches)=[];
+    end
+    
+    %% -----
     
     
     color='#33cc33';
@@ -2074,6 +2097,107 @@ end
 
 v.tb =[li cellstr(num2str(ncount)) tb];
 v.tbh=[{'Unique-Files-In-Study', '#found'} tbh];
+
+
+%% ===============================================
+
+function  o=setparams(pp)
+% set specific antx-parameters in parameter-file(proj-file), 
+% Note that the proj-file is changed accordingly!
+% USAGE:
+% antcb('set',<PARAMETER>,<VALUE>, <PARAMETER>,<VALUE>, ...); %
+% EXAMPLES:
+% [1]: change name of the project-file ('project')
+%    antcb('set','project','project_123');
+% [2]: set 'orienttype'-parameter to [12]
+%    antcb('set','wa.orientType',12);
+% [3]: set 'fastSegment'-parameter to [7]
+%    antcb('set','fastSegment',7);
+% [4]: set 'orienttype'-parameter to [12] and 'fastSegment' to 7 
+%    antcb('set','wa.orientType',1,'wa.fastSegment',7);
+
+o=[];
+
+global an
+if isempty(an)
+    disp('..no project loaded...load projectfile first..'); 
+end
+%% ===============================================
+
+p=pp(2:end);
+if isempty(p)
+   disp('..input needs parameter to change .. TYPE: antcb(''set?'') for help ');  
+end
+% % p(1:2:end)=cellfun(@(a) {[ 'an.'  a]},p(1:2:end))
+% % p = { 'an.wa.orientType'  2   'an.wa.fastSegment'  2 };
+% S = struct();
+% % ______MAKE NESTED STRUCT FROM CELL
+% for k = 1:2:numel(p)
+%     parts = strsplit(p{k}, '.');
+%     expr = 'S';
+%     for j = 1:numel(parts)-1
+%         expr = sprintf('%s.(%s)', expr, ['''' parts{j} '''']);
+%     end
+%     % assign value
+%     eval([expr '.(parts{end}) = p{k+1};']);
+% end
+
+S=cell2structnested(p);
+%_____MERGE STRUCTS
+an=mergeStructs2(an,S);
+
+
+
+%SAVE PROJECT
+% antcb('saveproject') ;% save projfile
+evalc('antcb(''saveproject'');');
+antcb('updateParameterLB');
+if 0
+    antcb('reload')      ;% reload projfile
+end
+%% ============================================
+
+
+function S=cell2structnested(p)
+
+S = struct();
+% ______MAKE NESTED STRUCT FROM CELL
+for k = 1:2:numel(p)
+    parts = strsplit(p{k}, '.');
+    expr = 'S';
+    for j = 1:numel(parts)-1
+        expr = sprintf('%s.(%s)', expr, ['''' parts{j} '''']);
+    end
+    % assign value
+    eval([expr '.(parts{end}) = p{k+1};']);
+end
+
+%% ===============================================
+function A = mergeStructs2(A, B)
+% Recursively merge struct B into struct A
+%
+% If fields overlap:
+%   - If both are structs, merge them recursively
+%   - Otherwise, values from B overwrite values in A
+
+fn = fieldnames(B);
+for k = 1:numel(fn)
+    f = fn{k};
+    if isfield(A, f)
+        if isstruct(A.(f)) && isstruct(B.(f))
+            % Recursive merge for substructs
+            A.(f) = mergeStructs(A.(f), B.(f));
+        else
+            % Overwrite with B's value
+            A.(f) = B.(f);
+        end
+    else
+        % Add new field from B
+        A.(f) = B.(f);
+    end
+end
+
+
 
 
 %% ===============================================

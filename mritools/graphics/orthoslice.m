@@ -115,6 +115,7 @@
 function [varargout]=orthoslice(f, varargin )
 varargout{1}=[];
 warning off;
+drawnow; %
 % if nargin==0
 %    orthoslice('s.nii');
 %    % orthoslice({'AVGTmask.nii','s.nii'});
@@ -3317,7 +3318,12 @@ for j=1:3
         end
         
         if i==1
+            try
             Bm=imfill(otsu(F,50)>1,'holes');
+            catch
+                FM=F;FM(isnan(FM))=min(FM(:));
+                Bm=imfill(otsu(FM,50)>1,'holes');
+            end
         end
         
         
