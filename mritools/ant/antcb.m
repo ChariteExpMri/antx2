@@ -2186,7 +2186,7 @@ for k = 1:numel(fn)
     if isfield(A, f)
         if isstruct(A.(f)) && isstruct(B.(f))
             % Recursive merge for substructs
-            A.(f) = mergeStructs(A.(f), B.(f));
+            A.(f) = mergeStructs2(A.(f), B.(f));
         else
             % Overwrite with B's value
             A.(f) = B.(f);
