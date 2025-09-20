@@ -2107,14 +2107,14 @@ function  o=setparams(pp)
 % USAGE:
 % antcb('set',<PARAMETER>,<VALUE>, <PARAMETER>,<VALUE>, ...); %
 % EXAMPLES:
-% [1]: change name of the project-file ('project')
+% [1]: change name of the ANTx-project
 %    antcb('set','project','project_123');
-% [2]: set 'orienttype'-parameter to [12]
+% [2]: change preorientiation ('orienttype'-parameter)
 %    antcb('set','wa.orientType',12);
-% [3]: set 'fastSegment'-parameter to [7]
-%    antcb('set','fastSegment',7);
-% [4]: set 'orienttype'-parameter to [12] and 'fastSegment' to 7 
-%    antcb('set','wa.orientType',1,'wa.fastSegment',7);
+% [3]: change skullstripping method
+%    antcb('set','usePriorskullstrip',6);
+% [4]: change preorientiation anf skullstripping method
+%    antcb('set','wa.orientType',1,'wa.usePriorskullstrip',7);
 
 o=[];
 

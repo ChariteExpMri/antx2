@@ -24,17 +24,17 @@ updateantx(2);
 % set specifc parameters of projectfile
 %EXAMPLES: 
 %---------------
-% [1]: change name of the project-file ('project')
-antcb('set','project','project_123');
-
-% [2]: set 'orienttype'-parameter to [12]
-antcb('set','wa.orientType',12);
-
-% [3]: set 'fastSegment'-parameter to [7]
-antcb('set','fastSegment',7);
-
-% [4]: set 'orienttype'-parameter to [12] and 'fastSegment' to 7
-antcb('set','wa.orientType',1,'wa.fastSegment',7);
+%   [1]: change name of the ANTx-project
+     antcb('set','project','project_123');
+     
+%   [2]: change preorientiation ('orienttype'-parameter)
+     antcb('set','wa.orientType',12);
+     
+%   [3]: change skullstripping method
+     antcb('set','usePriorskullstrip',6);
+     
+%   [4]: change preorientiation anf skullstripping method
+     antcb('set','wa.orientType',1,'wa.usePriorskullstrip',7);
 
 
 %% #################################################
@@ -191,7 +191,257 @@ xgetlabels4(0,z);
  
  
  
+%% #################################################
+% pipeline
+% QSM-pipeline
  
+cf;clear;
+addpath('D:\MATLAB\qsm_tools'); %add path of QSM-wrapper functions
+ 
+%% ===============================================
+%% parameter
+%% ===============================================
+v=struct();
+v.pastudy      ='H:\Daten-2\Imaging\AG_Boehm_Sturm\ERC_Syn_2025\GEMI_pilot_2025\qsm_ana'; %path of study
+v.paraw        =fullfile(v.pastudy,'raw'); % path: Bruker-rawdata
+v.protocol     ='MPM_3D_0p15'    ;         % substring contained in 'protocoll' in Bruker-rawdata to use for QSM
+v.qsmfilefilter={'pd'  'mt' 't1'};         % QSM: use these filter to select the input QSM-images
+v.qsmnewname   ={'PD'  'MT' 'T1'};         % QSM: new namestring as part of the new files)
+%                                          %   note that length and order of "qsmfilefilter" and "qsmnewname" must match
+v.useqsmfilefilter=1       ;% if [1]: the string in qsmfilefilter is used for 
+%                           % selecting the coorect file
+%                           %if [0]: files are selected based on the listorder of 
+%                           % the files, accordingly the order of the strings in "qsmfilefilter" 
+%                           % must match order of file-listing (REASON: in one study somebody forgot
+%                           % to change the protocollnames for 'pd'  'mt' 't1' ...all names were identicall)
+v.template_refpath   ='D:\MATLAB\anttemplates\mouse_Allen2017HikishimaLR'; %path of used animal-template
+v.template_specis   ='mouse';               % species
+v.template_voxsize  =[.07 .07 .07];         % target resolution in standardspace (ideally same as in template)
+ 
+v.SEPIApath    ='D:\MATLAB\sepia-1.2.2.6'; % path of sepia toolbox
+v.TE2keep      =[2:8];                     % TE's tto keep (1st one might bee noisy)
+% ===============================================
+cprintf('*[0 .5 0]',['PARAMETER' '\n']);
+disp(v);
+ 
+%% ==============================================
+%%  [0] make project  
+%% ===============================================
+makeproject('projectname',fullfile(v.pastudy,'proj.m'), 'voxsize',v.template_voxsize,...
+    'wa_refpath',v.template_refpath,...
+    'wa_species',v.template_specis)
+antcb('load',fullfile(v.pastudy,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+ 
+%% ==============================================
+%%  [1] IMPORT BRUKER-DATA (use all steps here)
+%% ===============================================
+% DISPLAY all Bruker-files from 'raw'-folder, PLEASE INSPECT THE TABLE BEFORE DOING THE NEXT STEP
+w1=xbruker2nifti(v.paraw,0,[],[],'gui',0,'show',1);
+ 
+% FILTER and DISPLAY a list of Bruker files where the protocol name contains 'T2_ax_mousebrain'
+% % % protocol='MPM_3D_0p15'
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol',v.protocol});
+ 
+% IMPORT Bruker files where the protocol name contains 'T2_ax_mousebrain'
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol',v.protocol},...
+    'paout',fullfile(v.pastudy,'dat'),'ExpNo_File',1,'PrcNo_File',1);
+ 
+%% check if filenumber is consistent
+antcb('selectdirs','all');
+numfiles=antcb('countfiles', v.protocol);
+pat=(numfiles)/(length(v.qsmfilefilter)*2);
+numfiles_str=strjoin(cellfun(@(a){[ num2str(a) ]} , num2cell(numfiles)),',');
+disp(['number of QSM-files found: ' numfiles_str])
+if length(unique(pat))~=1
+   error('some animals have different numbers of QSM-files..check') ;
+end
+if unique(pat)~=round(unique(pat))
+   error('some files are missing..presumably the phase-image') ; 
+end
+ 
+% ==============================================
+%% [2]  work on some of the animals
+% ===============================================
+animal_dropped=[];  % exclude animal (by number) here
+animal_ok     =setdiff([1:length(antcb('getallsubjects'))],  animal_dropped);
+% animal_ok   =[4  7 8]
+% antcb('selectdirs',[1:3 5 6 9 10 ])
+antcb('selectdirs',animal_ok);
+mdirs=antcb('getsubjects');
+
+%% ==============================================
+%%   [3a] rename files 
+%% ===============================================
+newnames={...
+    'qsm_PD_mag.nii'
+    'qsm_PD_pha.nii'
+    'qsm_T1_mag.nii'
+    'qsm_T1_pha.nii'
+    'qsm_MT_mag.nii'
+    'qsm_MT_pha.nii'
+    };
+for i=1:length(mdirs)
+    fi=spm_select('List',mdirs{i},[v.protocol]);
+    fi=cellstr(fi);
+    [~,animal]=fileparts(mdirs{i});
+    cprintf('*[0 .5 0]',['renaming files: [' pnum(i,3) '] '  animal '\n']);
+    if v.useqsmfilefilter==0
+        if length(fi)==6
+            F1=stradd(fi       , [mdirs{i} filesep],1);
+            F2=stradd(newnames , [mdirs{i} filesep],1);
+            copyfilem(F1,F2);
+            showinfo2(['copied files'],mdirs{i});
+        end
+    elseif v.useqsmfilefilter==1
+        for j=1:length(v.qsmfilefilter)
+            fi2=fi(regexpi2(fi,v.qsmfilefilter{j}));
+            imgNum=1;  %magnitude-image
+            F1=fullfile(mdirs{i}, fi2{imgNum}                          ); %MAG-image-in
+            F2=fullfile(mdirs{i}, [ 'qsm_' v.qsmnewname{j} '_mag.nii'  ]); %MAG-image-out
+            imgNum=2;  %phase-image
+            F3=fullfile(mdirs{i}, fi2{imgNum}                         ); %MAG-image-in
+            F4=fullfile(mdirs{i}, [ 'qsm_' v.qsmnewname{j} '_pha.nii'  ]); %MAG-image-out
+            copyfile(F1,F2,'f');
+            copyfile(F3,F4,'f'); 
+        end
+    end
+end
+%% ==============================================
+%%   [3b] replace the header of the 
+%%      phasemaps with the magnitude-header
+%% ===============================================
+  cprintf('*[0 .5 0]',['replace phase-HDR' '\n']);
+for i=1:length(v.qsmnewname)
+    z=[];
+    z.files =  {...
+        ['qsm_' v.qsmnewname{i} '_pha.nii']     ['qsm_' v.qsmnewname{i} '_pha.nii']     'rHDR:'
+        ['qsm_' v.qsmnewname{i} '_mag.nii']     ''                  'ref'  };
+   xrename(0,z.files(:,1),z.files(:,2),z.files(:,3));
+    %disp(z.files);
+    
+end
+ 
+%% ==============================================
+%%   [4] extract first magnitude-vol and use as t2.nii for registration
+%% ===============================================
+% % % % % antcb('selectdirs','all');
+xrename(0,'qsm_PD_mag.nii','t2.nii','1');
+ 
+%% ========================================================================================
+%%  [5] get HTML-file with pre-orientations 
+%%      please inspect the HTML-file. Use the best-matching rotation index from the HTML file 
+%%      to update the orientType variable in the project file (proj.m).
+%%      This step has to be done only for one animal per study, assumed that oriention is identical for all animals
+%% ========================================================================================
+antcb('getpreorientation','selectdirs',1);% GET HTMLFILE WITH PRE-ORIENTATION FOR TRAFO TO STANDARD-SPACE from 1st animal
+ 
+%% ========================================================================================
+%%  [6] change 'orientType' variable in project-file
+%%      When inspecting the HTML-file best orientation is [12] which is set in 'orientType' variable 
+%%      in project-file, projectfile is saved and reloaded
+%% ========================================================================================
+global an
+an.wa.orientType=11        ;% set preorientation: [12]: florian [11] berlin
+an.wa.usePriorskullstrip=7 ;% skullstripping method
+antcb('saveproject')       ;% save projfile
+antcb('reload')            ;% reload projfile
+clear an
+ 
+%% ========================================================================================================================
+%%  [7] calculate transformation & back-transformation (native-space (NS) -- standard-space (SS))
+%%      using parallel-processing
+%% =======================================================================================================================
+% antcb('selectdirs','all');   % select all animal-folders
+antcb('selectdirs',animal_ok);
+xwarp3('batch','task',[1:4],'autoreg',1,'parfor',1);
+ 
+%% ================================================================
+%%  [8] transform mask-image from standard-space to native-space  (NS)
+%% =================================================================
+% transform brain mask from standard-space to native-space using NN-interpolation
+doelastix(-1, [], {'AVGTmask.nii'}  ,0 ,'local' );
+ 
+%% ==============================================
+%%  [9] make QSM header
+%% ===============================================
+antcb('selectdirs',animal_ok);
+mdirs  =antcb('getsubjects');
+for j=1:length(mdirs)
+    pam   =mdirs{j};
+    [~,animal]=fileparts(pam);
+    cprintf('*[0 .5 0]',['make header: [' pnum(i,3) '] '  animal '\n']);
+    flt='^qsm_.*_mag.nii'; %only magnitudue
+    fis= spm_select('FPList',pam,flt); fis=cellstr(fis);
+    for i=1:length(fis)
+        nifti     =fis{i};
+        fo1=qsm_makeheader_v3(nifti,v.paraw,2 );
+    end
+end
+ 
+%% ==============================================
+%% [10]  run QSM
+%% ===============================================
+antcb('selectdirs',animal_ok);
+mdirs=antcb('getsubjects');
+ 
+s.SEPIApath=v.SEPIApath;%'D:\MATLAB\sepia-1.2.2.6';
+s.TE2keep  =v.TE2keep;%[2:8];
+for j=1:length(mdirs)
+    pam   =mdirs{j};
+    [~,animal]=fileparts(pam);
+    cprintf('*[0 .5 0]',['running QSM: [' pnum(j,3) '] '  animal '\n']);
+    flt='^qsm_.*_header.*.mat';
+    hdrfiles= spm_select('List',pam,flt); hdrfiles=cellstr(hdrfiles);
+    for i=1:length(v.qsmnewname)
+        ix=regexpi2(hdrfiles,v.qsmnewname{i});
+        hdrfile=fullfile(   pam,  hdrfiles{ix} );
+        if exist(hdrfile)==2
+            s.HDRfile=hdrfile;
+            fo1=qsm_run_approach1(s);
+        else
+            disp(['..not found: ' hdrfile ])  ;
+        end
+    end
+end
+ 
+%% ==============================================
+%%  [11] make PNG of chi-image
+%% ===============================================
+mdirs=antcb('getsubjects');
+for j=1:length(mdirs)
+    pam   =mdirs{j};
+    fis= spm_select('FPList',pam,'^chimap_.*.nii'); fis=cellstr(fis);
+    for i=1:length(fis)
+        fo1=make_chipng(fis{i} );
+    end
+end
+ 
+%% ==============================================
+%% [12] make ppt
+%% ===============================================
+mdirs=antcb('getsubjects');
+paout =v.pastudy;
+pptfile =fullfile(paout,'chimaps.pptx');
+for j=1:length(mdirs)
+    pam   =mdirs{j};
+    [~,animal]=fileparts(pam);
+    titlem  =['chimaps: ' animal ];
+    [pngs]   = spm_select('FPList',pam,'^chimap_.*.png');    pngs=cellstr(pngs);
+    tx=[ ['ANIMAL: '  pam ]; pngs];
+    if j==1; doc='new'; else; doc='add'; end
+    img2ppt(paout,pngs, pptfile,'size','A4l','doc',doc,...
+        'crop',0,'gap',[0 0 ],'columns',1,'xy',[0 1 ],'wh',[ 25 5.9],...
+        'title',titlem,'Tha','center','Tfs',20,'Tcol',[0 0 0],'Tbgcol',[0.3 0.74 0.93],...
+        'text',tx,'tfs',8,'txy',[0 19],'tbgcol',[1 1 1],'disp',0);  
+end
+showinfo2(['pptfile'],pptfile);
+ 
+ 
+ 
+ 
+ 
+ 
+
 
 
 %% #################################################
