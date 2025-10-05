@@ -81,6 +81,37 @@ end
      rots=deg2rad(rots);
      rots=num2cell(allcomb(rots,rots,rots));
      rot22=cellfun(@(a,b,c) {[ num2str(a) ' ' num2str(b) ' ' num2str(c)]},rots(:,1),rots(:,2),rots(:,3));
+     
+     if 0
+         %remove existing rotations
+         rt1=cell2mat(cellfun(@(a){str2num(a)},otc));
+         rt2=cell2mat(cellfun(@(a){str2num(a)},rot22));
+         % Round to 4 decimals to avoid floating-point issues
+         rt1r = round(rt1,2);
+         rt2r = round(rt2,2);
+         % Check which rows of rt2 are in rt1
+         [tf, loc] = ismember(rt2r, rt1r, 'rows');
+         rot22(tf,:)=[];
+     end
+     
+     rt1=cell2mat(cellfun(@(a){str2num(a)},otc));
+     rt2=cell2mat(cellfun(@(a){str2num(a)},rot22));
+     rm1=zeros(size(rt1,1),9);
+     for i=1:size(rt1,1)
+         dx=eul2rotm_zyx(rt1(i,:));   rm1(i,:)=dx(:);
+     end
+     rm2=zeros(size(rt2,1),9);
+     for i=1:size(rt2,1)
+         dx=eul2rotm_zyx(rt2(i,:));   rm2(i,:)=dx(:);
+     end
+     tolerance = 1e-3;
+     delv=zeros( size(rm2,1),1);
+     for i=1:size(rm1,1)
+         df=abs(rm2-repmat(rm1(i,:),[size(rm2,1)  1 ]));
+         iw=find(sum(df<tolerance,2)==size(rm2,2));
+         delv(iw,1)=iw;
+     end
+     rot22(find(delv~=0),:)=[];
      otc=[otc; rot22];
  end
 %% ===============================================
@@ -557,3 +588,39 @@ disp(metrics);
 assignin('base', 'metrics', metrics)
 
 return
+
+
+% --- Example usage ---
+% r1 = [-pi/2 0 0];      % [-1.5708 0 0]
+% r2 = [pi/2 pi pi];     % [1.5708 3.1416 3.1416]
+% 
+% R1 = eul2rotm_zyx(r1);
+% R2 = eul2rotm_zyx(r2);
+% 
+% % Check if identical (within tolerance)
+% tolerance = 1e-3;
+% if all(abs(R1(:)-R2(:)) < tolerance)
+%     disp('The rotations are identical.');
+% else
+%     disp('The rotations are different.');
+% end
+
+% --- Convert ZYX Euler angles (yaw-pitch-roll) to rotation matrix ---
+function R = eul2rotm_zyx(eul)
+% eul = [yaw pitch roll] = [Z Y X]
+phi   = eul(3); % roll (X)
+theta = eul(2); % pitch (Y)
+psi   = eul(1); % yaw (Z)
+
+Rz = [cos(psi) -sin(psi) 0;
+    sin(psi)  cos(psi) 0;
+    0         0  1];
+Ry = [cos(theta) 0 sin(theta);
+    0 1       0;
+    -sin(theta) 0 cos(theta)];
+Rx = [1      0           0;
+    0 cos(phi) -sin(phi);
+    0 sin(phi)  cos(phi)];
+
+R = Rz * Ry * Rx;
+

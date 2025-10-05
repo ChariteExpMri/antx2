@@ -7,6 +7,10 @@
 %       11   files x folder ..compact version
 %       2    folder x files ..long version
 %       22   folder x files ..compact version
+% 'sel'  'selected' :  -show files only of GUI-selected animals
+%         otherwise files of all animimals will be shown
+%             example: dispfiles('sel','selected')
+% 
 % 'flt'  or 'f' : filter   (default: '.*.nii')
 %       examples;
 %         '.*'  ...all files
@@ -49,6 +53,12 @@
 % o=dispfiles('form',2,'flt','.*.nii','counts',0,'dir',fullfile(pwd,'dat'),'show',0); % find all NIFTIs,show no count-column/row, use explicit main folder, do not show, parse output
 % -check nifti-files in template folder of two studies using shortcuts
 % dispfiles('f','nii','m',1,'s',1,'c',1,'d',{'F:\data8_MPM\MPM_agBrandt3\templates','F:\data7\AG_schmid\templates'})
+%
+% from selected animals show all NIFTIs starting with 't2' or 'x_t2'
+% dispfiles('sel','selected','flt','^t2.*.nii|^x_t2.*.nii')
+%
+
+
 function varargout=dispfiles(varargin)
 
 % clc
@@ -136,6 +146,13 @@ elseif iscell(pam)
     [~, dirs2]=fileparts2(pam);
 else
     error('dir(s) not specified');
+end
+
+if isfield(p,'sel') && strcmp(p.sel,'selected')==1
+    if useglobVar==1
+       dirs= antcb('getsubjects');
+    end
+    dirs2=dirs;
 end
 
 if isempty(char(dirs2{1})) %some other direct path such as 'templates'

@@ -396,6 +396,14 @@ if find(s.task==1)
         msk=fullfile(s.pa,'_msk.nii');
         rsavenii(msk,hc,mx2.*c);
         disp('..done.');
+    elseif s.usePriorskullstrip==8 %
+        disp(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  '].. ' '"_msk.nii"  is background removed "t2.nii" ']);
+        [hc c]=rgetnii(s.t2);
+        mx2=fsegbrain({hc c},'show',0);
+        %montage2(mx2);
+        msk=fullfile(s.pa,'_msk.nii');
+        rsavenii(msk,hc,mx2.*c);
+        disp('..done.');        
     elseif s.usePriorskullstrip==-1 % 
         % ==============================================
         %% '_msk.nii exist in path'

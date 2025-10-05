@@ -26,6 +26,7 @@ function ssh2_struct = sftp_simple_put(hostname, username, password, localFilena
 % (c)2011 Boston University - ECE
 %    David Scott Freedman (dfreedma@bu.edu)
 %    Version 2.0
+do_alternative=0;
 
 if nargin < 4
     ssh2_struct = [];
@@ -47,5 +48,37 @@ else
     
     ssh2_struct = ssh2_config(hostname, username, password);
     ssh2_struct.close_connection = 1; %close connection use
-    ssh2_struct = sftp_put(ssh2_struct, localFilename, remotePath, localPath, remoteFilename);
+    try
+        ssh2_struct = sftp_put(ssh2_struct, localFilename, remotePath, localPath, remoteFilename);
+    catch
+        do_alternative=1;
+    end 
 end
+
+
+if do_alternative==1
+    %% ===============================================
+    %addpath('D:\progs\putty');
+%     e=[which('plink.exe') ' -ssh -batch -pw ' password ' ' username '@' hostname ' "' command '"' ];
+%     [s, cs] = system(e);
+%     cs=strsplit(cs,char(10))';
+%     command_result=cellstr(cs);
+    
+    
+    infile=['"' fullfile(localPath,localFilename) '"'];
+    outfile=[ remotePath '/' remoteFilename];
+    if strcmp(outfile,'/')==1
+        outfile=':';
+    else
+        outfile=[ ' ' outfile ];
+    end
+    
+    e=[which('pscp.exe') ' -pw ' password ' ' infile ' ' username '@' hostname outfile ];
+    [s, cs] = system(e);
+     cs=strsplit(cs,char(10))';
+     if isempty(cs{end}); cs(end)=[]; end
+    ssh2_struct=cellstr(cs);
+    %% ===============================================
+end
+
+

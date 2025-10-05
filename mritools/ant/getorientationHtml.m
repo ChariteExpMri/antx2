@@ -76,10 +76,12 @@ p.ref=f2;
 %% ===============================================
 % p.slices=5;
 % [arg,rot]=evalc(['' 'findrotation2' '']);
-if p.rottable==1
-    global rottable; rottable=1;
-elseif p.rottable==2
-    global rottable; rottable=2;
+try
+    if p.rottable==1
+        global rottable; rottable=1;
+    elseif p.rottable==2
+        global rottable; rottable=2;
+    end
 end
 [arg,rot]=evalc(['' 'findrotation2' '']);
 %% ===============================================

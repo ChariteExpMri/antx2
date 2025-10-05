@@ -196,6 +196,8 @@ end
 if strcmp(do, 'loadprojectfile?') || strcmp(do, 'load?')  ;
     disp(help(['antcb' filemarker 'loadprojectfile']));
 end
+if strcmp(do,'load?');    help antcb>load;end
+%% ===============================================
 
 if strcmp(do, 'fontsize');
     fontsize(input);
@@ -223,7 +225,15 @@ if strcmp(do,'set')
 end
 if strcmp(do,'set?');    help antcb>setparams;end
 %% ===============================================
-
+if strcmp(do,'loop')
+    try ;    varargout{1}=loop(input2(2:end));
+    catch;   
+        %disp('* type    antcb(''countfiles'',''?'')     for help');
+        do='loop?';
+    end
+end
+if strcmp(do,'loop?');    help antcb>loop;end
+%% ===============================================
 
 if strcmp(do, 'load__OLD_vers_21_12_23');
     %     fprintf(' ...(re)loading project..');
@@ -2099,7 +2109,69 @@ v.tb =[li cellstr(num2str(ncount)) tb];
 v.tbh=[{'Unique-Files-In-Study', '#found'} tbh];
 
 
+
+% antcb('loop','mdirs','all');
+% antcb('loop','mdirs',{ '1001_a2'   , '1001_copy'});
+% antcb('loop','mdirs',[]);
+% antcb('loop','mdirs',[1:3]);
+% antcb('loop','mdirs',[1],'task','slice2png(fullfile(''$mdir'',''t2.nii''),''showonly'',1)' );
+% antcb('loop','mdirs',[1:2],'task','slice2png',fullfile('$mdir','t2.nii'),'showonly',1 );
+% antcb('loop','mdirs',[],'task','slice2png',fullfile('$mdir','t2.nii'),'showonly',1,'dim',1 );
+% antcb('loop','mdirs',[],'task','ls','$mdir' );
+% antcb('loop','mdirs',[1:2],'task','[ha a]=rgetnii(fullfile(''$mdir'',''t2.nii''));me=mean(a(:))  ' );
+
 %% ===============================================
+function  o=loop(pp)
+%bum bum
+mdirs0='all';
+task=[];
+im=find(strcmp(pp,'mdirs'));
+if ~isempty(im); mdirs0=pp{im+1}; end
+if ischar(mdirs0) && strcmp(mdirs0,'all')
+    mdirs=antcb('getallsubjects');
+elseif iscell(mdirs0) || ischar(mdirs0)
+    mdirs0=cellstr(mdirs0);
+    antcb('selectdirs',mdirs0) ;
+    mdirs=antcb('getsubjects');
+elseif isnumeric(mdirs0)
+    if isempty(mdirs0)
+        mdirs=antcb('getsubjects');
+    else
+        antcb('selectdirs',mdirs0) ;
+        mdirs=antcb('getsubjects');
+    end
+end
+if isempty(char(mdirs)); disp('no animal-dirs selected'); end
+
+it=find(strcmp(pp,'task'));
+% if ~isempty(it); task=pp{it+1}; end
+task=pp(it+1:length(pp))
+
+
+
+if isempty(task); return; end
+for i=1:length(mdirs)
+    disp([' *running: ' mdirs{i}]);
+    tt=task;
+    if ischar(tt)
+        tt=strrep(tt,'$mdir',mdirs{i});
+    elseif iscell(tt)
+        tt=cellfun(@(a) {[ strrep(a,'$mdir',mdirs{i})]}, tt);
+    end
+    if length(tt)==1
+        eval(tt{1});
+%         disp(w);
+    else
+        w=feval(tt{:})
+    end
+end
+
+
+
+
+
+
+o=[];
 
 function  o=setparams(pp)
 % set specific antx-parameters in parameter-file(proj-file), 
@@ -2112,7 +2184,7 @@ function  o=setparams(pp)
 % [2]: change preorientiation ('orienttype'-parameter)
 %    antcb('set','wa.orientType',12);
 % [3]: change skullstripping method
-%    antcb('set','usePriorskullstrip',6);
+%    antcb('set','wa.usePriorskullstrip',6);
 % [4]: change preorientiation anf skullstripping method
 %    antcb('set','wa.orientType',1,'wa.usePriorskullstrip',7);
 
@@ -3309,9 +3381,26 @@ function loadprojectfile(varargin)
 % load a projectfile (proj.m) , i.e. load a study into ANT-GUI
 % usage use:     antcb('load', <projFilename>);
 %           or   antcb('loadprojectfile', <projFilename>);
-%  example:
-% antcb('load','proj.m')
-% antcb('load',fullfile(pwd,'proj.m'))
+%       'p'/'print'   : print project-files in path as loadable hyperlinks in CMD-window
+%       'n'/'newest'  : load newest/last modified projectfile in path
+% ------------------------------------------------------------------------
+% EXAMPLES:
+% # load specific project 
+%    antcb('load','proj.m')
+%    antcb('load',fullfile(pwd,'proj.m'))
+% 
+% # load project via GUI 
+%    antcb('load
+% 
+% # print project-files in path as loadable hyperlinks in CMD-window
+%    antcb('load','p');                %same as: antcb('load','print') 
+%    antcb('load','F:\data5\nogui\p'); %same as: antcb('load','F:\data5\nogui\print')
+% 
+% # load newest/last modified projectfile in path
+%    antcb('load','n');                %same as: antcb('load','newest')
+%    antcb('load','F:\data5\nogui\n'); %same as: antcb('load','F:\data5\nogui\newest')
+% 
+
 
 %% open ant before, if nonexisting
 if isempty(findobj(0,'tag','ant'))
@@ -3321,6 +3410,92 @@ end
 try
     
     configfile=varargin{1}{1};
+    [pa fi ext]=fileparts(configfile);
+     if strcmp(fi,'p') || strcmp(fi,'print') || strcmp(fi,'n') || strcmp(fi,'newest')  %load local project-file
+    %% =======================[print projectfiles in path]========================
+    %antcb('load','p')
+    %antcb('load','print')
+    %antcb('load','F:\data5\nogui\p')
+    %antcb('load','F:\data5\nogui\print')
+    %% =======================[load newest projectfile in path]========================
+    %antcb('load','n')   
+    %antcb('load','newest')
+    %antcb('load','F:\data5\nogui\n')
+    %antcb('load','F:\data5\nogui\newest')
+    %
+    
+        t={};
+        if isempty(pa); pa=pwd; end
+        k=dir(fullfile(pa,'*.m'));
+        files={k.name}';
+        % Extract modification dates
+        dates = [k.datenum]';
+        
+        % Sort by modification date (newest first)
+        [~, idx] = sort(dates, 'descend');
+        files=files(idx);
+        dates=dates(idx);
+        nowtime=(now);
+        for k = 1:numel(files)
+            fname =fullfile(pa, files{k});
+            %mtime = datestr(dates(k), 'yyyy-mm-dd HH:MM:SS')
+            %fprintf('%-30s  %s\n', fname, mtime); % Display filename and modification time
+            
+            % Open file for reading
+            fid = fopen(fname, 'r');
+            if fid == -1
+                warning('Could not open %s', fname);
+                continue;
+            end
+            
+            found = false;
+            for i = 1:3
+                tline = fgetl(fid);
+                if ~ischar(tline), break; end
+                if ~isempty(strfind(tline, 'x.project')) 
+                    found = true;
+                    dt_days = nowtime - dates(k);% Time difference in days
+                    % Convert to h/m/s
+                    dt_seconds = dt_days * 24*3600;
+                    days = floor(dt_seconds / 86400);
+                    hours = floor(mod(dt_seconds, 86400) / 3600);
+                    minutes = floor(mod(dt_seconds, 3600) / 60);
+                    seconds = floor(mod(dt_seconds, 60));
+                    mtime = datestr(dates(k), 'yyyy-mm-dd HH:MM:SS');
+                    % Display result
+                    %fprintf('Elapsed time: %d days %02d:%02d:%02d\n', days, hours, minutes, seconds);
+                    timstr=sprintf('lastmodif:%d days+%02d:%02d:%02d', days, hours, minutes, seconds);    
+                    t(end+1,:)={ files{k}, mtime timstr fname   };
+                end
+            end
+            fclose(fid);
+        end
+        
+        if isempty(t); disp('no projectfile found '); end
+        if strcmp(fi,'p') || strcmp(fi,'print')
+            for k=1:size(t,1)
+                % fprintf('<a href="matlab: edit(''myScript.m'')">Open myScript.m</a>\n');
+                mfilelong=strrep(t{k,4},filesep,[filesep filesep]);
+                fprintf(['<a href="matlab: antcb(''load'' ,''' mfilelong ''')'  '">load ['  t{k,1}  ']</a>'...
+                    repmat(' ', [1 size(char(t(:,1)),2)+1-length(  t{k,1})])   t{k,2}...
+                    ' ' t{k,3}....
+                    '\n']);
+            end
+            return
+        elseif strcmp(fi,'n') || strcmp(fi,'newest')
+            configfile=t{1,4};
+        end
+        
+        
+        %% ===============================================
+        
+       
+        
+        
+    end
+    %% ===============================================
+    
+    
     [pa fi ext]=fileparts(configfile);
     if isempty(pa); pa=pwd; end
     configfile=fullfile(pa,[fi ext]);

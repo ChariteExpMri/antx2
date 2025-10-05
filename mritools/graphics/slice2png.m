@@ -767,6 +767,9 @@ if ~isempty(ix);   g.brainmask=masks{ix};
 else           ;   g.brainmask='';         p.usemask=0;
 end
 
+if p.usemask==0
+    g.brainmask='';
+end
 
 
 

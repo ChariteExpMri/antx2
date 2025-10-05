@@ -22,6 +22,7 @@ function command_result = ssh2_simple_command(hostname, username, password, comm
 %    Version 2.0
 
 command_result = [];
+do_alternative=0;
 
 if nargin < 4
     ssh2_struct = [];
@@ -35,8 +36,27 @@ else
     ssh2_struct.close_connection = 1; %close connection use
 
     if nargout == 0
+        try
         ssh2_struct = ssh2_command(ssh2_struct, command, enableprint);
+        catch
+            do_alternative=1; 
+        end
     else
-        [ssh2_struct, command_result] = ssh2_command(ssh2_struct, command, enableprint);
+        try
+            [ssh2_struct, command_result] = ssh2_command(ssh2_struct, command, enableprint);
+        catch
+            do_alternative=1;
+        end
     end
+end
+
+
+if do_alternative==1
+    %% ===============================================
+    %addpath('D:\progs\putty');
+    e=[which('plink.exe') ' -ssh -batch -pw ' password ' ' username '@' hostname ' "' command '"' ];
+    [s, cs] = system(e);
+    cs=strsplit(cs,char(10))';
+    command_result=cellstr(cs);
+    %% ===============================================
 end
