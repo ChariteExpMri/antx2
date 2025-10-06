@@ -198,7 +198,8 @@ end
 if strcmp(do, 'loadprojectfile?') || strcmp(do, 'load?')  ;
     disp(help(['antcb' filemarker 'loadprojectfile']));
 end
-if strcmp(do,'load?');    help antcb>load;end
+% if strcmp(do,'load?');    help antcb>load;end
+if strcmp(do,'load?');    help antcb>loadprojectfile;end
 %% ===============================================
 
 if strcmp(do, 'fontsize');
