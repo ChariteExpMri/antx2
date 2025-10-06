@@ -3538,6 +3538,7 @@ function loadprojectfile(varargin)
 %           or   antcb('loadprojectfile', <projFilename>);
 %       'p'/'print'   : print project-files in path as loadable hyperlinks in CMD-window
 %       'n'/'newest'  : load newest/last modified projectfile in path
+%       'l'/'last'    : show list of last modified projectfiles (across studies)
 % ------------------------------------------------------------------------
 % EXAMPLES:
 % # load specific project
