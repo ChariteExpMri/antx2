@@ -3702,9 +3702,9 @@ try
                 fclose(fid);
             end
         end
-        if size(t,1)>10
-            t=t(1:10,:);
-        end
+%         if size(t,1)>10
+%             t=t(1:10,:);
+%         end
         for k=1:size(t,1)
             % fprintf('<a href="matlab: edit(''myScript.m'')">Open myScript.m</a>\n');
             mfilelong=strrep(t{k,4},filesep,[filesep filesep]);
