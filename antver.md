@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   19 Sep 2025 (11:15:33)  
+ &#x1F34E; last modification:   06 Oct 2025 (11:11:32)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,11 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**06 Oct 2025 (11:11:32)**</ins>  
+  handshakes between our win-10 server and HPC has been changed thus the PUTTY windows-executables   
+  (plink.exe and pscp.exe) where included. The functions 'ssh2_simple_command.m' and 'sftp_simple_put.m'   
+   where updated and now use plink/pscp if new ciphers/MAC are needd.  
+<!---->
   &#x1F535;   <ins>**19 Sep 2025 (11:15:33)**</ins>  
    __[antcb.m]__ : updated, contains no antcb('set') to  modify specifc parameters of projectfile  
    for HELP type antcb('set?')  

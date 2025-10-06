@@ -1135,6 +1135,12 @@
 % #ba 19 Sep 2025 (11:15:33)
 % #k [antcb.m] #n : updated, contains no antcb('set') to  modify specifc parameters of projectfile
 %  for HELP type antcb('set?')
+% #ba 06 Oct 2025 (11:11:32)
+% handshakes between our win-10 server and HPC has been changed thus the PUTTY windows-executables 
+% (plink.exe and pscp.exe) where included. The functions 'ssh2_simple_command.m' and 'sftp_simple_put.m' 
+%  where updated and now use plink/pscp if new ciphers/MAC are needd.
+% 
+% 
 % 
 
 %% ===============================================
