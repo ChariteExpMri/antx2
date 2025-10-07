@@ -538,7 +538,7 @@ if strcmp(do, 'settings');
         ' # NOTE: <overwrite> and <save as> reloads the respective configfile'
         }, ...
         'Dessert Menu', ...
-        choices{1},choices{2},choices{3},choices{2});
+        choices{1},choices{2},choices{3},choices{1});
     
     % ==============================================
     %%

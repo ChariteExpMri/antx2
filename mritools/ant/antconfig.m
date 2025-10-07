@@ -45,6 +45,8 @@
 %         [4] : '_msk.nii' is basically 't2.nii' but background is removed to accellerate segmentation
 %               *use this option for exvivo skullstripped brain preserved in the stuff that produces 
 %               high-contrast in the MR-image. 
+%         [8] : universal approach: use for invivo & exvivo brains, with/without skullstripping, 
+%                         works also with brains placed in phosphate-buffered saline (PBS)
 %        [-1] : brain masked image '_msk.nii' is assumed to exist in the path
 %               use this option if you have created a brain-masked 't2.nii' via other tools
 % #g NOTE: The aim of '_msk.nii' file is to obtain a rough but sufficient rigid registration. Accordingly,
@@ -161,6 +163,8 @@ meth_skullstrip=...
     '[5]: create "_msk.nii" unsing otsu-method (2 clusters)'                               [5]
     '[6]: EXVIVO & high-contrast tube (PBS): approach1: "deTube"+pcnn3d)'                  [6]
     '[7]: EXVIVO & high-contrast tube (PBS): approach2: "deTube"+pcnn3d)'                  [7]
+    '[8]: UNIVERSAL: – in/ex vivo, ±skullstrip, ±PBS'                                      [8]
+    '                                                               '  [1]
     '[0]: "t2.nii" is already skullstripped (exvivo brain) '                               [0]
     '[2]: create "_msk.nii" as copy of "t2.nii"  (for allready skullstripped brains)'      [2]
     '[4]: "_msk.nii" is "t2.nii" but background is removed to accellerate segmentation'    [4]
@@ -334,6 +338,16 @@ end
 try;
     z.mdirs=an.mdirs ;
 end
+%---get configfile
+try
+    ix=regexpi2(an.ls,'an.configfile');
+    configfile_str=an.ls(ix);
+end
+
+%...........
+%% ==== create an-struct and ls ========================
+
+
 
 an=z;
 %set Listbox-2
@@ -341,6 +355,15 @@ ls=an.ls;
 ls(regexpi2(ls,'^\s*z.inf\d'))=[];
 ls(regexpi2(ls,'^\s*z.mdirs'))=[];
 ls=regexprep(ls,'^\s*z.','');
+try
+ls=[ls; configfile_str];    
+end
+try
+ eval(configfile_str{1});   
+end
+
+%% ===============================================
+
 set(findobj(findobj('tag','ant'),'tag','lb2'),'string',ls);
 
 

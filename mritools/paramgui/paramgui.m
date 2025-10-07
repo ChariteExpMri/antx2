@@ -1693,7 +1693,7 @@ varargout{2}=[]; %not speccified
 % varargout{4}=params;
 
 function figkey(h,e)
-
+'a'
 % if strcmp(e.Key,'f3')
 %     hbut=findobj(gcf,'tag','pb1');
 %     hgfeval(get(hbut,'Callback'));
@@ -3587,6 +3587,13 @@ elseif   iscellmode>=1
         drawnow
     end
     
+    u.jPopup=jPopup;
+    set(pd,'userdata',u);
+%     try %escape-option pulldown
+         set( jPopup,'KeyPressedCallback',{@keypress_pulldown_java,pd});
+  %    set( jPopup,'PopupMenuCanceledCallback',{@keypress_pulldown_java,pd});
+%     end
+    
     
     set(gcf,'currentobject',findobj(gcf,'tag','pulldown'));
     set(findobj(gcf,'tag','pulldown'),'value',1);
@@ -3980,14 +3987,14 @@ end
 
 
 
-
+%% ===============================================
 function pulldownkeypress(h,e,tx3,tb,val,carpos,iscellmode)
 % h
 
 % if strcmp(e.Key,'return') %close and lock answer
 %     'space'
 % end
-if strcmp(e.Key,'leftarrow') 
+if strcmp(e.Key,'leftarrow')  %|| strcmp(e.Key,'downarrow')
    % 'le'
     hpull=findobj(gcf,'tag','pulldown');
     li=get(hpull,'string');
@@ -3996,7 +4003,7 @@ if strcmp(e.Key,'leftarrow')
     if va<1; return; end
     set(hpull,'value',va);
     
-elseif strcmp(e.Key,'rightarrow')
+elseif strcmp(e.Key,'rightarrow')% || strcmp(e.Key,'uparrow')
    % 'ri'
      hpull=findobj(gcf,'tag','pulldown');
     li=get(hpull,'string');
@@ -4006,14 +4013,64 @@ elseif strcmp(e.Key,'rightarrow')
     set(hpull,'value',va);
 end
 
+function keypress_pulldown_java(h,e,pd)
+%% ===============================================
+drawnow;
+import java.awt.event.KeyEvent
+key=char(KeyEvent.getKeyText(e.getKeyCode));
+if strcmp(key,'ESC')
+    try
+        u=get(pd,'userdata');
+        u.key='escape';
+        set(pd,'userdata',u);
+    end 
+end
+
+
+drawnow;drawnow;
+%% ===============================================
+
 function cbpulldown(h,e,tx3,tb,val,carpos,iscellmode)
-
-
-
+% pause(0.1)
+drawnow
 % set(gcf,'currentobject',findobj(gcf,'tag','pulldown'))
 % return
-
 pb=findobj(gcf,'tag','pulldown');
+if isempty(pb)
+    return;
+end
+u=pb.UserData;
+if isfield(u,'key') && strcmp(u.key,'escape')==1 %escape
+   delete(pb);
+   return
+end
+
+import java.awt.event.KeyEvent
+keycode=double(get(gcf,'CurrentCharacter'));
+% key=char(KeyEvent.getKeyText(keycode))
+if ~isempty(keycode)
+    if keycode==30 || keycode==31
+        return
+    end
+end
+
+
+% if 0
+%     u.jPopup.showPopup();%jPopup.showPopup();
+%     drawnow
+% end
+
+% 
+% char(get(gcf,'CurrentCharacter'))
+% 
+% 
+% 
+% u=pb.UserData;
+% if isfield(u,'escape') && u.escape==1 %escape
+%    delete(pb)
+%    return
+% end
+
 li=cellstr(get(pb,'string'));
 va=get(pb,'value');
 us=get(gcf,'userdata');
