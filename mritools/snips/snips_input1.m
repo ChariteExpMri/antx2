@@ -2256,4 +2256,24 @@ path='c:\'
     freeBytes = f.getUsableSpace();     % Query usable space (in bytes)
     freeGB=freeBytes / 2^30      % Convert to GB
 
+%% #################################################
+% windows-10 server
+% logoff session by ID
+
+% 1. List all active sessions
+  qwinsta
+% 2. Use the session ID (here ID is 2) from the previous output
+  logoff 2
+
+% 3. if [2.] is not working, forcefully reset (terminate) a session)
+  rwinsta 2
+  
+
+
+
+
+
+
+
+
 

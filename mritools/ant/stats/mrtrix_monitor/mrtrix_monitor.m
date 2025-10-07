@@ -621,6 +621,42 @@ cmdlist={'squeue --me' 'ls' 'ls -lts --block-size=1' 'pwd' 'hostname',...
     'find $(pwd) -maxdepth 1 -name "*.e*" -o -name "*.o*" -atime -5 -ls',...
     'find $(pwd) -maxdepth 1 -name "*batch_*"  -atime -2 -ls',...
     };
+
+%% ===============================================
+try
+    p.HPC_hostname=get(findobj(gcf,'tag','hostname'),'string');
+    % cmd='squeue --me'
+    cmd='squeue --me --state=RUNNING --Format=Name --noheader';
+    cmdx=[cmd ' &> SomeFile.txt;cat SomeFile.txt'];
+    o=getHPCstatus(p,'cmd',[  cmdx ]);
+    
+    o=unique(o.msg);
+    o(strcmp(o,''))=[];
+    o=unique(regexprep(o,'\s+',''));
+    cmd2=strjoin(cellfun(@(a){['tail -n 3 ' a '*.o*'  ]} , o),char(10));
+    cmd3=strjoin(cellfun(@(a){['tail -n 3 ' a '*.e*'  ]} , o),char(10));
+    cmdlist=[cmdlist  cmd2 cmd3 ];
+end
+try
+    cmd3='sacct --state=COMPLETED,FAILED,CANCELLED,TIMEOUT -X --format=JobID,JobName,State,ExitCode,Elapsed';
+    cmd4='sacct --state=COMPLETED --format=JobID,JobName,Elapsed -X';
+    cmd5='sacct --format=JobID,JobName,State,Elapsed -X';
+    cmd6='sacct --starttime=now-10days --format=JobID,JobName,State,Elapsed -X';
+    cmdlist=[cmdlist  cmd3 cmd4 cmd5 cmd6];
+end
+try 
+    cmd3= ['for job in $(sacct --starttime=now-10days --format=JobName -X -n | sort -u); do echo "===== $job ====="; for f in *"$job"*.o* *"$job"*.e*; do [ -e "$f" ] || continue; echo "--- $f ---"; tail -n 2 "$f"; done; done'];
+    cmd4= ['echo "SHOW OUTPUT-FILES"; for job in $(sacct --starttime=now-10days --format=JobName -X -n | sort -u); do echo "===== $job ====="; for f in *"$job"*.o*; do [ -e "$f" ] || continue; echo "--- $f ---"; tail -n 5 "$f"; done; done'];
+    cmd5= ['echo "SHOW ERROR-FILES";for job in $(sacct --starttime=now-10days --format=JobName -X -n | sort -u); do echo "===== $job ====="; for f in *"$job"*.e*; do [ -e "$f" ] || continue; echo "--- $f ---"; tail -n 5 "$f"; done; done'];
+    cmdlist=[cmdlist  cmd3 cmd4 cmd5];
+    
+end
+ 
+%% ===============================================
+
+
+
+
 hb=uicontrol(ht4,'style','popupmenu','units','normalized','string',cmdlist);
 set(hb,'position',[.4 .3 .14 .023],...
     'tag','ed_bash_cmdlist',...
@@ -727,8 +763,11 @@ elseif strcmp(task,'bash_submitCMD')
 
     cmd=hb.String;
     hr=findobj(hf,'tag','ed_bash_cmdlist');
-    cmdlist=unique([cmd; get(hr,'string'); ],'stable');
-    set(hr,'string',cmdlist);
+    if sum(strcmp(get(hr,'string'),cmd))==0
+        cmdlist=unique([cmd; get(hr,'string'); ],'stable');
+        set(hr,'string',cmdlist);
+    end
+
     
     cmdx=[cmd ' &> SomeFile.txt;cat SomeFile.txt'];
     o=getHPCstatus(p,'cmd',[  cmdx ]);
