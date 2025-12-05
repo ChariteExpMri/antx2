@@ -15,6 +15,8 @@
 % #b - scale image by voxel factor     ('vf:')         #g e.g.: 'vf:3'          | 'vf:1 1 0.5'
 %      ..also the image is changed
 % #b - change header                   ('ch:')         #g e.g.: 'ch:mat:[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1];dt:64'  | 'ch:descrip:hallo' | 'ch:dt:64'
+%                                                      % translate volume: 'ch:trans:[1 1.2 1.3]; %(xd,dy,dz in mm)
+%                                                      % rotate volume   : 'ch:rot:[0.1 0.1 0.1]; %(xd,dy,dz in radians)
 % #b - mathematical operation (masking ('mo:')         #g e.g.: see below
 % #b - change dataType                 ('dt:')         #g e.g.: 'dt: 64'  | 'dt:16'
 % #b - threshold image                 ('tr:')         #g e.g.: 'tr:i>0.5=0'
@@ -145,7 +147,21 @@
 %% DTI_EPI_seg_30dir_sat_1.nii      new.nii            1:10s         !! note the "s", this is mandatory to expand the [s]lices 1-10
 %% ---------------------------------------------------------------
 %__________________________________________________________________________________________________________________
-%
+%__________________________________________________________________________________________________________________
+%% #by DELETE FILES
+% delete one file, use '##' or 'del' or 'delete' in task-column (or 4th argin via comand)
+% xrename(0,'w5_w6.txt','','delete'); %delete ''w5_w6.txt' in all selected animals
+% xrename(0,'w5_w6.txt|w6.txt','','##') ;% delete two files ('w5_w6.txt' and 'w6.txt') ...
+% 
+% delete files starting with 'w5_w6' or 'w6'
+% xrename(0,'^w5_w6.*.txt|^w6.*.txt','','##') ;
+% 
+% delete file ending with '_w6.txt'
+% xrename(0,'_w6.txt$','','##') ;
+% 
+%  delete file ending with '_w6.txt' or 'w5.txt'
+% xrename(0,'_w6.txt$|w5.txt$','','##') ;
+% 
 %% #by REPLACE VALUE BY ANOTHER VALUE
 % Replaces in a 3D/4D image a specific values by another value
 % - TAG: 'R:' or 'repl:' or 'replace:'
@@ -329,6 +345,13 @@
 %   z=[];
 %   z.files =  { 't2_copy.nii' 	'' 	'ch:mat:[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1];' };
 %   xrename(0,z.files(:,1),z.files(:,2),z.files(:,3));
+% 
+%% =====[change header-7:  translate object]==========================================
+% xrename(0,'t2.nii','t2_translated.nii','ch:trans:[1 0.2 0.3];');  %translated object by [dx,dy,dz] mm (here: 1,0.2,0.3 mm)
+% 
+%% =====[change header-8:  rotate object]==========================================
+% xrename(0,'t2.nii','t2_rotated.nii'   ,'ch:rot:[0.1 0.1 0.1];');  %rotate object by [dx,dy,dz] radians, (here: 0.1,0.1,0.1 radians)
+% 
 %
 %__________________________________________________________________________________________________________________
 %% #by replace Nifti-Header (rHDR:)
@@ -711,7 +734,11 @@ end
 delete(findobj(0,'tag','xrename'));
 s.pa=pa; %additional struct
 
-[ v2,he2 ]=parse4gui(v,he); %parses commands to cell  
+[ v2,he2 ]=parse4gui(v,he); %parses commands to cell 
+
+
+
+
 if usejava('desktop')==0;
     showgui=0;
 end
@@ -737,8 +764,14 @@ end
 % keyboard
 %% add special files due to special inserts in col-3
 try
-    iadd=find(~cellfun(@isempty,  regexpi(tbout(:,3), '^##$|^del$|^delete$')));
-    he=[he; tbout(iadd,1:3)];
+    if showgui==1
+        iadd=find(~cellfun(@isempty,  regexpi(tbout(:,3), '^##$|^del$|^delete$')));
+        he=[he; tbout(iadd,1:3)];
+    else
+        
+        
+    end
+%    
 end
 try
   if isempty(find(strcmp(he(:,end),'ref')))
@@ -866,12 +899,15 @@ for i=1:length(pa)      %PATH
                     end
                 elseif ~isempty(regexpi(volnum{j},'^##$|^del$|^delete$')); %delete
                     % 'delete me'
-                    delete(s1);
+                   delete(s1);  %delete files here
                     if exist(s1)==0
                         cprintf([0 .5 0],['file deleted: '  strrep(s1,filesep,[filesep filesep]) '\n']);
                     else
                         cprintf([1 0 1],['could not delete: '  strrep(s1,filesep,[filesep filesep]) '\n']);
                     end
+                    
+                    
+                   % cprintf([0 .5 0],['file deleted: '  strrep(s1,filesep,[filesep filesep]) '\n']);
                     
                     
                     
@@ -992,6 +1028,8 @@ for i=1:length(pa)      %PATH
                 elseif strfind(volnum{j},'ch:')==1; %vox factor
                     % ==============================================
                     %% change header (ch)
+                    %% xop(0,'t2.nii','t2_translated','ch:trans:[1 0.2 0.3];');  %translated object by [dx,dy,dz] mm
+                    %% xop(0,'t2.nii','t2_rotated'   ,'ch:rot:[0.1 0.1 0.1];');  %rotate object by [dx,dy,dz] radians
                     % ===============================================
                     try
                         %% ===============================================
@@ -999,6 +1037,20 @@ for i=1:length(pa)      %PATH
                         code=regexprep(code,'ch:' ,'');
                         if isempty(regexpi(code,'mat:\s*['))
                             t1=strsplit(code,';')';
+                            if ~isempty(regexpi(code,'trans:\s*[')) || ~isempty(regexpi(code,'rot:\s*[')) %translate or rotate
+                               if ~isempty(regexpi(code,'trans:\s*['))
+                                   i1=regexpi(code,'trans:\s*[');
+                               elseif ~isempty(regexpi(code,'rot:\s*['))
+                                   i1=regexpi(code,'rot:\s*[');
+                               end
+                                i2s=regexpi(code,']');
+                                i2=i2s(min(i2s>i1));
+                                code2=code(i1:i2);
+                                code=strrep(code,code2,'');
+                                t1=strsplit(code,';')';
+                            end
+                            
+                            
                         else
                             i1=regexpi(code,'mat:\s*[');
                             i2s=regexpi(code,']');
@@ -1021,7 +1073,36 @@ for i=1:length(pa)      %PATH
                             x=struct();
                         end
                         if exist('code2')==1
-                            x.mat= str2num(regexprep(code2,'mat:',''));
+                            if  ~isempty(strfind(code2,'mat'))
+                                x.mat= str2num(regexprep(code2,'mat:',''));
+                            elseif   ~isempty(strfind(code2,'trans'))  % translate images
+                                i1=strfind(code2,'trans');
+                                i2=strfind(code2,']');  i2=i2(min(find(i2>i1)));
+                                eval([strrep(code2(i1:i2),':','=') ';'])
+                                h=spm_vol(s1); h=h(1);
+                                imatrix=spm_imatrix(h.mat);
+                                if exist('trans')==1 && length(trans)==3
+                                    imatrix(1:3)=imatrix(1:3)+trans(:)';
+                                else
+                                    disp('adding translation: "trans" must be a vector of 3 values');
+                                end
+                                x.mat=spm_matrix(imatrix);
+                            elseif   ~isempty(strfind(code2,'rot'))  % translate images
+                                i1=strfind(code2,'rot');
+                                i2=strfind(code2,']');  i2=i2(min(find(i2>i1)));
+                                eval([strrep(code2(i1:i2),':','=') ';'])
+                                h=spm_vol(s1); h=h(1);
+                                imatrix=spm_imatrix(h.mat);
+                                if exist('rot')==1 && length(rot)==3
+                                    imatrix(4:6)=imatrix(4:6)+rot(:)';
+                                else
+                                    disp('adding rotation: "rot" must be a vector of 3 values');
+                                end
+                                x.mat=spm_matrix(imatrix);
+                                
+                                
+                            end
+                            
                         end
                         
                         
@@ -1927,7 +2008,7 @@ extractvolnum =repmat({''}, [size(v.tb,1) 1]);
 if ~isempty(he{1})
     for i=1:size(he,1)
         % wildcard
-        if ~isempty(regexpi( he{i,1},'*|\^|\$')) %~isempty(strfind( he{i,1},'*'))
+        if ~isempty(regexpi( he{i,1},'*|\^|\$|\|')) %~isempty(strfind( he{i,1},'*'))
             %id=regexpi2(v.tb(:,1), ['^' he{i,1}] );
             id=regexpi2(v.tb(:,1), [ he{i,1}] );
         else
@@ -2644,7 +2725,9 @@ if ~strcmp(task,'showimageinfo') && ~strcmp(task,'openfile')
         q={...
             'inf1'   'click [BULB]-icon for help' '' ''
             'image'    '' 'use header of this image: either as fullpath name or the patheless name of a file located in the animal directory' 'f'
-            'mat'      [] 'ALTERNATIVE TO "imageSource": use this transformation-matrix instead (if "mat" is used, keep "image" empty) ' {'1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1'}
+            'mat'      [] 'INSTEAD OFF "imageSource": use this transformation-matrix ' {'[1 0 0 1;0 1 0 1;0 0 1 1;0 0 0 1]'}
+            'trans'    [] 'INSTEAD OFF "imageSource": translate image by [dx,dy,dz] mm  ' {'[0 0 0]'; '[1 1 1]'; '[1 0 0]' ; '[0 0 1]'}
+            'rot'      [] 'INSTEAD OFF "imageSource": rotate image by [dx,dy,dz] radians ' {'[0 0 0]'; '[0.1 0.1 0.1]'; '[0.1 0 0]' ; '[0 0 0.1]'}
             'flipdim'  [] 'flip dimensions by index {1,2,3}: {1} Left/Right, {2} up/down and/or {3} anterior/posterior ... for the respective dimension: example [1 2]: flips L/R and up/down  dimension  ' {'' '1 2' '2' '1' '1 2 3'  }'
             'dt'       [] 'change dataType of the stored image; (empty: preserve orig. dataType)'  { [] 2      4      8   16   64}
             'descrip'  '' 'add arbitrary description {string} in the description-field of the header'  {'' '..test any text can be provided here' 't2w-image'}

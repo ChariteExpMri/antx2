@@ -632,7 +632,7 @@ for i=1:length(z.files)
             trafoFile{jvol,1} =transformVolume(  filename,i, jvol, v0, z);
         end %4d
     else
-        trafoFile={};
+        trafoFile = cell(length(v0),1);   % preallocate before parfor
         if length(v0)==1
             for jvol=1:length(v0)
                trafoFile{jvol,1}=transformVolume(  filename,i, jvol, v0, z);

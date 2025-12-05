@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   06 Oct 2025 (11:11:32)  
+ &#x1F34E; last modification:   % 05 Dec 2025 (14:38:08)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,11 @@
     
     
 ------------------  
+  % &#x1F535;   <ins>**05 Dec 2025 (14:38:08)**</ins>  
+  changed: xcheckreghtml.m -modifed fused image, allow to define the plots in html-file  
+  changed: xrename/xop via change header allow to translate/rotate volume  
+  bug-fix: doelastix+parallelized version  
+<!---->
   &#x1F535;   <ins>**06 Oct 2025 (11:11:32)**</ins>  
   handshakes between our win-10 server and HPC has been changed thus the PUTTY windows-executables   
   (plink.exe and pscp.exe) where included. The functions 'ssh2_simple_command.m' and 'sftp_simple_put.m'   
@@ -652,9 +657,9 @@
       5) Visualize files and folders  
       6) Selection of animals  
       7) Rename files  
-      8) Register ìt2.niiî to template (standard space, ss)  
+      8) Register ‚Äút2.nii‚Äù to template (standard space, ss)  
       9) Extract the first 3d-volume from the 4d-vlume 'dti_b100.nii'   
-      10) Coregister 'dti_b100_1stimg.nii' to ët2.niií  
+      10) Coregister 'dti_b100_1stimg.nii' to ‚Äòt2.nii‚Äô  
       11) Transform another image to standard-space  
       12) Transform another image to native-space  
       13) Check registration in standard-space - create html-file  
@@ -1009,7 +1014,7 @@
 <!---->
   &#x1F535;   <ins>**23 Aug 2021 (14:12:17)**</ins>  
    __[xcalcSNRimage.m]__ convert image to SNR-image   
-  according to Gudbjartsson H, Patz S. 1995: The Rician distribution of noisy MRI data. Magn Reson Med.; 34(6): 910ñ914.)  
+  according to Gudbjartsson H, Patz S. 1995: The Rician distribution of noisy MRI data. Magn Reson Med.; 34(6): 910‚Äì914.)  
   -can be used for Fluorine-19 (19F)-contrast images   
   &#8618;  access via ANT-menu: SNIPS/convert image to SNR-image  
 <!---->
@@ -1093,12 +1098,12 @@
                 3. Define a project  
                 4. Import Bruker data  
                 5. Import templates for this study  
-                6. Create a ët2.niií image  
+                6. Create a ‚Äòt2.nii‚Äô image  
                 7. Examine Orientation  
-                8. Register ët2.niií to the template  
+                8. Register ‚Äòt2.nii‚Äô to the template  
                 9. Back-transform template brain mask to native space  
               10. Extract 1st image of the 4D BOLD series  
-              11. Coregister ët2.niií onto BOLD (RS-) Data  
+              11. Coregister ‚Äòt2.nii‚Äô onto BOLD (RS-) Data  
               12. Mask first EPI-image with brain mask  
               13. Scale up 4D data for FSL  
              &#8618; access via ANT-menu: Extras/documentations  or ..\antx2\mritools\ant\docs  
@@ -1129,7 +1134,7 @@
     -TODO: test MAC & LINUX   : DONE!  
 <!---->
   &#x1F535;   <ins>**30 Oct 2020 (14:50:30)**</ins>  
-  __[SIGMA RAT template]__ (BarriËre et al., 2019) added to gdrive  
+  __[SIGMA RAT template]__ (Barri√®re et al., 2019) added to gdrive  
     - Paper           : https://rdcu.be/b9tKX  or https://doi.org/10.1038/s41467-019-13575-7  
     - &#8618;  access via link : https://drive.google.com/drive/u/2/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9  
       or ANT menu: EXTRAS/download templates  

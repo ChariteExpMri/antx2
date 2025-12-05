@@ -250,6 +250,17 @@ p={...
     'grid'    1      'Show line grid on top of image {0,1}'  'b'
     'gridspace'  20  'Space between grid lines (in pixels)'  { 5 10 20 30}
     'gridcolor'   [1 0 0] 'Grid color'  'col'
+    'plots'      [1 1 1] 'images to plot [toggleImg BGimg FGimg], example [1 1 1] plot all three' ...
+    {...
+    'toggle+BG+FG' [1 1 1];
+    'toggle only'  [1 0 0];
+    'BG only'      [0 1 0];
+    'FG only'      [0 0 1]; 
+    'BG+FG'        [0 1 1]; 
+    'toggle+BG'    [1 1 0];
+    'toggle+FG'    [1 0 1];
+    'none',        [0 0 0]; 
+    }
     'inf2'   '__optional___' '' ''
     'cmapB'           ''      '<optional> specify BG-color; otherwise leave empty'  {'cmap' cmapHTML}
     'cmapF'           ''      '<optional> specify FG-color; otherwise leave empty'  {'cmap' cmapHTML}
@@ -311,7 +322,11 @@ z.backgroundImg  =cellstr(z.backgroundImg);
 z.overlayImg     =cellstr(z.overlayImg);
 z.overlayImg     =z.overlayImg(:);
 
-filepairs=[  repmat(z.backgroundImg,[size(z.overlayImg,1) 1]) z.overlayImg];
+if ~isempty(char(z.overlayImg) )
+    filepairs=[  repmat(z.backgroundImg,[size(z.overlayImg,1) 1]) z.overlayImg];
+else
+    filepairs=[  z.backgroundImg  {''}];
+end
 
 %% ----
 

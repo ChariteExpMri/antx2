@@ -5370,9 +5370,21 @@ end
 
 
 for i=num% pws/contrasts
-    
     hd=us.pw(i).tbhead;
     d =us.pw(i).tb;
+    %--remove animalInfo
+    if ~isempty(regexpi2(hd,'animals'))
+        ic=[1:min(regexpi2(hd,'animals'))-1];
+        hd=hd(ic);
+        d=d(:,ic);
+        d=cell2mat(d);
+    end
+    try; 
+        d=cell2mat(d);
+    end
+    
+    
+    
     if isfield(us.pw(i),'fdr')==1
         hd(1)={'Huncor'};
         hd=['Hfdr' hd];

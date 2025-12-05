@@ -45,9 +45,9 @@ if isstruct(x)==1
     for i=1:length(fn)
         id=find(strcmp(p(:,1),fn{i}));
         if ~isempty(id)
-            eval(['dum=' fnp{i} ';']);
+            eval(['dum1234=' fnp{i} ';']);
             %             eval(['drum=' t3{i,1} ])
-            p(id,2)={dum};
+            p(id,2)={dum1234};
 %             p(id,2)=va(i);
         end
     end
