@@ -80,9 +80,39 @@ o   = ssh2_simple_command(p.host,p.uname,p.pw,cmd);
 %%   run mobaXterm, open specific session & run shellscript
 %% ==============================================
 
-s=['"C:\Program Files (x86)\Mobatek\MobaXterm\MobaXterm.exe" ' ...
+% s=['"C:\Program Files (x86)\Mobatek\MobaXterm\MobaXterm.exe" ' ...
+%     '-bookmark "s-mfz-csb-cpu02 (screenshots)'];
+
+s=['"D:\software\MobaXterm_Portable_v25.3\MobaXterm_Personal_25.3.exe" ' ...
     '-bookmark "s-mfz-csb-cpu02 (screenshots)'];
 system(s);
+
+% ==============================================
+%%   next step: find mobaxterm in systemPath
+% ===============================================
+
+if 0
+    %% ===============================================
+    %% recursively search for mobaxterm
+    tic
+    disp(['..recursively search for mobaxterm'])
+    % cmd = 'powershell -command "Get-ChildItem C:\,D:\ -Filter ''*MobaXterm*.exe'' -Recurse -EA SilentlyContinue | Select-Object -ExpandProperty FullName"';
+    
+    cmd = 'powershell -command "Get-ChildItem C:\,D:\ -Filter ''*MobaZZZterm*.exe'' -Recurse -EA SilentlyContinue | Select-Object -ExpandProperty FullName"';
+    [status, result] = system(cmd);
+    if isempty(result)
+        msgbox('"MobaXterm*.exe not found in drive C:\ or D:\"..process terminated') ;
+        return
+    end
+    % ===============================================
+    result=strsplit(result,char(10))';
+    result(cellfun(@isempty,result))=[];
+    disp(result)
+    
+    toc
+    
+    %% ===============================================
+end
 
 %% ===============================================
 %%   busy mode--> while.. check if "done.txt"-exists

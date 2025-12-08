@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   % 05 Dec 2025 (14:38:08)  
+ &#x1F34E; last modification:   08 Dec 2025 (13:38:14)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**08 Dec 2025 (13:38:14)**</ins>  
+  changed: makeScreenshots.m changed path to mobaxterm after new setup of server-..has to be dynamically set in future..  
+<!---->
   % &#x1F535;   <ins>**05 Dec 2025 (14:38:08)**</ins>  
   changed: xcheckreghtml.m -modifed fused image, allow to define the plots in html-file  
   changed: xrename/xop via change header allow to translate/rotate volume  

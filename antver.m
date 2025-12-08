@@ -1143,6 +1143,12 @@
 % changed: xcheckreghtml.m -modifed fused image, allow to define the plots in html-file
 % changed: xrename/xop via change header allow to translate/rotate volume
 % bug-fix: doelastix+parallelized version
+% #ba 08 Dec 2025 (13:38:14)
+% changed: makeScreenshots.m changed path to mobaxterm after new setup of server-..has to be dynamically set in future..
+% 
+% 
+% 
+% 
 % 
 
 
