@@ -12,10 +12,13 @@
 % antcb('saveproject')    % save/modify projectfile -->for HELP type antcb('saveproject?')
 % antcb('set')            % set specifc parameters of projectfile -->for HELP type antcb('set?')
 %
-% antcb('loop')           % perform a small task over animal dirs -->for HELP type antcb('loop?')
-%
 % antcb('getpreorientation');  %get HTML with preorientations for trafo to standard space
 %                               -->for HELP type antcb('getpreorientation?')
+% antcb('setpreorientation');  % Change preorientation (paramter: 'orientType') via comandline.
+%                               -->for HELP type antcb('setpreorientation?')
+%
+% antcb('loop')           % perform a small task over animal dirs -->for HELP type antcb('loop?')
+% 
 % antcb('load','proj_Harms3_lesionfill_20stack.m')   %load this project
 % antcb('reload')         % reload gui with project and previous mice-selection
 % antcb('version');       % get the last package version (1st output arg)
@@ -54,7 +57,7 @@
 %====================================================================================================
 
 function varargout=antcb(h,emp,do,varargin)
-
+warning off;
 if exist('h')==0; help antcb; return; end
 
 input2={};
@@ -168,6 +171,15 @@ if strcmp(do,'getpreorientation')
 end
 if strcmp(do,'getpreorientation?');    help antcb>getpreorientation;end
 %% ===============================================
+if strcmp(do,'setpreorientation')
+    try ;    varargout{1}=setpreorientation(input);
+    catch;   disp('* type    antcb(''setpreorientation'',''?'')     for help');
+    end
+end
+if strcmp(do,'setpreorientation?');    help antcb>setpreorientation;end
+%% ===============================================
+
+
 if strcmp(do,'saveproject')
     try ;    varargout{1}=saveproject(input);
     catch;   disp('* type    antcb(''saveproject'',''?'')     for help');
@@ -2508,6 +2520,43 @@ o=nc;
 if displayfile==2;
     uhelp(g,0,'name','found files');
 end
+
+%% ===============================================
+function  o=setpreorientation(par0)
+% Change preorientation (paramter: 'orientType') via comandline.
+% Changes of the 'orientType'-parameter will be also update the project-file!
+% USAGE___
+% set preorientation (orientType, value)  ;% value refers to a rotation-table index (example: [1])
+% set preorientation (orientType, string) ; string contains the 3 angles in radions (example: 'pi/2 pi pi')
+% EXAMPLE___
+% antcb('setpreorientation',12);           %sets preorientation to [12]
+% antcb('setpreorientation','pi/2 pi pi'); %sets preorientation to 'pi/2 pi pi'
+% 
+
+o=[];
+
+global an
+an.wa.orientType=par0{1}            ;% set orientType to [1]
+evalc('antcb(''saveproject'')')     ;% save projfile
+% antcb('reload')  ;  % evalc('antcb(''reload'')');% reload projfile
+
+ls=an.ls;
+ir=~cellfun(@isempty, regexpi(ls,'an.wa.orientType'));
+if isnumeric(par0{1});
+lin=['an.wa.orientType=[' num2str(par0{1}) '];'];
+else
+  lin=['an.wa.orientType='''  (par0{1}) ''';'] ;
+end
+ls{ir}=lin;
+msg=makenicer2(ls);       
+hf=findobj(0,'tag','ant');
+hlb2=findobj(hf,'tag','lb2');
+set(hlb2,'string',msg);
+
+disp(['preorientation (orientType) set to: ' num2str(an.wa.orientType) ' ..proj-file was updated..']);
+
+
+% clear an
 
 
 

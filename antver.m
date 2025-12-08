@@ -1133,20 +1133,21 @@
 % #k [slice2png.m] #n : display NIFTI-slices and save as PNGfiles
 % #gw --> to get a list of examples type 'snips' in cmd-window and inspect 'PLOTS-"plots/save as PNG-file' in the snips-window
 % #ba 19 Sep 2025 (11:15:33)
-% #k [antcb.m] #n : updated, contains no antcb('set') to  modify specifc parameters of projectfile
+% #k [antcb.m] #n : updated, antcb('set') to  modify specifc parameters of projectfile
 %  for HELP type antcb('set?')
 % #ba 06 Oct 2025 (11:11:32)
 % handshakes between our win-10 server and HPC has been changed thus the PUTTY windows-executables 
 % (plink.exe and pscp.exe) where included. The functions 'ssh2_simple_command.m' and 'sftp_simple_put.m' 
 %  where updated and now use plink/pscp if new ciphers/MAC are needd.
-% % #ba 05 Dec 2025 (14:38:08)
+% #ba 05 Dec 2025 (14:38:08)
 % changed: xcheckreghtml.m -modifed fused image, allow to define the plots in html-file
 % changed: xrename/xop via change header allow to translate/rotate volume
 % bug-fix: doelastix+parallelized version
 % #ba 08 Dec 2025 (13:38:14)
 % changed: makeScreenshots.m changed path to mobaxterm after new setup of server-..has to be dynamically set in future..
-% 
-% 
+% #ba 09 Dec 2025 (11:54:29)
+% #k [antcb.m] #n : updated, antcb('setpreorientation') to  change preorientation (paramter: 'orientType') via comandline.
+%  for HELP type antcb('setpreorientation?')
 % 
 % 
 % 

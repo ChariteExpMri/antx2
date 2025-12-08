@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   08 Dec 2025 (13:38:14)  
+ &#x1F34E; last modification:   09 Dec 2025 (11:54:29)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,10 +7,14 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**09 Dec 2025 (11:54:29)**</ins>  
+   __[antcb.m]__ : updated, antcb('setpreorientation') to  change preorientation (paramter: 'orientType') via comandline.  
+   for HELP type antcb('setpreorientation?')  
+<!---->
   &#x1F535;   <ins>**08 Dec 2025 (13:38:14)**</ins>  
   changed: makeScreenshots.m changed path to mobaxterm after new setup of server-..has to be dynamically set in future..  
 <!---->
-  % &#x1F535;   <ins>**05 Dec 2025 (14:38:08)**</ins>  
+  &#x1F535;   <ins>**05 Dec 2025 (14:38:08)**</ins>  
   changed: xcheckreghtml.m -modifed fused image, allow to define the plots in html-file  
   changed: xrename/xop via change header allow to translate/rotate volume  
   bug-fix: doelastix+parallelized version  
@@ -21,7 +25,7 @@
    where updated and now use plink/pscp if new ciphers/MAC are needd.  
 <!---->
   &#x1F535;   <ins>**19 Sep 2025 (11:15:33)**</ins>  
-   __[antcb.m]__ : updated, contains no antcb('set') to  modify specifc parameters of projectfile  
+   __[antcb.m]__ : updated, antcb('set') to  modify specifc parameters of projectfile  
    for HELP type antcb('set?')  
 <!---->
   &#x1F535;   <ins>**11 Sep 2025 (15:24:01)**</ins>  
