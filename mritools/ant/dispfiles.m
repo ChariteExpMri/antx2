@@ -169,21 +169,20 @@ if isfield(p,'sel') && strcmp(char(p.sel),'selected')==1
     dirs2=dirs;
 end
 %% ===============================================
-
-if (isfield(p,'sel') && strcmp(char(p.sel),'selected')==1)==0
-    % ===[fullpath folders]============================================
-    isexistDir=unique(existn(p.sel)==7);
-    if length(isexistDir)==1 && isexistDir==1
-        [dirs,dirs2]=deal(cellstr(p.sel));
+if isfield(p,'sel')
+    if (strcmp(char(p.sel),'selected')==1)==0
+        % ===[fullpath folders]============================================
+        isexistDir=unique(existn(p.sel)==7);
+        if length(isexistDir)==1 && isexistDir==1
+            [dirs,dirs2]=deal(cellstr(p.sel));
+        end
+        % ====[shortname folders]==========================
+        dirtest=stradd(cellstr(p.sel), [ an.datpath filesep ],1);
+        isexistDir=unique(existn(dirtest)==7);
+        if length(isexistDir)==1 && isexistDir==1
+            [dirs,dirs2]=deal(cellstr(dirtest));
+        end        
     end
-    % ====[shortname folders]==========================
-    dirtest=stradd(cellstr(p.sel), [ an.datpath filesep ],1);
-    isexistDir=unique(existn(dirtest)==7);
-    if length(isexistDir)==1 && isexistDir==1
-        [dirs,dirs2]=deal(cellstr(dirtest));
-    end
-    
-    %% ===============================================    
 end
 
  
