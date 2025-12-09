@@ -21,7 +21,12 @@ if nargin>0
         return
     elseif ischar(varargin{1}) && strcmp(varargin{1},'update')
         
-        hf=findobj(0,'tag','snips');         us=get(hf,'userdata');
+        hf=findobj(0,'tag','snips');     
+        if isempty(hf); 
+            snips();
+            return;
+        end
+        us=get(hf,'userdata');
         t=us.ht;
         t2=t.getTree;
         nodenum=t2.getSelectionRows;

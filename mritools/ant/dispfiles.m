@@ -8,6 +8,8 @@
 %       2    folder x files ..long version
 %       22   folder x files ..compact version
 % 'sel'  'selected' :  -show files only of GUI-selected animals
+%        {FP-mdirs}    : cellstring with fullpath animal-dirs
+%        {   mdirs}    : cellstring with animal-dirs assuming project is loaded
 %         otherwise files of all animimals will be shown
 %             example: dispfiles('sel','selected')
 % 
@@ -40,7 +42,7 @@
 %     mainpath: upper path of 'dirs'; example:'F:\data5\nogui\dat'
 %
 %% [EXAMPLES] ______________________________________________________antver
-
+% 
 % dispfiles;  %show all NIFTI from loaded project-file
 % o=dispfiles('flt','.*'); % show all files
 % dispfiles('tpm'); %search for files with string 'tpm' in it
@@ -57,6 +59,18 @@
 % from selected animals show all NIFTIs starting with 't2' or 'x_t2'
 % dispfiles('sel','selected','flt','^t2.*.nii|^x_t2.*.nii')
 %
+%% display files of selected fullpath-folders
+% md={'F:\data5\nogui\dat\tube_MN_t1_4D'
+%     'F:\data5\nogui\dat\tube_MN_t2'
+%     'F:\data5\nogui\dat\ventr'};
+% dispfiles('sel',md);
+%% ===============================================
+%% display files of selected shortname folders (antx-project must be loaded before)
+% md={'tube_MN_t1_4D'    'tube_MN_t2'    'ventr'};
+% dispfiles('sel',md)
+% 
+% 
+
 
 
 function varargout=dispfiles(varargin)
@@ -148,13 +162,35 @@ else
     error('dir(s) not specified');
 end
 
-if isfield(p,'sel') && strcmp(p.sel,'selected')==1
+if isfield(p,'sel') && strcmp(char(p.sel),'selected')==1
     if useglobVar==1
        dirs= antcb('getsubjects');
     end
     dirs2=dirs;
 end
+%% ===============================================
 
+if (isfield(p,'sel') && strcmp(char(p.sel),'selected')==1)==0
+    % ===[fullpath folders]============================================
+    isexistDir=unique(existn(p.sel)==7);
+    if length(isexistDir)==1 && isexistDir==1
+        [dirs,dirs2]=deal(cellstr(p.sel));
+    end
+    % ====[shortname folders]==========================
+    dirtest=stradd(cellstr(p.sel), [ an.datpath filesep ],1);
+    isexistDir=unique(existn(dirtest)==7);
+    if length(isexistDir)==1 && isexistDir==1
+        [dirs,dirs2]=deal(cellstr(dirtest));
+    end
+    
+    %% ===============================================    
+end
+
+ 
+%% ===============================================
+
+
+%% ===============================================
 if isempty(char(dirs2{1})) %some other direct path such as 'templates'
     dirs=cellstr(pam);
     [~, dirs2]=fileparts2(dirs);

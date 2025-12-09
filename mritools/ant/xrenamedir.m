@@ -212,7 +212,7 @@ uw.t=t;
 uw.tb=tb;
 set(gcf,'userdata',uw);
 
-if exist('pattern') && ~isempty(pattern) && iscell(pattern)
+if exist('pattern')==1 && ~isempty(pattern) && iscell(pattern)
     if mod(length(pattern),2)==0
         pattern=[pattern(1:2:end)' pattern(2:2:end)'];
     end

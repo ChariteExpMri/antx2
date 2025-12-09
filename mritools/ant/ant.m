@@ -687,6 +687,8 @@ hc3=uimenu('Parent',ContextMenu, 'Label','<html><b>INFO' ,'ForegroundColor',[ 0 
 uimenu('Parent',hc3, 'Label','general info',  'callback', {@cmenuCasesCB,'generalinfo' } ,'ForegroundColor',[0 .5 0], 'Separator','on');
 uimenu('Parent',hc3, 'Label','<html><k>show last modified files of selected animals'  , 'callback', {@cmenuCasesCB,'lastMOdFileAnimal_call' }          ,'ForegroundColor',[0 0 1  ],'Separator','off');
 uimenu('Parent',hc3, 'Label','<html><k>info of animal folders'  , 'callback', {@cmenuCasesCB,'animalfoldersinfo_call' }          ,'ForegroundColor',[0 0 1  ],'Separator','off');
+uimenu('Parent',hc3, 'Label','<html><k>display files of folder(s)' , 'callback', {@cmenuCasesCB,'DisplayFilesOfFolders' }          ,'ForegroundColor',[0 0 1  ],'Separator','on');
+
 
 %% ===============================================
 
@@ -823,6 +825,8 @@ switch cmenutask
         statusMsg(0);
         
         %% ===============================================
+    case 'DisplayFilesOfFolders'
+        dispfiles('sel','selected','form',1);
     case 'prune_mask'
         statusMsg(1,' prune_mask ');
         
