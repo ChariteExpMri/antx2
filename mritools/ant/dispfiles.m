@@ -58,14 +58,14 @@
 %
 % from selected animals show all NIFTIs starting with 't2' or 'x_t2'
 % dispfiles('sel','selected','flt','^t2.*.nii|^x_t2.*.nii')
-%
-%% display files of selected fullpath-folders
+%% ====
+%% display files of these fullpath-folders
 % md={'F:\data5\nogui\dat\tube_MN_t1_4D'
 %     'F:\data5\nogui\dat\tube_MN_t2'
 %     'F:\data5\nogui\dat\ventr'};
 % dispfiles('sel',md);
-%% ===============================================
-%% display files of selected shortname folders (antx-project must be loaded before)
+%% ====
+%% display files of these shortname folders (antx-project must be loaded before)
 % md={'tube_MN_t1_4D'    'tube_MN_t2'    'ventr'};
 % dispfiles('sel',md)
 % 
