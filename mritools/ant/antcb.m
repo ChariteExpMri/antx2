@@ -7,6 +7,8 @@
 %
 % antcb('countfiles', flt); % search and count specific files in animal-folders
 %                           % HELP: antcb('countfiles?')
+% antcb('getstudypath')     %get path of current study
+%                           ->for HELP type antcb('getstudypath?') 
 %
 % antcb('makeproject')    % create a new project -->for HELP type antcb('makeproject','?')
 % antcb('saveproject')    % save/modify projectfile -->for HELP type antcb('saveproject?')
@@ -177,6 +179,13 @@ if strcmp(do,'setpreorientation')
     end
 end
 if strcmp(do,'setpreorientation?');    help antcb>setpreorientation;end
+%% ===============================================
+if strcmp(do,'getstudypath')
+    try ;    varargout{1}=getstudypath(input);
+    catch;   disp('* type    antcb(''getstudypath'',''?'')     for help');
+    end
+end
+if strcmp(do,'getstudypath?');    help antcb>getstudypath;end
 %% ===============================================
 
 
@@ -2520,6 +2529,24 @@ o=nc;
 if displayfile==2;
     uhelp(g,0,'name','found files');
 end
+%% ===============================================
+function  o=getstudypath(par0)
+% get path of current study
+% output is empty, if no ANTx-project is loaded
+% USAGE___
+% studypath=antcb('getstudypath')
+% 
+
+% 
+
+o=[];
+global an
+if isempty(an);
+    disp('no ANTx-study loaded');
+    return;
+end
+o=fileparts(an.datpath);
+
 
 %% ===============================================
 function  o=setpreorientation(par0)
