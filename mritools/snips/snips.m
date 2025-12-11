@@ -817,7 +817,8 @@ s=hb.String;
 li=zeros(size(u.c,1),1);
 if ~isempty(s)
     for i=1:size(u.c,1)
-        if ~isempty(strfind(strjoin(u.c{i,3},' '),s));
+        %if ~isempty(strfind(strjoin(u.c{i,3},' '),s));
+            if ~isempty(regexpi(strjoin(u.c{i,3},' '),s));
             li(i)=1;
         end
     end

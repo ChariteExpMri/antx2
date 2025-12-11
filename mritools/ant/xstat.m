@@ -1651,6 +1651,7 @@ stattests={...
 
 p={
     'inf1'            '% ##'  '' ''
+%     'stattype'       xtype   'STATISTICAL TEST'  stattests(:,1)'
     'excelfile'       ''     '[Excel-file]: file containing columns with animal-IDs and group/regressionValue and optional covariates' 'f'
     'sheetnumber'     1      'sheet-index containing the data (default: 1)' ''
     'mouseID_col'     1      'column-index containing animal-IDs (default: 1)' ''
@@ -1672,6 +1673,7 @@ p={
     'inf4'     '_____ OTHER PARAMETER ________________________'  '' ''
     'smoothing'       1                 '<optional>smooth data, [0|1]; if [1] the NIFTI is smoothed & stored with prefix "s" in the animal-dir, the smoothed image is than used for analysis ' 'b'
     'smoothing_fwhm'  [0.28 0.28 0.28]  'smoothing width (FWHM); example: tripple of the voxsize of the inputimage '  ''
+    'variance'       'unequal'            'set variance {equal or unequal}' {'unequal' 'equal'}
     'showSPMwindows'  1                  'hide|show SPM-WINDOWS, [0|1]; if [0] SPM-windows are hidden' 'b';
     'showSPMbatch'    1                  'hide|show SPM-batch, [0|1]; usefull for evaluation and postprocessing' 'b';
     'runSPMbatch'     1                  'run SPM-batch, [0|1]; if [0] you have to start the SPM-batch by yourself,i.e hit the green triangle, [1] batch runs automatically ' 'b';
@@ -1694,8 +1696,7 @@ if strcmp(xtype,'fullfactorial')
 end
 if strcmp(xtype,'flexfactorial')
     %% ===============================================
-    
- 'a'  
+     
  pbk=p;
  isep=find(strcmp(pbk(:,1),'group_col'));
  pq1=pbk(1:isep    ,:);
@@ -1733,7 +1734,8 @@ if isempty(istat)
    disp(stattests(:,1));
    error('undefined statistical model!');
 end
-p{1,2}= [ strrep( stattests{istat,2} ,'%','% DESIGN:')  ' (' stattests{istat,1} ')']    ;% replace comment in 1st row
+p{1,2}= [ strrep( stattests{istat,2} ,'%','% DESIGN ("x.stattype"):')  ' (' stattests{istat,1} ')']    ;% replace comment in 1st row
+
 if strcmp(xtype, 'regression'); %remove "group_col"
     p(strcmp(p(:,1),'group_col'),:)=[];
 end

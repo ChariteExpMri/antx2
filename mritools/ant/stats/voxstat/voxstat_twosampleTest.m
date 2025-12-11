@@ -52,7 +52,23 @@ mb{1}.spm.stats.factorial_design.des.t2.scans1 = g1;
 mb{1}.spm.stats.factorial_design.des.t2.scans2 = g2;
 
 mb{1}.spm.stats.factorial_design.des.t2.dept = 0;
-mb{1}.spm.stats.factorial_design.des.t2.variance = 1;
+mb{1}.spm.stats.factorial_design.des.t2.variance = 1;   %  [1]: unequal variance; [0]:equal variance
+
+% ix_variance=find(strcmp(xvv.p(:,1),'variance'))
+if isfield(x,'variance')
+    if ~isempty(x.variance)
+        vartab={'unequal', 1; 'equal',0 };
+        ixvar=find(strcmp(vartab(:,1),x.variance));
+        if ~isempty(ixvar)
+           mb{1}.spm.stats.factorial_design.des.t2.variance = vartab{ixvar,2};
+           disp(['variance: ' vartab{ixvar,1} '(' num2str(vartab{ixvar,2}) ')'])
+        end
+    end
+end
+
+% return
+
+
 mb{1}.spm.stats.factorial_design.des.t2.gmsca = 0;
 mb{1}.spm.stats.factorial_design.des.t2.ancova = 0;
 % mb{1}.spm.stats.factorial_design.cov = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {});
