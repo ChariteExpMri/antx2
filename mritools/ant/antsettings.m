@@ -3,7 +3,7 @@
 % #ga CHANGEABLE PARAMETERS
 % ----------------------------
 % settings.show_intro               =  0          ;%[0,1] shows intro when ANT-gui is started
-% settings.show_HTMLprogressReport  =  1          ;%[0,1] shows HTML progress for init./coregistration/segementation/warping
+% settings.show_HTMLprogressReport  =  0          ;%[0,1] shows HTML progress for init./coregistration/segementation/warping
 % settings.show_instant_help        =  0          ;%[0,1] displays help when hovering over menu-items
 % settings.enable_menutooltips      =  0          ;%[0,1] enable tooltips when hovering over ANT-menu
 % 
@@ -29,7 +29,7 @@ settings=struct();
 %%   MODIFY HERE
 %====================================
 settings.show_intro               =  0          ;%[0,1] shows intro when ANT-gui is started
-settings.show_HTMLprogressReport  =  1          ;%[0,1] shows HTML progress for init./coregistration/segementation/warping
+% settings.show_HTMLprogressReport  =  0          ;%[0,1] shows HTML progress for init./coregistration/segementation/warping
 settings.show_instant_help        =  0          ;%[0,1] displays help when hovering over menu-items
 settings.enable_menutooltips      =  0          ;%[0,1] enable tooltips when hovering over ANT-menu
 

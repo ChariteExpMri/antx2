@@ -3725,16 +3725,23 @@ try
         
         %% ===============================================
     elseif strcmp(fi,'last')| strcmp(fi,'l')
+        try
+            a=preadfile2(fullfile(prefdir,'matlab.settings'));
+            i0=regexpi2(a,'<settings name="currentfolder">');
+            i1=regexpi2(a,' <key name="History">');
+            i2=regexpi2(a,' </key>');
+            i2=i2(min(find(i1<i2)));
+            ip=regexpi2(a,'<value><![CDATA[');
+            ps=find(ip>i1 & ip<i2);
+            pw=a(ip(ps));
+            pw=regexprep(pw,{'.*[CDATA[',']]></value>'}, '');
+        catch
+            s = settings;
+            cf = s.matlab.desktop.currentfolder;
+            pw = cf.History.ActiveValue(:); % history is a cell array of char
+            
+        end
         
-        a=preadfile2(fullfile(prefdir,'matlab.settings'));
-        i0=regexpi2(a,'<settings name="currentfolder">');
-        i1=regexpi2(a,' <key name="History">');
-        i2=regexpi2(a,' </key>');
-        i2=i2(min(find(i1<i2)));
-        ip=regexpi2(a,'<value><![CDATA[');
-        ps=find(ip>i1 & ip<i2);
-        pw=a(ip(ps));
-        pw=regexprep(pw,{'.*[CDATA[',']]></value>'}, '');
         pw(regexpi2(pw, 'antx2'))=[];
         % pwlast=pw{1};
         t={};

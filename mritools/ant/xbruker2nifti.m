@@ -38,8 +38,13 @@
 %       - if not specified the dat-folder of the loaded ANT-project is used. For this, the
 %         ANT-project must be loaded
 %       - otherwise specify a fullpath folder
+%
 % first - n, numeric number; for testing purpose , convert only the first n-files
-%        - example to convert only the first two files: ..,'first',2,..    
+%        - example to convert only the first two files: ..,'first',2,..
+% set   - the set-number to display or import
+%        -example: 'set',[ 1 3 5]  -->  display or import sets 1,3, and 5
+%        -         'set','all'     -->  display or import all sets (same as is 'set' is not specified)
+%
 % prefix: -(string), add a prefix string to the converted NIFTI-filenames
 % suffix: -(string), add a suffix string to the converted NIFTI-filenames
 % flt   : filter option
@@ -49,6 +54,9 @@
 %        - filters can be combined using : {ACN,SS,ACN,SS,...ACN,SS}:
 %          example: all files from set 2,3,5,6,7,8 with string 'RARE' or 'FISP' in protocol-name
 %                    .. 'flt',{'set' [2 3 5:8] 'pro','RARE|FISP'}
+%                  'flt',{'protocol','Loc|DTI'}    ..show/import all files where protocol-Names contain 'Loc'
+%                   or 'DTI'
+% overwrite -[0,1]; default:[1] overwrite all files, [0] write only nonexisting files ...use with caution!
 %
 % ==========================================================
 %% NO GUI (silent mode)
@@ -130,7 +138,7 @@
 % ==============================================
 %%   LARGE DATA (MANY BRUKER RAW DATA FILES)
 % ===============================================
-% In case of many Bruker raw data files the loading time could be long. 
+% In case of many Bruker raw data files the loading time could be long.
 % In this case, one can first read all raw-dara files to a struct (output argument of 'xbruker2nifti.m')
 % and with a 2nd/3rd.. call select specifc files (to import). For this the struct is parsed as 1st input
 % argument to 'xbruker2nifti.m'
@@ -146,14 +154,14 @@
 %
 % [3a] convert all files with 'FISP' or 'FLASH' in 'MR' (MRseq) to 'dat4'-folder
 % w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'MRs','FISP|FLASH'},'paout',fullfile(pwd,'dat4'));
-% 
+%
 % [3b] convert all files SELECTED VIA INTACTIVE GUI ('paout' is a test output-folder)
 % w2=xbruker2nifti(w1,0,[],[],'gui',1,'show',0,'paout',fullfile(pwd,'dat4'))
-% 
+%
 % [3c] convert first-two files with 'RARE' in 'MR' (MRseq) to 'dat4'-folder  ("first" is for testing purpose)
 % w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'MRs','RARE'},'paout',fullfile(pwd,'dat4'),'first',2);
-% 
-% 
+%
+%
 %
 % ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 %    EXAMPLE  BRUKER DATA-TABLE
@@ -182,41 +190,41 @@
 % 3   20220301_ECM_Round11_Cage1_M04 1      4     3     User:epi_mre 07_epi_mre                 3.402 10-Mrz-2022 11:24:26 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\4\pdata\3\2dseq ECM longitudinal       Cage1_M04             2
 % 3   20220301_ECM_Round11_Cage1_M04 1      6     1     FieldMap     B0Map-ADJ_B0MAP          1.04858 10-Mrz-2022 11:24:22 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\6\pdata\1\2dseq ECM longitudinal       Cage1_M04             3
 % ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-% 
+%
 % ==============================================
 %%  commandline example: BRUKER DATA  using Anastasia's data
-% ===============================================                                                                                                                                                                                                                                  
+% ===============================================
 % ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-% set    SubjectId           StudNo  ExpNo  PrcNo  MRseq         protocol                  sizeMB   date                  file                                                                                            StudId  SubjectName  CoreDim  
-% 1      2021517_aj_T7_271   1       1      1      FLASH         01_Localizer_multi_slice  0.49152  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\1\pdata\1\2dseq   40G_1   T7_271       2        
-% 1      2021517_aj_T7_271   1       2      1      DtiEpi        02_DWI_Trace_EPI_sat       4.7186  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\2\pdata\1\2dseq   40G_1   T7_271       2        
-% 1      2021517_aj_T7_271   1       2      2      DtiEpi        nan                        5.2429  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\2\pdata\2\2dseq   40G_1   T7_271       2        
-% 1      2021517_aj_T7_271   1       3      1      RARE          03_T2_TurboRARE            4.1943  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\3\pdata\1\2dseq   40G_1   T7_271       2        
-% 1      2021517_aj_T7_271   1       4      1      RARE          04_T1_RARE_32slices        4.1943  01-Jun-2023 10:22:08  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\4\pdata\1\2dseq   40G_1   T7_271       2        
-% 1      2021517_aj_T7_271   1       5      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:06  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\5\pdata\1\2dseq   40G_1   T7_271       2        
-% 1      2021517_aj_T7_271   1       5      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:06  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\5\pdata\2\2dseq   40G_1   T7_271       2        
-% 1      2021517_aj_T7_271   1       6      1      FieldMap      B0Map-ADJ_B0MAP            1.0486  01-Jun-2023 10:22:08  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\6\pdata\1\2dseq   40G_1   T7_271       3        
-% 1      2021517_aj_T7_271   1       7      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:10  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\7\pdata\1\2dseq   40G_1   T7_271       2        
-% 1      2021517_aj_T7_271   1       7      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:10  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\7\pdata\2\2dseq   40G_1   T7_271       2        
-% 1      2021517_aj_T7_271   1       8      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:06  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\8\pdata\1\2dseq   40G_1   T7_271       2        
-% 1      2021517_aj_T7_271   1       8      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:06  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\8\pdata\2\2dseq   40G_1   T7_271       2        
-% 2      2021517_aj_T13_277  1       1      1      FLASH         01_Localizer_multi_slice  0.49152  01-Jun-2023 10:22:12  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\1\pdata\1\2dseq  40G_1   T13_277      2        
-% 2      2021517_aj_T13_277  1       2      1      DtiEpi        02_DWI_Trace_EPI_sat       4.7186  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\2\pdata\1\2dseq  40G_1   T13_277      2        
-% 2      2021517_aj_T13_277  1       2      2      DtiEpi        nan                        5.2429  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\2\pdata\2\2dseq  40G_1   T13_277      2        
-% 2      2021517_aj_T13_277  1       3      1      FieldMap      B0Map-ADJ_B0MAP            1.0486  01-Jun-2023 10:22:10  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\3\pdata\1\2dseq  40G_1   T13_277      3        
-% 2      2021517_aj_T13_277  1       4      1      RARE          03_T2_TurboRARE            4.1943  01-Jun-2023 10:22:12  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\4\pdata\1\2dseq  40G_1   T13_277      2        
-% 2      2021517_aj_T13_277  1       5      1      RARE          04_T1_RARE_32slices        4.1943  01-Jun-2023 10:22:14  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\5\pdata\1\2dseq  40G_1   T13_277      2        
-% 2      2021517_aj_T13_277  1       6      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:18  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\6\pdata\1\2dseq  40G_1   T13_277      2        
-% 2      2021517_aj_T13_277  1       6      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:18  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\6\pdata\2\2dseq  40G_1   T13_277      2        
-% 2      2021517_aj_T13_277  1       7      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:14  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\7\pdata\1\2dseq  40G_1   T13_277      2        
-% 2      2021517_aj_T13_277  1       7      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:14  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\7\pdata\2\2dseq  40G_1   T13_277      2        
-% 2      2021517_aj_T13_277  1       8      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\8\pdata\1\2dseq  40G_1   T13_277      2        
-% 2      2021517_aj_T13_277  1       8      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\8\pdata\2\2dseq  40G_1   T13_277      2        
+% set    SubjectId           StudNo  ExpNo  PrcNo  MRseq         protocol                  sizeMB   date                  file                                                                                            StudId  SubjectName  CoreDim
+% 1      2021517_aj_T7_271   1       1      1      FLASH         01_Localizer_multi_slice  0.49152  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\1\pdata\1\2dseq   40G_1   T7_271       2
+% 1      2021517_aj_T7_271   1       2      1      DtiEpi        02_DWI_Trace_EPI_sat       4.7186  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\2\pdata\1\2dseq   40G_1   T7_271       2
+% 1      2021517_aj_T7_271   1       2      2      DtiEpi        nan                        5.2429  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\2\pdata\2\2dseq   40G_1   T7_271       2
+% 1      2021517_aj_T7_271   1       3      1      RARE          03_T2_TurboRARE            4.1943  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\3\pdata\1\2dseq   40G_1   T7_271       2
+% 1      2021517_aj_T7_271   1       4      1      RARE          04_T1_RARE_32slices        4.1943  01-Jun-2023 10:22:08  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\4\pdata\1\2dseq   40G_1   T7_271       2
+% 1      2021517_aj_T7_271   1       5      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:06  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\5\pdata\1\2dseq   40G_1   T7_271       2
+% 1      2021517_aj_T7_271   1       5      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:06  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\5\pdata\2\2dseq   40G_1   T7_271       2
+% 1      2021517_aj_T7_271   1       6      1      FieldMap      B0Map-ADJ_B0MAP            1.0486  01-Jun-2023 10:22:08  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\6\pdata\1\2dseq   40G_1   T7_271       3
+% 1      2021517_aj_T7_271   1       7      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:10  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\7\pdata\1\2dseq   40G_1   T7_271       2
+% 1      2021517_aj_T7_271   1       7      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:10  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\7\pdata\2\2dseq   40G_1   T7_271       2
+% 1      2021517_aj_T7_271   1       8      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:06  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\8\pdata\1\2dseq   40G_1   T7_271       2
+% 1      2021517_aj_T7_271   1       8      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:06  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\8\pdata\2\2dseq   40G_1   T7_271       2
+% 2      2021517_aj_T13_277  1       1      1      FLASH         01_Localizer_multi_slice  0.49152  01-Jun-2023 10:22:12  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\1\pdata\1\2dseq  40G_1   T13_277      2
+% 2      2021517_aj_T13_277  1       2      1      DtiEpi        02_DWI_Trace_EPI_sat       4.7186  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\2\pdata\1\2dseq  40G_1   T13_277      2
+% 2      2021517_aj_T13_277  1       2      2      DtiEpi        nan                        5.2429  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\2\pdata\2\2dseq  40G_1   T13_277      2
+% 2      2021517_aj_T13_277  1       3      1      FieldMap      B0Map-ADJ_B0MAP            1.0486  01-Jun-2023 10:22:10  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\3\pdata\1\2dseq  40G_1   T13_277      3
+% 2      2021517_aj_T13_277  1       4      1      RARE          03_T2_TurboRARE            4.1943  01-Jun-2023 10:22:12  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\4\pdata\1\2dseq  40G_1   T13_277      2
+% 2      2021517_aj_T13_277  1       5      1      RARE          04_T1_RARE_32slices        4.1943  01-Jun-2023 10:22:14  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\5\pdata\1\2dseq  40G_1   T13_277      2
+% 2      2021517_aj_T13_277  1       6      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:18  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\6\pdata\1\2dseq  40G_1   T13_277      2
+% 2      2021517_aj_T13_277  1       6      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:18  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\6\pdata\2\2dseq  40G_1   T13_277      2
+% 2      2021517_aj_T13_277  1       7      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:14  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\7\pdata\1\2dseq  40G_1   T13_277      2
+% 2      2021517_aj_T13_277  1       7      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:14  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\7\pdata\2\2dseq  40G_1   T13_277      2
+% 2      2021517_aj_T13_277  1       8      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\8\pdata\1\2dseq  40G_1   T13_277      2
+% 2      2021517_aj_T13_277  1       8      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\8\pdata\2\2dseq  40G_1   T13_277      2
 % ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-% % 
+% %
 % % OPTION-[1]: import all Anastasia Bruker data (no gui)
 % w1=xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0);
-% 
+%
 % % OPTION-[2]: import only a preselection of Anastasia Bruker data (no gui)
 % %preselection
 % w1=xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0,'show',1);  %read Bruker data
@@ -224,7 +232,7 @@
 % %import data with strings 'nan' or 'T1 or 'T2' found in field 'protocol' ..these files
 % % correspond to 'nan', '04_T1_RARE_32slices' and '03_T2_TurboRARE' in the 'protocol'-field
 % w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol','nan|T1|T2'},'paout',fullfile(pwd,'dat'));
-% 
+%
 %% ===============================================
 %% additional nonGUI-parameter
 %% ===============================================
@@ -238,9 +246,9 @@
 %                     {0|1}, default: 0
 % 'StudID_Dir'      add StudId as SUFFIX to animal directory
 %                     {0|1}, default: 1
-% 'SubjectName_Dir' add SubjectName as SUFFIX to animal directory 
+% 'SubjectName_Dir' add SubjectName as SUFFIX to animal directory
 %                     {0|1}, default: 0
-% 
+%
 % 'ExpNo_File'     add VisuExperimentNumber as suffix to new file
 %                      {0|1}, default: 0
 % 'PrcNo_File'     add VisuProcessingNumber/ReconstructionNumber as suffix to new file
@@ -249,17 +257,17 @@
 %                      string, default: ''
 % 'suffix'        add suffix to new file
 %                      string, default: ''
-% 
-% 
+%
+%
 %% example: import files which Protocol contains string 'T1rho', adding EXPerimentNumber to file
 % w1=xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0,'show',1);
 % w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol','T1rho'},...
 %     'paout',fullfile(pwd,'dat'),'ExpNo_File',1);
-%  
+%
 %% example: import files which Protocol contains string 'T1rho', addding EXPerimentNumber & ProcNumber to file
 % w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol','T1rho'},...
 %     'paout',fullfile(pwd,'dat'),'ExpNo_File',1,'PrcNo_File',1);
-%  
+%
 
 
 function varargout=xbruker2nifti(pain,sequence,trmb,x,varargin)
@@ -275,6 +283,7 @@ if exist('pain')==0
 end
 %% =========Pairwise inputs======================================
 p0.gui=1; % [0,1] show guis
+p0.overwrite=1; %force to overwrite
 if nargin>4
     pin= cell2struct(varargin(2:2:end),varargin(1:2:end),2);
     %p0=catstruct2(p0,pin);
@@ -720,9 +729,27 @@ end
 % ==============================================
 %%   reduce by ID
 % ===============================================
+set=cell2mat(cellfun(@(a){[str2num(a)]}, d(:,1)));
 if isfield(p0,'first') && isnumeric(p0.first) && p0.first<=length(id) ;% reduce via 'first'-option
-   id= id(1:p0.first);
+    id= id(1:p0.first);
 end
+% explicit set-numbers uded here: like: 'set',[1 3]  or 'set',[9]
+if isfield(p0,'set') && isnumeric(p0.set)
+    if length(intersect(unique(set),p0.set))==length(p0.set)
+        setids=find(ismember(set,p0.set));
+        id=intersect(id,setids);
+    else
+        isec=intersect(1:length(id),p0.set);
+        mis=setdiff(p0.set,isec);
+        disp(['  setNo found    : ' strjoin(cellstr(num2str(isec')),',')] );
+        disp(['  setNo not found: ' strjoin(cellstr(num2str(mis')),',')] );
+        disp('..import aborted .. please remove set');
+        return
+    end
+elseif  isfield(p0,'set') && ischar(p0.set) && strcmp(p0.set,'all')
+    %do nothing...here
+end
+
 
 dx       =d(id,:);
 files    =files(id);
@@ -730,6 +757,11 @@ seq      =seq(id);
 visux    =visux(id)';
 meth     =meth(id)';
 protocol =protocol(id);
+
+% clear d
+
+
+
 
 
 %% =============[visualize only]==================================
@@ -829,8 +861,8 @@ if showgui==1
 else
     z=param2struct(p);
 end
-if isempty(z); 
-%     cprintf([0 .5 .8],[' ..user abort!  \n']);
+if isempty(z);
+    %     cprintf([0 .5 .8],[' ..user abort!  \n']);
     return
 end
 fn=fieldnames(z);
@@ -875,7 +907,7 @@ end
 %% ===============================================
 
 % ==============================================
-%%  non-GUI input parameter 
+%%  non-GUI input parameter
 % ===============================================
 if exist('p0')==1 && isstruct(p0)
     
@@ -920,6 +952,8 @@ out.info='bruker-imported files';
 out.hd=dh;
 out.d =d(id,:);
 
+
+out.forceoverwrite=ones([size(files,1) 1]);
 out.raw     =files;
 out.nifti   =repmat({''},[size(files,1) 1]);
 out.success =repmat(0,[size(files,1) 1]);
@@ -927,7 +961,7 @@ out.errmsg  =repmat({''},[size(files,1) 1]);
 %  output-function
 out.showtable  = @(structname) disp(char(plog([],[structname.hd; structname.d],0,'BRUKER DATA ','al=1')));
 out.showtable2 = @(structname) uhelp(plog([],[structname.hd; structname.d],0,'BRUKER DATA ','al=1'),1);
-        
+
 
 for i=1:size(files,1)
     
@@ -961,13 +995,13 @@ for i=1:size(files,1)
         end
         
         if z.StudID_Dir==1;
-          mfold=  [mfold delimiter char(dx(i,strcmp(dh,'StudId')))];
+            mfold=  [mfold delimiter char(dx(i,strcmp(dh,'StudId')))];
         end
         if z.SubjectName_Dir==1;
-          mfold=  [mfold delimiter char(dx(i,strcmp(dh,'SubjectName')))];
+            mfold=  [mfold delimiter char(dx(i,strcmp(dh,'SubjectName')))];
         end
         
-      
+        
         
         
         
@@ -1008,92 +1042,113 @@ for i=1:size(files,1)
             fpname= stradd(fpname,p0.suffix,2);
         end
         
-        %disp([pnum(i,4) '] create <a href="matlab: explorer('' ' outdir '  '')">' fpname '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(files{i}) '  '')">' files{i}  '</a>']);% show h<perlink
+        % file exist
+        % file does not exist  
+        writeFile=1;
+        filealreadyExist=0;
+        if exist(fpname)==2
+            filealreadyExist=1;
+        end
         
-        %==============================================================================
-        %%===============================================
-        %%   EXTRACT DTA
-        %%===============================================
-        [ni bh  da]=getbruker(brukerfile);
         
-        % BUG -first 2Dims are mixed
-        if ndims(ni.d)==3
-            dimdiff=size(ni.d)-ni.hd.dim ;
-            if dimdiff(1)~=0 && dimdiff(2)~=0  && dimdiff(3)==0 %first 2Dims are mixed
-                ni.hd.dim=ni.hd.dim([2 1 3]);
+        if p0.overwrite==0 && exist(fpname)==2
+            writeFile=0;
+            out.forceoverwrite(i,1)=0;
+        end
+        
+        
+        
+        if writeFile==1
+                       
+            %disp([pnum(i,4) '] create <a href="matlab: explorer('' ' outdir '  '')">' fpname '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(files{i}) '  '')">' files{i}  '</a>']);% show h<perlink
+            
+            %==============================================================================
+            %%===============================================
+            %%   EXTRACT DTA
+            %%===============================================
+            [ni bh  da]=getbruker(brukerfile);
+            
+            % BUG -first 2Dims are mixed
+            if ndims(ni.d)==3
+                dimdiff=size(ni.d)-ni.hd.dim ;
+                if dimdiff(1)~=0 && dimdiff(2)~=0  && dimdiff(3)==0 %first 2Dims are mixed
+                    ni.hd.dim=ni.hd.dim([2 1 3]);
+                end
             end
-        end
-        
-        %     %nachtrag
-        %     if 1
-        %       vecm=  spm_imatrix(ni.hd.mat)
-        %         ni.hd.mat=[[diag(vecm(7:9)); 0 0 0] [  vecm(1:3) 1]']
-        %     end
-        %
-        
-        
-        if strcmp(z.origin,'volumeCenter')
-            ni.hd.mat(1:3,4) =-diag(ni.hd.mat(1:3,1:3)).*round(ni.hd.dim(1:3)/2)' ;
-        end
-        
-        
-        %     visu          = readBrukerParamFile(fullfile(pa,'visu_pars'));
-        %       dtest   = readBruker2dseq(brukerfile,visu);
-        
-        %%===============================================
-        %%   PREPARE NIFTI
-        %  hh   = struct('fname',outfile ,...
-        %         'dim',   {dim(1:3)},...
-        %         'dt',    {[64 spm_platform('bigend')]},...
-        %         'pinfo', {[1 0 0]'},...
-        %         'mat',   {mat},...
-        %         'descrip', {['x']});
-        %%===============================================
-        hh         = ni.hd;
-        hh.fname   = fpname;
-        
-        ifilesep=strfind(brukerfile,filesep);
-        brukerfile_short=brukerfile(ifilesep(end-4)+1:end);
-        hh.descrip = [ brukerfile_short];
-        
-        % PRECISION
-        %hh.dt         = [16 0]  ;%'float32'
-        hh.dt         = [64 0]  ;%'float64'
-        
-        %===============================================
-        %%  SAVE NIFTI (3d/4d)
-        %%===============================================
-        fclose('all');
-        
-        if 0 %% TEST
-            continue
-            disp( hh.fname );
-        end
-        
-        if ndims(ni.d)==3
-            hh=spm_create_vol(hh);
-            hh=spm_write_vol(hh,  ni.d);
-        elseif ndims(ni.d)==4
-            clear hh2
-            for j=1:size(ni.d,4)
-                dum=hh;
-                dum.n=[j 1];
-                hh2(j,1)=dum;
-                %if j==1
-                %mkdir(fileparts(hh2.fname));
-                spm_create_vol(hh2(j,1));
-                %end
-                spm_write_vol(hh2(j),ni.d(:,:,:,j));
+            
+            %     %nachtrag
+            %     if 1
+            %       vecm=  spm_imatrix(ni.hd.mat)
+            %         ni.hd.mat=[[diag(vecm(7:9)); 0 0 0] [  vecm(1:3) 1]']
+            %     end
+            %
+            
+            
+            if strcmp(z.origin,'volumeCenter')
+                ni.hd.mat(1:3,4) =-diag(ni.hd.mat(1:3,1:3)).*round(ni.hd.dim(1:3)/2)' ;
             end
-        elseif ndims(ni.d)==2
-            if hh.dim(1)==size(ni.d,1) && hh.dim(2)==size(ni.d,2)
+            
+            
+            %     visu          = readBrukerParamFile(fullfile(pa,'visu_pars'));
+            %       dtest   = readBruker2dseq(brukerfile,visu);
+            
+            %%===============================================
+            %%   PREPARE NIFTI
+            %  hh   = struct('fname',outfile ,...
+            %         'dim',   {dim(1:3)},...
+            %         'dt',    {[64 spm_platform('bigend')]},...
+            %         'pinfo', {[1 0 0]'},...
+            %         'mat',   {mat},...
+            %         'descrip', {['x']});
+            %%===============================================
+            hh         = ni.hd;
+            hh.fname   = fpname;
+            
+            ifilesep=strfind(brukerfile,filesep);
+            brukerfile_short=brukerfile(ifilesep(end-4)+1:end);
+            hh.descrip = [ brukerfile_short];
+            
+            % PRECISION
+            %hh.dt         = [16 0]  ;%'float32'
+            hh.dt         = [64 0]  ;%'float64'
+            
+            %===============================================
+            %%  SAVE NIFTI (3d/4d)
+            %%===============================================
+            fclose('all');
+            
+            
+            if 0 %% TEST
+                continue
+                disp( hh.fname );
+            end
+            
+            
+            if ndims(ni.d)==3
                 hh=spm_create_vol(hh);
                 hh=spm_write_vol(hh,  ni.d);
-            else
-                hh.dim=[size(ni.d) 1];
-                hh=spm_create_vol(hh);
-                hh=spm_write_vol(hh,  ni.d); 
-            end  
+            elseif ndims(ni.d)==4
+                clear hh2
+                for j=1:size(ni.d,4)
+                    dum=hh;
+                    dum.n=[j 1];
+                    hh2(j,1)=dum;
+                    %if j==1
+                    %mkdir(fileparts(hh2.fname));
+                    spm_create_vol(hh2(j,1));
+                    %end
+                    spm_write_vol(hh2(j),ni.d(:,:,:,j));
+                end
+            elseif ndims(ni.d)==2
+                if hh.dim(1)==size(ni.d,1) && hh.dim(2)==size(ni.d,2)
+                    hh=spm_create_vol(hh);
+                    hh=spm_write_vol(hh,  ni.d);
+                else
+                    hh.dim=[size(ni.d) 1];
+                    hh=spm_create_vol(hh);
+                    hh=spm_write_vol(hh,  ni.d);
+                end
+            end
         end
         
         try
@@ -1105,7 +1160,12 @@ for i=1:size(files,1)
         out.nifti{i,1}=fpname; %write filename to output-struct;
         
         %% SUCCESS
-        disp([pnum(i,4) '] create <a href="matlab: explorer('' ' outdir '  '')">' fpname '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(files{i}) '  '')">' files{i}  '</a>']);% show h<perlink
+        
+            prefixexist=' creating';
+            if filealreadyExist==1; prefixexist=' re-creating'; end
+            if writeFile==0;        prefixexist=' already exist'; end 
+            disp([pnum(i,4) ']' prefixexist ' <a href="matlab: explorer('' ' outdir '  '')">' fpname '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(files{i}) '  '')">' files{i}  '</a>']);% show h<perlink
+       
         
     catch
         
@@ -1147,11 +1207,16 @@ end
 try
     hlogfile=['NIFTI'  'RAW'       'SUCCESS'      out.hd    'ErrorMessage'     ];
     logfile =[out.nifti out.raw num2cell(out.success) out.d out.errmsg];
+    logfileBK=logfile;
+    logfile(find(out.forceoverwrite==0),:)=[]; %baustelle
     
-    logfile_fmt=(plog([],[  hlogfile;logfile],0,'','plotlines=0;al=1' ));
     
-    logfileName=fullfile(paout,   ['logImport_' regexprep(datestr(now),{'\s+',':'},{'__','-'}) '.log']);
-    pwrite2file(logfileName,logfile_fmt);
+    if ~isempty(logfile)
+        logfile_fmt=(plog([],[  hlogfile;logfile],0,'','plotlines=0;al=1' ));
+        
+        logfileName=fullfile(paout,   ['logImport_' regexprep(datestr(now),{'\s+',':'},{'__','-'}) '.log']);
+        pwrite2file(logfileName,logfile_fmt);
+    end
 end
 % ==============================================
 %%   save logfile within each animal folder
@@ -1162,12 +1227,16 @@ try
     
     for i=1:length(px_out_uni)
         ix=find(strcmp(px_out,px_out_uni{i}));
-        logfileAnimal=logfile(ix,:);
-        logfile_fmt=(plog([],[  hlogfile;logfileAnimal],0,'','plotlines=0;al=1' ));
+        logfileAnimal=logfileBK(ix,:);
+        logfile_write=out.forceoverwrite(ix);
+        logfileAnimal2write=logfileAnimal(logfile_write==1,:    );
         
-        logfileName=fullfile(px_out_uni{i},   ['logImport_' regexprep(datestr(now),{'\s+',':'},{'__','-'}) '.log']);
-        pwrite2file(logfileName,logfile_fmt);
-        showinfo2('saved: ',logfileName);
+        logfile_fmt=(plog([],[  hlogfile;logfileAnimal2write],0,'','plotlines=0;al=1' ));
+        if ~isempty(logfileAnimal2write)
+            logfileName=fullfile(px_out_uni{i},   ['logImport_' regexprep(datestr(now),{'\s+',':'},{'__','-'}) '.log']);
+            pwrite2file(logfileName,logfile_fmt);
+            showinfo2('saved: ',logfileName);
+        end
     end
 end
 
@@ -1374,7 +1443,7 @@ else
     iset=find(strcmp(flt(:,1),'set'));
     if ~isempty(iset)
         if isnumeric(flt{iset,2})
-            flt{iset,2}=  strjoin(cellfun(@(a){[ num2str(a) ]} ,num2cell(flt{iset,2})),'|');
+            flt{iset,2}=  strjoin(cellfun(@(a){[ '^' num2str(a) '$' ]} ,num2cell(flt{iset,2})),'|');
         end
     end
     
