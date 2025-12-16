@@ -341,6 +341,10 @@
 % xstat('fullreport', struct('format','html'));  
 % xstat('fullreport',struct('method',[2],'xls',0,'nifti',0,'format','html'));
 % xstat('fullreport',struct('method',[1:3],'xls',1,'nifti',1,'format','html'));
+% 
+% xstat('fullreport2');     %Specific:, reports only for cluster-based & FWE (over all contrast)
+%                           % write xls-files and nifti-files (if significant)
+%                           %no additonal inputs here!
 
 % ==============================================
 %%   
@@ -454,6 +458,19 @@ if nargin>0
 %            [fiout g]= extractdata(x);
 %            varargout{1}=fiout;
 %            varargout{2}=g;
+        end
+        if strcmp(showgui, 'fullreport2');
+            fiout=[]; g=[];
+            if exist('x')~=1;        
+                x.dummi=1;    
+                x.method=[2 3];
+                x.writesigonly=1;
+            end
+            summary_contrastAllMethods(x);
+            %            x.dummi=1;
+            %            [fiout g]= extractdata(x);
+            %            varargout{1}=fiout;
+            %            varargout{2}=g;
         end
         
         return
@@ -1230,6 +1247,7 @@ if 1
     end
 end
 
+
 % ==============================================
 %%   what to do
 % ===============================================
@@ -1244,6 +1262,9 @@ end
 
 p=struct();
 p.method=[1:3];%methods to use [1]uncorected,[2]cluster-based,[3]FWE; example: use all methods: [1,2,3]
+if isfield(pin,'method')
+    p.method=pin.method;  
+end
 p.con   =cons;%contrast to include
 p.xls   =1   ;%write xls-file
 p.nifti =1   ;%write NIFTI-file
@@ -1305,6 +1326,7 @@ if ~isempty(find(p.method==2))
         xSPM = evalin('base','xSPM');
         clustersize = cp_cluster_Pthresh(xSPM, 0.001); %estimate clusterSize
         xstat('set',struct('MCP','none','thresh',0.001,'clk',clustersize,'con',con,'show',0)); % set PARAMETER
+        xSPM = evalin('base','xSPM');
         [p2 nametag2 paramtag]=getparameter();% get mainParameter
         nametag2=strrep(nametag2,'none','CLUST');
         paramtag=strrep(paramtag,'none','CLUST');
@@ -1320,11 +1342,25 @@ if ~isempty(find(p.method==2))
         xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol,'format',p.format  )); % save stat. table in PPT
         %xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
         
-        if p.nifti==1
+        
+        issignf=1;
+        if isfield(pin,'writesigonly')==1
+            %             uc = [u_voxel  u_FWE  k_FWE  k_FDR]
+            %             u_voxel:voxel-level threshold (in Z)
+            %             u_FWE:voxel-level FWE-corrected threshold
+            %             k_FWE:cluster extent threshold (FWE)
+            %             k_FDR:cluster extent threshold (FDR)
+            %                 k_FWE = Inf means:No cluster size can reach significance
+            if isinf(xSPM.uc(3))
+                issignf=0;
+            end
+        end
+        
+        if p.nifti==1 && issignf==1
             F1=fullfile(outdirData,[ nametag2 '.nii'   ]);
             xstat('savevolume',F1);     % save tresholded volume
         end
-        if p.xls==1
+        if p.xls==1 && issignf==1
             F2=fullfile(outdirData,[ nametag2 '.xlsx'   ]);
             xstat('export',F2);     % save stat. table as excelfile
         end
@@ -1344,6 +1380,7 @@ if ~isempty(find(p.method==3))
         if mod(con,2)==1; bgcol=[1 1 1]; else; bgcol=[0.894 0.9412 0.9]; end % PPT-bgColor % alterate PPT-backgroundcolor for each contrast
         
         xstat('set',struct('MCP','FWE','thresh',0.05,'clk',1,'con',con,'show',0))
+         xSPM = evalin('base','xSPM');
         [p2 nametag2 paramtag]=getparameter();% get mainParameter
         nametag2=strrep(nametag2,'none','CLUST');
         paramtag=strrep(paramtag,'none','CLUST');
@@ -1357,6 +1394,24 @@ if ~isempty(find(p.method==3))
         
         xstat('report',PPTFILE,struct('doc',DOC,'con',con,'bgcol',bgcol,'format',p.format  )); % save stat. table in PPT
         %xstat('report',PPTFILE,struct('show','volume','doc','add','con',con,'bgcol',bgcol  )); % save volume in PPT
+        
+        
+        issignf=1;
+        if isfield(pin,'writesigonly')==1
+            %             uc = [u_voxel  u_FWE  k_FWE  k_FDR]
+            %             u_voxel:voxel-level threshold (in Z)
+            %             u_FWE:voxel-level FWE-corrected threshold
+            %             k_FWE:cluster extent threshold (FWE)
+            %             k_FDR:cluster extent threshold (FDR)
+            V = xSPM.Vspm;     % get peak T-value (or local maxima T-values)
+            Tvals = spm_get_data(V, xSPM.XYZ);   % all voxels above uncorrected u
+            Tpeak = max(Tvals);
+            isVoxelFWEsig = Tpeak >= xSPM.uc(2);  % compare to voxel-wise FWE threshold% true if any voxel survives
+            if isVoxelFWEsig==0
+                issignf=0;
+            end
+        end
+        
         
         if p.nifti==1
             F1=fullfile(outdirData,[ nametag2 '.nii'   ]);
@@ -3556,25 +3611,38 @@ hlg(1:2)={'Field' ,'value'};
 if size(lg,2)==4
    hlg(3:4)={'group1' ,'group2'}; 
 end
-pwrite2excel(fiout,{1 'info'},hlg,[],lg);
+
+if verLessThan('matlab','9.6')  % 9.6 = R2019a
+    pwrite2excel(fiout,{1 'info'},hlg,[],lg);
+else
+    % MATLAB R2019a or newer.. use writecell
+    writecell([hlg;lg], fiout, 'Sheet', 'info');
+end
 
 % ========[2]WRITE DATA-sheet =======================================
 %% (b)---write data
-% pwrite2excel(fiout,{2 sheetname},tbnumeric(1,:),tbnumeric(2,:),tbnumeric(3:end,:));
-pwrite2excel(fiout,{2 'voxstat'},tbnumeric(1,:),tbnumeric(2,:),tbnumeric(3:end,:));
+if verLessThan('matlab','9.6')  % 9.6 = R2019a;
+    pwrite2excel(fiout,{2 'voxstat'},tbnumeric(1,:),tbnumeric(2,:),tbnumeric(3:end,:));
+else
+    % MATLAB R2019a or newer .. use writecell
+    writecell(tbnumeric, fiout, 'Sheet', 'voxstat');
+end
+
 fileout=fiout;
 gg.hlg=hlg;
 gg.lg=lg;
 % ========[3]WRITE NOTE =======================================
-try
-    note={
-        ['img: ' NIIfiles{1}]
-        ['con: '  xSPM.title]
-        ['MCP: ' get(findobj(hg,'tag','mcp'),'string')  ]
-        ['TR: ' num2str(get(findobj(hg,'tag','thresh'),'string')) ]
-        ['k : ' get(findobj(hg,'tag','clustersize'),'string')]
-        };
-    xlsinsertComment(fiout,note, 2, 6, 11);
+if 0
+    try
+        note={
+            ['img: ' NIIfiles{1}]
+            ['con: '  xSPM.title]
+            ['MCP: ' get(findobj(hg,'tag','mcp'),'string')  ]
+            ['TR: ' num2str(get(findobj(hg,'tag','thresh'),'string')) ]
+            ['k : ' get(findobj(hg,'tag','clustersize'),'string')]
+            };
+        xlsinsertComment(fiout,note, 2, 6, 11);
+    end
 end
 %% ===============================================
 showinfo2('voxSTAT-excelfile',fiout);

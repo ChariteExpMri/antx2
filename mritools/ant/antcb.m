@@ -3627,11 +3627,9 @@ function loadprojectfile(varargin)
 %
 % # print project-files in path as loadable hyperlinks in CMD-window
 %    antcb('load','p');                %same as: antcb('load','print')
-%    antcb('load','F:\data5\nogui\p'); %same as: antcb('load','F:\data5\nogui\print')
 %
 % # load newest/last modified projectfile in path
 %    antcb('load','n');                %same as: antcb('load','newest')
-%    antcb('load','F:\data5\nogui\n'); %same as: antcb('load','F:\data5\nogui\newest')
 %
 % # show last 10 modified projectfile across all studies --> use hyperlink to load a project
 %     antcb('load','l');                %same as: antcb('load','last')

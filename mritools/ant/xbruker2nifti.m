@@ -303,7 +303,7 @@ end
 
 
 
-fprintf('...reading Bruker-data...');
+fprintf('...reading Bruker-data:      ');
 
 warning off;
 format compact;
@@ -436,8 +436,7 @@ if ~isstruct(pain)
     %% get sequence
     
     % seq=cell(length(files),1);
-    disp('*** READ IN BRUKER DATA ***     ....            ');
-    disp('....');
+   % disp('*** READ IN BRUKER DATA ***     ....            ');
     tic
     
     ikeep=[];
@@ -447,7 +446,8 @@ if ~isstruct(pain)
         pa2=pa(1:strfind(pa,'pdata')-1);
         
         
-        S = sprintf('read file %d',i);
+        %S = sprintf('read file %d',i);
+        S = sprintf('%d',i);
         fprintf(repmat('\b',1,numel(S)));
         fprintf(S);
         drawnow;
