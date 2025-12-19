@@ -2785,7 +2785,14 @@ path='c:\'
  f = java.io.File(path);
     freeBytes = f.getUsableSpace();     % Query usable space (in bytes)
     freeGB=freeBytes / 2^30      % Convert to GB
+ 
+%% #################################################
+% forgotten things
+% diverse
 
+% remove path of multiple files (incl. subfolders/misc.paths)    
+% files_only = cellfun(@(f) [fileparts(f) ''], files, 'uni', 0);    
+files_only = cellfun(@(f) f(regexp(f,'[^\\/]+$'):end), files, 'uni', 0);
 %% #################################################
 % windows-10 server
 % logoff session by ID

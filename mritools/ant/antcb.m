@@ -2222,23 +2222,23 @@ function  o=loop(pp)
 %  if mdirs is set  to 'all' : using all animals
 %__________________________________________________
 %% EXAMPLES
-%# check if file exist
+%_ check if file exist
 %   antcb('loop','mdirs',[1:3],'task','a(i,1)=exist(''t2.nii'');');
-%# obtain dim of NIFTI-header
+%_ obtain dim of NIFTI-header
 %   antcb('loop','mdirs',[1:3],'task','h=spm_vol(''t2.nii''); a(i,:)=h.dim;');
-%# get length of files
+%_ get length of files
 %   antcb('loop','mdirs',[1:3],'task','h=dir;a(i,1)=length(h);');
-%# load t2-file into 4D array
+%_ load t2-file into 4D array
 %   antcb('loop','task','[ha a]=rgetnii(''t2.nii'');a2(:,:,:,i)=a;');
-%# make 2d-slice plots of t2.nii
+%_ make 2d-slice plots of t2.nii
 %   antcb('loop','task','slice2png(fullfile(''$mdir'',''t2.nii''),''dim'',1,''showonly'',1);' );
-%# get volume of ABA-caudoputamen
+%_ get volume of ABA-caudoputamen
 %   antcb('loop','task','vol(i,1)=getvolume(''ANO.nii'',''==672''); ');
-%# show coreg-jpg
+%_ show coreg-jpg
 %   antcb('loop','task','system(''coreg2.jpg'');');
-%# create new file with caudoputamen as mask
+%_ create new file with caudoputamen as mask
 %   antcb('loop','task','[ha a]=rgetnii(''x_t2.nii'');[hm m]=rgetnii(''ANO.nii'');v=a.*(m==672); rsavenii(''_m672.nii'',ha,v );showinfo2([''new file''],fullfile(''$mdir'', ''_m672.nii''));');
-%# append NIFTI-headers to cellarray
+%_ append NIFTI-headers to cellarray
 % antcb('loop','task','h=spm_vol(''t2.nii''); h2=struct2list(h); if exist(''h3'')~=1; h3={};end; h3=[h3;h2];clear h h2');
 
 

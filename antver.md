@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   09 Dec 2025 (11:54:29)  
+ &#x1F34E; last modification:   17 Dec 2025 (21:52:47)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**17 Dec 2025 (21:52:47)**</ins>  
+   __[zipfile.m]__ : new, compress/uncompress NIFTIs  
+  % &#8618; access via ANT-menu: &#8658; Main/gzip/gunzip NIFTIs  
+<!---->
   &#x1F535;   <ins>**09 Dec 2025 (11:54:29)**</ins>  
    __[antcb.m]__ : updated, antcb('setpreorientation') to  change preorientation (paramter: 'orientType') via comandline.  
    for HELP type antcb('setpreorientation?')  

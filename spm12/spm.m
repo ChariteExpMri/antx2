@@ -502,6 +502,14 @@ delete(spm_figure('FindWin','Interactive'))
 
 %-Create SPM Interactive window
 %-----------------------------------------------------------------------
+global spm_hideFigures
+if ~isempty(spm_hideFigures) && isnumeric(spm_hideFigures) && spm_hideFigures==1
+    Vis='off';
+elseif ~isempty(spm_hideFigures) && isnumeric(spm_hideFigures) && spm_hideFigures==0
+    Vis='on';
+end
+
+
 FS     = spm('FontSizes');
 PF     = spm_platform('fonts');
 S0     = spm('WinSize','0',1);

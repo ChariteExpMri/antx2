@@ -342,7 +342,8 @@
 % xstat('fullreport',struct('method',[2],'xls',0,'nifti',0,'format','html'));
 % xstat('fullreport',struct('method',[1:3],'xls',1,'nifti',1,'format','html'));
 % 
-% xstat('fullreport2');     %Specific:, reports only for cluster-based & FWE (over all contrast)
+% xstat('fullreport2');     %Specific:, reports only cluster-based & FWE methods (over all contrast)
+%                            ..i.e. uncrorrected is not reported!!!
 %                           % write xls-files and nifti-files (if significant)
 %                           %no additonal inputs here!
 
@@ -465,6 +466,7 @@ if nargin>0
                 x.dummi=1;    
                 x.method=[2 3];
                 x.writesigonly=1;
+                x.showfigs=0;
             end
             summary_contrastAllMethods(x);
             %            x.dummi=1;
@@ -1220,10 +1222,9 @@ cprintf('*[1 0 1]',[ 'MAKE SUMMARY ...please wait' '\n' ]);
 % task='all';
 waitspin(1,'wait...');
 
-% =========== [which con] ====================================
-hf=findobj(0,'tag','vvstat');
-ht=findobj(hf,'tag','loadothercontrast');
-cons=1:length(get(ht,'string'));
+
+
+
 
 
 % =========== [which con] ====================================
@@ -1231,6 +1232,34 @@ xSPM = evalin('base','xSPM');
 SPM  = evalin('base','SPM');
 spmdir=SPM.swd;
 currdir=pwd;
+
+% =======[invisible]========================================
+w={'Menu' 'Interactive' 'Graphics'};
+iswinspm=[0 0 0];
+for i=1:length(w)
+    iswinspm(i)= ishandle(findobj(0,'tag',w{i}));
+end
+if sum(iswinspm)~=3
+    xstat('loadspm',fullfile(currdir,'SPM.mat'));
+end
+if isfield(pin,'showfigs') && pin.showfigs==0 %hide figures
+  
+    for i=1:length(w)
+        hw=findobj(0,'tag', w{i});
+        pos= get(hw,'position');
+        set(hw,'position',[ pos(1)-1000 pos(2:end) ]);
+    end
+    hw=findobj(0,'tag', 'vvstat');
+    pos_vvstat= get(hw,'position');
+    set(hw,'position',[1000 pos_vvstat(2:end) ]); 
+end
+
+% =========== [which con] ====================================
+hf=findobj(0,'tag','vvstat');
+ht=findobj(hf,'tag','loadothercontrast');
+cons=1:length(get(ht,'string'));
+
+
 cd(spmdir);
 [~,spmdirsShort]=fileparts(spmdir); % shortNames of the SPM-dirs..used for PPT-file-names
 outdir=fullfile(fileparts(spmdir), ['res_' spmdirsShort] );
@@ -1429,6 +1458,22 @@ end
 cd(currdir);
 try; waitspin(0,'Done'); end
 cprintf('*[1 0 1]',[ 'DONE!' '\n' ]);  
+
+
+% =======[visible again]========================================
+if isfield(pin,'showfigs') && pin.showfigs==0 %hide figures
+    w={'Menu' 'Interactive' 'Graphics'};
+    for i=1:length(w)
+        hw=findobj(0,'tag', w{i});
+        pos= get(hw,'position');
+        set(hw,'position',[pos(1)+1000 pos(2:end) ]);
+    end
+    hw=findobj(0,'tag', 'vvstat');
+    set(hw,'position',pos_vvstat); 
+end
+% ===============================================
+
+
 return
     
     
@@ -3887,13 +3932,13 @@ end
 % return
 %% ==========[save volume]=====================================
 global lab
-disp('...saving volume...wait..');
+% disp('...saving volume...wait..');
 
 spm_write_filtered(Z, XYZ, xSPM.DIM, xSPM.M,...
     sprintf('SPM{%c}-filtered: u = %5.3f, k = %d',xSPM.STAT,xSPM.u,xSPM.k),fiout);
 % showinfo2('voxSTAT-volume',lab.template,fiout);
-showinfo2('voxSTAT-volume',lab.template,fiout,7);
-disp('Done!');
+showinfo2('voxSTAT-NIFTI',lab.template,fiout,7);
+% disp('Done!');
 
 fileout=fiout;
 g.bgimg=lab.template;

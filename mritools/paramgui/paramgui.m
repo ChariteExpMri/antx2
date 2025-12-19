@@ -4095,7 +4095,15 @@ end
 %% =======[ evaluate function handle before going back to paramgui]=====
 if iscell(newtag)
     if isa(newtag{1},'function_handle')
+        try
        newtag= feval(newtag{1},newtag{2:end});
+        catch
+            feval(newtag{1},newtag{2:end});
+            pb=findobj(gcf,'tag','pulldown');
+            delete(pb);
+            return
+        end
+       
     end
 end
 
@@ -5637,12 +5645,13 @@ end
 %--------------------------------------------------
 % REPLACE TEXT
 iv   =regexpi(tx,[ char(10) field '[=|\s*]'])  ;% find onset of  variable
+if isempty(iv)
+    iv   =regexpi(tx,[  field '[=|\s*]'])  ;% find onset of  variable
+end
 ichar=regexpi(tx,[ char(10) 'x.' '[\S+ \S+=]']);   %find chars
 
 if isempty(iv)
     error('### could not found variable "field --> TYPO ???? ###"');
-    
-    
 end
 
 try
@@ -5652,6 +5661,12 @@ catch
     range=  [iv length(tx)];                  % .. in case it is the last entry in txt
     tx2=[tx(range(1):range(2))];
 end
+if iv==1 %1st entry
+    range=  [iv    ichar(1)-1 ];  % get line of code of this variable
+    tx2=[tx(range(1):range(2)    )]  ;
+    
+end
+
 
 d1=min(regexpi(tx2,'='));  %find equal sign
 d2=min(regexpi(tx2,'%'));  %find comment
@@ -5690,6 +5705,8 @@ end
 %--------------------------------------------------
 % make nicer
 tx5=makenicer2(tx4);
+%% ===============================================
+
 
 %--------------------------------------------------
 % insert back

@@ -1149,8 +1149,9 @@
 % #k [antcb.m] #n : updated, antcb('setpreorientation') to  change preorientation (paramter: 'orientType') via comandline.
 %  for HELP type antcb('setpreorientation?')
 % #k [snips.m] #n : added DWI-pipeline part 1 & 2
-% 
-% 
+% #ba 17 Dec 2025 (21:52:47)
+% #k [zipfile.m] #n : new, compress/uncompress NIFTIs
+% % #gw --> access via ANT-menu: &#8658; Main/gzip/gunzip NIFTIs
 % 
 % 
 % 

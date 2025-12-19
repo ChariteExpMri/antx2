@@ -27,8 +27,16 @@
 %                                        #g e.g.: xrename(0,'T2map_MSME_CRP_2_1.nii' ,'s:_mean', 'mean:') 
 % #b - replace Nifti-Header            ('rHDR:')        #g e.g.: header is replaced by a reference file (refference file is tagged as 'ref' in the 3rd column) 
 % #b - replace Nifti-mat               ('rmat:')        #g e.g.: NIfti-HDR-mat is replaced by a reference file (refference file is tagged as 'ref' in the 3rd column) 
+%
+% --gzip/gunzip via matlab-comand
 % #b - gzip Nifti-file                 ('gzip:')        #g e.g.: 'gzip:'
 % #b - gunzip Nifti-file               ('gunzip:')      #g e.g.: 'gunzip:'
+% 
+% --gzip/gunzip via gzip  (on windows via git's gzip) ..linux/mac via system git
+%   no output-string needs to be defined here, default: replace uncompressed with compressed version and vice versa 
+% #b - gzip Nifti-file                 ('gzip2:')        #g e.g.: 'gzip2:'
+% #b - gunzip Nifti-file               ('gunzip2:')      #g e.g.: 'gunzip2:'
+% 
 % #b - apply function to NIFTI         ('niifun:')      #g e.g.: 'niifun:myfunc.m' % to apply function 'myfunc.m' on sleected NIFTIfile
 % 
 % #r The functions 'XRENAME' and 'XOP' (lowercase) are identical, XOP is a wrapper-function of XRENAME)
@@ -378,6 +386,24 @@
 %__________________________________________________________________________________________________________________
 %% #by unzip Nifti-file (gunzip:)
 %     xrename(1, 'test3.nii.gz' ,	'test3.nii' ,	'gunzip:')
+%__________________________________________________________________________________________________________________
+%% #by  gzip/gunzip2 via system-gzip-comand
+% --gzip/gunzip via gzip  (on windows via git's gzip) ..linux/mac via system git
+%  - no output-string needs to be defined in column-2, 
+%  - default: replace uncompressed with compressed version and vice versa 
+% 
+% xrename(1,'vimg.nii','','gzip2:');    % compress file (to .nii.gz), orignal file (.nii) is replaced
+% xrename(1,'vimg.nii','','gzip2: -k'); % compress file (to .nii.gz), orignal file is kept
+% 
+% xrename(1,'vimg.nii.gz','','gunzip2:');   %uncompress file (to .nii), orignal file (.nii.gz) is replaced
+% xrename(1,'vimg.nii.gz','','gunzip2:-k'); %uncompress file (to .nii), orignal file (.nii.gz) is kept
+% 
+% z=[];                                                   
+% z.files =  { 'svimg.nii' 	'' 	'gzip2:'                  
+%             'vimg.nii' 	'' 	'gzip2:'                    
+%             'vimg2.nii' 	'' 	'gzip2:' };                
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
+% 
 %__________________________________________________________________________________________________________________
 %% #by apply function to NIFTI (niifun: functionname) 
 % a function can be applied to a NIFTI-file (arbitrary function name)
@@ -1708,6 +1734,65 @@ for i=1:length(pa)      %PATH
                     if strcmp(s1,s2)==0
                         delete(s2);
                     end
+                 elseif strfind(volnum{j},'gzip2:');
+                     % =======================================================
+                     %%  [gzip file via GIT] compress/decompress without deleting the orig file using GIT / no redundant files
+                     % ========================================================
+                     % xrename(1,'vimg.nii','','gzip2:-k');
+                     % xrename(1,'vimg.nii','','gzip2: -k');
+                     code=volnum{j};
+                     code=regexprep(code,{'gzip2:'},'');
+                     if isempty(strfind(code,'-f')); code=[code ' -f']; end
+                     if isempty(strfind(code,'-v')); code=[code ' -v']; end
+                     params=[ ' ' code ' '  ];
+                     if ispc==1
+                         [e path2exe]=system('where git.exe');
+                         path2exe=regexprep(path2exe,char(10),'');
+                         if exist(path2exe)
+                             pa_gzip=(fullfile(fileparts(fileparts(path2exe)),'usr','bin'));
+                             c=['"'  fullfile(pa_gzip,'gzip.exe' ) '"'   params '"' s1 '"' ];
+                             [e1 e2]=system(c);
+                         end
+                     else
+                         c=['gzip' params '"' s1 '"' ];
+                         [e1 e2]=system(c);
+                     end
+                     
+                     s2=[s1 '.gz'];
+                     if ~isempty(strfind(e2,s2))
+                         showinfo2(['zipped via gzip2:[' Z.animalDir ']'],s2);
+                     end
+                elseif strfind(volnum{j},'gunzip2:');
+                    % =======================================================
+                    %%  [gzip file via GIT] compress/decompress without deleting the orig file using GIT / no redundant files
+                    % ========================================================
+                    % xrename(1,'vimg.nii.gz','','gunzip2:')
+                    % xrename(1,'vimg.nii.gz','','gunzip2:-k')
+                    code=volnum{j};
+                    code=regexprep(code,{'gunzip2:'},'');
+                    if isempty(strfind(code,'-d')); code=[code ' -f']; end
+                    if isempty(strfind(code,'-d')); code=[code ' -d']; end
+                    if isempty(strfind(code,'-v')); code=[code ' -v']; end
+                    params=[ ' ' code ' '  ];
+                    if ispc==1
+                        [e path2exe]=system('where git.exe');
+                        path2exe=regexprep(path2exe,char(10),'');
+                        if exist(path2exe)
+                            pa_gzip=(fullfile(fileparts(fileparts(path2exe)),'usr','bin'));
+                            c=['"'  fullfile(pa_gzip,'gzip.exe' ) '"'   params '"' s1 '"' ];
+                            [e1 e2]=system(c);
+                        end
+                    else
+                        c=['gzip' params '"' s1 '"' ];
+                        [e1 e2]=system(c);
+                    end
+                    
+                    s2=regexprep(s1,'.gz$','');
+                    if ~isempty(strfind(e2,s2))
+                        showinfo2(['unzipped via gunzip2:[' Z.animalDir ']'],s2);
+                    end
+                    
+                    
                     %% ===============================================
                  elseif ~isempty(regexpi(volnum{j},'^niifun:'))==1
                      
@@ -2342,6 +2427,8 @@ try
     tb   =ht.Data;
     tbout=tb;
     ishange=find(~cellfun('isempty' ,ht.Data(:,2)));
+    ishange2=find(~cellfun('isempty' ,ht.Data(:,3)));
+    ishange=unique([ishange(:); ishange2(:)]);
     % ikeep=find(cellfun('isempty' ,tb(:,2))) ;
     %ishange=find(~cellfun('isempty' ,tb(:,2))) ;
     if isempty(ishange)
@@ -2627,8 +2714,10 @@ if ~strcmp(task,'showimageinfo') && ~strcmp(task,'openfile')
             'var:'                     '[var:]    variance over 4th dimension of 4D-NIFTI-file (4D NIFTI only) '
             'rHDR:'                    '[rHDR:]   replace NIFTI-header by reference file which is tagged with ''ref'''
             'rmat:'                    '[rmat:]   replace NIFTI-mat by  mat of reference file which is tagged with ''ref'''
-            'gzip:'                    '[gzip:]   gzip NIFTI-file (saved as *.nii.gz)'
-            'gunzip:'                  '[gunzip:] gunzip (*.nii.gz) file (saved as *.nii) '
+            'gzip:'                    '[gzip:]   gzip (matlab-based) NIFTI-file (saved as *.nii.gz)'
+            'gunzip:'                  '[gunzip:] gunzip (matlab-based) *.nii.gz-file (saved as *.nii) '
+            'gzip2:'                   '[gzip2:]   gzip (system-based) NIFTI-file (saved as *.nii.gz)'
+            'gunzip2:'                 '[gunzip2:] gunzip (system-based) *.nii.gz-file (saved as *.nii) '
             'niifun:myfun.m'           '[niifun: myfun.m] apply function "myfun" to NIFTIfile (see help)' 
             };
         

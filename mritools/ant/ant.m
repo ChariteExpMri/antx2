@@ -1286,7 +1286,11 @@ mh2 = uimenu(mh,'Label',' convert obj-files to NIFTI',         'Callback',{@menu
  
 mh2 = uimenu(mh,'Label',' merge directories',              'Callback',{@menubarCB, 'xmergedirectories' },  ...
      'userdata',[HSTART 'merge the  contents of pairwise assigned directories' ]);
-mh2 = uimenu(mh,'Label',' export files (from ANT-project)',              'Callback',{@menubarCB, 'export'},'Separator','on', ...
+
+ mh2 = uimenu(mh,'Label',' gzip/gunzip NIFTIs',              'Callback',{@menubarCB, 'gzip_gunzip_NIFTIs'},'Separator','on', ...
+    'userdata',[HSTART 'gzip/gunzip NIFTIs from selected ANT-folders' HEND '.. an ANT-project must be loaded)']);
+
+ mh2 = uimenu(mh,'Label',' export files (from ANT-project)',              'Callback',{@menubarCB, 'export'},'Separator','on', ...
     'userdata',[HSTART 'EXPORT selected files from selected ANT-folders' HEND '.. an ANT-project must be loaded)']);
 mh2 = uimenu(mh,'Label',' export files (from any folder)',               'Callback',{@menubarCB, 'export_fromanyfolder'},'Separator','off', ...
      'userdata',[HSTART 'EXPORT selected files from any folders' HEND ' .. no need to load an ANT-project ']);
@@ -3109,22 +3113,29 @@ elseif strcmp(task,'xmergedirectories')
     %% ===============================================
     xmergedirs(1);
     
-    %________________________________________________
+elseif strcmp(task,'gzip_gunzip_NIFTIs')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='zipfile';
+        return ;
+    end
+    if strcmp(u.mousekey,'right')%[cmd]=
+        hlpfun='zipfile.m';
+        showcmd(hlpfun);
+        return
+    end
+    zipfile();
     
 elseif strcmp(task,'export')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xexport';
         return ;
     end
-    %% ==============================[cmd]===========
-    if strcmp(u.mousekey,'right')
+    if strcmp(u.mousekey,'right')%[cmd]=
         hlpfun='xexport.m';
         showcmd(hlpfun);
         return
     end
-    %% ===============================================
-    xexport(1);
-    %________________________________________________
+    xexport(1);  
     
 elseif strcmp(task,'export_fromanyfolder')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
