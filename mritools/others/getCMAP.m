@@ -298,8 +298,12 @@ else
     catch
         cmap2=lutmap(cmap);
     end
-    
 end
+%limit to 0-1-range
+cmap2(cmap2<0)=0;
+cmap2(cmap2>1)=1;
+
+
 
 
 
