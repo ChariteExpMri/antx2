@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   17 Dec 2025 (21:52:47)  
+ &#x1F34E; last modification:   05 Jan 2026 (16:08:24)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**05 Jan 2026 (16:08:24)**</ins>  
+  antcb('getlabels');     %get atlas IDs & labels from xyz-coordinates (as 'mm' or 'indices')  
+     ..for HELP type antcb('getlabels?');  
+<!---->
   &#x1F535;   <ins>**17 Dec 2025 (21:52:47)**</ins>  
    __[zipfile.m]__ : new, compress/uncompress NIFTIs  
   % &#8618; access via ANT-menu: &#8658; Main/gzip/gunzip NIFTIs  

@@ -3277,9 +3277,9 @@ clusterregions=repmat({'-'},[ size(cc,2) 1]);
 %% PREPARE THE LABELS
 %regions do not exist
 if isfield(lab,'clusterregions');
-    if     size(cc,2)~=size(lab.clusterregions,1)
+%     if     size(cc,2)~=size(lab.clusterregions,1)
         lab=rmfield(lab,'clusterregions');
-    end
+%     end
 end
 
 if isfield(lab,'clusterregions')==0

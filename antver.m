@@ -1152,7 +1152,10 @@
 % #ba 17 Dec 2025 (21:52:47)
 % #k [zipfile.m] #n : new, compress/uncompress NIFTIs
 % % #gw --> access via ANT-menu: &#8658; Main/gzip/gunzip NIFTIs
-% 
+% #ba 05 Jan 2026 (16:08:24)
+% antcb('getlabels');     %get atlas IDs & labels from xyz-coordinates (as 'mm' or 'indices')
+%    ..for HELP type antcb('getlabels?');
+%   
 % 
 % 
 % 

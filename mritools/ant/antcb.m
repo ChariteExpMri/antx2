@@ -19,6 +19,8 @@
 % antcb('setpreorientation');  % Change preorientation (paramter: 'orientType') via comandline.
 %                               -->for HELP type antcb('setpreorientation?')
 %
+% antcb('getlabels');     %get atlas IDs & labels from xyz-coordinates (as 'mm' or 'indices')
+%                               -->for HELP type antcb('getlabels?');
 % antcb('loop')           % perform a small task over animal dirs -->for HELP type antcb('loop?')
 % 
 % antcb('load','proj_Harms3_lesionfill_20stack.m')   %load this project
@@ -187,7 +189,13 @@ if strcmp(do,'getstudypath')
 end
 if strcmp(do,'getstudypath?');    help antcb>getstudypath;end
 %% ===============================================
-
+if strcmp(do,'getlabels')
+    try ;    varargout{1}=getlabels(input);
+    catch;   disp('* type    antcb(''getlabels'',''?'')     for help');
+    end
+end
+if strcmp(do,'getlabels?');    help antcb>getlabels;end
+%% ===============================================
 
 if strcmp(do,'saveproject')
     try ;    varargout{1}=saveproject(input);
@@ -2529,6 +2537,116 @@ o=nc;
 if displayfile==2;
     uhelp(g,0,'name','found files');
 end
+
+%% ===============================================
+function  o=getlabels(pin)
+%% ===============================================
+% get atlas IDs & labels from xyz-coordinates (as 'mm' or 'indices')
+% INPUTS:
+% xyz        xyz-data  (n x 3) as  'mm' or 'indices' 
+% optional: 
+% units      xyz-input as: 'mm' or 'indices' ; default: 'mm'
+% file       fullpath-atlasfile (nifti), if emtpy take 'ANO.nii' from study's templates-path
+% getlabels  get region labels; [0,1]; default:[1]
+% show       show output; [0,1] ; default:[1]
+% 
+% EXAMPLES:
+% get labels using mm-cordinates
+% antcb('getlabels','xyz',[-3 -2 -1; 3 0 -4; 2 -3 -1]);
+% antcb('getlabels','xyz',[-3 -2 -1; 3 0 -4; 2 -3 -1],'show',1);
+% 
+% get labels using  using indices:
+% antcb('getlabels','xyz',[109 87 106],'units','indices');
+% antcb('getlabels','xyz',[109 87 106; 71 181 92],'units','indices');
+% 
+% use a specific atlas
+% antcb('getlabels','xyz',[-3 -2 -1; 3 0 -4; 2 -3 -1],'file', 'F:\data5\nogui\templates\ANO.nii');
+
+
+
+
+o=[];
+p.file      =''   ;% fullpath-atlasfile (nifti), if emtpy take 'ANO.nii'
+p.units     ='mm' ; % xyz-input as: 'mm' or 'indices'
+p.getlabels =1    ; % get region labesl [0,1]
+p.show      =1    ; % show output [0,1] 
+p.xyz       =0    ; % xyz-data  (n x 3) as  'mm' or 'indices' 
+
+
+
+if ~isempty(pin)
+    p2=cell2struct(pin(2:2:end),pin(1:2:end),2);
+    p=catstruct(p,p2);
+end
+if isempty(p.file)
+    pas   =antcb('getstudypath');
+    patemp=fullfile(pas,'templates');
+    
+    p.file=fullfile(patemp,'ANO.nii');
+end
+if exist(p.file)~=2; error('atlas-file does not exist'); end
+%% ===============================================
+v = spm_vol(p.file);
+ids=zeros(size(p.xyz,1),1);
+if strcmp(p.units,'mm')
+    for i=1:size(p.xyz,1)
+        ijk = round(inv(v.mat) * [p.xyz(i,:) 1]'); % mm -> voxel
+        if all(ijk(1:3) >= 1) && all(ijk(1:3)' <= v.dim) % bounds check
+            id = spm_get_data(v, ijk(1:3));
+        else
+            id = NaN;
+        end
+        ids(i,1)=id;
+    end
+elseif strcmp(p.units,'indices')
+    %p.xyz=[109 87 106]
+    for i=1:size(p.xyz,1)
+        ijk = p.xyz(i,:)';
+        if all(ijk(1:3) >= 1) && all(ijk(1:3)' <= v.dim) % bounds check
+            id = spm_get_data(v, ijk(1:3));
+        else
+            id = NaN;
+        end
+        ids(i,1)=id;
+    end
+end
+% ids
+%% =====[read excelfile]==========================================
+if p.getlabels==1
+    [patemp name ext]=fileparts(p.file);
+    f2=fullfile(patemp,[name '.xlsx']);
+    if exist(f2)==2
+        [~,~,a0]=xlsread(f2);
+        a=xlsprunesheet(a0);
+        ha=a(1,:);
+        a=a(2:end,:);
+        idlist=cell2mat(a(:,4));
+        idlabels=repmat({'-'},[size(ids,1)  1]);
+        for i=1:size(ids,1)
+            ix=find(idlist==ids(i));
+            if ~isempty(ix)
+                idlabels(i,1)=a(ix,1);
+            end
+        end
+        t1=[num2cell(ids) idlabels ];
+    end
+    t2=cell2table(t1,'VariableNames',{'ID','region'} );
+else
+    t2=[(ids) ];
+end
+
+if p.show==1
+    disp(t2);
+end
+o=t2;
+
+
+
+
+%% ===============================================
+
+
+
 %% ===============================================
 function  o=getstudypath(par0)
 % get path of current study
