@@ -1155,10 +1155,16 @@
 % #ba 05 Jan 2026 (16:08:24)
 % antcb('getlabels');     %get atlas IDs & labels from xyz-coordinates (as 'mm' or 'indices')
 %    ..for HELP type antcb('getlabels?');
-%   
+% #ba 30 Jan 2026 (00:04:38)
+% #k [elastixparamfile.m] #n : list/copy/modify elastix-parameterfile
+% #k [xmergenifti4D.m] #n : merge 3D NIFTIS to 4D-NIFTI (xmergenifti4D)
+% #gw --> access via ANT-menu: &#8658; Tools/merge 3D-NIFTIs to 4D-NIFTI
 % 
 % 
 % 
+% 
+% 
+
 
 
 %% ===============================================

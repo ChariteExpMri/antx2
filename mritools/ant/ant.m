@@ -1337,6 +1337,10 @@ mh2 = uimenu(mh,'Label',' register CT image',                                   
     'userdata',[HSTART ' register an CT-image to t2w-image ("t2.nii")']);
 mh2 = uimenu(mh,'Label',' register images manually',                                       'Callback',{@menubarCB, 'registermanually'},   ...
     'userdata',[HSTART 'an image is registered to another image manually' HEND '..via GUI']);
+
+mh2 = uimenu(mh,'Label',' merge 3D-NIFTIs to 4D-NIFTI'       , 'Callback',{@menubarCB, 'merge_to_4DNIFTI'}       ,'Separator','on'   ,...
+    'userdata',[HSTART 'build a 4D NIFTI' HEND  '...']);
+
 mh2 = uimenu(mh,'Label',' realign images (SPM, monomodal)'       , 'Callback',{@menubarCB, 'realignImages'}       ,'Separator','on'   ,...
     'userdata',[HSTART 'use SPM to realign images' HEND  '...monomodal approach']);
 mh2 = uimenu(mh,'Label',' realign images (ELASTIX, multimodal)'  , 'Callback',{@menubarCB, 'realignImagesMultimodal'},...
@@ -2479,12 +2483,29 @@ elseif strcmp(task,'registermanually')
         showcmd(hlpfun);
         return
     end
+    
     %% ===============================================
     statusMsg(1,' register images manually');
     xcoregmanu(1);
     statusMsg(0);
     
-    %________________________________________________
+%% ===============================================
+elseif strcmp(task,'merge_to_4DNIFTI')
+    if showhelpOnly==1  %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xmergenifti4D';
+        return ;
+    end
+    if strcmp(u.mousekey,'right')% ===[cmd]===========
+        hlpfun='xmergenifti4D.m';
+        showcmd(hlpfun);
+        return
+    end
+    statusMsg(1,' merge4D');
+    xmergenifti4D(1);
+    statusMsg(0);
+ %% ===============================================
+
+    
 elseif strcmp(task,'realignImages')
     if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xrealign';

@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   05 Jan 2026 (16:08:24)  
+ &#x1F34E; last modification:   30 Jan 2026 (00:04:38)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,11 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**30 Jan 2026 (00:04:38)**</ins>  
+   __[elastixparamfile.m]__ : list/copy/modify elastix-parameterfile  
+   __[xmergenifti4D.m]__ : merge 3D NIFTIS to 4D-NIFTI (xmergenifti4D)  
+  &#8618; access via ANT-menu: &#8658; Tools/merge 3D-NIFTIs to 4D-NIFTI  
+<!---->
   &#x1F535;   <ins>**05 Jan 2026 (16:08:24)**</ins>  
   antcb('getlabels');     %get atlas IDs & labels from xyz-coordinates (as 'mm' or 'indices')  
      ..for HELP type antcb('getlabels?');  

@@ -247,15 +247,24 @@ switch lower(varargin{1}), case 'display'
     %-Display MIP
     %----------------------------------------------------------------------
     Funits = get(F,'Units');
-    set(F,'Units','normalized')
+    set(F,'Units','normalized'); %paul
     if isempty(hMIPax)
         hMIPax = axes('Position',[0.24 0.54 0.62 0.42],'Parent',F);
     else
-        axes(hMIPax), cla reset
+        %axes(hMIPax), cla reset
+        cla(hMIPax,'reset');%paul
     end
 
     %-NB: spm_mip's `image` uses a newplot, & screws stuff without the figure.
-    figure(F)
+%     figure(F)
+%     ch=get(0,'children');  %paul
+%     tag=get(ch,'tag');
+%     iw=find(strcmp(tag,'Graphics') ) ;
+%     iwnew=[iw  setdiff(1:length(tag),iw)];
+%     set(0,'children',ch(iwnew))
+   set(0,'CurrentFigure',F);
+    
+    
     pXYZ = Ms*Md*[XYZ;ones(1,size(XYZ,2))];
     spm_mip(Z,pXYZ(1:3,:),Ms*Md*M,units);
     hMIPim = get(gca,'Children');
