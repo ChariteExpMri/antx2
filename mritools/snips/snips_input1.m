@@ -632,7 +632,262 @@ w.hstep            = 'all' ;%hmri-processing steps,'all' or use indices([1:5]; s
 w.mdirs=antcb('getallsubjects')  ; % path of animals-DIRs to process
 mpm('nogui',w)             ; % run proccessing steps without GUI
  
- 
+%% #################################################
+% pipeline
+% T1_FLASH-pipeline (realign/register series of T1_FLASH volumes)
+
+%% make ANTx-project
+%% import Brukerdata
+%% flash (optional) : simulate movement/translation over time
+%% flash: make 4D 
+%% flash: realign vols
+%% copy&rename  RARE to 't2.nii'
+%% flash: coregister flash to t2.nii
+%% (optional):  get HTML-file with pre-orientations
+%% (optional): change 'orientType' variable in project-file
+%% calculate transformation & back-transformation (native-space (NS) -- standard-space (SS))
+%% transform flash to standard-space (SS)
+%% make HTML with overlay
+
+%% ******************************************************************
+%%  PART-1  : define project and template
+%% ******************************************************************
+%% ==============================================
+%%     make ANTx-project
+%%     CREATE A PROJECT-FILE WITHOUT GUI: HERE THE PROJECTFILE "proj.m" IS CREATED 
+%%     USING A VOXELSIZE OF [.09 .09 .09] mm, and the ANIMAL-TEMPLATE "rat_SIGMA_RAT" 
+%%     is used, with species 'rat'
+% ===============================================
+makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[0.09 0.09 0.09],...
+    'wa_refpath','F:\anttemplates\rat_SIGMA_RAT',...
+    'wa_species','rat')
+antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+
+%% ==============================================
+%%    IMPORT BRUKER-DATA (use all steps here)
+%% ===============================================
+% DISPLAY all Bruker-files from 'raw'-folder, PLEASE INSPECT THE TABLE BEFORE DOING THE NEXT STEP
+w1=xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0,'show',1);
+
+% FILTER and DISPLAY a list of Bruker files 
+protocol={'2_T1_FLASHax_p2xp2_FA30', '1_T2_tRAREax_Ave3_p1xp1'}
+protocol=strjoin(protocol,'|')
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol',protocol});
+% IMPORT Bruker files
+w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'ExpNo_File',1,'PrcNo_File' ,1);
+
+
+antcb('update'); %ipdate GUI
+dispfiles; %show files
+
+%% ******************************************************************
+%%  PART-2  : flash realign/ registration to t2.nii
+%% ******************************************************************
+% ==============================================
+%%   select animals
+% ===============================================
+antcb('selectdirs','all'); %all animals
+% antcb('selectdirs',[1]); %1st animal
+mdirs=antcb('getsubjects');  %get animals
+
+
+% ==============================================
+%%   flash: simulate movement/translation over time
+% ===============================================
+simulateMovement=0;
+if simulateMovement==1
+    xop(0,'2_T1_FLASHax_p2xp2_FA30_6_1.nii','2_T1_FLASHax_p2xp2_FA30_6_1.nii','ch:trans:[0.2 0.3 0];');  %translated object by [dx,dy,dz] mm (here: 1,0.2,0.3 mm)
+    for i=1:length(mdirs)
+        f1=fullfile(mdirs{i},'2_T1_FLASHax_p2xp2_FA30_6_1.nii' );
+        fref=fullfile(mdirs{i},'2_T1_FLASHax_p2xp2_FA30_5_1.nii' );
+        f3=fullfile(mdirs{i},'2_T1_FLASHax_p2xp2_FA30_6_1.nii' );
+        [h,d ]=rreslice2target(f1,fref, f3, 0);
+        %now just checks (same hdr.mat and visual inspection)
+        hf1= spm_vol(fref);
+        hf3= spm_vol(f3);
+        deviatmat=sum(abs(hf1.mat(:)-hf1.mat(:)));
+        disp(['devation in hdr.mat (ref, aligned): ' num2str(deviatmat)]);
+        rmricron([],fref,f3); % show in mricron
+    end
+end
+
+% ==============================================
+%%  flash: make 4D 
+% ===============================================
+z=[];
+z.file      = '.*2_T1_FLASHax_p2xp2_FA30_.*.nii';   % % [SELECT] 3D-NIFTIs to convert to 4D-NIFTI
+z.fileout   =  'FLASHax_p2xp2_FA30.nii' ;                      % % output filename of 4D-NIFTI
+z.sortfiles = [1];                                  % % sort 3D-NIFTIs/filtered NIFTI-files {0|1}; default:[1]
+z.dt        = [0];                                  % % datatype (see spm_type); default:[0], 0 means sane datatype as input
+z.writelist = [1];                                  % % write textfile with listed merged NIFTIs;  default:[1]
+z.isparallel= [0];                                  % % use parallel processing over animals;  default:[0]
+xmergenifti4D(0,z)
+
+% ==============================================
+%%  flash: realign vols
+% ===============================================
+method=1;
+if method==1
+    tic
+    % =====================================================
+    % #g FUNCTION:    [xrealign_elastix.m]
+    %  #yk  Realign a 3d-(time)series/4Dvolume using ELASTIX and mutual information
+    % =====================================================
+    z=[];
+    z.image3D            = { '' };                                                                       % % SELECT: a 3D-volume series to realign (only 1st image is needed to select here)
+    z.image4D            = { 'FLASHax_p2xp2_FA30.nii' };                                                 % % SELECT: a 4D-volume to realign
+    z.convertDataType    = [0];                                                                         % % converts dataType if 4D volume is to large: [0]no..keep dataType, [16] change to single precision
+    z.merge4D            = [1];                                                                          % % merge 3D-series to 4D-volume: [0]no,keep 3D-volumes, [1]save as 4D-volume
+    z.prefix             = 'r';                                                                          % % Filename Prefix:specify the string to be prepended to the filenames of the resliced image
+    z.outputname         = 'FLASHax_p2xp2_FA30_aligned.nii';                                                                           % % optional: rename outputfile; if empty the output-filename is "prefix"+"inputfilename"
+    z.cleanup            = [1];                                                                          % % remove temporary files [0]no,[1]yes
+    z.keepConvertedInput = [1];                                                                          % % if "convertDataType" is 16,the converted input will be kept(1) or deleted (0) afterwards
+    z.isparallel         = [0];                                                                          % % parallel-processing: [0]no,[1]yes
+    %z.paramfile          = 'D:\MATLAB\antx2\mritools\elastix\paramfiles\trafoeuler5_MutualInfo.txt';     % % registration parameterfile
+    %z.paramfile          =which('trafoeuler5_MutualInfo.txt');
+    z.paramfile          = which('trafoeuler5.txt');
+    z.numres             = [1];                                                                          % % number of pyramid resolutions. Larger is more precise & more time-consuming.
+    z.niter              = [100];                                                                        % % number of iterations in each resolution level.Larger is more precise & more time-consuming.
+    z.interp             = [1];                                                                          % % Interpolation: [0]NN, [1]trilinear, [3] bslpine-order 3
+    xrealign_elastix(0,z);
+    toc
+end
+if method==2
+    tic
+    z=[];
+    z.image3D          = { '' };                               % % SELECT: a 3D-volume series to realign (only 1st image is needed to select here)
+    z.image4D          = { 'FLASHax_p2xp2_FA30.nii' };         % % SELECT: a 4D-volume to realign
+    z.convertDataType  = [0];                                  % % converts dataType if 4D volume is to large: [0]no..keep dataType, [16] change to single precision
+    z.merge4D          = [1];                                  % % merge 3D-series to 4D-volume: [0]no,keep 3D-volumes, [1]save as 4D-volume
+    z.outputname       = 'FLASHax_p2xp2_FA30_aligned.nii';     % % optional: rename outputfile; if empty the output-filename is "roptions_prefix"+"inputfilename"
+    z.isparallel       = [0];                                  % % parallel-processing: [0]no,[1]yes
+    z.eoptions_quality = [0.9];                                % % Quality versus speed trade-off {0-1},Highest   quality   (1)   gives   most   precise   results
+    z.eoptions_sep     = [1];                                  % % The separation (in mm) between the points sampled in the reference image.
+    z.eoptions_fwhm    = [0.5];                                % % SMOOTHING: FWHM of the Gaussian smoothing kernel (mm) applied to the images before estimating
+    z.eoptions_rtm     = [0];                                  % % [0]Register  to  first:  Images  are registered to the first image in the series. [1]  Register to mean..
+    z.eoptions_interp  = [2];                                  % % Interpolation: Method by which the images are sampled when estimating the optimum transformation.
+    z.eoptions_wrap    = [0  0  0];                            % % Wrapping: Directions in the volumes the values should wrap around in.
+    z.eoptions_weight  = '';                                   % % Weighting: Optional  weighting  image  to  weight  each  voxel  of  the  reference  image
+    z.roptions_which   = [2  0];                               % % Specify the images to reslice..see HELP
+    z.roptions_interp  = [4];                                  % % Interpolation: The method by which the images are sampled when being written in a different space.
+    z.roptions_wrap    = [0  0  0];                            % % Wrapping: This indicates which directions in the volumes the values should wrap around in.
+    z.roptions_mask    = [1];                                  % % MASKING: see HELP
+    z.roptions_prefix  = 'r';                                  % % Filename Prefix:specify the string to be prepended to the filenames of the resliced image
+    xrealign(0,z);
+      toc           
+end
+
+% ==============================================
+%%   copy&rename  RARE to 't2.nii'
+% ===============================================
+xrename(0,'1_T2_tRAREax_Ave3_p1xp1_7_1.nii', 't2.nii','copy');
+
+% ==============================================
+%%   flash: coregister flash to t2.nii
+%%  --slow: %43sec
+% ===============================================
+if 0
+    tic
+    z=[];
+    z.TASK          = '[100] noSPMregistration, only elastix';                                      % % Task to perform (display before/after and or register)
+    z.targetImg1    = { 't2.nii' };                                                                 % % target image [t1], (static/reference image)
+    z.sourceImg1    = { 'FLASHax_p2xp2_FA30_aligned.nii' };                                         % % source image [t2], (moved image)
+    z.sourceImgNum1 = [1];                                                                          % % if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum)
+    z.applyImg1     = { '' };                                                                       % % images on which the transformation is applied (do not select the sourceIMG again!)                                                                                                              % % smoothing to apply to 256x256 joint histogram
+    z.interpOrder   = 'auto';                                                                       % % interpolation order [0]nearest neighbour, [1] trilinear interpolation, ["auto"] to autodetect interpolation order
+    z.warping       = [1];                                                                          % % USE ELASTIX, example..do subsequent nonlinear warping [0|1],
+    z.warpParamfile = which('trafoeuler5_MutualInfo.txt');     % % parameterfile used for warping
+    z.warpPrefix    = 'c_';                                                                         % % prefix out the output file after warping (if empty, it will overwrite the output of the previously affine registered file)
+    z.cleanup       = [1];                                                                          % % remove interim steps
+    z.isparallel    = [0];                                                                          % % parallel processing over animals: [0]no,[1]yes
+    xcoreg(0,z);
+    toc
+end
+
+% ==============================================
+%%  flash: coregister flash to t2.nii 
+%% --faster
+%% ok: res/iter: 2/1000->16s, ok
+%% ok: res/iter: 2/500->10s, ok
+%% ok: res/iter: 1/1000->12s, ok
+% ===============================================
+parafile=elastixparamfile('copy','pfile','trafoeuler5_MutualInfo.txt','outdir',antcb('getstudypath')   );
+paramfile=elastixparamfile('set','pfile',paramfile,'NumberOfResolutions',1, 'MaximumNumberOfIterations',1000); 
+
+tic
+z=[];                                                                                                                                                                                                                         
+z.TASK          = 100;                                      % % Task to perform (display before/after and or register)                                                                    
+z.targetImg1    = { 't2.nii' };                                                                 % % target image [t1], (static/reference image)                                                                               
+z.sourceImg1    = { 'FLASHax_p2xp2_FA30_aligned.nii' };                                         % % source image [t2], (moved image)                                                                                          
+z.sourceImgNum1 = [1];                                                                          % % if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum)                                           
+z.applyImg1     = { '' };                                                                       % % images on which the transformation is applied (do not select the sourceIMG again!)                                                                                                              % % smoothing to apply to 256x256 joint histogram                                                                             
+z.interpOrder   = 'auto';                                                                       % % interpolation order [0]nearest neighbour, [1] trilinear interpolation, ["auto"] to autodetect interpolation order         
+z.warping       = [1];                                                                          % % USE ELASTIX, example..do subsequent nonlinear warping [0|1],                                                              
+z.warpParamfile = parafile;     % % parameterfile used for warping                                                                                            
+z.warpPrefix    = 'c_';                                                                         % % prefix out the output file after warping (if empty, it will overwrite the output of the previously affine registered file)
+z.cleanup       = [1];                                                                          % % remove interim steps                                                                                                      
+z.isparallel    = [0];                                                                          % % parallel processing over animals: [0]no,[1]yes                                                                            
+xcoreg(0,z);  
+toc
+
+%% ******************************************************************
+%%  PART-3  : register to standard space
+%% ******************************************************************
+% check if change of preorienation is necessary!!!
+if 0
+    %% ========================================================================================
+    %%  [3.1] get HTML-file with pre-orientations
+    %%      please inspect the HTML-file. Use the best-matching rotation index from the HTML file
+    %%      to update the orientType variable in the project file (proj.m).
+    %% ========================================================================================
+    antcb('getpreorientation','selectdirs',1);% GET HTMLFILE WITH PRE-ORIENTATION FOR TRAFO TO STANDARD-SPACE from 1st animal
+    %% ========================================================================================
+    %%  [3.2] change 'orientType' variable in project-file
+    %%      When inspecting the HTML-file best orientation is [1] which is set in 'orientType' variable
+    %%      in project-file, projectfile is saved and reloaded
+    %% ========================================================================================
+end
+antcb('setpreorientation',1);
+
+%% ========================================================================================================================
+%%  [3.3] calculate transformation & back-transformation (native-space (NS) -- standard-space (SS))
+%%      using parallel-processing
+%% =======================================================================================================================
+antcb('selectdirs','all');   % select all animal-folders
+xwarp3('batch','task',[1:4],'autoreg',1,'parfor',0);
+
+%% ******************************************************************
+%%  PART-4  : transform flash to  standard-space (SS)
+%% ******************************************************************
+% transform flash3D to SS using linear interp
+doelastix(1, [], 'c_FLASHax_p2xp2_FA30_aligned.nii'  ,1 ,'local' );
+
+
+% ==============================================
+%%   make HTML with overlay
+% ===============================================
+z=[];                                                                                                                                                                                                                         
+z.backgroundImg = { 'x_t2.nii' };                                         % % [SELECT] Background/reference image (a single file)                                                                                             
+z.overlayImg    = { 'x_c_FLASHax_p2xp2_FA30_aligned.nii' };               % % [SELECT] Image to overlay (multiple files possible)                                                                                             
+z.outputPath    = '';     % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )                     
+z.outputstring  = 'flash';                                                % % optional Output string added (suffix) to the HTML-filename and image-directory                                                                  
+z.slices        = 'n25';                                                  % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image                            
+z.dim           = [2];                                                    % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital                                                      
+z.size          = [400];                                                  % % Image size in HTML file (in pixels)                                                                                                             
+z.grid          = [1];                                                    % % Show line grid on top of image {0,1}                                                                                                            
+z.gridspace     = [20];                                                   % % Space between grid lines (in pixels)                                                                                                            
+z.gridcolor     = [1  0  0];                                              % % Grid color                                                                                                                                      
+z.plots         = [1  1  1];                                              % % images to plot [toggleImg BGimg FGimg], example [1 1 1] plot all three                                                                          
+z.cmapB         = 'gray';                                                 % % <optional> specify BG-color; otherwise leave empty                                                                                              
+z.cmapF         = 'jet';                                                  % % <optional> specify FG-color; otherwise leave empty                                                                                              
+z.showFusedIMG  = [1];                                                    % % <optional> show the fused image                                                                                                                 
+z.sliceadjust   = [1];                                                    % % intensity adjust slices separately; [0]no; [1]yes                                                                                               
+xcheckreghtml(0,z);   
+
+
+
+
+
 
 
 %% #################################################
