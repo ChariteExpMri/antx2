@@ -519,9 +519,14 @@ if is4D==1
     
 else
     [~ ,namex,ext]=fileparts(f1);
-    namestem=regexprep(namex,'_00+1$','');
-    f2= spm_select('FPList', px, ['^' namestem '_0\d+' '.nii$']);
+    %namestem=regexprep(namex,'_00+1$','');
+    %namestem=regexprep(namex,'.*_0?1.nii$','')
+    namestem=namex(1:strfind(namex,'_')-1);
+    
+    %f2= spm_select('FPList', px, ['^' namestem '_0\d+' '.nii$']);
+    f2= spm_select('FPList', px, ['^' namestem '_0?\d+' '.nii$']);
     f2=cellstr(f2);
+    f2=natsort(f2);
     f3=f2;    
     
     
@@ -653,13 +658,15 @@ end
 % ===============================================
 
 % if exist(mergedImage)==2
-    try; delete(mergedImage); end
-   matfile=strrep(mergedImage,'.nii','.mat');
-   if exist(matfile)==2
-      try; delete(matfile); end 
-   end
+try; delete(mergedImage); end
+try; matfile=strrep(mergedImage,'.nii','.mat');
+    
+    
+    if exist(matfile)==2
+        try; delete(matfile); end
+    end
+end
 % end
-
 
 try; delete(stradd(f2,'r',1)); end
 
@@ -689,7 +696,8 @@ end
 if strcmp(p0.NIIfile,'all')
     flt=['.*.nii$'];
 elseif strcmp(p0.NIIfile,'firstImage')
-    flt=['.*_0+1.nii$'];
+%     flt=['.*_0+1.nii$'];
+    flt='.*_0?1.nii$';
 end
 
 

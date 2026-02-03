@@ -3,7 +3,11 @@
 %%
 % #yk EXAMPLES
 % antcb('getsubjects')    % get selected subjects-->only those selected from [ANT] Mouse-listbox
+%                           ..also possible to obtain the pyratNo, animalNames and a substring from animalnames
+%                           ->for HELP type antcb('getsubjects?') 
 % antcb('getallsubjects') % get all subjects  --> all from list
+%                           ..also possible to obtain the pyratNo, animalNames and a substring from animalnames
+%                           ->for HELP type antcb('getallsubjects?') 
 %
 % antcb('countfiles', flt); % search and count specific files in animal-folders
 %                           % HELP: antcb('countfiles?')
@@ -639,7 +643,7 @@ if strcmp(do,'reload?');
 end
 %% ===============================================
 if strcmp(do,'getsubjects');
-    paths=getsubjects;
+    paths=getsubjects(input2);
     varargout{1}=paths;
 end
 if strcmp(do,'getsubjects?');
@@ -648,7 +652,7 @@ end
 %% ===============================================
 
 if strcmp(do,'getallsubjects');
-    paths=getallsubjects;
+    paths=getallsubjects(input2);
     varargout{1}=paths;
 end
 if strcmp(do,'getallsubjects?');
@@ -1745,8 +1749,35 @@ end
 %       set(findobj(hfig,'tag','status'),'string',[txt.tag ' ' sprintf('dt %2.2fs', etime(clock, txt.time))/60  ]);
 
 
-function paths=getsubjects
-% get selected animals, selected from the ANTx-listbox
+function paths=getsubjects(input2)
+% antcb('getsubjects');
+%   -get FULLPATH of SELECTED animals, selected from the ANTx-listbox
+% antcb('getsubjects','name');
+%   -get  SHORTNAME of SELECTED animals, selected from the ANTx-listbox
+% output:
+%         '20230714CH_013116_M17'
+%         '20230714CH_013117_M18'
+%===================================================================================================
+% antcb('getsubjects','pyrat')  get  -get 2nd substring in SELECTED animalNames (in some cases it is the pyrat-number)
+% output:
+%             '013116'
+%             '013117'
+%===================================================================================================
+% antcb('getsubjects','field',2);  -get 2nd substring in SELECTED animalNames separated by underscore
+%     this is identical to: antcb('getallsubjects','field',2,'separator','_')
+% output:
+%             '013116'
+%             '013117'
+% antcb('getsubjects','field',1);  -as above but get the 1st substring  
+% output:
+%             '20230714CH'
+%             '20230714CH'
+% antcb('getsubjects','field',3);  -as above but get the 3rd substring
+% output:
+%             'M17'
+%             'M18'
+
+
 
 global an
 if isempty(an);
@@ -1783,12 +1814,74 @@ try
     pathshtml(del)=[];
     paths(   del)=[];
 end
+if length(input2)>1 && strcmp(input2{2},'name')
+    paths=strrep(paths,[fullfile(antcb('getstudypath'),'dat') filesep],'');
+elseif length(input2)>1 && strcmp(input2{2},'pyrat')
+    animals=strrep(paths,[fullfile(antcb('getstudypath'),'dat') filesep],'');
+    pyratno = cellfun(@(x) strsplit(x,'_'), animals, 'UniformOutput', false);
+    pyratno = cellfun(@(x) x{2}, pyratno, 'UniformOutput', false);
+    paths=pyratno;
+elseif length(input2)>1 && strcmp(input2{2},'field')
+    paths=getanimalNameField(paths,input2);
+   
+end
+
+function nametag=getanimalNameField(paths,input2)
+p0.field     =2;
+p0.separator ='_';
+p=cell2struct(input2(3:2:end),input2(2:2:end),2);
+p=catstruct(p0,p);
+animals=strrep(paths,[fullfile(antcb('getstudypath'),'dat') filesep],'');
+tags=repmat({''},[length(animals) 1]);
+for i=1:length(animals)
+    ta=animals{i};
+    ta=[ta repmat([num2str(p.separator) 'nan'],1,10)];
+    ic=strfind(ta,p.separator);
+    if ic(1)~=1; ic=[0 ic]; end
+    tags{i,1}=ta(ic(p.field)+1:ic(p.field+1)-1);
+end
+nametag=tags;
 
 
-function paths=getallsubjects
-%obtain all animals from dat-folder
+function paths=getallsubjects(input2)
+% antcb('getallsubjects');  -get FULLPATH-LIST of all animals from dat-folder
 % output: cell containing the fullpath-dirs of all animals
-% exammple: mdirs=antcb('getallsubjects');
+% example: mdirs=antcb('getallsubjects');
+% 
+% antcb('getallsubjects','name'); -get SHORTNAME-list of all animals from dat-folder
+%   -get FULLPATH of selected animals, selected from the ANTx-listbox
+% example: animals=antcb('getallsubjects','name');
+% output:
+%         '20230726CH_013106_M8'
+%         '20230726CH_013111_M1'
+%         '20230726CH_013112_M2'
+%===================================================================================================
+% antcb('getallsubjects','pyrat')  get  -get 2nd substring in ALL animalNames (in some cases it is the pyrat-number)
+% output:
+%         '20230726CH_013106_M8'
+%         '20230726CH_013111_M1'
+%         '20230726CH_013112_M2'
+%===================================================================================================
+%     
+% antcb('getallsubjects','field',2);  -get 2nd substring in all animalNames separated by underscore
+%     this is identical to: antcb('getallsubjects','field',2,'separator','_')
+% output:
+%             '013106'
+%             '013111'
+%             '013112'
+% antcb('getallsubjects','field',1);  -as above but get the 1st substring  
+% output:
+%             '20230726CH'
+%             '20230726CH'
+%             '20230726CH'
+% antcb('getallsubjects','field',3);  -as above but get the 3rd substring
+% output:
+%             'M8'
+%             'M1'
+%             'M2'
+
+
+
 global an
 lb3=findobj(findobj(0,'tag','ant'),'tag','lb3');
 %li=get(lb3,'string');
@@ -1807,6 +1900,18 @@ end
 % %% remove 'deselected' files
 % [pathstr, name, ext] = fileparts2(paths);
 % paths(regexpi2(name,'^_'))=[];
+if length(input2)>1 && strcmp(input2{2},'name')
+    paths=strrep(paths,[fullfile(antcb('getstudypath'),'dat') filesep],'');
+elseif length(input2)>1 && strcmp(input2{2},'pyrat')
+    animals=strrep(paths,[fullfile(antcb('getstudypath'),'dat') filesep],'');
+    pyratno = cellfun(@(x) strsplit(x,'_'), animals, 'UniformOutput', false);
+    pyratno = cellfun(@(x) x{2}, pyratno, 'UniformOutput', false);
+    paths=pyratno;
+elseif length(input2)>1 && strcmp(input2{2},'field')
+    paths=getanimalNameField(paths,input2);
+   
+end
+
 
 function cb_anima(e,e2)
 antcb('status',0);

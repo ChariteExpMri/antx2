@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   30 Jan 2026 (00:04:38)  
+ &#x1F34E; last modification:   03 Feb 2026 (12:05:26)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**03 Feb 2026 (12:05:26)**</ins>  
+   __[antcb.m]__ : modified, get pyratNo, animalNames and a substring from animalname via antcb('getsubjects')   
+    or antcb('getallsubjects') ... for help see antcb('getsubjects?') or antcb('getallsubjects?')  
+<!---->
   &#x1F535;   <ins>**30 Jan 2026 (00:04:38)**</ins>  
    __[elastixparamfile.m]__ : list/copy/modify elastix-parameterfile  
    __[xmergenifti4D.m]__ : merge 3D NIFTIS to 4D-NIFTI (xmergenifti4D)  

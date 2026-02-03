@@ -1159,7 +1159,9 @@
 % #k [elastixparamfile.m] #n : list/copy/modify elastix-parameterfile
 % #k [xmergenifti4D.m] #n : merge 3D NIFTIS to 4D-NIFTI (xmergenifti4D)
 % #gw --> access via ANT-menu: &#8658; Tools/merge 3D-NIFTIs to 4D-NIFTI
-% 
+% #ba 03 Feb 2026 (12:05:26)
+% #k [antcb.m] #n : modified, get pyratNo, animalNames and a substring from animalname via antcb('getsubjects') 
+%   or antcb('getallsubjects') ... for help see antcb('getsubjects?') or antcb('getallsubjects?')
 % 
 % 
 % 
