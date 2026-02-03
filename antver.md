@@ -10,6 +10,7 @@
   &#x1F535;   <ins>**03 Feb 2026 (12:05:26)**</ins>  
    __[antcb.m]__ : modified, get pyratNo, animalNames and a substring from animalname via antcb('getsubjects')   
     or antcb('getallsubjects') ... for help see antcb('getsubjects?') or antcb('getallsubjects?')  
+   __[xrename.m]__ : modified, extraction of a 2D slice from 3D/4D volume  
 <!---->
   &#x1F535;   <ins>**30 Jan 2026 (00:04:38)**</ins>  
    __[elastixparamfile.m]__ : list/copy/modify elastix-parameterfile  

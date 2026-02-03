@@ -39,7 +39,13 @@
 % 
 % #b - apply function to NIFTI         ('niifun:')      #g e.g.: 'niifun:myfunc.m' % to apply function 'myfunc.m' on sleected NIFTIfile
 % 
+% #by extract 2D-slice                  (slice:)  % extract one/several 2Dslice(s) from NIFTI-file and write as 2D-NIFTI(s)
+%                                                   xrename(0,'cbf_matchingvol.nii','cbf_matchingvol_slice.nii','slice:1');
+% 
+% 
+% 
 % #r The functions 'XRENAME' and 'XOP' (lowercase) are identical, XOP is a wrapper-function of XRENAME)
+% 
 % 
 % 
 % % __________________________________________________________________________________________________________________
@@ -377,6 +383,18 @@
 %     z.files =  { 'adc.nii' 	'bla.nii' 	'rmat:'
 %                  'adc2.nii' 	''   	    'ref'  };
 %     xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
+
+%__________________________________________________________________________________________________________________
+%% #by extract 2D-slice (slice:)
+% extract one/several 2Dslice(s) from NIFTI-file and write as 2D-NIFTI(s)
+% EXAMPLES:
+%     % extract 1st 2D-slice from ''cbf_matchingvol.nii' and save as 'cbf_matchingvol_slice.nii'
+%     %  here the 1st volume (3D) is used
+%         xrename(0,'cbf_matchingvol.nii','cbf_matchingvol_slice.nii','slice:1');
+%     % as above but extract 2D slices of number 2 and 3 ..will be written as cbf_matchingvol_slice002.nii & cbf_matchingvol_slice003.nii  
+%         xrename(0,'cbf_matchingvol.nii','cbf_matchingvol_slice.nii','slice:2:3;vol=1');
+%     % same as above but use write 2 and 4
+%         xrename(0,'cbf_matchingvol.nii','cbf_matchingvol_slice.nii','slice:[2 4];vol=1');
 %__________________________________________________________________________________________________________________
 %% #by zip Nifti-file (gzip:)
 %     xrename(1,'test3.nii' ,	'test3.nii' ,	'gzip:')
@@ -1703,6 +1721,44 @@ for i=1:length(pa)      %PATH
                     rsavenii(s2, hr, a, 64);
                     showinfo2(['replace HDR:[' Z.animalDir ']'],s2);
                     %% ===============================================
+               elseif strfind(volnum{j},'slice:');   
+                   %% ===============================================
+                   %  xrename(0,'cbf_matchingvol.nii','cbf_matchingvol_slice.nii','slice:1');
+                   %  xrename(0,'cbf_matchingvol.nii','cbf_matchingvol_slice.nii','slice:2:3;vol=1');
+                   %  xrename(0,'cbf_matchingvol.nii','cbf_matchingvol_slice.nii','slice:[2 4];vol=1');
+                   
+                   arg=[strrep(volnum{j},'slice:','slice=') ';'];
+                   if ~isempty(strfind(arg,'=;'));
+                       arg=regexprep(arg,'=;','=1;');
+                   end
+                  % arg =    'slice=1:3;vol=1;'
+                   %tmp = regexp(arg, '(\w+)\s*=\s*([\d\.]+)', 'tokens');
+                  % tmp = regexp(arg, '(\w+)\s*=\s*([\d\.]+(?::[\d\.]+)?)', 'tokens');
+                   tmp = regexp(arg, '(\w+)\s*=\s*([^;]+)', 'tokens');
+                   tmp = [tmp{:}];          % FLATTEN inner cells (this is the key)
+                   c  = struct(tmp{:});
+                   
+                  
+                   
+                   c0.slice=1;
+                   c0.vol  =1;
+                   c=catstruct(c0,c);
+                   
+                   try; c.slice=eval(c.slice); end
+                   try; c.vol=eval(c.vol); end
+              
+                   s3=extract_slice(s1,s2,c.slice,c.vol,0);
+                   try
+                   showinfo2(['extractSlice:[' Z.animalDir ']'],s3{1});
+                   end
+                   
+             
+                   return
+                   %s1,s2
+                   %% ===============================================
+                   
+                   
+                   
                elseif strfind(volnum{j},'gzip:');
                     %% ===[gzip file]===========
                     % z=[];

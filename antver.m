@@ -1162,7 +1162,7 @@
 % #ba 03 Feb 2026 (12:05:26)
 % #k [antcb.m] #n : modified, get pyratNo, animalNames and a substring from animalname via antcb('getsubjects') 
 %   or antcb('getallsubjects') ... for help see antcb('getsubjects?') or antcb('getallsubjects?')
-% 
+% #k [xrename.m] #n : modified, extraction of a 2D slice from 3D/4D volume
 % 
 % 
 % 
