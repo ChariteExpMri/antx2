@@ -21,6 +21,24 @@ antcb('close'); exit
 updateantx(2);
 %% #################################################
 % cmd
+% programatically create projext (mouse) 
+% 
+%------[from my f_drive]---------
+makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[.07 .07 .07],...
+    'wa_refpath','f:\anttemplates\mouse_Allen2017HikishimaLR',...
+    'wa_species','mouse')
+antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+
+%------[windows-server]---------
+makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[.07 .07 .07],...
+    'wa_refpath','D:\MATLAB\anttemplates\mouse_Allen2017HikishimaLR',...
+    'wa_species','mouse')
+antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+
+
+
+%% #################################################
+% cmd
 % set specifc parameters of projectfile
 %EXAMPLES: 
 %---------------
