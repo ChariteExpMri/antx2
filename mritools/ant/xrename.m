@@ -383,7 +383,6 @@
 %     z.files =  { 'adc.nii' 	'bla.nii' 	'rmat:'
 %                  'adc2.nii' 	''   	    'ref'  };
 %     xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
-
 %__________________________________________________________________________________________________________________
 %% #by extract 2D-slice (slice:)
 % extract one/several 2Dslice(s) from NIFTI-file and write as 2D-NIFTI(s)
@@ -445,7 +444,6 @@
 % or 'codes' in the study folder:
 % xrename(1,'ADCmask.nii' ,	'test.nii',	'niifun:myfunc.m');
 %                          
-
 %__________________________________________________________________________________________________________________
 %% #by voxel scaling (vf:)
 % change voxel scaling of an image via  the [TASK]-column
@@ -617,7 +615,8 @@
 %
 %
 %% #r RE-USE BATCH: see 'anth' [..anthistory] -variable in workspace
-
+% 
+% 
 
 
 function xrename(showgui,fi,finew,extractnum,varargin)
