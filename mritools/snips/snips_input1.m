@@ -107,6 +107,36 @@ for i=1:size(t,1)
     rsavenii(Fo2, ha,o2, 16);
     showinfo2([ 'file' ] ,Fo1,Fo2,13);
 end
+
+
+
+%% #################################################
+% Bruker import
+% import a single Bruker-File AND RENAME FILE DIRECTLY
+
+v.study=antcb('getstudypath')
+v.paraw=fullfile(v.study,'raw')
+w1=xbruker2nifti(v.paraw,0,[],[],'gui',0,'show',1); %GET ALL Bruker raw-data files
+
+%FILTER ONLY THE TURBORARE
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol','TurboRARE'});
+
+%% OPTION-1: output-file with orignal name ('03_T2_TurboRARE.nii')
+w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0);
+
+%% OPTION-2: output file with orignal name + ExperimentNumber+ProcessingNumber ('03_T2_TurboRARE_2_1.nii')
+w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'ExpNo_File',1,'PrcNo_File',1)
+
+%% OPTION-3: rename turborare as 't2.nii'
+w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'outname','t2.nii');
+
+%% OPTION-4:  rename turborare and add ExperimentNumber+ProcessingNumber, output is: 't2_2_1.nii'
+w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'outname','t2.nii','ExpNo_File',1,'PrcNo_File',1);
+
+
+%% OPTION-5: rename turborare as 't2.nii' but write only if file did not exist before
+w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'outname','t2.nii','overwrite',0);
+
 %% #################################################
 % pipeline
 % from Bruker-import to standardspace

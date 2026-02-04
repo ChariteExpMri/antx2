@@ -257,6 +257,10 @@
 %                      string, default: ''
 % 'suffix'        add suffix to new file
 %                      string, default: ''
+% 'outname'       (for single-file import only!) - specify name of the resulting NIFTI-file (see example)
+%                      type: string
+% 'overwrite'    force to overwrite file; if [0] file is creates only if not existed before
+%                {0|1}, default: 1
 %
 %
 %% example: import files which Protocol contains string 'T1rho', adding EXPerimentNumber to file
@@ -268,6 +272,26 @@
 % w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol','T1rho'},...
 %     'paout',fullfile(pwd,'dat'),'ExpNo_File',1,'PrcNo_File',1);
 %
+%% examples of single file import
+% v.study=antcb('getstudypath')
+% v.paraw=fullfile(v.study,'raw')
+% w1=xbruker2nifti(v.paraw,0,[],[],'gui',0,'show',1); %GET ALL Bruker raw-data files
+% 
+% %FILTER ONLY THE TURBORARE
+% w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol','TurboRARE'});
+% 
+% %% import only a single file
+% % output-file with orignal name ('03_T2_TurboRARE.nii')
+% w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0);
+% % output file with orignal name + ExperimentNumber+ProcessingNumber ('03_T2_TurboRARE_2_1.nii')
+% w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'ExpNo_File',1,'PrcNo_File',1)
+% % 
+% % rename turborare as 't2.nii'
+% w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'outname','t2.nii');
+% % 
+% % rename turborare and add ExperimentNumber+ProcessingNumber, output is: 't2_2_1.nii'
+% w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'outname','t2.nii','ExpNo_File',1,'PrcNo_File',1);
+
 
 
 function varargout=xbruker2nifti(pain,sequence,trmb,x,varargin)
@@ -1021,6 +1045,17 @@ for i=1:size(files,1)
         %% MAKE FILENAME  [fname fpname]
         idrename=find(strcmp(tbrename(:,1),protocol{i}));
         fname=[ tbrename{idrename,2}];
+        
+        if isfield(p0,'outname') && ischar(p0.outname)
+            [~,nname, next]=fileparts(p0.outname);
+              nname=regexprep(nname,'\s+','');
+              if ~isempty(nname)
+              fname=[ nname ];%remove spaces and add '.nii'
+              end
+        end
+        
+        
+        
         if z.ExpNo_File==1;
             if z.suffixLetter==1  ; let='e'; else ;let=''; end
             fname=[fname delimiter let dx{i, strcmp( dh,    'ExpNo'  )}]   ;
