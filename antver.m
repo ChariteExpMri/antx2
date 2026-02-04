@@ -1151,7 +1151,7 @@
 % #k [snips.m] #n : added DWI-pipeline part 1 & 2
 % #ba 17 Dec 2025 (21:52:47)
 % #k [zipfile.m] #n : new, compress/uncompress NIFTIs
-% % #gw --> access via ANT-menu: &#8658; Main/gzip/gunzip NIFTIs
+% #gw --> access via ANT-menu: &#8658; Main/gzip/gunzip NIFTIs
 % #ba 05 Jan 2026 (16:08:24)
 % antcb('getlabels');     %get atlas IDs & labels from xyz-coordinates (as 'mm' or 'indices')
 %    ..for HELP type antcb('getlabels?');
@@ -1164,9 +1164,13 @@
 %   or antcb('getallsubjects') ... for help see antcb('getsubjects?') or antcb('getallsubjects?')
 % #k [xrename.m] #n : modified, extraction of a 2D slice from 3D/4D volume
 % 
+% #ba 04 Feb 2026 (13:29:21)
+% #k [snips.m] #n updated
+% added: Bruker-import examples (see also 'pipline')
+% added: pipeline DWI-multishell
+% #gw --> access: type snips to inspect the snips-GUI
 % 
 % 
-
 
 
 %% ===============================================

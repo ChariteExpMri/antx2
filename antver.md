@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   03 Feb 2026 (12:05:26)  
+ &#x1F34E; last modification:   04 Feb 2026 (13:29:21)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,10 +7,17 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**04 Feb 2026 (13:29:21)**</ins>  
+   __[snips.m]__ updated  
+  added: Bruker-import examples (see also 'pipline')  
+  added: pipeline DWI-multishell  
+  &#8618; access: type snips to inspect the snips-GUI  
+<!---->
   &#x1F535;   <ins>**03 Feb 2026 (12:05:26)**</ins>  
    __[antcb.m]__ : modified, get pyratNo, animalNames and a substring from animalname via antcb('getsubjects')   
     or antcb('getallsubjects') ... for help see antcb('getsubjects?') or antcb('getallsubjects?')  
    __[xrename.m]__ : modified, extraction of a 2D slice from 3D/4D volume  
+    
 <!---->
   &#x1F535;   <ins>**30 Jan 2026 (00:04:38)**</ins>  
    __[elastixparamfile.m]__ : list/copy/modify elastix-parameterfile  
@@ -23,7 +30,7 @@
 <!---->
   &#x1F535;   <ins>**17 Dec 2025 (21:52:47)**</ins>  
    __[zipfile.m]__ : new, compress/uncompress NIFTIs  
-  % &#8618; access via ANT-menu: &#8658; Main/gzip/gunzip NIFTIs  
+  &#8618; access via ANT-menu: &#8658; Main/gzip/gunzip NIFTIs  
 <!---->
   &#x1F535;   <ins>**09 Dec 2025 (11:54:29)**</ins>  
    __[antcb.m]__ : updated, antcb('setpreorientation') to  change preorientation (paramter: 'orientType') via comandline.  
