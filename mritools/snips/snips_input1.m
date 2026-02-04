@@ -21,7 +21,7 @@ antcb('close'); exit
 updateantx(2);
 %% #################################################
 % cmd
-% programatically create projext (mouse) 
+% programatically create project (mouse-template) 
 % 
 %------[from my f_drive]---------
 makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[.07 .07 .07],...
@@ -133,9 +133,46 @@ w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'outname','t2.nii');
 %% OPTION-4:  rename turborare and add ExperimentNumber+ProcessingNumber, output is: 't2_2_1.nii'
 w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'outname','t2.nii','ExpNo_File',1,'PrcNo_File',1);
 
-
 %% OPTION-5: rename turborare as 't2.nii' but write only if file did not exist before
 w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'outname','t2.nii','overwrite',0);
+
+%% #################################################
+% Bruker import
+% import Bruker TURBORARE from missing animals, rename it and register those animals to standard space
+
+v.study      =antcb('getstudypath');   %study-folder
+v.paraw      =fullfile(v.study,'raw'); %Bruker-rawdata-folder
+cd(v.study)
+ 
+%% ===============================================
+%% [1]  import Bruker data
+%% ===============================================
+cprintf('*[0 .5 0]',['IMPORT BRUKER DATA '  '\n']);
+% DISPLAY all Bruker-files from 'raw'-folder, PLEASE INSPECT THE TABLE BEFORE DOING THE NEXT STEP
+w1=xbruker2nifti(v.paraw,0,[],[],'gui',0,'show',1);
+% ===============================================
+%FILTER ONLY THE TURBORARE
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol','TurboRARE'});
+%% rename turborare as 't2.nii' but write only if file did not exist before
+w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'outname','t2.nii','overwrite',0);
+antcb('update'); %update GUI
+ 
+%% ========================================================================
+%% [2] select images that hane not yet registered to standard space
+%% =========================================================================
+counts=antcb('countfiles', 'x_t2.nii');
+ix_mdir2regster=find(counts==0);
+antcb('selectdirs',ix_mdir2regster);
+ 
+%% ========================================================================================================================
+%% [3.] calculate transformation & back-transformation (native-space (NS) -- standard-space (SS))
+%%      using parallel-processing
+%% =======================================================================================================================
+xwarp3('batch','task',[1:4],'autoreg',1,'parfor',1);
+
+
+
+
 
 %% #################################################
 % pipeline
