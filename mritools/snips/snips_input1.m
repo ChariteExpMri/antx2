@@ -3662,10 +3662,388 @@ w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol','MPM_3D'},...
 % IMPORT Bruker files where the protocol name contains 'MPM_3D
 w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol','MPM_3D'},...
     'paout',fullfile(pwd,'dat'),'ExpNo_File',1);
+%% #################################################
+% Baydiff
+%% BayDiff Script: estimates microstructural diffusion parameters by Bayesian estimation 
+%% written by Marco Reisert, Medical Physics, University Hospital Freiburg
+%% Adapted from: H:\Daten-2\Imaging\AG_Paul_Brandt\code
+% Prerequisites:
+% - Antx project defined, transformation parameters to standard space (SS) has been estimated
+% - DWI MRtrix pipeline has been executed, and MRtrix-DWI data have been backed up
+%% steps                                                                                         
+% [1] copy mif-files from animal's Backup-drive to respective dir in antx-study            
+% [2] create temporary HPC-DIR, copy mif-files to HPC-DIR                
+% [3] write mif2nii converter-script                                   
+% [4] make HPC-starterscript (transfer+chmod script)                               
+% [5] RUN starterscript on HPC (convert mif to nii and extract bvals/vec)  
+% [6] check number of files                                            
+% [7] transfer nii+bvals/bvec back to ANTx-study                      
+% [8] run baydiff, make pngs&PPT                                       
+% [9] merge summary-PPT                                                 
+%[10] trafo badyiff maps to SS                                         
+%[11] clean-up                                                         
+% ===============================================
+cf;clear;clc
+%% ====[PLEASE SET/MODIFY PARAMETERS]===========================================
+v.study      =antcb('getstudypath') ;% ANTx-study
+v.pa_backup  ='H:\Daten-2\Imaging\BACKUP_DTI\AG_Penack_ICANS_test' ;% studypath containing the MIF-fil
+v.pa_mainHPC ='X:\Imaging';  %HPC-main-DIR
+
+v.bscale     =1; % BAYDIFF: EXVIVO a value between 2 -3D [2.77];   INVIVO:[1]
+v.cleanup    =1; %cleanup; {0|1}
+v.trafo2SS   =1; %trafo to standardSpace  ; {0|1}
+
+%% ====internal===========================================
+v.pa_baydiff ='D:\MATLAB\baydiff';             %baydiff-toolbox path path
+v.miffile    =[   'dwi_den_unr_pre_pos.mif' ]; %used mif-file
+v.prefix     ='bay';                           %filePrefix of resulting NIFTIs & PNGs
+[~, v.studyname]=fileparts(v.study);
+v.baydiffname=['baydiff_' v.studyname];  %temporary baydiff-folder on HPC
+
+% ==============================================
+%%   start
+% ===============================================
+cprintf('*[1 0 1]',['START BAYDIFF..DONE!'   '\n']);
+timex=tic;
+antcb('selectdirs','all');
+% ==============================================
+%% [1] copy mif-files from animal's Backup-drive to antx-study
+% ===============================================
+mdirs=antcb('getsubjects');
+file=v.miffile;%[   'dwi_den_unr_pre_pos.mif' ];
+for i=1:length(mdirs)
+    pa_target=mdirs{i};
+    [~,animal]=fileparts(pa_target);
+    pa_source=(fullfile(v.pa_backup,'dat',animal,'mrtrix'));
+    Fi1=fullfile(pa_source,file );
+    if exist(Fi1)~=2; 
+       disp([ animal ']' 'file not exist "' file  '"' ]);
+    else
+      Fo1=fullfile(pa_target,file )  ;
+      copyfile(Fi1,Fo1,'f');
+      showinfo2([' ..copied mif-file'],Fo1);
+    end  
+end
+% ==============================================
+%% [2] create temporary HPC-DIR, copy mif-files to HPC-dir
+% ===============================================
+v.pa_HPC    =fullfile( v.pa_mainHPC,v.baydiffname );
+v.pa_HPC_dat=fullfile(v.pa_HPC,'dat');
+try; rmdir(v.pa_HPC_dat,'s')          ;end  %remove dat-folder
+try; delete(fullfile(v.pa_HPC,'*.sh')); end %delete shellscripts there
+if exist(v.pa_HPC_dat)~=7
+    mkdir(v.pa_HPC_dat);
+end
+mdirs=antcb('getsubjects');
+for i=1:length(mdirs)
+    pa=mdirs{i};
+    [~,animal]=fileparts(pa);
+    pout=fullfile(v.pa_HPC_dat, animal);
+    if exist(pout)~=7
+        mkdir(pout);
+    end
+    Fi1=fullfile(pa,file);
+    Fo1=fullfile(pout,file);
+    copyfile(Fi1,Fo1,'f');
+    showinfo2([' ..mif-file copied to HPC'],Fo1);
+end
+
+% ==============================================
+%%   [3] write mif2nii converter-script
+% ===============================================
+hz=...
+    {
+    '#!/bin/bash'
+    'echo "Convert MIF to NIFTI and export FSL bvals/vecs"'
+    '# Debug and exit on error'
+%     'set -x'
+%     'set -e'
+    '# Self-aware script path'
+    'SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"'
+    'inputpath="$SCRIPT_DIR/dat"'
+    '# Loop over each subject folder'
+    'for subj_dir in "$inputpath"/*/; do'
+    '    input="$subj_dir/dwi_den_unr_pre_pos.mif"'
+    '    output="${input%.mif}.nii"'
+    '    if [ -f "$input" ]; then'
+    '        echo "Converting $input to $output"'
+    '        mrconvert "$input" "$output" \'
+    '            -export_grad_fsl "${input%.mif}_bvec.txt" "${input%.mif}_bval.txt" \'
+    '            -force'
+    '    else'
+    '        echo "File $input not found in $subj_dir, skipping..."'
+    '    fi'
+    'done'
+    'echo "All conversions complete!"'
+    };
+
+cprintf('*[0 .5 0]',['..write "mif2nii.sh"' '\n']);
+so1=fullfile(v.pa_HPC,'mif2nii.sh' );
+pwrite2file(so1,hz);
+showinfo2([' ..writing mif2nii-script'],so1);
+
+% ==============================================
+%%   [4] make HPC-starterscript
+% ===============================================
+hx={...
+ '#!/bin/bash'
+ '#SBATCH --job-name=mif2nii'
+ '#SBATCH --output=mif2nii.o        #FileName of output with %A(jobID) and %a(array-index);(alternative: .o%j)'
+ '#SBATCH --error=mif2nii.e         #FileName of error with %A(jobID) and %a(array-index);alternative: .e%j)'
+ '#SBATCH --partition=compute         # Specify partition name'
+ '#SBATCH --nodes=1                   # Specify number of nodes'
+ '#SBATCH --cpus-per-task=1          # Specify number of CPUs (cores) per task'
+ '#SBATCH --mem=8G'
+ '# Load MRtrix module if needed'
+ 'source /etc/profile.d/conda.sh                # Conda initialization in the bash shell'
+ 'conda activate /sc-projects/sc-proj-agtiermrt/Daten-2/condaEnvs/dtistuff        # Activate conda virtual environment'
+ '# Run the conversion script'
+ 'bash /sc-projects/sc-proj-agtiermrt/Daten-2/Imaging/baydiff_AG_Penack_ICANS/mif2nii.sh'
+ ['bash /sc-projects/sc-proj-agtiermrt/Daten-2/Imaging/' v.baydiffname  '/mif2nii.sh']
+};
+batchfilename=fullfile(v.pa_HPC,'batch_baydiff_mifvonvert.sh');
+pwrite2file(batchfilename,hx);
+showinfo2([' ..writing HPC-starterscript'],batchfilename);
+
+% ==============================================
+%%  [4.1] transfer batch-file to HPC
+% via SSH/SFTP/SCP For Matlab (v2)-package
+% ===============================================
+[batchPath bathNameTmp batchExt]=fileparts(batchfilename);
+batchName=[bathNameTmp batchExt];
+% --------------------------------
+% [4.1] get username and password
+global mpw
+if isempty(mpw)
+    [p.login p.password] = logindlg('Title','HPC-cluster');
+    mpw.login =p.login;
+    mpw.password=p.password;
+else
+    p.login=mpw.login;
+    p.password=mpw.password;
+end
+mpw.login =p.login;
+mpw.password=p.password;
+p.HPC_hostname='s-sc-frontend2.charite.de'; %rs.HPC_hostname;%
+% --------------------------------
+% [4.2] transfer batchfile
+cmd=['rm ' batchName];%delete file
+command_output = ssh2_simple_command(p.HPC_hostname,p.login,p.password,cmd);
+msg=sftp_simple_put(p.HPC_hostname,p.login,p.password,batchName,'',batchPath);%transfer file
+% --------------------------------
+% [4.3] verify tranfer
+cmd=['[ -f ' batchName  ' ] && echo "File exist" || echo "File does not exist"'];
+command_output = ssh2_simple_command(p.HPC_hostname,p.login,p.password,cmd);
+if strfind(strjoin(command_output,char(10)),'File exist')
+    cprintf('*[0 .5 0]',['file "' batchName '" successfully transfered to HPC-cluster ' '\n']);
+else
+    cprintf('*[1 0 0]',['failed to transfer file "' batchName '" to HPC-cluster! ' '\n']);
+end
+% ===============================================
+% [4.4] make executable
+    % command_output = ssh2_simple_command(p.HPC_hostname,p.login,p.password,['ls -la ' batchName]);
+    cmd=['chmod +x ' batchName ';' ['ls -la ' batchName]  ];
+    command_output = ssh2_simple_command(p.HPC_hostname,p.login,p.password,cmd);
+    if length(strfind(command_output{1}(1:10),'x'))>0
+        cprintf('*[0 .5 0]',['file "' batchName '" now is executable  ' '\n']);
+        disp([' info: ' strjoin(command_output,char(10))]);
+    else
+        cprintf('*[1 0 0]',['failed to make file "' batchName '" executable!  ' '\n']);
+    end
+% ==============================================
+%%   [5] RUN starterscript on HPC (convert mif to nii and get bvals/vec)
+% ===============================================
+cprintf('*[0 .5 0]',['Running "' batchName '" !  ' '\n']);
+cmd=['sbatch ' batchName ];
+co = ssh2_simple_command(p.HPC_hostname,p.login,p.password,cmd);
+pause(5);
+dorun=1;
+while dorun==1
+    co = ssh2_simple_command(p.HPC_hostname,p.login,p.password,['squeue --me']);
+    ix=regexpi2(co,'mif2nii');
+    if ~isempty(ix)
+        disp(char(co(ix)));
+    else
+        disp(char(co));
+        disp('done');
+        dorun=0;
+    end
+    pause(5);
+end
+% ==============================================
+%% [6] check number of files
+% ===============================================
+fis = spm_select('FPListRec',v.pa_HPC_dat,'.*'); fis=cellstr(fis);
+[~,fname,fext]=fileparts2(fis);
+fname=cellfun(@(a,b){ [a  b]} ,fname,fext);
+fname_uni=unique(fname);
+t={};
+[dirs] = spm_select('List',v.pa_HPC_dat,'dir');dirs=cellstr(dirs);
+ndirs=size(dirs,1);
+for i=1:length(fname_uni)
+   cn=sum(strcmp(fname,fname_uni{i}) );
+   t(i,:)={fname_uni{i} num2str(cn) num2str(ndirs)};
+end
+ht={'file' 'count' 'expected' };
+cprintf('*[0 .5 0]',['files after conversion' '\n']);
+disp(char(plog([],[ht;t],0,['mif2nifti-conversion, folders: '  num2str(ndirs) ])));
+% ==============================================
+%% [7]  transfer nii+bvals/bvec back to ANTx-study
+% ===============================================
+cprintf('*[0 .5 0]',['copy files back to ANTx-study' '\n']);
+for i=1:length(mdirs)
+   paT=mdirs{i} ;
+   [~,animal]=fileparts(paT);
+   paS=fullfile(v.pa_HPC_dat, animal);
+   fi=spm_select('List',paS,'.*.nii|.*.txt'); fi=cellstr(fi);
+   for j=1:length(fi)
+       F1=fullfile(paT,fi{j});
+      copyfile(  fullfile(paS,fi{j}),  F1 ,  'f') 
+      showinfo2([ '  [' num2str(i) '] "' animal '" copied back'],F1);
+   end
+end
+%% ==============================================
+%%  [8] run baydiff, make pngs&PPT
+%% ==============================================
+addpath(v.pa_baydiff);% add path of BAYDIFF-tbx
+fclose('all');
+padat=fullfile(v.study,'dat');
+[~,dwifile,dwifileext]=fileparts(v.miffile);
+dwifile=[dwifile '.nii']  ;% 'dwi_den_unr_pre_pos.nii'
+[fis] = spm_select('FPListRec',padat,[ '^' dwifile '$' ]);fis=cellstr(fis);
+% bscale = 1    ; %invivo;  or bscale = 2.77 ; % exvivo a value between 2 -3D; invivo:[1]
+bscale =v.bscale;
+noise  = 1    ;
+figure; imagesc; title('baydiff-dummy-figure'); %dummy figure 
+for i=1:length(fis)
+    [paout,fname]=fileparts(fis{i});
+    [~,animal]=fileparts(paout);
+    cprintf('*[1 0 1]',['BAYDIFF [' num2str(i) '] animal: ' animal   '\n']);
+    F1=fullfile(paout,[fname '.nii']);
+    F2=fullfile(paout,[fname '_bvec.txt']);
+    F3=fullfile(paout,[fname '_bval.txt']);
+    if all(  existn({ F1 F2 F3} )  ==2)==0;
+        error(['some file not found']) ;
+    end
+    % ===============================================
+    x = load_untouch_nii(F1);
+    data.dwi=x.img;
+    bvecs = importdata(F2);
+    bvals = importdata(F3);
+    t=[bvecs' bvals' ];
+    % bval = round(t(:,4)/200)*200 /bscale;
+    %bval = round(round(t(:,4)/200)*200 /bscale);
+    bval=round(round(t(:,4),-2)/bscale);
+    bvec  =t(:,1:3);
+    if size(bvec,2)==3
+        bvec=bvec';
+        bval=bval(:)';
+    end
+    for k = 1:size(bval,2),
+        gdir = bvec(:,k);
+        gdir = gdir / (eps+norm(gdir));
+        data.tensor(:,:,k) = gdir*gdir' *bval(k);
+    end
+    params = {'SNRthreshold',0,'reg',10^-9,'nt',10^5,'force_retraining',...
+        true,'noise',noise,'qspace','multishell','includeb0',false};
+    [est,model] = baydiff(data,params{:});
+    z = x;
+    for k = 1:length(model.parameter_names') %6,
+       % out =fullfile(paout, ['r_' pnum(k,3) '__' model.parameter_names{k} '.nii']);
+        out =fullfile(paout, [v.prefix pnum(k,3) '_' model.parameter_names{k} '.nii']);
+        z.img = est(:,:,:,k);
+        z.hdr.dime.dim(5)=1;
+        save_untouch_nii(z,out);
+        showinfo2('.. nifti',out);
+    end
+    % ==============================================
+    % make PNG of middle slice plot for all imgs
+    % ===============================================
+    warning off;    fclose('all');
+    disp('..writing pngs');
+    papng=fullfile(paout,'baydiff_png');
+    try; delete(fullfile(papng,'*')) ; end
+    try; rmdir(papng,'s'); end
+    if exist(papng)~=7; mkdir(papng); end
+    for k=1:length(model.parameter_names');
+        fo1 =fullfile(paout, [v.prefix pnum(k,3) '_' model.parameter_names{k} '.nii']);
+        [~,imgname]=fileparts(fo1);
+        hs=spm_vol(fo1);
+        [d ds]=getslices(fo1,1,[round(hs.dim(3)./2)],[],0 );
+        fo2=fullfile(papng,[imgname '.png'] );
+        hf = figure('Visible', 'off');
+        imagesc(d);    colormap(gray);
+        c = colorbar;  %    ylabel(c, 'Values');
+        set(gca, 'FontSize', 10,'fontweight','bold');
+        axis tight; axis off;
+        title(imgname,'fontsize',12,'fontweight','bold','interpreter','none');
+        drawnow;
+        savePNG(fo2,'bgtransp',1,'saveres',100, 'hf', hf,'info',0);
+        close(hf);
+    end
+    % ==============================================
+    % make PPT
+    % ===============================================
+    paimg =papng;
+    pptfile =fullfile(paout,['baydiff_' animal '.pptx']);
+    titlem  =['BAYDIFF [' num2str(i) '] ' animal  ];
+    %[pngs]   = spm_select('FPList',paimg,'^r.*.png');    pngs=cellstr(pngs);
+     [pngs]   = spm_select('FPList',paimg,['^' v.prefix  '.*.png']);    pngs=cellstr(pngs);
+    tx      ={['path: '  paimg ]};
+    
+    nimg_per_page  =6;           %number of images per plot
+    imgIDXpage     =unique([1:nimg_per_page:length(pngs) length(pngs)+1 ]);
+    for k=1:length(imgIDXpage)-1
+        if k==1; doc='new'; else; doc='add'; end
+        img_perslice=pngs([imgIDXpage(k):imgIDXpage(k+1)-1]);
+        img2ppt(paout,img_perslice, pptfile,'size','A4','doc',doc,...
+            'crop',0,'gap',[0.1 .1 ],'columns',2,'xy',[.3 1.5 ],'wh',[ 10 nan],...
+            'title',titlem,'Tha','center','Tfs',15,'Tcol',[0 0 0],'Tbgcol',[1 .8 0],...
+            'text',tx,'tfs',6,'txy',[0 28],'tbgcol',[1 1 1],'disp',0);
+    end
+    showinfo2('.. PPT',pptfile);
+end
+
+% ==============================================
+%%  [9] merge summary-PPT
+% ===============================================
+% thisstudy=(fileparts(padat));
+odir=fullfile(v.study,'results','baydiff');
+if exist(odir)~=7; mkdir(odir); end
+pptfile2=fullfile(odir,'baydiff_results.pptx');
+
+pptfiles = spm_select('FPListRec',padat,'^baydiff.*.pptx');
+pptfiles=cellstr(pptfiles);
+pptfiles=natsort(pptfiles);
+pptmerge(pptfile2,pptfiles);
+% ==============================================
+%%  [10] trafo badyiff maps to SS
+% ===============================================
+if v.trafo2SS==1
+    cprintf('*[0 .5 0]',['trafo to SS'   '\n']);
+    fis = spm_select('FPListRec',fullfile(v.study,'dat'),['^' v.prefix '.*.nii$'   ]); fis=cellstr(fis);
+    [~,fname,fext]=fileparts2(fis);
+    fname=cellfun(@(a,b){ [a  b]} ,fname,fext);
+    files2SS=unique(fname);
+    doelastix(1  , [],      files2SS ,1 ,'local');
+end
+% ==============================================
+%%  [11] clean-up
+% ===============================================
+if v.cleanup==1
+    if exist(v.pa_HPC)==7
+        rmdir(v.pa_HPC,'s'); %delete HPC-converter dir
+        xrename(0,v.miffile, '','del'); %delete ANTx-mif-file
+    end
+end
+% ==============================================
+%%   done
+% ===============================================
+cprintf('*[1 0 1]',['BAYDIFF..DONE! (ET: ' sprintf('%2.2fmin',toc(timex)/60) ')'   '\n']);
 
 %% #################################################
 % Baydiff
-% copy files, transform to SS, region-wise parameter readout
+% copy files, transform to SS, region-wise parameter readout (older)
 
  
  

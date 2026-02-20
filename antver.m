@@ -1169,6 +1169,9 @@
 % added: Bruker-import examples (see also 'pipline')
 % added: pipeline DWI-multishell
 % #gw --> access: type snips to inspect the snips-GUI
+% #ba 20 Feb 2026 (13:17:48)
+% #k [snips.m] #n updated
+% added: Baydiff-script 
 % 
 % 
 
