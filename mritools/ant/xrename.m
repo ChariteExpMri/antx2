@@ -39,7 +39,7 @@
 % 
 % #b - apply function to NIFTI         ('niifun:')      #g e.g.: 'niifun:myfunc.m' % to apply function 'myfunc.m' on sleected NIFTIfile
 % 
-% #by extract 2D-slice                  (slice:)  % extract one/several 2Dslice(s) from NIFTI-file and write as 2D-NIFTI(s)
+% #b extract 2D-slice                  (slice:)  % extract one/several 2Dslice(s) from NIFTI-file and write as 2D-NIFTI(s)
 %                                                   xrename(0,'cbf_matchingvol.nii','cbf_matchingvol_slice.nii','slice:1');
 % 
 % 
@@ -90,7 +90,7 @@
 % #k 'show  info'         : #n show file information (file paths; existence of files; header information)
 %
 %
-%% #by RENAME FILES
+%% #ck ___RENAME FILES___
 %     - type a new name in the [NewName] column (but not "##" this would delete the file)
 %     - the [TASK]-column must be empty or type "rename"
 %% [RENAME]: rename "T2_TurboRARE.nii" to "t2.nii"
@@ -100,7 +100,7 @@
 %%  or
 %% T2_TurboRARE.nii       t2.nii            rename             !! the new file name is "t2.nii"
 %__________________________________________________________________________________________________________________
-%% #by COPY FILES
+%% #ck ___COPY FILES___
 %     - in the [NewName]-COLUMN type a file-name (but not "##" this would delete the file)
 %     - the [TASK]-column must contain ":" (the ":" means take all containing volums) or
 %       type "copy"
@@ -110,7 +110,7 @@
 %%  or
 %% T2_TurboRARE.nii       t2.nii               copy           !! use "copy" to copy the file
 %__________________________________________________________________________________________________________________
-%% #by DELETE FILES
+%% #ck ___DELETE FILES___
 %    - in the [NewName]-COLUMN type "##"  or "delete"  (without "); the [TASK]-column is empty
 %    - or: [NewName] is empty and  [TASK]-column contains "##"
 %
@@ -122,7 +122,7 @@
 %% T2_TurboRARE.nii                             del                !! type delete, to delete the volume
 %% T2_TurboRARE.nii                             delete             !! type delete, to delete the volume
 %__________________________________________________________________________________________________________________
-%% #by EXTRACT 3D-volumes
+%% #ck ___EXTRACT 3D-volumes___
 %   extract 1/more volumes from 4D volume and save as 3D or 4D-volume
 %   - a new filename in the [NEWNAME]-column must be given (do not use '##'  ..this would delete the orig. file)
 %   - in the [Task]-column -type matlabstyle-like index-indications to extract the respective volume(s):
@@ -138,7 +138,7 @@
 %% DTI_EPI_seg_30dir_sat_1.nii      new.nii             3:6          !! note, this creates one (!) 4d volume containing the volumes 3-to-6
 %% ----------------------------------------------------------------
 %__________________________________________________________________________________________________________________
-%% #by EXPAND FILES
+%% #ck ___EXPAND FILES___
 % #r EXPAND: expands a 4d-volume into separate 3d-volumes
 %    -new filename in the [NEWNAME]-column must be given (but not '##'  ..this would delete the orig. file)
 %     in the [TASK]-COLUMN -type the matlabstyle-like index-indications to expand the respective volume(s) and add a "s"
@@ -162,7 +162,7 @@
 %% ---------------------------------------------------------------
 %__________________________________________________________________________________________________________________
 %__________________________________________________________________________________________________________________
-%% #by DELETE FILES
+%% #ck ___DELETE FILES___
 % delete one file, use '##' or 'del' or 'delete' in task-column (or 4th argin via comand)
 % xrename(0,'w5_w6.txt','','delete'); %delete ''w5_w6.txt' in all selected animals
 % xrename(0,'w5_w6.txt|w6.txt','','##') ;% delete two files ('w5_w6.txt' and 'w6.txt') ...
@@ -176,7 +176,7 @@
 %  delete file ending with '_w6.txt' or 'w5.txt'
 % xrename(0,'_w6.txt$|w5.txt$','','##') ;
 % 
-%% #by REPLACE VALUE BY ANOTHER VALUE
+%% #ck ___REPLACE VALUE BY ANOTHER VALUE___
 % Replaces in a 3D/4D image a specific values by another value
 % - TAG: 'R:' or 'repl:' or 'replace:'
 % - ARGs: INPUTVALUE SEMICOLON REPLACING-VALUE
@@ -194,7 +194,7 @@
 %  xrename(1,'v4D3.nii','v4D3_mod.nii','R:<40;1'); % replace values<40 with 1 in image 'v4D3.nii' and store as 'v4D3_mod.nii'
 %  xrename(1,'v1.nii','v1_0.nii','R:0;ME');        % replace zeros with data with mean and STD of the image in 'v1.nii' and store as 'v1_0.nii' 
 % 
-%% #by Threshold Image (tr:)
+%% #ck ___Threshold Image (tr:)___
 % threshold image and save as new file
 % filled task code in column-3, EXAMPLES:
 %    'tr: i>3=0'        threshold image, values above 3 are set to 0
@@ -210,7 +210,7 @@
 % #r Don't forget to specify an output filename in the 2nd-column, otherwise the input file is overwritten!
 % #g CMD:  example: threshold image ('INPUT.nii'), values <0.7 set to 0, file stored as 'OUTPUT.nii'
 %     xrename(1, 'c2t2.nii' , 'zzz' , 'tr: i<.7=0');  % 1st arg indcates that GUI is poping up when executed
-%% #by Change data type (dt:)
+%% #ck ___Change data type (dt:)___
 % change datytype and save as new file
 % example: change 't2_64.nii' to dataType 16 ('float32', see help of spm_type) and save as 't2_16.nii'
 % z=[];
@@ -218,7 +218,7 @@
 % xrename(0,z.files(:,1),z.files(:,2),z.files(:,3));
 %__________________________________________________________________________________________________________________
 %
-%% #by MATHEMATICAL OPERATIONS (ma:)
+%% #ck ___MATHEMATICAL OPERATIONS (ma:)___
 % SIMPLE MATHEMATICAL OPERATIONS CAN BE Done using the [TASK]-column
 % examples: threshold image, extract ROI from atlas image, combine mask(s) with image etc.
 % #k used CONVENTIONS:
@@ -231,34 +231,50 @@
 % #g EXAMPLES:
 % #r NOTE the columns in z.files correspond to 'FileName', 'NewName' and 'TASK'-columns in the GUI-TABLE!
 % ==============================================
-%%  #g get right Striatum-mask of SIGMA-RAT atlas (striatum: id=73) via 'AVGThemi.nii' (internally refered via 'i1')
-%%  #g and save file as 'striatum_Right.nii'
+% 
+%% #b make binary mask of caudoputamen
+%  xrename(0,'ANO.nii','ANO_thesh.nii','mo:o=i==672;');
+%
+%% #b lower-threshold image 
+% xrename(0,'t2.nii','t2_thresh.nii','mo:i(i<5)=5;o=i; ');
+% 
+%% #b upper- and lower-threshold image 
+% xrename(0,'t2.nii','t2_thresh.nii','mo:i(i<5)=5; i(i>=25)=25; o=i; ');
+%
+%% #b make mask via upper- and lower-threshold image , version-1
+% xrename(0,'t2.nii','t2_thresh.nii','mo: o=double((i>=4)&(i<=45));');
+% 
+%% #b make mask via upper- and lower-threshold image , version-2
+% xrename(0,'t2.nii','t2_thresh.nii','mo: i(i<=4)=0;i(i>=45)=0;o=i~=0; ');
+% 
+%% #b get right Striatum-mask of SIGMA-RAT atlas (striatum: id=73) via 'AVGThemi.nii' (internally refered via 'i1')
+%% #b and save file as 'striatum_Right.nii'
 % z.files={ 'ANO.nii' 	'striatum_Right.nii' 	'mo: o=(i1==2).*(i==73);'
 %          'AVGThemi.nii' 	'' 	  'i1' };
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
-% ==============================================
-%%   #g recode left/right Striatum of SIGMA-RAT atlas (id=73); store with datatype=2 ('dt=2')
+% 
+%% #b recode left/right Striatum of SIGMA-RAT atlas (id=73); store with datatype=2 ('dt=2')
 % z.files={ 'ANO.nii' 	'striatum_newID.nii' 	'mo: o=(i1==1).*(i==73)*3; o=o+(i1==2).*(i==73)*4; dt=2;'
 %          'AVGThemi.nii' 	'' 	  'i1' };
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
-% ==============================================
-%%  #g  mask 'x_t2.nii' with 'AVGTmask.nii', here 'AVGTmask.nii' is internally refered as 'i1'
-%%  #g i.e. multiply all voxels larger than 0 with 'x_t2.nii'
+% 
+%% #b  mask 'x_t2.nii' with 'AVGTmask.nii', here 'AVGTmask.nii' is internally refered as 'i1'
+%% #b i.e. multiply all voxels larger than 0 with 'x_t2.nii'
 % z.files={ 'x_t2.nii' 	'x_t2Masked.nii' 	'mo: o=(i1>0).*i;'
 %          'AVGTmask.nii' 	'' 	         'i1' };
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
-% ==============================================
-%% #g threshold 't2.nii' with thresholded GM- and WM-segmentation images'
-%% #g i.e.  threshold GM and WM independently at 0.3, add both masks and make all values above 0 1, than
-%% #g multiply with 't2.nii' and store as 't2Masked.nii'
-%% #g  note that GM and WM are internally referenced via i1 and i2
+% 
+%% #b threshold 't2.nii' with thresholded GM- and WM-segmentation images'
+%% #b i.e.  threshold GM and WM independently at 0.3, add both masks and make all values above 0 1, than
+%% #b multiply with 't2.nii' and store as 't2Masked.nii'
+%% #b  note that GM and WM are internally referenced via i1 and i2
 % z.files={ 't2.nii' 	't2Masked.nii' 	'mo: o=(((i1>0.3)+(i2>0.3))>0).*i;'
 %          'c1t2.nii' 	'' 	         'i1'
 %          'c2t2.nii' 	'' 	         'i2' };
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
 %
 %__________________________________________________________________________________________________________________
-%% #by remove volume(s) from 4D volume  (rmvol:)
+%% #ck ___remove volume(s) from 4D volume  (rmvol:)___
 % example
 % remove vol-Nr 6 from 'test_revDtiEpi_5_1.nii', save new file 'test_revDtiEpi_5_1_corrected.nii' (using suffix-tag)
 % xrename(1,'test_revDtiEpi_5_1.nii','s:_corrected' ,'rmvol:6')
@@ -267,7 +283,7 @@
 % xrename(1,'test_revDtiEpi_5_1.nii','s:_corrected' ,'rmvol:3:end')
 % 
 %__________________________________________________________________________________________________________________
-%% #by operations over 4th dimensions of 4D volume  (mean:)(median:)(mode:)(sum:)(max:)(min:)(std:)(zscore:)(var:)
+%% #ck ___operations over 4th dimensions of 4D volume  (mean:)(median:)(mode:)(sum:)(max:)(min:)(std:)(zscore:)(var:)___
 % the output is a 3D-NIFTI-file
 % 
 % examples:
@@ -289,27 +305,27 @@
 % xrename(0,'T2map_MSME_CRP_2_1.nii' ,'dum', 'var:')   ;% variance over all vols of 4th dimension, save as 'dum.nii'
 % 
 %__________________________________________________________________________________________________________________
-%% #by voxel resolution (vr:)
+%% #ck ___voxel resolution (vr:)___
 % change voxel resolution of an image via  the [TASK]-column
 % IMPORTANT: HERE THE IMAGE WILL BE CHANGED wrt the new voxelsize!!!
 % example: in [TASK]-column type :  "vr: .1 .1 .1" to change the voxel resolution of an image (previous vox resolution was: [.09 .09 .09])
 %          "vr: .1 .1 .1"  this is identical to "vr: .1"
-% #g change voxel resolution of 'AVGT.nii' to [.1 .1 .1] and save as 'test33.nii'
+% #b change voxel resolution of 'AVGT.nii' to [.1 .1 .1] and save as 'test33.nii'
 % z.files={ 'AVGT.nii' 	'test33.nii' 	'vr: .1' };
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
 %__________________________________________________________________________________________________________________
-%% #by voxel size (vs:)
+%% #ck ___voxel size (vs:)___
 % set voxel size of an image via  the [TASK]-column
 % IMPORTANT: ONLY THE VOXELSIZE IN THE HEADER IS CHANGED (IMAGE IS NOT CHANGED)!!!
 % example: in [TASK]-column type :  "vs: .1 .1 .1" to set the voxel size of an image (previous vox resolution was: [.09 .09 .09])
 %          "vs: .1 .1 .1"  this is identical to "vs: .1"
-% #g set voxel size to [.07 .07 .1] and save as 'v1Z.nii' 
+% #b set voxel size to [.07 .07 .1] and save as 'v1Z.nii' 
 % xrename(1,'v1.nii','v1Z.nii','vs: .07 .07 .1');
 % set voxel size of the 2nd dimension to 0.07 preserve vox size of dim1 and dim3 and save as 'v1Z.nii' 
 % xrename(1,'v1.nii','v1Z.nii','vs: nan .07 nan');
 % 
 %__________________________________________________________________________________________________________________
-%% #by change header (ch:)
+%% #ck ___change header (ch:)___
 % change header using eather a reference file or a transformation-matrix or header of selected-file
 % story as a new file (new name as specified in column-2 /2nd input argument ...or empty to change the original file!!!)
 % - if no reference file or transformation-matrix is given, you can change:
@@ -368,7 +384,7 @@
 % 
 %
 %__________________________________________________________________________________________________________________
-%% #by replace Nifti-Header (rHDR:)
+%% #ck ___replace Nifti-Header (rHDR:)___
 % A reference-file is needed, tagged with 'ref' in 3rd-column.  Here, the HDR of 'test3.nii' is
 % replaced by HDR of 'test2.nii' (tagged with 'ref') and result is saved as 'bla.nii'
 %     z=[];
@@ -376,7 +392,7 @@
 %                  'test2.nii' 	''   	    'ref'  };
 %     xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
 %__________________________________________________________________________________________________________________
-%% #by replace Nifti-mat (rmat:)
+%% #ck ___replace Nifti-mat (rmat:)___
 % A reference-file is needed, tagged with 'ref' in 3rd-column.  Here, the HDR of 'adc.nii' is
 % replaced by HDR of 'adc2.nii' (tagged with 'ref') and result is saved as 'bla.nii'
 %     z=[];
@@ -384,7 +400,7 @@
 %                  'adc2.nii' 	''   	    'ref'  };
 %     xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
 %__________________________________________________________________________________________________________________
-%% #by extract 2D-slice (slice:)
+%% #ck ___extract 2D-slice (slice:)___
 % extract one/several 2Dslice(s) from NIFTI-file and write as 2D-NIFTI(s)
 % EXAMPLES:
 %     % extract 1st 2D-slice from ''cbf_matchingvol.nii' and save as 'cbf_matchingvol_slice.nii'
@@ -395,16 +411,16 @@
 %     % same as above but use write 2 and 4
 %         xrename(0,'cbf_matchingvol.nii','cbf_matchingvol_slice.nii','slice:[2 4];vol=1');
 %__________________________________________________________________________________________________________________
-%% #by zip Nifti-file (gzip:)
+%% #ck ___zip Nifti-file (gzip:)___
 %     xrename(1,'test3.nii' ,	'test3.nii' ,	'gzip:')
 % same as
 %     xrename(1,'test3.nii' ,	'test3' ,     	'gzip:')
 %     xrename(1,'test3.nii' ,	'test3.nii.gz',	'gzip:')
 %__________________________________________________________________________________________________________________
-%% #by unzip Nifti-file (gunzip:)
+%% #ck ___unzip Nifti-file (gunzip:)___
 %     xrename(1, 'test3.nii.gz' ,	'test3.nii' ,	'gunzip:')
 %__________________________________________________________________________________________________________________
-%% #by  gzip/gunzip2 via system-gzip-comand
+%% #ck ___gzip/gunzip2 via system-gzip-comand___
 % --gzip/gunzip via gzip  (on windows via git's gzip) ..linux/mac via system git
 %  - no output-string needs to be defined in column-2, 
 %  - default: replace uncompressed with compressed version and vice versa 
@@ -422,7 +438,7 @@
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
 % 
 %__________________________________________________________________________________________________________________
-%% #by apply function to NIFTI (niifun: functionname) 
+%% #ck ___apply function to NIFTI (niifun: functionname)___
 % a function can be applied to a NIFTI-file (arbitrary function name)
 % structure of the function:
 % function [ha a]=myfunc(ha,a)    
@@ -445,21 +461,21 @@
 % xrename(1,'ADCmask.nii' ,	'test.nii',	'niifun:myfunc.m');
 %                          
 %__________________________________________________________________________________________________________________
-%% #by voxel scaling (vf:)
+%% #ck ___voxel scaling (vf:)___
 % change voxel scaling of an image via  the [TASK]-column
 % this will scal up an image ...PURPOSE: scale up an image ba factor 10 to use software tools for human brain (and it's resolution)
 % example: in [TASK]-column type :  "vf: 10 10 10"  or 'vf: 10' to scale up the brain in x,y,z-direction by factor 10
-% #g inflate 'AVGT.nii' by voxel fator 1.5,1.5 and 1 in  x,y,z direction and store as 'inflated'
+% #b inflate 'AVGT.nii' by voxel fator 1.5,1.5 and 1 in  x,y,z direction and store as 'inflated'
 % z.files={ 'AVGT.nii' 	'inflated.nii' 	'vf: 1.5 1.5 1' };
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
 %__________________________________________________________________________________________________________________
 %
 % #r -----simple examples------
-% #g  to rename  a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN is empty
-% #g  to copy    a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN  is ":"  (without "")
-% #g  to delete  a file:  name in [NEWNAME]-column  is '##'
-% #g  to extract a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN is something like "1", "2","1:3","end","end-1:end",":" (without "")
-% #g  to expand  a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN is something like "1s", "2s","1:3s","ends","end-1:ends",":s" (without "")
+% #b  to rename  a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN is empty
+% #b  to copy    a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN  is ":"  (without "")
+% #b  to delete  a file:  name in [NEWNAME]-column  is '##'
+% #b  to extract a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN is something like "1", "2","1:3","end","end-1:end",":" (without "")
+% #b  to expand  a file:  name in [NEWNAME]-column  is 'something' but not '##'   &    [TASK]-COLUMN is something like "1s", "2s","1:3s","ends","end-1:ends",":s" (without "")
 %
 %% #r NOTE: DIFFERENCE OF EXTRACTION AND EXPANSION
 % INPUT:
@@ -509,7 +525,7 @@
 %          -'fi' and 'finew' : must correspond ONE TO ONE  !!!
 % __________________________________________________________________________________________________________________
 %% #yg BATCH EXAMPLES
-% #g RENAMING-EXAMPLE
+% #b RENAMING-EXAMPLE
 %      xrename                                           %open gui
 %      xrename(1);                                       %open gui
 %      xrename(1, 'vol5.nii' , 'vol7.nii' )            %open gui, preselect: 'vol5.nii' should be renamed to  'vol7.nii'
@@ -518,18 +534,18 @@
 %      xrename(1,{'vol5.nii' 'vol6.nii'}',{'vol7.nii' 'vol8.nii'}')  %same..
 %      xrename(0,{'vol5.nii' 'vol6.nii'}',{'vol7.nii' 'vol8.nii'}')  %same,but without opening GUI
 %      xrename(0, 'blob3.nii'  , 'blob4.nii' ,'rename' ); % 'blob3.nii' it renamed to 'blob4.nii'
-% #g COPYING-EXAMPLE
+% #b COPYING-EXAMPLE
 %     % make a copy of c_nan_2.nii , named hausboot.nii
 %    xrename(1, 'c_nan_2.nii' ,	'hausboot'   ,	':' )
 %    xrename(0, 'bla.nii'     ,  'blob3.nii' ,  'copy' );  % 'bla.nii' is copied as 'blob3.nii'
 %
-% #g DELETION-EXAMPLE
+% #b DELETION-EXAMPLE
 %     xrename(1, 'vol5.nii' , '##' )
 %     xrename(0, 'blob3.nii' ,   'delete'  );
 %     xrename(1,'^prc_*|^rc_*|^c_*','','del'); % with GUI-preselection: delete all NIFTs starting with "prc_"/"rc"/"c"
 %     xrename(0,'^prc_*|^rc_*|^c_*','','del'); % no GUI: delete all NIFTs starting with "prc_"/"rc"/"c"
 %
-% #g EXTRACTION-EXAMPLE  "extract one volume"
+% #b EXTRACTION-EXAMPLE  "extract one volume"
 %    %[example-1]: extract 9th volume from [MSME-T2-map_20slices_1.nii] and save as [M.nii]
 %                  xrename(1, 'MSME-T2-map_20slices_1.nii' , 'M' ,9)  ;
 %
@@ -537,7 +553,7 @@
 %                  extract 3rd volume from [msme2neu_1.nii]             and save as [x2.nii]
 %                  xrename(1, {'MSME-T2-map_20slices_1.nii' 'msme2neu_1.nii'}, {'x1' 'x2'} ,[9 3]);
 %
-% #g EXTRACTION-EXAMPLE  "extract several volumes"
+% #b EXTRACTION-EXAMPLE  "extract several volumes"
 %    %[example-1]: extract vols 1-3 from [MSME-T2-map_20slices_1.nii]  and write as [x1.nii] and...
 %    %             extract vols 3   from [c_nan2neu_2]                 and write as [x2.nii]
 %                  xrename(1, {'MSME-T2-map_20slices_1.nii' 'c_nan2neu_2.nii'}, {'x1' 'x2'} ,{'1:3' '3'})
@@ -546,27 +562,43 @@
 %    %             extract all vols            from [c_nan2neu_2]                 and write as [x2.nii]
 %                 xrename(1, {'MSME-T2-map_20slices_1.nii' 'c_nan2neu_2.nii'}, {'x1' 'x2'} ,{'end-1:end' ':'})
 %
-% #g MIXED-RENAMING-EXTRACTION-EXAMPLE
+% #b MIXED-RENAMING-EXTRACTION-EXAMPLE
 %    %[example-2]: extract 7-9th volumes from [X.nii] and save as [x.nii] and also ...
 %    %             extract 3rd volume from [Z.nii] and save as [z.nii] , but
 %    %             rename [Y.nii] as [y.nii] (doesn't matter what Y.nii is)
 %     xrename(1, {'X.nii' 'Y.nii' 'Z.NII'}, {'x' 'y' 'z'} ,[7-9 0 3]);
 %
-% #g EPANSION-EXAMPLE  "expand volumes from several files" (dont forget the "s" tag)
+% #b EPANSION-EXAMPLE  "expand volumes from several files" (dont forget the "s" tag)
 % %             expand the 3rd volume from msme2neu_1.nii and                  -->write as x1_003.nii
 % %             expand all volumes from c_nan2neu_2.nii starting from 3rd vol  --> x2_003.nii/x2_004.nii...x2_"last volume as number".nii
 %    xrename(1, {'msme2neu_1.nii' 'c_nan2neu_2.nii'}, {'x1' 'x2'} ,{'3s' '[3:end s]'})
 %
 %
 % ==============================================
-%%    wildcards
-% ===============================================
+%% #wb    ___wildcards___
 % use ".*" wildcard, optional "^"/"$" for start/ending string
 % xrename(1,{'^.*.doc'},{},{'del'});  %delete all doc-files
 % xrename(1,{'^.*.doc'},{'newdoc.doc'},{':'}); %make copy of all docfiles...call it 'newdoc.doc'
 % xrename(1,'anatomy_axial.*.nii','t2.nii','1s'); %extract 1st volume
 % xrename(1,'^B0Map'      ,'NEW.nii',':');   %copyNrename NIFTI(s) starting with "B0Map"
 % xrename(1,'sat_4_1.nii$','NEW.nii',':');   %copyNrename NIFTI(s) ending with "sat_4_1.nii"
+% 
+%% substitute string in inputfile and use as outputfile
+% -->create a copied version of 't5_flipped.nii' with name 't6_flipped.nii'
+% xrename(1,'t5_flipped.nii','regexprep(i,''^t5_'',''t6_'')',':')
+% -->create a copied version of 'pre_ADC.nii' with name 'post_ADC.nii'
+% xrename(0,'pre_ADC.nii','regexprep(i,''^pre_'',''post_'')',':')
+% 
+%-->create a copied version of 'pre_ADC_01234.nii', replace 'pre_' with 'post' and remove '_01234' 
+%  output is "post_ADC.nii"
+% xrename(1,'pre_ADC_01234.nii','regexprep(i,{''^pre_'',''_01234''},{''post_'',''''})',':')
+%
+%% wildcard in inputfile ans string-substitution in outputfile
+% copy and rename tissue compartments (c1t2.nii,c2t2.nii,c3t2.nii) as 'c1_tissue.nii.nii','c2_tissue.nii',
+% 'c3_tissue.nii'
+% xrename(1,'^c.*t2.nii','regexprep(i,''t2'',''_tissue'')',':');  
+% 
+% 
 % 
 %% copy and rename all files containg '.*_pd_.*1.nii' to  'PD_mag.nii' and files containing
 %% '.*_pd_.*3.nii' to 'PD_phase.nii'
@@ -924,6 +956,22 @@ for i=1:length(pa)      %PATH
                 if isempty(ex);  s2=fullfile(pa{i},[fix ex0 ]);
                 else             s2=fullfile(pa{i},[fix ex ]);
                 end
+                
+                %% ===replace part of filename string and use as outputstring
+                if ~isempty(strfind(finew{j},'regexprep('))
+                    
+                    fnameNew='';
+                    evalstr=['fnameNew=regexprep(''',  [fix0 ex0],''',' finew{j}(min(strfind(finew{j}, ',')+1):end) ';'];
+                    eval(evalstr);
+                    if ~isempty(fnameNew)
+                        s2=fullfile(pa{i},fnameNew);
+                    end
+                    
+                end
+                
+                
+                %% ===============================================
+                
                 %                 if 1
                 %                     disp('---rename-test--');
                 %                     disp(['old: ' s1]);
@@ -1918,6 +1966,13 @@ for i=1:length(pa)      %PATH
                     % ===============================================
                     try
                         code=volnum{j};
+                        try
+                            sameNumb_bracketst=length(strfind(code,'(')) ==length(strfind(code,')')) ;
+                            if sameNumb_bracketst==0
+                                disp('number of brackets mismatch'); return;
+                            end
+                            
+                        end
                         
                         %code='ma: (i<.5)=0; (i>=.5)=1;'
                         %code='ma: (i<.5)=.5'
@@ -2597,8 +2652,10 @@ function pan_callback(e,e2,task)
 if strcmp(task,'pop1')
     he=findobj(gcf,'tag','pan_ed_col2');
     hb=findobj(gcf,'tag','pan_pop_col2');
-    insert=regexprep(hb.String{hb.Value},{'(.*\)','\s+'},'');
-    set(he,'string',insert);
+%     insert=regexprep(hb.String{hb.Value},{'(.*\)','\s+'},'');
+%     set(he,'string',insert);
+list=get(hb,'userdata');
+set(he,'string',list{hb.Value,1});
 elseif strcmp(task,'pop2')
     he=findobj(gcf,'tag','pan_ed_col3');
     hb=findobj(gcf,'tag','pan_pop_col3');
@@ -2712,7 +2769,17 @@ if ~strcmp(task,'showimageinfo') && ~strcmp(task,'openfile')
         
         list1=unique(ht.Data(:,2));
         list1(strcmp(list1, ''))=[];
-        list1=[list1 ; {''} ;'t2.nii';'_test1.nii'  ;'_test2.nii' ;'p:V_ (ADD FILENAME-PREFIX: here "V_")'; 's:_s (ADD FILENAME-SUFFIX: here "_s")' ];
+        list1=[list1 ; {''} ;'t2.nii';'_test1.nii'  ;'_test2.nii' ;'p:V_ (ADD FILENAME-PREFIX: here "V_")'; 's:_s (ADD FILENAME-SUFFIX: here "_s")' ...
+            ;'dum'];
+        lis={...
+            't2.nii'                            'outputfile is "t2.nii"'
+            '_test1.nii'                        'outputfile is "_test1.nii"'
+            'p:V_'                              'ADD FILENAME-PREFIX: here "V_"'
+            's:_s'                              'ADD FILENAME-SUFFIX: here "_s"'
+            'regexprep(i,''^t5_'',''t6_'')'     'replace prefix "t5_" with "t6_"'
+            'regexprep(i,''flipped4'',''FLP'')' 'replace string "flipped4" with "FLP"'
+            'regexprep(i,{''^pre_'',''_01234''},{''post_'',''''})'   'replace "pre" with "post", remove "_01234"'
+            };
         
         %TXT-selectable options
         hb=uicontrol(hp,'style','text','units','norm','string','selectable options');
@@ -2720,10 +2787,10 @@ if ~strcmp(task,'showimageinfo') && ~strcmp(task,'openfile')
         set(hb,'foregroundcolor','k');
         
         hb=uicontrol(hp,'style','popupmenu','units','norm','tag','pan_pop_col2');
-        set(hb,'position',[.55  .6 .45 .2],'string',list1);
+        %set(hb,'position',[.55  .6 .45 .2],'string',list1);
         set(hb,'tooltipstring','selected item from popup-menu is used to fill the left edit box');
         set(hb,'callback',{@pan_callback,'pop1'});
-        
+        set(hb,'position',[.55  .6 .45 .2],'string',lis(:,2),'userdata',lis);
         
         
         %% ================[column3]===============================
