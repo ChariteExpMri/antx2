@@ -45,7 +45,7 @@ function pwrite2excel(filename,sheet,header,subheader,data)
 %     18     3    15     9     3     2     0     0   NaN   NaN   NaN   NaN   NaN
 %     19     3    15     9     3     2     0     0   NaN   NaN   NaN   NaN   NaN
 %     20     2    13     8     3     1     0     0     5   883     1     2     0];
-% pwrite2excel(filename,header,subheader,data);
+% pwrite2excel(filename,{1 'table'},header,subheader,data);
 
 % ==============================================
 %%
