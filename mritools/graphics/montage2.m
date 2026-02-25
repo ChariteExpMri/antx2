@@ -1,11 +1,36 @@
 
-
+% display 2-4d volume
+% montage2(IMG) ;%show image
+%     -IMG can be NIFTI-file or 2-4d array
+%% ADDITONAL PAIRWSE PARAMETER:
+% cmap : COLORMAP for cmaps see: help of getCMAP, use o=getCMAP   or   getCMAP('showmaps');
+% dim  : -dimension to slice, default: [3]
+%        -dim can be used to permute the ND-array, if dim is of size as ndims
+%         ecample: [2 3 1 4]  -->permute dimensions of 4D array --> 1st dim is than used to get slices
+% makeanimatedgif: create animated gif over volumes: [0,1]; default: [0]
+% dt:  delaytime between images for animated gifs
+% 
+% ===============================================
+%% examples
 % montage2(fname) ;%show image
 % montage2(fullfile(pwd,'img2_Elastix1_rrt2_t1_T1_map_RARE_pfi.nii'))
 % show image and make animated gif
 % montage2(fullfile(pwd,'img2_Elastix1_rrt2_t1_T1_map_RARE_pfi.nii'),'makeanimatedgif',1);
 % show image and make animated gif, saved with specific name 
 % montage2(fullfile(pwd,'img2_Elastix1_rrt2_t1_T1_map_RARE_pfi.nii'),'makeanimatedgif',1,'fileout',fullfile(pwd,'test2.gif'));
+% smae as above, but change dalytime of animated gif
+% montage2('rt2_t1_T1map_RARE_rat220705avg2_7.nii','makeanimatedgif',1,'fileout',fullfile(pwd,'test2.gif'),'dt',0.5);
+% 
+% change dimension
+% montage2(a,'dim',[2]);          %slice alling 2nd dimension
+% montage2(a,'dim',[3 2 1 4]);    % permute 4D-volune
+% 
+%--colormaps--- 
+% :for cmaps see: help of getCMAP, use o=getCMAP   or   getCMAP('showmaps');
+% montage2(rand(30,30),1);
+% montage2(rand(30,30),'cmap',1 );
+% montage2(rand(30,30),'cmap','NIH_fire.lut' );
+
 
 
 function montage2(fname, varargin)
@@ -19,6 +44,10 @@ function montage2(fname, varargin)
 %
 % fname='O:\Processing_dti\20160624HP_M39\2\pdata\1\2dseq'
 p.dummy=0;
+p.dim  =3;   %dimension to slice
+p.dt   =0.1; %animated gif delaytime 
+p.cmap='gray';
+
 if nargin>1
     pin=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
     p=catstruct(p,pin);
@@ -81,6 +110,8 @@ else
             x.fname=fname;
             x.dim=size(d);
             x.Ndims=length(x.dim);
+            x.mat=hd(1).mat;
+            %plog([],hd(1).mat,0,'','plotlines=0;')
             isbruker=0;
         end
     end
@@ -123,6 +154,20 @@ else
     
 end
 %________________________________________________
+%% change dim
+if length(p.dim)==1
+    if ndims(d)>2
+    dimvec=1:ndims(d);
+    isdim=find(dimvec==p.dim);
+    dimvec2=dimvec;
+    dimvec2(3)=isdim;
+    dimvec2(isdim)=3;
+    d=permute(d, dimvec2);
+    end
+elseif length(p.dim)==ndims(d)
+     d=permute(d, p.dim);
+end
+%% ===============================================
 
 us=[];
 us.figtag='montage2.m';
@@ -131,6 +176,11 @@ us.d =d;
 us.fname=fname;
 us.num=1;
 us.info=info;
+
+
+
+
+
 %________________________________________________
 
 
@@ -180,6 +230,26 @@ set(s2,'value',1); % default
 
 showimage([],[],1);
 
+if isfield(p,'cmap')
+    if isnumeric(p.cmap) && length(p.cmap)==1
+        o=getCMAP(p.cmap);colormap(o);
+    else
+        try;
+            colormap(p.cmap);
+        catch
+            try
+                o=getCMAP(p.cmap); colormap(o);
+                '3'
+                
+            end
+            
+        end
+    end
+    
+    
+end
+
+
 %% courcour
 %% courcour
 cr=[...
@@ -207,8 +277,20 @@ set(gcf,'PointerShapeCData',cr);
 
 
 
+% cm = uicontextmenu(gcf);
+% m1 = uimenu(cm,'Text','Menu1');
+% m2 = uimenu(cm,'Text','Menu2');
+
+% cm = uicontextmenu(gcf);
+% m = uimenu(cm,'Text','Menu1');
+% cm.ContextMenuOpeningFcn = @(src,event)disp('Context menu opened');
+
+c = uicontextmenu;
+m= uimenu(c,'Label','change colormap','Callback',{@context,'chnagemap'},'separator','on');
+set(gcf     ,'UIContextMenu',c);
+
 %% ===============================================
-if isfield(p,'makeanimatedgif' )
+if isfield(p,'makeanimatedgif' ) && p.makeanimatedgif==1
     makeanimatedgif(p);
 end
   
@@ -216,6 +298,138 @@ end
 %———————————————————————————————————————————————
 %%   subs
 %———————————————————————————————————————————————
+function context(e,e2,arg)
+if strcmp(arg,'chnagemap');
+    
+    fig = ancestor(e,'figure');
+    
+    % get mouse position in figure coordinates
+    oldUnits = fig.Units;
+    fig.Units = 'pixels';
+    pt = fig.CurrentPoint;   % [x y]
+    fig.Units = oldUnits;
+    
+    % optional: adjust y (popup grows downward)
+    popupWidth  = 150;
+    popupHeight = 25;
+    
+     hb= findobj(gcf,'tag','popcmapm');
+     if isempty(hb)
+         % create popup
+         o=getCMAP('html');
+         hb=uicontrol('Parent',fig, ...
+             'Style','popupmenu', ...
+             'String',{'Option 1','Option 2','Option 3'}, ...
+             'Units','pixels', 'tag','popcmapm',...
+             'Position',[pt(1) pt(2)-popupHeight popupWidth popupHeight],...;
+             'callback'  ,{@context,'setCmap'});
+         set(hb,'string',o)
+     else
+        set(hb,'visible','on');
+        set(hb, 'Position',[pt(1) pt(2)-popupHeight popupWidth popupHeight] );
+     end
+    
+elseif strcmp(arg,'setCmap')
+   hb= findobj(gcf,'tag','popcmapm');
+   val=hb.Value;
+   o=getCMAP(val);
+   colormap(o);
+   set(hb,'visible','off');
+    
+end
+ 
+ 
+
+
+return
+    %% ===============================================
+    
+    o=getCMAP('html');
+%     o2=regexprep(o,{'<html>' ,'</html>'},'')
+    
+    hb=uicontrol('style','popupmenu')
+    
+    set(hb,'string',o)
+    
+    
+    return
+    
+    
+    s
+% str_out : cleaned cell array
+str_in=o2
+str_out = cell(size(str_in));
+
+for i = 1:numel(str_in)
+
+    s = strtrim(str_in{i});
+
+    % 1) lowercase FONT
+    s = regexprep(s,'<\s*FONT','<font');
+    s = regexprep(s,'</\s*FONT','</font');
+
+    % 2) quote hex colors
+    s = regexprep(s,'color=#([0-9A-Fa-f]{6})','color="#$1"');
+
+    % 3) ensure black is quoted
+    s = regexprep(s,'color=black','color="black"');
+
+    % 4) insert closing </font> BEFORE each new <font>
+    s = regexprep(s,'(<font[^>]*>)','</font>$1');
+
+    % remove first unnecessary closing
+    s = regexprep(s,'^</font>','');
+
+    % 5) add html wrapper
+    s = ['<html>' s '</html>'];
+
+    str_out{i} = s;
+
+end
+
+o2=regexprep(str_out,{'<html>' ,'</html>'},'')
+     id=selector2(o2,{'colormap'},'iswait',1,'position',[0.0778  0.0772  0.3510  0.8644],'selection','single')
+    
+
+    %% ===============================================
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+%     
+%      id=selector2(o2,{'colormap'},'iswait',1,'position',[0.0778  0.0772  0.3510  0.8644],'selection','single')
+% 
+%     %% ===============================================
+%     
+%       tb={  'cx'     ' 6'    'g33'
+%       'b1'     '10'    'g3'
+%       'c1'     ' 9'    'f3'
+%       'd1'     ' 8'    'd3'
+%       'f1'     ' 5'    'c3'
+%       'g1'     ' 0'    'b3'
+%       'g11'    ' 7'    'a3' }
+%   
+%   colhtml=getCMAP('html') 
+%   
+%   id=selector2(tb,{'Nvox' 'Color'  'Label'},'iswait',1,'position',[0.0778  0.0772  0.3510  0.8644]);
+%  id=selector2(tb,{'Nvox' 'Color'  'Label'},'iswait',1,'position',[0.0778  0.0772  0.3510  0.8644],'selection','single')
+%     
+%     
+%     %% ===============================================
+%     
+%     
+% end
+
+
 function makeanimatedgif(p)
 
 %% ===============================================
@@ -245,9 +459,9 @@ for i=1:size(us.d,4)
     [A,map] = rgb2ind(im,256);
     % --- Write to GIF ---
     if i == 1
-        imwrite(A,map,filename,'gif','LoopCount',Inf,'DelayTime',0.1);
+        imwrite(A,map,filename,'gif','LoopCount',Inf,'DelayTime',p.dt); % 
     else
-        imwrite(A,map,filename,'gif','WriteMode','append','DelayTime',0.1);
+        imwrite(A,map,filename,'gif','WriteMode','append','DelayTime',p.dt);
     end
     
     
@@ -321,8 +535,8 @@ elseif slidnum==4
 elseif slidnum==5
     set(hb1,'value',0); set(hb2,'value',0); set(hb3,'value',1);
     us=get(gcf,'userdata');
-    me=median(us.d(:));
-    sd=2*std(us.d(:));
+    me=nanmedian(us.d(:));
+    sd=2*nanstd(us.d(:));
     mima=[me-sd me+sd];
     if get(hs1,'min')>mima(1);
         mima(1)=get(hs1,'min');
@@ -421,11 +635,15 @@ set(cb,'position',[.25 .03 .02 .3],'fontsize',8,'fontweight','normal','color','k
 dat=d(:,:,:,imnum); dat=dat(:);
 
 hm={};
-hm{end+1,1}=[sprintf('min: %4.4g'    ,min(dat))];
-hm{end+1,1}=[sprintf('max: %4.4g'    ,max(dat))];
-hm{end+1,1}=[sprintf('ME : %4.4g'   ,mean(dat))];
-hm{end+1,1}=[sprintf('SD : %4.4g'     ,std(dat))];
-hm{end+1,1}=[sprintf('med: %4.4g' ,median(dat))];
+hm{end+1,1}=[sprintf('min: %4.4g'    ,nanmin(dat))];
+hm{end+1,1}=[sprintf('max: %4.4g'    ,nanmax(dat))];
+hm{end+1,1}=[sprintf('ME : %4.4g'   ,nanmean(dat))];
+hm{end+1,1}=[sprintf('SD : %4.4g'     ,nanstd(dat))];
+hm{end+1,1}=[sprintf('med: %4.4g' ,nanmedian(dat))];
+
+is_nan=~isempty(find(isnan(dat)));
+if is_nan==1; nanstr='yes'; else; nanstr='no'; end
+hm{end+1,1}=[sprintf('contains NaN: %s' ,nanstr)  ];
 
 te=findobj(gcf,'tag','infomagn');
 if isempty(te)
@@ -463,25 +681,26 @@ set(gcf,'currentaxes',hb);
 
 ns=size(d,4);
 no=ns+2;
-pp=[.1 1];
+px=[.1 .85];
+pp=px;
+stp_right=0.08;
+nplotperrow=5;
 for i=1:no
-    
-    
-    
     if i==no-1
-       num='info'; col='r';  txtid='info';
+       num='info'; col='r';  txtid='info'; stp_right=0.1;  pp(1)=stp_right; pp(2)=pp(2)-.18;
     elseif i==no
-       num='[help]'; col='m';  txtid='keys';
+       num='[help]'; col='m';  txtid='keys';stp_right=0.1; 
     else
       num=  num2str(i);col=[.7 .7 .7];txtid='txtid';
     end
-    text(pp(1),pp(2) ,[' ' num ' '],'fontsize',8,'fontweight','bold','ButtonDownFcn' ,{@showimage,i},'userdata',txtid,...
+    ht=text(pp(1),pp(2) ,[' ' num ' '],'fontsize',10,'fontweight','bold','ButtonDownFcn' ,{@showimage,i},'userdata',txtid,...
     'color',col);
-    if mod(i,5)==0; 
-        pp(2)=pp(2)-.1; 
-        pp(1)=0;  
+    %set(ht,'backgroundcolor',[0.9412    0.9412    0.9412]);
+    if mod(i,nplotperrow)==0  
+        pp(2)=pp(2)-.12; 
+        pp(1)=px(1)-stp_right;  
     end
-    pp(1)=pp(1)+.1;
+    pp(1)=pp(1)+stp_right;
 end
 ylim([pp(2)-.1 1]);
 xlim([.05 .65]);
