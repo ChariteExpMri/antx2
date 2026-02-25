@@ -511,12 +511,24 @@ end
 
 
 % ==============================================
-%%   REALIGN-1: FILES
+%%   make temporary copy of inputfile
 % ===============================================
 if is4D==1
-    [~,name2]=fileparts(f2);
-    f3= spm_select('ExtFPList', px, ['^' name2 '.nii$']);
+    f2a=stradd(f2,['_tempRealigned_0123456789'],2);
+    copyfile(f2,f2a,'f');
     
+end
+
+
+
+% ==============================================
+%%   REALIGN-1: FILES
+% ===============================================
+usetempfile=0;
+if is4D==1
+    [~,name2]=fileparts(f2a);
+    f3= spm_select('ExtFPList', px, ['^' name2 '.nii$']);
+    usetempfile=1;
 else
     [~ ,namex,ext]=fileparts(f1);
     %namestem=regexprep(namex,'_00+1$','');
@@ -533,6 +545,9 @@ else
     [~,name2]=fileparts(f3{1});
     
 end
+
+
+
 
 % ==============================================
 %%   REALIGN-2: batch
@@ -637,16 +652,31 @@ elseif is4D==0 && z.merge4D==0
     end
 else
     f4=fullfile(px,[z.roptions_prefix  name2 '.nii']);
-    if ~isempty(z.outputname)
-        f5=fullfile(px,[strrep(z.outputname,'.nii','') '.nii']);
+    if ~isempty(z.outputname) || usetempfile==1
+        if ~isempty(z.outputname)
+            outname=z.outputname;
+        else
+            outname=[ z.roptions_prefix  name ];
+        end
+        
+        f5=fullfile(px,[strrep(outname,'.nii','') '.nii']);
         movefile(f4,f5,'f');
         showinfo2(['alignedFile(4D)[' animal ']' ],f5);
         
         rpfile0=fullfile(px,['rp_' name2 '.txt']);
         if exist(rpfile0)==2
-           rpfile=fullfile(px,[ strrep(z.outputname,'.nii','')  '_rp'  '.txt']);
+           rpfile=fullfile(px,[ strrep(outname,'.nii','')  '_rp'  '.txt']);
             movefile(rpfile0,rpfile,'f');
         end
+        try; delete(f4); end  %delete temporare registered file
+        [paf4  namef4]=fileparts(f4); % 
+        try; delete(fullfile( paf4, [namef4  '.mat']  )); end
+        if  exist(f2a)==2
+            [paf2a  namef2a]=fileparts(f2a); % 
+            try; delete(fullfile( paf2a, [namef2a  '.mat']  )); end
+            try; delete(f2a); end  %delete temporary sourcefile
+        end
+        
         
     else
         showinfo2(['alignedFile(4D)[' animal ']' ],f4);

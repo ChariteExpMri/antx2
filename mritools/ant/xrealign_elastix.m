@@ -326,6 +326,22 @@ mkdir(pxtemp);
 if is4D==1
     vo=spm_file_split(f1, pxtemp);  % distribute 3d files
     fis     = {vo(:).fname}'  ; %3D-files to realign
+    
+    %---elastx_issue with 64bit : convert to 16bit -----------------------
+    hdr=spm_vol(fis{1});
+    if hdr.dt(1)==64
+        for i=1:length(fis)
+            V = spm_vol(fis{i});
+            img = spm_read_vols(V);
+            img(isnan(img))=0; %remove NAN
+            V.dt = [16 0];  % float32
+            spm_write_vol(V, img);
+           % V2 = spm_vol(fis{i}); disp(V2.dt);
+        end
+    
+    end
+    %--- -----------------------
+    
 else  %single 3d-files
     fis=cellstr(f3);
 end
@@ -337,6 +353,14 @@ copyfile(z.paramfile,paramfile,'f');
 set_ix(paramfile,'NumberOfResolutions'              ,   z.numres   );
 set_ix(paramfile,'MaximumNumberOfIterations'        ,   z.niter    );
 set_ix(paramfile,'FinalBSplineInterpolationOrder'   ,   z.interp   );
+
+% % issue with dt: 64bit --> internal processing-dataType  ('float') seems not to work using elastix
+% hdr=spm_vol(fis{1});
+% if hdr.dt(1)==64
+%     set_ix(paramfile,'FixedInternalImagePixelType'   ,   'short'  );
+%     set_ix(paramfile,'MovingInternalImagePixelType'  ,   'short'  );
+% end
+
 
 % ==============================================
 %%   2b run elastix

@@ -1,5 +1,14 @@
 
-function montage2(fname)
+
+% montage2(fname) ;%show image
+% montage2(fullfile(pwd,'img2_Elastix1_rrt2_t1_T1_map_RARE_pfi.nii'))
+% show image and make animated gif
+% montage2(fullfile(pwd,'img2_Elastix1_rrt2_t1_T1_map_RARE_pfi.nii'),'makeanimatedgif',1);
+% show image and make animated gif, saved with specific name 
+% montage2(fullfile(pwd,'img2_Elastix1_rrt2_t1_T1_map_RARE_pfi.nii'),'makeanimatedgif',1,'fileout',fullfile(pwd,'test2.gif'));
+
+
+function montage2(fname, varargin)
 
 %     fname: 'O:\data\millward\raw\20160823qing1.Dd1\6\pdata\1\2dseq'
 %       dim: [128 128 10 8]
@@ -9,6 +18,12 @@ function montage2(fname)
 %__________image______________________________________
 %
 % fname='O:\Processing_dti\20160624HP_M39\2\pdata\1\2dseq'
+p.dummy=0;
+if nargin>1
+    pin=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+    p=catstruct(p,pin);
+end
+
 
 if isnumeric(fname) | islogical(fname)
     dat=double(fname);
@@ -192,16 +207,57 @@ set(gcf,'PointerShapeCData',cr);
 
 
 
-
+%% ===============================================
+if isfield(p,'makeanimatedgif' )
+    makeanimatedgif(p);
+end
   
-
-%     ,...
-%         'Callback', @surfzlim); 
-
 
 %———————————————————————————————————————————————
 %%   subs
 %———————————————————————————————————————————————
+function makeanimatedgif(p)
+
+%% ===============================================
+
+us=get(gcf,'userdata');
+[pa fi]=deal('');
+if isfield(us,'fname')
+    [pa fi]=fileparts(us.fname);
+end
+if isfield(p,'fileout')
+    [pa fi]=fileparts(p.fileout);
+end
+if isempty(pa);  pa=pwd; end
+if isempty(fi);  fi='test'; end
+
+filename=fullfile(pa,[fi '.gif']);
+
+for i=1:size(us.d,4)
+    num=i;
+    showimage([],[],num);
+    drawnow
+    
+    
+    % --- Capture frame ---
+    frame = getframe(gcf);
+    im = frame2im(frame);
+    [A,map] = rgb2ind(im,256);
+    % --- Write to GIF ---
+    if i == 1
+        imwrite(A,map,filename,'gif','LoopCount',Inf,'DelayTime',0.1);
+    else
+        imwrite(A,map,filename,'gif','WriteMode','append','DelayTime',0.1);
+    end
+    
+    
+end
+showinfo2(['..animated gif'],filename);
+
+
+%% ===============================================
+
+
 
 function sliderIntensityThresh(h,e,slidnum)
 hs1=findobj(gcf,'tag','slidlowvalue');

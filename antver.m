@@ -1172,6 +1172,12 @@
 % #ba 20 Feb 2026 (13:17:48)
 % #k [snips.m] #n updated
 % added: Baydiff-script 
+% #ba 25 Feb 2026 (15:12:49)
+% #k [xrealign_elastix]#n : modified
+% if input-volume is 4D-volume: - convert to datatype-16 (float32) if dattype is 64 (double), replace NaNs
+% with zeros
+% #k [xrealign]#n : modified
+% if nput-volume is 4D-volume: use temporary copy of input-file for realignemnt via SPM
 % 
 % 
 
