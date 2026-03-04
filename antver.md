@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   25 Feb 2026 (15:12:49)  
+ &#x1F34E; last modification:   04 Mar 2026 (14:42:03)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**04 Mar 2026 (14:42:03)**</ins>  
+   __[orthoslice]__#n : modified, configurable gap at their intersection of the fixation cross ("cursorgap")  
+<!---->
   &#x1F535;   <ins>**25 Feb 2026 (15:12:49)**</ins>  
    __[xrealign_elastix]__#n : modified  
   if input-volume is 4D-volume: - convert to datatype-16 (float32) if dattype is 64 (double), replace NaNs  

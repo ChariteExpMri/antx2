@@ -18,8 +18,10 @@
 % p.fs         =9;            % colorbar fontsize; default: 9
 % p.cursorcol  =[1 1 1];      % cursorcolor; default: [0 0 1] (i.e spm cursor color)
 % p.cursorwidth=0.5;          % cursor width; default: 0.5
-% p.showparams =0;            % display parameter; {0,1}; default: 0
+% p.cursorgap  =10;           % gap in pixels where cursor-lines crosses
 % 
+% p.showparams =0;            % display parameter; {0,1}; default: 0
+%
 % p.panel      =1;            % make one panel [0|1]
 % p.fs         =10            % colorbar-fontsize
 % p.cblabel    =''            % colorbar-label  (string or empty)
@@ -44,30 +46,30 @@
 %% mosaic/panel-2 get 3 index-based slices from dimension-2, arrange in one row
 % q=orthoslice({'AVGT.nii','JD.nii'},'panel',2,'mdim',3,'msliceidx',[50 100 120],'bgcol','w','mroco',[1 nan],'alpha',[1 .5],'labelcol','k');
 %% orthoslice/panel-1: more complex example
-% files =  { 'F:\data8\ortoslice_tests\AVGT.nii' 	
-%     'F:\data8\ortoslice_tests\_b1grey.nii' 
-%     'F:\data8\ortoslice_tests\_b2white.nii' 	
+% files =  { 'F:\data8\ortoslice_tests\AVGT.nii'
+%     'F:\data8\ortoslice_tests\_b1grey.nii'
+%     'F:\data8\ortoslice_tests\_b2white.nii'
 %     'F:\data8\ortoslice_tests\_b3csf.nii' };
-% r=[];   
+% r=[];
 % r.ce=[-1 -1 -1.5]  ;%  center/cursor-location
-% r.alpha       =  [0.5  0.5  0.5  0.7];  %transparency                                                                                                                                 
-% r.axolperc    =  [7];   %overlapp ov axis in percent                                                                                                                                                  
-% r.bgcol       =  '0.93725 0.86667 0.86667'; %background-color                                                                                                                             
-% r.cbarvisible =  [0  1  1  1  1]; % colorbar-visibility                                                                                                                                       
-% r.clim        =  [0     495.24 ;  0.7 1 ;0.7 1 ; 0.4  1 ];                                                                                                                                     
-% r.cmap        =  { 'gray' 	'Oranges' 	'Greens' 	'@yellow' };  %colormaps                                                                                                           
-% r.cursorcol   =  [1 1 1 ]; %cursor-color                                                                                                                                                
-% r.cursorwidth =  [1];    %cursor-width                                                                                                                                                  
-% r.figwidth    =  [780];  %figure width in pixels                                                                                                                                                
-% r.mbarlabel   =  { '' 	'GM' 	'WM' 	'csf' };  %cbar-labels 
+% r.alpha       =  [0.5  0.5  0.5  0.7];  %transparency
+% r.axolperc    =  [7];   %overlapp ov axis in percent
+% r.bgcol       =  '0.93725 0.86667 0.86667'; %background-color
+% r.cbarvisible =  [0  1  1  1  1]; % colorbar-visibility
+% r.clim        =  [0     495.24 ;  0.7 1 ;0.7 1 ; 0.4  1 ];
+% r.cmap        =  { 'gray' 	'Oranges' 	'Greens' 	'@yellow' };  %colormaps
+% r.cursorcol   =  [1 1 1 ]; %cursor-color
+% r.cursorwidth =  [1];    %cursor-width
+% r.figwidth    =  [780];  %figure width in pixels
+% r.mbarlabel   =  { '' 	'GM' 	'WM' 	'csf' };  %cbar-labels
 % r.labelcol    =  [1 0 1]; %cbar-color
-% r.mcbarfs     =  [11];      %cbar-fontsize                                                                                                                                             
-% r.mcbarpos    =  [-70  20  10  100];   % last c-bar-location relativ to right-fig-size (pixels)                                                                                                                                  
-% r.visible     =  [1  1  1  1]; %bg/overlay-images-visible                                                                                                                                          
+% r.mcbarfs     =  [11];      %cbar-fontsize
+% r.mcbarpos    =  [-70  20  10  100];   % last c-bar-location relativ to right-fig-size (pixels)
+% r.visible     =  [1  1  1  1]; %bg/overlay-images-visible
 % orthoslice(files,r);
 %% create hidden figure, save as png
 % orthoslice({'AVGT.nii','JD.nii'},'alpha',[1 .5],'cmap',{'gray' 'jet'},'ce','max', 'hide',1,'saveas',fullfile(pwd,'test.png'),'dosave',1,'saveres',300)
-% 
+%
 %
 %% posthoc (after figure is created): save fig as png
 % q=orthoslice('post','saveas',fullfile(pwd,'test.png'),'dosave',1)
@@ -152,6 +154,7 @@ p.maskcol    =[.7 .7 .7];    % color of the brainMaks (usefull when "blobthresh"
 p.fs         =9;            % colorbar fontsize; default: 9
 p.cursorcol=[1 1 1];      % cursorcol; default: [0 0 1] (i.e spm cursor color)
 p.cursorwidth=0.1;          % cursor width; default: 0.5
+p.cursorgap =10;           % gap between cursor's crossing lines (in puxels)
 p.showparams =0;            % display parameter; {0,1}; default: 0
 p.panel      =1;            %make one panel
 p.cblabel    ='' ;          %colorbar-label
@@ -185,7 +188,7 @@ p.mcbaralign=0  ;%mosaic: align cbar
 
 
 p.mcbarticks     =3;         %number of ticks/ticklabels in colorbar
-p.mcbardecimals  =2;         %number of decimals of ticklabels in colorbar 
+p.mcbardecimals  =2;         %number of decimals of ticklabels in colorbar
 
 p.mplotwidth =0.89           ;%mosaic: width of plot to allow space for colorbar; default: 0.9 (normalized units)
 
@@ -206,7 +209,7 @@ p.crop      =0; %saving: crop image {0|1};   (1) crop image; default: 0
 
 
 p.value0transp=1  ; %set zeros-value to nan, ie. make them transparent {0,1}; default
-p.usebrainmask=0  ; %use brainmask to hide outerbrain signals to rid [0,1]  ; default:,1 
+p.usebrainmask=0  ; %use brainmask to hide outerbrain signals to rid [0,1]  ; default:,1
 
 
 %% ========[varinpit]=======================================
@@ -250,7 +253,7 @@ if exist('f') && ischar(f)
         varargout{1}=p;
         return
     end
-
+    
 end
 
 if exist('f')==0
@@ -274,7 +277,7 @@ end
 %% ===============================================
 [p errmsg]=sanitycheck(p);
 if errmsg==1
-  return 
+    return
 end
 
 % pbk=p;
@@ -282,8 +285,8 @@ update(p);
 if p.panel==1
     makeOnePanel(p)
     change_bgcolor();
-%     update();
-
+    %     update();
+    
     
 elseif p.panel==2
     msosaic(p);
@@ -341,7 +344,7 @@ function zooming_reset(e,e2)
 hf=findobj(0,'tag','orthoview');
 for i=1:3
     ax= findobj(hf,'tag',['ax' num2str(i)]);
-%     i
+    %     i
     if ~isempty(ax)
         set(hf,'CurrentAxes',ax);
         set(gca,'xlimmode','auto','ylimmode','auto');
@@ -359,8 +362,8 @@ hf=findobj(0,'tag','orthoview');
 hcs=findobj(hf,'userdata','cbar');
 u=get(hf,'userdata');
 for i=1:length(hcs)
-%     num=str2num(regexprep( get(hcs(i),'tag'),'cbar',''))
-%     lims=p.clim(num,:);
+    %     num=str2num(regexprep( get(hcs(i),'tag'),'cbar',''))
+    %     lims=p.clim(num,:);
     set_cbarticks(hcs(i), hcs(i).YLim ,u.p);
 end
 %% ===============================================
@@ -756,10 +759,10 @@ elseif strcmp(item,'cbarvisible')
 elseif strcmp(item,'cmap')   || strcmp(item,'clims')  || strcmp(item,'thresh') || strcmp(item,'alpha')
     if u.p.panel==1
         
-            figure(hf); update(u.p);
+        figure(hf); update(u.p);
         % %         return
         lims=u.p.clim(no,:);
-         inan=isnan(lims);
+        inan=isnan(lims);
         if sum(inan)>0
             w=[u.gx{no}(1).a(:); u.gx{no}(2).a(:) ;u.gx{no}(3).a(:)];
             lims3=[min(w) max(w)];
@@ -768,20 +771,20 @@ elseif strcmp(item,'cmap')   || strcmp(item,'clims')  || strcmp(item,'thresh') |
             if lims(1)==lims(2); lims(2)=lims(1)+eps; end
             if isnan(lims(1)); lims=[0 0+eps]; end
         end
-       
         
-      %% ===============================================
-      
+        
+        %% ===============================================
+        
         
         lims3=[];
-         for i=1:length(him2)
+        for i=1:length(him2)
             himx=him2(i);
             set(hf,'CurrentAxes',get(himx,'parent'));
             axes(get(himx,'parent'));
-            unfreezeColors(himx); 
-             caxis(lims)
-%              drawnow;
-%             bb=himx.CData;
+            unfreezeColors(himx);
+            caxis(lims)
+            %              drawnow;
+            %             bb=himx.CData;
             if iscell(u.p.cmap)
                 mapname=u.p.cmap{no};
                 map=getCMAP(mapname);
@@ -793,37 +796,37 @@ elseif strcmp(item,'cmap')   || strcmp(item,'clims')  || strcmp(item,'thresh') |
             hc=findobj(hf,'tag',['cbar' num2str(no)]);
             %set(hc,'ytick',lims,'yticklabels',lims);  %issue yticks
             set_cbarticks(hc, lims,u.p);
-%             b=himx.CData; b=b(:); b(isnan(b))=[];
-%             curlim=[nan nan];
-%             rmin=min(b);
-%             rmax=max(b);
-%             if ~isempty(rmin); curlim(1)=rmin; end
-%             if ~isempty(rmax); curlim(2)=rmax; end
-%             lims3(i,:)=curlim;
-             colormap(map);    drawnow;
-%              caxis(lims)
-%             caxis(lims);
-             freezeColors;
-         end  
-         %% ===============================================
-         
-         
-%          lims=u.p.clim(no,:);
-%          inan=isnan(lims);
-%          if sum(inan)>0
-%              
-%              if inan(1)==1; lims(1)=min(lims3(:)); end
-%              if inan(2)==1; lims(2)=max(lims3(:)); end
-%              if lims(1)==lims(2); lims(2)=lims(1)+eps; end
-%              if isnan(lims(1)); lims=[0 0+eps]; end
-%          end
-                 
-            
-            hba=findobj(hc,'type','image');
-            map3=cat(3,map(:,1),map(:,2),map(:,3) );
-            set(hba,'cdata', map3);
-            set(hba,'ydata' ,lims);
-            set(hc,'ylim'   ,lims);
+            %             b=himx.CData; b=b(:); b(isnan(b))=[];
+            %             curlim=[nan nan];
+            %             rmin=min(b);
+            %             rmax=max(b);
+            %             if ~isempty(rmin); curlim(1)=rmin; end
+            %             if ~isempty(rmax); curlim(2)=rmax; end
+            %             lims3(i,:)=curlim;
+            colormap(map);    drawnow;
+            %              caxis(lims)
+            %             caxis(lims);
+            freezeColors;
+        end
+        %% ===============================================
+        
+        
+        %          lims=u.p.clim(no,:);
+        %          inan=isnan(lims);
+        %          if sum(inan)>0
+        %
+        %              if inan(1)==1; lims(1)=min(lims3(:)); end
+        %              if inan(2)==1; lims(2)=max(lims3(:)); end
+        %              if lims(1)==lims(2); lims(2)=lims(1)+eps; end
+        %              if isnan(lims(1)); lims=[0 0+eps]; end
+        %          end
+        
+        
+        hba=findobj(hc,'type','image');
+        map3=cat(3,map(:,1),map(:,2),map(:,3) );
+        set(hba,'cdata', map3);
+        set(hba,'ydata' ,lims);
+        set(hc,'ylim'   ,lims);
         
         
         
@@ -1132,7 +1135,7 @@ tb={'1'  3
 tb=repmat(tb,[10,1]);
 tbh={'  parameter                       ' '  value                         '};
 %shift=-0.08;
- shift=-0.12;
+shift=-0.12;
 t = uitable('Parent', t0,'units','norm', 'Position', [shift 0.12 1-shift .4 ], 'Data', tb,...
     'tag','tb1',...
     'ColumnWidth','auto');
@@ -1380,7 +1383,7 @@ p=u.p;
 files=p.f;
 del={'f' 'qmm' 'val'};
 for i=1:length(del)
-   try; p=rmfield(p,del{i}); end
+    try; p=rmfield(p,del{i}); end
 end
 pn=fieldnames(p);
 
@@ -1392,12 +1395,12 @@ for i=1:length(pn)
     
     
     if size(a,1)==size(b,1) &&  size(a,2)==size(b,2) &&  strcmp(class(a),class(b))
-%         if i==13
-%            'a' 
-%         end
-       try % iscell(a)
+        %         if i==13
+        %            'a'
+        %         end
+        try % iscell(a)
             
-     
+            
             if double(a)==double(b)
                 s=rmfield(s,pn{i});
             end
@@ -1452,7 +1455,7 @@ fname=tbref{idx(1),3};
 chk={ 'labelcol' 'cursorcol' 'bgcol'};
 if idx(2)>1; return; end
 if isempty(find(strcmp(chk,fname)));
-    return; 
+    return;
 end
 
 col=uisetcolor;
@@ -1566,10 +1569,10 @@ elseif strcmp(fname,'axolperc')
         %     set(gca,'visible','on')
     end
     %% ===============================================
- elseif strcmp(fname,'mcbarticks') ||  strcmp(fname,'mcbardecimals')   
+elseif strcmp(fname,'mcbarticks') ||  strcmp(fname,'mcbardecimals')
     
-     %prp_cb([],[], 'update_pstruct','thresh');
-     fast_update('clims');
+    %prp_cb([],[], 'update_pstruct','thresh');
+    fast_update('clims');
     
 elseif strcmp(fname,'mcbarpos') ||  strcmp(fname,'mcbargap')
     %% ===============================================
@@ -1802,10 +1805,10 @@ elseif strcmp(task,'pb_select_fgimage');
     hj = findjobj(hb);
     hj.setCaretPosition(hj.getDocument.getLength);
     
-%    
+    %
     imageprops_guiupdate_loadimage(num);
     imageprops_guiupdate();
-    if isempty(t); 
+    if isempty(t);
         hb=findobj(hs,'tag','prp_filename');
         hb.Value=length(hb.String);
         prp_cb([],[],'image');
@@ -1948,9 +1951,9 @@ else
     delete(hf);
     
     orthoslice(f,c2{:});
-%     if  u.p.panel==1
-%         update(u.p);
-%     end
+    %     if  u.p.panel==1
+    %         update(u.p);
+    %     end
     
     hf=findobj(0,'tag','orthoview');
     if keepfigpos==1
@@ -2036,7 +2039,7 @@ for i=1:length(hax)
         %set(c2,'AlphaData',wtrans*p.alpha(1));
     else
         if 0
-        set(c2,'AlphaData',wtrans);
+            set(c2,'AlphaData',wtrans);
         end
         
     end
@@ -2262,6 +2265,7 @@ set(ht,'userdata',tb);
 tb={...
     'cursor-width'         ''   'cursorwidth'
     'cursor-color'         ''   'cursorcol'
+    'cursor-gap'         ''     'cursorgap'
     
     % 'other fontsize'       ''   'fs'
     
@@ -2492,7 +2496,7 @@ end
 if p.bgtransp==1; set(gcf,'InvertHardcopy','on' );
 else ;            set(gcf,'InvertHardcopy','off');
 end
-% set(gcf,'color',[1 0 1]); 
+% set(gcf,'color',[1 0 1]);
 % set(findobj(gcf,'type','axes'),'color','none');
 
 q=filename;
@@ -2525,9 +2529,9 @@ if p.bgtransp==1 || p.crop==1;
             m2=sum(m,3)~=3;
             imwrite(im,filename,'png','alpha',double(m2));
         end
-%         showinfo2(['saved png(resolution:' num2str(p.saveres)  ')'],filename);
+        %         showinfo2(['saved png(resolution:' num2str(p.saveres)  ')'],filename);
         
-%             
+        %
     else
         imwrite(im,filename,'png');
     end
@@ -2555,19 +2559,19 @@ if isstr(p.ce)
     
     if strcmp(p.ce,'max') %get max coordinate
         
-%         [h0 a0 mu]=rgetnii(p.f{1});
-%         a0=a0(:);
-%         q= mu(:,max(find(a0==max(a0))))';
+        %         [h0 a0 mu]=rgetnii(p.f{1});
+        %         a0=a0(:);
+        %         q= mu(:,max(find(a0==max(a0))))';
         
         [ha a mm]=rgetnii(p.f{end});
         a=a(:);
         p.ce= mm(:,max(find(a==max(a))))';
-%         p.ce
-%         cs=mm(:,max(find(a==max(a))));
-%         ic=vecnearest2(sum((mu-repmat(cs,[1 size(mu,2)])).^2,1),0)
-%         
-%         mu(:,ic)
-%         p.ce
+        %         p.ce
+        %         cs=mm(:,max(find(a==max(a))));
+        %         ic=vecnearest2(sum((mu-repmat(cs,[1 size(mu,2)])).^2,1),0)
+        %
+        %         mu(:,ic)
+        %         p.ce
         
     elseif strcmp(p.ce,'min') %get min coordinate
         [ha a mm]=rgetnii(p.f{end});
@@ -2609,8 +2613,8 @@ end
 gx{1,1}=gt;
 
 for i=2:length(p.f)
-   [gt p]=obtaintslices(p.f([1 i]),p); 
-   gx{1,i}=gt;
+    [gt p]=obtaintslices(p.f([1 i]),p);
+    gx{1,i}=gt;
 end
 
 
@@ -2828,7 +2832,7 @@ for i=1:size(ds{1,1},2)-1
     ndiffnumbers=length(   unique(cellfun(@(a) {[ a(1:1+i) ]},ds))    );
     if length(d)==ndiffnumbers
         ndecim=ndecim+i-1;
-       break 
+        break
     else
         
     end
@@ -2839,9 +2843,9 @@ end
 s={};
 for i=1:length(d)
     if isinteg(i)==1
-        s{i,1}= sprintf('% d',d(i));  
+        s{i,1}= sprintf('% d',d(i));
     else
-   s{i,1}= sprintf(['% .' num2str(ndecim) 'f'],d(i));  
+        s{i,1}= sprintf(['% .' num2str(ndecim) 'f'],d(i));
     end
 end
 
@@ -2879,14 +2883,14 @@ if strcmp(get(gca,'tag'),'ax1')
     ly=linspace(w.y(1),w.y(2),size(w.a,1));
     ce=[    u.p.ce(1)     lx(co(1))   ly(co(2))  ];
     
-%     val(1)=w.a(co(2),co(1));
-%     if size(u.gx,2)>1
-%         w2=u.gx{2}(3);
-%         val(2)=w2.a(co(2),co(1));
-%     end
+    %     val(1)=w.a(co(2),co(1));
+    %     if size(u.gx,2)>1
+    %         w2=u.gx{2}(3);
+    %         val(2)=w2.a(co(2),co(1));
+    %     end
     
     for i=1:length(u.gx)
-      valv(1,i)= u.gx{i}(3).a(co(2),co(1));
+        valv(1,i)= u.gx{i}(3).a(co(2),co(1));
     end
     
     
@@ -2896,13 +2900,13 @@ elseif strcmp(get(gca,'tag'),'ax2')
     ly=linspace(w.y(1),w.y(2),size(w.a,1));
     ce=[lx(co(1)) u.p.ce(2)  ly(co(2))  ];
     
-%     val(1)=w.a(co(2),co(1));f
-%     if size(u.gx,2)>1
-%         w2=u.gx{2}(1);
-%         val(2)=w2.a(co(2),co(1));
-%     end
-     for i=1:length(u.gx)
-      valv(1,i)= u.gx{i}(1).a(co(2),co(1));
+    %     val(1)=w.a(co(2),co(1));f
+    %     if size(u.gx,2)>1
+    %         w2=u.gx{2}(1);
+    %         val(2)=w2.a(co(2),co(1));
+    %     end
+    for i=1:length(u.gx)
+        valv(1,i)= u.gx{i}(1).a(co(2),co(1));
     end
     
     
@@ -2912,11 +2916,11 @@ elseif strcmp(get(gca,'tag'),'ax3')
     ly=linspace(w.y(1),w.y(2),size(w.a,1));
     ce=[lx(co(2))   ly(co(1)) u.p.ce(3) ];
     
-%     val(1)=w.a(co(1),size(w.a,2)-co(2)+1);
-%     if size(u.gx,2)>1
-%         w2=u.gx{2}(2);
-%         val(2)=w2.a(co(1),size(w2.a,2)-co(2)+1);
-%     end
+    %     val(1)=w.a(co(1),size(w.a,2)-co(2)+1);
+    %     if size(u.gx,2)>1
+    %         w2=u.gx{2}(2);
+    %         val(2)=w2.a(co(1),size(w2.a,2)-co(2)+1);
+    %     end
     
     for i=1:length(u.gx)
         w2=u.gx{i}(2);
@@ -2960,7 +2964,7 @@ if isnumeric(p.cmap)
         end
     end
     o= getCMAP('names');
-    p.cmap=o(p.cmap)';  %convert to names   
+    p.cmap=o(p.cmap)';  %convert to names
 else
     %p.cmap={'bla','hot'};
     maps=p.cmap;
@@ -2975,13 +2979,13 @@ else
         end
     end
     maps=maps(ifound);
-  
-  if isempty(char(maps)); maps=[]; end
-  nmaps=length(maps);
-  mapdefault={  'gray' 'jet' 'copper'  'hot' 'summer'};
-  maps=[maps  mapdefault(nmaps+1:end)];
-  maps=maps(1:length(p.f));   
-  p.cmap=maps;
+    
+    if isempty(char(maps)); maps=[]; end
+    nmaps=length(maps);
+    mapdefault={  'gray' 'jet' 'copper'  'hot' 'summer'};
+    maps=[maps  mapdefault(nmaps+1:end)];
+    maps=maps(1:length(p.f));
+    p.cmap=maps;
 end
 %% ===============================================
 
@@ -3075,7 +3079,7 @@ ce=p.ce;
 %         end
 %     end
 %     o= getCMAP('names');
-%     p.cmap=o(p.cmap)';  %convert to names   
+%     p.cmap=o(p.cmap)';  %convert to names
 % else
 %     %p.cmap={'bla','hot'};
 %     maps=p.cmap;
@@ -3090,50 +3094,50 @@ ce=p.ce;
 %         end
 %     end
 %     maps=maps(ifound);
-%   
+%
 %   if isempty(char(maps)); maps=[]; end
 %   nmaps=length(maps);
 %   mapdefault={  'gray' 'jet' 'copper'  'hot' 'summer'};
 %   maps=[maps  mapdefault(nmaps+1:end)];
-%   maps=maps(1:length(g));   
+%   maps=maps(1:length(g));
 %   p.cmap=maps;
 % end
 % %% ===============================================
 
-    
+
 % elseif iscell(p.cmap)
-%     
+%
 %     if length(g)>length(cellstr(p.cmap))
-%         
-%         
+%
+%
 %         p.cmap={  'gray' 'jet' 'copper'  'hot' 'summer'};
 %         p.cmap=[1 2 3 4 5];
 %     end
 % elseif ischar(p.cmap)
 %     if length(g)>length(cellstr(p.cmap))
-%         
+%
 %     end
 
 
 % if isempty(p.clim) || size(p.clim,1)<length(g) || size(p.clim,2)~=2
 %     p.clim=nan(length(g), 2);
 % end
-% 
+%
 % alpha=p.alpha;
 % if length(alpha)<length(g)
 %     alpha=[  1   repmat(alpha,[ 1 length(g)-1 ] )  ] ;
 %     p.alpha=alpha;
 % end
-% 
+%
 % thresh=p.thresh;
 % if isempty(thresh)
 %     p.thresh=nan(length(g), 2);
 % end
-% 
+%
 % if isempty(p.visible) || length(p.visible)~=length(p.f)
 %     p.visible=repmat(1,  [1  length(p.f) ]  );
 % end
-% 
+%
 % if ischar(p.mbarlabel)
 %     p.mbarlabel=cellstr(p.mbarlabel)
 % end
@@ -3319,7 +3323,7 @@ for j=1:3
         
         if i==1
             try
-            Bm=imfill(otsu(F,50)>1,'holes');
+                Bm=imfill(otsu(F,50)>1,'holes');
             catch
                 FM=F;FM(isnan(FM))=min(FM(:));
                 Bm=imfill(otsu(FM,50)>1,'holes');
@@ -3342,7 +3346,7 @@ for j=1:3
         %alphadata = p.alpha(i).*(F >= climF(1)); %prevous
         alphadata =ones(size(F))*p.alpha(i);
         if i>1
-           alphadata=~isnan(F).*alphadata;    % issue with NAN --> become transparent
+            alphadata=~isnan(F).*alphadata;    % issue with NAN --> become transparent
         end
         
         
@@ -3351,7 +3355,7 @@ for j=1:3
                 alphadata=alphadata.*Bm;
             else
                 if p.usebrainmask==1
-                   alphadata=alphadata.*Bm; 
+                    alphadata=alphadata.*Bm;
                 end
                 
             end
@@ -3395,13 +3399,13 @@ for j=1:3
                 set(hc,'tag',['cbar' num2str(i)],'userdata','cbar');
                 set(hc,'position',[.5+i*(0.1) 0.1 .02 .3]);
             end
-                
-                tx={0  'off'
-                    1  'on'};
-                hba=findobj(hc,'type','image');
-                set(hc ,'visible',tx{p.cbarvisible(i)+1,2});
-                set(hba,'visible',tx{p.cbarvisible(i)+1,2});
-                
+            
+            tx={0  'off'
+                1  'on'};
+            hba=findobj(hc,'type','image');
+            set(hc ,'visible',tx{p.cbarvisible(i)+1,2});
+            set(hba,'visible',tx{p.cbarvisible(i)+1,2});
+            
             
         end
         
@@ -3412,31 +3416,113 @@ for j=1:3
         set(him2,'ButtonDownFcn',@btndown);
         
         
+        if isfield(p,'cursorgap')
+            cursorgap=p.cursorgap;
+%             cursorgap=0;
+        else
+            cursorgap=0;
+        end
         
         
-        
-        if ord(j)==1
-            hline(cz,'color',p.cursorcol,'linewidth',cursorwidth);
-            vline(cx,'color',p.cursorcol,'linewidth',cursorwidth);
+%         set(hf,'visible','on')
+        if cursorgap>0
             
-        elseif ord(j)==3
-            hline(cz,'color',p.cursorcol,'linewidth',cursorwidth);
-            vline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
-        elseif ord(j)==2
-            if ordspm==0
-                hline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
+            
+            if ord(j)==1
+                % horizontal (cz) with gap
+                line([min(xlim) cx-cursorgap], [cz cz], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                line([cx+cursorgap max(xlim)], [cz cz], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                
+                % vertical (cx) with gap
+                line([cx cx], [min(ylim) cz-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                line([cx cx], [cz+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                
+            elseif ord(j)==3
+                % horizontal at cz with gap
+                line([min(xlim) cy-cursorgap], [cz cz], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                line([cy+cursorgap max(xlim)], [cz cz], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                
+                % vertical at cy with gap
+                line([cy cy], [min(ylim) cz-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                line([cy cy], [cz+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                
+            elseif ord(j)==2
+                if ordspm==0
+                    % horizontal at cy with gap
+                    line([min(xlim) cx-cursorgap], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                    line([cx+cursorgap max(xlim)], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                    
+                    % vertical at cx with gap
+                    line([cx cx], [min(ylim) cy-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                    line([cx cx], [cy+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                    
+                elseif ordspm==1
+                    if ord(j)==2
+                        
+                        
+                        % flipped horizontal position (as in original hline)
+        ypos = size(w.a,2) - cx + 1;
+
+        % horizontal with gap (segments left & right of intersection at x=cy)
+        line([min(xlim) cy-cursorgap], [ypos ypos], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+        line([cy+cursorgap max(xlim)], [ypos ypos], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+
+        % vertical with gap (x = cy, y around ypos)
+        line([cy cy], [min(ylim) ypos-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+        line([cy cy], [ypos+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+
+                        
+                        % right panel (horizontal)
+                        %                         xpos = size(w.a,2)-cx+1;
+                        %                         line([min(xlim) xpos-cursorgap], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        %                         line([xpos+cursorgap max(xlim)], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        %
+                        % %                         hline(size(w.a,2)-cx+1,'color',p.cursorcol,'linewidth',cursorwidth); %right panel
+                        %
+                        %                         % vertical
+                        %                         line([xpos xpos], [min(ylim) cy-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        %                         line([xpos xpos], [cy+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        %
+                        
+                        
+                    else
+                        % default
+                        line([min(xlim) cx-cursorgap], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        line([cx+cursorgap max(xlim)], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        
+                        line([cx cx], [min(ylim) cy-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        line([cx cx], [cy+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                    end
+                end
+            end
+            
+            
+            
+            
+        else
+            if ord(j)==1
+                hline(cz,'color',p.cursorcol,'linewidth',cursorwidth);
                 vline(cx,'color',p.cursorcol,'linewidth',cursorwidth);
-            elseif ordspm==1
-                if ord(j)==2
-                    hline(size(w.a,2)-cx+1,'color',p.cursorcol,'linewidth',cursorwidth); %right panel
-                    vline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
-                else
+                
+            elseif ord(j)==3
+                hline(cz,'color',p.cursorcol,'linewidth',cursorwidth);
+                vline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
+            elseif ord(j)==2
+                if ordspm==0
                     hline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
                     vline(cx,'color',p.cursorcol,'linewidth',cursorwidth);
+                elseif ordspm==1
+                    if ord(j)==2
+                        hline(size(w.a,2)-cx+1,'color',p.cursorcol,'linewidth',cursorwidth); %right panel
+                        vline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
+                    else
+                        hline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
+                        vline(cx,'color',p.cursorcol,'linewidth',cursorwidth);
+                    end
                 end
             end
         end
-        %set(findobj(gcf,'type','line'),'ButtonDownFcn',@btndown);
+        
         
         set(ha,'tag',['ax' num2str(j)]);
         
@@ -3683,7 +3769,7 @@ for kk=1:3
     
     if length(f)==2
         V=spm_vol(f{2});
-%         V=V(volnum2);
+        %         V=V(volnum2);
         if length(V)>1
             V=V(1);
         end
@@ -3829,7 +3915,7 @@ function showOverlays(e,e2)
 
 
 % ==============================================
-%%   
+%%
 % ===============================================
 
 
@@ -3871,7 +3957,7 @@ for i=2:nimg
         hg=findobj(ax(j),'tag',['im' num2str(i)]);
         if ~isempty(hg)
             if u.p.visible(i)==1
-            set(hg,'visible','on') ;
+                set(hg,'visible','on') ;
             else
                 set(hg,'visible','off') ;
             end
@@ -3885,9 +3971,9 @@ end
 function figresize(e,e2)
 
 % 'resize'
-% 
+%
 % e2.EventName
-% 
+%
 % b=dbstack
 % subs={b.name}'
 % 'a'
@@ -3904,7 +3990,7 @@ set(findobj(hf,'tag','ax3'),'units','normalized');
 %     set(findobj(hf,'tag','ax1'),'units','pixels');
 % set(findobj(hf,'tag','ax2'),'units','pixels');
 % set(findobj(hf,'tag','ax3'),'units','pixels');
-%     
+%
 %     return;
 % end
 % blockCalls = true;
@@ -3920,12 +4006,12 @@ set(findobj(hf,'tag','ax3'),'units','normalized');
 %     %    set(AxesH, 'Position', [5, 5, siz(3:4)-10]);
 %     drawnow;
 %     '2'
-%     
+%
 %     doResize = ~isequal(siz, get(hf, 'Position'));
 % end
 % blockCalls = false;  % Allow further calls again
 % '3'
-% 
+%
 % % pause(1); drawnow
 % % set(findobj(hf,'tag','ax1'),'units','pixels');
 % % set(findobj(hf,'tag','ax2'),'units','pixels');
