@@ -19,7 +19,7 @@
 % p.cursorcol  =[1 1 1];      % cursorcolor; default: [0 0 1] (i.e spm cursor color)
 % p.cursorwidth=0.5;          % cursor width; default: 0.5
 % p.cursorgap  =10;           % gap in pixels where cursor-lines crosses
-% 
+%
 % p.showparams =0;            % display parameter; {0,1}; default: 0
 %
 % p.panel      =1;            % make one panel [0|1]
@@ -211,6 +211,7 @@ p.crop      =0; %saving: crop image {0|1};   (1) crop image; default: 0
 p.value0transp=1  ; %set zeros-value to nan, ie. make them transparent {0,1}; default
 p.usebrainmask=0  ; %use brainmask to hide outerbrain signals to rid [0,1]  ; default:,1
 
+p.zoomfactor=7;
 
 %% ========[varinpit]=======================================
 % disp(nargin)
@@ -311,6 +312,8 @@ uimenu(f,'Label','go to closest maximum','callback',{@setcordinate,'closestmax'}
 uimenu(f,'Label','go to closest minimum','callback',{@setcordinate,'closestmin'});
 uimenu(f,'Label','show overlays','callback',{@showOverlays});
 uimenu(f,'Label','zoom on/off','callback',{@zooming});
+uimenu(f,'Label','zoom in current point','callback',{@zoom_50,'in'});
+uimenu(f,'Label','zoom out current point','callback',{@zoom_50,'out'});
 uimenu(f,'Label','zoom reset','callback',{@zooming_reset});
 % uimenu(f,'Label','save as png','callback',{@saveimg});
 
@@ -331,6 +334,39 @@ else
 end
 
 return
+
+function zoom_50(e,e2,arg)
+%% ===============================================
+hf=findobj(0,'tag','orthoview');
+u=get(hf,'userdata');
+for i=1:3
+    ax= findobj(hf,'tag',['ax' num2str(i)]);
+    %     i
+    if ~isempty(ax)
+        set(hf,'CurrentAxes',ax);
+        hl= findobj(ax,'type','line');
+        s=[];
+        for j=1:length(hl)
+            s(j,:) =  [hl(j).XData hl(j).YData];
+        end
+            k1=s(:,1:2); k1=mode(k1(:));
+            k2=s(:,3:4); k2=mode(k2(:));
+            if strcmp(arg,'in')
+            xl=diff(xlim)/u.p.zoomfactor;
+            yl=diff(ylim)/u.p.zoomfactor;
+            else
+              xl=diff(xlim)/1.5;%*(u.p.zoomfactor/5);
+              yl=diff(ylim)/1.5;%*(u.p.zoomfactor/5);   
+            end
+            xlim([k1-xl k1+xl]); ylim([k2-yl k2+yl]);
+    end
+end
+
+% u.p.zoomiter=u.p.zoomiter+1;
+% set(hf,'userdata',u);
+%% ===============================================
+
+
 
 function zooming(e,e2)
 hf=findobj(0,'tag','orthoview');
@@ -3418,13 +3454,14 @@ for j=1:3
         
         if isfield(p,'cursorgap')
             cursorgap=p.cursorgap;
-%             cursorgap=0;
+            %             cursorgap=0;
         else
             cursorgap=0;
         end
         
         
-%         set(hf,'visible','on')
+        %         set(hf,'visible','on')
+        if i==length(g)
         if cursorgap>0
             
             
@@ -3461,16 +3498,17 @@ for j=1:3
                         
                         
                         % flipped horizontal position (as in original hline)
-        ypos = size(w.a,2) - cx + 1;
-
-        % horizontal with gap (segments left & right of intersection at x=cy)
-        line([min(xlim) cy-cursorgap], [ypos ypos], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-        line([cy+cursorgap max(xlim)], [ypos ypos], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-
-        % vertical with gap (x = cy, y around ypos)
-        line([cy cy], [min(ylim) ypos-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-        line([cy cy], [ypos+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-
+                        ypos = size(w.a,2) - cx + 1;
+                        
+                        % horizontal with gap (segments left & right of intersection at x=cy)
+                        line([min(xlim) cy-cursorgap], [ypos ypos], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        line([cy+cursorgap max(xlim)], [ypos ypos], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        
+                        % vertical with gap (x = cy, y around ypos)
+                        line([cy cy], [min(ylim) ypos-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        line([cy cy], [ypos+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        
+                   
                         
                         % right panel (horizontal)
                         %                         xpos = size(w.a,2)-cx+1;
@@ -3522,6 +3560,7 @@ for j=1:3
                 end
             end
         end
+    end% last image
         
         
         set(ha,'tag',['ax' num2str(j)]);
