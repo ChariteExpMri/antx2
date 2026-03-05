@@ -73,8 +73,13 @@
 %
 %% posthoc (after figure is created): save fig as png
 % q=orthoslice('post','saveas',fullfile(pwd,'test.png'),'dosave',1)
-
-
+%% posthoc change cursorlocation
+% q=orthoslice('setcursor',[1 0.5 0]);
+% 
+%% make animated gif --> 
+%TYPE  orthoslice('animatedgif?'); % for available parameters
+% orthoslice('animatedgif','filename',fullfile(pwd,['test' '.gif']));
+% 
 
 
 % orthoslice('s.nii','fs',20,'cmap','parula');
@@ -138,6 +143,26 @@ drawnow; %
 %
 %     return
 % end
+
+% ==============================================
+%%  fast post-stuff
+% ===============================================
+if exist('f') && ischar(f)
+    if strcmp(f,'setcursor')
+        hf=findobj(0,'tag','orthoview');
+        u=get(hf,'userdata');
+        u.p.ce=varargin{1};
+        update(u.p);
+    elseif strcmp(f,'animatedgif')
+        makeanimatedgif([],[],varargin)
+    elseif strcmp(f,'animatedgif?')    
+        disp(help(['orthoslice' filemarker 'makeanimatedgif']));
+    end
+    
+    return
+end
+
+
 
 % ==============================================
 %% pairwise parameter
@@ -269,7 +294,9 @@ end
 % ===============================================
 delete(findobj(0,'tag','orthoview'));
 if exist('f')==1
-    f=cellstr(f);
+    if ~iscell(f)
+        f=cellstr(f);
+    end
     p.f=f;
 else
     p.f=[];
@@ -304,7 +331,7 @@ varargout{1}=gcf;
 % f = uimenu(gcf,'colormap','misc');
 uimenu(gcf,'Label','settings','callback',{@openSpecs});
 
-f = uimenu(gcf,'Label','misc');
+f = uimenu(gcf,'Label','peaks & zoom');
 uimenu(f,'Label','go to maximum','callback',{@setcordinate,'max'});
 uimenu(f,'Label','go to minimum','callback',{@setcordinate,'min'});
 uimenu(f,'Label','go to origin','callback',{@setcordinate,'origin'});
@@ -316,6 +343,12 @@ uimenu(f,'Label','zoom in current point','callback',{@zoom_50,'in'});
 uimenu(f,'Label','zoom out current point','callback',{@zoom_50,'out'});
 uimenu(f,'Label','zoom reset','callback',{@zooming_reset});
 % uimenu(f,'Label','save as png','callback',{@saveimg});
+
+f = uimenu(gcf,'Label','misc');
+uimenu(f,'Label','copy to clipboard','callback',{@copytoClipboard});
+uimenu(f,'Label','make animated gif','callback',{@makeanimatedgif_gui});
+
+
 
 %% ===[save]============================================
 k=dbstack;
@@ -334,6 +367,145 @@ else
 end
 
 return
+
+
+function makeanimatedgif_gui(e,e2)
+%% ===============================================
+% p.dim     =1;   %dimension to slice [1,2,3]
+% p.filename=fullfile(pwd,['test' '.gif']); %full path output name of animated gif
+% p.dt      =0.3; %delta time between images [seconds]
+% p.nslices =10;   %number of aquidistant slices to display 
+
+info=help(['orthoslice' filemarker 'makeanimatedgif']);
+info=strsplit(info,char(10))';
+p={...
+    'outName'        'test.gif'      'file outputname: <string>  ' ''
+    'outDir'         'local'       '<<select the output directory:  ["local"] refers to local mouseDir'   'd'
+    'dim' 2          'dimension to slice through' {1 2 3}
+    'dt'  0.3        'delta time between images [seconds]'  {0.1 0.3 .5 1}
+    'nslices'  10    'number of aquidistant slices to display' {5 10 15 20}
+    };
+% p=paramadd(p,x);%add/replace parameter
+[m z ]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[ 0.2458    0.3556    0.5000    0.1844 ],...
+    'title',['makeanimatedgif_gui'],'info',info);
+if isempty(m); return; end
+fn=fieldnames(z);
+z=rmfield(z,fn(regexpi2(fn,'^inf\d')));
+
+%% ===============================================
+
+if strcmp(z.outDir,'local'); z.outDir=pwd; end
+z.filename=fullfile(z.outDir,z.outName);
+[pa fi ext]=fileparts(z.filename);
+z.filename=fullfile(pa, [fi '.gif' ]);
+
+makeanimatedgif(e,e2,z);
+%% ===============================================
+
+
+function makeanimatedgif(e,e2,pin)
+%% make animated gif over a dimension
+%PARAMETER
+% filename=fullfile(pwd,['test' '.gif']); %full path output name of animated gif
+% optional parameters:
+% dim     =1;   %dimension to slice [1,2,3]
+% nslices =10;   %numnber of aquidistant slices to display 
+% dt      =0.3; %delta time between images [secondes]
+%% EXAMPLES
+%
+% orthoslice('animatedgif','filename',fullfile(pwd,['test' '.gif']));
+% orthoslice('animatedgif','filename',fullfile(pwd,['test_dim3' '.gif']), 'dim',3 );
+% 
+
+
+%% ===============================================
+p.dim     =1;   %dimension to slice [1,2,3]
+p.filename=fullfile(pwd,['test' '.gif']); %full path output name of animated gif
+p.dt      =0.3; %delta time between images [secondes]
+p.nslices =10;   %numnber of aquidistant slices to display 
+
+if exist('pin')==1 && ~isempty(pin)
+    if ~isstruct(pin)
+        pin=cell2struct(pin(2:2:end),pin(1:2:end),2);
+    end
+    p=catstruct(p,pin);
+end
+
+
+
+%  return
+%% ===============================================
+
+disp('wait...');
+hf=findobj(0,'tag','orthoview');
+u=get(hf,'userdata');
+
+
+filename=p.filename;
+dt      =p.dt;
+dim     =p.dim;
+nslices =p.nslices;
+
+
+% world_bb('AVGT.nii')
+%    -5.6750   -8.7945   -8.4503
+%     5.7350    5.9755    2.5397
+bb=   [u.gx{1}(1).x' u.gx{1}(2).y'  u.gx{1}(3).y'];
+%  ord=[2 1 3 ]
+ord=[1 2 3];
+bb=bb(:,ord);
+% bb=[ceil(bb(1,:)*10)/10; floor(bb(2,:)*10)/10]
+cut=0.7;
+bb(1,:)=bb(1,:)+cut; bb(2,:)=bb(2,:)-cut;
+ce_pre=u.p.ce;
+ce=ce_pre;
+vals=linspace(bb(1,dim),bb(2,dim),nslices);
+
+oax=setdiff([1:3],dim);
+visib=get(findobj(findobj(hf,'tag',['ax' num2str(oax(1)) ]),'type','line'),'visible');
+visib=visib{1};
+
+for i=1:length(vals)
+    ce(dim)=vals(i);
+    orthoslice('setcursor',ce);
+    
+    set(findobj(findobj(hf,'tag',['ax' num2str(dim) ]),'type','line'),'visible','off');
+    set(findobj(findobj(hf,'tag',['ax' num2str(oax(1)) ]),'type','line'),'visible','on');
+    set(findobj(findobj(hf,'tag',['ax' num2str(oax(2)) ]),'type','line'),'visible','on');
+    drawnow
+    % --- Capture frame ---
+    frame = getframe(hf);
+    im = frame2im(frame);
+    [A,map] = rgb2ind(im,256);
+    % --- Write to GIF ---
+    if 1
+        if i == 1
+            imwrite(A,map,filename,'gif','LoopCount',Inf,'DelayTime',dt); %
+        else
+            imwrite(A,map,filename,'gif','WriteMode','append','DelayTime',dt);
+        end
+    end
+end
+set(findobj(findobj(hf,'tag',['ax' num2str(dim) ]),'type','line'),'visible',visib);
+set(findobj(findobj(hf,'tag',['ax' num2str(oax(1)) ]),'type','line'),'visible',visib);
+set(findobj(findobj(hf,'tag',['ax' num2str(oax(2)) ]),'type','line'),'visible',visib);
+orthoslice('setcursor',ce_pre);
+showinfo2(['..animated gif'],filename);
+
+%% ===============================================
+
+
+
+
+function copytoClipboard(e,e2)
+set(gcf,'InvertHardcopy','off');
+if ispc==1
+    print(gcf,'-clipboard','-dmeta')     ;  % Windows metafile (vector)
+else
+    print(gcf,'-clipboard','-dbitmap')  ;   % bitmap (like screenshot)
+end
+
+
 
 function zoom_50(e,e2,arg)
 %% ===============================================
@@ -617,7 +789,12 @@ else
     if strcmp(hl.String{hl.Value},'<empty>');
         names={};
         for i=1:length(p.f)
+            if iscell(p.f{i})
+                namx=['loadedarray_' num2str(i) ];
+                ext='.array';
+            else
             [pax namx ext]=fileparts(p.f{i});
+            end
             names{i,1}=[ namx ext];
         end
         set(hl,'string',names,'value',1);
@@ -1444,9 +1621,13 @@ for i=1:length(pn)
     end
 end
 
-g.files=files;
-r=struct2list2(g,'r');
-t1=regexprep(r, 'r.files','files');
+if iscell(files{1})
+   t1={'files={{hd1 d1},{hd2 d2}};'} ;
+else
+    g.files=files;
+    r=struct2list2(g,'r');
+    t1=regexprep(r, 'r.files','files');
+end
 t2=struct2list2(s,'r');
 
 
@@ -1986,7 +2167,31 @@ else
     
     delete(hf);
     
-    orthoslice(f,c2{:});
+    % ==============================================
+    %%   REPLOT
+    % ===============================================
+
+    %% ===========[using array]====================================
+    isarray=find(strcmp(regexprep(f,'\d',''),'array'));
+    if ~isempty(isarray)
+        fbk=f;
+        f={};
+        for i=1:length(isarray);
+             iv= str2num( regexprep(  fbk{isarray(i)},'\D','')  );
+             f(1,i)=u.p.f(iv);
+        end
+        orthoslice(f,c2{:});
+        
+    else
+        
+         orthoslice(f,c2{:});
+    end
+    
+    
+    %% ===============================================
+    
+    
+   
     %     if  u.p.panel==1
     %         update(u.p);
     %     end
@@ -2185,7 +2390,11 @@ set(findobj(hs,'tag','legendgap'),'string',  num2str(p.legendgap));
 set(findobj(hs,'tag','axoverlapp'),'string', num2str(p.axolperc));
 try
     hb=findobj(hs,'tag','select_bgimage');
-    set(hb,'string', p.f{1});
+    if iscell(p.f{1})
+        set(hb,'string', [['array' num2str(1)]]);
+    else
+        set(hb,'string', p.f{1});
+    end
     hj = findjobj(hb);
     hj.setCaretPosition(hj.getDocument.getLength);
 end
@@ -2198,7 +2407,11 @@ if isfield(p,'f')
         try
             hb=findobj(hs,'tag',['select_fgimage' num2str(i-1) ]);
             if i<=length(p.f)
-                set(hb,'string', p.f{i});
+                if iscell(p.f{1})
+                    set(hb,'string', [['array' num2str(i)]]);
+                else
+                    set(hb,'string', p.f{i});
+                end
                 hj = findjobj(hb);
                 hj.setCaretPosition(hj.getDocument.getLength);
             end
@@ -3082,9 +3295,20 @@ end
 %% =========[files]======================================
 isexist=zeros(length(p.f),1);
 for i=1:length(p.f)
-    [pth,nam,ext,num] = spm_fileparts(p.f{i});
-    fis=fullfile(pth,[nam,ext]);
-    isexist(i,1)=exist(fis)==2;
+%     if iscell(p.f{i})  %for {hdr vol}-cell-args
+%         if length(p.f{i})==2
+%             
+%             
+%         end
+%     else
+  if ~iscell(p.f{i})
+        [pth,nam,ext,num] = spm_fileparts(p.f{i});
+        fis=fullfile(pth,[nam,ext]);
+        isexist(i,1)=exist(fis)==2;
+  else
+      isexist(i,1)=1;
+  end
+%     end
 end
 if ~isempty(find(isexist==0))
     disp('##### files not found ######');
@@ -3650,9 +3874,13 @@ return
 function [ g p]=obtaintslices(f,p);
 
 ce=p.ce;
+if ~iscell(f); f = cellstr(f); end
 
-f = cellstr(f);
-V = spm_vol(f{1});
+if iscell(f{1})
+    V=f{1}{1};
+else
+    V = spm_vol(f{1});
+end
 BB=world_bb(V);
 
 % V=V(volnum1);
@@ -3807,7 +4035,16 @@ for kk=1:3
     
     
     if length(f)==2
-        V=spm_vol(f{2});
+        
+        if iscell(f{2})
+             V=f{2}{1};
+        else
+            if isnumeric(f{2})
+                V=f{1};
+            else
+                V=spm_vol(f{2});
+            end
+        end
         %         V=V(volnum2);
         if length(V)>1
             V=V(1);
