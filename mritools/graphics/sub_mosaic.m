@@ -223,6 +223,12 @@ for i=1:length(g)
 %         delete(him2del)
 %     end
     %delete(hims)
+    
+    if  p.alpha(i)==-1% && i>1 % && i>1
+             [F alphadata]=makeContour(F,climF,p);
+    end
+    
+    
     if isempty(him2)
         him2 = imagesc(F,climF);
     else
@@ -233,7 +239,8 @@ for i=1:length(g)
     caxis(climF);
 %     if i>1
 
-% # ALPHA #############
+if  p.alpha(i)~=-1%
+    % # ALPHA #############
     alphadata = p.alpha(i).*(F >= climF(1));
     if length(unique(Bm(:)))>1 %outer mask
         if i==1
@@ -244,20 +251,20 @@ for i=1:length(g)
             end
         end
     end
-% # THRESHOLD ############
-   athresh=(p.thresh(i,:));
-   
-   if any(athresh)==1
-       if isnan(athresh(1))==0
-          % alphadata=alphadata.*(F>athresh(1));
-           alphadata(find(F<athresh(1)))=0;
-       end
-       if isnan(athresh(2))==0
-           %alphadata=alphadata.*(F<athresh(2));
+    % # THRESHOLD ############
+    athresh=(p.thresh(i,:));
+    if any(athresh)==1
+        if isnan(athresh(1))==0
+            % alphadata=alphadata.*(F>athresh(1));
+            alphadata(find(F<athresh(1)))=0;
+        end
+        if isnan(athresh(2))==0
+            %alphadata=alphadata.*(F<athresh(2));
             alphadata(find(F>athresh(2)))=0;
-           
-       end
-   end
+        end
+    end
+end
+   
   set(him2,'AlphaData',alphadata);
   
 %   
@@ -315,6 +322,38 @@ for i=1:length(g)
      hba=findobj(hc,'type','image');
      set(hc ,'visible',tx{p.cbarvisible(i)+1,2});
      set(hba,'visible',tx{p.cbarvisible(i)+1,2});
+     
+     %% ======[contours]=========================================
+     if 0
+         if  p.alpha(i)==-1 % && i>1
+             if 0
+                 
+                 
+                 % detect boundaries between different region labels
+                 fcont=F;
+                 fcont(isnan(F))=0;
+                 Bx = diff(fcont,1,2) ~= 0;
+                 By = diff(fcont,1,1) ~= 0;
+                 
+                 cont = false(size(fcont));
+                 cont(:,1:end-1) = cont(:,1:end-1) | Bx;
+                 cont(1:end-1,:) = cont(1:end-1,:) | By;
+                 
+                 % plot structural image
+                 %figure
+                 %imagesc(cont)
+                 % colormap(gray)
+                 %axis image off
+                 %hold on
+                 
+                 % overlay boundaries
+                 [y,x] = find(cont);
+                 %hp=plot(x,y,'r.','MarkerSize',1)
+                 hp=plot(x,y,'r.','MarkerSize',1,'color',cmap([end],:));
+             end
+         end
+     end
+     %% ===============================================
      
      
 end
@@ -536,4 +575,16 @@ set(gcf,'userdata',u);
 
 
 
+function [FC alphadata]=makeContour(F,climF,p)
+A2=F;
+A2(isnan(F))=0;
+% compute region boundaries
+B = false(size(A2));
+B(:,1:end-1) = B(:,1:end-1) | (A2(:,1:end-1) ~= A2(:,2:end));
+B(1:end-1,:) = B(1:end-1,:) | (A2(1:end-1,:) ~= A2(2:end,:));
+
+% thin the boundaries to 1-pixel wide
+B         = bwmorph(B,'thin',Inf);
+FC        = B*max(climF);
+alphadata = B*0.9;
 

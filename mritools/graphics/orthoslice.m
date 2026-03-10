@@ -75,11 +75,11 @@
 % q=orthoslice('post','saveas',fullfile(pwd,'test.png'),'dosave',1)
 %% posthoc change cursorlocation
 % q=orthoslice('setcursor',[1 0.5 0]);
-% 
-%% make animated gif --> 
+%
+%% make animated gif -->
 %TYPE  orthoslice('animatedgif?'); % for available parameters
 % orthoslice('animatedgif','filename',fullfile(pwd,['test' '.gif']));
-% 
+%
 
 
 % orthoslice('s.nii','fs',20,'cmap','parula');
@@ -153,13 +153,16 @@ if exist('f') && ischar(f)
         u=get(hf,'userdata');
         u.p.ce=varargin{1};
         update(u.p);
+        return
     elseif strcmp(f,'animatedgif')
-        makeanimatedgif([],[],varargin)
-    elseif strcmp(f,'animatedgif?')    
+        makeanimatedgif([],[],varargin);
+        return
+    elseif strcmp(f,'animatedgif?')
         disp(help(['orthoslice' filemarker 'makeanimatedgif']));
+        return
+        
     end
     
-    return
 end
 
 
@@ -374,7 +377,7 @@ function makeanimatedgif_gui(e,e2)
 % p.dim     =1;   %dimension to slice [1,2,3]
 % p.filename=fullfile(pwd,['test' '.gif']); %full path output name of animated gif
 % p.dt      =0.3; %delta time between images [seconds]
-% p.nslices =10;   %number of aquidistant slices to display 
+% p.nslices =10;   %number of aquidistant slices to display
 
 info=help(['orthoslice' filemarker 'makeanimatedgif']);
 info=strsplit(info,char(10))';
@@ -409,20 +412,20 @@ function makeanimatedgif(e,e2,pin)
 % filename=fullfile(pwd,['test' '.gif']); %full path output name of animated gif
 % optional parameters:
 % dim     =1;   %dimension to slice [1,2,3]
-% nslices =10;   %numnber of aquidistant slices to display 
+% nslices =10;   %numnber of aquidistant slices to display
 % dt      =0.3; %delta time between images [secondes]
 %% EXAMPLES
 %
 % orthoslice('animatedgif','filename',fullfile(pwd,['test' '.gif']));
 % orthoslice('animatedgif','filename',fullfile(pwd,['test_dim3' '.gif']), 'dim',3 );
-% 
+%
 
 
 %% ===============================================
 p.dim     =1;   %dimension to slice [1,2,3]
 p.filename=fullfile(pwd,['test' '.gif']); %full path output name of animated gif
 p.dt      =0.3; %delta time between images [secondes]
-p.nslices =10;   %numnber of aquidistant slices to display 
+p.nslices =10;   %numnber of aquidistant slices to display
 
 if exist('pin')==1 && ~isempty(pin)
     if ~isstruct(pin)
@@ -521,16 +524,16 @@ for i=1:3
         for j=1:length(hl)
             s(j,:) =  [hl(j).XData hl(j).YData];
         end
-            k1=s(:,1:2); k1=mode(k1(:));
-            k2=s(:,3:4); k2=mode(k2(:));
-            if strcmp(arg,'in')
+        k1=s(:,1:2); k1=mode(k1(:));
+        k2=s(:,3:4); k2=mode(k2(:));
+        if strcmp(arg,'in')
             xl=diff(xlim)/u.p.zoomfactor;
             yl=diff(ylim)/u.p.zoomfactor;
-            else
-              xl=diff(xlim)/1.5;%*(u.p.zoomfactor/5);
-              yl=diff(ylim)/1.5;%*(u.p.zoomfactor/5);   
-            end
-            xlim([k1-xl k1+xl]); ylim([k2-yl k2+yl]);
+        else
+            xl=diff(xlim)/1.5;%*(u.p.zoomfactor/5);
+            yl=diff(ylim)/1.5;%*(u.p.zoomfactor/5);
+        end
+        xlim([k1-xl k1+xl]); ylim([k2-yl k2+yl]);
     end
 end
 
@@ -793,7 +796,7 @@ else
                 namx=['loadedarray_' num2str(i) ];
                 ext='.array';
             else
-            [pax namx ext]=fileparts(p.f{i});
+                [pax namx ext]=fileparts(p.f{i});
             end
             names{i,1}=[ namx ext];
         end
@@ -1622,7 +1625,7 @@ for i=1:length(pn)
 end
 
 if iscell(files{1})
-   t1={'files={{hd1 d1},{hd2 d2}};'} ;
+    t1={'files={{hd1 d1},{hd2 d2}};'} ;
 else
     g.files=files;
     r=struct2list2(g,'r');
@@ -2170,28 +2173,28 @@ else
     % ==============================================
     %%   REPLOT
     % ===============================================
-
+    
     %% ===========[using array]====================================
     isarray=find(strcmp(regexprep(f,'\d',''),'array'));
     if ~isempty(isarray)
         fbk=f;
         f={};
         for i=1:length(isarray);
-             iv= str2num( regexprep(  fbk{isarray(i)},'\D','')  );
-             f(1,i)=u.p.f(iv);
+            iv= str2num( regexprep(  fbk{isarray(i)},'\D','')  );
+            f(1,i)=u.p.f(iv);
         end
         orthoslice(f,c2{:});
         
     else
         
-         orthoslice(f,c2{:});
+        orthoslice(f,c2{:});
     end
     
     
     %% ===============================================
     
     
-   
+    
     %     if  u.p.panel==1
     %         update(u.p);
     %     end
@@ -3295,20 +3298,20 @@ end
 %% =========[files]======================================
 isexist=zeros(length(p.f),1);
 for i=1:length(p.f)
-%     if iscell(p.f{i})  %for {hdr vol}-cell-args
-%         if length(p.f{i})==2
-%             
-%             
-%         end
-%     else
-  if ~iscell(p.f{i})
+    %     if iscell(p.f{i})  %for {hdr vol}-cell-args
+    %         if length(p.f{i})==2
+    %
+    %
+    %         end
+    %     else
+    if ~iscell(p.f{i})
         [pth,nam,ext,num] = spm_fileparts(p.f{i});
         fis=fullfile(pth,[nam,ext]);
         isexist(i,1)=exist(fis)==2;
-  else
-      isexist(i,1)=1;
-  end
-%     end
+    else
+        isexist(i,1)=1;
+    end
+    %     end
 end
 if ~isempty(find(isexist==0))
     disp('##### files not found ######');
@@ -3542,7 +3545,8 @@ axexist=0;
 cursorwidth=p.cursorwidth;
 if cursorwidth<0.001 ; cursorwidth=0.001  ; end
 
-
+% set(hf,'visible','on');
+% disp('line3549');
 for j=1:3
     % axes
     
@@ -3590,6 +3594,9 @@ for j=1:3
             end
         end
         
+        if  p.alpha(i)==-1% && i>1 % && i>1  %CONTOUR
+            [F alphadata]=makeContour(F,climF,p);
+        end
         
         him2=findobj(ha,'type','image','tag',['im'  num2str(i)]);
         if isempty(him2)
@@ -3604,37 +3611,36 @@ for j=1:3
         
         % ### ALPHA #############
         %alphadata = p.alpha(i).*(F >= climF(1)); %prevous
-        alphadata =ones(size(F))*p.alpha(i);
-        if i>1
-            alphadata=~isnan(F).*alphadata;    % issue with NAN --> become transparent
-        end
-        
-        
-        if length(unique(Bm(:)))>1 %outer mask
-            if i==1
-                alphadata=alphadata.*Bm;
-            else
-                if p.usebrainmask==1
+        if p.alpha(i)~=-1
+            alphadata =ones(size(F))*p.alpha(i);
+            if i>1
+                alphadata=~isnan(F).*alphadata;    % issue with NAN --> become transparent
+            end
+            
+            
+            if length(unique(Bm(:)))>1 %outer mask
+                if i==1
                     alphadata=alphadata.*Bm;
+                else
+                    if p.usebrainmask==1
+                        alphadata=alphadata.*Bm;
+                    end
+                    
                 end
-                
             end
-        end
-        
-        
-        
-        % ### THRESHOLD ############
-        athresh=(p.thresh(i,:));
-        
-        if any(athresh)==1
-            if isnan(athresh(1))==0
-                % alphadata=alphadata.*(F>athresh(1));
-                alphadata(find(F<athresh(1)))=0;
-            end
-            if isnan(athresh(2))==0
-                %alphadata=alphadata.*(F<athresh(2));
-                alphadata(find(F>athresh(2)))=0;
-                
+            % ### THRESHOLD ############
+            athresh=(p.thresh(i,:));
+            
+            if any(athresh)==1
+                if isnan(athresh(1))==0
+                    % alphadata=alphadata.*(F>athresh(1));
+                    alphadata(find(F<athresh(1)))=0;
+                end
+                if isnan(athresh(2))==0
+                    %alphadata=alphadata.*(F<athresh(2));
+                    alphadata(find(F>athresh(2)))=0;
+                    
+                end
             end
         end
         set(him2,'AlphaData',alphadata);
@@ -3686,105 +3692,105 @@ for j=1:3
         
         %         set(hf,'visible','on')
         if i==length(g)
-        if cursorgap>0
-            
-            
-            if ord(j)==1
-                % horizontal (cz) with gap
-                line([min(xlim) cx-cursorgap], [cz cz], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                line([cx+cursorgap max(xlim)], [cz cz], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+            if cursorgap>0
                 
-                % vertical (cx) with gap
-                line([cx cx], [min(ylim) cz-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                line([cx cx], [cz+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
                 
-            elseif ord(j)==3
-                % horizontal at cz with gap
-                line([min(xlim) cy-cursorgap], [cz cz], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                line([cy+cursorgap max(xlim)], [cz cz], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                
-                % vertical at cy with gap
-                line([cy cy], [min(ylim) cz-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                line([cy cy], [cz+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                
-            elseif ord(j)==2
-                if ordspm==0
-                    % horizontal at cy with gap
-                    line([min(xlim) cx-cursorgap], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                    line([cx+cursorgap max(xlim)], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                if ord(j)==1
+                    % horizontal (cz) with gap
+                    line([min(xlim) cx-cursorgap], [cz cz], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                    line([cx+cursorgap max(xlim)], [cz cz], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
                     
-                    % vertical at cx with gap
-                    line([cx cx], [min(ylim) cy-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                    line([cx cx], [cy+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                    % vertical (cx) with gap
+                    line([cx cx], [min(ylim) cz-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                    line([cx cx], [cz+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
                     
-                elseif ordspm==1
-                    if ord(j)==2
-                        
-                        
-                        % flipped horizontal position (as in original hline)
-                        ypos = size(w.a,2) - cx + 1;
-                        
-                        % horizontal with gap (segments left & right of intersection at x=cy)
-                        line([min(xlim) cy-cursorgap], [ypos ypos], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                        line([cy+cursorgap max(xlim)], [ypos ypos], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                        
-                        % vertical with gap (x = cy, y around ypos)
-                        line([cy cy], [min(ylim) ypos-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                        line([cy cy], [ypos+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                        
-                   
-                        
-                        % right panel (horizontal)
-                        %                         xpos = size(w.a,2)-cx+1;
-                        %                         line([min(xlim) xpos-cursorgap], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                        %                         line([xpos+cursorgap max(xlim)], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                        %
-                        % %                         hline(size(w.a,2)-cx+1,'color',p.cursorcol,'linewidth',cursorwidth); %right panel
-                        %
-                        %                         % vertical
-                        %                         line([xpos xpos], [min(ylim) cy-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                        %                         line([xpos xpos], [cy+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
-                        %
-                        
-                        
-                    else
-                        % default
+                elseif ord(j)==3
+                    % horizontal at cz with gap
+                    line([min(xlim) cy-cursorgap], [cz cz], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                    line([cy+cursorgap max(xlim)], [cz cz], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                    
+                    % vertical at cy with gap
+                    line([cy cy], [min(ylim) cz-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                    line([cy cy], [cz+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                    
+                elseif ord(j)==2
+                    if ordspm==0
+                        % horizontal at cy with gap
                         line([min(xlim) cx-cursorgap], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
                         line([cx+cursorgap max(xlim)], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
                         
+                        % vertical at cx with gap
                         line([cx cx], [min(ylim) cy-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
                         line([cx cx], [cy+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        
+                    elseif ordspm==1
+                        if ord(j)==2
+                            
+                            
+                            % flipped horizontal position (as in original hline)
+                            ypos = size(w.a,2) - cx + 1;
+                            
+                            % horizontal with gap (segments left & right of intersection at x=cy)
+                            line([min(xlim) cy-cursorgap], [ypos ypos], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                            line([cy+cursorgap max(xlim)], [ypos ypos], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                            
+                            % vertical with gap (x = cy, y around ypos)
+                            line([cy cy], [min(ylim) ypos-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                            line([cy cy], [ypos+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                            
+                            
+                            
+                            % right panel (horizontal)
+                            %                         xpos = size(w.a,2)-cx+1;
+                            %                         line([min(xlim) xpos-cursorgap], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                            %                         line([xpos+cursorgap max(xlim)], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                            %
+                            % %                         hline(size(w.a,2)-cx+1,'color',p.cursorcol,'linewidth',cursorwidth); %right panel
+                            %
+                            %                         % vertical
+                            %                         line([xpos xpos], [min(ylim) cy-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                            %                         line([xpos xpos], [cy+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                            %
+                            
+                            
+                        else
+                            % default
+                            line([min(xlim) cx-cursorgap], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                            line([cx+cursorgap max(xlim)], [cy cy], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                            
+                            line([cx cx], [min(ylim) cy-cursorgap], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                            line([cx cx], [cy+cursorgap max(ylim)], 'Color', p.cursorcol, 'LineWidth', cursorwidth);
+                        end
                     end
                 end
-            end
-            
-            
-            
-            
-        else
-            if ord(j)==1
-                hline(cz,'color',p.cursorcol,'linewidth',cursorwidth);
-                vline(cx,'color',p.cursorcol,'linewidth',cursorwidth);
                 
-            elseif ord(j)==3
-                hline(cz,'color',p.cursorcol,'linewidth',cursorwidth);
-                vline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
-            elseif ord(j)==2
-                if ordspm==0
-                    hline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
+                
+                
+                
+            else
+                if ord(j)==1
+                    hline(cz,'color',p.cursorcol,'linewidth',cursorwidth);
                     vline(cx,'color',p.cursorcol,'linewidth',cursorwidth);
-                elseif ordspm==1
-                    if ord(j)==2
-                        hline(size(w.a,2)-cx+1,'color',p.cursorcol,'linewidth',cursorwidth); %right panel
-                        vline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
-                    else
+                    
+                elseif ord(j)==3
+                    hline(cz,'color',p.cursorcol,'linewidth',cursorwidth);
+                    vline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
+                elseif ord(j)==2
+                    if ordspm==0
                         hline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
                         vline(cx,'color',p.cursorcol,'linewidth',cursorwidth);
+                    elseif ordspm==1
+                        if ord(j)==2
+                            hline(size(w.a,2)-cx+1,'color',p.cursorcol,'linewidth',cursorwidth); %right panel
+                            vline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
+                        else
+                            hline(cy,'color',p.cursorcol,'linewidth',cursorwidth);
+                            vline(cx,'color',p.cursorcol,'linewidth',cursorwidth);
+                        end
                     end
                 end
             end
-        end
-    end% last image
+        end% last image
         
         
         set(ha,'tag',['ax' num2str(j)]);
@@ -4037,7 +4043,7 @@ for kk=1:3
     if length(f)==2
         
         if iscell(f{2})
-             V=f{2}{1};
+            V=f{2}{1};
         else
             if isnumeric(f{2})
                 V=f{1};
@@ -4293,6 +4299,20 @@ set(findobj(hf,'tag','ax3'),'units','normalized');
 % % set(findobj(hf,'tag','ax2'),'units','pixels');
 % % set(findobj(hf,'tag','ax3'),'units','pixels');
 
+
+
+function [FC alphadata]=makeContour(F,climF,p)
+A2=F;
+A2(isnan(F))=0;
+% compute region boundaries
+B = false(size(A2));
+B(:,1:end-1) = B(:,1:end-1) | (A2(:,1:end-1) ~= A2(:,2:end));
+B(1:end-1,:) = B(1:end-1,:) | (A2(1:end-1,:) ~= A2(2:end,:));
+
+% thin the boundaries to 1-pixel wide
+B         = bwmorph(B,'thin',Inf);
+FC        = B*max(climF);
+alphadata = B*0.9;
 
 
 

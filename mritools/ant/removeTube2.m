@@ -1,10 +1,25 @@
 
 
 % ==============================================
-%%   tubesegment
+%%   tubesegment2
 % ===============================================
 % subfunction: Exvivo-data with high-contrast (PBS) solution --> remove exvivo-tube  use imcomplement+otsu
 % q=removeTube2(fullfile(pa,'t2.nii'));
+% 
+% EXAMPLES:
+% f1='F:\data10\issue_exvivoSkullstrip\dat\20250801PBS_NS247_T2_DTI_MPM\t2.nii'
+% F1=removeTube2(f1);
+%   showinfo2(['new file2:'],F1);   
+% % ===============================================
+%     pa='F:\data8\lina_exvivoTubesegmentation\dat\20240828LA_CupExvivo_F01_dMRI_MPM_MWF'
+%     file=fullfile(pa,'t2.nii');
+%     q=removeTube2(file)
+%     showinfo2(['new file2:'],q);
+% 
+% 
+
+    
+    
 %
 function fileout=removeTube2(file)
 %% ===============================================
@@ -19,16 +34,14 @@ function fileout=removeTube2(file)
 %
 % end
 %% ===============================================
+disp(['..tubesegFile: ' mfilename]);
 fileout=[];
 f1=file;
 pa=fileparts(f1);
 % f1=fullfile(pa,'t2.nii');
 [ha a0]=rgetnii(f1);
-
 % a=imgaussfilt(a0,2);
 a=ordfilt3D(a0,14);
-
-
 b=reshape(otsu(a(:),2),[ha.dim]);
 
 edge1=b(:,[1 end],:);
@@ -86,35 +99,54 @@ filename    ='_tmp_ExvivoTube.nii';
 dim2use=min(find(excen==min(excen)));
 if ~isempty(dim2use)
     
-    %% ===============================================
-    b=zeros(size(a0));
-    memax=zeros(size(a,dim2use) ,1);
-    ri=b;
-    for i=1:size(a,dim2use)
+    %% =====[depending on dimension]========================
+    dim_excen=find(excen==min(excen));
+    dims =1:ndims(a);
+    dims2=[setdiff(1:ndims(a),dim_excen) dim_excen ];
+    
+    a0p= permute(a0,dims2);
+    ap = permute(a ,dims2);
+    
+    [in2 bp rip]=deal(zeros(size(a0p)));
+    for i=1:size(a0p,3)
         %disp(i);
-        ao=squeeze(a0(:,i,:));
-        as=squeeze(a(:,i,:));
-        
-        %         m=otsu(ao,nc);
-        %         mx=(m==nc);
-        %         val=mean(ao(m==(nc-1)));
-        %
-        %         d=ao;
-        %         d(mx==1)=val;
-        %         b(:,i,:)=d;
+        ao=squeeze(a0p(:,:,i));
+        as=squeeze( ap(:,:,i));
         v=otsu(as,3); %multimask
         m=v>1;
         m=imfill(m,'holes');
         in=imerode(m,ones(3));
-        in2(:,i,:)=in;
+        
         vals=sort(as(in),'descend');
         memax(i,1)=mean(vals(1:100));
-        
-        b(:,i,:)=as./memax(i,1);
-        % b(:,i,:)=ao./memax(i,1);
-        ri(:,i,:)=m-in;
+        bp(:,:,i)=as./memax(i,1);
+        rip(:,:,i)=m-in;
     end
-    %     fg,plot(memax)
+    b  =permute(bp ,dims2);
+    ri =permute(rip,dims2);
+    
+    
+%     %% ===============================================
+%     b=zeros(size(a0));
+%     memax=zeros(size(a,dim2use) ,1);
+%     ri=b;
+%     for i=1:size(a,dim2use)
+%         %disp(i);
+%         ao=squeeze(a0(:,i,:));
+%         as=squeeze(a(:,i,:));
+%         v=otsu(as,3); %multimask
+%         m=v>1;
+%         m=imfill(m,'holes');
+%         in=imerode(m,ones(3));
+%         in2(:,i,:)=in;
+%         vals=sort(as(in),'descend');
+%         memax(i,1)=mean(vals(1:100));
+%         
+%         b(:,i,:)=as./memax(i,1);
+%         % b(:,i,:)=ao./memax(i,1);
+%         ri(:,i,:)=m-in;
+%     end
+%     %     fg,plot(memax)
     
     %% ===============================================
     if 0
