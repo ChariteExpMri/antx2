@@ -1180,6 +1180,8 @@
 % if nput-volume is 4D-volume: use temporary copy of input-file for realignemnt via SPM
 % #ba 04 Mar 2026 (14:42:03)
 % #k [orthoslice]#n : modified, configurable gap at their intersection of the fixation cross ("cursorgap")
+% #ba 11 Mar 2026 (12:38:32)
+% #k [xrename.m] #n : modified,  reslice to target implemented (see help)
 % 
 % 
 % 

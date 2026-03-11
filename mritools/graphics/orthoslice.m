@@ -2745,8 +2745,9 @@ if exist('filename')==0
     filename=fullfile(pa,fi);
 end
 %% ===============================================
-if p.bgtransp==1; set(gcf,'InvertHardcopy','on' );
-else ;            set(gcf,'InvertHardcopy','off');
+% p.bgtransp
+if p.bgtransp==1; set(hf,'InvertHardcopy','on' );
+else ;            set(hf,'InvertHardcopy','off');
 end
 % set(gcf,'color',[1 0 1]);
 % set(findobj(gcf,'type','axes'),'color','none');

@@ -43,6 +43,11 @@
 %                                                   xrename(0,'cbf_matchingvol.nii','cbf_matchingvol_slice.nii','slice:1');
 % 
 % 
+% #b relice volume to target           (r2t:)   %use 'r2t:' in 3rd colum to indicate which image should be resliced
+%                                                use 'ref' in 3rd colum to indicate the reference-file
+%                                                see examples below
+% 
+% 
 % 
 % #r The functions 'XRENAME' and 'XOP' (lowercase) are identical, XOP is a wrapper-function of XRENAME)
 % 
@@ -436,6 +441,40 @@
 %             'vimg.nii' 	'' 	'gzip2:'                    
 %             'vimg2.nii' 	'' 	'gzip2:' };                
 % xrename(1,z.files(:,1),z.files(:,2),z.files(:,3));
+% 
+%__________________________________________________________________________________________________________________
+%% #ck ___RESLICE VOLUME TO TARGET  (r2t:)___
+% relsice volume to target-volume
+% target/reference volume must be defined via a 'ref'-tag in the TASK-column (3rd column)
+% 
+% <optional args>:
+%  interp=* -interpolations, options: {0,1,..};   where: [0]:next neighbour, [1]bilinear interp. 
+%             ...higher values  ..higher order interp.
+%     dt=*  -change datatype ..see help of spm_type (2,4,8,16,64), otherwise datype of inputfile
+%            is used
+% 
+%% #b EXAMPLES
+% #B EXAMPLE-1:  reslice 'ix_AVGTmask.nii', reference is '05_T1_FLASH_3D_DCE.nii'
+% #B resliced file is saved as 'ix_AVGTmask_resliced.nii', using next neighbour
+% #B interpolation (interp=0; this is default)
+% z.files={...
+%     'ix_AVGTmask.nii' 	   'ix_AVGTmask_resliced.nii' 	'r2t:'
+%     '05_T1_FLASH_3D_DCE.nii' 	'' 	                        'ref'};
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
+% 
+% #B EXAMPLE-2: similar to EXAMPLE-1 but using linear interpolation (interp=1)
+% z.files={...
+%     'ix_AVGTmask.nii' 	    'ix_AVGTmask_resliced.nii' 	'r2t: interp=1'
+%     '05_T1_FLASH_3D_DCE.nii' 	'' 	                        'ref'};
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
+% 
+% #B EXAMPLE-3: similar to EXAMPLE-1 but using higher order interpolation and change datatype to 16 (dt=16)
+% z.files={...
+%     'ix_AVGTmask.nii' 	    'ix_AVGTmask_resliced.nii' 	'r2t: interp=3;dt=16'
+%     '05_T1_FLASH_3D_DCE.nii' 	'' 	                        'ref'};
+% xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
+% 
+% 
 % 
 %__________________________________________________________________________________________________________________
 %% #ck ___apply function to NIFTI (niifun: functionname)___
@@ -1957,7 +1996,109 @@ for i=1:length(pa)      %PATH
                      
                      %% ===============================================
                      
-                     
+                elseif strfind(volnum{j},'r2t:'); %reslice2target  
+                    %% ===============================================
+                    
+                    if 0 %EXAMPLES
+                       %% ===============================================
+                       % reslice 'ix_AVGTmask.nii', reference is '05_T1_FLASH_3D_DCE.nii'
+                       % reslices file is saved as 'ix_AVGTmask_resliced.nii', using next neighbour
+                       % interpolation (interp=0; which is default)
+                        z.files={...
+                            'ix_AVGTmask.nii' 	        'ix_AVGTmask_resliced.nii' 	'r2t:'
+                            '05_T1_FLASH_3D_DCE.nii' 	'' 	                        'ref'};
+                        xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
+                       %% ===============================================
+                        % reslice 'ix_AVGTmask.nii', reference is '05_T1_FLASH_3D_DCE.nii'
+                       % reslices file is saved as 'ix_AVGTmask_resliced.nii', using linear interpolation
+                        z.files={...
+                            'ix_AVGTmask.nii' 	        'ix_AVGTmask_resliced.nii' 	'r2t: interp=1'
+                            '05_T1_FLASH_3D_DCE.nii' 	'' 	                        'ref'};
+                        xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
+                       %% ===============================================
+                       % reslice 'ix_AVGTmask.nii', reference is '05_T1_FLASH_3D_DCE.nii'
+                       % reslices file is saved as 'ix_AVGTmask_resliced.nii', using highter order interpolation
+                       % and changed datatype to 64
+                        z.files={...
+                            'ix_AVGTmask.nii' 	        'ix_AVGTmask_resliced.nii' 	'r2t: interp=3;dt=64'
+                            '05_T1_FLASH_3D_DCE.nii' 	'' 	                        'ref'};
+                        xrename(1,z.files(:,1),z.files(:,2),z.files(:,3) );
+                        %% ===============================================
+                    end
+                    
+                    
+                    
+                    code=volnum{j};
+                    arg=[strrep(code,'r2t:','task=resliceVolume;') ';'];
+                    if ~isempty(strfind(arg,'=;'));
+                        arg=regexprep(arg,'=;','=1;');
+                    end
+                    tmp = regexp(arg, '(\w+)\s*=\s*([^;]+)', 'tokens');
+                    tmp = [tmp{:}];          % FLATTEN inner cells (this is the key)
+                    c  = struct(tmp{:});
+                    %------defaults----
+                    c0.interp=0; %interpolation
+                    %c=catstruct(c0,c);
+                    
+                    
+                    ix_ref=find(strcmp(tbout(:,3),'ref'));
+                    if ~isempty(ix_ref)
+                        reffile=fullfile( fileparts(s1) ,tbout{ix_ref,1}); %reference file
+                        if exist(reffile)==2
+                             
+                            hsource=spm_vol(s1);
+                            c0.dt    =hsource(1).dt(1);
+                            c=catstruct(c0,c);
+                            if ~isnumeric(c.dt);    c.dt      =str2num(c.dt);     end
+                            if ~isnumeric(c.interp); c.interp =str2num(c.interp); end
+                            
+                            
+                            tas=fieldnames(c);
+                            tas(:,2)=cellfun(@(f) {[ num2str(f)  ]},struct2cell(c));
+                            iv=find(strcmp(tas(:,1),'task'));
+                            tas=tas( [ iv setdiff([1:size(tas,1)],iv ) ],:  );
+                            ms='';
+                            for k=1:size(tas,1)
+                                ms=[ms [tas{k,1} '=' tas{k,2} '; ' ]];
+                            end
+                            disp([ ' .. ' ms ]);
+                            
+                            
+                            
+                            [ha a] =rgetnii(s1);
+                            [hr r] =rgetnii(reffile);
+                            hr     =hr(1);
+                            r      =r(:,:,:,1);
+                            
+                            d=zeros([hr.dim size(a,4) ]);
+                            for k=1:size(a,4)
+                                [h,d(:,:,:,k) ]=rreslice2target({ha(1) a(:,:,:,k)},{hr r}, [], ...
+                                    (c.interp), (c.dt));
+                            end
+                            
+                            if strcmp(s1,s2)==0  %delete prev file of its not sourceFile
+                                try; delete(s2); end
+                            end
+                            
+                            rsavenii( s2, h,d,[(c.dt) 0]);
+                            
+                            if isDesktop==1
+                                disp([' ..resliced volume: <a href="matlab: explorerpreselect(''' s2 ''')">' s2 '</a>' ]);
+                            else
+                                disp([' ..resliced volume: ' s2  ]);
+                            end
+                            
+                            
+                            %rreslice2target(fi2merge, firef, fi2save, interpx,dt)
+                            %rreslice2target(s1, reffile, s2, c.interp,c.dt);
+                            
+                            
+                        end
+                    end
+                    
+                    
+                    
+                     %% ===============================================
                      
                     
                 elseif strfind(volnum{j},'mo:'); %vox factor
