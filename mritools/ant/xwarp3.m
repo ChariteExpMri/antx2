@@ -312,9 +312,10 @@ if find(s.task==1)
     end
     
     %% SKULLSTRIP T2.nii
-    if s.usePriorskullstrip==1 || s.usePriorskullstrip==6 || s.usePriorskullstrip==7
+    if s.usePriorskullstrip==1 || s.usePriorskullstrip==6 || s.usePriorskullstrip==7 ....
+            || s.usePriorskullstrip==9
         %disp('#check---skullstripp');
-        if s.usePriorskullstrip==1
+        if s.usePriorskullstrip==1 || s.usePriorskullstrip==9
             F1=s.t2;
             msg='use';
         elseif s.usePriorskullstrip==6
@@ -339,7 +340,31 @@ if find(s.task==1)
         if s.usePriorskullstrip==6
             try; delete(F1); end
         end
+        
+        
+        if s.usePriorskullstrip==9
+            [hb b]=rgetnii(F1);  %SUBTRACT TUBE
+            [hc c]=rgetnii(fullfile(s.pa, '_msk.nii' ));
+            F3=fullfile(s.pa,'_mskTemp.nii');
+            rsavenii(F3,hb,b-c, 16);
+            
+            %if isfield(s,'species') && strcmp(s.species,'rat')  % ##-RAT-##
+            if isfield(s,'species') && (strcmp(s.species,'rat') || strcmp(s.species,'etruscianshrew') ...
+                    || strcmp(s.species,'hamster') || strcmp(s.species,'piglet4w'))
+                skparam.species = s.species;
+                evalc(['skullstrip_pcnn3d(F3, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip'' ,skparam  )']); ;
+            else
+                %skullstrip_pcnn3d(s.t2, fullfile(s.pa, '_msk.nii' ),  'skullstrip'   );
+                evalc('skullstrip_pcnn3d(F3, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip''   )'); ;
+            end
+             try; delete(F3); end
+        end
+        
+        
         fprintf('..done.\n ');
+
+        
+            
         
     elseif s.usePriorskullstrip==2 
         % ==============================================

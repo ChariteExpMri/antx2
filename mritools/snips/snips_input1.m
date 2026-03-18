@@ -2692,6 +2692,106 @@ slice2png(ff,'clims',[nan nan;nan 1000],'alpha',[1 0],'sb',[ 4 nan],...
     'cbarvisible',[0 0],'mask',mask,'maskvalue',[ 1:1400 ]);
 
 
+%% #################################################
+% orthoslice
+% display volumes using orthoslice
+
+%% =============================================================
+%% OVERLAY IMAGE AND SAVE AS PNG: as [1] slices or [2] othoview
+%% =============================================================
+
+f1='F:\data10\issue_exvivoSkullstrip\dat\20250801PBS_NS247_T2_DTI_MPM\AVGT.nii';
+f2='F:\data10\issue_exvivoSkullstrip\dat\20250801PBS_NS247_T2_DTI_MPM\JD.nii';
+% ---[1] MAKE PLLOT WITH SLICES
+r=[];
+r.alpha      =  [1  0.5];
+r.blobthresh =  [];
+r.cblabel    =  '';
+r.clim       =  [   nan nan;  nan nan ];
+r.cmap       =  { 'gray'    'RdYlBu_flip' };
+r.mbarlabel  =  { ''    '' };
+r.mcbardecimals =  [1];
+r.mcbarfs       =  [9]; 
+r.mcbarticks    =  [2];   
+r.mroco      =  [NaN  NaN];
+r.msliceidx  =  'n20';
+r.mslicemm   =  [];
+r.panel      =  [2];
+r.saveas     =  '';
+r.thresh     =  [  NaN        NaN   ;   0.6      1.4  ];
+r.visible    =  [1  1];
+r.hide=   0;   %             hide image: [0,1]
+r.usebrainmask=1
+orthoslice({f1 f2},r);
+pas=fileparts(f2);
+fo4=fullfile(pas,'coreg1_slices.png');
+q=orthoslice('post','saveas',fo4,'dosave',1);
+
+% ---[2] MAKE ORTHO-PLOT
+r.panel      =  [1];
+orthoslice({f1 f2},r);
+fo4=fullfile(pas,'coreg2_ortho.png');
+q=orthoslice('post','saveas',fo4,'dosave',1);
+
+
+
+  %% =============================================================
+  %% display 3 images using orthoslice
+  %% =============================================================
+ files =  { 'F:\data8\ortoslice_tests\AVGT.nii' 	
+      'F:\data8\ortoslice_tests\_b1grey.nii' 
+      'F:\data8\ortoslice_tests\_b2white.nii' 	
+      'F:\data8\ortoslice_tests\_b3csf.nii' };
+  r=[];   
+  r.ce=[-1 -1 -1.5]  ;%  center/cursor-location
+  r.alpha       =  [0.5  0.5  0.5  0.7];  %transparency                                                                                                                                 
+  r.axolperc    =  [7];   %overlapp ov axis in percent                                                                                                                                                  
+  r.bgcol       =  '0.93725 0.86667 0.86667'; %background-color                                                                                                                             
+  r.cbarvisible =  [0  1  1  1  1]; % colorbar-visibility                                                                                                                                       
+  r.clim        =  [0     495.24 ;  0.7 1 ;0.7 1 ; 0.4  1 ];                                                                                                                                     
+  r.cmap        =  { 'gray' 	'Oranges' 	'Greens' 	'@yellow' };  %colormaps                                                                                                           
+  r.cursorcol   =  [1 1 1 ]; %cursor-color                                                                                                                                                
+  r.cursorwidth =  [1];    %cursor-width                                                                                                                                                  
+  r.figwidth    =  [780];  %figure width in pixels                                                                                                                                                
+  r.mbarlabel   =  { '' 	'GM' 	'WM' 	'csf' };  %cbar-labels 
+  r.labelcol    =  [1 0 1]; %cbar-color
+  r.mcbarfs     =  [11];      %cbar-fontsize                                                                                                                                             
+  r.mcbarpos    =  [-70  20  10  100];   % last c-bar-location relativ to right-fig-size (pixels)                                                                                                                                  
+  r.visible     =  [1  1  1  1]; %bg/overlay-images-visible                                                                                                                                          
+  orthoslice(files,r);
+  
+  %% =============================================================
+  %% display 3 images using orthoslice  from current study
+  %% =============================================================
+  global an
+  pa_study=fileparts(an.datpath)
+  pa_temp=fullfile(pa_study,'templates')
+ files =  { fullfile(pa_temp,'AVGT.nii'    )	
+            fullfile(pa_temp,'_b1grey.nii' )
+            fullfile(pa_temp,'_b2white.nii')	
+            fullfile(pa_temp,'_b3csf.nii'  ) };
+  r=[];   
+  r.ce=[-1 -1 -1.5]  ;%  center/cursor-location
+  r.alpha       =  [0.5  0.5  0.5  0.7];  %transparency                                                                                                                                 
+  r.axolperc    =  [7];   %overlapp ov axis in percent                                                                                                                                                  
+  r.bgcol       =  '0.93725 0.86667 0.86667'; %background-color                                                                                                                             
+  r.cbarvisible =  [0  1  1  1  1]; % colorbar-visibility                                                                                                                                       
+  r.clim        =  [0     495.24 ;  0.7 1 ;0.7 1 ; 0.4  1 ];                                                                                                                                     
+  r.cmap        =  { 'gray' 	'Oranges' 	'Greens' 	'@yellow' };  %colormaps                                                                                                           
+  r.cursorcol   =  [1 1 1 ]; %cursor-color                                                                                                                                                
+  r.cursorwidth =  [1];    %cursor-width                                                                                                                                                  
+  r.figwidth    =  [780];  %figure width in pixels                                                                                                                                                
+  r.mbarlabel   =  { '' 	'GM' 	'WM' 	'csf' };  %cbar-labels 
+  r.labelcol    =  [1 0 1]; %cbar-color
+  r.mcbarfs     =  [11];      %cbar-fontsize                                                                                                                                             
+  r.mcbarpos    =  [-70  20  10  100];   % last c-bar-location relativ to right-fig-size (pixels)                                                                                                                                  
+  r.visible     =  [1  1  1  1]; %bg/overlay-images-visible                                                                                                                                          
+  orthoslice(files,r)
+  
+  
+  
+  
+
 
 
 
@@ -3039,63 +3139,6 @@ z.closeMricroGL  = [1];                                                         
 z.mricroGL       = '';                                                            % % <optional> specify full path to MRIcroGL exe/app if not auto-detected (SEE HELP)                     
 xplotortho_mricrogl(0,z);  
 
-
-%% #################################################
-% orthoslice
-% display volumes using orthoslice
-
-  %% =============================================================
-  %% display 3 images using orthoslice
-  %% =============================================================
- files =  { 'F:\data8\ortoslice_tests\AVGT.nii' 	
-      'F:\data8\ortoslice_tests\_b1grey.nii' 
-      'F:\data8\ortoslice_tests\_b2white.nii' 	
-      'F:\data8\ortoslice_tests\_b3csf.nii' };
-  r=[];   
-  r.ce=[-1 -1 -1.5]  ;%  center/cursor-location
-  r.alpha       =  [0.5  0.5  0.5  0.7];  %transparency                                                                                                                                 
-  r.axolperc    =  [7];   %overlapp ov axis in percent                                                                                                                                                  
-  r.bgcol       =  '0.93725 0.86667 0.86667'; %background-color                                                                                                                             
-  r.cbarvisible =  [0  1  1  1  1]; % colorbar-visibility                                                                                                                                       
-  r.clim        =  [0     495.24 ;  0.7 1 ;0.7 1 ; 0.4  1 ];                                                                                                                                     
-  r.cmap        =  { 'gray' 	'Oranges' 	'Greens' 	'@yellow' };  %colormaps                                                                                                           
-  r.cursorcol   =  [1 1 1 ]; %cursor-color                                                                                                                                                
-  r.cursorwidth =  [1];    %cursor-width                                                                                                                                                  
-  r.figwidth    =  [780];  %figure width in pixels                                                                                                                                                
-  r.mbarlabel   =  { '' 	'GM' 	'WM' 	'csf' };  %cbar-labels 
-  r.labelcol    =  [1 0 1]; %cbar-color
-  r.mcbarfs     =  [11];      %cbar-fontsize                                                                                                                                             
-  r.mcbarpos    =  [-70  20  10  100];   % last c-bar-location relativ to right-fig-size (pixels)                                                                                                                                  
-  r.visible     =  [1  1  1  1]; %bg/overlay-images-visible                                                                                                                                          
-  orthoslice(files,r);
-  
-  %% =============================================================
-  %% display 3 images using orthoslice  from current study
-  %% =============================================================
-  global an
-  pa_study=fileparts(an.datpath)
-  pa_temp=fullfile(pa_study,'templates')
- files =  { fullfile(pa_temp,'AVGT.nii'    )	
-            fullfile(pa_temp,'_b1grey.nii' )
-            fullfile(pa_temp,'_b2white.nii')	
-            fullfile(pa_temp,'_b3csf.nii'  ) };
-  r=[];   
-  r.ce=[-1 -1 -1.5]  ;%  center/cursor-location
-  r.alpha       =  [0.5  0.5  0.5  0.7];  %transparency                                                                                                                                 
-  r.axolperc    =  [7];   %overlapp ov axis in percent                                                                                                                                                  
-  r.bgcol       =  '0.93725 0.86667 0.86667'; %background-color                                                                                                                             
-  r.cbarvisible =  [0  1  1  1  1]; % colorbar-visibility                                                                                                                                       
-  r.clim        =  [0     495.24 ;  0.7 1 ;0.7 1 ; 0.4  1 ];                                                                                                                                     
-  r.cmap        =  { 'gray' 	'Oranges' 	'Greens' 	'@yellow' };  %colormaps                                                                                                           
-  r.cursorcol   =  [1 1 1 ]; %cursor-color                                                                                                                                                
-  r.cursorwidth =  [1];    %cursor-width                                                                                                                                                  
-  r.figwidth    =  [780];  %figure width in pixels                                                                                                                                                
-  r.mbarlabel   =  { '' 	'GM' 	'WM' 	'csf' };  %cbar-labels 
-  r.labelcol    =  [1 0 1]; %cbar-color
-  r.mcbarfs     =  [11];      %cbar-fontsize                                                                                                                                             
-  r.mcbarpos    =  [-70  20  10  100];   % last c-bar-location relativ to right-fig-size (pixels)                                                                                                                                  
-  r.visible     =  [1  1  1  1]; %bg/overlay-images-visible                                                                                                                                          
-  orthoslice(files,r)
   
 %% #################################################
 % mricroGL-colorize brain region from atlas
@@ -3662,6 +3705,48 @@ w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol','MPM_3D'},...
 % IMPORT Bruker files where the protocol name contains 'MPM_3D
 w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',0,'flt',{'protocol','MPM_3D'},...
     'paout',fullfile(pwd,'dat'),'ExpNo_File',1);
+
+%% #################################################
+% MPM
+% for RATs: make ventricle-mask for PD-normalization
+
+% ==============================================
+%%   make ventricle mask from ANO.nii for RATs
+% ===============================================
+cf;clear
+pastudy=antcb('getstudypath');
+patemp=fullfile(pastudy,'templates');
+f1=fullfile(patemp,'ANO.nii');
+[ha a]=rgetnii(f1);
+fat=fullfile(patemp,'ANO.xlsx');
+[~,~,b0]=xlsread(fat);
+b0=xlsprunesheet(b0,1,1);
+ix1=regexpi2(b0(:,1),'ventricular system');
+ix2=regexpi2(b0(:,1),'ventricle');
+
+iv=[ix1(:); ix2(:);];
+ids=cell2mat(b0(iv,4)); %ids
+ch=cell2mat(b0(iv,5)); %childs
+ids=[ids(:); ch(:) ];
+ids(isnan(ids))=[] ;%remove nan
+m=zeros(size(a));
+for i=1:length(ids)
+    m=m+double(a==ids(i));
+end
+m=double(m>0);
+%% errode mask
+perode=2;%round(min(ha.dim)/20)  ;% approx 11
+m2=imerode(m,ones(perode,perode,perode));
+fo1=fullfile(pastudy,'mpm_ventriclemask.nii');
+rsavenii(fo1,ha,m2);
+showinfo2([' .ventricleMask for mpm'],fo1);
+fref=fullfile(patemp,'AVGT.nii');
+rmricron([],fref,fo1,1)
+
+
+
+
+
 %% #################################################
 % Baydiff
 %% BayDiff Script: estimates microstructural diffusion parameters by Bayesian estimation 

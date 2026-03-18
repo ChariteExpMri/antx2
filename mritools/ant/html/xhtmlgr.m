@@ -287,9 +287,9 @@ mx='';
 for s=1:size(tb,1)%subjects
     %---------------------------PROCESSING..
     if procsubject(s)==1 % process this subject
-        mx{end+1,1}=['<font color="black" size="3"> processing..'];
+        mx{end+1,1}=['<font color="blue" size="3">.. processing<font color="black"> [' pnum(s,3) '] '];
     else
-        mx{end+1,1}=['<font color="white" size="3"> processing..'];
+        mx{end+1,1}=['<font color="white" size="3">.. processing<font color="black"> [' pnum(s,3) '] '];
     end
     %---------------------------BULLITS
     mx{end+1,1}=['<font color="black" size=5px>'];
@@ -318,6 +318,10 @@ for s=1:size(tb,1)%subjects
     %---------------------------processing done
     if sum(tb(s,:).*proctask) ==sum(proctask)*4  % "4" is the finished taskcode
        mx{end+1,1}=['<b>' 'done ' '</b>' '<font color="gray" size="2">' datestr(now) '</font>']; 
+       try
+           iv=regexpi2(mx, ['\[' pnum(s,3) ']']);
+           mx(iv)= regexprep(mx(iv),'<font color="blue"','<font color="white"');
+       end
     end
     
     
