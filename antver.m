@@ -1184,6 +1184,9 @@
 % #k [xrename.m] #n : modified,  reslice to target implemented (see help)
 % #ba 18 Mar 2026 (14:50:16)
 % #k [snips.m] #n updated
+% #ba 19 Mar 2026 (11:20:43)
+% #k [mergePPTfiles.m] #n removed bug with clipboard timing (PowerPoint COM)
+% 
 % 
 % 
 % 

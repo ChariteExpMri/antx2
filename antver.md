@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   18 Mar 2026 (14:50:16)  
+ &#x1F34E; last modification:   19 Mar 2026 (11:20:43)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**19 Mar 2026 (11:20:43)**</ins>  
+   __[mergePPTfiles.m]__ removed bug with clipboard timing (PowerPoint COM)  
+<!---->
   &#x1F535;   <ins>**18 Mar 2026 (14:50:16)**</ins>  
    __[snips.m]__ updated  
 <!---->

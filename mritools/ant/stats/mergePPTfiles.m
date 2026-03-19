@@ -101,13 +101,34 @@ for i=1:length(addfis)
     op2 = invoke(ppt.Presentations,'Open',filespec2,[],[],0);
     slide_count1 = get(op1.Slides,'Count');
     slide_count2 = get(op2.Slides,'Count');
-    k =slide_count2+1;
-    for i = 1 : slide_count1
-        invoke(op1.Slides.Item(i),'Copy');
-        invoke(op2.Slides,'Paste');
-        % invoke(op2.Item(k).Slides,'Paste)
-        k = k+1;
+   
+    %     k =slide_count2+1;
+    %     for i = 1 : slide_count1
+    %         invoke(op1.Slides.Item(i),'Copy');
+    %         invoke(op2.Slides,'Paste');
+    %         % invoke(op2.Item(k).Slides,'Paste)
+    %         k = k+1;
+    %     end
+    
+    for j = 1:slide_count1
+        invoke(op1.Slides.Item(j),'Copy');
+        success = false;
+        for k = 1:5
+            try
+                pause(0.1);
+                invoke(op2.Slides,'Paste');
+                success = true;
+                break;
+            catch
+                pause(0.2);
+            end
+        end
+        if ~success
+            error('Failed to paste slide after retries');
+        end
     end
+
+    
     invoke(op2,'Save');
     % invoke(op2,'SaveAs',filespec2,1);
     invoke(op1,'Close');
