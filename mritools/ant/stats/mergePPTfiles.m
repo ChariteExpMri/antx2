@@ -81,61 +81,89 @@ else
 end
 
 %% ===============================================
-
-for i=1:length(addfis)
-    if ~isempty(p.insertslide) && i>1
-      if isempty(insertsliceparas)  
-      img2ppt(fileparts(pptfilename),[], pptfilename,'doc','add',...
-        'title',p.insertslide{i},'Tfs',15,'disp',0 );  
-      else
-         img2ppt(fileparts(pptfilename),[], pptfilename,'doc','add',...
-        'title',p.insertslide{i},insertsliceparas{:} );  
-      end
-    
+%% =====[using sliceinsert]==========================================
+for i = 1:length(addfis)
+    % --- optional inserted slide ---
+    if ~isempty(p.insertslide) && i > 1
+        if isempty(insertsliceparas)  
+            img2ppt(fileparts(pptfilename),[], pptfilename,'doc','add',...
+                'title',p.insertslide{i},'Tfs',15,'disp',0 );  
+        else
+            img2ppt(fileparts(pptfilename),[], pptfilename,'doc','add',...
+                'title',p.insertslide{i},insertsliceparas{:} );  
+        end
     end
-    
-    filespec1 =addfis{i} ;%'D:\Copy_ppt.pptx';
-    filespec2 =pptfilename ;% 'D:\Paste_ppt.pptx';
+    filespec1 = addfis{i};
+    filespec2 = pptfilename;
     ppt = actxserver('PowerPoint.Application');
+    % open presentations
     op1 = invoke(ppt.Presentations,'Open',filespec1,[],[],0);
     op2 = invoke(ppt.Presentations,'Open',filespec2,[],[],0);
+    % get slide counts
     slide_count1 = get(op1.Slides,'Count');
     slide_count2 = get(op2.Slides,'Count');
-   
-    %     k =slide_count2+1;
-    %     for i = 1 : slide_count1
-    %         invoke(op1.Slides.Item(i),'Copy');
-    %         invoke(op2.Slides,'Paste');
-    %         % invoke(op2.Item(k).Slides,'Paste)
-    %         k = k+1;
-    %     end
-    
-    for j = 1:slide_count1
-        invoke(op1.Slides.Item(j),'Copy');
-        success = false;
-        for k = 1:5
-            try
-                pause(0.1);
-                invoke(op2.Slides,'Paste');
-                success = true;
-                break;
-            catch
-                pause(0.2);
-            end
-        end
-        if ~success
-            error('Failed to paste slide after retries');
-        end
-    end
-
-    
-    invoke(op2,'Save');
-    % invoke(op2,'SaveAs',filespec2,1);
+    % close source (not needed anymore)
     invoke(op1,'Close');
+    % --- INSERT instead of copy/paste ---
+    invoke(op2.Slides, 'InsertFromFile', filespec1, slide_count2, 1, slide_count1);
+    % save & cleanup
+    invoke(op2,'Save');
     invoke(op2,'Close');
     invoke(ppt,'Quit');
-    
-    
 end
+%% =====[older version using clipboard]==========================================
+ 
+if 0
+    for i=1:length(addfis)
+        if ~isempty(p.insertslide) && i>1
+            if isempty(insertsliceparas)
+                img2ppt(fileparts(pptfilename),[], pptfilename,'doc','add',...
+                    'title',p.insertslide{i},'Tfs',15,'disp',0 );
+            else
+                img2ppt(fileparts(pptfilename),[], pptfilename,'doc','add',...
+                    'title',p.insertslide{i},insertsliceparas{:} );
+            end
+            
+        end
+        filespec1 =addfis{i} ;%'D:\Copy_ppt.pptx';
+        filespec2 =pptfilename ;% 'D:\Paste_ppt.pptx';
+        ppt = actxserver('PowerPoint.Application');
+        op1 = invoke(ppt.Presentations,'Open',filespec1,[],[],0);
+        op2 = invoke(ppt.Presentations,'Open',filespec2,[],[],0);
+        slide_count1 = get(op1.Slides,'Count');
+        slide_count2 = get(op2.Slides,'Count');
+        %     k =slide_count2+1;
+        %     for i = 1 : slide_count1
+        %         invoke(op1.Slides.Item(i),'Copy');
+        %         invoke(op2.Slides,'Paste');
+        %         % invoke(op2.Item(k).Slides,'Paste)
+        %         k = k+1;
+        %     end
+        for j = 1:slide_count1
+            invoke(op1.Slides.Item(j),'Copy');
+            success = false;
+            for k = 1:5
+                try
+                    pause(0.1);
+                    invoke(op2.Slides,'Paste');
+                    success = true;
+                    break;
+                catch
+                    pause(0.2);
+                end
+            end
+            if ~success
+                error('Failed to paste slide after retries');
+            end
+        end
+        invoke(op2,'Save');
+        % invoke(op2,'SaveAs',filespec2,1);
+        invoke(op1,'Close');
+        invoke(op2,'Close');
+        invoke(ppt,'Quit');
+    end
+end
+
+
 
 showinfo2(['newPPT'],pptfilename);
