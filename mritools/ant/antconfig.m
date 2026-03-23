@@ -141,16 +141,38 @@ datapath=fullfile(pwd,'dat');
 spaceInPath=strfind(datapath,' ');
 if ~isempty(spaceInPath)
     %clc;
+    %% ===============================================
+    
     cprintf('*[1 0 1]','___ ERROR ___\n');
-    msg=[ 'Space-characters in study-path not allowd: '  ];
+    msg=[ 'Space-characters in study-path not allowed: '  ];
     cprintf('*[1 0 1]',msg); fprintf([ strrep(datapath,[filesep],[filesep filesep]) '\n' ]);
     msg2=[' space(s) found (n=' num2str(length(spaceInPath)) '): ' ];
     msg2=[repmat(' ',[1 length(msg)-length(msg2)])  msg2];
     msgspacepos=repmat(' ',[1 length(datapath)]);
     msgspacepos(spaceInPath)='^';
+    cprintf(' [0 0 0]',[msg2 ]);  cprintf('*[1 0 0]',[ msgspacepos '\n' ]);
+    %% ===============================================
     
-   cprintf(' [0 0 0]',[msg2 ]);  cprintf('*[1 0 0]',[ msgspacepos '\n' ]);
+    %reduced version:
+    firsterr=spaceInPath(1);
+    sep=strfind(datapath,filesep);
+    ix_start=sep(max(find(sep<firsterr)));%start with last filesep
+   
+    
+    msgspacepos2=repmat(' ',[1 length(datapath(ix_start:end))]);
+    msgspacepos2(spaceInPath-ix_start+1)='^';
+%     cprintf('*[0 0 0]',['  ' ]); fprintf([ strrep(datapath(firsterr:end),[filesep],[filesep filesep]) '\n' ]);
+%     cprintf(' [0 0 0]',['  ' ]);  
+    
+    cprintf('*[0 0 1]',[ '       your path: ..'  strrep(datapath(ix_start:end),[filesep],[filesep filesep]) '\n' ]);
+    cprintf('*[1 0 0]',[ ' spaces found here: '   msgspacepos2 '\n' ]);
+    %% ===============================================
+    
+    
+   
    cprintf('*[.75 .75 0]',['Please remove spaces from studypath and try again! [process aborted]' '\n'   ]);
+   disp(' ');
+   varargout{3}=[];
    return
 
 end

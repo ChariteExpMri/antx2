@@ -122,6 +122,7 @@ end
 % p.wa.BiasFieldCor=888
 
 [w1 p0 cc ]=antconfig(0);
+if isempty(p0); return; end
 p0=rmfield(p0,'ls');
 % p1=catstruct(p0,p)
 % p2=catstruct(p,p0)
