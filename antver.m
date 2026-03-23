@@ -1186,6 +1186,10 @@
 % #k [snips.m] #n updated
 % #ba 19 Mar 2026 (11:20:43)
 % #k [mergePPTfiles.m] #n removed bug with clipboard timing (PowerPoint COM)
+% #ba 23 Mar 2026 (15:35:24)
+% #k [makefig4spm.m] #n : new, make orthoplots from SPM-voxelwise results & create PPT
+% #k [export_spmtable.m] #n : new, export spm_tables as excelfile or wordfile
+%  --> for examples type 'snips' and go to % VOXELWISE-STATISTIC/posthoc: plots & tables
 % 
 % 
 % 

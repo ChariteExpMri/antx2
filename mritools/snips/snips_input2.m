@@ -114,5 +114,48 @@ for i=1:length(fiprefix)
     showinfo2(['pptmain'],Fout);
 end
 
+%% #################################################
+% VOXELWISE-STATISTIC
+% posthoc: plots & tables
+
+% [1] PLOTS: make othoplots & PPT for all peaks of sign. clusters of all sign maps (clusterbased approach)
+v=[];
+v.meth      ='clust';
+v.copyexcel =1;
+v.copyppt   =1;
+v.indir     ='H:\Daten-2\Imaging\AG_Boehm_Sturm\Ratbrains_Iowa_2025_ana2\voxstat\voxstat_smooth 0';
+makefig4spm(v);
+
+
+% [2] TABLES: make single worddoc with tables of all sign. clusters of all sign maps (clusterbased approach)
+paexcel='H:\Daten-2\Imaging\AG_Boehm_Sturm\Ratbrains_Iowa_2025_ana2\voxstatPlots\method_clust\xls';
+docfile=export_spmtable(paexcel, struct('mergename',fullfile(fileparts(paexcel), 'resSig_clust_tables.docx')  ));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

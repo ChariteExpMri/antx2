@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   19 Mar 2026 (11:20:43)  
+ &#x1F34E; last modification:   23 Mar 2026 (15:35:24)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,11 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**23 Mar 2026 (15:35:24)**</ins>  
+   __[makefig4spm.m]__ : new, make orthoplots from SPM-voxelwise results & create PPT  
+   __[export_spmtable.m]__ : new, export spm_tables as excelfile or wordfile  
+   --> for examples type 'snips' and go to % VOXELWISE-STATISTIC/posthoc: plots & tables  
+<!---->
   &#x1F535;   <ins>**19 Mar 2026 (11:20:43)**</ins>  
    __[mergePPTfiles.m]__ removed bug with clipboard timing (PowerPoint COM)  
 <!---->
