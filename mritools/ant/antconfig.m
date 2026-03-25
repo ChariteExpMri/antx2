@@ -1,66 +1,66 @@
 
 % #ok [ANTCONFIG.m] configure paramters
-% 
+%
 % #kl  *** SETTINGS-FILE ***
 % The paramter are stored in the project-file (matlab m-file): The default name is 'proj.m', but
 % you can chose a suitable name. Ideally, store the project-file in a study-folder which can contain
-% the raw-data (dicom/Bruker raw data). 
-% Later, the study-folder will contain a 'dat'-folder which is the main animal folder. This folder 
-% will contain the animals subfolder. Each animal with one subfolder. 
-% Please provide enough storage capacity. The study-folder will become large. Also provide the proper 
+% the raw-data (dicom/Bruker raw data).
+% Later, the study-folder will contain a 'dat'-folder which is the main animal folder. This folder
+% will contain the animals subfolder. Each animal with one subfolder.
+% Please provide enough storage capacity. The study-folder will become large. Also provide the proper
 % access rights (linux!) for writing/deleting files.
 % ___________________________________________________________________________________________________
 % #b project: #n Project-name. No need to specify. String can be arbibtrarily chosen.
 % ___________________________________________________________________________________________________
 % #b datpath: #n Path of the 'dat'-folder. The 'dat'-folder contains the animal-data of the study.
 %               -ideally the 'dat-folder' is located at the same hierarchical level as the project-file 'proj.m'
-%               -Do not store raw-data (dicom/Bruker raw data)  here. 
+%               -Do not store raw-data (dicom/Bruker raw data)  here.
 % ___________________________________________________________________________________________________
 % #b voxsize: #n Final voxel-resolution used for the template and images transformed to standard space.
 % ___________________________________________________________________________________________________
-% #b BiasFieldCor: #n [0,1] use dirty BiasFieldCorrectio of "t2.nii" prior to skull-stripping. 
-%               #r Please avoid to use this option. #n In most cases the skullstripping/registration works. 
+% #b BiasFieldCor: #n [0,1] use dirty BiasFieldCorrectio of "t2.nii" prior to skull-stripping.
+%               #r Please avoid to use this option. #n In most cases the skullstripping/registration works.
 %               If [1] the biasFieldCorrection will change the input image 't2.nii' permanently.
 %               Sometimes, registration will fail because of inhomogenious image intensities. This will,
 %              result in skull-stripping (problem with bias-filed/lesion/artecact...). In this case, try
 %              another [usePriorskullstrip]-option  & another [orientelxParamfile]-paramterfile ("trafoeuler5_MutualInfo.txt")
-%              before using this [BiasFieldCor] finction   
+%              before using this [BiasFieldCor] finction
 %          #g * default: [0]
 % ___________________________________________________________________________________________________
 % #b usePriorskullstrip:  #n skull strip "t2.nii". This option is used for rigid registration, only.
-%         Here,  the image "_msk.nii" is created based on 't2.nii' 
+%         Here,  the image "_msk.nii" is created based on 't2.nii'
 %         #r '_msk.nii' is not binary!, rather the brain-masked 't2.nii'-image (outer brain values are ideally 0).
-% options [0] : 't2.nii' is already skullstripped (exvivo brain) 
-%         [1] : create '_msk.nii' based on pcnn3d-tool. #b real skull-stripping 
+% options [0] : 't2.nii' is already skullstripped (exvivo brain)
+%         [1] : create '_msk.nii' based on pcnn3d-tool. #b real skull-stripping
 %              #g default: [1]
 %         [2] : '_msk.nii' is a copy of 't2.nii' (no changes)
 %                -EXVIVO-data: appriach for already scullstriped data
-%         [3] : create '_msk.nii' based on otsu-method (3 clusters). 
+%         [3] : create '_msk.nii' based on otsu-method (3 clusters).
 %               -This option is prone to errors.
-%               -method can be useful for exvivo skullstripped brains preserved in the stuff that produces 
+%               -method can be useful for exvivo skullstripped brains preserved in the stuff that produces
 %               high-contrast in the MR-image
-%         [5] : same as [3] but using 2-otsu clusters 
+%         [5] : same as [3] but using 2-otsu clusters
 %               might work better than [3]
 %         [6] : EXVIVO-data in TUBE with high-contrast solution (e.g. PBS) + posthoc skullstripping (pcnn3d)
 %         [4] : '_msk.nii' is basically 't2.nii' but background is removed to accellerate segmentation
-%               *use this option for exvivo skullstripped brain preserved in the stuff that produces 
-%               high-contrast in the MR-image. 
-%         [8] : universal approach: use for invivo & exvivo brains, with/without skullstripping, 
+%               *use this option for exvivo skullstripped brain preserved in the stuff that produces
+%               high-contrast in the MR-image.
+%         [8] : universal approach: use for invivo & exvivo brains, with/without skullstripping,
 %                         works also with brains placed in phosphate-buffered saline (PBS)
 %        [-1] : brain masked image '_msk.nii' is assumed to exist in the path
 %               use this option if you have created a brain-masked 't2.nii' via other tools
 % #g NOTE: The aim of '_msk.nii' file is to obtain a rough but sufficient rigid registration. Accordingly,
 % #g don't use this file as 'proper' brain mask for later analysis
-% #g for [3]&[4]: For successful registration select the  parameterfile #k "trafoeuler5_MutualInfo.txt" for "orientelxParamfile"-parameter 
+% #g for [3]&[4]: For successful registration select the  parameterfile #k "trafoeuler5_MutualInfo.txt" for "orientelxParamfile"-parameter
 % ___________________________________________________________________________________________________
-% #b orientType #n : Type of orientation. 
-%                This parameter defines the orientation of the animal in the MR bore relative 
+% #b orientType #n : Type of orientation.
+%                This parameter defines the orientation of the animal in the MR bore relative
 %                to the used template. The proper [orientType] is necessary to have a
 %                good initial guess for image registration.
 %      [orientType] can be specified as #r [1] numeric value #n or as #r [2] as string
 %      [1] numeric value: is an index  refering to a table of pre-defined rotation angles (pitch,yaw,roll)
 %         *USE #g 'examine orientation' from animals listbox to specify a suitable orientation (index)
-%      [2] string: can be used to transmit 3 rotation angles (pitch,yaw,roll). Here we use a string 
+%      [2] string: can be used to transmit 3 rotation angles (pitch,yaw,roll). Here we use a string
 %         argument to allow readable PI-fractions  example: 'pi/2 pi 0'
 %         *USE #g 'get orientation via 3-point selection' from animals listbox to specify a suitable orientation (string)
 %      #g * default: [1]
@@ -71,36 +71,36 @@
 %           * Use "trafoeuler5_MutualInfo.txt" if the rigide registration fails :high contrast; exvivo brains
 %             preserved in the stuff that produces high-contrast in the MR-image; artefacts; other modality
 % ___________________________________________________________________________________________________
-% #b x.wa.elxMaskApproach: #n Approach used for non-linear transformation. The approach is only used to 
+% #b x.wa.elxMaskApproach: #n Approach used for non-linear transformation. The approach is only used to
 %           calculation of a transfomation paramters. Click #g 'ICON' #n for more details.
 %           #g * default: [1]
 % ___________________________________________________________________________________________________
-% #b elxParamfile: #n ELASTIX parameter files (cell-array)  with paths for affine+nonlinear parameter file 
-%         -Contains two files: 1st parameter file: affine registration 
+% #b elxParamfile: #n ELASTIX parameter files (cell-array)  with paths for affine+nonlinear parameter file
+%         -Contains two files: 1st parameter file: affine registration
 %                              2nd parameter file: non-linear warping
 %           #g * default: {'f:\antx2\mritools\elastix\paramfiles\Par0025affine.txt' 'f:\antx2\mritools\elastix\paramfiles\Par0033bspline_EM2.txt' }
 % ___________________________________________________________________________________________________
 % #b cleanup: #n delete temporary files [0,1]
 % ___________________________________________________________________________________________________
-% #b usePCT: #n use parallel-computation 
+% #b usePCT: #n use parallel-computation
 %           [0] no ; [1] SPMD; [2] parfor
-%           #g * default: [2] 
+%           #g * default: [2]
 %           -Parallel Computing toolbox must be provided
-%           -currently, support only for the initalization/coregistration/segmentation & warping pipeline     
+%           -currently, support only for the initalization/coregistration/segmentation & warping pipeline
 % ___________________________________________________________________________________________________
 % #b refpath: #n Reference Path of the template
 %           #r - the reference path has to be specified! Please download the respective animal template
 %           #r   from google-drive. See Menu: Extras/get templates from google drive
 % ___________________________________________________________________________________________________
 % #b species: #n used animal species
-%          #r normally, You don't need to change this field. [species] is updated when the template's 
+%          #r normally, You don't need to change this field. [species] is updated when the template's
 %          #r reference path is selected
-% 
+%
 % ___________________________________________________________________________________________________
-% #b IMAGES : #n images to transform ('tf_t2','tf_avg'..etc). Please do not change these parameters 
-% 
-% 
-% 
+% #b IMAGES : #n images to transform ('tf_t2','tf_avg'..etc). Please do not change these parameters
+%
+%
+%
 
 function varargout=antconfig(showgui,varargin)
 varargout{1}=[];
@@ -138,11 +138,13 @@ end
 [pant r]=   antpath;
 %% __datapath__
 datapath=fullfile(pwd,'dat');
+isok=1;
+% ==============================================
+%%   spaces in path
+% ==============================================
 spaceInPath=strfind(datapath,' ');
 if ~isempty(spaceInPath)
-    %clc;
-    %% ===============================================
-    
+    % ===============================================
     cprintf('*[1 0 1]','___ ERROR ___\n');
     msg=[ 'Space-characters in study-path not allowed: '  ];
     cprintf('*[1 0 1]',msg); fprintf([ strrep(datapath,[filesep],[filesep filesep]) '\n' ]);
@@ -151,31 +153,61 @@ if ~isempty(spaceInPath)
     msgspacepos=repmat(' ',[1 length(datapath)]);
     msgspacepos(spaceInPath)='^';
     cprintf(' [0 0 0]',[msg2 ]);  cprintf('*[1 0 0]',[ msgspacepos '\n' ]);
-    %% ===============================================
-    
+    % ===============================================
     %reduced version:
     firsterr=spaceInPath(1);
     sep=strfind(datapath,filesep);
     ix_start=sep(max(find(sep<firsterr)));%start with last filesep
-   
-    
     msgspacepos2=repmat(' ',[1 length(datapath(ix_start:end))]);
     msgspacepos2(spaceInPath-ix_start+1)='^';
-%     cprintf('*[0 0 0]',['  ' ]); fprintf([ strrep(datapath(firsterr:end),[filesep],[filesep filesep]) '\n' ]);
-%     cprintf(' [0 0 0]',['  ' ]);  
     
-    cprintf('*[0 0 1]',[ '       your path: ..'  strrep(datapath(ix_start:end),[filesep],[filesep filesep]) '\n' ]);
-    cprintf('*[1 0 0]',[ ' spaces found here: '   msgspacepos2 '\n' ]);
-    %% ===============================================
-    
-    
-   
-   cprintf('*[.75 .75 0]',['Please remove spaces from studypath and try again! [process aborted]' '\n'   ]);
-   disp(' ');
-   varargout{3}=[];
-   return
-
+    cprintf('*[0 0 1]',[ 'your path: ..' ]);
+    cprintf(' [0 0 0]',[strrep(datapath(ix_start:end),[filesep],[filesep filesep]) '\n' ]);
+    cprintf('*[1 0 0]',[ '   SPACES:   '   msgspacepos2 '\n' ]);
+    cprintf('*[.75 .75 0]',['Please remove SPACES from studypath and try again! [process aborted]' '\n'   ]);
+    disp(['..ERROR IN "' mfilename '.m"']);
+    isok=0;
 end
+% ==============================================
+%%   special characters in path
+% ==============================================
+specvarInPath=find((datapath>127)==1);
+if ~isempty(specvarInPath)
+    %% ===============================================
+    cprintf('*[1 0 1]','___ ERROR ___\n');
+    msg=[ 'Specal characters in study-path not allowed: '  ];
+    cprintf('*[1 0 1]',msg); fprintf([ strrep(datapath,[filesep],[filesep filesep]) '\n' ]);
+    
+    %reduced version:
+    firsterr=specvarInPath(1);
+    sep=strfind(datapath,filesep);
+    ix_start=sep(max(find(sep<firsterr)));%start with last filesep
+    msgspacepos2=repmat(' ',[1 length(datapath(ix_start:end))]);
+    msgspacepos2(specvarInPath-ix_start+1)='^';
+    %     cprintf('*[0 0 0]',['  ' ]); fprintf([ strrep(datapath(firsterr:end),[filesep],[filesep filesep]) '\n' ]);
+    %     cprintf(' [0 0 0]',['  ' ]);
+    
+    cprintf('*[0 0 1]',[ '         your path: ..' ]);
+    cprintf(' [0 0 0]',[strrep(datapath(ix_start:end),[filesep],[filesep filesep]) '\n' ]);
+    cprintf('*[1 0 0]',[ 'SPECIAL CHARACTERS:   '   msgspacepos2 '\n' ]);
+    cprintf('*[.75 .75 0]',['Please remove SPECIAL CHARACTERS from studypath and try again! [process aborted]' '\n'   ]);
+    disp(['..ERROR IN "' mfilename '.m"']);
+    isok=0;
+    %% ===============================================   
+end
+
+if  isok==0
+    varargout{3}=[];
+    ME = MException('PathCheck:InvalidPath', ...
+        'spaces and special characters detected in studypath...abort.');
+    throw(ME)
+    
+    
+end
+
+
+
+
 
 %% =====[skullStrippingMethos]==========================================
 meth_skullstrip=...
@@ -195,40 +227,40 @@ meth_skullstrip=...
 %              #g default: [1]
 %         [2] : '_msk.nii' is a copy of 't2.nii' (no changes)
 %                -EXVIVO-data: appriach for already scullstriped data
-%         [3] : create '_msk.nii' based on otsu-method (3 clusters). 
+%         [3] : create '_msk.nii' based on otsu-method (3 clusters).
 %               -This option is prone to errors.
-%               -method can be useful for exvivo skullstripped brains preserved in the stuff that produces 
+%               -method can be useful for exvivo skullstripped brains preserved in the stuff that produces
 %               high-contrast in the MR-image
-%         [5] : same as [3] but using 2-otsu clusters 
+%         [5] : same as [3] but using 2-otsu clusters
 %               might work better than [3]
 %         [6] : EXVIVO-data in TUBE with high-contrast solution (e.g. PBS) + posthoc skullstripping (pcnn3d)
 %         [4] : '_msk.nii' is basically 't2.nii' but background is removed to accellerate segmentation
-%               *use this option for exvivo skullstripped brain preserved in the stuff that produces 
-%               high-contrast in the MR-image. 
+%               *use this option for exvivo skullstripped brain preserved in the stuff that produces
+%               high-contrast in the MR-image.
 %        [-1] : brain masked image '_msk.nii' is assumed to exist in the path
 
-% options [0] : 't2.nii' is already skullstripped (exvivo brain) 
-%         [1] : create '_msk.nii' based on pcnn3d-tool. #b real skull-stripping 
+% options [0] : 't2.nii' is already skullstripped (exvivo brain)
+%         [1] : create '_msk.nii' based on pcnn3d-tool. #b real skull-stripping
 %              #g default: [1]
 %         [2] : '_msk.nii' is a copy of 't2.nii' (no changes)
 %                -EXVIVO-data: appriach for already scullstriped data
-%         [3] : create '_msk.nii' based on otsu-method (3 clusters). 
+%         [3] : create '_msk.nii' based on otsu-method (3 clusters).
 %               -This option is prone to errors.
-%               -method can be useful for exvivo skullstripped brains preserved in the stuff that produces 
+%               -method can be useful for exvivo skullstripped brains preserved in the stuff that produces
 %               high-contrast in the MR-image
-%         [5] : same as [3] but using 2-otsu clusters 
+%         [5] : same as [3] but using 2-otsu clusters
 %               might work better than [3]
 %         [6] : EXVIVO-data in TUBE with high-contrast solution (e.g. PBS) + posthoc skullstripping (pcnn3d)
 %         [4] : '_msk.nii' is basically 't2.nii' but background is removed to accellerate segmentation
-%               *use this option for exvivo skullstripped brain preserved in the stuff that produces 
-%               high-contrast in the MR-image. 
+%               *use this option for exvivo skullstripped brain preserved in the stuff that produces
+%               high-contrast in the MR-image.
 %        [-1] : brain masked image '_msk.nii' is assumed to exist in the path
 
 %% ======[orientType]=========================================
 
- [arg,rot]=evalc(['' 'findrotation2' '']);
- orientype=[cellfun(@(a,b){['[' num2str(a) '] which is [' b  ']']}, num2cell([1:size(rot,1)]') ,rot)];
- orientype(:,2)=num2cell([1:size(orientype,1)])';
+[arg,rot]=evalc(['' 'findrotation2' '']);
+orientype=[cellfun(@(a,b){['[' num2str(a) '] which is [' b  ']']}, num2cell([1:size(rot,1)]') ,rot)];
+orientype(:,2)=num2cell([1:size(orientype,1)])';
 %% ============[]===================================
 
 
@@ -238,7 +270,7 @@ meth_skullstrip=...
 p={...
     'inf99'      '*** CONFIGURATION PARAMETERS   ***              '                         '' ''
     'inf100'     '==================================='                          '' ''
-   % 'inf1'       '% DEFAULTS             '  '' ''
+    % 'inf1'       '% DEFAULTS             '  '' ''
     'project'    'NEW PROJECT'            'PROJECT NAME (arbitrary tag)'    ''
     'datpath'    fullfile(pwd,'dat')      'studie''s datapath, MUST BE be specified, and named "dat", such as "c:\b\study1\dat" '  'd'
     'voxsize'     [.07 .07 .07]           'voxel size (default for Allen Mouse: [.07 .07 .07])'    cellfun(@(a) {repmat(a,1,3)},   {' .01' ' .03' ' .05' ' .07'}')
@@ -257,45 +289,45 @@ p={...
     
     
     %%'is used use compartments,(3)use t2w/AVGT as moving/fixed image,(4)heavy lesions(5)used use BFC-t2w/AVGT'
-    'wa.elxMaskApproach'       1         'used registration approach..click icon for further information  '   {@setapproach} 
+    'wa.elxMaskApproach'       1         'used registration approach..click icon for further information  '   {@setapproach}
     %'wa.autoreg'             1         'automatic registration (0:manual, 1:automatic)' 'b'
     'wa.elxParamfile'     { which('Par0025affine.txt');  which('Par0033bspline_EM2.txt')}' ...
-                                        'ELASTIX Parameterfiles, fullpath of either Par0025affine.txt+Par0033bspline_EM2.txt  or par_affine038CD1.txt+par_bspline033CD1.txt'  {@paramfiles} % 'mf'
+    'ELASTIX Parameterfiles, fullpath of either Par0025affine.txt+Par0033bspline_EM2.txt  or par_affine038CD1.txt+par_bspline033CD1.txt'  {@paramfiles} % 'mf'
     
- 
     
-     %'wa.create_gwc'       1         'create overlay gray-white-csf-image (recommended for visualization) ' 'b'
-     %'wa.create_anopcol'   1         'create pseudocolor anotation file (recommended for visualization) ' 'b'
+    
+    %'wa.create_gwc'       1         'create overlay gray-white-csf-image (recommended for visualization) ' 'b'
+    %'wa.create_anopcol'   1         'create pseudocolor anotation file (recommended for visualization) ' 'b'
     'wa.cleanup'            1         'delete unused files in folder' 'b'
     'wa.usePCT'             2         'use Parallel Computing toolbox (0:no/1:SPMD/2:parfor) ' {1,2,3}
-   
+    
     'inf31'   '_________TEMPLATE_________________________________________________________________________' '' ''
-
+    
     'wa.refpath'     r.refpa         'PATH of the used reference system (such as "O:\anttemplates\mouse_spmmouse" for "mouse_spmmouse" )'  { @referencefolder }
     'wa.species'     'mouse'         'animal species to investigate {mouse or rat}'  {'mouse' 'rat' 'etruscianshrew'}
     
-%     'wa.refTPM'      r.refTPM    'c1/c2/c3-compartiments (reference)' ,'mf'
-%     'wa.ano'         r.ano       'reference anotation-image' 'f'
-%     'wa.avg'         r.avg       'reference structural image' 'f'
-%     'wa.fib'         r.fib       'reference fiber image' 'f'
+    %     'wa.refTPM'      r.refTPM    'c1/c2/c3-compartiments (reference)' ,'mf'
+    %     'wa.ano'         r.ano       'reference anotation-image' 'f'
+    %     'wa.avg'         r.avg       'reference structural image' 'f'
+    %     'wa.fib'         r.fib       'reference fiber image' 'f'
     %'wa.refsample'  r.refsample       'a sample image in reference space' 'f'
-
+    
     'inf34'   '_________OTHERS________________________________________________________________' '' ''
     'wa.resizeFactor'   1      'use a smaller value such as 0.9 if animal brain is much smaller than the template; default: 1.0 '   {1 .9 .85 1.1}
     
-%     
-%     'inf34'   '_________VOLUMES TO TRANSFORM________________________________________________________________' '' ''
-%     'wa.tf_t2'                  1        'create "x_t2.nii" (mouse-t2-image)                         in TEMPLATESPACE (forwardTrafo)'     'b'
-%     'wa.tf_avg'                 1        'create "ix_AVGT.nii" (template-structural-image)                 in MOUSESPACE (inverseTrafo)'     'b'
-% 
-%     'wa.tf_ano'                 1        'create "ix_ANO.nii" (template-label-image)                       in MOUSESPACE (inverseTrafo)'     'b'
-%    % 'wa.tf_anopcol'            0        'create "ix_ANOpcol.nii" (template-pseudocolor-label-image label) in MOUSESPACE (inverseTrafo)'     'b'
-%    % 'wa.tf_refc1'              0        'create "ix_refIMG.nii" (template-grayMatter-image)               in MOUSESPACE (inverseTrafo)'     'b'
-%     'wa.tf_c1'                  0        'create "x_c1t2.nii" (mouse-grayMatter-image)               in TEMPLATESPACE (forwardTrafo)'     'b'
-%     'wa.tf_c2'                  0        'create "x_c2t2.nii" (mouse-whiteMatter-image)              in TEMPLATESPACE (forwardTrafo)'     'b'
-%     'wa.tf_c3'                  0        'create "x_c3t2.nii" (mouse-CSF-image)                      in TEMPLATESPACE (forwardTrafo)'     'b'
-%     'wa.tf_c1c2mask'            0        'create "x_c1c2mask.nii" (mouse-gray+whiteMatterMask-image) in TEMPLATESPACE (forwardTrafo)'     'b'
-   };
+    %
+    %     'inf34'   '_________VOLUMES TO TRANSFORM________________________________________________________________' '' ''
+    %     'wa.tf_t2'                  1        'create "x_t2.nii" (mouse-t2-image)                         in TEMPLATESPACE (forwardTrafo)'     'b'
+    %     'wa.tf_avg'                 1        'create "ix_AVGT.nii" (template-structural-image)                 in MOUSESPACE (inverseTrafo)'     'b'
+    %
+    %     'wa.tf_ano'                 1        'create "ix_ANO.nii" (template-label-image)                       in MOUSESPACE (inverseTrafo)'     'b'
+    %    % 'wa.tf_anopcol'            0        'create "ix_ANOpcol.nii" (template-pseudocolor-label-image label) in MOUSESPACE (inverseTrafo)'     'b'
+    %    % 'wa.tf_refc1'              0        'create "ix_refIMG.nii" (template-grayMatter-image)               in MOUSESPACE (inverseTrafo)'     'b'
+    %     'wa.tf_c1'                  0        'create "x_c1t2.nii" (mouse-grayMatter-image)               in TEMPLATESPACE (forwardTrafo)'     'b'
+    %     'wa.tf_c2'                  0        'create "x_c2t2.nii" (mouse-whiteMatter-image)              in TEMPLATESPACE (forwardTrafo)'     'b'
+    %     'wa.tf_c3'                  0        'create "x_c3t2.nii" (mouse-CSF-image)                      in TEMPLATESPACE (forwardTrafo)'     'b'
+    %     'wa.tf_c1c2mask'            0        'create "x_c1c2mask.nii" (mouse-gray+whiteMatterMask-image) in TEMPLATESPACE (forwardTrafo)'     'b'
+    };
 
 
 p2=paramadd(p,an);%add/replace parameter
@@ -303,24 +335,24 @@ p2=paramadd(p,an);%add/replace parameter
 if showgui==1
     
     
-         hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
-        %figpos=[0.1688    0.3000    0.8073    0.6111];
-        figpos=[0.1688    0.3611    0.8073    0.5511];
-        [m z a params]=paramgui(p2,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',figpos,...
-            'title',['SETTINGS [' mfilename '.m]'],'pb1string','OK','info',hlp);%,'cb1string',cb1string);
+    hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
+    %figpos=[0.1688    0.3000    0.8073    0.6111];
+    figpos=[0.1688    0.3611    0.8073    0.5511];
+    [m z a params]=paramgui(p2,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',figpos,...
+        'title',['SETTINGS [' mfilename '.m]'],'pb1string','OK','info',hlp);%,'cb1string',cb1string);
+    
+    %          hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
+    %     [m z]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .6 .5 ],...
+    %         'title','LABELING','info',hlp);
+    
+    if isempty(m)
         
-%          hlp=help(mfilename); hlp=strsplit2(hlp,char(10))';
-%     [m z]=paramgui(p,'uiwait',1,'close',1,'editorpos',[.03 0 1 1],'figpos',[.2 .3 .6 .5 ],...
-%         'title','LABELING','info',hlp);
-        
-   if isempty(m)
-        
-%            [m z a params]=paramgui(p2,'uiwait',0,'close',1,'editorpos',[.03 0 1 1],'figpos',[0 0 .1 .1],...
-%             'title','SETTINGS','pb1string','OK','info',hlp);%,'cb1string',cb1string);
+        %            [m z a params]=paramgui(p2,'uiwait',0,'close',1,'editorpos',[.03 0 1 1],'figpos',[0 0 .1 .1],...
+        %             'title','SETTINGS','pb1string','OK','info',hlp);%,'cb1string',cb1string);
         return
     end
     
-
+    
 else
     z=[];
     for i=1:size(p2,1)
@@ -336,26 +368,26 @@ try
     z.ls=struct2list(z);
 end
 
-    % ==============================================
-    %% sanity check: remove ending fileseps
-    % =============================================== 
-    % 
-   
-   
-    try; z.datpath         =regexprep(z.datpath     ,['\' filesep '$'],''); end
-    try; z.templatepath    =regexprep(z.templatepath,['\' filesep '$'],''); end
-    try; z.wa.refpath      =regexprep(z.wa.refpath  ,['\' filesep '$'],''); end
+% ==============================================
+%% sanity check: remove ending fileseps
+% ===============================================
+%
+
+
+try; z.datpath         =regexprep(z.datpath     ,['\' filesep '$'],''); end
+try; z.templatepath    =regexprep(z.templatepath,['\' filesep '$'],''); end
+try; z.wa.refpath      =regexprep(z.wa.refpath  ,['\' filesep '$'],''); end
+
+try
+    mb=strsplit(m,char(10))';
+    il=regexpi2(mb,'^x.datpath');
+    mb(il)=strrep(mb(il)    ,[z.datpath filesep], z.datpath );
     
-    try
-        mb=strsplit(m,char(10))';
-        il=regexpi2(mb,'^x.datpath');
-        mb(il)=strrep(mb(il)    ,[z.datpath filesep], z.datpath );
-        
-        
-        il=regexpi2(mb,'^x.wa.refpath');
-        mb(il)=strrep(mb(il)    ,[z.wa.refpath filesep], z.wa.refpath );
-        m=strjoin(mb,char(10));
-    end
+    
+    il=regexpi2(mb,'^x.wa.refpath');
+    mb(il)=strrep(mb(il)    ,[z.wa.refpath filesep], z.wa.refpath );
+    m=strjoin(mb,char(10));
+end
 
 try;
     z.mdirs=an.mdirs ;
@@ -378,10 +410,10 @@ ls(regexpi2(ls,'^\s*z.inf\d'))=[];
 ls(regexpi2(ls,'^\s*z.mdirs'))=[];
 ls=regexprep(ls,'^\s*z.','');
 try
-ls=[ls; configfile_str];    
+    ls=[ls; configfile_str];
 end
 try
- eval(configfile_str{1});   
+    eval(configfile_str{1});
 end
 
 %% ===============================================
@@ -404,7 +436,7 @@ try
 end
 
 if showgui==0
-   varargout{length(varargout)+1}=p; % third arg-out
+    varargout{length(varargout)+1}=p; % third arg-out
 end
 
 function paramfiles(li,lih)
@@ -484,9 +516,9 @@ else
     outval=id;
 end
 
- paramgui('setdata','x.wa.orientType',outval);       
-        
-        
+paramgui('setdata','x.wa.orientType',outval);
+
+
 
 
 
@@ -508,8 +540,8 @@ paramgui('setdata','x.wa.species',ref.species);
 %      fullfile(ref.path,'_b2white.nii' )
 %      fullfile(ref.path,'_b3csf.nii' ) };
 %  paramgui('setdata','x.wa.refTPM',tpm);
-%  
-%  
+%
+%
 %  paramgui('setdata','x.wa.ano', fullfile(ref.path,'ANO.nii'));
 %  paramgui('setdata','x.wa.avg', fullfile(ref.path,'AVGT.nii'));
 %  if exist(fullfile(ref.path,'FIBT.nii'))==2
@@ -517,18 +549,18 @@ paramgui('setdata','x.wa.species',ref.species);
 %  else
 %      paramgui('setdata','x.wa.fib', '');
 %  end
- 
- 
- if isfield(ref,'voxsize')
-     paramgui('setdata','x.voxsize',ref.voxsize);
- end
- 
- 
- 
- 
- 
- 
- 
+
+
+if isfield(ref,'voxsize')
+    paramgui('setdata','x.voxsize',ref.voxsize);
+end
+
+
+
+
+
+
+
 
 
 

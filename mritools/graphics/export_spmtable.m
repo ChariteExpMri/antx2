@@ -25,7 +25,7 @@
 % % --WORD-SPECIFIC OPTIONS
 % % ---margins---------------
 % v.cm2pointsfac=28.35 ; % factor: 1cm is 28.35points
-% v.margLR=[1.5 1.5];  % page-left & right margin in cm; default: [1.5 1.5]
+% v.margLR=[1. 1.0];  % page-left & right margin in cm; default: [1.0 1.0]
 % v.margTB=[2.0 2.0];  % page-top & botton margin in cm; default: [2.0 2.0]
 % % ---title  ..here called /header (h..) -----
 % v.hfn  ='Arial'; %header: fontname, default 'Arial'
@@ -37,7 +37,7 @@
 % v.hls  =10; %header: linespace in points, default:10
 % % --table (t..)----------------
 % v.tfn  ='Arial'; %table: fontname, default 'Arial'
-% v.tfs  =9; %table: fontSize, default 9
+% v.tfs  =8; %table: fontSize, default 8
 % v.tsb  =0; %table: remove space before each row, default:0
 % v.tsa  =0; %table: remove space after each row, default:0
 % v.tlsr =5; %table: linespace rule/ wdLineSpaceS: options:[ ,0,1,2,3,4,5], whis is single 1.5, 2,..; default:5
@@ -108,7 +108,7 @@ v.mergename     ='alltables.docx' ; %if "mergetables" is [1],name of merged WORD
 % --WORD-SPECIFIC OPTIONS
 % ---margins---------------
 v.cm2pointsfac=28.35 ; % factor: 1cm is 28.35points
-v.margLR=[1.5 1.5];  % page-left & right margin in cm; default: [1.5 1.5]
+v.margLR=[1.0 1.0];  % page-left & right margin in cm; default: [1.5 1.5]
 v.margTB=[2.0 2.0];  % page-top & botton margin in cm; default: [2.0 2.0]
 % ---title  ..here called /header (h..) -----
 v.hfn  ='Arial'; %header: fontname, default 'Arial'
@@ -120,7 +120,7 @@ v.hlsr = 0; %header: linespace rule/ wdLineSpaceS: options:[ ,0,1,2,3,4,5], whis
 v.hls  =10; %header: linespace in points, default:10
 % --table (t..)----------------
 v.tfn  ='Arial'; %table: fontname, default 'Arial'
-v.tfs  =9; %table: fontSize, default 9
+v.tfs  =8; %table: fontSize, default 9
 v.tsb  =0; %table: remove space before each row, default:0
 v.tsa  =0; %table: remove space after each row, default:0
 v.tlsr =5; %table: linespace rule/ wdLineSpaceS: options:[ ,0,1,2,3,4,5], whis is single 1.5, 2,..; default:5
@@ -278,11 +278,6 @@ end
 
 
 
-if strcmp(v.format, 'word')
-    fileout=fullfile(outdir, [outname '.docx' ]);
-else
-    fileout=fullfile(outdir, [outname '.xlsx'  ]);
-end
 
 
 %% ===============================================
@@ -338,6 +333,20 @@ headers_combined = strcat(header1,'_',header2);
 
 % Data starts from row 3
 data = raw(3:end,:);
+
+ix_noclustersfound=regexpi2(  cellfun(@(a) {[ num2str(a)]} ,data(:,2) ) ,'no suprathreshold clusters found');
+if ~isempty(ix_noclustersfound)
+    return
+end
+
+
+
+if strcmp(v.format, 'word')
+    fileout=fullfile(outdir, [outname '.docx' ]);
+else
+    fileout=fullfile(outdir, [outname '.xlsx'  ]);
+end
+
 
 %% --- Correct column mapping for publication table
 % Based on your two header rows
@@ -714,7 +723,7 @@ for r = 1:table.Rows.Count
 end
 
 % Convert maxLen to points (adjust factor for font/size)
-widthPoints = maxLen * 5 ; % 5 points per character is a rough estimate
+widthPoints = maxLen * 6 ; % 5 points per character is a rough estimate
 
 % Set last column width
 % table.Columns.Item(lastCol).Width = widthPoints;

@@ -1190,7 +1190,8 @@
 % #k [makefig4spm.m] #n : new, make orthoplots from SPM-voxelwise results & create PPT
 % #k [export_spmtable.m] #n : new, export spm_tables as excelfile or wordfile
 %  --> for examples type 'snips' and go to % VOXELWISE-STATISTIC/posthoc: plots & tables
-% 
+% #ba 25 Mar 2026 (13:05:58)
+% #k [antconfig.m] #n : added check for spaces/special characters in studypath
 % 
 % 
 % 
