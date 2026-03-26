@@ -132,11 +132,87 @@ paexcel='H:\Daten-2\Imaging\AG_Boehm_Sturm\Ratbrains_Iowa_2025_ana2\voxstatPlots
 docfile=export_spmtable(paexcel, struct('mergename',fullfile(fileparts(paexcel), 'resSig_clust_tables.docx')  ));
 
 
+%% #################################################
+% VOXELWISE-STATISTIC
+% posthoc: extract [MEAN CLUSTER-VALUES] & make barplots & powerpoint
+
+% EXTRACT: MEAN CLUSTER-VALUES
+extracttype='cluster';
+indir='H:\Daten-2\Imaging\AG_Ambrozkiewicz\voxstat\voxstat_unequalVar_smooth0';
+flt='.*CLUST.*.xlsx';
+[fis] = spm_select('FPListRec',indir,flt); fis=cellstr(fis);
+v=struct();
+v.indir  = fis;
+v.type   = extracttype
+v.outdir = fullfile(pwd,['singlevalues_' extracttype '.xlsx']);
+fo2      = rspm_extractvalues(v);
+
+% MAKE PLOTS & PPT
+v=struct();
+v.infile  = fo2;%fullfile(pwd,'singlevalues_cluster.xlsx');
+% v.plots = [1:2];
+v.hide    = 1;
+v.verbose = 0;
+v.outdir  = fullfile(pwd,['barplots_'  extracttype 'png']);
+fp2=rspm_barplots(v);
 
 
 
+%% #################################################
+% VOXELWISE-STATISTIC
+% posthoc: extract [PEAK-VALUES] & make barplots & powerpoint
+
+% EXTRACT: PEAK-VALUES
+extracttype='peak';
+indir='H:\Daten-2\Imaging\AG_Ambrozkiewicz\voxstat\voxstat_unequalVar_smooth0';
+flt='.*CLUST.*.xlsx';
+[fis] = spm_select('FPListRec',indir,flt); fis=cellstr(fis);
+v=struct();
+v.indir  =  fis;
+v.type   = extracttype
+v.outdir = fullfile(pwd,['singlevalues_' extracttype '.xlsx']);
+fo2      = rspm_extractvalues(v);
+
+% MAKE PLOTS & PPT
+v=struct();
+v.infile  = fo2;%fullfile(pwd,'singlevalues_cluster.xlsx');
+% v.plots = [1:2];
+v.hide    = 1;
+v.verbose = 0;
+v.outdir  = fullfile(pwd,['barplots_'  extracttype 'png']);
+fp2=rspm_barplots(v);
 
 
+
+%% #################################################
+% END
+% end
+                          oooo$$$$$$$$$$$$oooo
+                      oo$$$$$$$$$$$$$$$$$$$$$$$$o
+                   oo$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$o         o$   $$ o$
+   o $ oo        o$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$o       $$ $$ $$o$
+oo $ $ "$      o$$$$$$$$$    $$$$$$$$$$$$$    $$$$$$$$$o       $$$o$$o$
+"$$$$$$o$     o$$$$$$$$$      $$$$$$$$$$$      $$$$$$$$$$o    $$$$$$$$
+  $$$$$$$    $$$$$$$$$$$      $$$$$$$$$$$      $$$$$$$$$$$$$$$$$$$$$$$
+  $$$$$$$$$$$$$$$$$$$$$$$    $$$$$$$$$$$$$    $$$$$$$$$$$$$$  """$$$
+   "$$$""""$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$     "$$$
+    $$$   o$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$     "$$$o
+   o$$"   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$       $$$o
+   $$$    $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" "$$$$$$ooooo$$$$o
+  o$$$oooo$$$$$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   o$$$$$$$$$$$$$$$$$
+  $$$$$$$$"$$$$   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$     $$$$""""""""
+ """"       $$$$    "$$$$$$$$$$$$$$$$$$$$$$$$$$$$"      o$$$
+            "$$$o     """$$$$$$$$$$$$$$$$$$"$$"         $$$
+              $$$o          "$$""$$$$$$""""           o$$$
+               $$$$o                 oo             o$$$"
+                "$$$$o      o$$$$$$o"$$$$o        o$$$$
+                  "$$$$$oo     ""$$$$o$$$$$o   o$$$$""
+                     ""$$$$$oooo  "$$$o$$$$$$$$$"""
+                        ""$$$$$$$oo $$$$$$$$$$
+                                """"$$$$$$$$$$$
+                                    $$$$$$$$$$$$
+                                     $$$$$$$$$$"
+                                       "$$$""""
 
 
 
