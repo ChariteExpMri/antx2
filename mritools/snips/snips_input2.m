@@ -136,51 +136,59 @@ docfile=export_spmtable(paexcel, struct('mergename',fullfile(fileparts(paexcel),
 % VOXELWISE-STATISTIC
 % posthoc: extract [MEAN CLUSTER-VALUES] & make barplots & powerpoint
 
+ 
+%% extract singlevalues and make barplots
+cf;clear;
+v.study     =antcb('getstudypath');
+ 
+indir      =fullfile(v.study, 'voxstat','voxstat_unequalVar_smooth0');
+outdir_main=fullfile(v.study, 'voxstat','voxstat_unequalVar_smooth0_plotsntabbles');
+
+% ==================================================================================
+%%  [part-1]: posthoc: extract [MEAN CLUSTER-VALUES] & make barplots & powerpoint
+% ===================================================================================
 % EXTRACT: MEAN CLUSTER-VALUES
-extracttype='cluster';
-indir='H:\Daten-2\Imaging\AG_Ambrozkiewicz\voxstat\voxstat_unequalVar_smooth0';
-flt='.*CLUST.*.xlsx';
-[fis] = spm_select('FPListRec',indir,flt); fis=cellstr(fis);
+extracttype  = 'cluster';
+flt          = '.*CLUST.*.xlsx';
+[fis]        = spm_select('FPListRec',indir,flt); fis=cellstr(fis);
 v=struct();
 v.indir  = fis;
-v.type   = extracttype
-v.outdir = fullfile(pwd,['singlevalues_' extracttype '.xlsx']);
-fo2      = rspm_extractvalues(v);
-
+v.type   = extracttype;
+v.outdir = fullfile(outdir_main,['singlevalues_' extracttype '.xlsx']);
+fo1      = rspm_extractvalues(v);
+ 
 % MAKE PLOTS & PPT
 v=struct();
-v.infile  = fo2;%fullfile(pwd,'singlevalues_cluster.xlsx');
+v.infile  = fo1;%fullfile(pwd,'singlevalues_cluster.xlsx');
 % v.plots = [1:2];
 v.hide    = 1;
 v.verbose = 0;
-v.outdir  = fullfile(pwd,['barplots_'  extracttype 'png']);
-fp2=rspm_barplots(v);
-
-
-
-%% #################################################
-% VOXELWISE-STATISTIC
-% posthoc: extract [PEAK-VALUES] & make barplots & powerpoint
-
+v.outdir  = fullfile(outdir_main,['barplots_'  extracttype 'png']);
+fp1=rspm_barplots(v);
+ 
+% ==================================================================================
+%%  [part-2]: posthoc:  extract [Peak-VALUES] & make barplots & powerpoint
+% ===================================================================================
 % EXTRACT: PEAK-VALUES
-extracttype='peak';
-indir='H:\Daten-2\Imaging\AG_Ambrozkiewicz\voxstat\voxstat_unequalVar_smooth0';
-flt='.*CLUST.*.xlsx';
-[fis] = spm_select('FPListRec',indir,flt); fis=cellstr(fis);
+extracttype  = 'peak';
+flt          = '.*CLUST.*.xlsx';
+[fis]        = spm_select('FPListRec',indir,flt); fis=cellstr(fis);
 v=struct();
 v.indir  =  fis;
-v.type   = extracttype
-v.outdir = fullfile(pwd,['singlevalues_' extracttype '.xlsx']);
+v.type   = extracttype;
+v.outdir = fullfile(outdir_main,['singlevalues_' extracttype '.xlsx']);
 fo2      = rspm_extractvalues(v);
-
+ 
 % MAKE PLOTS & PPT
 v=struct();
 v.infile  = fo2;%fullfile(pwd,'singlevalues_cluster.xlsx');
 % v.plots = [1:2];
 v.hide    = 1;
 v.verbose = 0;
-v.outdir  = fullfile(pwd,['barplots_'  extracttype 'png']);
+v.outdir  = fullfile(outdir_main,['barplots_'  extracttype 'png']);
 fp2=rspm_barplots(v);
+ 
+ 
 
 
 

@@ -46,6 +46,14 @@ if nargin>0
         catch
             t2.setSelectionRows(1);
         end
+        
+        
+        %scroll the node to the top of the visible tree window,
+        rect = t2.getRowBounds(nodenum);
+        rect.y = rect.y - 5;   % small offset (optional safety)
+        t2.scrollRectToVisible(rect);
+        t2.setSelectionRows(nodenum);
+        
         set(hf,'position',pos);
         return
         
@@ -131,10 +139,12 @@ v.pb1callback=@pb1callback;
 v.info  ='';
 v.close =0;
 v.title='snips';
+v.hide=1;
 
 delete(findobj('tag','snips'));
 if isempty(v.hfig)
-    figure('visible','on','color','w','menubar','none','toolbar','none',...
+    vis='on';     if v.hide==1;    vis='off';     end
+    figure('visible',vis,'color','w','menubar','none','toolbar','none',...
         'tag','snips', 'name',(v.title),...
         'NumberTitle','off','CloseRequestFcn',[]);
 else
@@ -169,23 +179,36 @@ if ~isempty(v.figpos)
 end
 %% ===============================================
 
-
+import com.mathworks.widgets.text.mcode.MLanguage
 
 
 jCodePane = com.mathworks.widgets.SyntaxTextPane;
 codeType = com.mathworks.widgets.text.mcode.MLanguage.M_MIME_TYPE;
 jCodePane.setContentType(codeType);
 
+
+
 % t2=strjoin(t,char(10))
 jCodePane.setText('% SELECT SNIPS');
 jScrollPane = com.mathworks.mwswing.MJScrollPane(jCodePane);
 [jhPanel,hContainer] = javacomponent(jScrollPane,round(pos2),hf); %[10,10,500,200]
-% jhPanel.setFont(java.awt.Font('Comic Sans MS',java.awt.Font.PLAIN,28))
+%  jhPanel.setFont(java.awt.Font('Comic Sans MS',java.awt.Font.PLAIN,8))
+% jCodePane.setFont(java.awt.Font('Monospaced', java.awt.Font.PLAIN, 4));
 jhPanel.setHorizontalScrollBarPolicy(32);
 set(hf,'position',figposp);
 
-set(hf,'visible','on');  % #rp1
+% set(hf,'visible','on');  % #rp1
 set(hContainer,'units','norm');
+
+
+
+
+
+% hj = handle(jCodePane,'CallbackProperties');
+% set(hj,'MouseWheelMovedCallback',@zoomFont);
+% jCodePane.setFocusable(true);
+% jhPanel.setMouseWheelCallback(@(~,evt) zoomFont(evt));
+
 
 %% ===============================================
 
@@ -254,7 +277,9 @@ jCodePane.setComponentPopupMenu(jPopup);
 us.jCodePane=jCodePane;
 us.jhPanel=jhPanel;
 us.hContainer=hContainer;
+us.pos2=round(pos2);
 % us.ispulldownON=0;
+
 
 % ==============================================
 %%  UITREE
@@ -352,6 +377,7 @@ ht.setSelectedNode([dxFirst]);  %
 set(hf,'SizeChangedFcn',@SizeChangedFcn)
 % set(ht,'units','pixels');
 
+
 % ==============================================
 %%   controls
 % ===============================================
@@ -429,6 +455,10 @@ jTree.setFocusable(true);% keyboard
 jTree.requestFocus();
 set(jTree, 'KeyPressedCallback', @(src, event) keyPressedCallback_tree(event, jTree));
 
+
+set(hf,'visible','on');
+
+
 % -------------------
 % jp=handle(us.jCodePane, 'CallbackProperties');
 % jp.setFocusable(true);
@@ -468,6 +498,8 @@ set(jTree, 'KeyPressedCallback', @(src, event) keyPressedCallback_tree(event, jT
 % % 'aa'
 
 % popup_panel()
+
+
 
 function popup_panel
 %% ===============================================
@@ -1022,7 +1054,8 @@ end
 % ===============================================
 if exist('figh')==1 ;     hf=figh; else;     hf=gcf; end
 if exist('hres')==1 ;            ; else;     return; end
-figure(hf);
+% figure(hf);
+set(0,'CurrentFigure',hf)
 
 % ===============================================
 % ----INPUT PARAMETER

@@ -2693,6 +2693,35 @@ slice2png(ff,'clims',[nan nan;nan 1000],'alpha',[1 0],'sb',[ 4 nan],...
 
 
 %% #################################################
+% HTML
+% create simple HTML-file with PNG
+
+% ================================================================================
+%%   make HTML-file ..recursively find all 'mask_rs.png'-images and embed in HTML-file 
+% ================================================================================
+pa_png='X:\Imaging\retune\data\';
+flt='mask_rs.png';
+png=spm_select('FPListRec',pa_png,flt); png=cellstr(png); %find png-names
+filehtml='H:\Daten-2\Imaging\retune\dataset1\checks\f1_QA_mouse_RSmasks.html'; %HTML-filename
+fid = fopen(filehtml,'w');
+fprintf(fid,'<html><body>\n');
+for i = 1:numel(png)
+    file = png{i};
+    tok = regexp(file,'(rs_\d+)','tokens');
+    subj = tok{1}{1}; %obtain animal-name (starting with 'rs_')
+    fprintf(fid,'<b>%s</b><br>%s<br>',subj,file); % html: add animalName and filename
+    fprintf(fid,'<img src="%s" height=200><br><br>\n',file);%html: add PNG
+end
+fprintf(fid,'</body></html>');
+fclose(fid);
+showinfo2([' html-file'],filehtml);
+
+
+
+
+
+
+%% #################################################
 % orthoslice
 % display volumes using orthoslice
 
