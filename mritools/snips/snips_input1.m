@@ -3718,7 +3718,67 @@ end
       'O:\harms1\harms3_lesionfill\dat\s20150505SM09_1_x_x\lesion_64.nii'}
       doelastix(1   , [],      files                      ,3 ,'local' );
 
+%% #################################################
+%  registration to standardspace
+% Stepwise registration of exvivo MRI data
+% PROBLEM:
+% Brains were stored in PBS (phosphate-buffered saline), which produces a
+% very bright outer embedding signal in TurboRARE images due to long T2
+% relaxation (high free-water content). This can interfere with the
+% skull-stripping step used during the initial registration stage.
+% WORKFLOW FOR FAILED SKULL-STRIPPING CASES:
+% (1a) Run registration step 1 (initialization) for failed animals using:
+%      usePriorskullstrip = 9
+%      Inspect the results using the HTML-INITIALIZATION page.
+% (1b) Re-run registration step 1 for the same failed animals using:
+%      usePriorskullstrip = 6
+%      Again, inspect the results using the HTML-INITIALIZATION page.
+% (2) To ensure successful continuation of the pipeline:
+%     Select all previously failed animals and run registration step 2
+%     (COREGISTRATION).
+%     Inspect results using the HTML-COREGISTRATION page.
+% (3) Final processing:
+%     Select all animals that passed steps 1 and 2, then run:
+%     - Step 3: Segmentation
+%     - Step 4: Warping
 
+ant;antcb('load',fullfile(pwd,'proj_paul.m'))
+ 
+% ==============================================
+%% [1] do registration-step: 1  --> and inspect HTML-INITIALIZATION
+% ===============================================
+%% =====[1a  failed datasets: round-1]==========================================
+cprintf('*[0 .5 0]',['SET  TYPE OF SKULLSTRIPPING'  '\n']);
+antcb('set','wa.usePriorskullstrip',9);
+drawnow;
+idfailed=[1, 2, 4, 7, 8, 9, 13, 14, 16, 17, 18, 19, 20];
+antcb('selectdirs',idfailed)
+xwarp3('batch','task',[1],'autoreg',1,'parfor',0);
+ 
+%% ======[1b failed datasets: round-2]=========================================
+cprintf('*[0 .5 0]',['SET  TYPE OF SKULLSTRIPPING'  '\n']);
+antcb('set','wa.usePriorskullstrip',6);
+drawnow;
+idfailed2=[13];
+antcb('selectdirs',idfailed2);
+xwarp3('batch','task',[1],'autoreg',1,'parfor',0);
+ 
+% ==============================================
+%% [2]  do registration-step: 2  --> and inspect HTML-COREGISTRATION
+% ===============================================
+idfailed=[1, 2, 4, 7, 8, 9, 13, 14, 16, 17, 18, 19, 20];
+antcb('selectdirs',idfailed);
+xwarp3('batch','task',[2],'autoreg',1,'parfor',1);
+ 
+% ==============================================
+%%  [3] do registration-steps: 3& 4 for all those anaimals 
+%%  --> and inspect final HTML-WARPING
+% ===============================================
+idfailed=[1, 2, 4, 7, 8, 9, 13, 14, 16, 17, 18, 19, 20];
+antcb('selectdirs',idfailed);
+xwarp3('batch','task',[3:4],'autoreg',1,'parfor',1);
+     
+      
   
 %% #################################################
 % MPM

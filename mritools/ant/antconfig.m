@@ -47,6 +47,9 @@
 %               high-contrast in the MR-image.
 %         [8] : universal approach: use for invivo & exvivo brains, with/without skullstripping,
 %                         works also with brains placed in phosphate-buffered saline (PBS)
+%         [9]: EXVIVO & high-contrast tube (PBS): approach3: apply pcnn3d twice
+%                 -runs pcnn3d on t2.nii twice (1st round 'catches' high OBS-signal, 2nd round extracts the brain )
+% 
 %        [-1] : brain masked image '_msk.nii' is assumed to exist in the path
 %               use this option if you have created a brain-masked 't2.nii' via other tools
 % #g NOTE: The aim of '_msk.nii' file is to obtain a rough but sufficient rigid registration. Accordingly,
@@ -218,6 +221,7 @@ meth_skullstrip=...
     '[6]: EXVIVO & high-contrast tube (PBS): approach1: "deTube"+pcnn3d)'                  [6]
     '[7]: EXVIVO & high-contrast tube (PBS): approach2: "deTube"+pcnn3d)'                  [7]
     '[8]: UNIVERSAL: – in/ex vivo, ±skullstrip, ±PBS'                                      [8]
+    '[9]: EXVIVO & high-contrast tube (PBS): approach3: apply pcnn3d twice'                [9]
     '                                                               '  [1]
     '[0]: "t2.nii" is already skullstripped (exvivo brain) '                               [0]
     '[2]: create "_msk.nii" as copy of "t2.nii"  (for allready skullstripped brains)'      [2]
