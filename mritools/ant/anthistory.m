@@ -73,7 +73,7 @@ warning off;
 p.upa=fullfile(userpath,'antx2_userdef');
 p.fhist=fullfile(p.upa, 'userdef.mat' );
 
-if exist('task')==0
+if exist('task')~=1
     task='select';
 end
 

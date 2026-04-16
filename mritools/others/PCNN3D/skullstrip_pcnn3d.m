@@ -26,7 +26,9 @@ warning off;
 % ===============================================
 
 pmouse.species      ='mouse';
-pmouse.brainSize    = [100 550]; %c57/B6- mouse
+% pmouse.brainSize    = [100 550]; %c57/B6- mouse
+% pmouse.brainSize    = [200 550]; %c57/B6- mouse, changed: 14.03.26
+pmouse.brainSize    = [200 650]; %c57/B6- mouse, changed: 14.03.26
 pmouse.scalefactor  = [1];
 
 pmouse.species      ='rat';

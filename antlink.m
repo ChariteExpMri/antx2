@@ -39,20 +39,26 @@ function showlastpath
 pwnow=pwd;
 
 try
-    a=preadfile2(fullfile(prefdir,'matlab.settings'));
+    if verLessThan('matlab','9.5')   % before R2018b
+        a=preadfile2(fullfile(prefdir,'matlab.settings'));
+        i0=regexpi2(a,'<settings name="currentfolder">');
+        i1=regexpi2(a,' <key name="History">');
+        i2=regexpi2(a,' </key>');
+        i2=i2(min(find(i1<i2)));
+        ip=regexpi2(a,'<value><![CDATA[');
+        ps=find(ip>i1 & ip<i2);
+        pw=a(ip(ps));
+        pw=regexprep(pw,{'.*[CDATA[',']]></value>'}, '');
+        pw(regexpi2(pw, 'antx2'))=[];
+        pwlast=pw{1};
+    else
+        s = settings;
+        pw = s.matlab.desktop.currentfolder.History.ActiveValue;
+        pwlast = pw{1};
+        
+    end
     
-    i0=regexpi2(a,'<settings name="currentfolder">');
-    i1=regexpi2(a,' <key name="History">');
-    i2=regexpi2(a,' </key>');
-    i2=i2(min(find(i1<i2)));
-    ip=regexpi2(a,'<value><![CDATA[');
     
-    ps=find(ip>i1 & ip<i2);
-    
-    pw=a(ip(ps));
-    pw=regexprep(pw,{'.*[CDATA[',']]></value>'}, '');
-    pw(regexpi2(pw, 'antx2'))=[];
-    pwlast=pw{1};
     
     disp(['<a href="matlab: cd(''' pwlast ''');">' ['Go Back To:'  ] '</a>' ' ' pwlast ]);
     %disp(['<a href="matlab: ant;">' ['open ANTx2-GUI'  ] '</a>' ' '  ]);

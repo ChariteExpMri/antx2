@@ -313,9 +313,9 @@ if find(s.task==1)
     
     %% SKULLSTRIP T2.nii
     if s.usePriorskullstrip==1 || s.usePriorskullstrip==6 || s.usePriorskullstrip==7 ....
-            || s.usePriorskullstrip==9
+            || s.usePriorskullstrip==9 || s.usePriorskullstrip==10
         %disp('#check---skullstripp');
-        if s.usePriorskullstrip==1 || s.usePriorskullstrip==9
+        if s.usePriorskullstrip==1 || s.usePriorskullstrip==9 
             F1=s.t2;
             msg='use';
         elseif s.usePriorskullstrip==6
@@ -324,6 +324,21 @@ if find(s.task==1)
        elseif s.usePriorskullstrip==7
             F1=removeTube2(s.t2);
             msg='remove tube & use';
+        elseif s.usePriorskullstrip==10   
+            F01=s.t2;
+            [PBS_present,score,info] = detectPBStube(F01,'show',0);
+            
+            if PBS_present==0
+                F1=s.t2;
+                msg=' PBStube-not found-->standard approach';
+            else
+                
+                [bm,vm] = removePBStube(F01);
+                F1=fullfile(fileparts(F01),'_noPBStemp.nii');
+                rsavenii(F1,ha,vm);
+                msg='remove PBStube & use';
+            end
+            
         end
         
         fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: ' msg ' pcnn3d-tool ' ]);
@@ -337,12 +352,11 @@ if find(s.task==1)
             %skullstrip_pcnn3d(s.t2, fullfile(s.pa, '_msk.nii' ),  'skullstrip'   );
             evalc('skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip''   )'); ;
         end
-        if s.usePriorskullstrip==6
-            try; delete(F1); end
-        end
+        if s.usePriorskullstrip== 6;                               try; delete(F1); end   ;     end
+        if s.usePriorskullstrip==10 && PBS_present==1;             try; delete(F1); end   ;     end
         
         
-        if s.usePriorskullstrip==9
+        if s.usePriorskullstrip==9 
             [hb b]=rgetnii(F1);  %SUBTRACT TUBE
             [hc c]=rgetnii(fullfile(s.pa, '_msk.nii' ));
             F3=fullfile(s.pa,'_mskTemp.nii');
