@@ -353,8 +353,46 @@ if find(s.task==1)
             evalc('skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip''   )'); ;
         end
         if s.usePriorskullstrip== 6;                               try; delete(F1); end   ;     end
-        if s.usePriorskullstrip==10 && PBS_present==1;             try; delete(F1); end   ;     end
-        
+        if s.usePriorskullstrip==10 && PBS_present==1;  
+            try; delete(F1); end   ;   
+        end
+        if s.usePriorskullstrip==10
+           [hb b]=rgetnii(fullfile(s.pa, '_msk.nii' ));
+           %% =======[get number of clusters]=========================
+           bm=b>0;
+           dimord=[setdiff([1:3],info.axis) info.axis];
+           bm=permute(bm,dimord);
+           nc=zeros(size(bm,3),1);
+           for k=1:size(bm,3)
+               [~,nc(k,1)]=bwlabel(bm(:,:,k));
+           end
+           
+           clustvec = (nc == 1) | (nc == 2)  ; % slices with max 2 clusters
+           dcl = diff([0; clustvec; 0]);  % pad to catch edges
+           start_idx = find(dcl == 1);
+           end_idx   = find(dcl == -1) - 1;
+           maxlen=end_idx-start_idx;
+           isel=find(maxlen==max(maxlen));
+           if length(isel)>1  %tendency to middle slice if more than one continuous block found
+               mid=hb.dim(info.axis)/2;
+               devmid=abs(mid-(start_idx(isel)+end_idx(isel))/2);
+               isel=isel(find(devmid==min(devmid)));
+           end
+           b2=zeros(size(bm));
+           b2(:,:,start_idx(isel): end_idx(isel))=1;
+           b2=permute(b2, dimord);
+           b3=b2.*b;
+           rsavenii(fullfile(s.pa, '_msk.nii' ),hb,b3);
+           
+           
+           
+           
+           
+           
+           %% ===============================================
+           
+            
+        end
         
         if s.usePriorskullstrip==9 
             [hb b]=rgetnii(F1);  %SUBTRACT TUBE
