@@ -100,7 +100,7 @@ end
 %=============================================
 
 %niter        = 100;
-radelem      = 4;
+radelem      = 5;
 vdim         = abs(vox);%abs(diag(ha.mat(1:3,1:3))');
 vdim2        = vdim/pp.scalefactor;
 brainSize    = pp.brainSize;

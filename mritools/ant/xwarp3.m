@@ -362,10 +362,13 @@ if find(s.task==1)
            bm=b>0;
            dimord=[setdiff([1:3],info.axis) info.axis];
            bm=permute(bm,dimord);
+           
            nc=zeros(size(bm,3),1);
            for k=1:size(bm,3)
                [~,nc(k,1)]=bwlabel(bm(:,:,k));
            end
+           
+           
            
            clustvec = (nc == 1) | (nc == 2)  ; % slices with max 2 clusters
            dcl = diff([0; clustvec; 0]);  % pad to catch edges
@@ -373,16 +376,23 @@ if find(s.task==1)
            end_idx   = find(dcl == -1) - 1;
            maxlen=end_idx-start_idx;
            isel=find(maxlen==max(maxlen));
+           mid=round(hb.dim(info.axis)/2);
            if length(isel)>1  %tendency to middle slice if more than one continuous block found
-               mid=hb.dim(info.axis)/2;
+               
                devmid=abs(mid-(start_idx(isel)+end_idx(isel))/2);
                isel=isel(find(devmid==min(devmid)));
            end
-           b2=zeros(size(bm));
-           b2(:,:,start_idx(isel): end_idx(isel))=1;
-           b2=permute(b2, dimord);
-           b3=b2.*b;
-           rsavenii(fullfile(s.pa, '_msk.nii' ),hb,b3);
+           
+           overlappwithMid=find(start_idx(isel): end_idx(isel)==mid)
+           if sum([nc(1:2); nc(end-1:end)])~=0  && ~isempty(overlappwithMid)
+               if maxlen(isel)>10  %that many slices
+                   b2=zeros(size(bm));
+                   b2(:,:,start_idx(isel): end_idx(isel))=1;
+                   b2=permute(b2, dimord);
+                   b3=b2.*b;
+                   rsavenii(fullfile(s.pa, '_msk.nii' ),hb,b3);
+               end
+           end
            
            
            
@@ -778,7 +788,7 @@ if find(s.task==3)
      
      
     
-    if isfield(s,'fastSegment')==0; s.fastSegment=1; end   % check param
+    %if isfield(s,'fastSegment')==0; s.fastSegment=1; end   % check param
     %s.fastSegment=1;
 
     if s.fastSegment==1
