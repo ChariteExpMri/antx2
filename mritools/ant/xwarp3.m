@@ -327,36 +327,44 @@ if find(s.task==1)
         elseif s.usePriorskullstrip==10   
             F01=s.t2;
             [PBS_present,score,info] = detectPBStube(F01,'show',0);
-            
-            if PBS_present==0
-                F1=s.t2;
-                msg=' PBStube-not found-->standard approach';
-            else
-                
-                [bm,vm] = removePBStube(F01);
-                F1=fullfile(fileparts(F01),'_noPBStemp.nii');
-                rsavenii(F1,ha,vm);
-                msg='remove PBStube & use';
-            end
+            msg='remove tube & use';
+             fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: ' msg ' pcnn3d-tool ' ]);
+
+%             if PBS_present==0
+%                 F1=s.t2;
+%                 msg=' PBStube-not found-->standard approach';
+%             else
+                removePBStube2(F01);
+%                 [bm,vm] = removePBStube(F01);
+%                 F1=fullfile(fileparts(F01),'_noPBStemp.nii');
+%                 rsavenii(F1,ha,vm);
+%                 msg='remove PBStube & use';
+%             end
             
         end
         
-        fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: ' msg ' pcnn3d-tool ' ]);
 
-        %if isfield(s,'species') && strcmp(s.species,'rat')  % ##-RAT-##
-        if isfield(s,'species') && (strcmp(s.species,'rat') || strcmp(s.species,'etruscianshrew') ...
-                              || strcmp(s.species,'hamster') || strcmp(s.species,'piglet4w')) 
-            skparam.species = s.species;
-            evalc(['skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip'' ,skparam  )']); ;
-        else
-            %skullstrip_pcnn3d(s.t2, fullfile(s.pa, '_msk.nii' ),  'skullstrip'   );
-            evalc('skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip''   )'); ;
+        if s.usePriorskullstrip~=10
+           fprintf(['     ...do skullstripping [method-' num2str(s.usePriorskullstrip)  ']: ' msg ' pcnn3d-tool ' ]);
+
+            %if isfield(s,'species') && strcmp(s.species,'rat')  % ##-RAT-##
+            if isfield(s,'species') && (strcmp(s.species,'rat') || strcmp(s.species,'etruscianshrew') ...
+                    || strcmp(s.species,'hamster') || strcmp(s.species,'piglet4w'))
+                skparam.species = s.species;
+                evalc(['skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip'' ,skparam  )']); ;
+            else
+                %skullstrip_pcnn3d(s.t2, fullfile(s.pa, '_msk.nii' ),  'skullstrip'   );
+                evalc('skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip''   )'); ;
+            end
         end
+        
+        
+        
         if s.usePriorskullstrip== 6;                               try; delete(F1); end   ;     end
-        if s.usePriorskullstrip==10 && PBS_present==1;  
-            try; delete(F1); end   ;   
-        end
-        if s.usePriorskullstrip==10
+%         if s.usePriorskullstrip==10 && PBS_present==1;  
+%             try; delete(F1); end   ;   
+%         end
+        if s.usePriorskullstrip==100010
            [hb b]=rgetnii(fullfile(s.pa, '_msk.nii' ));
            %% =======[get number of clusters]=========================
            bm=b>0;

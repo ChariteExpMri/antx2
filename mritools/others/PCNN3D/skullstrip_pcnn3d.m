@@ -28,7 +28,7 @@ warning off;
 pmouse.species      ='mouse';
 % pmouse.brainSize    = [100 550]; %c57/B6- mouse
 % pmouse.brainSize    = [200 550]; %c57/B6- mouse, changed: 14.03.26
-pmouse.brainSize    = [200 650]; %c57/B6- mouse, changed: 14.03.26
+pmouse.brainSize    = [200 550]; %c57/B6- mouse, changed: 14.03.26
 pmouse.scalefactor  = [1];
 
 pmouse.species      ='rat';
@@ -100,7 +100,7 @@ end
 %=============================================
 
 %niter        = 100;
-radelem      = 5;
+radelem      = 4;
 vdim         = abs(vox);%abs(diag(ha.mat(1:3,1:3))');
 vdim2        = vdim/pp.scalefactor;
 brainSize    = pp.brainSize;
@@ -122,8 +122,9 @@ catch
 end
 if iserror==1
     try
+        brainSize
         % [args ,I_border, gi] =  evalc(['PCNN3D(  a , ' num2str(radelem-1) '  , vdim2, brainSize );']);
-        [args ,I_border, gi] =  evalc(['PCNN3D(  a , ' num2str(radelem-1) '  , vdim2, brainSize );']);
+        [args ,I_border, gi] =  evalc(['PCNN3D(  a , ' num2str(radelem+3) '  , vdim2, brainSize );']);
         iserror=0;
         %get Guess for best iteration.
         ix  = strfind(args,'Guess for best iteration is ');
