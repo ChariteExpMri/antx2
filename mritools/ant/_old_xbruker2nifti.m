@@ -1,4 +1,5 @@
 %% #b convert brukerData to nifti-data
+%
 %% function xbruker2nifti(pain,sequence,trmb)
 %% INPUT
 % pain  : bruker-Metafolder, this folder contains all mouseFolder (! do not specify  a specific
@@ -162,9 +163,9 @@
 %
 %
 %
-% Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯
+% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 %    EXAMPLE  BRUKER DATA-TABLE
-% Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯
+% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 % set SubjectId                      StudNo ExpNo PrcNo MRseq        protocol                sizeMB   date                 file                                                                                      StudId                 SubjectName           CoreDim
 % 1   Kevin                          12     1     1     FLASH        1_Localizer_multi_slice  1.10592 17-Jun-2021 11:46:44 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\1\pdata\1\2dseq                         20180808_A1812081_GADO BreinDMD_Alzet        2
 % 1   Kevin                          12     10    1     RARE         RARE-T1W-7min            1.73538 17-Jun-2021 11:46:44 F:\data5\nogui\raw_mix\20180808_082822_Kevin_1_12\10\pdata\1\2dseq                        20180808_A1812081_GADO BreinDMD_Alzet        2
@@ -188,12 +189,12 @@
 % 3   20220301_ECM_Round11_Cage1_M04 1      4     1     User:epi_mre 07_epi_mre                 3.402 10-Mrz-2022 11:24:26 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\4\pdata\1\2dseq ECM longitudinal       Cage1_M04             2
 % 3   20220301_ECM_Round11_Cage1_M04 1      4     3     User:epi_mre 07_epi_mre                 3.402 10-Mrz-2022 11:24:26 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\4\pdata\3\2dseq ECM longitudinal       Cage1_M04             2
 % 3   20220301_ECM_Round11_Cage1_M04 1      6     1     FieldMap     B0Map-ADJ_B0MAP          1.04858 10-Mrz-2022 11:24:22 F:\data5\nogui\raw_mix\20220301_093711_20220301_ECM_Round11_Cage1_M04_1_1\6\pdata\1\2dseq ECM longitudinal       Cage1_M04             3
-% Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯
+% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 %
 % ==============================================
 %%  commandline example: BRUKER DATA  using Anastasia's data
 % ===============================================
-% Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯
+% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 % set    SubjectId           StudNo  ExpNo  PrcNo  MRseq         protocol                  sizeMB   date                  file                                                                                            StudId  SubjectName  CoreDim
 % 1      2021517_aj_T7_271   1       1      1      FLASH         01_Localizer_multi_slice  0.49152  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\1\pdata\1\2dseq   40G_1   T7_271       2
 % 1      2021517_aj_T7_271   1       2      1      DtiEpi        02_DWI_Trace_EPI_sat       4.7186  01-Jun-2023 10:22:04  F:\data7\brukerImport_revisited\raw\20210517_101301_2021517_aj_T7_271_d13_1_1\2\pdata\1\2dseq   40G_1   T7_271       2
@@ -219,7 +220,7 @@
 % 2      2021517_aj_T13_277  1       7      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:14  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\7\pdata\2\2dseq  40G_1   T13_277      2
 % 2      2021517_aj_T13_277  1       8      1      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\8\pdata\1\2dseq  40G_1   T13_277      2
 % 2      2021517_aj_T13_277  1       8      2      User:epi_mre  05_epi_mre                 3.8016  01-Jun-2023 10:22:16  F:\data7\brukerImport_revisited\raw\20210517_101522_2021517_aj_T13_277_d13_1_1\8\pdata\2\2dseq  40G_1   T13_277      2
-% Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯
+% ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 % %
 % % OPTION-[1]: import all Anastasia Bruker data (no gui)
 % w1=xbruker2nifti(fullfile(pwd,'raw'),0,[],[],'gui',0);
@@ -275,23 +276,22 @@
 % v.study=antcb('getstudypath')
 % v.paraw=fullfile(v.study,'raw')
 % w1=xbruker2nifti(v.paraw,0,[],[],'gui',0,'show',1); %GET ALL Bruker raw-data files
-%
+% 
 % %FILTER ONLY THE TURBORARE
 % w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol','TurboRARE'});
-%
+% 
 % %% import only a single file
 % % output-file with orignal name ('03_T2_TurboRARE.nii')
 % w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0);
 % % output file with orignal name + ExperimentNumber+ProcessingNumber ('03_T2_TurboRARE_2_1.nii')
 % w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'ExpNo_File',1,'PrcNo_File',1)
-% %
+% % 
 % % rename turborare as 't2.nii'
 % w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'outname','t2.nii');
-% %
+% % 
 % % rename turborare and add ExperimentNumber+ProcessingNumber, output is: 't2_2_1.nii'
 % w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'outname','t2.nii','ExpNo_File',1,'PrcNo_File',1);
-% --------------
-%  last mod: 08-May-2026 11:00:11
+
 
 
 function varargout=xbruker2nifti(pain,sequence,trmb,x,varargin)
@@ -303,14 +303,11 @@ warning off;
 if exist('pain')==0
     global an
     pain={'guidir' fileparts(an.datpath)};
-    sequence=0;
+    sequence=0
 end
 %% =========Pairwise inputs======================================
-p0.gui      =1; % [0,1] show guis
-p0.readfast =1;  %[0,1]: read brukerdata-visuData: [0]slow+full,[1]fast+reads essential fields only
+p0.gui=1; % [0,1] show guis
 p0.overwrite=1; %force to overwrite
-
-
 if nargin>4
     pin= cell2struct(varargin(2:2:end),varargin(1:2:end),2);
     %p0=catstruct2(p0,pin);
@@ -428,8 +425,6 @@ if ~isstruct(pain)
         end
     else
         [files,dirs] = spm_select('FPListRec',pain,'^2dseq$');
-        %     files = find_2dseq_fast(pain);toc
-        %         files = (pain);
         files=cellstr(files);
         dirs=cellstr(dirs);
     end
@@ -464,10 +459,8 @@ if ~isstruct(pain)
     %==============================================================================
     %% get sequence
     
-    
-    
     % seq=cell(length(files),1);
-    % disp('*** READ IN BRUKER DATA ***     ....            ');
+   % disp('*** READ IN BRUKER DATA ***     ....            ');
     tic
     
     ikeep=[];
@@ -476,34 +469,38 @@ if ~isstruct(pain)
         [pa fi]=fileparts(files{i});
         pa2=pa(1:strfind(pa,'pdata')-1);
         
+        
+        %S = sprintf('read file %d',i);
         S = sprintf('%d',i);
         fprintf(repmat('\b',1,numel(S)));
         fprintf(S);
         drawnow;
+        
+        %     if i==4
+        %        keyboard
+        %     end
+        
         
         try
             %get ExperimentNumber and RECO-Number
             slash   =strfind(pa,filesep);
             expNrA  =pa(slash(end-2)+1:slash(end-1)-1);
             recoNrA =pa(slash(end)+1:end);
+            %disp(pa);
+            
             
             methodfile=fullfile(pa2,'method');
+            
             me=preadfile2(methodfile);
             me2=me{regexpi2(me,'\$Method')};
+            
+            
             seqA=[num2str(num) '_'  me2];
-            %visuxA      = readBrukerParamFile(fullfile(pa,'visu_pars'));
-            %             visuxA      = readBrukerParamFile_fast(fullfile(pa,'visu_pars'));
-            if p0.readfast==1
-                visuxA      = fast_bruker_meta(fullfile(pa,'visu_pars'));
-%             elseif p0.readfast==2   
-%                 visuxA      = fast_bruker_meta_ultra(fullfile(pa,'visu_pars'));
-            else
-                visuxA      = readBrukerParamFile(fullfile(pa,'visu_pars'));
-            end
+            visuxA      = readBrukerParamFile(fullfile(pa,'visu_pars'));
             try;         protocolA   = visuxA.VisuAcquisitionProtocol;
             catch;       protocolA   = 'nan';
             end
-            if isempty(protocolA); protocolA='nan'; end
+            
             
             %---------------------
             seq{num,1}      = seqA; %sequence
@@ -512,9 +509,17 @@ if ~isstruct(pain)
             protocol{num,1} = protocolA;%protocol-name
             recoNr{num,1} = recoNrA;%recontructionNumber (subfolder after pdata)
             expNr{num,1} = expNrA  ;%ExperimentNumber   (subfolder before pdata)
+            
+            
             num=num+1;
             ikeep(end+1,1)=i;
+            
         end
+        % O:\data\brukerImport2\20151126_162717_20151126_TF_LT16_1_1\2\pdata\1
+        
+        
+        
+        %     disp([i num]);
         if mod(i,10)==0
             fclose('all');
         end
@@ -540,9 +545,6 @@ if ~isstruct(pain)
                 dum=getfield(visux{i}, addparanames{j});
                 try
                     dum=num2str(dum);
-                if isempty(dum);
-                    dum='x';
-                end
                 end
             catch
                 dum='x';
@@ -1046,10 +1048,10 @@ for i=1:size(files,1)
         
         if isfield(p0,'outname') && ischar(p0.outname)
             [~,nname, next]=fileparts(p0.outname);
-            nname=regexprep(nname,'\s+','');
-            if ~isempty(nname)
-                fname=[ nname ];%remove spaces and add '.nii'
-            end
+              nname=regexprep(nname,'\s+','');
+              if ~isempty(nname)
+              fname=[ nname ];%remove spaces and add '.nii'
+              end
         end
         
         
@@ -1076,7 +1078,7 @@ for i=1:size(files,1)
         end
         
         % file exist
-        % file does not exist
+        % file does not exist  
         writeFile=1;
         filealreadyExist=0;
         if exist(fpname)==2
@@ -1092,7 +1094,7 @@ for i=1:size(files,1)
         
         
         if writeFile==1
-            
+                       
             %disp([pnum(i,4) '] create <a href="matlab: explorer('' ' outdir '  '')">' fpname '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(files{i}) '  '')">' files{i}  '</a>']);% show h<perlink
             
             %==============================================================================
@@ -1194,11 +1196,11 @@ for i=1:size(files,1)
         
         %% SUCCESS
         
-        prefixexist=' creating';
-        if filealreadyExist==1; prefixexist=' re-creating'; end
-        if writeFile==0;        prefixexist=' already exist'; end
-        disp([pnum(i,4) ']' prefixexist ' <a href="matlab: explorer('' ' outdir '  '')">' fpname '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(files{i}) '  '')">' files{i}  '</a>']);% show h<perlink
-        
+            prefixexist=' creating';
+            if filealreadyExist==1; prefixexist=' re-creating'; end
+            if writeFile==0;        prefixexist=' already exist'; end 
+            disp([pnum(i,4) ']' prefixexist ' <a href="matlab: explorer('' ' outdir '  '')">' fpname '</a>' '; SOURCE: ' '<a href="matlab: explorer('' ' fileparts(files{i}) '  '')">' files{i}  '</a>']);% show h<perlink
+       
         
     catch
         
@@ -1533,180 +1535,4 @@ end
 %% ===============================================
 
 
-function out = fast_bruker_meta(fname)
 
-fid = fopen(fname,'r');
-if fid < 0
-    error('Cannot open file: %s', fname);
-end
-
-% --- only requested fields
-keys = { ...
-    'VisuSubjectId'
-    'VisuStudyNumber'
-    'VisuExperimentNumber'
-    'VisuProcessingNumber'
-    'VisuStudyId'
-    'VisuSubjectName'
-    'VisuCoreDim'
-    'VisuAcquisitionProtocol'
-};
-
-nK = numel(keys);
-val = cell(nK,1);
-found = false(nK,1);
-
-while true
-    t = fgetl(fid);
-    if ~ischar(t), break; end
-
-    % FAST SKIP: only process parameter lines
-    if numel(t) < 4 || t(1) ~= '#' || t(2) ~= '#'
-        continue;
-    end
-
-    % only Visu parameters
-    if numel(t) < 3 || t(3) ~= '$'
-        continue;
-    end
-
-    % strip "##$"
-    t = t(4:end);
-
-    eq = strfind(t,'=');
-    if isempty(eq)
-        continue;
-    end
-
-    k = strtrim(t(1:eq(1)-1));
-
-    % match only required keys
-    for i = 1:nK
-        if ~found(i) && strcmp(k, keys{i})
-
-            v = strtrim(t(eq(1)+1:end));
-
-            % ---- CASE 1: inline value
-            if ~isempty(v) && v(1) ~= '('
-                val{i} = cleanVal(v);
-                found(i) = true;
-                break;
-            end
-
-            % ---- CASE 2: multi-line block
-            % read next lines until value closes or next parameter starts
-            block = '';
-            while true
-                pos = ftell(fid);
-                line2 = fgetl(fid);
-
-                if ~ischar(line2)
-                    break;
-                end
-
-                if startsWith(line2,'##')
-                    fseek(fid,pos,'bof');
-                    break;
-                end
-
-                block = [block ' ' strtrim(line2)]; %#ok<AGROW>
-            end
-
-            val{i} = cleanVal(block);
-            found(i) = true;
-            break;
-        end
-    end
-
-    if all(found)
-        break;
-    end
-end
-
-fclose(fid);
-
-% --- output struct
-out = struct();
-for i = 1:nK
-    out.(keys{i}) = val{i};
-end
-
-% numeric conversion
-if ~isempty(out.VisuCoreDim)
-    out.VisuCoreDim = str2double(out.VisuCoreDim);
-end
-
-
-% ---------------- helper ----------------
-function v = cleanVal(v)
-    v = strtrim(v);
-    if ~isempty(v) && v(1) == '<'
-        v = extractBetween(v,'<','>');
-        if ~isempty(v)
-            v = v{1};
-        end
-    end
-
-
-    
-function files = find_2dseq_fast(pain)
-
-files = {};
-
-d1 = dir(pain);
-d1 = d1([d1.isdir] & ~startsWith({d1.name},'.'));
-
-for i = 1:numel(d1)
-
-    lvl1 = fullfile(pain, d1(i).name);
-
-    % ----------------------------
-    % CASE A: pdata directly here
-    % ----------------------------
-    files = search_level(lvl1, files);
-
-    % ----------------------------
-    % CASE B: one level deeper (animal â†’ experiment)
-    % ----------------------------
-    d2 = dir(lvl1);
-    d2 = d2([d2.isdir] & ~startsWith({d2.name},'.'));
-
-    for j = 1:numel(d2)
-        lvl2 = fullfile(lvl1, d2(j).name);
-        files = search_level(lvl2, files);
-    end
-end
-
-% -------- natural sort --------
-% if ~isempty(files)
-%     tokens = regexp(files, '.*[\\/](\d+)[\\/]+pdata[\\/]+(\d+)[\\/]2dseq$', 'tokens');
-% 
-%     key = cellfun(@(t) str2double(t{1}{1})*100 + str2double(t{1}{2}), tokens);
-% 
-%     [~, idx] = sort(key);
-%     files = files(idx);
-% end
-files=natsort(files);
-
-% ================= helper: =================
-function files = search_level(base, files)
-pdata = fullfile(base,'pdata');
-if ~isfolder(pdata)
-    return;
-end
-d = dir(pdata);
-d = d([d.isdir] & ~startsWith({d.name},'.'));
-for k = 1:numel(d)
-
-    f = fullfile(pdata, d(k).name, '2dseq');
-
-    if exist(f,'file')
-        files{end+1,1} = f; %#ok<AGROW>
-    end
-end 
-    
-    
-    
-    
-    
-    

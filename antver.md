@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   13 Apr 2026 (16:37:21)  
+ &#x1F34E; last modification:   08 May 2026 (11:03:14)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,12 +7,14 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**08 May 2026 (11:03:14)**</ins>  
+   __[makefig4spm.m]__ : improved reading performance  
+<!---->
   &#x1F535;   <ins>**13 Apr 2026 (16:37:21)**</ins>  
    __[snips.m]__ updated ..type 'snips' to open snips-window  
 <!---->
   &#x1F535;   <ins>**25 Mar 2026 (13:05:58)**</ins>  
    __[antconfig.m]__ : added check for spaces/special characters in studypath  
-    
 <!---->
   &#x1F535;   <ins>**23 Mar 2026 (15:35:24)**</ins>  
    __[makefig4spm.m]__ : new, make orthoplots from SPM-voxelwise results & create PPT  

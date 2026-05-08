@@ -1192,12 +1192,13 @@
 %  --> for examples type 'snips' and go to % VOXELWISE-STATISTIC/posthoc: plots & tables
 % #ba 25 Mar 2026 (13:05:58)
 % #k [antconfig.m] #n : added check for spaces/special characters in studypath
-% 
 % #ba 13 Apr 2026 (16:37:21)
 % #k [snips.m] #n updated ..type 'snips' to open snips-window
+% #ba 08 May 2026 (11:03:14)
+% #k [makefig4spm.m] #n : improved reading performance
 % 
 % 
-% 
+
 
 %% ===============================================
 %----- EOF
