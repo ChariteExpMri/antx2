@@ -334,12 +334,19 @@ if find(s.task==1)
 %                 F1=s.t2;
 %                 msg=' PBStube-not found-->standard approach';
 %             else
-                removePBStube2(F01);
+               
 %                 [bm,vm] = removePBStube(F01);
 %                 F1=fullfile(fileparts(F01),'_noPBStemp.nii');
 %                 rsavenii(F1,ha,vm);
 %                 msg='remove PBStube & use';
 %             end
+         
+%                     skparam.species = s.species;
+                removePBStube2(F01,s.species);
+
+
+
+
             
         end
         

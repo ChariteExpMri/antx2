@@ -1196,6 +1196,10 @@
 % #k [snips.m] #n updated ..type 'snips' to open snips-window
 % #ba 08 May 2026 (11:03:14)
 % #k [makefig4spm.m] #n : improved reading performance
+% #ba 13 May 2026 (10:08:45)
+% #k [xbruker2nifti.m] #n : improved reading performance
+% #k [snips.m] #n updated : added updated exvivo-MPM-pipeline
+% 
 % 
 % 
 

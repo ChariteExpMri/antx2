@@ -28,8 +28,13 @@
 %          #g * default: [0]
 % ___________________________________________________________________________________________________
 % #b usePriorskullstrip:  #n skull strip "t2.nii". This option is used for rigid registration, only.
-%         Here,  the image "_msk.nii" is created based on 't2.nii'
+%         Here,  the SKULLSTRIPPED image "_msk.nii" is created based on 't2.nii'
 %         #r '_msk.nii' is not binary!, rather the brain-masked 't2.nii'-image (outer brain values are ideally 0).
+% 
+%         RECOMMENDATIONS:
+%         - In vivo MRI: use parameter set [1], or if it fails use [10]
+%         - Ex vivo MRI: use parameter set [10] (samples stored in PBS or fixed in formalin/PFA)
+% 
 % options [0] : 't2.nii' is already skullstripped (exvivo brain)
 %         [1] : create '_msk.nii' based on pcnn3d-tool. #b real skull-stripping
 %              #g default: [1]
@@ -41,6 +46,15 @@
 %               high-contrast in the MR-image
 %         [5] : same as [3] but using 2-otsu clusters
 %               might work better than [3]
+% 
+%         [10]:EXVIVO & high-contrast tube (PBS):apply pcnn3d twice, use compactness to obtain brain
+%             -Creates a brain mask by skull stripping a T2 MRI and removing surrounding PBS tube/background signal
+%                 Removes surrounding PBS tube/background signal from a T2 MRI volume.
+%                 Performs skull stripping to extract the brain region automatically.
+%                 Uses a second-pass refinement and selects the best mask based on compactness,
+%                 where compactness favors smooth, dense, brain-like objects over elongated tube structures.
+%                 Saves the final brain mask as "_msk.nii" and removes temporary files.
+% 
 %         [6] : EXVIVO-data in TUBE with high-contrast solution (e.g. PBS) + posthoc skullstripping (pcnn3d)
 %         [4] : '_msk.nii' is basically 't2.nii' but background is removed to accellerate segmentation
 %               *use this option for exvivo skullstripped brain preserved in the stuff that produces
@@ -215,13 +229,13 @@ end
 %% =====[skullStrippingMethos]==========================================
 meth_skullstrip=...
     {...
-    '[1]: create "_msk.nii" using pcnn3d-tool (default)'                                   [1]
-    '[3]: create "_msk.nii" unsing otsu-method (3 clusters)'                               [3]
-    '[5]: create "_msk.nii" unsing otsu-method (2 clusters)'                               [5]
+    '[1] :create "_msk.nii" using pcnn3d-tool (default)'                                   [1]
+    '[3] :create "_msk.nii" unsing otsu-method (3 clusters)'                               [3]
+    '[5] :create "_msk.nii" unsing otsu-method (2 clusters)'                               [5]
+    '[10]:EXVIVO & high-contrast tube (PBS):apply pcnn3d twice, use compactness to obtain brain' [10]
     '[6]: EXVIVO & high-contrast tube (PBS): approach1: "deTube"+pcnn3d)'                  [6]
     '[7]: EXVIVO & high-contrast tube (PBS): approach2: "deTube"+pcnn3d)'                  [7]
     '[8]: UNIVERSAL: – in/ex vivo, ±skullstrip, ±PBS'                                      [8]
-    '[9]: EXVIVO & high-contrast tube (PBS): approach3: apply pcnn3d twice'                [9]
     '                                                               '  [1]
     '[0]: "t2.nii" is already skullstripped (exvivo brain) '                               [0]
     '[2]: create "_msk.nii" as copy of "t2.nii"  (for allready skullstripped brains)'      [2]

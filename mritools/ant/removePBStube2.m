@@ -1,7 +1,34 @@
 
 
 
-function temp_tube(F1)
+function removePBStube2(F1,species)
+
+% removePBStube2
+% Creates a skullstripped brain and removes surrounding PBS tube/background
+% from a T2 MRI volume.
+% Main steps:
+%   1. Copies the input image and performs skull stripping using
+%      skullstrip_pcnn3d.
+%   2. If skull stripping fails, applies intensity normalization and
+%      bias-field correction before retrying.
+%   3. Runs a second skull stripping pass on the residual image to
+%      detect remaining non-brain structures.
+%   4. Compares candidate masks using compactness/shape measures and
+%      selects the most plausible brain mask.
+%   5. Saves the final mask as:
+%         _msk.nii
+%   6. Removes temporary files.
+%
+% Input:
+%   F1  - fullpath filename of T2w-NIfTI image
+%   species -species 'rat','mouse',etc
+% Output:
+%   _msk.nii  - final skullstripped brain
+%
+% Purpose:
+%   Intended for automated removal of PBS tube signal and extraction
+%   of the brain region from rodent MRI data.
+
 
 if 0
     %% ===============================================
@@ -18,6 +45,8 @@ end
 
 p.show=1;
 p.cleanup=1;
+
+skparam.species = species;
 
 
 %
@@ -39,7 +68,9 @@ try; delete(Fm2); end
 
 try
     copyfile(F1,Fs,'f') ;
-    evalc('skullstrip_pcnn3d(Fs, Fm1,  ''skullstrip''   )');
+    evalc('skullstrip_pcnn3d(Fs, Fm1,  ''skullstrip'',skparam   )');
+    %evalc(['skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip'' ,skparam  )']); ;
+
 catch
     [ha a]=rgetnii(F1);
     vec=spm_imatrix(ha.mat);
@@ -54,7 +85,7 @@ catch
     rsavenii(Fs,ha,Vcorr);
     % ===============================================
     
-    evalc('skullstrip_pcnn3d(Fs, Fm1,  ''skullstrip''   )');
+    evalc('skullstrip_pcnn3d(Fs, Fm1,  ''skullstrip'',skparam   )');
     % rmricron([],Fm1)
 end
 
@@ -65,7 +96,7 @@ try
     rsavenii(Fs,hb,c);
     
     
-    evalc('skullstrip_pcnn3d(Fs, Fm2,  ''skullstrip''   )');
+    evalc('skullstrip_pcnn3d(Fs, Fm2,  ''skullstrip'',skparam   )');
 catch
 %     disp('--failed') ;
 end
@@ -163,6 +194,7 @@ copyfile(mask,mask2,'f');
 if p.cleanup==1
     try; delete(Fm1); end
     try; delete(Fm2); end
+    try; delete(fullfile(pa,'_noPBStemp.nii')); end
 end
 
 if p.show==1;

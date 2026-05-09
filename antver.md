@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   08 May 2026 (11:03:14)  
+ &#x1F34E; last modification:   13 May 2026 (10:08:45)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**13 May 2026 (10:08:45)**</ins>  
+   __[xbruker2nifti.m]__ : improved reading performance  
+   __[snips.m]__ updated : added updated exvivo-MPM-pipeline  
+<!---->
   &#x1F535;   <ins>**08 May 2026 (11:03:14)**</ins>  
    __[makefig4spm.m]__ : improved reading performance  
 <!---->

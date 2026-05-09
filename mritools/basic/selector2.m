@@ -104,7 +104,7 @@ tb=[ cellstr(num2str([1:size(tb,1)]'-1)) tb ];
 us.raw=tb(2:end,:);
 
 %% ======special characters  =========================================
-tb=regexprep(tb,'<','&lt;');
+% tb=regexprep(tb,'<','&lt;'); % this bug disables HTML-stlye
 
 %% ===============================================
 

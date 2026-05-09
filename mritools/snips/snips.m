@@ -394,6 +394,35 @@ if 1
     set(hb,'visible','on')
 end
 
+if 1   
+    hj=findjobj(hb);
+    uv.hj=hj;
+    set(hb,'KeyPressFcn',@keyedit);
+    uv.str=[];
+    uv.list={''};
+    uv.fig2=hf;
+    set(hb,'userdata',uv);
+   
+%     uicontrol(findobj(gcf,'tag','edsearch'));
+
+
+%% LISTBOX
+hl=uicontrol('style','listbox','units','norm','position',[.0 .2-.15 .15 .2],'tag', 'lbsearch','visible','off');
+set(hl,'string',{''})
+set(hl,'callback',@lbselectthis);
+set(hl,'KeyPressFcn',@keyedit_lb)
+% pause(0.05)
+% jScroll = findjobj(hl);
+% %jScroll.setHorizontalScrollBarPolicy(31);
+%  jScroll.setHorizontalScrollBarPolicy(  javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+hb=uicontrol(hf,'style','pushbutton','units','norm','tag','pbclosesearch','visible','off');
+% set(hb,'position',[.15 .2 0.01 0.01]);
+set(hb,'position',[.15-0.013 .22 0.013 0.03]);
+set(hb,'backgroundcolor','w','string','x','callback',@closesearch);
+
+
+end
 
 
 
@@ -403,7 +432,7 @@ end
 hb=uicontrol(hf,'style','popu','units','pixels','tag','find_words');
 set(hb,'position',[134+13 -1 21 21]);
 set(hb,'callback',@find_words,'string',{'ddd' 'vvv' 'www'});
-set(hb,'tooltipstring','words');
+set(hb,'tooltipstring','words','string', '<search>');
 setWordlist();
 % =====clear finder ==========================================
 hb=uicontrol(hf,'style','pushbutton','units','pixels','tag','find_clear');
@@ -456,7 +485,12 @@ jTree.requestFocus();
 set(jTree, 'KeyPressedCallback', @(src, event) keyPressedCallback_tree(event, jTree));
 
 
+
+
+
 set(hf,'visible','on');
+
+updatecolumnlist; %update list
 
 
 % -------------------
@@ -499,6 +533,112 @@ set(hf,'visible','on');
 
 % popup_panel()
 
+function lbselectthis(e,e2)
+li=get(e,'string');
+va=get(e,'value');
+if isempty(li)
+   return 
+end
+hf=findobj(0,'tag','snips');
+hs=findobj(hf,'tag', 'find');
+try
+    set(hs,'string',li{va});
+    uv=get(hs,'userdata');
+    
+    uv.str=li{va};
+    set(hs,'userdata',uv);
+    % pbsearch(e,e2);
+    finder();
+end
+
+
+
+function keyedit_lb(e,e2)
+hf=findobj(0,'tag','snips');
+hl=findobj(hf,'tag', 'lbsearch');
+hb=findobj(hf,'tag', 'pbclosesearch');
+try
+    if strcmp(e2.Key,'escape')
+        set(hl,'visible','off');  
+        set(hb,'visible','off'); 
+    end
+end
+
+function closesearch(e,e2)
+hf=findobj(0,'tag','snips');
+hl=findobj(hf,'tag', 'lbsearch');
+hb=findobj(hf,'tag', 'pbclosesearch');
+
+set(hl,'visible','off');
+set(hb,'visible','off');
+
+
+function keyedit(e,e2)
+hf=findobj(0,'tag','snips');
+hs=findobj(hf,'tag', 'find');
+uv=get(hs,'userdata');
+
+hj=uv.hj;
+str=char(hj.getText);
+isel=find(cellfun(@(x) any(x),regexpi(uv.list,str)));
+
+if isempty(str)
+    isel=1:length(uv.list);
+end
+
+hl=findobj(hf,'tag', 'lbsearch');
+hb=findobj(hf,'tag', 'pbclosesearch');
+if strcmp(get(hl,'visible'),'off') && ~isempty(str)
+    set(hl,'visible','on');
+    set(hb,'visible','on');
+    % pause(0.05)
+
+    
+end
+if isempty(str)
+   set(hl,'visible','off'); 
+   set(hb,'visible','off');
+end
+    
+set(hl,'value',1,'string',uv.list(isel));
+if isempty(isel)
+    set(hl,'backgroundcolor',[1 1 .4]);
+else
+    set(hl,'backgroundcolor',[1 1 1]);
+end
+
+    drawnow
+jScroll = findjobj(hl);
+% %jScroll.setHorizontalScrollBarPolicy(31);
+if jScroll.getHorizontalScrollBarPolicy~=31
+  jScroll.setHorizontalScrollBarPolicy(  javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+end
+
+try
+    if strcmp(e2.Key,'escape')
+        set(hl,'visible','off');  
+         set(hb,'visible','off');
+    end
+end
+
+
+function updatecolumnlist
+hf=findobj(0,'tag','snips');
+hs=findobj(hf,'tag', 'find');
+uv=get(hs,'userdata');
+us=get(uv.fig2,'userdata') ;
+
+% icol=get(findobj(hf,'tag', 'pdcolumnsearch'),'value');
+% list = regexprep( us.raw(:,icol+1), {'<.*?>','&nbsp;'}, '' );
+
+list=get(findobj(hf,'tag','find_words'),'String');
+
+hl=findobj(hf,'tag', 'lbsearch');
+set(hl,'string',list);
+hs=findobj(hf,'tag', 'find');
+set(hs,'string','<search>');
+uv.list=list;
+set(hs,'userdata',uv);
 
 
 function popup_panel
@@ -586,14 +726,37 @@ u=get(gcf,'userdata');
 nc=u.c(:,3);
 flatCellArray = vertcat(nc{:});
 allText = strjoin(flatCellArray, ' '); % Join all sentences into a single string
-words = regexp(allText, '\w+', 'match'); % Extract words (ignores punctuation)
-% words = lower(words);
+% words = regexp(allText, '\w+', 'match'); % Extract words (ignores punctuation)
 
-minLength=5;
-words = words(cellfun(@(x) length(x) >= minLength, words));
-words=words(regexpi2(words,'^\D'));
-words=words(cellfun(@(w) numel(unique(w)) > 1, words));
-words = unique(words');
+% words = lower(words);
+%% ===============================================
+
+% tic
+% words = regexp(allText, '\w+(?:-\w+)*', 'match')';
+% minLength=5;
+% words = words(cellfun(@(x) length(x) >= minLength, words));
+% words=words(regexpi2(words,'^\D'));
+% words=words(cellfun(@(w) numel(unique(w)) > 1, words));
+% words1 = unique(words');
+% toc
+
+% tic
+
+words = regexp(allText, '\w+(?:-\w+)*', 'match');
+% minimum length + first char not numeric
+keep = cellfun('length',words) >= 5 & ...
+       ~cellfun(@(x) x(1)>='0' && x(1)<='9', words);
+words = words(keep);
+% remove words like 'aaaaaa'
+keep = false(size(words));
+for k=1:numel(words)
+    w = words{k};
+    keep(k) = any(w ~= w(1));
+end
+words = unique(words)';
+
+% toc
+%% ===============================================
 
 hp=findobj(gcf,'tag','find_words');
 set(hp,'string',words);
@@ -838,7 +1001,9 @@ function find_clear(e,e2)
 hf=findobj('tag','snips');
 hb=findobj(hf,'tag','find');
 hb.String='';
+% set()
 finder();
+set(findobj(hf,'tag','lbsearch'),'visible','off');
 
 function finder(e,e2)
 %% ===============================================
@@ -878,8 +1043,10 @@ for i=1:length(li)
 end
 javaMethodEDT('repaint', u.ht);
 
+try
 set(hb,'backgroundcolor',bcol); drawnow
 set(hb,'string',s)
+end
 
 
 

@@ -67,6 +67,23 @@ antcb('cwcol',[1 .94 .87]);
 antcb('cwname','paul works here');
 
 %% #################################################
+% export
+% export files ( no need to load a specific ANTx-study  before
+% export 't2.nii' and 'mt2.nii' from study, keep existing data-structure, no GUI
+% ist 1st arg to [1] to open GUI
+% 
+
+z=[];                                                                                                                                                                                                                                 
+z.sourcePath          = 'H:\Daten-2\Imaging\AG_Harms\2025_Psychedelics_rsMRI_DTI\dat';     %% source path                                                                            
+z.fileNames           = {'t2.nii','mt2.nii'};                                              %% recoursively find these files in "sourcePath"                                                                        
+z.destinationPath     = 'C:\Users\SVC-AG-TierMRT\Desktop\invivo_psych';                    %% destination path to export files                                                                                                                                           % % boolean, [1] write a logfile "export+timestamp.txt" [0] write no logfile                                                               
+exportfiles(0,z);                                                                                                                                                                                                                     
+                   
+
+
+
+
+%% #################################################
 % file-conversion
 % convert an IMG/HDR file to NIfTI format, and replace the header of a mask image
 % with the header from the corresponding structural image
@@ -569,6 +586,8 @@ makeproject('projectname',fullfile(v.study,'proj.m'), 'voxsize',[.07 .07 .07],..
     'wa_species','mouse')
 antcb('load',fullfile(v.study,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
  
+antcb('copytemplates'); %copy templates to study
+
 %% ===============================================
 %% [3]  import Bruker data
 %% ===============================================
@@ -717,63 +736,69 @@ w.hstep            = 'all' ;%hmri-processing steps,'all' or use indices([1:5]; s
 w.mdirs=antcb('getallsubjects')  ; % path of animals-DIRs to process
 mpm('nogui',w)             ; % run proccessing steps without GUI
  
+%% ==============================================
+%% [15] QA 
+%% ==============================================
+% please check:
+% [1] QA_REG_contourPD_normalized--AVGT.html: this HTML-file contains the registration of "PD_normalized.nii"
+%  onto AVGT.nii for all aninmals(also check the respective values)
+% [2] if something is odd in [1], check "summary.html" in the study-folder
+
+
+
+
+
 
 
 %% #################################################
 % pipeline
 % MPM-pipeline_exvivo (skullstripped)
-%% turborare is used as 't2.nii' and registered to MD/T1/PD space,
+%% turborare-image is used  and registered to MD/T1/PD space,
 %% --->advantage: better biascorrection compared to scenario where
 %% 1st volume of T1(or MT/PD) is used as 't2.nii'
 %% ===================================================================
  
-%%  ######################################################################
-%%  [PART-1] ANTx-setup, BRUKER IMPORT, CONFIGURATIONS
-%%  ######################################################################
 
 
 %% ===============================================
 %% [1]  set parameter
 %% ===============================================
  
-try; antcb('close'); end
-clear all
-cf;clear, clc, warning off;
+try; antcb('close'); end  %close ANTx-gui
+clear all; cf; clc; warning off;
  
-v.study      ='H:\Daten-2\Imaging\AG_Boehm_Sturm\ERC_Syn_2025\GEMI_pilot_2025\mpm_ana'; %study-folder
-v.paraw      ='H:\Daten-2\Imaging\AG_Boehm_Sturm\ERC_Syn_2025\GEMI_pilot_2025\raw' ; %Bruker-rawdata-folder
-v.mpm        ='D:\MATLAB\mpm'                       ;%PATH of: wrapper functions
-v.MPMtoolbox ='D:\MATLAB\hMRI-toolbox-0.2.4'        ;%%PATH of: MPM-toolbox
- 
+v.study      ='H:\Daten-2\Imaging\Paul\mpm_stuff\mpm_oxford_exvivo'     ; %study-folder
+v.paraw      ='H:\Daten-2\Imaging\AG_Infante_Duarte\Jiliang\Oxford\raw' ; %Bruker-rawdata-folder
+v.mpm        ='D:\MATLAB\mpm\mpm_rodent'                                ; %PATH of: wrapper functions
+v.MPMtoolbox ='D:\MATLAB\hMRI-toolbox-0.2.4'                            ;%%PATH of: MPM-toolbox
+cd(v.study); %go study study-folder 
 % ===============================================
-cd(v.study);
-if exist(fullfile(v.study,'dat'))==7    %remove dat-folder if exist
-    rmdir(fullfile(v.study,'dat'),'s');
-end
+%remove dat-folder if exist
+if exist(fullfile(v.study,'dat'))      ==7;  rmdir(fullfile(v.study,'dat'),'s');      end  
 %remove mpm-folder if exist
-if exist(fullfile(v.study,'mpm'))==7    %remove mpm-folder if exis
-    rmdir(fullfile(v.study,'mpm'),'s');
-end
-if exist(fullfile(v.study,'templates'))==7  %remove templates-folder if exist
-    rmdir(fullfile(v.study,'templates'),'s');
-end
- 
+if exist(fullfile(v.study,'mpm'))      ==7;  rmdir(fullfile(v.study,'mpm'),'s');       end
+  %remove templates-folder if exist
+if exist(fullfile(v.study,'templates'))==7;  rmdir(fullfile(v.study,'templates'),'s'); end
+
 %% ===============================================
 %% [2]  make ANTx-project
 %% ===============================================
 cprintf('*[0 .5 0]',['MAKE ANTX-PROJECT '  '\n']);
 makeproject('projectname',fullfile(v.study,'proj.m'), 'voxsize',[.07 .07 .07],...
     'wa_refpath','D:\MATLAB\anttemplates\mouse_Allen2017HikishimaLR',...
-    'wa_species','mouse')
+    'wa_species','mouse'); %make new ANTx-project: use mouse-mouse_Allen2017HikishimaLR-template
 antcb('load',fullfile(v.study,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
- 
+
+antcb('copytemplates'); %copy templates to study
+
+%  
 %% ===============================================
 %% [3]  import Bruker data
 %% ===============================================
 cprintf('*[0 .5 0]',['IMPORT BRUKER DATA '  '\n']);
 % DISPLAY all Bruker-files from 'raw'-folder, PLEASE INSPECT THE TABLE BEFORE DOING THE NEXT STEP
 w1=xbruker2nifti(v.paraw,0,[],[],'gui',0,'show',1);
-% ===============================================
+% === [ DISPLAY ONLY ] ====================================
 % FILTER and DISPLAY a list of Bruker files for MPM-files
 protocol='MPM_3D';
 %THIS MIGHT CONTAIN MAGNITUDE AND PHASE VOLUMES
@@ -782,7 +807,7 @@ w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',...
 %USE ONLY THE MAGNITUDE VOLUME BY USING ONLY THE PrcNo OF [1]
 w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',...
     {'protocol',protocol,'PrcNo','1'});
-% ===============================================
+% =====[ IMPORT DATA ]==========================================
 % IMPORT Bruker files where the protocol name contains MPM-data
 w3=xbruker2nifti(w2,0,[],[],'gui',0,'show',0,'flt',{'protocol',protocol},...
     'paout',fullfile(v.study,'dat'),'ExpNo_File',1);
@@ -799,22 +824,19 @@ antcb('selectdirs','all');
 xrename(0,['.*' protocol '.*pd' '.*'],'in_PD.nii','copy');
 xrename(0,['.*' protocol '.*t1' '.*'],'in_T1.nii','copy');
 xrename(0,['.*' protocol '.*mt' '.*'],'in_MT.nii','copy');
-xrename(0,['.*' 'TurboRARE'  '.*'],'t2.nii','copy');
+xrename(0,['.*' 'TurboRARE'  '.*'   ],'in_t2.nii','copy'); % IMPORTANT do not name turborare as 't2.nii', because pre-rotation will be changed later
 dispfiles;% check files
  
 %% =========================================================================================================================
 %%  [5] change ANTx-config: 
-%%  Because brains are skullstripped and stored in PBS --> we use another segmentation-type(6)
+%%  Because brains are skullstripped and stored in PBS --> we use another segmentation-type(10)
+%%  also change fastsegment-flag to [0]  --> might be an issue with later MPM-biascorrecton
 %% ==========================================================================================================================
 cprintf('*[0 .5 0]',['SET  TYPE OF SKULLSTRIPPING'  '\n']);
-antcb('set','wa.usePriorskullstrip',6);
+antcb('set','wa.usePriorskullstrip',10); %set skullstripping-type to [10]
+antcb('set','wa.fastSegment'       ,0); % set fast segmentation to [0]
 drawnow;
  
-
-
-%%  ######################################################################
-%%     [PART-2] MPM-ANALYSIS
-%%  ######################################################################
 
 %% =========================================================================================================================
 %% [6] set path of MPM-wrapper functions  (or use hyperlink from cmd-window)
@@ -830,7 +852,7 @@ cd(v.study); %go back to study-path
 cprintf('*[0 .5 0]',['MPM-SETUP'  '\n']);
 f_setup('ini','mpm.MPM_path',v.MPMtoolbox); % initialize MPM for this study
  
-my_MPMpath=fullfile(v.study,'mpm'); %folder with MPM-configuration for this study
+my_MPMpath=fullfile(v.study,'mpm');            %folder with MPM-configuration for this study
 config    =fullfile(my_MPMpath, 'mpm_config'); %this file is created and is modifed in below steps
 excelfile =fullfile(my_MPMpath,'mpm_NIFTIparameters.xlsx');%this file is created and is modifed in below steps
  
@@ -851,7 +873,7 @@ cprintf('*[0 .5 0]',['WRITE NAMES OF MPM-FILES IN EXCELFILE'  '\n']);
 ha=a0(1,:);
 a =a0(2:end,:);
 a(:,2)={nan};
-a{strcmp(a(:,1),'t2w'),2}='t2.nii';
+a{strcmp(a(:,1),'t2w'),2}='in_t2.nii';
 a{strcmp(a(:,1),'PD' ),2}='in_PD.nii';
 a{strcmp(a(:,1),'MT' ),2}='in_MT.nii';
 a{strcmp(a(:,1),'T1' ),2}='in_T1.nii';
@@ -859,17 +881,17 @@ pwrite2excel(excelfile,{1 'blanko-1'}, ha,[],a);
 showinfo2(['excelfile-modified'],excelfile);
  
 %% ========================================================================
-%% [10] get orientation from 't2.nii'-space to 'T1/MT/PD'-space
-%% please check HTML-file for best preorientation ..than go to next step
+%% [10] get PRE-ORIENTATION from 't2.nii'-space to 'T1/MT/PD'-space
+%% please check HTML-file for best PRE-ORIENTATION ..than go to next step
 %% ========================================================================
 f_getconfig(config); % load MPM-config of this study
 f_estimPreorientHTML()
 %PLEASE CHECK THE HTML-FILE before running the next step (f_setup)!
 % --> here the best preorientation is: rotTable-Index [14]: which is '1.5708 0 1.5708'
-%--> thus, in the next step we'll set 'mpm.t2w_preorient' to [1.5708 0 1.5708]
+%-->  in the next step we'll set 'mpm.t2w_preorient' to [1.5708 0 1.5708]
  
 %% ================================================================
-%% [11] set preorientation from 't2.nii'-space to 'AVGT.nii'-space
+%% [11] set PRE-ORIENTATION from 't2.nii'-space to 'AVGT.nii'-space
 %% via f_setup('update',...
 %% ================================================================
 f_setup('update','mpm.MPM_path',v.MPMtoolbox, 'mpm.t2w_preorient',[1.5708 0 1.5708]);
@@ -879,8 +901,8 @@ disp(['<a href="matlab: edit(''' config ''');">' 'edit mpm_config-file'...
     '</a>' ' * please check the configfile* ']);
  
 %% ============================================================================
-%% [12] set preorientation from  'T1/MT/PD'-space to  'AVGT.nii'-space
-%% please check HTML-file for best preorientation ..than go to next step
+%% [12] set PRE-ORIENTATION from  'T1/MT/PD'-space to  'AVGT.nii'-space (template space)
+%% please check HTML-file for best PRE-ORIENTATION ..than go to next step
 %% ============================================================================
 antcb('selectdirs','all');
 mdirs= antcb('getsubjects');
@@ -893,8 +915,8 @@ z.outputstring ='sameOrient'; % % prefix of HTML-fileName
 xgetpreorientationHTML(0,z);
  
 %% ==========================================================================
-%% [13] set preorientation from 'T1/MT/PD'-space to 'AVGT.nii'-space
-%% best preorientation is rotTable-Index [11]: which is '3.1416 0 1.5708'
+%% [13] set PRE-ORIENTATION from 'T1/MT/PD'-space to 'AVGT.nii'-space
+%% best PRE-ORIENTATION is rotTable-Index [11]: which is '3.1416 0 1.5708'
 %% ==========================================================================
 antcb('set','wa.orientType',11);
  
@@ -910,9 +932,55 @@ w=struct();
 w.mpm_configfile   = fullfile(v.study,'mpm','mpm_config.m' );  % mpm-configfile
 w.antx_configfile  = fullfile(v.study,'proj.m' );              % antx-projectfile(configfile)
 w.pstep            = 'all' ;%preprocessing steps,'all' or use indices([1:5]; see mpm('steps')
-w.hstep            = 'all' ;%hmri-processing steps,'all' or use indices([1:5]; see mpm('steps');
+w.hstep            = 'all' ;%hmri-processing steps,'all' or use indices([1:7]; see mpm('steps');
 w.mdirs=antcb('getallsubjects')  ; % path of animals-DIRs to process
 mpm('nogui',w)             ; % run proccessing steps without GUI
+ 
+
+if 0
+    %% ==============================================
+    %% server/matlab-down after weekend
+    %% [15]  RUN all "hsteps"-again 
+    %%     to see steps, type:  mpm('steps')
+    %% ===============================================
+    clear global mpm
+    cprintf('*[0 .5 0]',['RUN MPM'  '\n']);
+    loadconfig(fullfile(v.study,'proj.m')); %load ANTX-project of current study
+    
+    w=struct();
+    w.mpm_configfile   = fullfile(v.study,'mpm','mpm_config.m' );  % mpm-configfile
+    w.antx_configfile  = fullfile(v.study,'proj.m' );              % antx-projectfile(configfile)
+    w.pstep            = [] ;%preprocessing steps,'all' or use indices([1:5]; see mpm('steps')
+    w.hstep            = 'all' ;%hmri-processing steps,'all' or use indices([1:7]; see mpm('steps');
+    w.mdirs=antcb('getallsubjects')  ; % path of animals-DIRs to process
+    mpm('nogui',w)             ; % run proccessing steps without GUI
+    
+end
+
+% ==============================================
+%% [15] QA 
+% please check:
+% [1] QA_REG_contourPD_normalized--AVGT.html: this HTML-file contains the registration of "PD_normalized.nii"
+%  onto AVGT.nii for all aninmals(also check the respective values)
+% [2] if something is odd in [1], check "summary.html" in the study-folder
+% ===============================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
 %% #################################################
 % pipeline
