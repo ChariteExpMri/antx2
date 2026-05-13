@@ -32,6 +32,12 @@
 %                    [1] just display the output (do not write excel-files) 
 %                    [0] write Excelfiles
 %                     default: [0]
+% 
+%  'outdir'          output-folder where new excelfiles are stored
+%                      -<empty>, if empty files are stored in "groupfile"-folder
+%                      -<subdir>: enter subdir-name which will be created/located wtihin the study-folder
+%                      -<fullpath-dir>: 
+% 
 % 'outputprefix'     -prefix string of resulting excelfile-names; 
 %                    -default: 'ga_'
 % 'addcounter'       -add a counter to the filename-prefix
@@ -256,7 +262,20 @@
 % z.addcounter   = [1];                                                                           % % add a numeric counter to the filename-prefix                                                     
 % xgroupassigfactorial(1,z);                                                                                                                                                                           
 %                             
-% 
+%% #wb  specify output-folder
+% z=[];                                                                                                                                                                              
+% z.groupfile    = 'F:\data10\invivo\Gruppenzuteilung_LGI1_NMDAR_mGo.xlsx';     % % group-assignment file (Excel-file)                                                               
+% z.sheetIdx     = [1];                                                         % % sheet number with animal-IDs and group-assignment/factors                                        
+% z.col_animal   = [1];                                                         % % column index with ANIMAL-IDs                                                                     
+% z.col_group    = [2];                                                         % % column index/indices with groups/factors                                                         
+% z.keepRowType  = [1];                                                         % % keep row Information: [1]no [2]keep old factors [3]keep all [4]keep all except of old factors    
+% z.compType     = 'all';                                                       % % group comparison type ["all"]: make all essenial comparisons,["gui"]: specify comparisons via GIU
+% z.compFile     = '';                                                          % % only if "compType" is "file": select textfile with comparisons here (see help)                   
+% z.simulate     = [0];                                                         % % simulate output: [1]just show output, don't write file; [1] write excelfiles                     
+% z.outdir       = 'group_test2';                                               % % output-folder, if empty, files are stored in "groupfile"-folder                                  
+% z.outputprefix = 'ga_';                                                       % % prefix of resulting excelfile(s)                                                                 
+% z.addcounter   = [1];                                                         % % add a numeric counter to the filename-prefix                                                     
+% xgroupassigfactorial(0,z);  
 
 
 function xgroupassigfactorial(showgui,x)
@@ -277,7 +296,10 @@ p={...
     'compType'         'all'    'group comparison type ["all"]: make all essenial comparisons,["gui"]: specify comparisons via GIU'         {'all' 'gui' 'file'}
     'compFile'         ''       'only if "compType" is "file": select textfile with comparisons here (see help)' 'f'
     'simulate'         [0]      'simulate output: [1]just show output, don''t write file; [1] write excelfiles '                            'b'
+    
+    'outdir'           ''       'output-folder, if empty, files are stored in "groupfile"-folder; {empty|subdir|fullpath-dir}  '      'd'
     'outputprefix'     'ga_'    'prefix of resulting excelfile(s)'                                      {'ga_' 'subgroups_' 'comps_'}
+    
     'addcounter'       [1]      'add a numeric counter to the filename-prefix'                          'b'
     };
 
@@ -471,6 +493,28 @@ counterstr='';
 if z.simulate==0
     cprintf('*[0 0 1]',['write Excel-files...wait... ' '\n']);
     [pa fis ext]=fileparts(z.groupfile);
+    
+    if isempty(z.outdir)
+        outdir=pa;
+    else
+        if exist(z.outdir)==7
+            outdir=z.outdir ;
+        else
+            [pa2 pasub2]=fileparts(z.outdir);
+            if ~isempty(pa2)
+                outdir=z.outdir;
+            else
+                outdir=fullfile(  antcb('getstudypath'), pasub2  );
+            end
+            if exist(outdir)~=7
+                mkdir(outdir);
+            end
+        end
+    end
+    
+    
+    
+    
     g=w.g;
     for i=1:size(g,1)
         newlab=unique(g{i,3}(:,2),'stable');
@@ -484,7 +528,7 @@ if z.simulate==0
         
         fname=[ z.outputprefix counterstr name  '.xlsx'];
         if 1
-            F1=fullfile(pa,fname);
+            F1=fullfile(outdir,fname);
             pwrite2excel(F1,{1 'group'},g{i,4},{},g{i,3});
             %showinfo2('fileTXT: ',F1);
             %colorize groups
@@ -569,7 +613,7 @@ for i=1:size(t,1)
     
     conname=strjoin(compstr, '_');
     
-    keepcolumnMode=3;  
+    keepcolumnMode=z.keepRowType;%3;  
     if keepcolumnMode==1   % keep nothing else
         cols=[];
     elseif keepcolumnMode==2    % keep old factor-columns
@@ -760,7 +804,7 @@ end
 % ==============[check]=================================
 %% ===============================================
 
-keepcolumnMode=2 ;
+keepcolumnMode=z.keepRowType;%2 ;
 lg={};
 g={};
 for i=1:length(e)
