@@ -43,15 +43,64 @@ roco   = p.mroco ;
 dim    = p.mdim ;
 
 %% ===============================================
-g={};
-for i=1:length(p.f)
-    [d ds]=getslices(p.f{1},dim,nslice,slicemm,0 );
-    g(i).d=d;
-    g(i).ds=ds;
-    if i>1% length(p.f)==2
-        [o os]=getslices(p.f([1 i])   ,dim,nslice,slicemm,0 );
-        g(i).d=o;
-        g(i).ds=os;
+if ischar(nslice) && ~isempty(strfind(nslice,',')) 
+    %remove start and end image, 'n20,3' -->remove 3first and 3 last images
+   cm=strsplit(nslice,',');
+   nslice=cm{1};
+   [bond1 bond2]=deal(str2num(cm{2}));
+   if length(cm)>2
+       bond2=str2num(cm{3});
+   end
+   g={};
+    for i=1:length(p.f)
+        [d ds]=getslices(p.f{1},dim,nslice,slicemm,0 );
+        if i==1
+            checkmm=ds.smm;
+            try
+                checkmm([1:bond1 end+1-bond2:end])=[];
+                isok=1;
+                if isempty(checkmm); isok=0; end
+            catch
+                isok=0;
+            end
+            if isok==0
+                [bond1 bond2]=deal([]);
+            end
+        end
+        
+        ds.smm([1:bond1 end+1-bond2:end])=[];
+        d(:,:,[1:bond1 end+1-bond2:end])=[];
+        
+        g(i).d=d;
+        g(i).ds=ds;
+        if i>1% length(p.f)==2
+            [o os]=getslices(p.f([1 i])   ,dim,nslice,slicemm,0 );
+            os.smm([1:bond1 end+1-bond2:end])=[];
+            o(:,:,[1:bond1 end+1-bond2:end])=[];
+            g(i).d=o;
+            g(i).ds=os;
+        end
+    end
+   
+   
+   
+   
+    
+    
+    
+else
+    
+    
+    g={};
+    for i=1:length(p.f)
+        [d ds]=getslices(p.f{1},dim,nslice,slicemm,0 );
+        g(i).d=d;
+        g(i).ds=ds;
+        if i>1% length(p.f)==2
+            [o os]=getslices(p.f([1 i])   ,dim,nslice,slicemm,0 );
+            g(i).d=o;
+            g(i).ds=os;
+        end
     end
 end
 % ===============================================
@@ -213,6 +262,11 @@ for i=1:length(g)
     if climF(1)==climF(2);    climF(2)=climF(2)+eps; end
     if isnan(climF(1))==1; climF(1)=0      ;end
     if isnan(climF(2))==1; climF(2)=0+eps  ;end
+    
+    if isinf(climF(1))==1; climF(1)=prctile(F(:), [p.pclim ]) ;end
+    if isinf(climF(2))==1; climF(2)=prctile(F(:), [100-p.pclim]) ;end
+    
+    
     p.clim(i,:)=climF;
     
 

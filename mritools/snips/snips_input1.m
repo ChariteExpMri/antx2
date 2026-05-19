@@ -16,9 +16,18 @@ antcb('close')
 % close Antx-GUI & exit from snips-GUI
 snips('close');
 antcb('close'); exit
-
+% _____________________________
 % update Antx-GUI from github
 updateantx(2);
+% _____________________________
+% OPEN GUI WITH LAST LOGGED SESSIONS --> SELECT ONE TO LOAD THE PROJECT
+anthistory
+% show list of last ANTx project-files in CMD-window as loadable hyperlinks
+antcb('load','l')  % 'l'/'last'    : show list of last modified projectfiles (across studies)
+% load newest/last modified projectfile in path
+antcb('load','n') % 'n'/'newest'  : load newest/last modified projectfile in path
+
+
 %% #################################################
 % cmd
 % programatically create project (mouse-template) 
@@ -67,17 +76,38 @@ antcb('cwcol',[1 .94 .87]);
 antcb('cwname','paul works here');
 
 %% #################################################
-% export
+% misc
 % export files ( no need to load a specific ANTx-study  before
 % export 't2.nii' and 'mt2.nii' from study, keep existing data-structure, no GUI
 % ist 1st arg to [1] to open GUI
 % 
-
 z=[];                                                                                                                                                                                                                                 
 z.sourcePath          = 'H:\Daten-2\Imaging\AG_Harms\2025_Psychedelics_rsMRI_DTI\dat';     %% source path                                                                            
 z.fileNames           = {'t2.nii','mt2.nii'};                                              %% recoursively find these files in "sourcePath"                                                                        
 z.destinationPath     = 'C:\Users\SVC-AG-TierMRT\Desktop\invivo_psych';                    %% destination path to export files                                                                                                                                           % % boolean, [1] write a logfile "export+timestamp.txt" [0] write no logfile                                                               
-exportfiles(0,z);                                                                                                                                                                                                                     
+exportfiles(0,z);    
+
+%% #################################################
+% misc
+% make subgroup-excelfiles
+% The excelfile 'groups.xlsx' contains >2 groups: Here 3 groups with names "A",'B','C'). 
+% Create new groupfiles (xlsx-files) containing only two groups
+% resulting files: 'ga_01#A__VS__B.xlsx','ga_02#A__VS__C.xlsx', 'ga_03#B__VS__C.xlsx'
+%
+z=[];                                                                                                                                                                              
+z.groupfile    = 'F:\data10\invivo\groups.xlsx';                              % % group-assignment file (Excel-file)                                                               
+z.sheetIdx     = [1];                                                         % % sheet number with animal-IDs and group-assignment/factors                                        
+z.col_animal   = [1];                                                         % % column index with ANIMAL-IDs                                                                     
+z.col_group    = [2];                                                         % % column index/indices with groups/factors                                                         
+z.keepRowType  = [1];                                                         % % keep row Information: [1]no [2]keep old factors [3]keep all [4]keep all except of old factors    
+z.compType     = 'all';                                                       % % group comparison type ["all"]: make all essenial comparisons,["gui"]: specify comparisons via GIU
+z.compFile     = '';                                                          % % only if "compType" is "file": select textfile with comparisons here (see help)                   
+z.simulate     = [0];                                                         % % simulate output: [1]just show output, don't write file; [1] write excelfiles                     
+z.outdir       = 'groups';                                                    % % output-folder, if empty, files are stored in "groupfile"-folder                                  
+z.outputprefix = 'ga_';                                                       % % prefix of resulting excelfile(s)                                                                 
+z.addcounter   = [1];                                                         % % add a numeric counter to the filename-prefix                                                     
+xgroupassigfactorial(0,z);                                                                                                                                                         
+                                   
                    
 
 
@@ -2784,6 +2814,130 @@ fprintf(fid,'</body></html>');
 fclose(fid);
 showinfo2([' html-file'],filehtml);
 
+% ================================================================================
+%%   make HTML-file, find all 'coreg2.jpg' make 3 plots in one row 
+% ================================================================================
+clear
+study=antcb('getstudypath');
+pa_img=fullfile(study,'dat');
+flt='coreg2.jpg';
+png=spm_select('FPListRec',pa_img,flt); png=cellstr(png);
+png(regexpi2(png,'summary'))=[]; %remove subdir-pngs
+paout=fullfile(study,'check');
+if exist(paout)~=7;     mkdir(paout); end
+filehtml=fullfile(paout,'registration3.html');
+nimginrow = 3;   % <-- number of images per row
+imgheight = 400;
+fid = fopen(filehtml,'w');
+fprintf(fid,'<html><body>\n');
+fprintf(fid,'<table border="0" cellspacing="20">\n');
+for i = 1:numel(png)
+    if mod(i-1,nimginrow)==0 % start new row
+        fprintf(fid,'<tr>\n');
+    end
+    file = png{i};
+    parts = strsplit(file,filesep);
+    subj  = parts{end-1};
+    disp(subj);
+    fprintf(fid,'<td align="center" valign="top">\n');
+    fprintf(fid, '<b style="font-size:12px; color:blue; font-family:Arial;">%s</b><br>\n', ['['  pnum(i,3) ' ] ' subj]);
+    fprintf(fid,'<img src="%s" height="%d"><br>\n',file,imgheight);
+    fprintf(fid,'</td>\n');
+    if mod(i,nimginrow)==0 || i==numel(png)    % close row
+        fprintf(fid,'</tr>\n');
+    end
+end
+fprintf(fid,'</table>\n');
+fprintf(fid,'</body></html>');
+fclose(fid);
+showinfo2('html-file',filehtml);
+
+%% #################################################
+% HTML
+% make overlay, contour-plot of ANO onto x_t2.nii for all animals, create HTML-file
+
+% ==============================================
+%% part-1: make images: contour of registration
+% ===============================================
+clear
+study=antcb('getstudypath');
+pa_dat=fullfile(study,'dat');
+flt='x_t2.nii';
+img=spm_select('FPListRec',pa_dat,flt); img=cellstr(img); %find png-names
+ovl=fullfile(study,'templates','ANO.nii');
+% ovl=fullfile(study,'templates','AVGThemi.nii')
+for i=1:length(img)
+    f1=img{i};
+    f2=ovl;
+    files={f1 f2};
+    % ---[1] MAKE PLLOT WITH SLICES
+    r=[];
+    r.alpha         =  [1  -1];
+    r.blobthresh    =  [];
+    r.cbarvisible   =  [0  0 ];
+    r.cblabel       =  '';
+    r.clim          =  [ inf inf nan nan  ]; % [percentile-min percentile-max 1st image] [min max 2nd image]
+    r.cmap          =  { 'gray' 	'isoRed' };
+    r.mbarlabel     =  { '' 	'' };
+    r.mcbardecimals =  [1];
+    r.mcbarfs       =  [1];
+    r.mcbarticks    =  [2];
+    r.mlabelfs      =  [1];
+    r.mroco         =  [2  NaN]; %two rows with plots
+    r.msliceidx     =  'n20,4,4'; % obtain 20 equidist. plot, remove first and last 4 plots ->16 plots
+    r.panel         =  [2];
+    r.saveas        =  '';
+    r.thresh        =  [        NaN        NaN;   NaN        NaN  ];
+    r.visible       =  [1  1];
+    r.hide   =1; %hide image
+    orthoslice(files,r);
+    % =======save image========================================
+    pas=fileparts(f1);
+    imgName='contour_reg.png';
+    fo4=fullfile(pas,imgName);
+    q= orthoslice('post','saveas',fo4,'dosave',1,'bgtransp',1,'crop',1);
+end
+% ==============================================
+%% part-2: make HTML-file
+% ===============================================
+mdirs=antcb('getallsubjects');
+paout=fullfile(study,'check');
+if exist(paout)~=7;     mkdir(paout); end
+filehtml=fullfile(paout,'registration1.html');
+nimginrow = 2;   % <-- number of images per row
+imgheight = 230;
+fid = fopen(filehtml,'w');
+fprintf(fid,'<html><body>\n');
+fprintf(fid,'<table border="0" cellspacing="10">\n');
+for i = 1:length(mdirs)
+    if mod(i-1,nimginrow)==0 % start new row
+        fprintf(fid,'<tr>\n');
+    end
+    file = fullfile(mdirs{i}, imgName);
+    parts = strsplit(file,filesep);
+    subj  = parts{end-1};
+    fprintf(fid,'<td align="left" valign="top">\n');
+    fprintf(fid, '<b style="font-size:12px; color:blue; font-family:Arial;">%s</b><br>\n', ['['  pnum(i,3) ' ] ' subj]);
+    if exist(file)==2
+        fprintf(fid,'<img src="%s" height="%d"><br>\n',file,imgheight);
+    else
+        fprintf(fid,...
+            ['<div style="' 'width:600px;height:%dpx;border:2px dashed gray;' ...
+            'display:flex;align-items:center;justify-content:center;color:red;font-family:Arial;' ...
+            'font-size:16px;">MISSING</div><br>\n'],...
+            50);
+    end
+    fprintf(fid,'</td>\n');
+    if mod(i,nimginrow)==0 || i==numel(mdirs)    % close row
+        fprintf(fid,'</tr>\n');
+    end
+end
+fprintf(fid,'</table>\n');
+fprintf(fid,'</body></html>');
+fclose(fid);
+showinfo2('html-file',filehtml);
+
+
 
 
 
@@ -4432,6 +4586,8 @@ st= dbstack('-completenames');  % full stack info
 stf=st(find(strcmp({st.name},mfilename)));
 disp(['ERROR in file: <a href="matlab:gol(' num2str(stf.line) ')">' [ stf.name '.m  >> line-' num2str(stf.line) '' ] '</a>']);
 
+
+
 %% #################################################
 % forgotten things
 % check space of drive   
@@ -4449,6 +4605,28 @@ path='c:\'
 % remove path of multiple files (incl. subfolders/misc.paths)    
 % files_only = cellfun(@(f) [fileparts(f) ''], files, 'uni', 0);    
 files_only = cellfun(@(f) f(regexp(f,'[^\\/]+$'):end), files, 'uni', 0);
+
+%% ===============================================
+
+  % find matching lines in  multiple cells
+    idx = find(contains(lines, str)); % > matlab>1016
+    idx = find(~cellfun(@isempty, strfind(lines, str)));
+
+
+
+%% ===============================================
+% test  a function inside script
+a=[rand(5,5)]
+b=myfun(a,'velocity');
+disp(b);
+
+function b=myfun(a,tit)
+   b= mean(a,1);
+   fg,imagesc(a); title(tit); colorbar
+end
+
+
+
 %% #################################################
 % windows-10 server
 % logoff session by ID
@@ -4470,3 +4648,4 @@ files_only = cellfun(@(f) f(regexp(f,'[^\\/]+$'):end), files, 'uni', 0);
 
 
 
+  

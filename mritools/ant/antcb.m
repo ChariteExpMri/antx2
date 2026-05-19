@@ -57,6 +57,17 @@
 % antcb('cwname');                      % ..selection via command window input
 %
 % antcb('versionupdate'),
+% 
+% antcb('restartsession');   % restarts Matlab-session (and closes current session) and reload previous project
+%                            % see: antcb('restartsession?');  
+% 
+% antcb('searchstr',<pairwise parameter>) % find string in files recursively within specific path
+%                         % example: antcb('searchstr','str','display' ,'flt','*.txt','dir',pwd); % recursively find 'display' in all txt-files in current folder;
+%                         % see: antcb('searchstr?');  
+% 
+% 
+
+
 
 
 %====================================================================================================
@@ -271,6 +282,15 @@ end
 if strcmp(do,'loop?');    help antcb>loop;end
 %% ===============================================
 %% ===============================================
+if strcmp(do,'restartsession')
+    try ;    varargout{1}=restartsession(input2(2:end));
+    catch;
+        do='restartsession?';
+    end
+end
+if strcmp(do,'restartsession?');    help antcb>restartsession;end
+
+%% ===============================================
 if strcmp(do,'gohome')
     try ;    varargout{1}=gohome(input2(2:end));
     catch;
@@ -279,6 +299,27 @@ if strcmp(do,'gohome')
 end
 if strcmp(do,'gohome?');    help antcb>gohome;end
 %% ===============================================
+%% ===============================================
+if strcmp(do,'searchstr')
+    try ;   
+        %% ===============================================
+      dum=searchstr(input,nargout);
+      if nargout>=1;      
+          varargout{1}=dum{1};
+      end
+      if nargout>=2;        
+          varargout{2}=dum{2};
+      end
+          
+  
+      
+      return
+    catch;   disp('* type    antcb(''searchstr'',''?'')     for help');
+    end
+end
+if strcmp(do,'searchstr?');    help antcb>searchstr;end
+%% ===============================================
+
 
 if strcmp(do, 'load__OLD_vers_21_12_23');
     %     fprintf(' ...(re)loading project..');
@@ -2254,6 +2295,68 @@ end
 v.tb =[li cellstr(num2str(ncount)) tb];
 v.tbh=[{'Unique-Files-In-Study', '#found'} tbh];
 
+%% ===============================================
+function  o=restartsession(pp)
+% re-starts Matlab and closes current Matlab session ..
+% if ANTx-paths were set in the previous session .. ANTx-paths will be set 
+% if ANTx-project was loaded in the previous session .. ANTx-project will be loaded 
+% 
+%% ===============================================
+o=[];
+
+matlabExe = fullfile(matlabroot,'bin','matlab.exe');
+global an
+configfile='';
+studypath=pwd;
+try
+    configfile=an.configfile;
+    [pa fi ext]=fileparts(configfile);
+    configfile=fullfile(pa,[fi '.m']);
+    studypath=pa;
+end
+path_ant=fileparts(which('antlink.m'));
+
+w1='';
+if exist(path_ant)==7
+    w1=['cd ''' path_ant ''';antlink(1);'   ];
+end
+w2='';
+if exist(studypath)==7
+   w2=  ['cd ''' studypath ''';' ];
+end
+w3='';
+if exist(configfile)==2 && exist(path_ant)==7
+   w3= ['ant; antcb(''load'','''  configfile ''');'];
+end
+
+fname='restartsession';
+% w4='';
+% if exist('restartsession.m')
+  w4= [ 'try; delete(''restartsession.m''); end'];
+% end
+%% ===============================================
+w={['function ' fname]
+    w1
+    w2
+    w3
+    w4
+    };
+disp(char(w));
+F1=fullfile(studypath,[ fname '.m' ]);
+pwrite2file(F1,w);
+showinfo2('starterfile: ' ,F1);
+%% ===============================================
+% p = 'C:\myProject';
+cmd = sprintf([ ...
+    'start "" "%s" -r "' ...
+    'cd(''%s'');' fname '"' ], ...
+    fullfile(matlabroot,'bin','matlab.exe'), studypath)
+%% ===============================================
+system(cmd);
+close all force
+exit
+
+
 
 
 
@@ -2642,6 +2745,106 @@ o=nc;
 if displayfile==2;
     uhelp(g,0,'name','found files');
 end
+
+function  o=searchstr(pin,nouts)
+
+% find string in files recursively within specific path
+% antcb('searchstr',<pairwise parameter>)
+% 
+% INPUT: pairwise input parameter:
+% flt:     file-format-filter ;default: '*.m'
+%            -for all file-formatse use '*'
+% dir:     folder to recursively search for; default: pwd;
+% str:     searchstring to find in file; deafault 'a'
+% byte:    byte-size threshold; files>byte-size are skipped;  default: 10000
+% verbose: print result to comand-window; {0,1};    default:1
+% 
+% OUTPUT: cellarray with n x {'files' 'linesNumber' 'hyperlink'} 
+% 
+% EXAMPLES:
+%% recursively find 'display' in all txt-files in current folder;
+%    antcb('searchstr','str','display' ,'flt','*.txt','dir',pwd);
+% 
+%% as above, but search in all non-image-files
+%    antcb('searchstr','str','display' ,'flt','*','dir',pwd);
+% 
+%% search in Bruker-raw-files for  'VisuCoreDataSlope'
+%    antcb('searchstr','str','VisuCoreDataSlope' ,'flt','*','dir','F:\data8\brukerImport_noGUI\raw');
+% 
+%% as above, put result in output variable and  don't print results, 
+%    fx=antcb('searchstr','str','VisuCoreDataSlope' ,'flt','*','dir','F:\data8\brukerImport_noGUI\raw','verbose',0);
+
+%% ===============================================
+p.flt='*.m';
+p.dir=pwd;
+p.str='a';
+p.verbose=1;
+p.byte=10000; %file: upper byte limit
+varargout{1}=[];
+
+if ~isempty(pin)
+    p2=cell2struct(pin(2:2:end),pin(1:2:end),2);
+    p=catstruct(p,p2);
+end
+disp(['searchstring: "'  p.str  '"' ]);
+
+tbx_folder =p.dir;% 'F:\mpm';
+% tbx_folder = fileparts(which('ant.m'))
+files = dir(fullfile(tbx_folder,'**',p.flt));  % all functions recursively
+files = files(~ismember({files.name}, {'.','..'}));
+files = files(~[files.isdir]);
+
+fname={files.name};
+[~,name,ext] = fileparts(fname);
+ext = lower(ext);
+% handle .nii.gz
+if strcmp(ext,'.gz')
+    [~,~,ext2] = fileparts(name);
+    ext = [ext2 ext];   % becomes '.nii.gz'
+end
+isImage = ismember(ext, { ...% image / volume formats
+    '.nii',     '.nii.gz',     '.img',     '.hdr',     '.jpg',     '.jpeg',     '.png',     '.bmp',     '.tif', ...
+    '.tiff',     '.gif',     '.dicom',     '.dcm'   ...
+    });
+files(isImage)=[];
+files([files.bytes]>p.byte)=[];
+
+tic
+tb={};
+for k = 1:length(files)
+    fname = fullfile(files(k).folder, files(k).name);
+    try
+    txt = fileread(fname);
+    catch
+        'a'
+    end
+    
+    if contains(txt,p.str,'IgnoreCase',true)
+        lines = strsplit(txt, sprintf('\n'));
+        ix=regexpi2(lines,p.str);
+        q=cellfun(@(a) {[ '<a href="matlab:edit(''' fname '''); gol([' num2str(a) '])">' num2str(a) '</a>']}, num2cell(ix)');
+        if p.verbose==1
+            disp([fname ':' strjoin(q,',')]);
+        end
+        tb(end+1,:)={ fname ix q };
+        %         fprintf('Found reference in: %s\n', fname);
+    end
+end
+toc
+if isempty(tb)
+    disp( ['string "' p.str '" not found in "'  p.dir '"']);
+end
+
+% if nouts==1
+o{1}=tb;
+% elseif nouts==2
+z.t=tb;
+z.ht={'files' 'linesNumber' 'hyperlink'};
+o{2}=z;
+% end
+
+
+
 
 %% ===============================================
 function  o=getlabels(pin)

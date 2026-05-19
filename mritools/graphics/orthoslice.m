@@ -220,17 +220,11 @@ p.mcbardecimals  =2;         %number of decimals of ticklabels in colorbar
 
 p.mplotwidth =0.89           ;%mosaic: width of plot to allow space for colorbar; default: 0.9 (normalized units)
 
-
-
 p.thresh=[]; % imageTreshold (by value -->via transparency)
 p.visible=1; %visible image
 p.cbarvisible=[1 1 1 1 1]; %visible cbar
 p.mbarlabel='';
 p.figwidth=720; %orthoview figure-width (pixels)
-
-
-%---tests
-% p.axolperc   =-50   ;           %axoverlap in percent
 p.bgadjust  =1;
 p.bgtransp  =0; %saving: transparent background: {0|1};   (1) transparent background; default: 0
 p.crop      =0; %saving: crop image {0|1};   (1) crop image; default: 0
@@ -239,7 +233,9 @@ p.crop      =0; %saving: crop image {0|1};   (1) crop image; default: 0
 p.value0transp=1  ; %set zeros-value to nan, ie. make them transparent {0,1}; default
 p.usebrainmask=0  ; %use brainmask to hide outerbrain signals to rid [0,1]  ; default:,1
 
-p.zoomfactor=7;
+p.zoomfactor=7; %zoomfactor for zooming
+p.pclim     =5; %percentile-value for colorlimits when using inf (NOTE: nan is min or max)
+
 
 %% ========[varinpit]=======================================
 % disp(nargin)
@@ -988,6 +984,12 @@ elseif strcmp(item,'cmap')   || strcmp(item,'clims')  || strcmp(item,'thresh') |
             if isnan(lims(1)); lims=[0 0+eps]; end
         end
         
+        iinf=isinf(lims);
+        if sum(iinf)>0
+            w=[u.gx{no}(1).a(:); u.gx{no}(2).a(:) ;u.gx{no}(3).a(:)];
+            if iinf(1)==1; lims(1)=prctile(w(:), [u.p.pclim ]); end
+            if iinf(2)==1; lims(2)=prctile(w(:), [100-u.p.pclim ]); end            
+        end
         
         %% ===============================================
         
@@ -1075,6 +1077,16 @@ elseif strcmp(item,'cmap')   || strcmp(item,'clims')  || strcmp(item,'thresh') |
                 if lims(1)==lims(2); lims(2)=lims(1)+eps; end
                 if isnan(lims(1)); lims=[0 0+eps]; end
             end
+            
+            iinf=isinf(lims);
+            if sum(iinf)>0
+                b=himx.CData; b=b(:); b(isnan(b))=[];
+                if iinf(1)==1; lims(1)=prctile(b(:), [u.p.pclim ]); end
+                if iinf(2)==1; lims(2)=prctile(b(:), [100-u.p.pclim ]); end
+            end
+            
+            
+            
             caxis(lims);
             freezeColors;
             
@@ -3580,6 +3592,11 @@ for j=1:3
         if climF(1)==climF(2); climF(2)=climF(2)+eps; end
         if isnan(climF(1))==1; climF(1)=0      ;end
         if isnan(climF(2))==1; climF(2)=0+eps  ;end
+        
+        if isinf(climF(1))==1; climF(1)=prctile(F(:), [p.pclim ]) ;end
+        if isinf(climF(2))==1; climF(2)=prctile(F(:), [100-p.pclim]) ;end
+        
+        
         p.clim(i,:)=climF;
         
         if ord(j)==2

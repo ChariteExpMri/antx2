@@ -91,7 +91,7 @@ for i = 1:length(paths)
         end
     end
 end
-fileList';
+fileList=natsort(fileList');
 % toc
 %% ===============================================
 c={};
@@ -200,7 +200,8 @@ set(hf,'position',figposp);
 % set(hf,'visible','on');  % #rp1
 set(hContainer,'units','norm');
 
-
+hj = handle(jCodePane,'CallbackProperties');
+set(hj,'MousePressedCallback',@mouseCB);
 
 
 
@@ -267,6 +268,14 @@ hc = javax.swing.JMenuItem(htmlLabel);
 set(handle(hc, 'CallbackProperties'), 'ActionPerformedCallback', {@context,'run'});
 jPopup.add(hc);% Add the new item to the menu
 
+
+htmlLabel = '<html><n><font color="fuchsia">find in snips-file</font></n></html>';
+hc1 = javax.swing.JMenuItem(htmlLabel);
+set(handle(hc1, 'CallbackProperties'), 'ActionPerformedCallback', {@context,'findinSnipsfile'});
+jPopup.add(hc1);% Add the new item to the menu
+hc1.setVisible(false);
+
+
 % Attach the context menu to the syntax pane
 jCodePane.setComponentPopupMenu(jPopup);
 
@@ -278,6 +287,7 @@ us.jCodePane=jCodePane;
 us.jhPanel=jhPanel;
 us.hContainer=hContainer;
 us.pos2=round(pos2);
+us.altitem1_hide=hc1;
 % us.ispulldownON=0;
 
 
@@ -532,6 +542,54 @@ updatecolumnlist; %update list
 % % 'aa'
 
 % popup_panel()
+
+function mouseCB(src, ev)
+% jPopup = src.getComponentPopupMenu;
+isAlt = bitand(ev.getModifiersEx,  java.awt.event.InputEvent.ALT_DOWN_MASK) ~= 0;
+u=get(gcf,'userdata');
+if isAlt
+%     hc = javax.swing.JMenuItem('ALT action');
+%     set(handle(hc,'CallbackProperties'), ...
+%         'ActionPerformedCallback', @(~,~)disp('ALT action'));
+%     jPopup.add(hc);
+%     % IMPORTANT: remove it after menu closes
+%     cleanup = addlistener(jPopup, 'PopupMenuWillBecomeInvisible', @(~,~)jPopup.remove(hc));
+%     u.hc_contextitem1=hc;
+% %     hc.setEnabled(false);
+%     set(gcf,'userdata',u);
+    % store cleanup somewhere if needed
+     u.altitem1_hide.setVisible(true);
+else
+    
+%     try
+%     jPopup.remove(u.hc_contextitem1);
+    u.altitem1_hide.setVisible(false);
+%     end
+    
+    
+end
+
+
+
+
+
+% function mouseCB(src, ev)
+% % right click only
+% if ev.getButton ~= java.awt.event.MouseEvent.BUTTON3
+%     return;
+% end
+% mod = ev.getModifiersEx;
+% isAlt = bitand(mod, java.awt.event.InputEvent.ALT_DOWN_MASK) ~= 0;
+% if isAlt
+% %     showExtendedMenu(src, ev);
+%     'a'
+% else
+% %     showNormalMenu(src, ev);
+%     'b'
+% end
+
+
+
 
 function lbselectthis(e,e2)
 li=get(e,'string');
@@ -859,12 +917,14 @@ menuItem2 = javax.swing.JMenuItem('<html><b>expand tree nodes');
 menuItem3 = javax.swing.JMenuItem('<html>show/hide tooltips');
 menuItem4 = javax.swing.JMenuItem('<html>increase fontsize [+]');
 menuItem5 = javax.swing.JMenuItem('<html>decrease fontsize [-]');
+menuItem5 = javax.swing.JMenuItem('<html>show source file');
 
 set(menuItem1, 'ActionPerformedCallback', {@uitree_contextCB, 'collapse'});
 set(menuItem2, 'ActionPerformedCallback', {@uitree_contextCB, 'expand'}); 
 set(menuItem3, 'ActionPerformedCallback', {@uitree_contextCB, 'showtooltips'}); 
 set(menuItem4, 'ActionPerformedCallback', {@uitree_contextCB, 'increaseFS'}); 
-set(menuItem5, 'ActionPerformedCallback', {@uitree_contextCB, 'decreaseFS'}); 
+set(menuItem5, 'ActionPerformedCallback', {@uitree_contextCB, 'decreaseFS'});
+set(menuItem5, 'ActionPerformedCallback', {@uitree_contextCB, 'showSourcefile'}); 
 jmenu = javax.swing.JPopupMenu;
 jmenu.add(menuItem1);
 jmenu.add(menuItem2);
@@ -896,8 +956,66 @@ elseif strcmp(task,'increaseFS')
 elseif strcmp(task,'decreaseFS')
      jTree = handle(ht.getTree, 'CallbackProperties'); %TOOLTIPS
     tree_font(jTree,'-');
+elseif strcmp(task,'showSourcefile')
+       
+    %% ===============================================
+    
+     node = u.ht.getTree.getLastSelectedPathComponent;
+    ix = node.getValue;
+    mainnode=0;
+    if ischar(ix)
+        node=node.getFirstChild;
+        ix = node.getValue;
+         mainnode=1;
+    end
+    if ischar(ix)
+       return 
+    end
+       
+    j = u.jCodePane;
+    pos  = j.getCaretPosition();
+    root = j.getDocument().getDefaultRootElement();
+%     line = root.getElementIndex(pos) + 1;
+    txt  = char(j.getText());
+    txt = regexp(txt, '\r\n|\n|\r', 'split')';
+    
+    if 1% size(txt,1)==1; return; end
+        %     sstring=char(txt(line));
+        if mainnode==1
+            t1=char(u.c(ix,1));
+            t2=char(u.c(ix,2));
+            addnr=0;
+        else
+            t1=char(txt(1));
+            t2=char(txt(2));
+            addnr=1;
+        end
+        
+        % node = u.ht.getTree.getLastSelectedPathComponent
+        % name = char(node.toString)
+        % label = char(node.getName)
+        
+        %     s1=regexprep(t1,'^\s*%+\s*','');
+        %     s2=regexprep(t2,'^\s*%+\s*','');
+        %     ix=find(strcmp(u.c(:,1),s1) & strcmp(u.c(:,2),s2));
+        file=[u.c{ix,5} '.m'];
+        F1=which(file);
+        a=preadfile(F1); a=a.all;
+        
+        w1=regexpi2(a,t1);
+        w2=regexpi2(a,t2);
+        if ~isempty(w2)
+            w2= w2-1;
+        end
+        line1=mode([w1(:); w2(:)]);
+        
+        
+        edit(F1)
+        gol(line1+addnr);
+        %% ===============================================
+        
+    end
 end
-
 
 
 
@@ -1004,6 +1122,7 @@ hb.String='';
 % set()
 finder();
 set(findobj(hf,'tag','lbsearch'),'visible','off');
+set(findobj(hf,'tag','pbclosesearch'),'visible','off');
 
 function finder(e,e2)
 %% ===============================================
@@ -1043,9 +1162,45 @@ for i=1:length(li)
 end
 javaMethodEDT('repaint', u.ht);
 
+if sum(li)~=0 %scroll node to visible area
+    try
+    tree=u.ht;
+    nodenr=min(find(li));
+    hx=u.hc{nodenr};
+    jTree = tree.getTree;
+    path = javax.swing.tree.TreePath(hx.getPath);
+    jTree.expandPath(path);
+    jTree.scrollPathToVisible(path);
+    
+    rect    = jTree.getPathBounds(path);
+    visRect = jTree.getVisibleRect;
+    
+    newY = rect.y - visRect.height/2 + rect.height/2;
+    newY = max(0,newY);
+    
+%     targetRect = java.awt.Rectangle( ...
+%         0,...
+%         newY,...
+%         visRect.width,...
+%         visRect.height);
+    
+    targetRect = java.awt.Rectangle( ...
+    0,...
+    rect.y,...
+    1,...
+    1);
+    
+    jTree.scrollRectToVisible(targetRect);
+    end
+    
+    
+end
+    
+
+
 try
-set(hb,'backgroundcolor',bcol); drawnow
-set(hb,'string',s)
+    set(hb,'backgroundcolor',bcol); drawnow
+    set(hb,'string',s)
 end
 
 
@@ -1060,7 +1215,57 @@ u=get(hf,'userdata');
 txt=char(u.jCodePane.getSelectedText());
 if strcmp(task,'run')
     disp(['Selected Text: ', txt]);
-    evalin('base', txt); % Run the selected text in the base workspace
+%     evalin('base', txt); % Run the selected text in the base workspace
+    
+%% ===============================================
+
+%     txt = [
+% 'function y=bla(a)', newline, ...
+% 'y=mean(a);', newline, ...
+% 'end'];
+
+lines = strsplit(txt, sprintf('\n'));
+% lines={' function fff '};
+ix=regexpi2(lines,'function ');
+emode=1;
+for i=1:length(ix)
+    i1=strfind(lines{ix(i)},'function ' );
+    if i1==1
+        emode=2;
+    elseif i1~=1
+       i2= min(strfind(lines{ix(i)}, '%'));
+       if isempty(i2) 
+           emode=2;
+       elseif i1< i2
+             emode=2 ;
+       end
+    end
+end
+
+if emode==1
+    
+        evalin('base', txt); % Run the selected text in the base workspace
+
+    
+else
+    %% ===============================================
+    
+    
+    
+    fname = fullfile(pwd ,'temp_snipexec_123456.m');
+    fid = fopen(fname,'w');
+    fprintf(fid,'%s',txt);
+    fclose(fid);
+    [p,f] = fileparts(fname);
+    evalin('base', f);
+    % addpath(p)
+    delete(fname)
+    
+end
+%% ===============================================
+
+    
+    
 elseif strcmp(task,'helpfun_editor')
     evalin('base', ['help ' txt]);
 elseif strcmp(task,'helpfun_doc')
@@ -1087,6 +1292,50 @@ elseif strcmp(task,'show_linenumbers')
     hb=findobj(hf,'tag','bt_linenumbers');
     hb.Value=~hb.Value;
     bt_linenumbers();
+elseif strcmp(task,'findinSnipsfile')
+    %% ===============================================
+    
+    node = u.ht.getTree.getLastSelectedPathComponent;
+    ix = node.getValue;
+       
+    j = u.jCodePane;
+    pos  = j.getCaretPosition();
+    root = j.getDocument().getDefaultRootElement();
+    line = root.getElementIndex(pos) + 1;
+    txt  = char(j.getText());
+    txt = regexp(txt, '\r\n|\n|\r', 'split')';
+    if size(txt,1)==1; return; end
+    sstring=char(txt(line));
+    
+
+% node = u.ht.getTree.getLastSelectedPathComponent
+% name = char(node.toString)
+% label = char(node.getName)
+    t1=char(txt(1));
+    t2=char(txt(2));
+%     s1=regexprep(t1,'^\s*%+\s*','');
+%     s2=regexprep(t2,'^\s*%+\s*','');
+%     ix=find(strcmp(u.c(:,1),s1) & strcmp(u.c(:,2),s2));
+    file=[u.c{ix,5} '.m'];
+    F1=which(file);
+    a=preadfile(F1); a=a.all;
+    
+    w1=regexpi2(a,t1);
+    w2=regexpi2(a,t2);
+    if ~isempty(w2)
+       w2= w2-1;
+    end
+    line1=mode([w1(:); w2(:)]);
+    
+    
+    edit(F1)
+    gol(line+line1-1);
+    
+    
+
+%% ===============================================
+
+    
 end
 
 

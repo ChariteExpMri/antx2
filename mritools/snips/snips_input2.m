@@ -51,7 +51,7 @@ cf;clear;clc
 smoothvalue=0.28    ;% SMOOTHING:: if [0]: no smoothing; [0.28]: smooth with kernel 0.28mm
 
 pamain     =antcb('getstudypath');       %get path of study
-paout      =fullfile(pamain,'voxstat',['voxstat_smooth ' num2str(smoothvalue)  ]);  %outputMain-Dir                    %PLEASE MODIFY: THE MAIN-OUTPUT-FOLDER
+paout      =fullfile(pamain,'voxstat',['voxstat_smooth' num2str(smoothvalue)  ]);  %outputMain-Dir                    %PLEASE MODIFY: THE MAIN-OUTPUT-FOLDER
 pagroup    =fullfile(pamain,'groups'); %path containing the groupfiles (Excelfilesfiles)
 groupfiles =spm_select('FPList',pagroup,'^gr_.*.xlsx'); groupfiles=cellstr(groupfiles); %get all groupfiles
 
@@ -189,6 +189,94 @@ v.outdir  = fullfile(outdir_main,['barplots_'  extracttype 'png']);
 fp2=rspm_barplots(v);
  
  
+%% #################################################
+% TFCE-VOXELWISE-STATISTIC
+% PART-1: DATA-PREPARATION to run TFCE on maps in standard space(SS) 
+% PART-2:  RUN TFCE ON HPC--> see below
+
+%% ==============================================
+%% [PART-1]: DATA-PREPARATION FOR TFCA on SS_maps
+%% ==============================================
+cf;clear;clc
+addpath('D:\MATLAB\TFCEonHPC');      %path to TFCE-functions   
+v.study      = antcb('getstudypath');%current ANTx-study ;example 'H:\Daten-2\Imaging\AG_Ambrozkiewicz'; %ANTx-study
+v.pa_HPCmain = 'X:\mri\TFCE';        %main folder on HPC to work on
+v.subdir     = 'TFCE_a2';            %subfolder in TFCE-study on HPC ('TFCE_a1','TFCE_a2' ...)
+ 
+v.files      = {'x_c1t2.nii','x_c2t2.nii','JD.nii'...  % make voxstat for these maps
+                'x_fa.nii'    'x_rd.nii'    'x_ad.nii'   'x_adc.nii'   };
+v.groupfile  = fullfile(v.study,'group','Gruppenzuteilung_LGI1_NMDAR_mGo.xlsx'); %groupAssingment-file
+v.animal_col = [1];  %animal-column
+v.group_cols = [2];  %condition/factor-column(s)
+ 
+v.pa_atl     = fullfile(v.study,'templates');  %path of templates with 'ANO.nii' & 'AVGT.nii'
+v.minDist_mm = 1.0;  %min distance of peaks in cluster [in mm] (can be modified in part-2)
+v.nPeaks     = 3;    %max peaks per cluster to resport (can be modified in part-2) 
+v.HPC_hostname='s-sc-frontend2.charite.de'; %HPC-hostname
+ 
+% ==============================================
+%%   run this functions
+% ===============================================
+v=sub_makecontrasts(v); %create TFCE-contrasts
+v=sub_writecontrast(v); %write contrasts and info to HPC
+v=sub_write4Dnifti(v);  %write 4D-niftis (maps) to HPC
+v=sub_exportscripts2HPC(v); %export HPC-scripts
+v=sub_saveproject(v);  %save projects in <v.study>/<v.subdir>
+ 
+%% ==============================================
+%% [PART-2]:  RUN TFCE ON HPC
+%% ==============================================
+% The slurm batch will be displayed in the comand-window; example: "batch_TFCE_2025_NMDR_LGI1_a1.sh"
+% NOW, RUN SHELL-SCRIPT ON HPC manually:
+% HPC-execution run the following comand: 
+% [cmd to show batchfile on HPC]: cat batch_TFCE_2025_NMDR_LGI1_a1.sh
+% [cmd to run on HPC           ]: sbatch batch_TFCE_2025_NMDR_LGI1_a1.sh
+
+%% #################################################
+% TFCE-VOXELWISE-STATISTIC
+% PART-3: make XLSX-file, PLOTS and PPT
+% run this after runnng HPC-TFCE-calulation
+
+%% ==============================================
+%% [PART-3]: make XLSX-file, PLOTS and PPT
+%% ==============================================
+clear
+addpath('D:\MATLAB\TFCEonHPC');
+v.study      = antcb('getstudypath');
+v.subdir     = 'TFCE_a2'; 
+matfile=fullfile(v.study,v.subdir,'tfce.mat');
+sub_loadconfig(matfile);
+%% ===[make excel, PNGs and PPTs: default]====
+t1_make_TFCEplots();
+ 
+if 0  % specifc modificationd of the plots
+    return
+    %% ===[make excel, PNGs and PPTs: use specific plotParameter]===
+    r=[];
+    r.cursorwidth =  [0.3];
+    r.clim        =  [nan 200 ; [3 8 ] ];      % [0.95 1 ]
+    r.cmap        =  { 'gray' 'actc.lut'};
+    t1_make_TFCEplots('plotparams',r)
+    
+    %% =[PLOTs: once excelfile is created, change plots only]===
+    % use another output-DIR
+    r.cursorwidth =  [0.3];
+    r.clim        =  [nan nan ; [3 8 ] ];      % [0.95 1 ]
+    r.cmap        =  { 'gray' 'NIH_ice.lut'};
+    outdir='H:\Daten-2\Imaging\AG_Ambrozkiewicz\TFCE_a2\_modifplots';
+    t1_make_TFCEplots('replot',r,'outdir', outdir );
+    
+    % displax availbale colormaps
+    showinfo2(['colormaps'],which('colormaps.html'));
+end
+%% ====[make groupAverages]==================
+t2_averagegroups();
+%% ====[clusterPeaks: make excel and barplots]==========
+if 0 %optional
+    t3_barplots_peaks();
+end
+%% ====[clusterMean: make excel and barplots]==========
+t4_barplots_cluster();
 
 
 

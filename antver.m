@@ -1199,7 +1199,8 @@
 % #ba 13 May 2026 (10:08:45)
 % #k [xbruker2nifti.m] #n : improved reading performance
 % #k [snips.m] #n updated : added updated exvivo-MPM-pipeline
-% 
+% #ba 16 May 2026 (23:16:01)
+% minor unspecific updates
 % 
 % 
 
