@@ -422,7 +422,7 @@ pwrite2file(F4,z);
 % ==========================================================================================================================================
 function F1=makeHTML_WARPcontour(w)
 be=getHTML_endlines(); 
-he=getHTML_header('INI', w.refresh);
+he=getHTML_header('WARPcontour', w.refresh);
 %% ===============title================================
 title='Warping contourplot';
 ti={...

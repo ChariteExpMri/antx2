@@ -275,7 +275,7 @@ if z.isParallel==1
         z2     =z;
         z2.mdir=pa{i};
         [~,animal]=fileparts(z2.mdir);
-        msg2{i,1}=proc_mdir(z2);
+        msg2{i}=proc_mdir(z2);
     end
     
     
