@@ -78,6 +78,7 @@ F1=makeHTML_INIT(w);
 F2=makeHTML_COREG(w);
 F3=makeHTML_SEGM(w);
 F4=makeHTML_WARP(w);
+F5=makeHTML_WARPcontour(w);
 % 
 
 htmlfiles={F1;F2;F3;F3};
@@ -87,6 +88,7 @@ if w.show==1
     web(F2,'-new');
     web(F3,'-new');
     web(F4,'-new');
+    web(F5,'-new');
 end
 
 
@@ -411,6 +413,82 @@ end
 z=[ he;          ;ti ;in       ;be   ];
 F4=fullfile(w.paout,['stp4_' lower(title) '.html'] );
 pwrite2file(F4,z);
+
+
+
+
+% ==========================================================================================================================================
+%%   [1] makeHTML_WARPcontour
+% ==========================================================================================================================================
+function F1=makeHTML_WARPcontour(w)
+be=getHTML_endlines(); 
+he=getHTML_header('INI', w.refresh);
+%% ===============title================================
+title='Warping contourplot';
+ti={...
+    ['<A NAME="codewordTOP">']
+    ['<b><h2 style="color:green; margin-top:3;margin-bottom:0"> ' title ' </h2></b>']
+    ['<pre>']
+    ['study: ' w.pastudy]
+    ['date : ' datestr(now)]
+    ['</pre>']
+    };
+%  loop over mdirs% ==============================================
+imgName='warp_contour_ANO.png';
+nimginrow = 2;   % <-- number of images per row
+imgheight = 230;
+in={};
+in{end+1,1}='<table border="0" cellspacing="10">';
+
+mdirs=w.mdirs;
+for i = 1:length(mdirs)
+    q={};
+    if mod(i-1,nimginrow)==0 % start new row
+       q(end+1,1)={'<tr>'};
+    end
+    file = fullfile(mdirs{i},'summary', imgName);
+    parts = strsplit(file,filesep);
+    animal=parts{end-2};
+    subdir  = parts{end-1};
+    q{end+1,1}='<td align="left" valign="top">';
+    q{end+1,1}=['<b style="font-size:12px; color:blue; font-family:Arial;">' ['['  pnum(i,3) ' ] ' animal]   '</b><br>'  ];
+    q{end+1,1}=['<n style="font-size:10px; color:black; font-family:Arial;">' [mdirs{i}]   '</n><br>'  ];
+%     if exist(file)==2
+   %<img src="../dat/m1/summary/AVGT.gif" id="x_t21" width="400" height="400" onclick=
+    q{end+1,1}=...
+    ['<img src="' [  '../dat/' animal '/' subdir '/' imgName ]  '" height="' num2str(imgheight) '"><br>'];
+    
+%        q{end+1,1}= sprintf('<img src="%s" height="%d"><br>',file,imgheight);
+%     else
+%          q{end+1,1}= sprintf(...
+%             ['<div style="' 'width:600px;height:%dpx;border:2px dashed gray;' ...
+%             'display:flex;align-items:center;justify-content:center;color:red;font-family:Arial;' ...
+%             'font-size:16px;">MISSING</div><br>\n'],...
+%             50);
+%     end
+    q{end+1,1}= sprintf('</td>');
+    if mod(i,nimginrow)==0 || i==numel(mdirs)    % close row
+        q{end+1,1}= sprintf('</tr>');
+    end
+    in=[in;  q] ; 
+end
+in{end+1,1}='</table border>';
+% ===============================================
+
+% ['<img src="' msk '" alt="HTML5 Icon" style="width:128px;height:128px;">']
+% ['<img src="/images/html5.gif" alt="HTML5 Icon" style="width:128px;height:128px;">']
+% =======[write webside]=======================
+ z=[ he;          ;ti ;in       ;be   ];
+% z=[ '<html><body>';          ;ti ;in       ;be   ];
+F1=fullfile(w.paout,['stp4_' lower(title) '.html'] );
+pwrite2file(F1,z);
+
+% showinfo2('',F1)
+
+%% ===============================================
+
+
+
 
 function writeCSSfile(cssfilename)
 % ==============================================

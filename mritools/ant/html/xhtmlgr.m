@@ -697,7 +697,8 @@ li={'<font size="+1">'
     '<a href="summary_steps/stp1_initialization.html" target="_blank">initialization</a>&nbsp;&nbsp;&nbsp;'
     '<a href="summary_steps/stp2_coregistration.html" target="_blank">coregistration</a>&nbsp;&nbsp;&nbsp;'
     '<a href="summary_steps/stp3_segmentation.html"   target="_blank">segmentation</a>&nbsp;&nbsp;&nbsp;'
-    '<a href="summary_steps/stp4_warping.html"        target="_blank">warping</a><br>&nbsp;&nbsp;&nbsp;'
+    '<a href="summary_steps/stp4_warping.html"        target="_blank">warping</a>&nbsp;&nbsp;&nbsp;'
+    '<a href="summary_steps/stp4_warping contourplot.html"        target="_blank">contour</a><br>&nbsp;&nbsp;&nbsp;'
     '</font>'};
 
 m1=a(1:is-1); 

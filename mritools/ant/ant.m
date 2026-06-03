@@ -394,6 +394,7 @@ h = uicontrol('style','radiobutton','units','normalized','position',[.94 .65 .08
 c = uicontextmenu;
 plotline.UIContextMenu = c;
 m1 = uimenu(c,'Label','show HTML summary now','Callback',@showHTMLsummary);
+m1 = uimenu(c,'Label','recreate HTML summary ','Callback',@recreateHTMLsummary);
 m1 = uimenu(c,'Label','export HTML summary','Callback',@fun_summary_export);
 set(h,'UIContextMenu',c);
 
@@ -4275,17 +4276,27 @@ end
 
 
 function showHTMLsummary(e,e2)
-
 global an
 if isempty(an)
     page=fullfile(pwd,'summary.html');
 else
     page=fullfile(fileparts(an.datpath),'summary.html');
 end
-
 if exist(page)==2
     xhtmlgr('show','page',page);
 end
+
+function recreateHTMLsummary(e,e2)
+
+
+HTMLpath=fullfile( antcb('getstudypath'));
+F1=fullfile(HTMLpath,'summary.html');
+ht=xhtmlgr('copyhtml','s' ,which('formgr.html'),'t',F1);
+ xhtmlgr('study','page',ht,'study',HTMLpath);
+xhtmlgr('timer','page',ht,'start',datestr(now));
+xhtmlgr('update','page',F1);
+showinfo2('HTMLsummary',F1)
+
 
 function fun_summary_export(e,e2)
 

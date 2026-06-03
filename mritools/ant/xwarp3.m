@@ -65,8 +65,27 @@ if strcmp(s,'batch')
     return
 end
 
+if strcmp(s,'createcontours')
+    
+    p.mdirs=[];
+    try
+        p.mdirs=antcb('getallsubjects');
+    end
+    if ~isempty(varargin)
+        pin=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+        p=catstruct(p,pin)
+    end
+    for i=1:length(p.mdirs)
+        makecontour_ANO(p.mdirs{i});
+    end
+    return
+end
 
 
+if ~isstruct(s)
+    error('false inputs')
+    return
+end
 
 
 timex=tic;
@@ -1068,6 +1087,14 @@ if find(s.task==4)
     fis{1}=fullfile(s.pa,'JD.nii');
     movefile(tr4,fis{1},'f');
     showinfo2(msgvol,fis{1},+1) ;
+    
+    
+    %% ======[contourplot]===========
+    try
+        makecontour_ANO(s.pa);
+    end
+    
+    
     %% ===============================================================
     %%  [4.2]  clean up
     %% ===============================================================
@@ -1107,6 +1134,54 @@ timex2=toc(timex);
 try
     antcb('update');
 end
+
+
+function makecontour_ANO(pa)
+
+
+% function snip_makecontour(s.pa)
+
+%% ===============================================
+% tic
+f1=fullfile(pa,'x_t2.nii');
+f2=fullfile(fileparts(fileparts(pa)),'templates','ANO.nii');%'AVGThemi.nii')
+files={f1 f2};
+% ---[1] MAKE PLLOT WITH SLICES
+r=[];
+r.alpha         =  [1  -1];
+r.blobthresh    =  [];
+r.cbarvisible   =  [0  0 ];
+r.cblabel       =  '';
+r.clim          =  [ inf inf nan nan  ]; % [percentile-min percentile-max 1st image] [min max 2nd image]
+r.cmap          =  { 'gray' 	'isoRed' };
+r.mbarlabel     =  { '' 	'' };
+r.mcbardecimals =  [1];
+r.mcbarfs       =  [1];
+r.mcbarticks    =  [2];
+r.mlabelfs      =  [1];
+r.mroco         =  [2  NaN]; %two rows with plots
+r.msliceidx     =  'n20,4,4'; % obtain 20 equidist. plot, remove first and last 4 plots ->16 plots
+r.panel         =  [2];
+r.saveas        =  '';
+r.thresh        =  [        NaN        NaN;   NaN        NaN  ];
+r.visible       =  [1  1];
+r.hide   =1; %hide image
+Fh=orthoslice(files,r);
+% =======save image========================================
+imgName='warp_contour_ANO.png';
+fo4=fullfile(pa,'summary',imgName);
+q= orthoslice('post','saveas',fo4,'dosave',1,'bgtransp',1,'crop',1,'saveres',200);
+
+try;delete(Fh); end
+% toc
+
+%% ===============================================
+
+
+
+
+
+
 
 function showinfo(infox, bold,col )
 %% SHOW INFO
