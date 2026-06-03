@@ -1201,6 +1201,7 @@
 % #k [snips.m] #n updated : added updated exvivo-MPM-pipeline
 % #ba 16 May 2026 (23:16:01)
 % minor unspecific updates
+% #k [xcoreg2D_singleSlice.m] #n updated: added parameter NumberOfResolutions
 % 
 % 
 

@@ -65,7 +65,14 @@
 %        [1000 2000]  ...number of iteration for 1st parameterfile is set to 1000 (example: rigid registration)
 %                        whereas the number of iteration for the 2nd parameterfile is set to 2000 (example: affine registration)
 %     -default: [], i.e. the default MaximumNumberOfIterations of the parameterfile(s) are used.
-%                   
+% 
+% [NumberOfResolutions]    :  maximum number of resolutions, (leave empty to use default NumberOfResolutions from parameter-file) 
+%     -These values will override the NumberOfResolutions specified in the parameter-files
+%     -examples:
+%        [3]   ...number of resolutions for single parameterfile is set to [3]  
+%        [3 4]  ...number of resolutions for 1st parameterfile is set to [3] (example: rigid registration)
+%                        whereas the number of resolutions for the 2nd parameterfile is set to [4] (example: affine registration)
+%     -default: [], i.e. the default NumberOfResolutions of the parameterfile(s) are used.                  
 % 
 % 
 %% #ok ___GUI___
@@ -93,6 +100,25 @@
 % z.isParallel     = [1];                                                                                % % parallel processing over sourceFiles , {0|1}; default: [0]                                                                                     
 % xcoreg2D_singleSlice(1,z);                                                                            % % run function with GUI.
 % 
+% % % #ba [ EXAMPLE-2]
+% % % set NumberOfResolutions =[1] (faster), with default MaximumNumberOfIterations
+% z=[];                                                                                                                                                                                                                                                                
+% z.targetFile                = { 'T1rho_2DG__001.nii' };              % % target image (single 3D-NIFTI-file)                                                                                                            
+% z.sourceFiles               = { 'T1rho_2DG__002.nii' };              % % source images (1/more 3D-NIFTI-files)                                                                                                          
+% z.slice                     = [1];                                   % % slice  to register (3rd dimension), registration parameter will be applied to the other slices                                                 
+% z.sliceDimension            = [3];                                   % % slice is taken from this dimension {1|2|3}; default: [3]                                                                                       
+% z.parameterFiles            = { which('parameters_Rigid2D.txt')};    % % Elastix-2D-paramer-files (rigid,affine or Bspline), single or multiple files                                                                   
+% z.interpOrder               = 'auto';                                % % interpolation: [0] nearest neighbour, [1] bilinear interpolation, [3] spline interpolation, order 3, ["auto"] to autodetect interpolation order
+% z.prefix                    = 'c_';                                  % % file prefix of the output file (if empty, "c_" is used  )                                                                                      
+% z.cleanup                   = [1];                                   % % do cleanup. Remove temporary processing folder, {0|1|2}; default: [1]                                                                          
+% z.isParallel                = [0];                                   % % parallel processing over sourceFiles , {0|1}; default: [0]                                                                                     
+% z.simulate                  = [0];                                   % % simulate only (check existence of files,similar header-mat and dimensions) , {0|1}; default: [0]                                               
+% z.MaximumNumberOfIterations = [];                                    % % number of iterations (if empty use number of iterations as specified in parameter-file)                                                        
+% z.NumberOfResolutions       = [1];                                   % % number of resolution (if empty use number of resolutions as specified in parameter-file)                                                       
+% xcoreg2D_singleSlice(1,z);    
+% 
+% 
+
 % 
 %% #m RE-USE BATCH: see 'anth' [..anthistory] -variable in workspace
 % 
@@ -152,6 +178,14 @@ param_iterations={...
     'TWO parameterfiles: each with 1000 iterations: [1000 1000]'        [1000 1000]
     'THREE parameterfiles: each with 1000 iterations: [1000 1000 1000]' [1000 1000 1000]
     };
+
+param_resolutions={...
+    'RESOLUTIONS as specified in parameterfile(s)'                       []
+    'SINGLE parameterfile: number of resolutions [2]'                    [2]
+    'SINGLE parameterfile: number of resolutions [3]'                    [3]
+    'TWO parameterfiles: each with 3 resolutions: [3 3]'                 [3 3]
+    'THREE parameterfiles: each with 3 resolutions: [3 3 3 ]' [3 3 3]
+    };
    
 
 %% ________________________________________________________________________________________________
@@ -183,6 +217,7 @@ p={...
     'inf3000'        ''                           '' ''
     'inf3'  '___ELASTIX_PARAMETER_SPECS___'  ' ' ' '
     'MaximumNumberOfIterations'   []    'number of iterations (if empty use number of iterations as specified in parameter-file)'   param_iterations
+    'NumberOfResolutions'         []    'number of resolution (if empty use number of resolutions as specified in parameter-file)'  param_resolutions
     };
 
 
@@ -311,7 +346,7 @@ if p0.isParallel==1 && length(p0.sourceFiles)>1
         p.iter       =i;
         p.niter      =length(p0.sourceFiles);
         p.sourceFiles=p0.sourceFiles(i);
-        msg{i,1}=proc_register(p);
+        msg{i}=proc_register(p);
     end
 else
     for i=1:length(p0.sourceFiles)
@@ -513,15 +548,26 @@ paramFile0 =cellstr(paramFile0);
 if ~isempty(p.MaximumNumberOfIterations)
     numberOfIterations=p.MaximumNumberOfIterations;
     if length(paramFile0)>length(numberOfIterations)
-        numberOfIterations=repmat(numberOfIterations, [1 length(paramFile0)]);
+        numberOfIterations=repmat(numberOfIterations(1), [1 length(paramFile0)]);
         disp([' Number of paramerfiles is ' num2str(length(paramFile0)) '. It is expected that also '  ...
             num2str(length(paramFile0)) ' values for the "numberOfIterations" is given!']);
         disp(['--> SOLUTION: numberOfIterations is replicated to match the number of paramerfiles: [' num2str(numberOfIterations) ']'   ]);
     end
 end
+if ~isempty(p.NumberOfResolutions)
+    numberOfResolutions=p.NumberOfResolutions;
+    if length(paramFile0)>length(numberOfResolutions)
+        numberOfResolutions=repmat(numberOfResolutions(1), [1 length(paramFile0)]);
+        disp([' Number of paramerfiles is ' num2str(length(paramFile0)) '. It is expected that also '  ...
+            num2str(length(paramFile0)) ' values for the "numberOfResolutions" is given!']);
+        disp(['--> SOLUTION: numberOfResolutions is replicated to match the number of paramerfiles: [' num2str(numberOfResolutions) ']'   ]);
+    end
+end
+
 
 % set copy paramfiles and set parameter
-chk__NO_iterations=[];
+chk__NO_iterations =[];
+chk__NO_resolutuons=[];
 for i=1:length(paramFile0)
     [papar parname parext] =fileparts(paramFile0{i});
     paramFile{i,1}=fullfile(paoutParamfiles,[ parname parext] );
@@ -533,8 +579,15 @@ for i=1:length(paramFile0)
          set_ix(paramFile{i}, 'MaximumNumberOfIterations' ,numberOfIterations(i));
     end
      chk__NO_iterations(1,i)=  get_ix(paramFile{i}, 'MaximumNumberOfIterations');
+     
+    if ~isempty(p.NumberOfResolutions)
+         set_ix(paramFile{i}, 'NumberOfResolutions' ,numberOfResolutions(i));
+    end
+     chk__NO_resolutuons(1,i)=  get_ix(paramFile{i}, 'NumberOfResolutions');
+     
 end
 disp([ '  ..MaximumNumberOfIterations: ['  num2str(chk__NO_iterations) ']' ]);
+disp([ '  ..NumberOfResolutions      : ['  num2str(chk__NO_resolutuons) ']' ]);
 
 
 % ==============================================

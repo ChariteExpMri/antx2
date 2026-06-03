@@ -9,6 +9,7 @@
 ------------------  
   &#x1F535;   <ins>**16 May 2026 (23:16:01)**</ins>  
   minor unspecific updates  
+   __[xcoreg2D_singleSlice.m]__ updated: added parameter NumberOfResolutions  
 <!---->
   &#x1F535;   <ins>**13 May 2026 (10:08:45)**</ins>  
    __[xbruker2nifti.m]__ : improved reading performance  
