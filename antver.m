@@ -1309,6 +1309,7 @@ it(end+1)=size(s1,1);
 %% ============[new dots/symbols]===================================
 tb={};
 tb(end+1,:)={ '#ba'    '&#x1F535; ' '&#x1F535; LARGE BLUE CIRCLE --new date dot '   } ;
+tb(end+1,:)={ '#wb'    '&#x1F535; ' '&#x1F535; LARGE BLUE CIRCLE --new date dot '   } ;
 tb(end+1,:)={ '#bw'    '&#x1F4D7; ' '&#x1F4D7; GREEN BOOK -->new tutorial '   } ;
 tb(end+1,:)={ '#ra'    '&#x1F535; ' '&#x1F535; LARGE BLUE CIRCLE --new date dot (used in older dates in antver) '   } ;
 tb(end+1,:)={ '#ok'    '&#x1F34E; ' '&#x1F34E; green apple   new antx-version' } ;
