@@ -3,10 +3,15 @@
 %
 %% [OPTIONAL PAIRWISE INPUTS] ___________________________________________
 % 'form' or 'm':  form/mode to display (default: 1)
-%       1    files x folder ..long version
-%       11   files x folder ..compact version
-%       2    folder x files ..long version
-%       22   folder x files ..compact version
+%       [1]    :files x folder ..long version
+%       [11]   :files x folder ..compact version
+%       [2]    :folder x files ..long version
+%       [22]   :folder x files ..compact version
+%     'list'   : list of all files
+%     'cell'   : list of all files in quotes (directly usable in matlab)
+%     'cellist': one line-list of all files in quotes (directly usable in matlab)
+%     'counts' : list and counts of all files
+% 
 % 'sel'  'selected' :  -show files only of GUI-selected animals
 %        {FP-mdirs}    : cellstring with fullpath animal-dirs
 %        {   mdirs}    : cellstring with animal-dirs assuming project is loaded
@@ -382,20 +387,54 @@ if 1
             df3=df3(:,[end]);
             x=[[ {' ' 'counts'}  ]; [ he2]; [  fisuni(:)  df3  ] ];
         end
-        
           % resort counts as 2nd column
         try
             x=[x(:,1) x(:,end) x(:,2:end-1)];
             x=[x(1,:); x(2,:);x(end,:); x(2:end-1,:)];
         end
-        
         w=plog([],x,0,'FILE x FOLDER','al=1;');
+        if p.show==1 % show table
+            disp(char(w))
+        end
+   
+      elseif ischar(p.form) && ( strcmp(p.form,'list') || strcmp(p.form,'cell') || strcmp(p.form,'celline'))
+          x=fisuni;
+          if strcmp(x{end,1},'counts')==1
+            x(end,:)=[];
+        end
+          %w=plog([],x,0,'FILES','al=1;');
+          w=x;
+          if strcmp(p.form,'cell')
+              w=cellfun(@(a) {[ ''''  a '''' ]},w);
+          elseif strcmp(p.form,'celline')
+              w=cellfun(@(a) {[ ''''  a '''' ]},w);
+              w=strjoin(w,', ');
+          end
+          
+          
+          
+          
+           if p.show==1 % show table
+            disp(char(w))
+           end
+    elseif ischar(p.form) && strcmp(p.form,'counts')
+        x=[[fisuni df2(end,:)' ]];
+        if strcmp(x{end,1},'counts')==1
+            x(end,:)=[];
+        end
+        
+        w=plog([''],x,0,'FILES','al=1;');
         
         
         if p.show==1 % show table
             disp(char(w))
         end
         
+          
+          
+          
+          
+          
         
         %         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
         %         FILE x FOLDER
