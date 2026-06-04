@@ -34,9 +34,12 @@
 % dir or 'd' :-as  <char> : upper dir ("dat"-dir) to search in subdirs or other dir
 %           default: use data-path from loaded project (an.datpath)
 %         : as <cell> list of fullpath-animal-dirs or other dir 
-% show or 's' : show in comand-window (default: 1)
-%       [1] yes
+% show or 's' : show  output 
+%       [1] show in comand-window, default: 1
+%       [2] show in separate window
 %       [0] no
+% 
+% 
 %% [OPTIONAL OUTPUT] ___________________________________________
 % o-struct with
 %     hm:       header of m: {'dirs x files'}
@@ -290,8 +293,12 @@ if 1
         % ===============================================
         helin={repmat('=',[1 nc ])};
         dlin =repmat({'='},[1 size(df2,2) ]);
-        w=plog([],[[hedirs he2];[helin dlin]; [ dirs2  (df2)]],0,'FOLDER x FILE','al=1;');
         
+        try
+            w=plog([],[[hedirs he2];[helin dlin]; [ dirs2  (df2)]],0,'FOLDER x FILE','al=1;');
+        catch
+            w=plog([],[[hedirs he2];[helin dlin]; [ dirs2'  (df2)]],0,'FOLDER x FILE','al=1;');
+        end
         
         irep=regexpi2(w,'====');
         w{irep}=repmat('-',[ 1 length(w{irep}) ]);
@@ -458,7 +465,11 @@ if nargout>0
     varargout{1}=o;
 end
 
-
+if p.show==2 % show table in help-window
+  try;
+      uhelp(w);
+  end
+end
 
 
 
