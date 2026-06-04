@@ -1365,6 +1365,10 @@ mh2 = uimenu(mh,'Label',' replace header (older version)',                      
 
 mh2 = uimenu(mh,'Label',' image calculator',                                               'Callback',{@menubarCB, 'calc0'},'Separator','on',...
     'userdata',[HSTART 'make image calculations' HEND '..image-hresholding/masking/addition etc.' HEND '..create new image'  ]);
+
+mh2 = uimenu(mh,'Label',' CESL mono-exponential fit',                                               'Callback',{@menubarCB, 'CESLfit'},'Separator','on',...
+    'userdata',[HSTART 'CESL mono-exponential fit' HEND '..Estimate voxel-wise R1rho relaxation maps' HEND '..create new image'  ]);
+
 % mh2 = uimenu(mh,'Label',' Mask-Generator (GUI)',                                           'Callback',{@menubarCB, 'maskgenerate'},'Separator','on',...
 %     'userdata',[HSTART 'generate mask(s)' HEND ' from NIFTI-file ("ANO.nii")']);
 % mh2 = uimenu(mh,'Label',' make mask from Excelfile',                                       'Callback',{@menubarCB, 'maskgenerateFromExcelfile'},...
@@ -2850,6 +2854,19 @@ elseif strcmp(task,'calc0')
     end
     %% ===============================================
     xcalc(1);
+    
+elseif strcmp(task,'CESLfit')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xCESL_monoexpfit';
+        return
+    end
+    if strcmp(u.mousekey,'right')
+        hlpfun='xCESL_monoexpfit.m';
+        showcmd(hlpfun);
+        return
+    end
+    xCESL_monoexpfit();
+    
     
     %________________________________________________
 elseif strcmp(task,'manipulateheader')

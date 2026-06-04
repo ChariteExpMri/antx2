@@ -1202,6 +1202,10 @@
 % #ba 16 May 2026 (23:16:01)
 % minor unspecific updates
 % #k [xcoreg2D_singleSlice.m] #n updated: added parameter NumberOfResolutions
+% #wb 04 Jun 2026 (10:18:33)
+% #k [xCESL_monoexpfit.m] #n new: Estimate voxel-wise R1rho relaxation maps from CESL/T1rho MRI 
+% #gw --> access via ANT-menu: &#8658; Tools/CESL mono-exponential fit
+% 
 % 
 % 
 
