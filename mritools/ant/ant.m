@@ -1352,7 +1352,7 @@ mh2 = uimenu(mh,'Label','[xrename] manipulate files (rename/copy/delete/extract/
 mh2 = uimenu(mh,'Label','<html><font color="blue">[xop]: NIFTI operation (same as xrename)',       'Callback',{@menubarCB, 'call_xop'},'Separator','off',...
      'userdata',[HSTART 'similar to "xrename "... to rename/copy/delete/extract or expand NIFTI-FILES' HEND ' ..and make simple file-operations (masking/thresholding/change voxel-size)']);
  
- mh2 = uimenu(mh,'Label','flip left/right images',       'Callback',{@menubarCB, 'call_xflipLR'},'Separator','on',...
+mh2 = uimenu(mh,'Label','flip left/right images',       'Callback',{@menubarCB, 'call_xflipLR'},'Separator','on',...
      'userdata',[HSTART 'flip images: left/right' HEND ' ']);
  
  
@@ -1366,8 +1366,17 @@ mh2 = uimenu(mh,'Label',' replace header (older version)',                      
 mh2 = uimenu(mh,'Label',' image calculator',                                               'Callback',{@menubarCB, 'calc0'},'Separator','on',...
     'userdata',[HSTART 'make image calculations' HEND '..image-hresholding/masking/addition etc.' HEND '..create new image'  ]);
 
-mh2 = uimenu(mh,'Label',' CESL mono-exponential fit',                                               'Callback',{@menubarCB, 'CESLfit'},'Separator','on',...
-    'userdata',[HSTART 'CESL mono-exponential fit' HEND '..Estimate voxel-wise R1rho relaxation maps' HEND '..create new image'  ]);
+
+mh2 = uimenu(mh,'Label',' mono-exponential fit',...
+'userdata',[HSTART 'fit for CESL & diffusion data' HEND '..']);
+
+uimenu(mh2,'Label',' viewer for mono-exponential fit',                                'Callback',{@menubarCB, 'CESLfit_gui'},'Separator','on',...
+    'userdata',[HSTART 'viewer for mono-exponential fit' HEND '..' HEND '..e'  ]);
+
+uimenu(mh2,'Label',' mono-exponential fit',                                               'Callback',{@menubarCB, 'CESLfit'},'Separator','on',...
+    'userdata',[HSTART 'mono-exponential fit' HEND '..Estimate voxel-wise R1rho relaxation maps' HEND '..create new image'  ]);
+
+
 
 % mh2 = uimenu(mh,'Label',' Mask-Generator (GUI)',                                           'Callback',{@menubarCB, 'maskgenerate'},'Separator','on',...
 %     'userdata',[HSTART 'generate mask(s)' HEND ' from NIFTI-file ("ANO.nii")']);
@@ -2866,6 +2875,17 @@ elseif strcmp(task,'CESLfit')
         return
     end
     xCESL_monoexpfit();
+elseif strcmp(task,'CESLfit_gui')
+    if showhelpOnly==1   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xCESL_monoexpfit_showfit';
+        return
+    end
+    if strcmp(u.mousekey,'right')
+        hlpfun='xCESL_monoexpfit_showfit.m';
+        showcmd(hlpfun);
+        return
+    end
+    xCESL_monoexpfit_showfit();
     
     
     %________________________________________________

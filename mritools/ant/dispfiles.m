@@ -228,18 +228,54 @@ end
 % ===============================================
 
 fisuni=unique(fisall);
+fisuni=natsort(fisuni);
+sortertype=0
+if isfield(p,'sort') && strcmp(p.sort,'time')
+    sortertype=1; %sort accrding date
+elseif isfield(p,'sort') && strcmp(p.sort,'bytes')
+    sortertype=2; %sort accrding bytes
+end
+
+
+% sorter='date'
+dates=[];
 try
     df=zeros(length(dirs),length(fisuni) );
     for i=1:length(dirs)
         for j=1:length(fisuni)
             if exist(fullfile(dirs{i},fisuni{j}))==2
                 df(i,j)=1;
+                if sortertype==0; continue; end
+                %% ===============================================
+                if sortertype==1
+                    k=dir(fullfile(dirs{i},fisuni{j}));
+                    dates(i,j)=k.datenum;
+                elseif sortertype==2
+                    k=dir(fullfile(dirs{i},fisuni{j}));
+                    dates(i,j)=k.bytes;
+                end
+                %% ===============================================
+                
             end
         end
     end
 catch
     df=[];
 end
+
+%sort according date
+if sortertype==1 && ~isempty(dates)
+    dates(dates==0)=nan;
+%     datevec=nanmean(dates,1);
+     datevec=nanmax(dates,[],1);
+   [~, isort]= sort(datevec);
+   fisuni=fisuni(isort);
+   df=df(:,isort);
+    
+end
+
+
+
 % ==============================================
 %%   variable output
 % ===============================================

@@ -1203,9 +1203,11 @@
 % minor unspecific updates
 % #k [xcoreg2D_singleSlice.m] #n updated: added parameter NumberOfResolutions
 % #wb 04 Jun 2026 (10:18:33)
-% #k [xCESL_monoexpfit.m] #n new: Estimate voxel-wise R1rho relaxation maps from CESL/T1rho MRI 
-% #gw --> access via ANT-menu: &#8658; Tools/CESL mono-exponential fit
-% 
+% #k [xCESL_monoexpfit.m] #n new: Estimate voxel-wise R1rho relaxation maps from CESL/T1rho MRI or decay rate for diffusion data 
+% #gw --> access via ANT-menu: &#8658; Tools/mono-exponential fit/CESL mono-exponential fit
+% #wb 18 Jun 2026 (10:31:19)
+% #k [xCESL_monoexpfit_showfit.m] #n new: GUI to explore fit of CESL-R1rho maps or diffusion-based decay rate maps
+% #gw --> access via ANT-menu: &#8658; Tools/mono-exponential fit/viewer for mono-exponential fit
 % 
 % 
 
@@ -1257,7 +1259,7 @@ if nargin==1
         a= preadfile(which('antver.m')); a=a.all;
         gotoline=min(regexpi2(a,'EOF'))-5;
         matlab.desktop.editor.openAndGoToLine(which('antver.m'), gotoline);
-        clipboard('copy', [    ['% #ba '   datestr(now,'dd mmm yyyy (HH:MM:SS)') repmat(' ',1,0) ]           ]);
+        clipboard('copy', [    ['% #wb '   datestr(now,'dd mmm yyyy (HH:MM:SS)') repmat(' ',1,0) ]           ]);
         return
     end
 end

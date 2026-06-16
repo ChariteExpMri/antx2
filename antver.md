@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   04 Jun 2026 (10:18:33)  
+ &#x1F34E; last modification:   18 Jun 2026 (10:31:19)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,9 +7,13 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**18 Jun 2026 (10:31:19)**</ins>  
+   __[xCESL_monoexpfit_showfit.m]__ new: GUI to explore fit of CESL-R1rho maps or diffusion-based decay rate maps  
+  &#8618; access via ANT-menu: &#8658; Tools/mono-exponential fit/viewer for mono-exponential fit  
+<!---->
   &#x1F535;   <ins>**04 Jun 2026 (10:18:33)**</ins>  
-   __[xCESL_monoexpfit.m]__ new: Estimate voxel-wise R1rho relaxation maps from CESL/T1rho MRI   
-  &#8618; access via ANT-menu: &#8658; Tools/CESL mono-exponential fit  
+   __[xCESL_monoexpfit.m]__ new: Estimate voxel-wise R1rho relaxation maps from CESL/T1rho MRI or decay rate for diffusion data   
+  &#8618; access via ANT-menu: &#8658; Tools/mono-exponential fit/CESL mono-exponential fit  
 <!---->
   &#x1F535;   <ins>**16 May 2026 (23:16:01)**</ins>  
   minor unspecific updates  
