@@ -932,15 +932,24 @@ set(ht,'callback',@roitool_defined)
 % ==============[screenshot]=================================
 
 hb=uicontrol(hf,'style','pushbutton', 'string','screencapture','units','norm');
-set(hb,'position',[0.18451 0.35355 0.05 0.0476])
+set(hb,'position',[0.18595 0.31545 0.05 0.0476])
 set(hb,'tag','capture')
 set(hb,'callback',@screencapture);
 
 hb=uicontrol(hf,'style','edit', 'string',pwd,'units','norm');
-set(hb,'position',[0.0021765 0.4083 0.24 0.035],'fontsize',8);
+set(hb,'position',[0.0021765 0.4083 0.2 0.035],'fontsize',8);
 set(hb,'tag','capture_ed_path','HorizontalAlignment','left');
 set(hb,'tooltipstring','path to save screenshots');
 set(hb,'callback',@ed_path);
+
+str={pwd, '$mdir' fullfile(fileparts(fileparts(z.pa{1})),'png_fit')};
+hb=uicontrol(hf,'style','popupmenu', 'string',str,'units','norm');
+set(hb,'position',[0.2 0.4083 0.01 0.04],'fontsize',8);
+set(hb,'tag','capture_pop_path','HorizontalAlignment','left');
+set(hb,'tooltipstring',['potential paths for screenshots' char(10) ' .."$mdir" is local animal-folder']);
+set(hb,'callback',@pd_path);
+
+
 
 hb=uicontrol(hf,'style','edit', 'string','fit','units','norm');
 set(hb,'position',[0.0021765 0.37021 0.03 0.035],'fontsize',8);
@@ -1054,9 +1063,16 @@ set(hb,'BackgroundColor','w');
 set(hb,'callback',@fix_range_cb);
 
 %% ===============================================
-set(hf,'userdata',z)
-set(hf,'WindowKeyPressFcn',@keys)
+set(hf,'userdata',z);
+set(hf,'WindowKeyPressFcn',@keys);
 % set(hf,'KeyPressFcn',@keys)
+
+function pd_path(e,e2)
+hf=findobj(0,'tag','showfit');
+hp=findobj(hf,'tag','capture_pop_path');
+hb=findobj(hf,'tag','capture_ed_path');
+hb.String=hp.String{hp.Value};
+
 
 
 function helper(e,e2)
@@ -1210,9 +1226,16 @@ isfileadd =get(findobj(hf,'tag','capture_rd_addfile'),'value');
 
 hroi=findobj(hf,'tag','roi_defined');
 
+u=get(gcf,'userdata');
+ha=findobj(hf,'tag','c_animals');
 
-
-
+%% ===============================================
+if strcmp(spath,'$mdir') || strcmp(spath,'mdir') || strcmp(spath,'$local') || strcmp(spath,'local')
+    animal= ha.String{ha.Value};
+    ix=regexpi2(u.pa,animal);
+    spath=u.pa{ix};
+    
+end
 
 %% ===============================================
 addinfo='';
@@ -1253,7 +1276,6 @@ end
 
 
 %% ======[filename]=========================================
-ha=findobj(hf,'tag','c_animals');
 hfi=findobj(hf,'tag','c_files');
 
 animal='';
@@ -1283,8 +1305,10 @@ if exist('e')==1 && isfield(e,'savefile')
 end
 
 
+
 %% ===============================================
 if isauto==0
+    if exist(spath)~=7; mkdir(spath); end
     [file pa]=uiputfile(fullfile(spath,fileshort),'save screenshot');
     if isnumeric(file); return; end
     fo1=fullfile(pa,file);
@@ -1295,7 +1319,7 @@ end
 
 if exist(spath)~=7; mkdir(spath); end
 
-set(findobj(hf,'tag','capture_ed_path'),'string',spath);
+% set(findobj(hf,'tag','capture_ed_path'),'string',spath);
 
 hf=findobj(0,'tag','showfit');
 u=get(hf,'userdata');
@@ -2420,14 +2444,16 @@ if isRoi==0
     %   hdot = plot(ax2,NaN,NaN,'.','MarkerSize',10,'tag','dot','color','r');
     
     hdot = line(ax2,...
-        NaN,NaN,...
+        100,100,...
         'Marker','.',...
         'MarkerSize',10,...
         'LineStyle','none',...
         'Color','r','tag','dot','HitTest','off','PickableParts','none','hittest','off');
     
-    
-    set(hf,'WindowButtonMotionFcn',{@motion,hImg,a,w,ax3,[]})
+    drawnow
+    set(hf,'WindowButtonMotionFcn',{@motion,hImg,a,w,ax3,[]});
+    drawnow
+    set(hf,'WindowButtonMotionFcn',{@motion,hImg,a,w,ax3,[]});
 elseif isRoi==1
     myFunction(v.hpoly, [])
 end
@@ -2537,8 +2563,8 @@ function motion(src,~,hImg,a,w,ax3,mask)
 
 hf=findobj(0,'tag','showfit');
 
-%  rand(1)
-% return
+% rand(1)
+%  return
 
 
 u=get(hf,'userdata');
