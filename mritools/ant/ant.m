@@ -1376,6 +1376,10 @@ uimenu(mh2,'Label',' viewer for mono-exponential fit',                          
 uimenu(mh2,'Label',' mono-exponential fit',                                               'Callback',{@menubarCB, 'CESLfit'},'Separator','on',...
     'userdata',[HSTART 'mono-exponential fit' HEND '..Estimate voxel-wise R1rho relaxation maps' HEND '..create new image'  ]);
 
+mh2 = uimenu(mh,'Label',' Rocketship_wrapper',                     'Callback',{@menubarCB, 'Rocketship_wrapper'},'Separator','off',...
+    'userdata',[HSTART 'Rocketship_wrapper ' HEND '..Variable Flip Angle T1 Mapping.' HEND '..'  ]);
+
+
 
 
 % mh2 = uimenu(mh,'Label',' Mask-Generator (GUI)',                                           'Callback',{@menubarCB, 'maskgenerate'},'Separator','on',...
@@ -2875,6 +2879,8 @@ elseif strcmp(task,'CESLfit')
         return
     end
     xCESL_monoexpfit();
+    
+    
 elseif strcmp(task,'CESLfit_gui')
     if showhelpOnly==1   %% HELP-PARSER: we need the TARGET-FUNCTION here
         hlpfun='xCESL_monoexpfit_showfit';
@@ -2887,6 +2893,18 @@ elseif strcmp(task,'CESLfit_gui')
     end
     xCESL_monoexpfit_showfit();
     
+elseif strcmp(task,'Rocketship_wrapper')
+    thisFun='xRocketship_wrapper';
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun=thisFun;
+        return
+    end
+    if strcmp(u.mousekey,'right')
+        hlpfun=thisFun;
+        showcmd(hlpfun);
+        return
+    end
+   fh = str2func(thisFun);fh();
     
     %________________________________________________
 elseif strcmp(task,'manipulateheader')

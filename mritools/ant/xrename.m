@@ -646,8 +646,32 @@
 % xrename(0,{'.*_mag.nii' '.*_phase.nii'},{'##','##'});
 %% shrter version: delete all files containing '.*_mag.nii' or '.*_phase.nii' 
 % xrename(0,'.*_mag.nii|.*_phase.nii','##')
+%% _________________________________________________________________________________
+% 
+%% #wb    ___new filename_via removal of filenName-tokens___
+% --> for more options see contextmenu -->[enter 2nd &3rd column extended]
+% 
+%% copy file,for new fileName: remove first three and last two token from filename based on '_'-separator
+%   xrename(1,'c_06_5_VFA_T1_map_postInj_50deg.nii','@removetoken($i,"_","[1 2 3 end-1 end]")',':'); 
+%  -->output: 'VFA_T1_map.nii'
+% 
+%% copy file,for new fileName: remove 2nd and 3rd token from filename after '_' and add suffix 'post'
+%   xrename(1,'c_06_5_VFA_T1_map_postInj_50deg.nii','@removetoken($i,"_","2:3",[],"_post")',':');              
+%  -->output: 'c_VFA_T1_map_postInj_50deg_post.nii'
+% 
+%% copy file,for new fileName: remove 1st,2nd and last token from filename based on '_'-separator and add prefix 'pre_' and suffix 'post'
+%   xrename(1,'c_06_5_VFA_T1_map_postInj_50deg.nii','@removetoken($i,"_","[1 2 end]","pre_","_post")',':');    
+% -->output: 'pre_5_VFA_T1_map_postInj_post.nii'
+% 
+%% copy all files of this form '^c_.*T1_map.*.nii' and remove 2nd and 3rd token based on '_'-separator' for new filename
+% xrename(1,'^c_0.*T1_map.*.nii', '@removetoken($i,"_","[2:3]")',':');
+% this applies for the following files:
+% 'c_04_1_VFA_T1_map_5deg.nii', 'c_08_2_VFA_T1_map_10deg.nii', 'c_033_3_VFA_T1_map_20deg.nii', 'c_04_4_VFA_T1_map_35deg.nii'..
+% -->output:
+% 'c_VFA_T1_map_5deg.nii', 'c_VFA_T1_map_10deg.nii', 'c_VFA_T1_map_20deg.nii', 'c_VFA_T1_map_35deg.nii'..
+% 
 % ==============================================
-%%    optional pairwise inputs
+%% #wb   optional pairwise inputs
 % ===============================================
 % dir : fullpath dirs (cellarray) to perform the task
 % flt : file-filter; default: '.*.nii'  so select only from nifti-files
@@ -998,15 +1022,33 @@ for i=1:length(pa)      %PATH
                 
                 %% ===replace part of filename string and use as outputstring
                 if ~isempty(strfind(finew{j},'regexprep('))
-                    
                     fnameNew='';
                     evalstr=['fnameNew=regexprep(''',  [fix0 ex0],''',' finew{j}(min(strfind(finew{j}, ',')+1):end) ';'];
+                    evalstr=regexprep(evalstr,'"','''');
                     eval(evalstr);
                     if ~isempty(fnameNew)
                         s2=fullfile(pa{i},fnameNew);
-                    end
-                    
+                    end 
                 end
+                %% ===using @-function
+                %xrename(1,'c_04_1_VFA_T1_map_5deg.nii','@removetoken($i,''_'',''2:3'')','copy')
+                %xrename(1,'c_0.*.nii','@removetoken($i,''_'',''2:3'')','copy')
+                if ~isempty(strfind(finew{j},'@'))
+                    cmd=strrep(finew{j},'@','');
+                     evalstr=['fnameNew=' regexprep(cmd, '\$i',['''' fix0 ex0 '''' ]) ';' ];
+                     evalstr=regexprep(evalstr,'"','''');
+                      eval(evalstr);
+                      %fnameNew
+                      [~,~, ext11]=fileparts(fnameNew);
+                      if isempty(ext11)
+                          fnameNew=[fnameNew ex0];
+                      end
+                    if ~isempty(fnameNew)
+                        s2=fullfile(pa{i},fnameNew);
+                    end
+                end
+                
+                
                 
                 
                 %% ===============================================
@@ -2755,6 +2797,8 @@ hs = uimenu(cmenu,'label','enter 2nd & 3rd column extended',     'Callback',{@hc
 hs = uimenu(cmenu,'label','copy & rename file'    ,         'Callback',{@hcontext, 'copyNrename'},'separator','off');
 hs = uimenu(cmenu,'label','rename file'           ,         'Callback',{@hcontext, 'rename'},'separator','off');
 
+hs = uimenu(cmenu,'label','paste from other row'           ,  'Callback',{@hcontext, 'paste_otherRow'},'separator','off');
+
 hs = uimenu(cmenu,'label','<html><font color=orange>clear SELECTION: all fields'      ,  'Callback',{@hcontext, 'clearfields_sel'}      ,'separator','on');
 hs = uimenu(cmenu,'label','<html><font color=orange>clear SELECTION: "NEW FILENAME"'  ,  'Callback',{@hcontext, 'clearfields_sel_file'} ,'separator','off');
 hs = uimenu(cmenu,'label','<html><font color=orange>clear SELECTION: "TASK"'          ,  'Callback',{@hcontext, 'clearfields_sel_task'} ,'separator','off');
@@ -2854,10 +2898,15 @@ if ~strcmp(task,'showimageinfo') && ~strcmp(task,'openfile')
         set(hf,'units',fig_unit);
         
         panpos=[[230 300   270 120]];
-        panpos=[200 figposPix(4)-120-100  270 120];
-        hp = uipanel('Title','enter 2nd/3rd column','FontSize',8,...
+        panpos=[200 figposPix(4)-120-100  550 120];
+        panpos=[200 100  550 120];
+        hp = uipanel('Title','        enter 2nd/3rd column','FontSize',8,...
             'BackgroundColor','white','units','pixels','tag','pan1');
         set(hp,'position',panpos);
+        
+        
+        je2 = findjobj(hp); % hTable is the handle to the uitable object
+        set(je2,'MouseDraggedCallback',{@hsim_motio,hp}  );
         
         
         %% ==============pan-tool=================================
@@ -2887,7 +2936,8 @@ if ~strcmp(task,'showimageinfo') && ~strcmp(task,'openfile')
         hv=uicontrol('style','pushbutton','units','pixels','tag', 'hsim_pbmovepan');
         set(hv,'position',[panpos(1) panpos(2)+panpos(4) .015 .015],'string','',...
             'CData',img,'tooltipstr',['shift panel position' char(10) 'left mouseclick+move mouse/trackpad pointer position' ]);%, 'callback', {@changecolumn,-1} );
-        set(hv,'position',[panpos(1)+panpos(3)-17 panpos(2)+panpos(4)-17 15 15 ]);
+        %set(hv,'position',[panpos(1)+panpos(3)-17 panpos(2)+panpos(4)-17 15 15 ]);
+        set(hv,'position',[panpos(1) panpos(2)+panpos(4)-17 15 15 ]);
         je = findjobj(hv); % hTable is the handle to the uitable object
         set(je,'MouseDraggedCallback',{@hsim_motio,hp}  );
         % set(hp,'units','pixels');
@@ -2917,10 +2967,41 @@ if ~strcmp(task,'showimageinfo') && ~strcmp(task,'openfile')
             '_test1.nii'                        'outputfile is "_test1.nii"'
             'p:V_'                              'ADD FILENAME-PREFIX: here "V_"'
             's:_s'                              'ADD FILENAME-SUFFIX: here "_s"'
-            'regexprep(i,''^t5_'',''t6_'')'     'replace prefix "t5_" with "t6_"'
-            'regexprep(i,''flipped4'',''FLP'')' 'replace string "flipped4" with "FLP"'
-            'regexprep(i,{''^pre_'',''_01234''},{''post_'',''''})'   'replace "pre" with "post", remove "_01234"'
+            'regexprep(i,"^t5_","t6_")'     'replace prefix "t5_" with "t6_"'
+            'regexprep(i,"flipped4","FLP")' 'replace string "flipped4" with "FLP"'
+            'regexprep(i,{"^pre_","_01234"},{"post_",""})'   'replace "pre" with "post", remove "_01234"'
+            
+            ''                                   ''
+            '@removetoken($i,"_","1")'        '<html><font color="blue"><b>remove 1 token before underscore: @removetoken($i,"_","1")'
+            '@removetoken($i,"_","2:3")'       '<html><font color="blue"><b>remove 2nd & 3rd token after underscore: @removetoken($i,"_","2:3")'
+            '@removetoken($i,"_","end")'       '<html><font color="blue"><b>remove last token after underscore: @removetoken($i,"_","end")'
+            '@removetoken($i,"_","end-1")'     '<html><font color="blue"><b>remove 2nd last token after underscore: @removetoken($i,"_","end-1")'
+            '@removetoken($i,"_","end-1:end")' '<html><font color="blue"><b> remove last two token after underscore: @removetoken($i,"_","end-1:end")'
+            '@removetoken($i,"_","[1 2 end]")' '<html><font color="blue"><b> remove 1st,2nd and last token before/after underscore: @removetoken($i,"_","[1 2 end]")'
+
+            
+            '@removetoken($i,"_","1","pre_")'                   '<html><font color="green"><b>remove 1 token add prefix "pre_": @removetoken($i,"_","1","pre_")'
+            '@removetoken($i,"_","2:3",[],"_post")'             '<html><font color="green"><b>remove 2nd & 3rd token add suffix "post": @removetoken($i,"_","2:3",[],"_post")'
+            '@removetoken($i,"_","[end]",[],"_post")'           '<html><font color="green"><b> remove last token add suffix "post": @removetoken($i,"_","[end]",[],"_post")'
+            '@removetoken($i,"_","[1 2 end]","pre_","_post")' '<html><font color="green"><b> remove 1st,2nd and last token add prefix "pre_" and suffix "post": @removetoken($i,"_","[1 2 end]","pre_","_post")'
+
+            '@removetoken($i,"_",[],"pre_")'                       '<html><font color="green"><b>only add prefix "pre_" (don''t remove any token) "pre_": @removetoken($i,"_",[],"pre_")'
+            '@removetoken($i,"_",[],[],"_post")'                   '<html><font color="green"><b>only add suffix "_post" (don''t remove any token) "pre_":@removetoken($i,"_",[],[],"_post")'
+
+
+            
             };
+        
+        
+        supportsString = ~verLessThan('matlab','9.1');   % R2016b = 9.1
+        c=lis(:,1);
+        if supportsString
+            c = cellfun(@string,c,'uni',0);
+        else
+            c = cellfun(@char,c,'uni',0);
+        end
+        lis(:,1)=c;
+        
         
         %TXT-selectable options
         hb=uicontrol(hp,'style','text','units','norm','string','selectable options');
@@ -3028,7 +3109,43 @@ if ~strcmp(task,'showimageinfo') && ~strcmp(task,'openfile')
         % ==============================================
         %%
         % ===============================================
-        
+    elseif strcmp(task,'paste_otherRow')  
+     %% ===============================================
+          selrows=e.getSelectedRows;
+           if isempty(selrows)
+              msgbox(' First select target-rows ..rows which should be filled! ');
+              return
+          end
+     
+          ht= findobj(gcf,'tag','table');
+          ix1=find(~cellfun(@isempty,ht.Data(:,2)));
+          ix2=find(~cellfun(@isempty,ht.Data(:,3)));
+          ix=unique([ix1(:); ix2(:)]);
+          if isempty(ix)
+              msgbox(' NewFilename/Task is empty..can''t duplice information found..abort ');
+              return
+          end
+          
+          
+          
+          dv=ht.Data(ix,2:3);
+          dv2=cellfun(@(a,b) {[ a '|' b ]},dv(:,1),dv(:,2)); 
+          [dv2,is]=unique(dv2); %remove duplicates
+          dv=dv(is,:);
+          
+          [idx,tf] = listdlg('PromptString',{ 'Select entry to douplicate','bla'},...
+              'SelectionMode','single','ListString',dv2,'ListSize',[450,100]);
+          if isempty(idx); return; end
+          sel=dv(idx,:);
+
+          pasterows=selrows+1;
+          out=sel;
+          
+          
+          
+          
+         %% ===============================================
+         
         
     elseif strcmp(task,'copyNrename')
         prompt = {[' enter new filename ']};

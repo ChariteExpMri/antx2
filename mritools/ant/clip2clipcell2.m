@@ -15,11 +15,13 @@
 function clip2clipcell2
 
 a=clipboard('paste');
-a2=strsplit2(a,char(32))';
+% a2=strsplit2(a,char(32))';
+a2=strsplit(a,char(10)); a2=a2(:);
 % a2=sort(a2);
 a2(cellfun(@isempty,a2))=[];
 a2(strcmp(a2,'.'))=[];
 a2(strcmp(a2,[char(10) char(46) char(46)]))=[]; %'..'
+a2=cellfun(@(a) {[ strtrim(a) ]},a2);
 ro =['{' ; cellfun(@(a) {[ ' ''' a '''']},a2); '};'];
 ro=regexprep(ro,char(10),'');
 mat2clip(ro);

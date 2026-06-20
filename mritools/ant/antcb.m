@@ -2259,7 +2259,13 @@ fifull(idel)=[];
 fi2(idel)   =[];
 
 li=unique(fi2);
-[li dum ncountid]=unique(fi2);
+[li dum ncountid]=(unique(fi2));
+
+[li,ix]=natsort(li);
+dum=dum(ix);
+ncountid=ncountid(ix);
+
+
 %% count files
 ncount=zeros(size(li,1),1);
 for i=1:size(li,1)

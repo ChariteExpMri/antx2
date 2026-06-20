@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   18 Jun 2026 (10:31:19)  
+ &#x1F34E; last modification:   26 Jun 2026 (11:40:28)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,14 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**26 Jun 2026 (11:40:28)**</ins>  
+   __[xRocketship_wrapper.m]__ new: wrapper to estimate quantitative R1 (=1/T1) and T1 maps from Variable  
+  Flip Angle (VFA) MRI data using the ROCKETSHIP toolbox  
+  &#8618; access via ANT-menu: &#8658; Tools/Rocketship_wrapper  
+  see example in snips/pipeline/Estimate T1 maps from Variable Flip Angle (VFA)  
+   __[xcalc.m]__ : updated, access to "evalstring"-examples via pulldown-menu, function contain new examples  
+  % xcalc.m now supports processing external files (NIfTI images outside ANTx study animal directories)  
+<!---->
   &#x1F535;   <ins>**18 Jun 2026 (10:31:19)**</ins>  
    __[xCESL_monoexpfit_showfit.m]__ new: GUI to explore fit of CESL-R1rho maps or diffusion-based decay rate maps  
   &#8618; access via ANT-menu: &#8658; Tools/mono-exponential fit/viewer for mono-exponential fit  

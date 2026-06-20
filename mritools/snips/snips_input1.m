@@ -2474,7 +2474,118 @@ for ss=1:p.numBatchfiles
 end %ss several shell-files
 disp('Done!');
 
+%% #################################################
+% pipeline
+% Estimate T1 maps from Variable Flip Angle (VFA)
+% Estimate quantitative T1 maps from Variable Flip Angle (VFA) MRI data using the ROCKETSHIP toolbox.
+% 
+% STEPS
+% [1]: Copy and rename vfa-files of pre-& post-injection
+% [2]: Estimate quantitative T1 maps for pre-& post-injection data
+% [2]: Calculate: Delta_R1, change in longitudinal relaxation rate (R1) between the pre- and post-contrast acquisition
 
+
+cf;clear
+v.study           =antcb('getstudypath');                            %get current ANTx-study
+v.path_Rocketship ='D:\MATLAB\ROCKETSHIP-master_2016\ROCKETSHIP-master'; %ROCKETSHIP-PATH (win-server)
+%v.path_Rocketship ='F:\data10\rocketship_wrapper\ROCKETSHIP-master'; %ROCKETSHIP-PATH (me)
+
+
+antcb('selectdirs','all'); % select all animals from ANTx-listbox
+
+%% ==============================================
+%% [1]  RENAME coregisterd VFA-files
+%% ==============================================
+% copy and rename all files of form '^c_0.*T1_map.*.nii':
+% such as  :'c_04_1_VFA_T1_map_5deg.nii', 'c_06_2_VFA_T1_map_postInj_10deg.nii'...
+% to "c_VFA_T1_map_*.nii"
+% such as: 'c_VFA_T1_map_5deg.nii', 'c_VFA_T1_map_10deg.nii'..
+% by removing the 2nd and 3rd token after underscore
+% REASON: OBTAIN IDENTICAL FILENAMES ACROSS ALL ANIMALS
+%% ===============================================
+
+xrename(0,'^c_0.*T1_map.*.nii', '@removetoken($i,"_","[2:3]")',':');
+
+
+%% ================================================================================
+%% [2a]  RUN ROCKETSHIP:  Estimate quantitative T1 maps for [PRE]-INJECTION-DATA
+%   --> resulting file: T1_map_t1_fa_linear_fit_VFA_T1map_real.nii
+%% ================================================================================
+  z=[];
+  z.inputfiles         = {...
+      'c_VFA_T1_map_5deg.nii'                                                  % % Input VFA NIfTI images. File order must exactly match rs_parameters (flip angles).
+      'c_VFA_T1_map_10deg.nii'
+      'c_VFA_T1_map_20deg.nii'
+      'c_VFA_T1_map_35deg.nii'
+      'c_VFA_T1_map_50deg.nii' };
+  z.Nifti4D_name       = 'VFA_T1map.nii';                                      % % Name of the temporary 4D NIfTI file created for ROCKETSHIP from the individual VFA images.
+  z.subdirName         = 'sub_rs';                                             % % Temporary processing subdirectory.
+  z.mask               = 'ix_AVGTmask.nii';                                    % % Optional binary brain mask to restrict fitting to brain tissue. Improves speed and reduces noise-driven fitting errors.
+  z.maskDilationSize   = [3];                                                  % % Number of voxels by which the brain mask is dilated before fitting. 0 disables dilation; higher values increase coverage but may include non-brain tissue.
+  z.path_Rocketship    = v.path_Rocketship;                                    % % Full path to ROCKETSHIP installation folder. Required to locate core fitting functions and scripts.
+  z.rs_output_basename = 'T1_map';                                             % % Base name for all output maps (e.g., T1_map.nii, T1_map_R2.nii). Defines naming convention for all results of this run.
+  z.rs_fit_type        = 't1_fa_linear_fit';                                   % % Defines the fitting model used for T1 estimation. "t1_fa_linear_fit" performs linearized VFA T1 mapping using flip angle data.
+  z.rs_parameters      = [5  10  20  35  50];                                  % % Flip angles (degrees) used for VFA T1 fitting. Must exactly match acquisition order and values for correct T1 estimation.
+  z.rs_tr              = [15];                                                 % % Repetition time (TR) used in the acquisition (ms). Critical parameter for accurate T1 estimation in VFA models.
+  z.rs_xy_smooth_size  = [0];                                                  % % Gaussian smoothing kernel size applied before fitting (in-plane only). 0 = no smoothing. Larger values improve SNR but reduce spatial resolution.
+  z.rs_rsquared        = [-1];                                                 % % R² threshold for voxel inclusion. -1 disables thresholding; otherwise voxels with poor fit quality are excluded.
+  z.rs_odd_echoes      = [0];                                                  % % If enabled (1), only odd echoes are used for fitting. For standard VFA T1 mapping this should remain 0.
+  z.rs_number_cpus     = [5];                                                  % % Number of CPU cores used for parallel fitting. Higher values speed up computation but depend on system limits and MATLAB Parallel Toolbox.
+  z.cleanup            = [1];                                                  % % Delete the temporary processing directory after completion.; default [1]
+  xRocketship_wrapper(0,z);
+  
+%% ===============================================================================
+%% [2B]  RUN ROCKETSHIP:  Estimate quantitative T1 maps for [POST]-INJECTION-DATA 
+% rocketship:  POST-INJECTION
+% --> resulting file: T1_map_t1_fa_linear_fit_VFA_T1map_post_real.nii 
+%% ===============================================================================
+  z=[];                                                                                                                                                                                                                                          
+  z.inputfiles         = { 'c_VFA_T1_map_postInj_5deg.nii'                     % % Input VFA NIfTI images. File order must exactly match rs_parameters (flip angles).
+                           'c_VFA_T1_map_postInj_10deg.nii'                                                                                                                                                                                      
+                           'c_VFA_T1_map_postInj_20deg.nii'                                                                                                                                                                                      
+                           'c_VFA_T1_map_postInj_35deg.nii'                                                                                                                                                                                      
+                           'c_VFA_T1_map_postInj_50deg.nii' };                                                                                                                                                                                   
+  z.Nifti4D_name       = 'VFA_T1map_post.nii';                                 % % Name of the temporary 4D NIfTI file created for ROCKETSHIP from the individual VFA images.                                                  
+  z.subdirName         = 'sub_rs';                                             % % Temporary processing subdirectory.     
+  z.mask               = 'ix_AVGTmask.nii';                                    % % Optional binary brain mask to restrict fitting to brain tissue. Improves speed and reduces noise-driven fitting errors.
+  z.maskDilationSize   = [3];                                                  % % Number of voxels by which the brain mask is dilated before fitting. 0 disables dilation; higher values increase coverage but may include non-brain tissue.    
+  z.path_Rocketship    = v.path_Rocketship;                                    % % Full path to ROCKETSHIP installation folder. Required to locate core fitting functions and scripts.
+  z.rs_output_basename = 'T1_map';                                             % % Base name for all output maps (e.g., T1_map.nii, T1_map_R2.nii). Defines naming convention for all results of this run.                                       
+  z.rs_fit_type        = 't1_fa_linear_fit';                                   % % Defines the fitting model used for T1 estimation. "t1_fa_linear_fit" performs linearized VFA T1 mapping using flip angle data.                                
+  z.rs_parameters      = [5  10  20  35  50];                                  % % Flip angles (degrees) used for VFA T1 fitting. Must exactly match acquisition order and values for correct T1 estimation.                                     
+  z.rs_tr              = [15];                                                 % % Repetition time (TR) used in the acquisition (ms). Critical parameter for accurate T1 estimation in VFA models.                                               
+  z.rs_xy_smooth_size  = [0];                                                  % % Gaussian smoothing kernel size applied before fitting (in-plane only). 0 = no smoothing. Larger values improve SNR but reduce spatial resolution.             
+  z.rs_rsquared        = [-1];                                                 % % R² threshold for voxel inclusion. -1 disables thresholding; otherwise voxels with poor fit quality are excluded.                                              
+  z.rs_odd_echoes      = [0];                                                  % % If enabled (1), only odd echoes are used for fitting. For standard VFA T1 mapping this should remain 0.                                                       
+  z.rs_number_cpus     = [5];                                                  % % Number of CPU cores used for parallel fitting. Higher values speed up computation but depend on system limits and MATLAB Parallel Toolbox.                    
+  z.cleanup            = [1];                                                  % % Delete the temporary processing directory after completion.; default [1]                                                                                                                          
+  xRocketship_wrapper(0,z);
+
+%% ==============================================
+%%  [3] Calculate: Delta_R1
+%% ==============================================
+% Delta_R1 represents the change in the longitudinal relaxation rate (R1) between the pre- and post-contrast 
+% acquisitions:         Delta_R1 = R1_post - R1_pre     where   R1 = 1 / T1    (T1 in seconds, R1 in s^-1).
+% Since Rocketship outputs T1 maps in milliseconds, the conversion used is:
+%                       Delta_R1 = 1./(T1_post/1000) - 1./(T1_pre/1000)
+% Delta_R1 is directly proportional to the concentration of many gadolinium-based contrast agents and is 
+% therefore commonly used as the input for quantitative permeability analysis (e.g. Patlak or Tofts pharmaco-
+% kinetic models). Compared with T1, the R1 parameter changes approximately linearly with contrast agent 
+% concentration. Positive values indicate shortening of T1 after contrast administration (increased R1), 
+% whereas values close to zero indicate little or no detectable contrast uptake.
+%% ===============================================
+z=[];                                                                                                                                                                                                                                          
+z.niftis     = {'T1_map_t1_fa_linear_fit_VFA_T1map_real.nii'
+                'T1_map_t1_fa_linear_fit_VFA_T1map_post_real.nii'  };   % %  << select IMAGE(S) to manipulate                                                                                                                                                                                                                                                                                                                          
+z.evalstring = '1./(@i2/1000) - 1./(@i1/1000)';                         % % string to evaluate->see help                                                                                                                                       
+z.outName    = 'Delta_R1.nii';                                          % % outputname: <string><cell> or  use "@xxx" to use the prefix "xx", otherwise define N-outputNames                                                                   
+z.outDir     = 'local';                                                 % % <<select the output directory:  ["local"] refers to local mouseDir                                                                                                 
+xcalc(0,z); 
+  
+
+
+
+  
 
 
 
@@ -4564,6 +4675,16 @@ files = dir(fullfile(folder, '*.png'));
 filtered_files = {files.name};
 matches = regexp(filtered_files, pattern, 'match');
 
+
+% find files starting with 'c_VFA_' and ending with '\.nii$' but don't contain 'post' 
+% not matching: negative lookahead: ((?!post).)*)
+'^c_VFA_((?!post).)*\.nii$'
+regexpi2(q,'^c_VFA_((?!post).)*.nii$')
+
+% find files starting with 'c_VFA_', followed by a digit and ending with '\.nii$'
+regexpi2(q,'^c_VFA_T1_map_\d.*.\.nii$')
+
+
 %% #################################################
 % cellfun
 % remove paths from fullpath-filelist
@@ -4574,6 +4695,8 @@ A = {'cat', 'dog'};
 B = {'bigdoghouse', 'wildcat123', 'mouse'};
 matches = cellfun(@(b) any(cellfun(@(a) ~isempty(strfind(b,a)), A)), B);
 B(matches)   % {'bigdoghouse', 'wildcat123'}
+
+
 
 
 

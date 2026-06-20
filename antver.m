@@ -1208,9 +1208,23 @@
 % #wb 18 Jun 2026 (10:31:19)
 % #k [xCESL_monoexpfit_showfit.m] #n new: GUI to explore fit of CESL-R1rho maps or diffusion-based decay rate maps
 % #gw --> access via ANT-menu: &#8658; Tools/mono-exponential fit/viewer for mono-exponential fit
+% #wb 26 Jun 2026 (11:40:28)
+% #k [xRocketship_wrapper.m] #n new: wrapper to estimate quantitative R1 (=1/T1) and T1 maps from Variable
+% Flip Angle (VFA) MRI data using the ROCKETSHIP toolbox
+% #gw --> access via ANT-menu: &#8658; Tools/Rocketship_wrapper
+% see example in snips/pipeline/Estimate T1 maps from Variable Flip Angle (VFA)
+% #k [xcalc.m] #n : updated, access to "evalstring"-examples via pulldown-menu, function contain new examples
+% % xcalc.m now supports processing external files (NIfTI images outside ANTx study animal directories)
 % 
 % 
-
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
 
 %% ===============================================
 %----- EOF
