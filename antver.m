@@ -1215,8 +1215,10 @@
 % see example in snips/pipeline/Estimate T1 maps from Variable Flip Angle (VFA)
 % #k [xcalc.m] #n : updated, access to "evalstring"-examples via pulldown-menu, function contain new examples
 % % xcalc.m now supports processing external files (NIfTI images outside ANTx study animal directories)
-% 
-% 
+% #wb 01 Sep 2026 (11:31:03)
+% #k [xstatlabels.m] #n : added: Hedges' g with its 95% CI, Welch two-sample t-test (unequal variance) and
+% Permutation-based Welch two-sample t-test
+% --> for examples see call snips and go to REGIONBASED-STATISTIC 
 % 
 % 
 % 

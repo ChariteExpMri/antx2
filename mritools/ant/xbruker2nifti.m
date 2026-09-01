@@ -302,8 +302,14 @@ warning off;
 
 if exist('pain')==0
     global an
-    pain={'guidir' fileparts(an.datpath)};
+    if ~isempty(an)
+        pain={'guidir' fileparts(an.datpath)};
+    else
+        pain='';
+    end
     sequence=0;
+else
+    
 end
 %% =========Pairwise inputs======================================
 p0.gui      =1; % [0,1] show guis
@@ -391,12 +397,16 @@ end
 if ~exist('paout','var') || isempty(paout)
     global an
     %paout=fullfile(fileparts(pain),'dat');
+    if ~isempty(an)
     paout=an.datpath;
+    else
+       paout='unknown'; 
+    end
     disp(['META-outfolder: ' paout]);
 end
 
 if ~exist('sequence','var') || isempty(sequence)
-    sequence=1;
+    sequence=0;
 end
 
 if ~exist('trmb','var') || isempty(trmb)
@@ -435,7 +445,7 @@ if ~isstruct(pain)
     end
     
     % sequence: 0: all sequences,   1:RARE,     , 2:FLASH,  3:FISP,  other sequence coded as string
-    if        sequence==0              sequence='';    %all
+    if     sequence==0              sequence='';    %all
     elseif sequence==1;             sequence='RARE';
     elseif sequence==2      sequence='FLASH';
     elseif sequence==3       sequence='FISP';
@@ -918,8 +928,19 @@ end
 
 %==============================================================================
 %% BRUKER IMPORT
+%==============================================================================
 warning off;
+if strcmp(char(paout),'unknown') % PATH NOT SPECIFIED ..ANTX-PROJECT NOT LOADED
+    paout=uigetdir(pwd, 'selet MAIN-output Directory');
+    if isnumeric(paout); disp('..aborting Bruker-import'); return; end
+end
+%% ===============================================
+
+
 mkdir(paout);
+
+
+
 
 %% loop trhoug all 2dseq-files
 

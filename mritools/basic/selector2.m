@@ -345,11 +345,13 @@ uimenu('Parent',ctx,'Label','multi find & select [f]','callback',@findnested,'se
 
 hg=uimenu('Parent',ctx,'Label','copy to clipboard','separator','on');
 uimenu('Parent',hg,'Label','content'                ,'callback',{@copyContent,1,1},'separator','on');
-uimenu('Parent',hg,'Label','content (tabulated)'    ,'callback',{@copyContent,1,2},'separator','of');
+uimenu('Parent',hg,'Label','content (tabulated)'    ,'callback',{@copyContent,1,2},'separator','off');
 uimenu('Parent',hg,'Label','highlighted rows'            ,'callback',{@copyContent,2,1},'separator','on');
-uimenu('Parent',hg,'Label','highlighted rows (tabulated)','callback',{@copyContent,2,2},'separator','of');
+uimenu('Parent',hg,'Label','highlighted rows (tabulated)','callback',{@copyContent,2,2},'separator','off');
 uimenu('Parent',hg,'Label','selecions'               ,'callback',{@copyContent,3,1},'separator','on');
-uimenu('Parent',hg,'Label','selecions (tabulated)'   ,'callback',{@copyContent,3,2},'separator','of');
+uimenu('Parent',hg,'Label','selecions (tabulated)'   ,'callback',{@copyContent,3,2},'separator','off');
+
+uimenu('Parent',hg,'Label','copy specific'   ,'callback',{@copyContent,1,3},'separator','on');
 
 
 
@@ -1273,6 +1275,89 @@ elseif fmt==2
     end
     l=[hv2; v2];
     mat2clip(l,'\t');
+    
+elseif fmt==3 % column    
+    %% ===============================================
+    hv2= [us.header(:)' ];
+    v2 =  us.raw;
+%     v2(:,1)=[]; %remove 1st column
+    
+    
+%       if selmode==2
+%         iu=get(hg1,'value')
+%     elseif selmode==3
+%         iu=find(sel==1)
+%       end
+%       iu
+%       return
+    
+ cols_info=strjoin(cellfun(@(a,b) {[ num2str(a) ':'  b ]},num2cell([1:length(hv2)]) , hv2),' , ');
+cols_info=['cols: '  cols_info];
+cols_sep_str='colum-selection (example: ''all'',[1] or [3:end])';
+    
+
+[sx, button] = settingsdlg(...
+    'title'      , 'COPY SPECIFC',...
+    'Description', cols_info,...
+    ...
+    'separator'  ,cols_sep_str ,...
+    {'column selection' 'cols'}, ['[1:' num2str(size(v2,2)) ']'],...
+    {'row selection'    'rows'}  , {'all','highlighted' 'selected'},...
+    ...
+    'separator'  , 'output-type',...
+    {'column separator' 'sep'}       , { 'tab' 'space' ';' '\t\t' },...
+    {'strings in single quotes '; 'Check_quote'}  , [true] ...
+    );
+if strcmp(button,'cancel'); return; end
+     %% ===============================================
+     
+     if     strcmp(sx.rows,'all');         ir=[1:size(v2,1)];
+     elseif strcmp(sx.rows,'highlighted'); ir=get(hg1,'value');
+     elseif strcmp(sx.rows,'selected');    ir=find(sel==1);
+     end
+     
+     if ~isempty(strfind(sx.cols,'all'))
+         ic=[1:size(v2,2) ];
+     elseif ~isempty(strfind(sx.cols,'end'))
+         ic=strrep(sx.cols,'end', num2str(size(v2,2))) ;
+     else
+         ic =sx.cols;
+         if isnumeric(sx.cols)
+         ic=num2str(ic);
+         end
+     end
+     
+     ic=['[' ic  ']'];
+     ic=str2num(ic);
+     v3=v2(ir,  ic);
+     if sx.Check_quote==1
+         v3=cellfun(@(a) {[ '''' a '''' ]},v3);
+     end
+     
+     if     strcmp(sx.sep,'space');         sep=' ';
+     elseif strcmp(sx.sep,'tab');           sep='\t';
+     elseif strcmp(sx.sep,';');             sep=';';
+     end
+     v4={};
+     for i=1:size(v3,1)
+         v4(end+1,1)=  {strjoin(v3(i,:),  sprintf(sep))};
+     end
+     if isempty(v4); disp('empty..'); return; end
+         
+     mat2clip(v4);
+     
+        %% ===============================================
+
+  
+   
+%        
+
+
+
+    
+    %% ===============================================
+    
+    
 end
 % get(t,'value')
 

@@ -1,4 +1,17 @@
 
+% savePNG(filename, varargin)
+% save current figure as png-file
+% __INPUT__
+% filename: reulting png-filename
+% optional pairwise inputs: 
+% p.bgtransp: use transparent background; {0,1}; default: [1]
+% p.crop    : crop image; default: [1]
+% p.saveres : image resolution; default: [300]
+% p.info    : display hyperlink in CMD-window to open PNG-file path or view PNG-file; {0,1}; default: [1]
+% p.hf      : handle to matlab figure to save as PNG; default: current figure (gcf)
+
+
+
 function savePNG(filename, varargin)
 
 

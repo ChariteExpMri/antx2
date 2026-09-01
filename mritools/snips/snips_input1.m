@@ -2586,12 +2586,74 @@ xcalc(0,z);
 
 
   
+%% #################################################
+% PLOTS
+% make BAR-plots
 
+
+%% ==============================================
+%%   MAKE  BAR plot with two bars
+%% ===============================================
+    sv1=[0.64707	0.48621	0.65033	0.56647	0.47039	0.67617	0.57054	0.58982	0.58403	0.62046	0.38555	0.53189	0.63364	0.66875	0.53838	0.60498];
+    sv2=[0.49076	0.19057	0.59410	0.39741	0.21747	0.62395	0.41552	0.31199	0.23766	0.21318	0.28261	0.25095	0.40325	0.47402	0.34691	0.29935];
+
+    p=struct();
+    p.xs      =.48  ; %bar-width/extend in x-direction; default: .48
+    p.sdalpha =[.5] ; %bar-transparency [0-1]
+    p.mecol   =[0 0 0]; % mean-linecolor; default: [0 0 0]
+    p.mewidth =2;       % mean-linewidth; default: 2
+    p.sfacecol=repmat([0.7],[1 3]); %single dots facecolor, default [.7 .7 .7]
+    p.sedgecol=repmat([0],[1 3]);   %single dots edgecolor, default [0 0 0]
+    p.smarkersize=3;  %single dots , markersize, default: 3
+    p.sstackbottom=0; %single dots, stack in background/below bars; default: [0]
+    p.sjitter=1;      %single dots, jitter dots horizontally, small value.. small jitter, default: [1]
+
+    fg;
+    p.sdcol=[0 0 1];
+    plot_mesdsc(1, [],[],sv1,p);
+    p.sdcol=[1 0 0];
+    plot_mesdsc(2, [],[],sv2,p);
+
+%% ==============================================
+%%   MAKE BARPLOT AND LEGEND ANS SAVE BOTH AS PNG-FILES
+%% ===============================================
+    sv1=[0.64707	0.48621	0.65033	0.56647	0.47039	0.67617	0.57054	0.58982	0.58403	0.62046	0.38555	0.53189	0.63364	0.66875	0.53838	0.60498];
+    sv2=[0.49076	0.19057	0.59410	0.39741	0.21747	0.62395	0.41552	0.31199	0.23766	0.21318	0.28261	0.25095	0.40325	0.47402	0.34691	0.29935];
+
+    p=struct();
+    p.xs      =.48  ; %bar-width/extend in x-direction; default: .48
+    p.sdalpha =[.5] ; %bar-transparency [0-1]
+    p.mecol   =[0 0 0]; % mean-linecolor; default: [0 0 0]
+    p.mewidth =2;       % mean-linewidth; default: 2
+    p.sfacecol=repmat([0.7],[1 3]); %single dots facecolor, default [.7 .7 .7]
+    p.sedgecol=repmat([0],[1 3]);   %single dots edgecolor, default [0 0 0]
+    p.smarkersize=3;  %single dots , markersize, default: 3
+    p.sstackbottom=0; %single dots, stack in background/below bars; default: [0]
+    p.sjitter=1;      %single dots, jitter dots horizontally, small value.. small jitter, default: [1]
+
+    fg;
+    p.sdcol=[0 0 1];
+    plot_mesdsc(1, [],[],sv1,p);
+    p.sdcol=[1 0 0];
+    plot_mesdsc(2, [],[],sv2,p);
+
+    set(gcf,'Units','centimeters');
+    set(gcf,'Position',[5 5 4 8]);   % [left bottom width height]
+    set(gca,'fontname','arial','fontsize',12);
+    set(gca,'xticklabels',[]);
+    xlim([0.45 2.45])
+
+    % SAVE BARPLOT AS PNG-FILE WITH 600dpi, DO NOT CROP
+    savePNG('test.png','saveres',600,'crop',0)
+
+    % MAKE LEGEND AND SAVE AS SEPARATE PNG-FILE
+    le=plot_mesdsc('legend',struct('string',{{'blue','red'}},'Orientation','vertical','fontname','arial','fontsize',12));
+    savePNG('test_legend.png','saveres',600,'crop',0)% SAVE legend AS PNG, WITH 600dpi, DO NOT CROP
 
 
 %% #################################################
 % PLOTS
-% make plots/save as PNG-file
+% make SLICE-plots/save as PNG-file
 %% ==========================================================================================
 %%  single image
 %% ==========================================================================================
@@ -4709,8 +4771,12 @@ st= dbstack('-completenames');  % full stack info
 stf=st(find(strcmp({st.name},mfilename)));
 disp(['ERROR in file: <a href="matlab:gol(' num2str(stf.line) ')">' [ stf.name '.m  >> line-' num2str(stf.line) '' ] '</a>']);
 
-
-
+%set debugger  at specifc line
+dbstop in xcalc.m at 334
+%set debugger  inside specif subfunction
+dbstop in xcalc.m at calcit
+ 
+ 
 %% #################################################
 % forgotten things
 % check space of drive   

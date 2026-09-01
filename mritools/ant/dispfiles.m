@@ -102,6 +102,7 @@ p.dir   =[];
 p.show  =1;
 p.countsonly=0;
 p.info  ='';
+p.hlink =0 ;%{0,1}; hyperlink
 
 
 if nargin>0
@@ -172,9 +173,11 @@ if ischar(pam)
     dirs=cellstr(dirs);
     [dirs2] = spm_select('List',pam,'dir','.*');
     dirs2=cellstr(dirs2);
+    dirsIn=dirs;
 elseif iscell(pam)
     dirs      =pam;
     [~, dirs2]=fileparts2(pam);
+    dirsIn=pam;
 else
     error('dir(s) not specified');
 end
@@ -193,10 +196,10 @@ if isfield(p,'sel')
     end
     if ~isnumeric(p.sel)  && ischar(p.sel) % for: '[1 end]','end','end-2:end','[end-3:end]' ,etc
         %% ===============================================
-        tf = ~isempty(regexp(strtrim(p.sel), '(?<![A-Za-z0-9_])end(?![A-Za-z0-9_])', 'once'));
-        if tf==1
+%         tf = ~isempty(regexp(strtrim(p.sel), '(?<![A-Za-z0-9_])end(?![A-Za-z0-9_])', 'once'));
+%         if tf==1
             eval([ 'p.sel=dirs(' p.sel ');']);
-        end
+%         end
         % first 4 should work
         %         q={'[1 end]'
         %             'end'
@@ -297,7 +300,6 @@ try
                     dates(i,j)=k.bytes;
                 end
                 %% ===============================================
-                'a'
                 
                 %% ===============================================
                 
@@ -437,8 +439,51 @@ if 1
             x=[x(:,1) x(:,end) x(:,2:end-1)];
             x=[x(1,:); x(2,:);x(end,:); x(2:end-1,:)];
         end
+         w=plog([],x,0,'FILE x FOLDER','al=1;');
+         
+        if p.hlink==1
+            %% ===============================================
+            try
+                usefullpath=0;
+                fpdirs    =dirs;
+                if isempty(fileparts(dirs2{1}))
+                    dirs3     = cellfun(@(x) x(max(strfind(x, filesep))+1:end), dirs, 'UniformOutput', false);
+                else
+                    dirs3= fpdirs;
+                    usefullpath=1;
+                end
+                %dirs3=             ix=regexpi2(w(:,1), '^(?!(FILE x FOLDER |counts ))[A-Za-z0-9]');
+                %fpdirs=stradd(dirs2,[ datpath filesep ],1);
+                %numid=pnum(1:length(fpdirs),3); numid=cellstr(numid);
+                w2=w;
+                c0=repmat({'   '},[size(w) 1]);
+                for i=1:length(dirs3)
+                    if usefullpath==0
+                        ix=regexpi2(w, ['^' dirs3{i} ' '] );
+                    else
+                        ix=find(cellfun(@isempty, strfind(w,dirs3{i}))==0);
+                    end
+                    if ~isempty(ix)
+                        numid=pnum(find(strcmp(dirsIn,dirs3{i})),3);
+                        c0{ix,1}=['<a href="matlab: explorer(''' fpdirs{i} ''')">' numid '</a>'];
+                    end
+                end
+                
+                w2=cellfun(@(a,b) {[ a ' ' b ]},c0,w);
+                w=w2;
+            end
+            
+            %% ===============================================
+            
+            
+            %% ===============================================
+            
+            
+        end
         
-        w=plog([],x,0,'FILE x FOLDER','al=1;');
+        
+        
+       
         
         
         

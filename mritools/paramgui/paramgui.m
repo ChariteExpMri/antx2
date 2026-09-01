@@ -483,7 +483,18 @@ if size(qw,2)>1
     %     x=cell2struct(qw(:,2),qw(:,1),1 );
     x=[];
     for i=1:size(qw,1)
+        
+       if ~isempty(qw{i,1})  && strcmp(qw{i,1}(1),'%')  % if there is direct comment in 1st row
+           qw{i,2}=qw{i,1}; %
+           qw{i,1}='';
+       end
+        
+        
+        if isempty(qw{i,1})  %EXMPTY FIELED
+          qw{i,1}=sprintf('inf%05d', randi([10000 99999])) ; 
+        end
         eval(['x.' qw{i,1} '= qw{' num2str(i) ',2};']);
+        
         %         if   isnumeric(getfield(x, qw{i,1} )) & isempty(getfield(x, qw{i,1} ))
         %             x=setfield(x, qw{i,1}, '[]' );
         %
@@ -669,14 +680,6 @@ us.history{1}=b3;
 us.historyValue=1;
 set(hf,'userdata',us);
 set(hf,'units','normalized','KeyPressFcn',@figkey);
-
-
-
-
-
-
-
-
 
 
 
@@ -905,7 +908,7 @@ pm=uicontrol('style','togglebutton',  'value',0,     'tag','pbmore',    'string'
     'position',[.12 -.005 .05 .045]);
 set(pm,'position',[.95 -.005 .025 .04]);
 set(pm,'units','pixels','callback',@morepanel,...
-    'TooltipString',['..show menu'],'backgroundcolor','w');%[.01 .93 .1 .04]
+    'TooltipString',['..show menu' char(10) ' [ctrl+m]'],'backgroundcolor','w');%[.01 .93 .1 .04]
 
 hrun=findobj(gcf,'style','pushbutton','tag','pb1');
 posr=get(hrun,'position');
@@ -1033,6 +1036,42 @@ if us.v.close==1
     close(findobj(0,'tag','paramgui'));
     drawnow;
 end
+
+
+% doc = jCodePane.getDocument;
+% docH = handle(doc, 'CallbackProperties');
+% addlistener(docH, 'DocumentEvent', @(src,evt) checkHash(doc));
+
+% doc = jCodePane.getDocument;
+% t = timer( ...
+%     'ExecutionMode','fixedRate', ...
+%     'Period',0.1);
+% 
+% t.UserData.last = "";
+% 
+% t.TimerFcn = @(~,~) check(doc, t);
+% 
+% start(t);
+% 
+% function check(doc, t)
+% try
+%     n = doc.getLength
+%     if n < 2, return; end
+%     
+%     txt = char(doc.getText(max(0,n-2), 2));
+%     
+%     if ~strcmp(txt, t.UserData.last)
+%         t.UserData.last = txt;
+%         
+%         if strcmp(txt,'##')
+%             disp('Detected ##');
+%         end
+%     end
+% catch
+% end
+
+
+
 
 
 function pbsettings_listbox_execute(e,e2)
@@ -1788,11 +1827,15 @@ function parameter_to_Batch(e,e2)
 us=get(gcf,'userdata');
 
 filename='';
-if exist(us.v.info{2})==2
-    [~, filename]=fileparts(us.v.info{2});
+try
+    if exist(us.v.info{2})==2
+        [~, filename]=fileparts(us.v.info{2});
+    end
 end
-if ~isempty(us.v.callerfunction)
-    [~, filename]=fileparts(us.v.callerfunction);
+try
+    if ~isempty(us.v.callerfunction)
+        [~, filename]=fileparts(us.v.callerfunction);
+    end
 end
 
 
@@ -1810,7 +1853,13 @@ if ~isempty(filename) %exist(us.v.info{2})==2
     w1=[w1(1:is-1); 'z=[];'; w1(is:end)]; %insert empty struct
     
     w2=[filename '(1,z);	% RUN'];
-    cp=[w0; w1;w2];
+    
+    if ~isempty(strfind(filename,'LiveEditorEvaluation'))
+        cp=[w0; w1;];
+    else
+        cp=[w0; w1;w2];
+    end
+    
     cp=strjoin(cp,char(10));
     clipboard('copy',cp);
     hs=addNote(gcf,'text','<b>parameter send to clipboard','fs',20,'col',[1 1 0],'pos',[[.3 .8 .3 .15]],...
@@ -1832,21 +1881,117 @@ isAltDown = eventData.isAltDown;  % ==> true
 modifiers = get(eventData,'Modifiers');  % or: eventData.getModifiers ==> 9 = 1 (Shift) + 8 (Alt)
 modifiersDescription = char(eventData.getKeyModifiersText(modifiers));  % ==> 'Alt+Shift'
 % (now decide what to do with this key-press...)
+%% ===============================================
+%% buffer-sequences
+%% ===============================================
 
-% get(eventData)
+%     e=eventData;
+%     persistent lastChar
+%     if isempty(lastChar)
+%         lastChar = '';
+%     end
+%     keyChar = char(eventData.getKeyChar);% current key
+%     % detect ##
+%     if  strcmp(lastChar, '#') && strcmp(keyChar, '#')
+%         disp('Detected ##'); 
+%         u=get(gcf,'userdata'); 
+%         doc = u.jCodePane.getDocument;
+%         pos = u.jCodePane.getCaretPosition;
+%         % remove the two '#' BEFORE current caret position
+%         start = max(0, pos-2);
+%         doc.remove(start, 2);
+%         lastChar = '';
+%     else% update state
+%         lastChar = keyChar;
+%     end
+% 
+%     % if strcmp(e.getKeyChar,'c') && e.isAltDown
+%     %     parameter2clipboard();
+%     % end
+%     if strcmp(e.getKeyChar,'c') && e.isAltDown
+%         parameter_to_Batch(1);
+%     end
 
-% jPopup = findjobj(findobj(gcbf,'Tag','popupmenu1'));
-% jPopup.hidePopup();
-% jPopup.showPopup();
+e = eventData;
 
-e=eventData;
+persistent buf
+if isempty(buf)
+    buf = '';
+end
 
-% if strcmp(e.getKeyChar,'c') && e.isAltDown
-%     parameter2clipboard();
+keyChar = char(eventData.getKeyChar);
+
+% ignore non-character keys
+% if isempty(keyChar) || e.isActionKey
+%     return;
 % end
-if strcmp(e.getKeyChar,'c') && e.isAltDown
+
+% update buffer (keep last 10 chars max)
+buf = [buf keyChar];
+if numel(buf) > 10
+    buf = buf(end-9:end);
+end
+
+% =========================
+% PATTERN DETECTION
+% =========================
+
+u = get(gcf,'userdata');
+doc = u.jCodePane.getDocument;
+pos = u.jCodePane.getCaretPosition;
+
+% ---- 1) ##
+if endsWith(buf,'##')
+%     disp('Detected ##');
+
+    start = max(0, pos-2);
+    doc.remove(start,2);
+
+    buf = '';
+    return;
+end
+
+% ---- 2) ...
+if endsWith(buf,'#q1')
+     disp('Detected #q1');
+
+    start = max(0, pos-3);
+    doc.remove(start,3);
+
+    buf = '';
+    return;
+end
+
+% ---- 3) hhh
+if endsWith(buf,'#q2')
+    disp('Detected #q2');
+
+    start = max(0, pos-3);
+    doc.remove(start,3);
+
+    buf = '';
+    return;
+end
+
+% ---- 4) wer
+if endsWith(buf,'#+1')
+    disp('Detected #+1');
+
+    start = max(0, pos-3);
+    doc.remove(start,3);
+
+    buf = '';
+    return;
+end
+
+% =========================
+% SPECIAL KEYS
+% =========================
+if strcmp(keyChar,'c') && e.isAltDown
     parameter_to_Batch(1);
 end
+
+%% ===============================================
 
 
 
@@ -1898,6 +2043,7 @@ end
 % e.getKeyChar
 % if strcmp(e.getKeyChar,'s')  && e.isControlDown
 if get(e,'ControlDown')==1 && get(e,'KeyCode') ==83 % 's' 
+    drawnow
     paramguishortcuts();
     
 end
@@ -1941,6 +2087,8 @@ if (get(e,'MetaDown')==1     && get(e,'KeyCode') ==40)  ||...  % 'down-arrow' --
      %get(e,'KeyCode')
 end
 
+
+% get(e,'KeyCode')
 if (get(e,'MetaDown')==1 && get(e,'KeyCode') ==38)  ||...  % 'up-arrow' --> last/orig size
         ( get(e,'ControlDown')==1 && get(e,'KeyCode') ==38)
     us=get(gcf,'userdata');
@@ -1992,15 +2140,11 @@ end
 %% F3 run-button
 if get(eventData,'KeyCode')==114;
     %     hbut=findobj(gcf,'tag','pb1');
-    %     hgfeval(get(hbut,'Callback'));
-    %
-    
+    %     hgfeval(get(hbut,'Callback'));    
     us=get(gcf,'userdata');
-    %    get line
     lastcurpos=us.jCodePane.getCaretPosition;
     linenum=us.jCodePane.getLineFromPos(lastcurpos);
     txcurrline=char(us.jCodePane.getLineText(linenum));
-    
     r=findobj(gcf,'style','pushbutton');
     iicons=[];
     for i=1:length(r)

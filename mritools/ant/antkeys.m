@@ -8,6 +8,7 @@
 % #g [ctrl l] #k load ANT-project
 % #g [s]      #k show KEYBOARD-SHORTCUTS
 % #g [k]      #k lists the [k]eybord shortcut list
+% #g [#]      #k open  xconsole (additional Matlab console)
 % #g [e]      #k opens windows [E]XPLORER with CURRENT DIRECTORY
 % #g [p]      #k show [p]revious projects &  load a previous project
 % #g [c]      #k open [c]ase-file matrix
@@ -65,6 +66,8 @@ if strcmp(get(h,'tag'),'ant')
         try;  antcb('reload'); end
     elseif strcmp(key,'l')==1 && strcmp(e.Modifier,'control')==1  
         antcb('load');
+   elseif strcmp(key,'#')==1  ||     strcmp(e.Character,'#')==1
+        xconsole
     elseif strcmp(key,'k')==1
         uhelp('antkeys.m');
     elseif strcmp(key,'e')==1

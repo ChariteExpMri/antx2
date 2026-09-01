@@ -65,9 +65,11 @@
 %                         % example: antcb('searchstr','str','display' ,'flt','*.txt','dir',pwd); % recursively find 'display' in all txt-files in current folder;
 %                         % see: antcb('searchstr?');  
 % 
+% antcb('nosemic',<pairwise parameter>) ;% find missing semicolons in file and display as hyperlink
+%                         % example: antcb('nosemic','file','xconsole.m') ;%show lines of missing semicolon as hypertext
+%                         % see: antcb('nosemic?');
 % 
-
-
+% 
 
 
 %====================================================================================================
@@ -318,6 +320,25 @@ if strcmp(do,'searchstr')
     end
 end
 if strcmp(do,'searchstr?');    help antcb>searchstr;end
+%% ===============================================
+if strcmp(do,'nosemic')
+    try ;   
+        %% ===============================================
+      dum=nosemic(input,nargout);
+      if nargout>=1;      
+          varargout{1}=dum{1};
+      end
+      if nargout>=2;        
+          varargout{2}=dum{2};
+      end
+          
+  
+      
+      return
+    catch;   disp('* type    antcb(''nosemic'',''?'')     for help');
+    end
+end
+if strcmp(do,'nosemic?');    help antcb>nosemic;end
 %% ===============================================
 
 
@@ -2752,6 +2773,66 @@ if displayfile==2;
     uhelp(g,0,'name','found files');
 end
 
+function o=nosemic(pin,nouts)
+% 'nosemic'
+% show lines with missing semicolons in specific file
+% antcb('nosemic','file','xconsole.m') ;% show lines with missing semicolons as hyperlinks
+% 
+% args: 'file':  mfile/ascifile (fullpath or must be in matlabs search path)
+%       'show': show lines with missing semicolon as hyperlink {0,1}
+% OPTIONAL OUTPUR: array with linenumbers
+%               -if not found--> empty
+% EXAMPLES:
+% antcb('nosemic','file','xconsole.m') ;%show lines of missing semicolon as hypertext
+% linenum=antcb('nosemic','file','xconsole.m','show',0) ; % pass to output, show no hyperlinks 
+%% ===============================================
+o{1}='';
+
+
+p.file='';
+p.show=1;%show as hyperlink
+if ~isempty(pin)
+    p2=cell2struct(pin(2:2:end),pin(1:2:end),2);
+    p=catstruct(p,p2);
+end
+
+[pa fi ext]=fileparts(p.file);
+if isempty(pa)
+    p.file=which(p.file);
+end
+if exist(p.file)~=2
+    disp('file not exist'); return
+end
+
+m=checkcode(p.file,'-id');
+l=[m.line]';
+me={m.message}';
+
+
+str='Terminate statement with semicolon';
+ix=regexpi2(me,str);
+lin=l(ix);
+
+if ~isempty(lin)
+    disp('mising semicolons');
+    if p.show==1
+        for i=1:length(lin)
+            disp(['<a href="matlab:edit(''' p.file '''); gol(' num2str(lin(i)) ');' '">L-' num2str(lin(i)) '</a>']);
+        end
+    end
+    
+end
+if nouts>0
+    o{1}=lin;
+end
+
+
+
+
+
+%% ===============================================
+
+
 function  o=searchstr(pin,nouts)
 
 % find string in files recursively within specific path
@@ -2785,7 +2866,7 @@ p.flt='*.m';
 p.dir=pwd;
 p.str='a';
 p.verbose=1;
-p.byte=10000; %file: upper byte limit
+p.byte=1000000; %file: upper byte limit
 varargout{1}=[];
 
 if ~isempty(pin)

@@ -55,6 +55,16 @@ if nargin>0
         t2.setSelectionRows(nodenum);
         
         set(hf,'position',pos);
+        
+        %set horiz. slider to 0
+        try
+            p = t2.getParent();
+            scrollpane = p.getParent();
+            hbar = scrollpane.getHorizontalScrollBar();
+            hbar.setValue(0);
+        end
+        
+        
         return
         
     end
@@ -203,6 +213,8 @@ set(hContainer,'units','norm');
 hj = handle(jCodePane,'CallbackProperties');
 set(hj,'MousePressedCallback',@mouseCB);
 
+
+%  set(hContainer, 'KeyPressedCallback', @keyPressedCallback_pane);
 
 
 % hj = handle(jCodePane,'CallbackProperties');
@@ -543,6 +555,16 @@ updatecolumnlist; %update list
 
 % popup_panel()
 
+% -------------------
+% jp=handle(us.jCodePane, 'CallbackProperties');
+% jp.setFocusable(true);
+% jp.requestFocus();
+% set(jp, 'KeyPressedCallback', @(src, event) keyPressedCallback_pane(event, jp));
+
+% set(jp,'KeyReleasedCallback',@keyPressedCallback_pane)
+% setappdata(hf,'ctrlPressed',false);
+
+
 function mouseCB(src, ev)
 % jPopup = src.getComponentPopupMenu;
 isAlt = bitand(ev.getModifiersEx,  java.awt.event.InputEvent.ALT_DOWN_MASK) ~= 0;
@@ -708,7 +730,7 @@ hPopupPanel = ctrluis.PopupPanel(gcf);  % use gcf or any figure handle
 hPopupPanel.setPosition([0.2 0.2 .2 .1]);
 % Alternative #1: set popup-panel's contents to some HTML-formatted message
 % note: createMessageTextPane() has optional input args FontName (arg #2), FontSize (#3)
-jPanel = ctrluis.PopupPanel.createMessageTextPane('testing <b><i>123</i></b> ...')
+jPanel = ctrluis.PopupPanel.createMessageTextPane('testing <b><i>123</i></b> ...');
 hPopupPanel.setPanel(jPanel);
 
 % % Alternative #2: set popup-panel's contents to a webpage URL
@@ -828,23 +850,59 @@ he.String=hp.String{hp.Value};
 finder();
 
 
-function keyPressedCallback_pane(event, jp)
+function keyPressedCallback_pane(src, event)
 %% ===============================================
 
-% event.getKeyChar
-% if strcmp(event.getKeyChar,'+')
-% event.isControlDown==1
-task='+'
-fn=jp.getFont;
-fs=fn.getSize;
-if strcmp(task,'+'); fs=fs+1;
-else;                fs=fs-1;
+fprintf('CALLBACK: key=%d, modifiers=%d\n', ...
+    event.getKeyCode(), event.getModifiers());
+
+
+return
+
+% try
+key = event.getKeyCode();
+% catch
+   keyboard 
+% end
+
+id  = event.getID();
+
+if id == java.awt.event.KeyEvent.KEY_PRESSED && key == 17
+    setappdata(gcf,'ctrlPressed',true);
+    return
 end
-if fs<2; fs=2; end
-% newFont = java.awt.Font('Arial', java.awt.Font.PLAIN, newFontSize);
-newFont = java.awt.Font(fn.getFontName,java.awt.Font.PLAIN,fs);
-jp.setFont(newFont);
-jp.repaint();% Apply the new font immediately
+
+if id == java.awt.event.KeyEvent.KEY_RELEASED && key == 17
+    setappdata(gcf,'ctrlPressed',false);
+    return
+end
+
+if id == java.awt.event.KeyEvent.KEY_PRESSED && ...
+        key == 10 && getappdata(gcf,'ctrlPressed')
+
+    disp('CTRL + ENTER');
+
+end
+
+
+% 
+% 
+% return
+% 
+% % event.getKeyChar
+% % if strcmp(event.getKeyChar,'+')
+% % event.isControlDown==1
+% task='+'
+% fn=jp.getFont;
+% fs=fn.getSize;
+% if strcmp(task,'+'); fs=fs+1;
+% else;                fs=fs-1;
+% end
+% if fs<2; fs=2; end
+% % newFont = java.awt.Font('Arial', java.awt.Font.PLAIN, newFontSize);
+% newFont = java.awt.Font(fn.getFontName,java.awt.Font.PLAIN,fs);
+% jp.setFont(newFont);
+% jp.repaint();% Apply the new font immediately
 %% ===============================================
 
 

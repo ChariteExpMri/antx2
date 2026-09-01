@@ -1604,6 +1604,11 @@ msub1 = uimenu(mh2,'Label','what is my Win-ServerSession-ID?',      'Callback',{
 msub1 = uimenu(mh2,'Label','change Win-ServerSession',      'Callback',{@menubarCB, 'call_changeWinServer'},...
     'userdata',[HSTART 'change Windows-ServerSession via session-ID' ],'separator','off');
 
+msub1 = uimenu(mh2,'Label','xconsole (extra Matlab console)',      'Callback',{@menubarCB, 'call_xconsole'},...
+    'userdata',[HSTART '..' ],'separator','on');
+msub1 = uimenu(mh2,'Label','xbash for windows',      'Callback',{@menubarCB, 'call_xbash'},...
+    'userdata',[HSTART '...' ],'separator','off');
+
 
 mh2 = uimenu(mh,'Label','<html><font color="blue">visit ANTx2 repository (Github)',              'Callback',{@menubarCB, 'visitGITHUB'},'separator','on',...
     'userdata',[HSTART 'go to the ANTx2-Github repository']);
@@ -3999,6 +4004,34 @@ elseif strcmp(task,'call_WinServerID')
     end
     gotoID= input('Enter Winserver-ID to connect to: ','s');
     sessid(str2num(gotoID));    
+    
+    
+ elseif strcmp(task,'call_xconsole')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xconsole.m';
+        return ;
+    end
+    if strcmp(u.mousekey,'right')
+        hlpfun='xconsole.m';
+        showcmd(hlpfun);
+        return
+    end
+   xconsole();        
+    
+   elseif strcmp(task,'call_xbash')
+    if showhelpOnly==1;   %% HELP-PARSER: we need the TARGET-FUNCTION here
+        hlpfun='xbash.m';
+        return ;
+    end
+    if strcmp(u.mousekey,'right')
+        hlpfun='xbash.m';
+        showcmd(hlpfun);
+        return
+    end
+   xbash('','shell',1)   
+    
+    
+    
     
     %________________________________________________
 elseif strcmp(task,'antsettings')

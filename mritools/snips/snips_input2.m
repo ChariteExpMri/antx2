@@ -3,6 +3,54 @@ function snips_input2
 snips
 return
 
+%% #################################################
+% REGIONBASED-STATISTIC
+% [1] RUN Welch two-sample t-test (unequal variance) on all atlas-regions
+% The data-file (Excelfile, generated via get GUI-"get anatomical labels" or xgetlabels4.m) contains the averaged
+% values from each anat. region for each animal ('mean'-sheet)
+% The group assignment file (Excelfile) contains a column with animal-IDs (here: 'MRI-ID') and a colum specifying
+% the group (here: 'group')
+
+v = [];
+v.data         =  fullfile(pwd,'anatomical_labels_native_bothHem.xlsx'); % % excel data file
+v.dataSheet    =  'mean';                                                % % sheetname of excel data file
+v.aux          =  fullfile(pwd,'animal_groups_all.xlsx');                % % excel group assignment file
+v.auxSheet     =  'Tabelle1';                                            % % sheetname of excel group assignment file
+v.id           =  'MRI-ID';                                              % % name of the column containing the animal-id in the auxSheet
+v.f1           =  'group';                                               % % name of the column containing the group-assignment in the auxSheet
+v.typeoftest1  =  'ttest2welch';                                         % % applied  statistical test (such as "ranksum" or "ttest2")
+v.tail         =  'both';                                                % % type of alternative hypothesis: both|left|right
+v.qFDR         =  [0.05];                                                % % q-threshold of FDR-correction (default: 0.05)
+v.isfdr        =  [1];                                                   % % use FDR correction: [0]no, [1]yes
+v.showsigsonly =  [0];                                                   % % show significant results only:  [0]no, show all, [1]yes, show signif. results only
+v.issort       =  [1];                                                   % % sort results according the p-value: [0]no, [1]yes,sort
+xstatlabels(v);      % % SET all Parameter
+xstatlabels('run');  % % RUN statistic
+xstatlabels('export','file', fullfile(pwd,'res_anatom.xlsx')); %save as Excelfile
+%% #################################################
+% REGIONBASED-STATISTIC
+% [2] RUN Permutation-based Welch two-sample t-test
+% same data as in [1]
+v = [];
+v.data         =  fullfile(pwd,'anatomical_labels_native_bothHem.xlsx'); % % excel data file
+v.dataSheet    =  'mean';                                                % % sheetname of excel data file
+v.aux          =  fullfile(pwd,'animal_groups_all.xlsx');                % % excel group assignment file
+v.auxSheet     =  'Tabelle1';                                            % % sheetname of excel group assignment file
+v.id           =  'MRI-ID';                                              % % name of the column containing the animal-id in the auxSheet
+v.f1           =  'group';                                               % % name of the column containing the group-assignment in the auxSheet
+v.typeoftest1  =  'permwelch';                                           % % applied  statistical test (such as "ranksum" or "ttest2")
+v.nperms       =  [5000];                                                % % number of permutations
+v.tail         =  'both';                                                % % type of alternative hypothesis: both|left|right
+v.qFDR         =  [0.05];                                                % % q-threshold of FDR-correction (default: 0.05)
+v.isfdr        =  [1];                                                   % % use FDR correction: [0]no, [1]yes
+v.showsigsonly =  [0];                                                   % % show significant results only:  [0]no, show all, [1]yes, show signif. results only
+v.issort       =  [1];                                                   % % sort results according the p-value: [0]no, [1]yes,sort
+xstatlabels(v);      % % SET all Parameter
+xstatlabels('run');  % % RUN statistic
+xstatlabels('export','file', fullfile(pwd,'res_anatom_perm.xlsx')); %save as Excelfile
+
+
+
 
 %% #################################################
 % VOXELWISE-STATISTIC

@@ -18,8 +18,18 @@
 %
 % [within]       : check if data bases on within design (repeated measure)
 % [test]         : select the test
-%                  for between-design: ttest2, ranksum, permutation, permutation2
-%                  for within-design: ttest, signrank, perm2  
+%                    -----------------
+%                  for BETWEEN-DESIGN: 
+%                     ttest2      : two-sample ttest (equal vairance)
+%                     ttest2welch : two-sample ttest (unequal vairance) --> Welch's ttest
+%                     ranksum     : Wilcoxon rank sum test.. quivalent to a Mann-Whitney U-test.
+%                                     old name was "WRS"
+%                     permwelch   : Permutation-based Welch two-sample t-test
+%                     permutation : depreciated, permutation-test
+%                    ----------------- 
+%                  for WITHIN-DESIGN: ttest, signrank, perm2  
+% 
+% 
 % 
 % [tail]         : tail of hypothesis-testing {both|left|right}
 % [useFDR]       : to correct for MCP
@@ -38,15 +48,21 @@
 % #wr REGIONS FILE   -OPTION-1:
 %   -a regions file can be additionally used to test a few specific regions or combinations of regions.
 %   -The regionsfile has to be an excelfile, specifically the 1st data sheet is used. In the 1st data sheet
-%    the 1st column contains the label of anatomical regions. The 2nd column contains a number.
-%  #r - is is assumed that the 1st ROW is a HEADER (label in the header-row are arbitrary)
-% Regions with the same number in the 2nd column will be combined,i.e. data of those regions will be pooled.
-% Note: - that the order of the labels (column-1) and the explicit value of the number in column-2 is arbitrary.
-%       - Be carefull with the exact spelling of the labels otherwise the region will not be found in the label-column
+%     contains (a)  1st column only with regions or
+%              (b)  1st column with regions and 2nd column with a pooling number
+% 1st COLUMN:
+%    the 1st column contains the label of anatomical regions (as STRING). Be carefull with the exact spelling of
+%        the labels otherwise the region will not be found in the label-column
 %         of the datasheet
-%       - only regions with a number in the 2nd. column will be parsed to analysis (all other regions defined
+%  <OPTIONAL>: 2nd COLUMN:
+%  If a 2nd column is given, it must contain pooling numbers: Regions with the same number in the 2nd column will
+%     be combined,i.e. data of those regions will be pooled.
+%     Note: - that the order of the labels (column-1) and the explicit value of the number in column-2 is arbitrary.
+%           - only regions with a number in the 2nd. column will be parsed to analysis (all other regions defined
 %        in column-1 will be neglected)--> Thus the regions file can contain only those regions you want to analyze.
+% 
 % EXAMPLE: In this example the data of the below Somatomotor areas will be pooled (same value in column-2: 22),
+%  #r - is is assumed that the 1st ROW is a HEADER (label in the header-row are arbitrary)
 % also the data of the below cingulate area will be pooled (same value in column-2: 5), while the data for
 %     Dorsal auditory area (value: 3) and Olfactory areas (value: 1000) remain unpooled
 % #m regions with the same mergeID will be pooled
@@ -95,6 +111,18 @@
 %     Olfactory areas                                      9
 %     ________________________________________________________
 %
+%% ===============================================
+%% OTHER PARAMETER, NOT AVAILABLE USING GUI
+%% ===============================================
+% 
+% 'nperms':  number of permutation (permutation based approaches)
+%              default: 5000
+% 'lillie' : do lillie-test, test for normality, {0,1}, 
+%              default: 0
+% 'levene' : do levene-test, test for equal variances', {0,1}
+%              default: 0
+% 
+%% ===============================================
 %
 %_________________________________________________________________
 % #wb AUTOMATIZE: examples
@@ -107,18 +135,18 @@
 %         fullfile(pwd,'aux_Aged_mice_MRI_20171023.xlsx'  ),'f1design',0,'typeoftest1','ranksum',...
 %         'auxSheet','Tabelle1','id', 'MRI-ID','f1','GROUP','isfdr',0 ,'showsigsonly',0 ,'issort',0,...
 %         'process',1,'task','export', 'exportfile',  fullfile(pwd, 'blo.xlsx')   ));
-%
-%     xstatlabels(struct('data',fullfile(pwd,'data_cbf_allen_space.xls'),'dataSheet','mean','aux',...
-%         fullfile(pwd,'aux_Aged_mice_MRI_20171023.xlsx'  ),'f1design',0,'typeoftest1','Ttest2',...
-%         'auxSheet','Tabelle1','id', 'MRI-ID','f1','GROUP','isfdr',1 ,'showsigsonly',1 ,'issort',1,'qFDR',.4));
-%
+% 
+% ==============================================
+%%      between-design
+% ===============================================
+% 
 %%  example  process data
 %     px='O:\data2\x01_maritzen'
 %     xstatlabels(struct(...
 %         'data',fullfile(px,'labels_c_ADC_native_ALL.xls'),...
 %         'dataSheet','mean',...
 %         'aux',fullfile(px,'#groups_Animal_groups.xlsx'  ),...
-%         'f1design',0,'typeoftest1','Ttest2',...
+%         'f1design',0,'typeoftest1','ttest2',...
 %         'auxSheet','Tabelle1',...
 %         'id', 'MRI Animal-ID','f1','type',...
 %         'isfdr',1 ,'showsigsonly',1 ,...
@@ -136,7 +164,7 @@
 %         'isfdr',1 ,'showsigsonly',0 ,...
 %         'issort',1,'qFDR',0.05,'process',1,'outvar','sx',...
 %         'regionsfile', fullfile(px,'#myRegions_test.xls'  )  ));
-%% example - created from batch
+%% example1 - created from batch
 % v = [];
 % v.data         =  'O:\data2\susanne_atlasstatisticProblem\anatomical_labels_brains_NR1_Apr2018_neu.xls';          % % excel data file
 % v.dataSheet    =  'vol_percBrain';          % % sheetname of excel data file
@@ -173,6 +201,56 @@
 % v.process      =  [0];          % % calculate statistic [0]no, [1]yes, (simulates pressing the [process]-button)
 % xstatlabels(v);     % % RUN statistic
 %
+% 
+%% #################################################
+%% example3: RUN Welch two-sample t-test (unequal variance) on all atlas-regions
+% The data-file (Excelfile, generated via get GUI-"get anatomical labels" or xgetlabels4.m) contains the averaged
+% values from each anat. region for each animal ('mean'-sheet)
+% The group assignment file (Excelfile) contains a column with animal-IDs (here: 'MRI-ID') and a colum specifying
+% the group (here: 'group')
+% 
+% v = [];
+% v.data         =  fullfile(pwd,'anatomical_labels_native_bothHem.xlsx'); % % excel data file
+% v.dataSheet    =  'mean';                                                % % sheetname of excel data file
+% v.aux          =  fullfile(pwd,'animal_groups_all.xlsx');                % % excel group assignment file
+% v.auxSheet     =  'Tabelle1';                                            % % sheetname of excel group assignment file
+% v.id           =  'MRI-ID';                                              % % name of the column containing the animal-id in the auxSheet
+% v.f1           =  'group';                                               % % name of the column containing the group-assignment in the auxSheet
+% v.typeoftest1  =  'ttest2welch';                                         % % applied  statistical test (such as "ranksum" or "ttest2")
+% v.tail         =  'both';                                                % % type of alternative hypothesis: both|left|right
+% v.qFDR         =  [0.05];                                                % % q-threshold of FDR-correction (default: 0.05)
+% v.isfdr        =  [1];                                                   % % use FDR correction: [0]no, [1]yes
+% v.showsigsonly =  [0];                                                   % % show significant results only:  [0]no, show all, [1]yes, show signif. results only
+% v.issort       =  [1];                                                   % % sort results according the p-value: [0]no, [1]yes,sort
+% xstatlabels(v);      % % SET all Parameter
+% xstatlabels('run');  % % RUN statistic
+% xstatlabels('export','file', fullfile(pwd,'res_anatom.xlsx')); %save as Excelfile
+%% #################################################
+%% example4: RUN Permutation-based Welch two-sample t-test
+% v = [];
+% v.data         =  fullfile(pwd,'anatomical_labels_native_bothHem.xlsx'); % % excel data file
+% v.dataSheet    =  'mean';                                                % % sheetname of excel data file
+% v.aux          =  fullfile(pwd,'animal_groups_all.xlsx');                % % excel group assignment file
+% v.auxSheet     =  'Tabelle1';                                            % % sheetname of excel group assignment file
+% v.id           =  'MRI-ID';                                              % % name of the column containing the animal-id in the auxSheet
+% v.f1           =  'group';                                               % % name of the column containing the group-assignment in the auxSheet
+% v.typeoftest1  =  'permwelch';                                           % % applied  statistical test (such as "ranksum" or "ttest2")
+% v.nperms       =  [5000];                                                % % number of permutations
+% v.tail         =  'both';                                                % % type of alternative hypothesis: both|left|right
+% v.qFDR         =  [0.05];                                                % % q-threshold of FDR-correction (default: 0.05)
+% v.isfdr        =  [1];                                                   % % use FDR correction: [0]no, [1]yes
+% v.showsigsonly =  [0];                                                   % % show significant results only:  [0]no, show all, [1]yes, show signif. results only
+% v.issort       =  [1];                                                   % % sort results according the p-value: [0]no, [1]yes,sort
+% xstatlabels(v);      % % SET all Parameter
+% xstatlabels('run');  % % RUN statistic
+% xstatlabels('export','file', fullfile(pwd,'res_anatom_perm.xlsx')); %save as Excelfile
+% 
+% 
+% ==============================================
+%%      witin-design
+% ===============================================
+% 
+% 
 %% ======================================================================================
 %% #ky EXAMPLE: paired t-test  (ttest)        [within-design]
 %% note: the excel-file must contain a column with a subject-factor (here "subject"), this
@@ -238,8 +316,8 @@
 % v.issort       =  [1];                                                                                         % % sort results according the p-value: [0]no, [1]yes,sort 
 % xstatlabels(v);      % % SET all Parameter   
 % xstatlabels('run');  % % RUN statistic
-
-
+% 
+% 
 % ==============================================
 % #ok POSTHOC  
 % ===============================================
@@ -309,7 +387,7 @@ try; delete(findobj(0,'tag','stat')); end
 figure;
 set(gcf,'tag','stat','color','w','name',['stat [' mfilename ']'],'NumberTitle','off');
 set(gcf,'menubar','none','units','normalized','position',[0.5594    0.4122    0.3889    0.4667]);
-
+hf=findobj(0,'tag','stat');
 
 % panel for Data
 h1=uipanel('units','norm');
@@ -322,7 +400,7 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.0043999 0.84165 0.
 h=uicontrol('style','popupmenu','units','norm','position',[.2 0.83927 .2 .05],'string','select sheet','tag','popdatasheet',...
     'callback',@call_datacheet,...
     'TooltipString',   '<html>select the Excel-<b>sheet</b> containing the <font color=red>data');
-
+   set(h,'enable','off');
 
 
 % text-'sheet'
@@ -389,9 +467,9 @@ h=uicontrol('style','popupmenu','units','norm','position',[.2 .60 .2 .05],'strin
 h=uicontrol('style','checkbox','units','norm','position',[.4 .60 .2 .05],'string','within',...
     'tag','F2design','backgroundcolor','w','callback',@call_f2design);
 
-set(findobj(gcf,'tag','groupFactor2'),'visible','off');
-set(findobj(gcf,'tag','popgroupF2'),'visible','off');
-set(findobj(gcf,'tag','F2design'),'visible','off');
+set(findobj(hf,'tag','groupFactor2'),'visible','off');
+set(findobj(hf,'tag','popgroupF2'),'visible','off');
+set(findobj(hf,'tag','F2design'),'visible','off');
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 % FDR
 h=uicontrol('style','checkbox','units','norm','position',[.1 .7 .2 .05],'string','use FDR',...
@@ -438,10 +516,12 @@ h=uicontrol('style','text','units','norm','position',[.06 .52 .05 .03],'string',
 
 
 % =====type of test==========================================
+btest2=get_betweenttests();
 h=uicontrol('style','popupmenu','units','norm','position',[0 .45 .2 .05],...
-    'string',{'ttest2' 'ranksum' 'permutation','permutation2'},'tag','testsbetween',...
+    'string',btest2,'tag','testsbetween',...
     'callback',@typeoftest1,'position',[0.45617 0.65833 0.14 0.05],'tag','typeoftest1',...
     'tooltipstring','select type of test');
+
 
 
 
@@ -499,6 +579,10 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.9 .5 .1 .025],...
     'tooltipstring',['code snippet to check the result ' char(10) ' ..modify and test the snippet']);
 
 
+set(findobj(hf,'tag','popID'),'enable','off');
+set(findobj(hf,'tag','popgroupF1'),'enable','off');
+set(findobj(hf,'tag','popsubjectF1'),'enable','off');
+set(findobj(hf,'tag','popdauxsheet'),'enable','off');
 
 us.dummy       =1;
 us.issort      =1;
@@ -508,7 +592,25 @@ us.f1design    =0;
 us.f2design    =0;
 us.typeoftest1 =1;
 us.qFDR        =.05;
-set(gcf,'userdata',us);
+us.nperms= 5000; 
+% us.levene=0; 
+% us.lillie=0;
+
+us.defaults={...
+    'lillie' 0   '% % lillie-test, test for normality'
+    'levene' 0   '% % levene-test, test for equal variances'
+    };
+
+%     'lillie'      '% % test for normality'
+%     'levene'      '% % levene test for equal spread or variance'
+for i=1:size(us.defaults,1)
+   us= setfield(us,us.defaults{i,1},us.defaults{i,2});
+end
+
+
+
+
+set(hf,'userdata',us);
 
 
 if 0
@@ -522,6 +624,8 @@ if ~isempty(varargin)
     in= varargin{1};
     loadstuff(in);
 end
+drawnow;
+updatelistbox;
 
 
 % % FDR
@@ -542,45 +646,51 @@ end
 
 
 function qFDR(e,e2)
-us       = get(gcf,'userdata');
-us.qFDR =  str2num(get(findobj(gcf,'tag','qFDR'),'string'))   ;
-set(gcf,'userdata',us);
+hf=findobj(0,'tag','stat');
+us       = get(hf,'userdata');
+us.qFDR =  str2num(get(findobj(hf,'tag','qFDR'),'string'))   ;
+set(hf,'userdata',us);
 
 
 
 function isfdr(e,e2)
-us       = get(gcf,'userdata');
-us.isfdr = get(findobj(gcf,'tag','isfdr'),'value');
-set(gcf,'userdata',us);
+hf=findobj(0,'tag','stat');
+us       = get(hf,'userdata');
+us.isfdr = get(findobj(hf,'tag','isfdr'),'value');
+set(hf,'userdata',us);
 
 function showsigsonly(e,e2)
-us       = get(gcf,'userdata');
-us.showsigsonly = get(findobj(gcf,'tag','showsigsonly'),'value');
-set(gcf,'userdata',us);
+hf=findobj(0,'tag','stat');
+us       = get(hf,'userdata');
+us.showsigsonly = get(findobj(hf,'tag','showsigsonly'),'value');
+set(hf,'userdata',us);
 
 function issort(e,e2)
-us       = get(gcf,'userdata');
-us.issort = get(findobj(gcf,'tag','issort'),'value');
-set(gcf,'userdata',us);
+hf=findobj(0,'tag','stat');
+us       = get(hf,'userdata');
+us.issort = get(findobj(hf,'tag','issort'),'value');
+set(hf,'userdata',us);
 
 
 function getdatafile(e,e2,file)
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
 if exist('file')==0
     [fi pa]=uigetfile(pwd,'select datafile (excel)','*.xls');
     if pa==0; return; end
     file=fullfile(pa,fi);
 end
-% us.dataFP    =fullfile(pa,fi);
 us.data=file;
 [d s fmt]=xlsfinfo(us.data);
 us.dataSheets =s;
-set(findobj(gcf,'tag','popdatasheet'),'string',us.dataSheets);
-set(gcf,'userdata',us);
+set(findobj(hf,'tag','popdatasheet'),'string',us.dataSheets);
+set(hf,'userdata',us);
 updatelistbox;
+set(findobj(hf,'tag','popdatasheet'),'enable','on');
 
 function getauxfile(e,e2,file)
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
 if exist('file')==0
     [fi pa]=uigetfile(pwd,'select auxilary data (excel)','*.xls');
     if pa==0; return; end
@@ -590,18 +700,27 @@ end
 us.aux=file;
 [d s fmt]=xlsfinfo(us.aux);
 us.auxSheets =s;
-set(findobj(gcf,'tag','popdauxsheet'),'string',['select sheet' us.auxSheets]);
-set(gcf,'userdata',us);
+set(findobj(hf,'tag','popdauxsheet'),'string',['select sheet' us.auxSheets]);
+set(hf,'userdata',us);
 updatelistbox;
 
+set(findobj(hf,'tag','popID'),'enable','on');
+set(findobj(hf,'tag','popgroupF1'),'enable','on');
+set(findobj(hf,'tag','popsubjectF1'),'enable','on');
+set(findobj(hf,'tag','popdauxsheet'),'enable','on');
+
+
+
+
 function updatelistbox
-us=get(gcf,'userdata');
-lb=findobj(gcf,'tag','lbinfo');
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
+lb=findobj(hf,'tag','lbinfo');
 us=orderfields(us);
 try; us=rmfield(us,'regions'); end
 try; us=rmfield(us,'reg'); end
 try; us=rmfield(us,'anat'); end
-
+try; us=rmfield(us,'defaults'); end
 
 list=struct2list(us);
 list=regexprep(list,'^us.','');
@@ -612,15 +731,17 @@ set(lb,'FontName','courier');
 
 
 function call_datacheet(e,e2)
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
 li=get(e,'string');
 val=get(e,'value');
 us.dataSheet=li{val};
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 set(e,'backgroundcolor',[0.8392    0.9098    0.8510]);
 updatelistbox;
 
 function call_auxcheet(e,e2)
+hf=findobj(0,'tag','stat');
 li=get(e,'string');
 sheet=li{get(e,'value')};
 if strcmp(sheet,'select sheet');
@@ -628,27 +749,28 @@ if strcmp(sheet,'select sheet');
 end
 
 
-us=get(gcf,'userdata');
+us=get(hf,'userdata');
 [~,collab]=xlsread(us.aux,sheet,'A1:Z1');
 us.auxcol  =collab;
 us.auxSheet=sheet;
 
-set(gcf,'userdata',us);
-set(findobj(gcf,'tag','popID'),'string',collab);
-set(findobj(gcf,'tag','popgroupF1'),'string',collab);
-set(findobj(gcf,'tag','popgroupF2'),'string',[collab '*none*']);
-set(findobj(gcf,'tag','popsubjectF1'),'string',['*none*' collab ]);
+set(hf,'userdata',us);
+set(findobj(hf,'tag','popID'),'string',collab);
+set(findobj(hf,'tag','popgroupF1'),'string',collab);
+set(findobj(hf,'tag','popgroupF2'),'string',[collab '*none*']);
+set(findobj(hf,'tag','popsubjectF1'),'string',['*none*' collab ]);
 set(e,'backgroundcolor',[0.8392    0.9098    0.8510]);
 
 updatelistbox;
 
 
 function call_popID(e,e2)
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
 li=get(e,'string');
 val=get(e,'value');
 us.id=li{val};
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 set(e,'backgroundcolor',[0.8392    0.9098    0.8510]);
 
 updatelistbox;
@@ -656,7 +778,8 @@ updatelistbox;
 
 
 function call_subjectFactor(e,e2)
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
 li=get(e,'string');
 val=get(e,'value');
 if isempty(val)
@@ -664,70 +787,83 @@ if isempty(val)
 else
     us.subject=li{val};
 end
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 set(e,'backgroundcolor',[0.8392    0.9098    0.8510]);
 updatelistbox;
 
 function call_groupFactor1(e,e2)
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
 li=get(e,'string');
 val=get(e,'value');
 us.f1=li{val};
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 set(e,'backgroundcolor',[0.8392    0.9098    0.8510]);
 
 updatelistbox;
 
+
+function btest2=get_betweenttests()
+btest2={'ttest2' 'ttest2welch' 'ranksum' 'permwelch' 'permutation' };
+
 function call_f1design(e,e2)
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
 val=get(e,'value');
 us.f1design=val;
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 
-htests=findobj(gcf,'tag','typeoftest1');
+htests=findobj(hf,'tag','typeoftest1');
 if val==0 %between
-    set(htests,'string',{'ttest2' 'ranksum' 'permutation' 'permutation2'});
+    btest2=get_betweenttests();
+    set(htests,'string',btest2);
 else
     set(htests,'string',{'ttest' 'signrank' 'perm2'});
+end
+if htests.Value >length(htests.String)
+    htests.Value=1;
 end
 
 updatelistbox;
 %% ===============================================
 function typeoftest1(e,e2)
-htests=findobj(gcf,'tag','typeoftest1');
+hf=findobj(0,'tag','stat');
+htests=findobj(hf,'tag','typeoftest1');
 val=get(htests,'value');
 % get(htests,'string')
-us=get(gcf,'userdata');
+us=get(hf,'userdata');
 us.typeoftest1=val;
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 updatelistbox;
 
 
 
 function call_groupFactor2(e,e2)
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
 li=get(e,'string');
 val=get(e,'value');
 us.f2=li{val};
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 updatelistbox;
 
 function call_f2design(e,e2)
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
 val=get(e,'value');
 us.f2design=val;
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 updatelistbox;
 %••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 
 function process(e,e2)
 disp('..wait...');
-hfig=findobj(0,'tag','stat');
-us=get(hfig,'userdata');
-% figure(hfig);
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
+% figure(hf);
 loadExcelatlas();
 % save('us','us');
-us=get(hfig,'userdata');
+us=get(hf,'userdata');
 a2_sub(us)
 
 
@@ -771,11 +907,11 @@ if isfield(us,'anat')==0
         
         
         [~,~,tb]=xlsread( us.data, us.dataSheet);
-        av    =tb(:,1)
+        av    =tb(:,1);
         rowlab=cellfun(@(a){[ num2str(a) ]},av);
-        idel=regexpi(rowlab,'^NaN$')
-        idel=regexpi2(rowlab,'NaN')
-        rowlab(regexpi2(rowlab,'NaN'))=[]
+        idel=regexpi(rowlab,'^NaN$');
+        idel=regexpi2(rowlab,'NaN');
+        rowlab(regexpi2(rowlab,'NaN'))=[];
         
     end
     
@@ -918,38 +1054,38 @@ a2_sub([],'task','export');
 
 function loadstuff(in)
 
-hfig=findobj(0,'tag','stat');
+hf=findobj(0,'tag','stat');
 
 
 if isfield(in,'data');     getdatafile([],[],in.data) ; end
 if isfield(in,'dataSheet');
-    hh=findobj(hfig,'tag','popdatasheet');
+    hh=findobj(hf,'tag','popdatasheet');
     set(hh,'value',  find(strcmp(get(hh,'string'),in.dataSheet)));
     hgfeval( get(hh,'callback')  ,hh);
 end
 if isfield(in,'aux');     getauxfile([],[],in.aux) ; end
 if isfield(in,'auxSheet');
-    hh=findobj(hfig,'tag','popdauxsheet');
+    hh=findobj(hf,'tag','popdauxsheet');
     set(hh,'value',  regexpi2(get(hh,'string'),in.auxSheet));
     hgfeval( get(hh,'callback')  ,hh);
 end
 
 ss={'id' 'popID'};
 if isfield(in,ss{1});
-    hh=findobj(hfig,'tag',ss{2});
+    hh=findobj(hf,'tag',ss{2});
     set(hh,'value', regexpi2(get(hh,'string'),['^' getfield(in,ss{1}) '$'  ])  );
     hgfeval( get(hh,'callback')  ,hh);
 end
 ss={'f1' 'popgroupF1'};
 if isfield(in,ss{1});
-    hh=findobj(hfig,'tag',ss{2});
+    hh=findobj(hf,'tag',ss{2});
     set(hh,'value',  regexpi2(get(hh,'string'),['^' getfield(in,ss{1}) '$'  ]) );
     hgfeval( get(hh,'callback')  ,hh);
 end
 %% ===============================================
 ss={'subject' 'popsubjectF1'};
 if isfield(in,ss{1});
-    hh=findobj(hfig,'tag',ss{2});
+    hh=findobj(hf,'tag',ss{2});
     set(hh,'value',  regexpi2(get(hh,'string'),['^' getfield(in,ss{1}) '$'  ]) );
     hgfeval( get(hh,'callback')  ,hh);
 end
@@ -959,21 +1095,21 @@ end
 
 ss={'f1design' 'F1design'};
 if isfield(in,ss{1});
-    hh=findobj(hfig,'tag',ss{2});
+    hh=findobj(hf,'tag',ss{2});
     set(hh,'value',  getfield(in,ss{1}) );
     hgfeval( get(hh,'callback')  ,hh);
 end
 
 ss={'typeoftest1' 'typeoftest1'};
 if isfield(in,ss{1});
-    hh=findobj(hfig,'tag',ss{2});
+    hh=findobj(hf,'tag',ss{2});
     set(hh,'value',  regexpi2(get(hh,'string'),['^' getfield(in,ss{1}) '$'  ]) );
     hgfeval( get(hh,'callback')  ,hh);
 end
 
 ss={'tail' 'tail'};
 if isfield(in,ss{1});
-    hh=findobj(hfig,'tag',ss{2});
+    hh=findobj(hf,'tag',ss{2});
     set(hh,'value',  regexpi2(get(hh,'string'),['^' getfield(in,ss{1}) '$'  ]) );
     % hgfeval( get(hh,'callback')  ,hh);
 end
@@ -983,71 +1119,49 @@ end
 
 ss={'isfdr' 'isfdr'};
 if isfield(in,ss{1});
-    hh=findobj(hfig,'tag',ss{2});
+    hh=findobj(hf,'tag',ss{2});
     set(hh,'value',  getfield(in,ss{1}) );
     hgfeval( get(hh,'callback')  ,hh);
 end
 ss={'showsigsonly' 'showsigsonly'};
 if isfield(in,ss{1});
-    hh=findobj(hfig,'tag',ss{2});
+    hh=findobj(hf,'tag',ss{2});
     set(hh,'value', getfield(in,ss{1}) );
     hgfeval( get(hh,'callback')  ,hh);
 end
 ss={'issort' 'issort'};
 if isfield(in,ss{1});
-    hh=findobj(hfig,'tag',ss{2});
+    hh=findobj(hf,'tag',ss{2});
     set(hh,'value',  getfield(in,ss{1}) );
     hgfeval( get(hh,'callback')  ,hh);
 end
-
 ss={'qFDR' 'qFDR'};
 if isfield(in,ss{1});
-    hh=findobj(hfig,'tag',ss{2});
+    hh=findobj(hf,'tag',ss{2});
     set(hh,'string',  num2str(getfield(in,ss{1})) );
     figure(findobj(0,'tag','stat'))
     hgfeval( get(hh,'callback')  ,hh);
 end
-
-
-% % % % %
-% % % % % if 0
-% % % % %
-% % % % %     xstatlabels(struct(...
-% % % % %         'data',file,...
-% % % % %         'dataSheet',param{k},...
-% % % % %         'aux',fullfile(px,'#groups_Aged_mice_MRI_20171023.xlsx'  ),...
-% % % % %         'f1design',0,'typeoftest1',tests{j},...
-% % % % %         'auxSheet','Tabelle1',...
-% % % % %         'id', 'MRI-ID','f1','GROUP',...
-% % % % %         'isfdr',1 ,'showsigsonly',0 ,...
-% % % % %         'issort',1,'qFDR',0.05,'process',1,'outvar','sx',...
-% % % % %         'regionsfile', fullfile(px,'#myRegions_test.xls'  )  ));
-% % % % % end
-
-
 if isfield(in, 'regionsfile')
     if ~isempty(char(in.regionsfile))
-        us=get(gcf,'userdata');
+        us=get(hf,'userdata');
         us.regionsfile=in.regionsfile;
-        set(gcf,'userdata',us);
+        set(hf,'userdata',us);
     end
 end
-
-
-
 
 drawnow
 ss={'process',1};
 if isfield(in,ss{1});
     drawnow;
-    hh=findobj(hfig,'tag',ss{1});
+    hh=findobj(hf,'tag',ss{1});
     if getfield(in,ss{1})==1;          hgfeval( get(hh,'callback')  ,hh);           end
 end
 
 ss={'export',1 };
 if isfield(in,'task') && strcmp(in.task,'export')
-    figure(hfig);drawnow;
-    hh=findobj(hfig,'tag',ss{1});
+    figure(hf);drawnow;
+    hh=findobj(hf,'tag',ss{1});
     % a2_sub([],'export',fullfile(pwd,'KK.xlsx'));
     a2_sub([],'task','export','exportfile',in.exportfile  );
 end
@@ -1061,27 +1175,18 @@ if isfield(in,'outvar')
     end
 end
 
-
-
-if 0
-    
-    xstatlabels(struct('data',fullfile(pwd,'data_cbf_allen_space.xls'),'dataSheet','mean','aux',...
-        fullfile(pwd,'aux_Aged_mice_MRI_20171023.xlsx'  ),'f1design',0,'typeoftest1','Ttest2',...
-        'auxSheet','Tabelle1','id', 'MRI-ID','f1','GROUP','isfdr',1 ,'showsigsonly',1 ,'issort',1,'qFDR',.3));
-    
-    
-    
-    xstatlabels(struct('data',fullfile(pwd,'data_cbf_allen_space.xls'),'dataSheet','mean','aux',...
-        fullfile(pwd,'aux_Aged_mice_MRI_20171023.xlsx'  ),'f1design',0,'typeoftest1','ranksum',...
-        'auxSheet','Tabelle1','id', 'MRI-ID','f1','GROUP','isfdr',0 ,'showsigsonly',0 ,'issort',0,...
-        'process',1,'task','export', 'exportfile',  fullfile(pwd, 'blo.xlsx')   ));
-    
-    xstatlabels(struct('data',fullfile(pwd,'data_cbf_allen_space.xls'),'dataSheet','mean','aux',...
-        fullfile(pwd,'aux_Aged_mice_MRI_20171023.xlsx'  ),'f1design',0,'typeoftest1','ranksum',...
-        'auxSheet','Tabelle1','id', 'MRI-ID','f1','GROUP','isfdr',0 ,'showsigsonly',0 ,'issort',0,...
-        'process',1,'task','export', 'exportfile',  fullfile(pwd, 'blo.xlsx')   ));
-    
+%% =======[ other parameter]========================================
+us=get(hf,'userdata');
+for i=1:size(us.defaults,1)
+     if isfield(in,us.defaults{i,1})
+         %val=getfield(in ,us.defaults{i,1})
+       us=  setfield(us, us.defaults{i,1}, getfield(in ,us.defaults{i,1}));
+     end
 end
+set(hf,'userdata',us);
+
+
+
 
 
 % ==============================================
@@ -1090,26 +1195,14 @@ end
 
 
 function a2_sub(us,varargin)
-% clear;
 
-% load us
-% load us
-% load us1
-%  load us2
-
-
+hf=findobj(0,'tag','stat');
 par=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
 if ~isfield(par,'task')    ; par.task=''; end
-
-
 if strcmp(par.task,'export')
     exportfun(par);
     return
-    
 end
-
-
-
 if ~isfield(us,'f1design'); us.f1design=0; end
 if ~isfield(us,'f2'); us.f2=''; end
 %———————————————————————————————————————————————
@@ -1128,7 +1221,7 @@ us.tborig  =aaa(2:end,:);
 us.idf1=aaa(2:end,[us.cid us.cf1 us.cf2]);
 try;
     us.idf1=strtrim(us.idf1);
-    us.tborig=strtrim(us.tborig)
+    us.tborig=strtrim(us.tborig);
 catch
     us.idf1=cellfun(@(a){[  num2str(a)]} ,us.idf1);
     us.tborig=cellfun(@(a){[  num2str(a)]} ,us.tborig);
@@ -1289,11 +1382,11 @@ if isfield(us,'regionsfile')
         idel=find(strcmp(cellfun(@(a){[ num2str(a) ]} ,rf(1,:)),'NaN'));
         rf(:,idel)=[];
         
-        %% only regions given
+        %% only regions given --> trest every region as separate region (no merging)
         if size(rf,2)==1 %
-            rf(1,2)={'regionmergeID'}
-            mergeID=cellfun(@(a){[ num2str(a)]} ,num2cell([1:size(rf,1)-1]'))
-            rf(2:end,2)=mergeID
+            rf(1,2)={'regionmergeID'};
+            mergeID=cellfun(@(a){[ num2str(a)]} ,num2cell([1:size(rf,1)-1]'));
+            rf(2:end,2)=mergeID;
         end
         rf=rf(:,1:2);
         
@@ -1376,7 +1469,7 @@ if isfield(us,'regions') && ~isempty(us.regions)
 end
 
 us.tb=tb;
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 
 
 % ==============================================
@@ -1471,7 +1564,7 @@ ga{end+1,1}=('__________________________________________________________________
 disp(char(ga));
 
 us.groupassign=ga;
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 
 
 
@@ -1480,12 +1573,17 @@ set(gcf,'userdata',us);
 %———————————————————————————————————————————————
 %%   pairwise tests
 %———————————————————————————————————————————————
-htail=findobj(gcf,'tag','tail');
+htail=findobj(hf,'tag','tail');
 tail=htail.String{htail.Value}; %get Tail
 
 % us.typeoftest1=1;  %[1]ttest2,[2]WRS
 vartype=1;
 us.pw={};
+htests=findobj(hf,'tag','typeoftest1');
+disp(['design: ' regexprep(num2str(us.f1design),{'0','1'},{'between','within'})]);
+disp(['  test: ' htests.String{htests.Value}]);
+
+
 if 1%us.f1design==0 %between
     
     for i=1:size(comb,1)
@@ -1557,7 +1655,10 @@ if 1%us.f1design==0 %between
             
         end
         %disp(sprintf(['groupsize ' ': %d vs %d'],[size(x,2) size(y,2)]));
-        if us.f1design==1 %PAIRED
+        if us.f1design==1 
+            % ==============================================
+            %%  within-DESIGN
+            % ===============================================
             if us.typeoftest1==1
                 us.pw(i).type='ttest';
                 [h p ci st]=ttest(x',y','tail',tail);
@@ -1628,8 +1729,20 @@ if 1%us.f1design==0 %between
             
             
             
-        else   %between
-            if us.typeoftest1==1
+        else  
+            
+            % ==============================================
+            %%  between-DESIGN
+            % ===============================================
+            if strcmp(htests.String{htests.Value},'ttest2welch') ;%us.typeoftest1==1
+                us.pw(i).type='ttest2welch';
+                [h p ci st]=ttest2(x',y','tail',tail,'Vartype','unequal');
+                [out outh]=getMESD(x,y,vartype);
+                res=[h' p' st.tstat'  out  st.df'    ] ;
+                reshead=['hyp' 'p' 'T' outh 'df'];
+                %reshead={'hyp' 'p' 'T' 'ME' 'SD' 'SE'  'n1' 'n2' 'df'};
+                ikeep=find(~isnan(res(:,1)));
+            elseif strcmp(htests.String{htests.Value},'ttest2') ;%us.typeoftest1==1
                 us.pw(i).type='ttest2';
                 [h p ci st]=ttest2(x',y','tail',tail);
                 [out outh]=getMESD(x,y,vartype);
@@ -1637,8 +1750,11 @@ if 1%us.f1design==0 %between
                 reshead=['hyp' 'p' 'T' outh 'df'];
                 %reshead={'hyp' 'p' 'T' 'ME' 'SD' 'SE'  'n1' 'n2' 'df'};
                 ikeep=find(~isnan(res(:,1)));
-            elseif us.typeoftest1==2
-                us.pw(i).type='WRS';
+            elseif strcmp(htests.String{htests.Value},'WRS') ||...
+                    strcmp(htests.String{htests.Value},'MWU') ||...
+                    strcmp(htests.String{htests.Value},'ranksum') 
+                %same as MANN-WHITNEY-UTEST
+                us.pw(i).type='ranksum';
                 res=nan(size(x,1),[3]);
                 [out outh]=getMESD(x,y,vartype);
                 for j=1:size(x,1)
@@ -1651,9 +1767,26 @@ if 1%us.f1design==0 %between
                 reshead=['hyp' 'p' 'RS' outh ];
                 %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
                 ikeep=find(~isnan(res(:,1)));
-            elseif us.typeoftest1==3
-                us.pw(i).type='perm';
-                px= permtestmat(x',y',1000,'approximate');
+             
+            elseif strcmp(htests.String{htests.Value},'permwelch') ;%us.typeoftest1==1
+                us.pw(i).type='permwelch';
+                nperms=us.nperms;
+                
+                [p,q,h,t] = permutation_ttest_between(x,y,nperms,0.05,tail);
+                
+                [out outh]=getMESD(x,y,vartype);
+                df=nan(size(t));
+                res=[h p t  out  df   ] ;
+                reshead=['hyp' 'p' 'T' outh 'df'];
+                %reshead={'hyp' 'p' 'T' 'ME' 'SD' 'SE'  'n1' 'n2' 'df'};
+                ikeep=find(~isnan(res(:,1)));
+                
+              %% ===============================================
+              
+            elseif strcmp(htests.String{htests.Value},'permutation') ;%us.typeoftest1==3
+                us.pw(i).type='permutation';
+                nperms=us.nperms;
+                px= permtestmat(x',y',nperms,'approximate');
                 cprintf([1 0 1] ,[  'tail: only two-sided (both) hyothesis-testing supported' '\n']);
                 
                 [out outh]=getMESD(x,y,vartype);
@@ -1663,8 +1796,8 @@ if 1%us.f1design==0 %between
                 %reshead={'hyp' 'p' 'ME' 'SD' 'SE' 'n1' 'n2'};
                 [hv px]=ttest2(x',y');
                 ikeep=find(~isnan(hv));
-            elseif us.typeoftest1==4
-                us.pw(i).type='perm2';
+            elseif strcmp(htests.String{htests.Value},'permutation2');%us.typeoftest1==4
+                us.pw(i).type='permutation2';
                 %tic;[pv,to,cr,al]=mult_comp_perm_t2_nan(x',y',5000,0,.05); toc
                 
                 if strcmp(tail,'both')
@@ -1687,6 +1820,98 @@ if 1%us.f1design==0 %between
                 ikeep=find(~isnan(hv));
                 %             [p,T,cr,al]=mult_comp_perm_t2_nan(x(ix,:)',y(ix,:)',5000,0,.05);
             end
+            
+            % ==[add effectSize]=============================================
+            [d, dCI, g, gCI] = effectSize_between(x, y);
+            %effectSize  =[d, dCI, g, gCI];
+            %heffectSize = {'Cohens_d', 'Cohens_d_CI_Lower', 'Cohens_d_CI_Upper', ...
+            %    'Hedges_g', 'Hedges_g_CI_Lower', 'Hedges_g_CI_Upper'};
+            
+            % USING Hedges' g with its 95% CI,
+            effectSize  =[g gCI]; %only HEDGES'g
+            heffectSize = { 'Hedges_g', 'Hedges_g_CI_Lower', 'Hedges_g_CI_Upper'};
+            
+            res    =[res effectSize];
+            reshead=[reshead  heffectSize];
+            
+            %% ===============================================
+            % add LILLIE_TEST for normality
+            if us.lillie==1
+                nRegions = size(x,1);
+                %             hX = false(nRegions,1);
+                %             pX = nan(nRegions,1);
+                %             hY = false(nRegions,1);
+                %             pY = nan(nRegions,1);
+                [hX hY pX pY  DX DY]=deal(nan(nRegions,1));
+                for r = 1:nRegions
+                    xx = x(r,:);
+                    xx = xx(~isnan(xx));
+                    if numel(xx) >= 4
+                        [hX(r),pX(r) ,DX(r)] = lillietest(xx);
+                    end
+                    yy = y(r,:);
+                    yy = yy(~isnan(yy));
+                    if numel(yy) >= 4
+                        [hY(r),pY(r),DY(r)] = lillietest(yy);
+                    end
+                end
+                lil=[hX pX DX hY pY DY];
+                hlil={'lillie_g1_H' 'lillie_g1_p' 'lillie_g1_D' 'lillie_g2_H' 'lillie_g2_p' 'lillie_g2_D' };
+                res    =[res      lil ];
+                reshead=[reshead  hlil];
+            end
+            %% ===============================================
+            % add LEVENE for equal variances
+            if us.levene==1   
+                % function [p,F] = levene_rows(x,y)
+                [nRegions,nx] = size(x);
+                ny = size(y,2);
+                [p F H]=deal(nan(nRegions,1));
+                for r = 1:nRegions
+                    xx = x(r,:);     yy = y(r,:);
+                    xx = xx(~isnan(xx));
+                    yy = yy(~isnan(yy));
+                    if numel(xx) < 2 || numel(yy) < 2;        continue;    end
+                    zx = abs(xx - mean(xx)); % Brown-Forsythe
+                    zy = abs(yy - mean(yy));
+                    n1 = numel(zx);
+                    n2 = numel(zy);
+                    N  = n1+n2;
+                    z1 = mean(zx);
+                    z2 = mean(zy);
+                    z  = mean([zx zy]);
+                    SSB = n1*(z1-z)^2 + n2*(z2-z)^2;% Between groups
+                    SSW = sum((zx-z1).^2) + sum((zy-z2).^2);% Within groups
+                    F(r) = (SSB/1) / (SSW/(N-2));
+                    p(r) = 1-fcdf(F(r),1,N-2);
+                end
+                H(find(p<0.05))=1; H(find(p>=0.05))=0;
+                lev =[H p F];
+                hlev={'levene_H' 'levene_p' 'levene_F'};
+                res    =[res      lev ];
+                reshead=[reshead  hlev];
+               % ===============================================
+               
+               % restested: 
+%                 group1=x(end,:); group2=y(end,:);
+%                 data   = [group1(:);group2(:)];
+%                 groups = [ones(length(group1),1);
+%                     2*ones(length(group2),1)];
+%                 [pVar st] = vartestn(data,groups,...
+%                     'TestType','LeveneAbsolute',...
+%                     'Display','off');
+%                 [pVar st.fstat]
+
+
+                
+                
+                
+            end
+            
+            %% ===============================================
+            
+            
+            
         end
         %% ===============================================
         %% deal with missings
@@ -1695,14 +1920,6 @@ if 1%us.f1design==0 %between
         ix=find((xex>.9)&(yex>.9)&(~isnan(h(:)))  );  %90% of data must exist
         
         ikeep=ix;
-        
-        
-        %           %SHOW ALL VALUES
-        %           if get(findobj(findobj(gcf,'tag','stat'),'tag','showsigsonly'),'value') ==0
-        %               ikeep=[1:length(xex)]';
-        %           else %REMOVE NANS
-        %               ikeep=ix;
-        %           end
         
         
         res2=res(ikeep,:);
@@ -1718,7 +1935,7 @@ if 1%us.f1design==0 %between
         end
         
     end
-    set(gcf,'userdata',us);
+    set(hf,'userdata',us);
     showresults(0);
     
 end
@@ -1730,8 +1947,8 @@ showresults('export',par);
 function out=showresults(task, par)
 warning off;
 out=[];
-hfig=findobj(0,'tag','stat');
-us=get(hfig,'userdata');
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
 if exist('task') && strcmp(task,'export')
     
     doexport=1;
@@ -1765,7 +1982,7 @@ for i=1:size(tab,1)
     grp= [grp  [' "' tab{i,1} '"' '(n=' num2str(tab{i,2})  ')'] ];
 end
 
-htail=findobj(hfig,'tag','tail');
+htail=findobj(hf,'tag','tail');
 tail=htail.String{htail.Value}; %get Tail
 
 %% SHOW RESULTS
@@ -1782,7 +1999,7 @@ sz{end+1,1}=['groups (size) : '      grp];
 
 sz{end+1,1}=['PAIRWISE TEST : '      us.pw(1).type];
 sz{end+1,1}=['TAIL          : '      tail         ];
-
+sz{end+1,1}=['Design        : '      regexprep(num2str(us.f1design),{'0','1'},{'between','within'})         ];
 
 sz{end+1,1}=['FDR-correction: '      regexprep(num2str(us.isfdr),{'1' '0'},{'yes','no'})];
 
@@ -2422,9 +2639,6 @@ ed=uicontrol('style','pushbutton','units','norm','position', [.3 0.01 .1 .025],.
 % set(ed,'position', [.3 0.01 .1 .025]);
 
 
-% 'a'
-% v.labx  =labx;
-% v.colhex=colhex;
 v.r2    =r2;
 v.id    =[1:size(labx)]';
 
@@ -2529,8 +2743,8 @@ set(gcf,'userdata',s);
 if ~isempty(s.p.submit)
     out=prepareoutput;
     
-    hfig=findobj(0,'tag','stat');
-    us=get(hfig,'userdata');
+    hf=findobj(0,'tag','stat');
+    us=get(hf,'userdata');
     if isempty(out)
         try
             us=rmfield(us,'regions');
@@ -2554,7 +2768,7 @@ if ~isempty(s.p.submit)
         
         
     end
-    set(hfig,'userdata',us);
+    set(hf,'userdata',us);
 end
 
 % disp('check:ok.function line 153');
@@ -2774,19 +2988,20 @@ end
 
 
 function loadregions(e,e2)
-us=get(gcf,'userdata');
+hf=findobj(0,'tag','stat');
+us=get(hf,'userdata');
 [fi pa]=uigetfile(pwd,'select regionsfile (excel)','*.xls');
 if pa==0;
     try; us=rmfield(us,'regions');end
     try; us=rmfield(us,'regionsfile');end
-    set(gcf,'userdata',us);
+    set(hf,'userdata',us);
     return;
 end
 regionsfile=fullfile(pa,fi);
 
 % us.dataFP    =fullfile(pa,fi);
 us.regionsfile=regionsfile;
-set(gcf,'userdata',us);
+set(hf,'userdata',us);
 
 
 
@@ -2975,6 +3190,12 @@ v.f1design= get(findobj(h,'tag','F1design'),'value');
 d=findobj(h,'tag','typeoftest1'); li=get(d,'string'); va= get(d,'value');
 v.typeoftest1 = li{va}      ;
 
+
+%permutation
+if ~isempty(strfind(v.typeoftest1,'perm'))
+  try;  v.nperms= u.nperms; end
+end
+
 d=findobj(h,'tag','tail'); li=get(d,'string'); va= get(d,'value');
 v.tail = li{va}      ;
 
@@ -2995,6 +3216,17 @@ v.process   = 0;
 % v.dums='%commment"'
 % v.dum2='erde="heute=9"'
 
+% levene
+% if u.lillie==1;     v.lillie=u.lillie;  end
+% if u.levene==1;     v.levene=u.levene;  end
+
+for i=1:size(u.defaults,1)
+    if getfield(u, u.defaults{i,1})~=u.defaults{i,2}  %if not default, than add parameter
+        v=setfield(v,u.defaults{i,1}, getfield(u, u.defaults{i,1}  ));
+    end
+end
+
+
 v2=struct2list(v);
 iq=regexpi(v2,'=');
 
@@ -3011,20 +3243,27 @@ helps={...
     'subject'     '% % within-test only: name of the column containing the subject-factor (same animal get the same number...for repeated measures)'
     'f1design'    '% % type of test: [0]between, [1]within'
     'typeoftest1' '% % applied  statistical test (such as "ranksum" or "ttest2")'
-    'tail'        '% %  Type of alternative hypothesis: both|left|right '
+    'tail'        '% % Type of alternative hypothesis: both|left|right '
     'regionsfile' '% % <optional> excelfile containing regions, only this regions will be tested'
     'qFDR'        '% % q-threshold of FDR-correction (default: 0.05)'
     'isfdr'       '% % use FDR correction: [0]no, [1]yes'
     'showsigsonly' '% % show significant results only:  [0]no, show all, [1]yes, show signif. results only'
     'issort'      '% % sort results according the p-value: [0]no, [1]yes,sort '
     'process'     '% % calculate statistic [0]no, [1]yes, (simulates pressing the [process]-button) '
+    'nperms'      '% % number of permutations'
     };
+
+%     'lillie'      '% % test for normality'
+%     'levene'      '% % levene test for equal spread or variance'
+    
+helps=[helps; [u.defaults(:,[1 3])]];
+
+
 
 if 1 %remove "process"
     idel=regexpi2(helps(:,1),'process');
     helps(idel,:)=[];
     v2(idel)=[];
-    
 end
 
 v3=v2;
@@ -3034,11 +3273,17 @@ for i=1:size(v2,1)
 end
 nwid=size(char(v3),2);
 for i=1:size(v2,1)
-    v3{i}=[v3{i}   repmat(' ',[1 nwid-length(v3{i})+1]) helps{i,2}];
+    var=regexprep(v3{i},{'=.*','\s+','^v.'},{''});
+    ix=find(strcmp(helps(:,1),var));
+    if ~isempty(ix)
+     v3{i}=[v3{i}   repmat(' ',[1 nwid-length(v3{i})+1]) helps{ix,2}];   
+    end
+    
+    %v3{i}=[v3{i}   repmat(' ',[1 nwid-length(v3{i})+1]) helps{i,2}];
 end
 
 % v4=['% #by [xstatlabels.m] '; 'v = [];' ; v3;  'xstatlabels(v);     % % RUN statistic';];
-%  uhelp(v4,1);
+%  uhelp(v3,1);
 %% ===============================================
 
 code=[...
