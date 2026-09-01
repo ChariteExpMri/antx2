@@ -1218,8 +1218,8 @@
 % #wb 01 Sep 2026 (11:31:03)
 % #k [xstatlabels.m] #n : added: Hedges' g with its 95% CI, Welch two-sample t-test (unequal variance) and
 % Permutation-based Welch two-sample t-test
-% --> for examples see call snips and go to REGIONBASED-STATISTIC 
-% 
+% --> for examples call snips and look for REGIONBASED-STATISTIC in left panel 
+% #wb 02 Sep 2026 (14:54:16) #n : simulated and checked within/paird-desgin tests, also added Hedges'g
 % 
 % 
 % 

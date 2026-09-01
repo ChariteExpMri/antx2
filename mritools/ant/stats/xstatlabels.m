@@ -27,9 +27,10 @@
 %                     permwelch   : Permutation-based Welch two-sample t-test
 %                     permutation : depreciated, permutation-test
 %                    ----------------- 
-%                  for WITHIN-DESIGN: ttest, signrank, perm2  
-% 
-% 
+%                  for WITHIN-DESIGN: 
+%                       ttest      : paired-sample t-test
+%                       signrank   : Wilcoxon signed rank test 
+%                       permwithin : permutation test for paired / within-subject data.
 % 
 % [tail]         : tail of hypothesis-testing {both|left|right}
 % [useFDR]       : to correct for MCP
@@ -297,7 +298,6 @@
 %% #ky EXAMPLE: use Wilcoxon signed rank test (signrank)        [within-design]
 %% otherwise similar to above
 %% =============================================================================
-% 
 % v = [];
 % v.data         =  'H:\Daten-2\Imaging\AG_Xu\SAB_project2025\results\x_flour19f_SNR_thresh3\flour19f_TR3.xlsx'; % % excel data file
 % v.dataSheet    =  'integrDens';                                                                                % % sheetname of excel data file
@@ -327,6 +327,7 @@
 % xstatlabels('export','file',fullfile(pwd,'__export_klaus2.xlsx')); %silent mode
 %
 %
+
 
 function xstatlabels(varargin)
 warning off;
@@ -478,7 +479,7 @@ h=uicontrol('style','checkbox','units','norm','position',[.1 .7 .2 .05],'string'
 set(h,'position',[.01 .55 .2 .05],'fontsize',7,'callback',@isfdr);
 % showSigs
 h=uicontrol('style','checkbox','units','norm','position',[.3 .7 .2 .05],'string','show SIGs only',...
-    'tag','showsigsonly','backgroundcolor','w','value',1,...
+    'tag','showsigsonly','backgroundcolor','w','value',0,...
     'tooltipstring','show significant results only');%,'callback',@call_f2design);
 set(h,'position',[.15 .55 .2 .05],'fontsize',7,'callback',@showsigsonly);
 %sort
@@ -586,7 +587,7 @@ set(findobj(hf,'tag','popdauxsheet'),'enable','off');
 
 us.dummy       =1;
 us.issort      =1;
-us.showsigsonly=1;
+us.showsigsonly=0;
 us.isfdr       =1;
 us.f1design    =0;
 us.f2design    =0;
@@ -802,9 +803,11 @@ set(e,'backgroundcolor',[0.8392    0.9098    0.8510]);
 
 updatelistbox;
 
+function btests=get_withintests()
+btests={'ttest' 'signrank' 'permwithin'};
 
-function btest2=get_betweenttests()
-btest2={'ttest2' 'ttest2welch' 'ranksum' 'permwelch' 'permutation' };
+function btests=get_betweenttests()
+btests={'ttest2' 'ttest2welch' 'ranksum' 'permwelch' 'permutation' };
 
 function call_f1design(e,e2)
 hf=findobj(0,'tag','stat');
@@ -815,10 +818,12 @@ set(hf,'userdata',us);
 
 htests=findobj(hf,'tag','typeoftest1');
 if val==0 %between
-    btest2=get_betweenttests();
-    set(htests,'string',btest2);
+    btests=get_betweenttests();
+    set(htests,'string',btests);
 else
-    set(htests,'string',{'ttest' 'signrank' 'perm2'});
+    btests=get_withintests();
+    %btests={'ttest' 'signrank' 'permwithin'};
+    set(htests,'string',btests);
 end
 if htests.Value >length(htests.String)
     htests.Value=1;
@@ -1486,8 +1491,13 @@ if us.f1design==1
             c1=dx(strcmp(dx(:,2),grp(1)),:);
             c2=dx(strcmp(dx(:,2),grp(2)),:);
             %sort tables
+            try
             id1=str2num(cell2mat(c1(:,end)));
             id2=str2num(cell2mat(c2(:,end)));
+            catch
+            id1=str2num(char(c1(:,end)));
+            id2=str2num(char(c2(:,end)));
+            end
             id=unique(id1);
             [cs1 cs2]=deal({});
             for k=1:length(id)
@@ -1659,7 +1669,7 @@ if 1%us.f1design==0 %between
             % ==============================================
             %%  within-DESIGN
             % ===============================================
-            if us.typeoftest1==1
+            if strcmp(htests.String{htests.Value},'ttest') 
                 us.pw(i).type='ttest';
                 [h p ci st]=ttest(x',y','tail',tail);
                 [out outh]=getMESD(x,y,vartype);
@@ -1667,7 +1677,7 @@ if 1%us.f1design==0 %between
                 reshead=['hyp' 'p' 'T' outh 'df'];
                 %reshead={'hyp' 'p' 'T' 'ME' 'SD' 'SE'  'n1' 'n2' 'df'};
                 ikeep=find(~isnan(res(:,1)));
-            elseif us.typeoftest1==2 %signrank
+            elseif strcmp(htests.String{htests.Value},'signrank') 
                 %% ===============================================
                 
                 us.pw(i).type='signrank';
@@ -1684,48 +1694,104 @@ if 1%us.f1design==0 %between
                 %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
                 ikeep=find(~isnan(res(:,1)));
                 
+            elseif    strcmp(htests.String{htests.Value},'permwithin') 
+                %% ===============================================
+                us.pw(i).type='permwithin';
+                [out outh]=getMESD(x,y,vartype);
+                [pp,t] = permutation_ttest_within(x,y,us.nperms,tail);
+                h=pp;
+                h(find(pp>=0.05))=0;
+                h(find(pp< 0.05))=1;
+                %h(isnan(pp))=nan
+                
+                res=[h pp t ];
+                res=[res out];
+                reshead=['hyp' 'p' 'T' outh ];
+                %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
+                ikeep=find(~isnan(res(:,1)));
+                
+                
+                
                 %% ===============================================
             elseif us.typeoftest1==3
+                %% depreciated
                 %% ===============================================
-                nperms=5000;
-                us.pw(i).type='perm2';
-                if strcmp(tail,'both')
-                    tailnum=0;
-                elseif strcmp(tail,'left')
-                    tailnum=-1;
-                elseif strcmp(tail,'right')
-                    tailnum=+1;
-                end
-                %function [pval, t_orig, crit_t, est_alpha, seed_state]=mult_comp_perm_t1(data,n_perm,tail,alpha_level,mu,reports,seed_state)
-                dif=(x-y)';
-                %[p,T,cr,al]=mult_comp_perm_t1(dif,15000, tailnum  ,.05);
-                [argso,p,T,cr,al]=evalc('mult_comp_perm_t1(dif,nperms, tailnum  ,.05)');
-                h=p<0.05;
-                %disp(min(p));
-                [out outh]=getMESD(x,y,vartype);
-                res=[h' p' T'  out       ] ;
-                
-                reshead=['hyp' 'p' 'T' outh  ];
-                %reshead={'hyp' 'p' 'T'    'ME' 'SD' 'SE' 'n1' 'n2'   };
-                
-                [hv px]=ttest(x',y');
-                ikeep=find(~isnan(hv));
-                
-                argso2=strsplit(argso,char(10))';
-                nperms_str=num2str(nperms);
-                if ~isempty(regexpi2(argso2,'Due to the limited number of observation'))
-                    lin=argso2(regexpi2(argso2,'test with '));
-                    nperms_str=[char(regexprep(lin,{'.*with' ,'permutations.*' ,'\s+'},{''}))...
-                        ', limited number of obs.'];
-                end
-                us.pw(i).type=['perm2 (n=' nperms_str ')'];
-                
-                
-                %% ===============================================
+%                 nperms=5000;
+%                 us.pw(i).type='perm2';
+%                 if strcmp(tail,'both')
+%                     tailnum=0;
+%                 elseif strcmp(tail,'left')
+%                     tailnum=-1;
+%                 elseif strcmp(tail,'right')
+%                     tailnum=+1;
+%                 end
+%                 %function [pval, t_orig, crit_t, est_alpha, seed_state]=mult_comp_perm_t1(data,n_perm,tail,alpha_level,mu,reports,seed_state)
+%                 dif=(x-y)';
+%                 %[p,T,cr,al]=mult_comp_perm_t1(dif,15000, tailnum  ,.05);
+%                 [argso,p,T,cr,al]=evalc('mult_comp_perm_t1(dif,nperms, tailnum  ,.05)');
+%                 h=p<0.05;
+%                 %disp(min(p));
+%                 [out outh]=getMESD(x,y,vartype);
+%                 res=[h' p' T'  out       ] ;
+%                 
+%                 reshead=['hyp' 'p' 'T' outh  ];
+%                 %reshead={'hyp' 'p' 'T'    'ME' 'SD' 'SE' 'n1' 'n2'   };
+%                 
+%                 [hv px]=ttest(x',y');
+%                 ikeep=find(~isnan(hv));
+%                 
+%                 argso2=strsplit(argso,char(10))';
+%                 nperms_str=num2str(nperms);
+%                 if ~isempty(regexpi2(argso2,'Due to the limited number of observation'))
+%                     lin=argso2(regexpi2(argso2,'test with '));
+%                     nperms_str=[char(regexprep(lin,{'.*with' ,'permutations.*' ,'\s+'},{''}))...
+%                         ', limited number of obs.'];
+%                 end
+%                 us.pw(i).type=['perm2 (n=' nperms_str ')'];
                 
                 
-                
+                %% ===============================================  
             end
+            
+            %% ===[EFFECT SIZE]============================================
+            %[d1, dCI1, g1, gCI1] = effectSize_between(x, y); %OLD VERSION
+            [d, dCI, g, gCI] = effectSize_dg(x, y, 0.05, 'within');
+            %effectSize  =[d, dCI, g, gCI];
+            %heffectSize = {'Cohens_d', 'Cohens_d_CI_Lower', 'Cohens_d_CI_Upper', ...
+            %    'Hedges_g', 'Hedges_g_CI_Lower', 'Hedges_g_CI_Upper'};
+            
+            % USING Hedges' g with its 95% CI,
+            effectSize  =[g gCI]; %only HEDGES'g
+            heffectSize = { 'Hedges_g', 'Hedges_g_CI_Lower', 'Hedges_g_CI_Upper'};
+            res    =[res effectSize];
+            reshead=[reshead  heffectSize];
+            
+            %% ===[add LILLIE_TEST for normality ]============================================
+            % For within/repeated-measures design:
+            % test normality of the paired differences x-y
+            if us.lillie==1
+                nRegions = size(x,1);
+                [hD pD DD] = deal(nan(nRegions,1));
+                for r = 1:nRegions
+                    dd = x(r,:) - y(r,:); % Paired differences
+                    dd = dd(~isnan(dd)); % Remove incomplete pairs
+                    if numel(dd) >= 4
+                        [hD(r),pD(r),DD(r)] = lillietest(dd);
+                    end
+                end
+                lil = [hD pD DD];
+                hlil = {'lillie_diff_H' ...
+                    'lillie_diff_p' ...
+                    'lillie_diff_D'};
+                res     = [res     lil];
+                reshead = [reshead hlil];    
+            end
+            %% ===[add LILLIE_TEST for normality ]==
+            % Levene's test is not an assumption in withinDesign (because first differences=x-y)
+
+
+%% ===============================================
+
             
             
             
@@ -1821,8 +1887,9 @@ if 1%us.f1design==0 %between
                 %             [p,T,cr,al]=mult_comp_perm_t2_nan(x(ix,:)',y(ix,:)',5000,0,.05);
             end
             
-            % ==[add effectSize]=============================================
-            [d, dCI, g, gCI] = effectSize_between(x, y);
+            %% ==[add effectSize]=============================================
+            %[d1, dCI1, g1, gCI1] = effectSize_between(x, y); %OLD VERSION
+            [d, dCI, g, gCI] = effectSize_dg(x, y, 0.05, 'between');
             %effectSize  =[d, dCI, g, gCI];
             %heffectSize = {'Cohens_d', 'Cohens_d_CI_Lower', 'Cohens_d_CI_Upper', ...
             %    'Hedges_g', 'Hedges_g_CI_Lower', 'Hedges_g_CI_Upper'};
@@ -1830,7 +1897,6 @@ if 1%us.f1design==0 %between
             % USING Hedges' g with its 95% CI,
             effectSize  =[g gCI]; %only HEDGES'g
             heffectSize = { 'Hedges_g', 'Hedges_g_CI_Lower', 'Hedges_g_CI_Upper'};
-            
             res    =[res effectSize];
             reshead=[reshead  heffectSize];
             
@@ -1969,8 +2035,8 @@ else
     doexport=0;
 end
 
-[~,fi]=fileparts(us.data);
-
+[~,fi    ,fi_ext]=fileparts(us.data);
+[~,figrp,figrp_ext]=fileparts(us.aux);
 
 %groupsizes
 tab=tabulate(cellfun(@(a){num2str(a)}, us.tb(:,2)));
@@ -1993,13 +2059,25 @@ sz{end+1,1}=[' #wr                 **** [ '   fi       ' ] ****'                
 sz{end+1,1}=['_____________________________________________________________________________________________________________________'];
 
 
-sz{end+1,1}=['FILE          : '      fi          ];
-sz{end+1,1}=['Parameter     : '      us.dataSheet];
-sz{end+1,1}=['groups (size) : '      grp];
+sz{end+1,1}=['dataFile: '      fi fi_ext              ];
+sz{end+1,1}=['groupFile: '     figrp,figrp_ext          ];
+sz{end+1,1}=['FP_dataFile: '      us.data            ];
+sz{end+1,1}=['FP_groupFile: '     us.aux         ];
 
-sz{end+1,1}=['PAIRWISE TEST : '      us.pw(1).type];
-sz{end+1,1}=['TAIL          : '      tail         ];
-sz{end+1,1}=['Design        : '      regexprep(num2str(us.f1design),{'0','1'},{'between','within'})         ];
+sz{end+1,1}=['Parameter(sheet): '      us.dataSheet ];
+sz{end+1,1}=['groups(size): '      grp];
+
+sz{end+1,1}=['PAIRWISE TEST: '      us.pw(1).type];
+sz{end+1,1}=['TAIL: '      tail         ];
+sz{end+1,1}=['Design: '      regexprep(num2str(us.f1design),{'0','1'},{'between','within'})         ];
+
+%permutation
+if ~isempty(strfind(us.pw(1).type,'perm'))
+  try  
+      sz{end+1,1}=['nperms: '      num2str(us.nperms)         ];
+  end
+end
+
 
 sz{end+1,1}=['FDR-correction: '      regexprep(num2str(us.isfdr),{'1' '0'},{'yes','no'})];
 
@@ -2009,12 +2087,12 @@ end
 
 % number of tests
 for i=1:length(us.pw)
-    sz{end+1,1}=  ['No of tests   : '      num2str(length(us.pw(i).ikeep))   ' for "' us.pw(i).str '"' ];
+    sz{end+1,1}=  ['No of tests: '      num2str(length(us.pw(i).ikeep))   ' for "' us.pw(i).str '"' ];
 end
 
-sz{end+1,1}=['sorting       : '      regexprep(num2str(us.issort),{'1' '0'},{'yes','no'})];
-sz{end+1,1}=['showsigsonly  : '      regexprep(num2str(us.showsigsonly),{'1' '0'},{'yes','no'})];
-sz{end+1,1}='abbreviations : [p]         pvalue                          [t|RS|signedrank] test-dependent test-statistic/parameter ';
+sz{end+1,1}=['sorting: '      regexprep(num2str(us.issort),{'1' '0'},{'yes','no'})];
+sz{end+1,1}=['showsigsonly: '      regexprep(num2str(us.showsigsonly),{'1' '0'},{'yes','no'})];
+sz{end+1,1}='abbreviations: [p]         pvalue                          [t|RS|signedrank] test-dependent test-statistic/parameter ';
 sz{end+1,1}='                [Me1|Me2]   mean of group1|2                [diff] mean difference            '  ;
 sz{end+1,1}='                [SD1|SD2]   standard deviation of group1|2  [SE1|SE2]   standard error of group1|2 ' ;
 sz{end+1,1}='                [Med1|Med2] median of group1|2              [range1|range2] range of group1|2 ';
@@ -2023,9 +2101,9 @@ sz{end+1,1}='                [n1|n2]     groupsize of group1|2           [df] de
 
 % regionsfile
 if isfield(us,'regionsfile') && ~isempty(us.regionsfile)
-    sz{end+1,1}=['regionsfile   : '     '"' us.regionsfile '"'];
+    sz{end+1,1}=['regionsfile: '     '"' us.regionsfile '"'];
 else
-    sz{end+1,1}=['regionsfile   :      none'];
+    sz{end+1,1}=['regionsfile:      none'];
 end
 
 if isfield(us,'regions')

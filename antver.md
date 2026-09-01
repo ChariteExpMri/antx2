@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   01 Sep 2026 (11:31:03)  
+ &#x1F34E; last modification:   02 Sep 2026 (14:54:16)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,10 +7,12 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**02 Sep 2026 (14:54:16)** : simulated and checked within/paird-desgin tests, also added Hedges'g</ins>  
+<!---->
   &#x1F535;   <ins>**01 Sep 2026 (11:31:03)**</ins>  
    __[xstatlabels.m]__ : added: Hedges' g with its 95% CI, Welch two-sample t-test (unequal variance) and  
   Permutation-based Welch two-sample t-test  
-  --> for examples see call snips and go to REGIONBASED-STATISTIC  
+  --> for examples call snips and look for REGIONBASED-STATISTIC in left panel   
 <!---->
   &#x1F535;   <ins>**26 Jun 2026 (11:40:28)**</ins>  
    __[xRocketship_wrapper.m]__ new: wrapper to estimate quantitative R1 (=1/T1) and T1 maps from Variable  
