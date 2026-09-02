@@ -327,7 +327,7 @@
 % xstatlabels('export','file',fullfile(pwd,'__export_klaus2.xlsx')); %silent mode
 %
 %
-
+% partially checked under MAC-OS
 
 function xstatlabels(varargin)
 warning off;
@@ -673,16 +673,34 @@ us.issort = get(findobj(hf,'tag','issort'),'value');
 set(hf,'userdata',us);
 
 
+function sheets = getExcelSheetNames(filename)
+    tmp = tempname;
+    mkdir(tmp);
+    unzip(filename,tmp);
+    workbookFile = fullfile(tmp,'xl','workbook.xml');
+    doc = xmlread(workbookFile);
+    nodes = doc.getElementsByTagName('sheet');
+    sheets = cell(nodes.getLength,1);
+    for k = 0:nodes.getLength-1
+        node = nodes.item(k);
+        sheets{k+1} = char(node.getAttribute('name'));
+    end
+    rmdir(tmp,'s');
+
 function getdatafile(e,e2,file)
 hf=findobj(0,'tag','stat');
 us=get(hf,'userdata');
-if exist('file')==0
-    [fi pa]=uigetfile(pwd,'select datafile (excel)','*.xls');
+if exist('file')~=1
+    %[fi pa]=uigetfile(pwd,'select datafile (excel)','*.xls|*.xlsx');
+    [fi, pa] = uigetfile({'*.xlsx';'*.xls'},  'Select data file (Excel)');
     if pa==0; return; end
     file=fullfile(pa,fi);
 end
 us.data=file;
 [d s fmt]=xlsfinfo(us.data);
+if ischar(s) && ~isempty(strfind(s,'Unreadable Excel file'))
+   s=getExcelSheetNames(us.data) ;
+end
 us.dataSheets =s;
 set(findobj(hf,'tag','popdatasheet'),'string',us.dataSheets);
 set(hf,'userdata',us);
@@ -692,16 +710,19 @@ set(findobj(hf,'tag','popdatasheet'),'enable','on');
 function getauxfile(e,e2,file)
 hf=findobj(0,'tag','stat');
 us=get(hf,'userdata');
-if exist('file')==0
-    [fi pa]=uigetfile(pwd,'select auxilary data (excel)','*.xls');
+if exist('file')~=1
+    [fi pa]=uigetfile({'*.xlsx';'*.xls'},'select group-assignment file (Excel)');
     if pa==0; return; end
     file=fullfile(pa,fi);
 end
 % us.auxFP    =fullfile(pa,fi);
 us.aux=file;
 [d s fmt]=xlsfinfo(us.aux);
+if ischar(s) && ~isempty(strfind(s,'Unreadable Excel file'))
+   s=getExcelSheetNames(us.aux) ;
+end
 us.auxSheets =s;
-set(findobj(hf,'tag','popdauxsheet'),'string',['select sheet' us.auxSheets]);
+set(findobj(hf,'tag','popdauxsheet'),'string',[us.auxSheets]);
 set(hf,'userdata',us);
 updatelistbox;
 
@@ -751,7 +772,12 @@ end
 
 
 us=get(hf,'userdata');
+try
 [~,collab]=xlsread(us.aux,sheet,'A1:Z1');
+catch
+sheetNo=find(strcmp(us.auxSheets,sheet))
+[~,collab]=xlsread(us.aux,sheetNo,'A1:Z1');
+end
 us.auxcol  =collab;
 us.auxSheet=sheet;
 
@@ -905,18 +931,18 @@ if isfield(us,'anat')==0
     catch
         
         
-        keyboard
-        
-        
-        
-        
-        
+        try
         [~,~,tb]=xlsread( us.data, us.dataSheet);
+        catch
+       [~,~,tb]=xlsread( us.data, find(strcmp(us.dataSheets,us.dataSheet)));
+        end
         av    =tb(:,1);
         rowlab=cellfun(@(a){[ num2str(a) ]},av);
         idel=regexpi(rowlab,'^NaN$');
         idel=regexpi2(rowlab,'NaN');
         rowlab(regexpi2(rowlab,'NaN'))=[];
+        labx  = rowlab;
+        colhex= repmat({'FFFFFF'},[size(labx,1) 1]);
         
     end
     
@@ -1212,8 +1238,12 @@ if ~isfield(us,'f1design'); us.f1design=0; end
 if ~isfield(us,'f2'); us.f2=''; end
 %———————————————————————————————————————————————
 %%   read groupAssignment
-%———————————————————————————————————————————————
-[a  aa aaa]=xlsread(us.aux, us.auxSheet);
+try
+     [a  aa aaa]=xlsread(us.aux, us.auxSheet);
+ catch
+       [a,aa,aaa]=xlsread( us.aux, find(strcmp(us.auxSheets,us.auxSheet)));
+end
+        
 he=aaa(1,:);
 he=cellfun(@(a){[ num2str(a)]},he);
 us.cid=regexpi2(he,['^' char( us.id) '$']);
@@ -1241,8 +1271,11 @@ us.tborig(find(strcmp(us.tborig(:,1),'NaN')),:)=[]; %remove NAN-rows
 
 %———————————————————————————————————————————————
 %%   read data
-%———————————————————————————————————————————————
-[a  aa aaa]=xlsread(us.data, us.dataSheet);
+try
+       [a  aa aaa]=xlsread(us.data, us.dataSheet);
+ catch
+       [a,aa,aaa]=xlsread( us.data, find(strcmp(us.dataSheets,us.dataSheet)));
+end
 he=aaa(1,:);
 ids=cellfun(@(a){[ num2str(a)]},he);
 
@@ -2134,7 +2167,12 @@ if doexport==1
         try delete(filename); end
     end
     try ; delete(file); end
+    try
     xlswrite( file, sz(2:end), 'info');
+    catch
+     writetable(table(sz(2:end)),file,'Sheet','info','WriteVariableNames', false )
+    end
+    
 end
 
 for i=1:size(us.pw,2)
@@ -2179,13 +2217,17 @@ for i=1:size(us.pw,2)
     
     if doexport==1
         
-        % [2] write statistic
-        xlswrite( file, sx, us.pw(i).str);
-        xlsAutoFitCol(file,us.pw(i).str,'A:Z');
-        % [4] remove default-sheets
         try
-            %  xlsremovdefaultsheets(file);
+            % [2] write statistic
+            xlswrite( file, sx, us.pw(i).str);
+            xlsAutoFitCol(file,us.pw(i).str,'A:Z');
+        catch
+            writetable(table(sx),file,'Sheet',us.pw(i).str,'WriteVariableNames', false);
         end
+        % [4] remove default-sheets
+%         try
+            %  xlsremovdefaultsheets(file);
+%         end
         
         %         % [3] write single Data
         %         if isfield(us.pw(i),'sid')
@@ -2256,8 +2298,12 @@ if doexport==1
     if ~isempty(T2)
         [~,ix]=unique(T2(:,2),'stable');
         T3=T2(ix,:);
-        xlswrite( file,  [HT1; T3], ['singleData']);
-        xlsAutoFitCol(file,'singleData','A:BBB');
+        try
+            xlswrite( file,  [HT1; T3], ['singleData']);
+            xlsAutoFitCol(file,'singleData','A:BBB');
+        catch
+            writetable(table([HT1; T3]),file,'Sheet', 'singleData','WriteVariableNames', false );
+        end
     end
     %     try
     %     [~,sheetnames]=xlsfinfo(file)
@@ -2284,9 +2330,15 @@ if doexport~=1
 end
 
 if doexport==1
-    removexlssheet(file);
-    xlsstyle(file);
+  try;  removexlssheet(file); end
+  try;  xlsstyle(file); end
+  if 1%ispc==0
+      try
+      removeExcelSheets(file, {'Sheet1','Sheet2','Sheet3','Tabelle1','Tabelle12','Tabelle3'});
+      end
+  end
     disp(['created: <a href="matlab: system('''  [file] ''')">' [file] '</a>']);
+    showinfo2([],file);
 end
 
 
