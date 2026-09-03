@@ -223,7 +223,7 @@
 % xrename(0,z.files(:,1),z.files(:,2),z.files(:,3));
 %__________________________________________________________________________________________________________________
 %
-%% #ck ___MATHEMATICAL OPERATIONS (ma:)___
+%% #ck ___MATHEMATICAL OPERATIONS (mo:)___
 % SIMPLE MATHEMATICAL OPERATIONS CAN BE Done using the [TASK]-column
 % examples: threshold image, extract ROI from atlas image, combine mask(s) with image etc.
 % #k used CONVENTIONS:
@@ -2185,14 +2185,13 @@ for i=1:length(pa)      %PATH
                         eval(evalstr);
                         
                         
-                        if hu.dt(1)==2
-                            hu.dt(1) =4;
+                        hu2=hu(1);
+                        if hu2.dt(1)==2
+                            hu2.dt(1) =4;
                         end
                         if ~isempty(dt)
-                            hu.dt(1)=dt(1);
+                            hu2.dt(1)=dt(1);
                         end
-                        
-                        %disp(hu.dt);
                         
                         delete(s2);
                         rsavenii(s2,hu,o);
