@@ -1,6 +1,6 @@
 
 %% [xstatlabels.m] statistical analyis of anatomical labels via excelfile
-% currently only between-tests implemented
+% - Designs: between (two-sample) or within (paired)
 %_________________________________________________________________
 %% #wb  GUI
 % [load data]:      select excel-file
@@ -10,7 +10,7 @@
 % [ID]           :   select column with mouse names/ids
 % [group factor1]:   select the column that indicates the group assignment
 % [subject]      : OPTIONAL for within-design only, select the column that indicates
-%                  the subject-factor, the excel-file must contain a column with a 
+%                  the subject-factor, the excel-file must contain a column with a
 %                  subject-factor (for xample "subject"), this column indicate which
 %                  measurements belong to the same animal, i.e. two timepoints from the
 %                  same animal obtain the same numeric ID
@@ -19,19 +19,19 @@
 % [within]       : check if data bases on within design (repeated measure)
 % [test]         : select the test
 %                    -----------------
-%                  for BETWEEN-DESIGN: 
+%                  for BETWEEN-DESIGN:
 %                     ttest2      : two-sample ttest (equal vairance)
 %                     ttest2welch : two-sample ttest (unequal vairance) --> Welch's ttest
 %                     ranksum     : Wilcoxon rank sum test.. quivalent to a Mann-Whitney U-test.
 %                                     old name was "WRS"
 %                     permwelch   : Permutation-based Welch two-sample t-test
 %                     permutation : depreciated, permutation-test
-%                    ----------------- 
-%                  for WITHIN-DESIGN: 
+%                    -----------------
+%                  for WITHIN-DESIGN:
 %                       ttest      : paired-sample t-test
-%                       signrank   : Wilcoxon signed rank test 
+%                       signrank   : Wilcoxon signed rank test
 %                       permwithin : permutation test for paired / within-subject data.
-% 
+%
 % [tail]         : tail of hypothesis-testing {both|left|right}
 % [useFDR]       : to correct for MCP
 % [show SIGS only]: shows only the significant results
@@ -61,7 +61,7 @@
 %     Note: - that the order of the labels (column-1) and the explicit value of the number in column-2 is arbitrary.
 %           - only regions with a number in the 2nd. column will be parsed to analysis (all other regions defined
 %        in column-1 will be neglected)--> Thus the regions file can contain only those regions you want to analyze.
-% 
+%
 % EXAMPLE: In this example the data of the below Somatomotor areas will be pooled (same value in column-2: 22),
 %  #r - is is assumed that the 1st ROW is a HEADER (label in the header-row are arbitrary)
 % also the data of the below cingulate area will be pooled (same value in column-2: 5), while the data for
@@ -115,14 +115,14 @@
 %% ===============================================
 %% OTHER PARAMETER, NOT AVAILABLE USING GUI
 %% ===============================================
-% 
+%
 % 'nperms':  number of permutation (permutation based approaches)
 %              default: 5000
-% 'lillie' : do lillie-test, test for normality, {0,1}, 
+% 'lillie' : do lillie-test, test for normality, {0,1},
 %              default: 0
 % 'levene' : do levene-test, test for equal variances', {0,1}
 %              default: 0
-% 
+%
 %% ===============================================
 %
 %_________________________________________________________________
@@ -136,11 +136,11 @@
 %         fullfile(pwd,'aux_Aged_mice_MRI_20171023.xlsx'  ),'f1design',0,'typeoftest1','ranksum',...
 %         'auxSheet','Tabelle1','id', 'MRI-ID','f1','GROUP','isfdr',0 ,'showsigsonly',0 ,'issort',0,...
 %         'process',1,'task','export', 'exportfile',  fullfile(pwd, 'blo.xlsx')   ));
-% 
+%
 % ==============================================
 %%      between-design
 % ===============================================
-% 
+%
 %%  example  process data
 %     px='O:\data2\x01_maritzen'
 %     xstatlabels(struct(...
@@ -202,14 +202,14 @@
 % v.process      =  [0];          % % calculate statistic [0]no, [1]yes, (simulates pressing the [process]-button)
 % xstatlabels(v);     % % RUN statistic
 %
-% 
+%
 %% #################################################
 %% example3: RUN Welch two-sample t-test (unequal variance) on all atlas-regions
 % The data-file (Excelfile, generated via get GUI-"get anatomical labels" or xgetlabels4.m) contains the averaged
 % values from each anat. region for each animal ('mean'-sheet)
 % The group assignment file (Excelfile) contains a column with animal-IDs (here: 'MRI-ID') and a colum specifying
 % the group (here: 'group')
-% 
+%
 % v = [];
 % v.data         =  fullfile(pwd,'anatomical_labels_native_bothHem.xlsx'); % % excel data file
 % v.dataSheet    =  'mean';                                                % % sheetname of excel data file
@@ -245,13 +245,13 @@
 % xstatlabels(v);      % % SET all Parameter
 % xstatlabels('run');  % % RUN statistic
 % xstatlabels('export','file', fullfile(pwd,'res_anatom_perm.xlsx')); %save as Excelfile
-% 
-% 
+%
+%
 % ==============================================
 %%      witin-design
 % ===============================================
-% 
-% 
+%
+%
 %% ======================================================================================
 %% #ky EXAMPLE: paired t-test  (ttest)        [within-design]
 %% note: the excel-file must contain a column with a subject-factor (here "subject"), this
@@ -286,13 +286,13 @@
 % v.subject      =  'subject';                                                                                   % % within-test only: name of the column containing the subject-factor (same animal get the same number...for repeated measures)
 % v.f1design     =  [1];                                                                                         % % type of test: [0]between, [1]within
 % v.typeoftest1  =  'ttest';                                                                                     % % applied  statistical test (such as "ranksum" or "ttest2")
-% v.tail         =  'both';                                                                                      % %  Type of alternative hypothesis: both|left|right 
+% v.tail         =  'both';                                                                                      % %  Type of alternative hypothesis: both|left|right
 % v.regionsfile  =  '';                                                                                          % % <optional> excelfile containing regions, only this regions will be tested
 % v.qFDR         =  [0.05];                                                                                      % % q-threshold of FDR-correction (default: 0.05)
 % v.isfdr        =  [1];                                                                                         % % use FDR correction: [0]no, [1]yes
 % v.showsigsonly =  [0];                                                                                         % % show significant results only:  [0]no, show all, [1]yes, show signif. results only
-% v.issort       =  [1];                                                                                         % % sort results according the p-value: [0]no, [1]yes,sort 
-% xstatlabels(v);      % % SET all Parameter   
+% v.issort       =  [1];                                                                                         % % sort results according the p-value: [0]no, [1]yes,sort
+% xstatlabels(v);      % % SET all Parameter
 % xstatlabels('run');  % % RUN statistic
 %% =============================================================================
 %% #ky EXAMPLE: use Wilcoxon signed rank test (signrank)        [within-design]
@@ -308,18 +308,18 @@
 % v.subject      =  'subject';                                                                                   % % within-test only: name of the column containing the subject-factor (same animal get the same number...for repeated measures)
 % v.f1design     =  [1];                                                                                         % % type of test: [0]between, [1]within
 % v.typeoftest1  =  'signrank';                                                                                  % % applied  statistical test (such as "ranksum" or "ttest2")
-% v.tail         =  'both';                                                                                      % %  Type of alternative hypothesis: both|left|right 
+% v.tail         =  'both';                                                                                      % %  Type of alternative hypothesis: both|left|right
 % v.regionsfile  =  '';                                                                                          % % <optional> excelfile containing regions, only this regions will be tested
 % v.qFDR         =  [0.05];                                                                                      % % q-threshold of FDR-correction (default: 0.05)
 % v.isfdr        =  [1];                                                                                         % % use FDR correction: [0]no, [1]yes
 % v.showsigsonly =  [0];                                                                                         % % show significant results only:  [0]no, show all, [1]yes, show signif. results only
-% v.issort       =  [1];                                                                                         % % sort results according the p-value: [0]no, [1]yes,sort 
-% xstatlabels(v);      % % SET all Parameter   
+% v.issort       =  [1];                                                                                         % % sort results according the p-value: [0]no, [1]yes,sort
+% xstatlabels(v);      % % SET all Parameter
 % xstatlabels('run');  % % RUN statistic
-% 
-% 
+%
+%
 % ==============================================
-% #ok POSTHOC  
+% #ok POSTHOC
 % ===============================================
 %% xstatlabels('run');  % process data (is like pressing the [process]-button)
 %% posthoc:  export results as excelfile
@@ -327,7 +327,7 @@
 % xstatlabels('export','file',fullfile(pwd,'__export_klaus2.xlsx')); %silent mode
 %
 %
-% partially checked under MAC-OS
+% checked also under MAC-OS: 02-Sep-2026 20:02:47
 
 function xstatlabels(varargin)
 warning off;
@@ -401,7 +401,7 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.0043999 0.84165 0.
 h=uicontrol('style','popupmenu','units','norm','position',[.2 0.83927 .2 .05],'string','select sheet','tag','popdatasheet',...
     'callback',@call_datacheet,...
     'TooltipString',   '<html>select the Excel-<b>sheet</b> containing the <font color=red>data');
-   set(h,'enable','off');
+set(h,'enable','off');
 
 
 % text-'sheet'
@@ -453,7 +453,7 @@ h=uicontrol('style','popupmenu','units','norm','position',[0.20261 0.6012 0.2 0.
 %%
 % ===============================================
 %between vs within group
-h=uicontrol('style','checkbox','units','norm','position',[[0.46689 0.70833 0.2 0.05]],'string','within',...
+h=uicontrol('style','checkbox','units','norm','position',[[0.44 0.70833 0.2 0.05]],'string','within',...
     'tag','F1design','backgroundcolor','w','callback',@call_f1design,...
     'TooltipString', '<html><b> between vs within groups </b><br>[ ] between/independent groups<br>[x] repeated/within group');
 
@@ -497,7 +497,7 @@ tail={'both','left','right'};
 h=uicontrol('style','popupmenu','units','norm','position',[.45 .7 .2 .05],'string',tail,...
     'tag','tail','backgroundcolor','w','value',1,...
     'tooltipstring','Type of alternative hypothesis: both(default)|right|left ');%,'callback',@call_f2design);
-set(h,'position',[.51 .545 .09 .05],'fontsize',7);%,'callback',@issort);
+set(h,'position',[.5 .545 .12 .05],'fontsize',7);%,'callback',@issort);
 
 % 'Tail' — Type of alternative hypothesis
 % 'both' (default) | 'right' | 'left'
@@ -520,7 +520,7 @@ h=uicontrol('style','text','units','norm','position',[.06 .52 .05 .03],'string',
 btest2=get_betweenttests();
 h=uicontrol('style','popupmenu','units','norm','position',[0 .45 .2 .05],...
     'string',btest2,'tag','testsbetween',...
-    'callback',@typeoftest1,'position',[0.45617 0.65833 0.14 0.05],'tag','typeoftest1',...
+    'callback',@typeoftest1,'position',[0.43 0.65833 0.18 0.05],'tag','typeoftest1',...
     'tooltipstring','select type of test');
 
 
@@ -585,7 +585,7 @@ set(findobj(hf,'tag','popgroupF1'),'enable','off');
 set(findobj(hf,'tag','popsubjectF1'),'enable','off');
 set(findobj(hf,'tag','popdauxsheet'),'enable','off');
 
-us.dummy       =1;
+% us.dummy       =1;
 us.issort      =1;
 us.showsigsonly=0;
 us.isfdr       =1;
@@ -593,8 +593,8 @@ us.f1design    =0;
 us.f2design    =0;
 us.typeoftest1 =1;
 us.qFDR        =.05;
-us.nperms= 5000; 
-% us.levene=0; 
+us.nperms= 5000;
+% us.levene=0;
 % us.lillie=0;
 
 us.defaults={...
@@ -605,7 +605,7 @@ us.defaults={...
 %     'lillie'      '% % test for normality'
 %     'levene'      '% % levene test for equal spread or variance'
 for i=1:size(us.defaults,1)
-   us= setfield(us,us.defaults{i,1},us.defaults{i,2});
+    us= setfield(us,us.defaults{i,1},us.defaults{i,2});
 end
 
 
@@ -674,32 +674,32 @@ set(hf,'userdata',us);
 
 
 function sheets = getExcelSheetNames(filename)
-    tmp = tempname;
-    mkdir(tmp);
-    unzip(filename,tmp);
-    workbookFile = fullfile(tmp,'xl','workbook.xml');
-    doc = xmlread(workbookFile);
-    nodes = doc.getElementsByTagName('sheet');
-    sheets = cell(nodes.getLength,1);
-    for k = 0:nodes.getLength-1
-        node = nodes.item(k);
-        sheets{k+1} = char(node.getAttribute('name'));
-    end
-    rmdir(tmp,'s');
+tmp = tempname;
+mkdir(tmp);
+unzip(filename,tmp);
+workbookFile = fullfile(tmp,'xl','workbook.xml');
+doc = xmlread(workbookFile);
+nodes = doc.getElementsByTagName('sheet');
+sheets = cell(nodes.getLength,1);
+for k = 0:nodes.getLength-1
+    node = nodes.item(k);
+    sheets{k+1} = char(node.getAttribute('name'));
+end
+rmdir(tmp,'s');
 
 function getdatafile(e,e2,file)
 hf=findobj(0,'tag','stat');
 us=get(hf,'userdata');
 if exist('file')~=1
-    %[fi pa]=uigetfile(pwd,'select datafile (excel)','*.xls|*.xlsx');
-    [fi, pa] = uigetfile({'*.xlsx';'*.xls'},  'Select data file (Excel)');
+    if ismac;    disp('Select datafile (Excel)');end
+    [fi, pa] = uigetfile({'*.xlsx';'*.xls'},  'Select datafile (Excel)');
     if pa==0; return; end
     file=fullfile(pa,fi);
 end
 us.data=file;
 [d s fmt]=xlsfinfo(us.data);
 if ischar(s) && ~isempty(strfind(s,'Unreadable Excel file'))
-   s=getExcelSheetNames(us.data) ;
+    s=getExcelSheetNames(us.data) ;
 end
 us.dataSheets =s;
 set(findobj(hf,'tag','popdatasheet'),'string',us.dataSheets);
@@ -711,6 +711,7 @@ function getauxfile(e,e2,file)
 hf=findobj(0,'tag','stat');
 us=get(hf,'userdata');
 if exist('file')~=1
+    if ismac;    disp('Select group-assignment file (Excel)');end
     [fi pa]=uigetfile({'*.xlsx';'*.xls'},'select group-assignment file (Excel)');
     if pa==0; return; end
     file=fullfile(pa,fi);
@@ -719,7 +720,7 @@ end
 us.aux=file;
 [d s fmt]=xlsfinfo(us.aux);
 if ischar(s) && ~isempty(strfind(s,'Unreadable Excel file'))
-   s=getExcelSheetNames(us.aux) ;
+    s=getExcelSheetNames(us.aux) ;
 end
 us.auxSheets =s;
 set(findobj(hf,'tag','popdauxsheet'),'string',[us.auxSheets]);
@@ -773,10 +774,10 @@ end
 
 us=get(hf,'userdata');
 try
-[~,collab]=xlsread(us.aux,sheet,'A1:Z1');
+    [~,collab]=xlsread(us.aux,sheet,'A1:Z1');
 catch
-sheetNo=find(strcmp(us.auxSheets,sheet))
-[~,collab]=xlsread(us.aux,sheetNo,'A1:Z1');
+    sheetNo=find(strcmp(us.auxSheets,sheet))
+    [~,collab]=xlsread(us.aux,sheetNo,'A1:Z1');
 end
 us.auxcol  =collab;
 us.auxSheet=sheet;
@@ -932,9 +933,9 @@ if isfield(us,'anat')==0
         
         
         try
-        [~,~,tb]=xlsread( us.data, us.dataSheet);
+            [~,~,tb]=xlsread( us.data, us.dataSheet);
         catch
-       [~,~,tb]=xlsread( us.data, find(strcmp(us.dataSheets,us.dataSheet)));
+            [~,~,tb]=xlsread( us.data, find(strcmp(us.dataSheets,us.dataSheet)));
         end
         av    =tb(:,1);
         rowlab=cellfun(@(a){[ num2str(a) ]},av);
@@ -1209,10 +1210,10 @@ end
 %% =======[ other parameter]========================================
 us=get(hf,'userdata');
 for i=1:size(us.defaults,1)
-     if isfield(in,us.defaults{i,1})
-         %val=getfield(in ,us.defaults{i,1})
-       us=  setfield(us, us.defaults{i,1}, getfield(in ,us.defaults{i,1}));
-     end
+    if isfield(in,us.defaults{i,1})
+        %val=getfield(in ,us.defaults{i,1})
+        us=  setfield(us, us.defaults{i,1}, getfield(in ,us.defaults{i,1}));
+    end
 end
 set(hf,'userdata',us);
 
@@ -1239,11 +1240,11 @@ if ~isfield(us,'f2'); us.f2=''; end
 %———————————————————————————————————————————————
 %%   read groupAssignment
 try
-     [a  aa aaa]=xlsread(us.aux, us.auxSheet);
- catch
-       [a,aa,aaa]=xlsread( us.aux, find(strcmp(us.auxSheets,us.auxSheet)));
+    [a  aa aaa]=xlsread(us.aux, us.auxSheet);
+catch
+    [a,aa,aaa]=xlsread( us.aux, find(strcmp(us.auxSheets,us.auxSheet)));
 end
-        
+
 he=aaa(1,:);
 he=cellfun(@(a){[ num2str(a)]},he);
 us.cid=regexpi2(he,['^' char( us.id) '$']);
@@ -1272,9 +1273,9 @@ us.tborig(find(strcmp(us.tborig(:,1),'NaN')),:)=[]; %remove NAN-rows
 %———————————————————————————————————————————————
 %%   read data
 try
-       [a  aa aaa]=xlsread(us.data, us.dataSheet);
- catch
-       [a,aa,aaa]=xlsread( us.data, find(strcmp(us.dataSheets,us.dataSheet)));
+    [a  aa aaa]=xlsread(us.data, us.dataSheet);
+catch
+    [a,aa,aaa]=xlsread( us.data, find(strcmp(us.dataSheets,us.dataSheet)));
 end
 he=aaa(1,:);
 ids=cellfun(@(a){[ num2str(a)]},he);
@@ -1525,11 +1526,11 @@ if us.f1design==1
             c2=dx(strcmp(dx(:,2),grp(2)),:);
             %sort tables
             try
-            id1=str2num(cell2mat(c1(:,end)));
-            id2=str2num(cell2mat(c2(:,end)));
+                id1=str2num(cell2mat(c1(:,end)));
+                id2=str2num(cell2mat(c2(:,end)));
             catch
-            id1=str2num(char(c1(:,end)));
-            id2=str2num(char(c2(:,end)));
+                id1=str2num(char(c1(:,end)));
+                id2=str2num(char(c2(:,end)));
             end
             id=unique(id1);
             [cs1 cs2]=deal({});
@@ -1698,11 +1699,11 @@ if 1%us.f1design==0 %between
             
         end
         %disp(sprintf(['groupsize ' ': %d vs %d'],[size(x,2) size(y,2)]));
-        if us.f1design==1 
+        if us.f1design==1
             % ==============================================
             %%  within-DESIGN
             % ===============================================
-            if strcmp(htests.String{htests.Value},'ttest') 
+            if strcmp(htests.String{htests.Value},'ttest')
                 us.pw(i).type='ttest';
                 [h p ci st]=ttest(x',y','tail',tail);
                 [out outh]=getMESD(x,y,vartype);
@@ -1710,7 +1711,7 @@ if 1%us.f1design==0 %between
                 reshead=['hyp' 'p' 'T' outh 'df'];
                 %reshead={'hyp' 'p' 'T' 'ME' 'SD' 'SE'  'n1' 'n2' 'df'};
                 ikeep=find(~isnan(res(:,1)));
-            elseif strcmp(htests.String{htests.Value},'signrank') 
+            elseif strcmp(htests.String{htests.Value},'signrank')
                 %% ===============================================
                 
                 us.pw(i).type='signrank';
@@ -1727,7 +1728,7 @@ if 1%us.f1design==0 %between
                 %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
                 ikeep=find(~isnan(res(:,1)));
                 
-            elseif    strcmp(htests.String{htests.Value},'permwithin') 
+            elseif    strcmp(htests.String{htests.Value},'permwithin')
                 %% ===============================================
                 us.pw(i).type='permwithin';
                 [out outh]=getMESD(x,y,vartype);
@@ -1749,41 +1750,41 @@ if 1%us.f1design==0 %between
             elseif us.typeoftest1==3
                 %% depreciated
                 %% ===============================================
-%                 nperms=5000;
-%                 us.pw(i).type='perm2';
-%                 if strcmp(tail,'both')
-%                     tailnum=0;
-%                 elseif strcmp(tail,'left')
-%                     tailnum=-1;
-%                 elseif strcmp(tail,'right')
-%                     tailnum=+1;
-%                 end
-%                 %function [pval, t_orig, crit_t, est_alpha, seed_state]=mult_comp_perm_t1(data,n_perm,tail,alpha_level,mu,reports,seed_state)
-%                 dif=(x-y)';
-%                 %[p,T,cr,al]=mult_comp_perm_t1(dif,15000, tailnum  ,.05);
-%                 [argso,p,T,cr,al]=evalc('mult_comp_perm_t1(dif,nperms, tailnum  ,.05)');
-%                 h=p<0.05;
-%                 %disp(min(p));
-%                 [out outh]=getMESD(x,y,vartype);
-%                 res=[h' p' T'  out       ] ;
-%                 
-%                 reshead=['hyp' 'p' 'T' outh  ];
-%                 %reshead={'hyp' 'p' 'T'    'ME' 'SD' 'SE' 'n1' 'n2'   };
-%                 
-%                 [hv px]=ttest(x',y');
-%                 ikeep=find(~isnan(hv));
-%                 
-%                 argso2=strsplit(argso,char(10))';
-%                 nperms_str=num2str(nperms);
-%                 if ~isempty(regexpi2(argso2,'Due to the limited number of observation'))
-%                     lin=argso2(regexpi2(argso2,'test with '));
-%                     nperms_str=[char(regexprep(lin,{'.*with' ,'permutations.*' ,'\s+'},{''}))...
-%                         ', limited number of obs.'];
-%                 end
-%                 us.pw(i).type=['perm2 (n=' nperms_str ')'];
+                %                 nperms=5000;
+                %                 us.pw(i).type='perm2';
+                %                 if strcmp(tail,'both')
+                %                     tailnum=0;
+                %                 elseif strcmp(tail,'left')
+                %                     tailnum=-1;
+                %                 elseif strcmp(tail,'right')
+                %                     tailnum=+1;
+                %                 end
+                %                 %function [pval, t_orig, crit_t, est_alpha, seed_state]=mult_comp_perm_t1(data,n_perm,tail,alpha_level,mu,reports,seed_state)
+                %                 dif=(x-y)';
+                %                 %[p,T,cr,al]=mult_comp_perm_t1(dif,15000, tailnum  ,.05);
+                %                 [argso,p,T,cr,al]=evalc('mult_comp_perm_t1(dif,nperms, tailnum  ,.05)');
+                %                 h=p<0.05;
+                %                 %disp(min(p));
+                %                 [out outh]=getMESD(x,y,vartype);
+                %                 res=[h' p' T'  out       ] ;
+                %
+                %                 reshead=['hyp' 'p' 'T' outh  ];
+                %                 %reshead={'hyp' 'p' 'T'    'ME' 'SD' 'SE' 'n1' 'n2'   };
+                %
+                %                 [hv px]=ttest(x',y');
+                %                 ikeep=find(~isnan(hv));
+                %
+                %                 argso2=strsplit(argso,char(10))';
+                %                 nperms_str=num2str(nperms);
+                %                 if ~isempty(regexpi2(argso2,'Due to the limited number of observation'))
+                %                     lin=argso2(regexpi2(argso2,'test with '));
+                %                     nperms_str=[char(regexprep(lin,{'.*with' ,'permutations.*' ,'\s+'},{''}))...
+                %                         ', limited number of obs.'];
+                %                 end
+                %                 us.pw(i).type=['perm2 (n=' nperms_str ')'];
                 
                 
-                %% ===============================================  
+                %% ===============================================
             end
             
             %% ===[EFFECT SIZE]============================================
@@ -1817,18 +1818,18 @@ if 1%us.f1design==0 %between
                     'lillie_diff_p' ...
                     'lillie_diff_D'};
                 res     = [res     lil];
-                reshead = [reshead hlil];    
+                reshead = [reshead hlil];
             end
             %% ===[add LILLIE_TEST for normality ]==
             % Levene's test is not an assumption in withinDesign (because first differences=x-y)
-
-
-%% ===============================================
-
+            
+            
+            %% ===============================================
             
             
             
-        else  
+            
+        else
             
             % ==============================================
             %%  between-DESIGN
@@ -1851,7 +1852,7 @@ if 1%us.f1design==0 %between
                 ikeep=find(~isnan(res(:,1)));
             elseif strcmp(htests.String{htests.Value},'WRS') ||...
                     strcmp(htests.String{htests.Value},'MWU') ||...
-                    strcmp(htests.String{htests.Value},'ranksum') 
+                    strcmp(htests.String{htests.Value},'ranksum')
                 %same as MANN-WHITNEY-UTEST
                 us.pw(i).type='ranksum';
                 res=nan(size(x,1),[3]);
@@ -1866,7 +1867,7 @@ if 1%us.f1design==0 %between
                 reshead=['hyp' 'p' 'RS' outh ];
                 %reshead={'hyp' 'p' 'RS' 'ME' 'SD' 'SE' 'n1' 'n2'};
                 ikeep=find(~isnan(res(:,1)));
-             
+                
             elseif strcmp(htests.String{htests.Value},'permwelch') ;%us.typeoftest1==1
                 us.pw(i).type='permwelch';
                 nperms=us.nperms;
@@ -1880,8 +1881,8 @@ if 1%us.f1design==0 %between
                 %reshead={'hyp' 'p' 'T' 'ME' 'SD' 'SE'  'n1' 'n2' 'df'};
                 ikeep=find(~isnan(res(:,1)));
                 
-              %% ===============================================
-              
+                %% ===============================================
+                
             elseif strcmp(htests.String{htests.Value},'permutation') ;%us.typeoftest1==3
                 us.pw(i).type='permutation';
                 nperms=us.nperms;
@@ -1961,7 +1962,7 @@ if 1%us.f1design==0 %between
             end
             %% ===============================================
             % add LEVENE for equal variances
-            if us.levene==1   
+            if us.levene==1
                 % function [p,F] = levene_rows(x,y)
                 [nRegions,nx] = size(x);
                 ny = size(y,2);
@@ -1989,19 +1990,19 @@ if 1%us.f1design==0 %between
                 hlev={'levene_H' 'levene_p' 'levene_F'};
                 res    =[res      lev ];
                 reshead=[reshead  hlev];
-               % ===============================================
-               
-               % restested: 
-%                 group1=x(end,:); group2=y(end,:);
-%                 data   = [group1(:);group2(:)];
-%                 groups = [ones(length(group1),1);
-%                     2*ones(length(group2),1)];
-%                 [pVar st] = vartestn(data,groups,...
-%                     'TestType','LeveneAbsolute',...
-%                     'Display','off');
-%                 [pVar st.fstat]
-
-
+                % ===============================================
+                
+                % restested:
+                %                 group1=x(end,:); group2=y(end,:);
+                %                 data   = [group1(:);group2(:)];
+                %                 groups = [ones(length(group1),1);
+                %                     2*ones(length(group2),1)];
+                %                 [pVar st] = vartestn(data,groups,...
+                %                     'TestType','LeveneAbsolute',...
+                %                     'Display','off');
+                %                 [pVar st.fstat]
+                
+                
                 
                 
                 
@@ -2038,6 +2039,19 @@ if 1%us.f1design==0 %between
     showresults(0);
     
 end
+
+
+if isfield(us,'regionsfile')
+    if exist(us.regionsfile)==2
+        disp(['regionsfile (found): ' us.regionsfile]);
+    else
+        disp(['regionsfile (not found!!!): ' us.regionsfile]);
+    end
+else
+    disp(['regionsfile: none']);
+end
+
+
 
 function exportfun(par)
 
@@ -2091,52 +2105,55 @@ sz{end+1,1}=['__________________________________________________________________
 sz{end+1,1}=[' #wr                 **** [ '   fi       ' ] ****'                      ];
 sz{end+1,1}=['_____________________________________________________________________________________________________________________'];
 
+sz{end+1,1}=['comparison: '     ['"' tab{1,1} '" vs "' tab{2,1} '"']             ];
+sz{end+1,1}=['creationDate: '   datestr(now)                ];
+sz{end+1,1}=[' '            ];
 
-sz{end+1,1}=['dataFile: '      fi fi_ext              ];
-sz{end+1,1}=['groupFile: '     figrp,figrp_ext          ];
-sz{end+1,1}=['FP_dataFile: '      us.data            ];
-sz{end+1,1}=['FP_groupFile: '     us.aux         ];
+sz{end+1,1}=['dataFile: '       fi fi_ext              ];
+sz{end+1,1}=['groupFile: '      figrp,figrp_ext          ];
+sz{end+1,1}=['dataFilePath: '     us.data            ];
+sz{end+1,1}=['groupFilePath: '    us.aux         ];
 
-sz{end+1,1}=['Parameter(sheet): '      us.dataSheet ];
-sz{end+1,1}=['groups(size): '      grp];
+sz{end+1,1}=[' '            ];
+sz{end+1,1}=['sheet: '  us.dataSheet ];
+sz{end+1,1}=['groupInfo: '      grp];
+% sz{end+1,1}=['groupLabel1: '       ['"' tab{1,1} '"']             ];
+% sz{end+1,1}=['groupLabel2: '       ['"' tab{2,1} '"']             ];
+sz{end+1,1}=['group1: '         tab{1,1}                 ];
+sz{end+1,1}=['group2: '         tab{2,1}            ];
 
-sz{end+1,1}=['PAIRWISE TEST: '      us.pw(1).type];
-sz{end+1,1}=['TAIL: '      tail         ];
-sz{end+1,1}=['Design: '      regexprep(num2str(us.f1design),{'0','1'},{'between','within'})         ];
+
+sz{end+1,1}=[' '            ];
+
+sz{end+1,1}=['statTest: '  us.pw(1).type];
+sz{end+1,1}=['tail: '           tail         ];
+sz{end+1,1}=['design: '         regexprep(num2str(us.f1design),{'0','1'},{'between','within'})         ];
 
 %permutation
 if ~isempty(strfind(us.pw(1).type,'perm'))
-  try  
-      sz{end+1,1}=['nperms: '      num2str(us.nperms)         ];
-  end
+    try
+        sz{end+1,1}=['nperms: '      num2str(us.nperms)         ];
+    end
 end
-
-
-sz{end+1,1}=['FDR-correction: '      regexprep(num2str(us.isfdr),{'1' '0'},{'yes','no'})];
-
+sz{end+1,1}=['fdrCorrection: '      regexprep(num2str(us.isfdr),{'1' '0'},{'yes','no'})];
 if us.isfdr==1
-    sz{end+1,1}=['FDR-qValue: '      num2str(us.qFDR)];
+    sz{end+1,1}=['fdrQValue: '      num2str(us.qFDR)];
 end
 
 % number of tests
 for i=1:length(us.pw)
-    sz{end+1,1}=  ['No of tests: '      num2str(length(us.pw(i).ikeep))   ' for "' us.pw(i).str '"' ];
+    sz{end+1,1}=  ['numTests: '   num2str(length(us.pw(i).ikeep))   ' for "' us.pw(i).str '"' ];
 end
 
-sz{end+1,1}=['sorting: '      regexprep(num2str(us.issort),{'1' '0'},{'yes','no'})];
-sz{end+1,1}=['showsigsonly: '      regexprep(num2str(us.showsigsonly),{'1' '0'},{'yes','no'})];
-sz{end+1,1}='abbreviations: [p]         pvalue                          [t|RS|signedrank] test-dependent test-statistic/parameter ';
-sz{end+1,1}='                [Me1|Me2]   mean of group1|2                [diff] mean difference            '  ;
-sz{end+1,1}='                [SD1|SD2]   standard deviation of group1|2  [SE1|SE2]   standard error of group1|2 ' ;
-sz{end+1,1}='                [Med1|Med2] median of group1|2              [range1|range2] range of group1|2 ';
-sz{end+1,1}='                [pVar]      pooled variance                 [SEpVar] standard error of pooled variance ';
-sz{end+1,1}='                [n1|n2]     groupsize of group1|2           [df] degrees of freedom '   ;
+sz{end+1,1}=['sorting: '            regexprep(num2str(us.issort),{'1' '0'},{'yes','no'})];
+sz{end+1,1}=['showSigsOnly: '       regexprep(num2str(us.showsigsonly),{'1' '0'},{'yes','no'})];
+
 
 % regionsfile
-if isfield(us,'regionsfile') && ~isempty(us.regionsfile)
-    sz{end+1,1}=['regionsfile: '     '"' us.regionsfile '"'];
+if isfield(us,'regionsFile') && ~isempty(us.regionsfile)
+    sz{end+1,1}=['regionsFile: '     '"' us.regionsfile '"'];
 else
-    sz{end+1,1}=['regionsfile:      none'];
+    sz{end+1,1}=['regionsFile: none'];
 end
 
 if isfield(us,'regions')
@@ -2155,7 +2172,18 @@ if isfield(us,'regions')
     end
 end
 
+
 sz=[sz; us.groupassign];
+
+sz{end+1,1}=[' '            ];
+sz{end+1,1}='abbreviations: [p]         pvalue                          [t|RS|signedrank] test-dependent test-statistic/parameter ';
+sz{end+1,1}='                [Me1|Me2]   mean of group1|2                [diff] mean difference            '  ;
+sz{end+1,1}='                [SD1|SD2]   standard deviation of group1|2  [SE1|SE2]   standard error of group1|2 ' ;
+sz{end+1,1}='                [Med1|Med2] median of group1|2              [range1|range2] range of group1|2 ';
+sz{end+1,1}='                [pVar]      pooled variance                 [SEpVar] standard error of pooled variance ';
+sz{end+1,1}='                [n1|n2]     groupsize of group1|2           [df] degrees of freedom '   ;
+sz{end+1,1}=[' '            ];
+
 
 %     sz{end+1,1}=['********************************************************************************'];
 if doexport==1
@@ -2168,9 +2196,9 @@ if doexport==1
     end
     try ; delete(file); end
     try
-    xlswrite( file, sz(2:end), 'info');
+        xlswrite( file, sz(2:end), 'info');
     catch
-     writetable(table(sz(2:end)),file,'Sheet','info','WriteVariableNames', false )
+        writetable(table(sz(2:end)),file,'Sheet','info','WriteVariableNames', false )
     end
     
 end
@@ -2225,9 +2253,9 @@ for i=1:size(us.pw,2)
             writetable(table(sx),file,'Sheet',us.pw(i).str,'WriteVariableNames', false);
         end
         % [4] remove default-sheets
-%         try
-            %  xlsremovdefaultsheets(file);
-%         end
+        %         try
+        %  xlsremovdefaultsheets(file);
+        %         end
         
         %         % [3] write single Data
         %         if isfield(us.pw(i),'sid')
@@ -2330,14 +2358,14 @@ if doexport~=1
 end
 
 if doexport==1
-  try;  removexlssheet(file); end
-  try;  xlsstyle(file); end
-  if 1%ispc==0
-      try
-      removeExcelSheets(file, {'Sheet1','Sheet2','Sheet3','Tabelle1','Tabelle12','Tabelle3'});
-      end
-  end
-    disp(['created: <a href="matlab: system('''  [file] ''')">' [file] '</a>']);
+    try;  removexlssheet(file); end
+    try;  xlsstyle(file); end
+    if 1%ispc==0
+        try
+            removeExcelSheets(file, {'Sheet1','Sheet2','Sheet3','Tabelle1','Tabelle12','Tabelle3'});
+        end
+    end
+%     disp(['created: <a href="matlab: system('''  [file] ''')">' [file] '</a>']);
     showinfo2([],file);
 end
 
@@ -3120,7 +3148,8 @@ end
 function loadregions(e,e2)
 hf=findobj(0,'tag','stat');
 us=get(hf,'userdata');
-[fi pa]=uigetfile(pwd,'select regionsfile (excel)','*.xls');
+if ismac;    disp('Select regionsfile  (Excel)');end
+[fi, pa] = uigetfile({'*.xlsx';'*.xls'},  'Select regionsfile  (Excel)');
 if pa==0;
     try; us=rmfield(us,'regions');end
     try; us=rmfield(us,'regionsfile');end
@@ -3323,7 +3352,7 @@ v.typeoftest1 = li{va}      ;
 
 %permutation
 if ~isempty(strfind(v.typeoftest1,'perm'))
-  try;  v.nperms= u.nperms; end
+    try;  v.nperms= u.nperms; end
 end
 
 d=findobj(h,'tag','tail'); li=get(d,'string'); va= get(d,'value');
@@ -3385,7 +3414,7 @@ helps={...
 
 %     'lillie'      '% % test for normality'
 %     'levene'      '% % levene test for equal spread or variance'
-    
+
 helps=[helps; [u.defaults(:,[1 3])]];
 
 
@@ -3406,7 +3435,7 @@ for i=1:size(v2,1)
     var=regexprep(v3{i},{'=.*','\s+','^v.'},{''});
     ix=find(strcmp(helps(:,1),var));
     if ~isempty(ix)
-     v3{i}=[v3{i}   repmat(' ',[1 nwid-length(v3{i})+1]) helps{ix,2}];   
+        v3{i}=[v3{i}   repmat(' ',[1 nwid-length(v3{i})+1]) helps{ix,2}];
     end
     
     %v3{i}=[v3{i}   repmat(' ',[1 nwid-length(v3{i})+1]) helps{i,2}];

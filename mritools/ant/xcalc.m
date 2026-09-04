@@ -1,61 +1,137 @@
-
-
-%% #ko image calculations within or across mouse folders [xcalc.m ]
-% -this function allows to fuse images, threshold an image, average images
-% -you can do image manipulations within a mouse folder or across mouse folders
-%% #yg GUI PARAMETERS
-% #b niftis
-%        - select one or more images from selected animal-DIRS, depending on the tasks:
-%         [1] to fuse images: select the respective images here
-%            example: make a mask from 3 images --> select the 3 images here
-%         [2] to threshold one/more images independently from each other: select the respective image(s)
-%         [3] to average image(s) across mosefolders independently: select the respective image(s)
-% 'niftis_ext'
-%         -external fullpath files
-% #b  evalstring
-%      -matematical operation  to evaluate (as string)
-%      -the operations must be in line with the matlab style and allow to call matlab build-in or costum functions
-%      * USE PLACEHOLDERS TO ASSIGN the repective image or images:
-%      [1] WITHIN MOUSE FOLDER  & SINGLE IMAGE OPERATION (niftis-parameter contain one image):
-%          use #r "@i"
-%         example: -average 4d-image in the 4th. dimension:    "mean(@i,4)"
-%         other examples:    "std(@i,[],4)" (to calculate the  STD over 4th dim)  or  "nanstd(@i,[],4)"
-%         see also:  median, mode, max,min, sum, var,  etc...
+%% #ko IMAGE CALCULATIONS WITHIN OR ACROSS MOUSE FOLDERS [xcalc.m]
+%
+% Perform mathematical operations on NIFTI files:
+% average, threshold, mask, fuse, statistics, create 4D volumes, etc.
 % 
-%      [2] WITHIN MOUSE FOLDER  & MULTIPLE IMAGE OPERATION (multiple NIFTI-files are used for calculateion):
-%           EXAMPLE TO MASK AN IMAGE BY ANOTHER IMAGE
-%          use #r "@i1","@i2",..,"@iN"
-%          where the number addresses the respective image in the "niftis"-array
-%          example:   "(@i1+@i2)/2"                  : average the first two images defined in niftis-array
-%                     "(@i1>.2)+(@i2>.2)+(@i3>.2)"   : threshold 3 input images at >0.2  and summate the result
-%      [3] ACROSS MOUSE FOLDERS:
-%          use  #r "@m"
-%          example: "mean(@m,4)"    : average 3d-input image across all mousefolders (average is done along 4th dimension, which is the mouse-id)
-%      [4] EXTERNAL FILES, ALONE OR IN COMBINATION WITH [1],[2] OR [3]
-%          use  #r "@e" / "@e1", "@e2", / "@eN"
-%          example: see examples below
-%          external files have to be specified via varable 'niftis_ext'
+% 
+%% #wb USAGE
+% xcalc(showgui,x,pa)
+%    showgui: show GUI, [0,1], default [1]
+%    x      : struct with parameters see below
+%    pa     : (optional) list of fullapth animalDIRS,
+%             if 'pa' is not specified, xcalc works on selected animalDirs from ANTx-GUI
+%             
+% xcalc(1);   %opens GUI without specified paramters
+% xcalc(1,x); %opens GUI with specified paramters x
+% xcalc(0,x); %run fun without GUI
+% xcalc(1,x,pa); /  xcalc(0,x,pa); %run fun on other animalDirs (not from an ANTx-loaded project) with/without GUI
+% 
+%% #yg GUI PARAMETERS
+% niftis
+%        Input files from selected animal-DIRS.
+%        Purpose:     - fuse several images, threshold images independently, average images across animals,
+%                       stack several images for aggregation
+% niftis_ext
+%        External full-path files. Used in combinaiton with 'niftis'
+% evalstring
+%        MATLAB expression describing the operation.
+%        MATLAB built-in and custom functions may be used.
+%        see examples below or in GUI-pulldownMenu
+% outName
+%        resulting output fileName
+%        -you can also construct a new filename using the image-placeholder example:  '@a_mean.nii' 
+% 'outDir'  
+%       output directory:  ["local"] refers to local animal folder otherwise specify an folder
+%      default: 'local'
+%             
 %
-% #b outName (filename outputformats)
-% #g file extension (".nii") allowed to add but not necessary
-% #g use "^" to indicate prefix/suffix or any substrings in combination with @i/@inum image placeholder
-% #g use "@i", "@inum", or "@m" for files as indicated above
-% FORMAT EXAMPLES____________________
-% 'mean'         just a new file name (identical to '^mean')
-% '^mean@i'      prefix "mean" added to 1st image name
-% '^mean@i1'     same as '^mean@i'
-% '^mean@i2'     prefix "mean" added to 2nd image name
-% '@i1'          same output name as 1st image, THIS WILL OVERWRITE THE 1st IMAGE !!!!
-% '@i1^masked    suffix "masked" added to 1st image name
-% '^just@i1^_@i2^masked'   prefix("just")+Img1Name+substring("_")+Img2Name+suffix("masked")
-% '^mean@m'     "mean" added to 1st image name FOR ACROSS-MOUSE-DIRS-SCENARIO
+% -------------------------------------------------------------------------
+% PLACEHOLDERS
+% -------------------------------------------------------------------------
+% @i       Process EACH selected file independently.
+%          Example:
+%             mean(@i,4)
 %
-% #b outDir
-%        specify the output directory, 2 options:
-%         [1] 'local': type 'local' to save in the respective mouse folder (this is in "WITHIN MOUSE FOLDER OPERATIONS" the usual way)
-%         [2] a fullpath directory: only usefull when doing operations ACROSS MOUSE FOLDERS
+%          For img1,img2:
+%             mean(img1,4) -> output1
+%             mean(img2,4) -> output2
 %
-%% #yg EXAMPLES-1: OPERATIONS WITHIN MOUSE FOLDERS
+% @i1,@i2  Explicit references to files in "niftis".
+%          Example:
+%             (@i1+@i2)./2
+%             @i2.*(@i1>0)
+%
+% @a       ALL files in "niftis" stacked first, then evaluated ONCE.
+%          IMPORTANT:
+%             @i = loop over files
+%             @a = stack files first
+%
+%          Example:
+%             mean(@a,4)
+%
+%          Equivalent to:
+%             mean(cat(4,img1,img2,img3),4)
+%
+% @m       Corresponding files from ALL animal-DIRS stacked together.
+%          Examples:
+%             mean(@m,4)
+%             std(@m,[],4)
+%             sum(@m,4)
+%
+% @e       External file from "niftis_ext".
+%          Example:
+%             @i.*@e
+%
+% @e1,@e2  Explicit references to external files.
+%
+% -------------------------------------------------------------------------
+% QUICK REFERENCE
+% -------------------------------------------------------------------------
+% @i       one file at a time
+% @i1..N   specific input files
+% @a       stack selected files
+% @m       stack files across animals
+% @e       external file
+% @e1..N   specific external files
+%
+% -------------------------------------------------------------------------
+% outName
+% -------------------------------------------------------------------------
+% Use "^" for prefixes/suffixes. ".nii" extension is optional.
+%
+% 'mean'                    -> mean.nii
+% '^mean@i'                -> mean_<inputName>
+% '^mean@i2'               -> mean_<inputName2>
+% '@i1'                    -> overwrite 1st input file
+% '@i1^masked'             -> <inputName1>masked
+% '^just@i1^_@i2^masked'   -> combined filename
+% '^mean@m'                -> across-animal result
+%
+% -------------------------------------------------------------------------
+% outDir
+% -------------------------------------------------------------------------
+% 'local'   save into each animal-DIR
+% fullpath  save into specified directory
+%
+% -------------------------------------------------------------------------
+% COMMON EXAMPLES
+% -------------------------------------------------------------------------
+% mean(@a,4)                         average over stack of  3D images
+% mean(@i,4)                         average 4D image
+% std(@i,[],4)                       std over 4th dim
+% double(@i>20)                      threshold image
+% @i1-@i2                            difference map
+% (@i1+@i2)./2                       average two images
+% @i2.*(@i1>0)                       apply mask
+% mean(@a,4)                         average selected files
+% mean(@m,4)                         average across animals
+% std(@m,[],4)                       std across animals
+% 100*sum(@m>10,4)./size(@m,4)       overlap percentage
+% @i.*@e                             external mask
+% mean(@m,4).*(@e==1)                masked group average
+%
+% -------------------------------------------------------------------------
+% SPECIAL FUNCTIONS
+% -------------------------------------------------------------------------
+% make4D                             create 4D volume from 3D files
+% ef: copyfile(...)                  copy external file
+% ef: rreslice2target(...)           reslice image
+% 
+% -------------------------------------------------------------------------
+% -------------------------------------------------------------------------
+%% #yg EXAMPLES: OPERATIONS WITHIN MOUSE FOLDERS, using @i or @i1,@i2,..
+% -------------------------------------------------------------------------
+% -------------------------------------------------------------------------
 %
 %% #r for each of 3D-NIFTI-file (separately), average over 4rd dimension and save this in the local mouse-directory
 %% #r as prefix "MEAN"+ inputName
@@ -119,8 +195,30 @@
 % z.outName        =  'fuse'                                          % % output name
 % z.outDir         =  'local';                                        % % select the output directory:  [empty] refers to local mouseDir
 % xcalc(1,z);
-%
-%% #yg EXAMPLES-2: OPERATIONS ACROSS MOUSE FOLDERS
+% 
+% -------------------------------------------------------------------------
+% -------------------------------------------------------------------------
+%% #yg EXAMPLES: OPERATIONS WITHIN MOUSE FOLDERS, stack files first, using @a
+% -------------------------------------------------------------------------
+% -------------------------------------------------------------------------
+% ______________________________________________________________________________________________________________________
+%  average over 4D volums
+% ______________________________________________________________________________________________________________________
+% z.niftis     = { '04_epi_mre_17_3.nii'        % %  << select IMAGE(S) from animal-DIRs to manipulate                                                
+%                  '04_epi_mre_18_3.nii'                                                                                                              
+%                  '04_epi_mre_19_3.nii' };                                                                                                           
+% z.niftis_ext = { '' };                        % %  << select external IMAGE(S). Images not from animal-Dirs                                         
+% z.evalstring = 'mean(@a,5)';                 % % string to evaluate->see help                                                                      
+% z.outName    = 'test2.nii';                   % % outputname: <string><cell> or  use "@xxx" to use the prefix "xx", otherwise define N-outputNames  
+%  xcalc(0,z); 
+% 
+% 
+% -------------------------------------------------------------------------
+% -------------------------------------------------------------------------
+%% #yg EXAMPLES: OPERATIONS ACROSS MOUSE FOLDERS, using @m
+% -------------------------------------------------------------------------
+% -------------------------------------------------------------------------
+% 
 % ______________________________________________________________________________________________________________________
 %% #r calculate standard deviation across mousedirs of a 3d input volume, save as "average_c_t2.nii" in "O:\data2\jing"
 % z=[];
@@ -155,8 +253,11 @@
 % xcalc(1,z); 
 % 
 % 
-% ______________________________________________________________________________________________________________________
-% #wb EXAMPLES: WORKING WITH FILES FROM ANIMAL-DIRS COMBINED WITH EXTERNALLY LOCATED FILES
+% -------------------------------------------------------------------------
+% -------------------------------------------------------------------------
+%% #yg EXAMPLES: WORKING WITH FILES FROM ANIMAL-DIRS COMBINED WITH EXTERNALLY LOCATED FILES
+% -------------------------------------------------------------------------
+% -------------------------------------------------------------------------
 %
 %% ====================================================================================================]
 %  mask an image from animal-Dir using an external mask
@@ -214,11 +315,12 @@
 % z.outName        =  {'perc_olap_GM_rightHemi.nii'}    % % respective output names
 % z.outDir         =   'F:\data5\nogui\out2\';                  % % select the output directory:  [empty] refers to local mouseDir
 % xcalc(0,z);
-%% ===============================================
+%
+%
+% 
+% 
 
-%
-%
-% %
+
 %% #wb BATCH
 % possible: see examples above
 % xcalc(1,z);    the 1st input argument defines whether to open the gui [1] or work in background [0]
@@ -231,9 +333,9 @@
 function xcalc(showgui,x,pa)
 
 
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 %%   example
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 if 0
     
     
@@ -241,9 +343,9 @@ if 0
     
 end
 
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 %%   PARAMS
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 if exist('showgui')==0 || isempty(showgui) ;    showgui=1                ;end
 if exist('x')==0                           ;    x=[]                     ;end
 if exist('pa')==0      || isempty(pa)      ;    pa=antcb('getsubjects')  ;end
@@ -264,14 +366,21 @@ end
 
 multicell_opt={};
 
-multicell_opt(end+1,:)={'<html><font color=blue><B> WITHIN ANIMAL-DIRS: </b>' ''        };
+multicell_opt(end+1,:)={'<html><font color=blue><B> WITHIN ANIMAL-DIRS : </b>' ''        };
 multicell_opt(end+1,:)={'delta_R1 (unit: 1/s) from T1-maps(unit: ms): (1000./post - 1000./pre) [1000./(@i1) - 1000./(@i2)]'  '1000./(@i1) - 1000./(@i2)'};
 multicell_opt(end+1,:)={'average over 4th Dimension:   mean(@i,4) '                                     'mean(@i,4)'        };
 multicell_opt(end+1,:)={'threshold image >20:   double(@i>20)'                                          'double(@i>20)'        };
 multicell_opt(end+1,:)={'difference map:  @i1-@i2'                                                      '@i1-@i2'             };
 multicell_opt(end+1,:)={'APPLY MASK TO IMAGE: (@i1:"AVGTmask.nii", @i1: "x_t2.nii"):   @i2.*(@i1>0)'        '@i2.*(@i1>0)'         };
 multicell_opt(end+1,:)={'multiply 1st-vol by 5 than add 2nd vol and devide all by 2:  ((@i1.*5)+@i2)./2'    '((@i1.*5)+@i2)./2'        };
+
 % multicell_opt(end+1,:)={'' ''        };
+
+multicell_opt(end+1,:)={'<html><font color=blue><B> WITHIN ANIMAL-DIRS, MAKE OP ON STACKED DATA  : </b>' ''        };
+multicell_opt(end+1,:)={'average ACROSS 3D volumes:     mean(@a,4) '       'mean(@a,4)'        };
+multicell_opt(end+1,:)={'stand.dev ACROSS 3D volumes:   std(@a,[],4) '   'std(@a,[],4)'        };
+multicell_opt(end+1,:)={'sum ACROSS 3D volumes and mask with external file (mask):   sum(@a,4).*@e'   'sum(@a,4).*@e'        };
+
 
 multicell_opt(end+1,:)={'<html><font color=blue><B> LOOP OVER ANIMAL-DIRS: </b>' ''        };
 multicell_opt(end+1,:)={'calculate standard deviation ACROSS(!) mousedirs of a 3D-volume:  std(@m,[],4)'      'std(@m,[],4)'        };
@@ -296,7 +405,7 @@ multicell_opt(end+1,:)={'USING EXTERNAL FILES only: keep values of AVGT.nii of l
 multicell_opt(end+1,:)={'calc. overlapp of GrayMatter (>0.7) in percent over animals using external mask: (@e1==2).*(100*sum(double(@m>0.7),4)/size(@m,4))' '(@e1==2).*(100*sum(double(@m>0.7),4)/size(@m,4))'};
 
 
-
+% multicell_opt(:,1)=cellfun(@(a,b){[ a ':  ' b]} ,multicell_opt(:,1),multicell_opt(:,2))
 
 
 % ==============================================
@@ -311,6 +420,7 @@ p={...
     'evalstring'     ''            'string to evaluate->see help'   multicell_opt
     'outName'        ''            'outputname: <string><cell> or  use "@xxx" to use the prefix "xx", otherwise define N-outputNames  ' ''
     'outDir'         'local'       '<<select the output directory:  ["local"] refers to local mouseDir'   {@outdir_path}
+    
     %     'inf8'           '__ alternatively use a costumized function (see help) _______________________________________________'        '' ''
     
     %     'costumfunction'      ''       '(<<) SELECT your own function ("evalstring" must be empty)' 'f'
@@ -335,9 +445,9 @@ xmakebatch(z,p, mfilename);
 calcit(z,pa);
 
 
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 %%
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 if 0
     
     
@@ -404,9 +514,9 @@ end
 
 
 
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 %%   calcit
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 
 function calcit(z,pa)
 
@@ -438,6 +548,8 @@ mod5=regexpi(estr, '@i\d+');
 mod6=regexpi(estr, '@m');
 mod7=[]; %external files only
 
+mod8=regexpi(estr, '@a' ); %over all vols in one OP (mean/std/ over images)
+
 % if ~isempty(mod1) && isempty(mod5)
 %     mod5=mod1;
 %     mod1=[];
@@ -447,7 +559,7 @@ mod7=[]; %external files only
 
 
 
-if ~isempty(regexpi(estr, '@e\d+|@e')) && isempty(regexpi(estr, '@m|@i|@i\d+'))
+if ~isempty(regexpi(estr, '@e\d+|@e')) && isempty(regexpi(estr, '@a|@m|@i|@i\d+'))
     mod7=1;
 end
 
@@ -491,9 +603,9 @@ end
 
 
 % replacenames
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 %%   mod6: loop over animals [@m]
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 if ~isempty(mod6)
     for j=1:length(z.niftis)%IMAGE
         for i=1:size(pa,1) %MOUSE
@@ -547,9 +659,9 @@ end
 
 
 
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 %%   mod5: using [@i]-with-DIGITs
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 if ~isempty(mod5)
     for i=1:size(pa,1) %MOUSE
         
@@ -629,9 +741,9 @@ if ~isempty(mod5)
 end
 
 
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 %%   mod1: using [@i]-without-DIGITs
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 if ~isempty(mod1) && isempty(mod5)
     for i=1:size(pa,1) %MOUSE
         for j=1:length(z.niftis)%IMAGE
@@ -803,6 +915,79 @@ if strcmp(z.evalstring, 'make4D')
     return
 end
 
+% ==============================================
+%% "@a" : make OP over all volums, such as mean over all volumes
+% ===============================================
+if ~isempty(mod8)
+    for i=1:size(pa,1) %MOUSE
+        a=[];
+        for j=1:length(z.niftis)%IMAGE
+            fi=fullfile(pa{i},z.niftis{j});
+            [hb b]=rgetnii(fi);
+            if j==1
+                a=zeros([numel(b) length(z.niftis) ]);
+            end
+            a(:,j)=b(:); % this is now 2D
+        end
+        dims=[ hb(1).dim  ];
+        if length(hb)>1
+            dims(1,end+1)=length(hb);
+        end
+        dims(1,end+1)=length(z.niftis);
+        a=reshape(a,[ dims ]);%reshape back
+        % ===============================================
+        % note: when applying also of external_files: those are already loaded!
+        %%===============================================
+        str2=['v=' regexprep(str,{'@a', '@e'}, {'a' 'e'}) ';'];
+        eval(str2);
+        outfi=char(z.outName);
+        
+        [~,namefi,ext]=fileparts_nii(outfi);
+        if isempty(ext); ext=['.nii' ]; end
+        outfi= [namefi,ext];
+      
+        
+        
+        if ~isempty(strfind(outfi,'@a'))
+            M = char(z.niftis);                  % convert to character matrix
+            idx = all(M == M(1,:), 1);    % columns identical in all rows
+            prefix = M(1,1:find(~idx,1)-1);
+            max_uscore=max(strfind(prefix,'_'));
+            try
+                if ~isempty(str2num(prefix(max_uscore+1:end))) %a only numeric after underscore
+                    %remove last underscore and trailing numeric code
+                    prefix=prefix(1:max_uscore-1);
+                    
+                end
+                prefix=strrep(outfi,'@a',prefix);%commonstring
+                if isempty(prefix); prefix='test'; end
+                outfi=prefix;
+                [~,namefi2,ext2]=fileparts_nii(outfi);
+                if isempty(ext2)
+                    outfi= [namefi2,ext];
+                end
+            end
+        end
+        
+       
+        
+        
+        
+        if strcmp(lower(z.outDir),'local')
+            fiout=fullfile(pa{i}, outfi);
+        else
+            fiout=fullfile(z.outDir{1}, outfi);
+        end
+        hv=hb(1);
+        rsavenii(fiout, hv,v);
+        showinfo2('xcalc result:',fiout);
+    end 
+end
+
+
+
+%% ===============================================
+ 
 
 function run_external(i,str,outfi, file_ext,z,pa)
 
@@ -862,9 +1047,9 @@ end
 
 
 
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 %%   use costum function
-%———————————————————————————————————————————————
+%â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 
 function costumfunction(z,pa)
 
@@ -991,3 +1176,15 @@ end
 paramgui('setdata','x.outDir',tpath);
 return
 
+
+function [pathstr,name,ext] = fileparts_nii(fn)
+
+[pathstr,name,ext] = fileparts(fn);
+
+if strcmpi(ext,'.gz')
+    [~,name2,ext2] = fileparts(name);
+    if strcmpi(ext2,'.nii')
+        name = name2;
+        ext  = '.nii.gz';
+    end
+end

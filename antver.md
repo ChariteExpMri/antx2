@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   02 Sep 2026 (14:54:16)  
+ &#x1F34E; last modification:   04 Sep 2026 (15:27:14)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,10 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**04 Sep 2026 (15:27:14)**</ins>  
+   __[xcalc.m]__ : added option for math. operation on stacked volumes  
+  -checkd xstatlabels.m on macOS  
+<!---->
   &#x1F535;   <ins>**02 Sep 2026 (14:54:16)** : simulated and checked within/paird-desgin tests, also added Hedges'g</ins>  
 <!---->
   &#x1F535;   <ins>**01 Sep 2026 (11:31:03)**</ins>  

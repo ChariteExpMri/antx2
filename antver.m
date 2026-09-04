@@ -1220,7 +1220,9 @@
 % Permutation-based Welch two-sample t-test
 % --> for examples call snips and look for REGIONBASED-STATISTIC in left panel 
 % #wb 02 Sep 2026 (14:54:16) #n : simulated and checked within/paird-desgin tests, also added Hedges'g
-% 
+% #wb 04 Sep 2026 (15:27:14)
+% #k [xcalc.m] #n : added option for math. operation on stacked volumes
+% -checkd xstatlabels.m on macOS
 % 
 % 
 % 
