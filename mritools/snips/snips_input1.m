@@ -30,7 +30,11 @@ antcb('load','n') % 'n'/'newest'  : load newest/last modified projectfile in pat
 
 %% #################################################
 % cmd
-% programatically create project (mouse-template) 
+% programatically create a project 
+
+% ==============================================
+%%  [1] create-mouse project 
+% ==============================================
 % 
 %------[from my f_drive]---------
 makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[.07 .07 .07],...
@@ -44,6 +48,16 @@ makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[.07 .07 .07],...
     'wa_species','mouse')
 antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
 
+% ==============================================
+%%  [2] create-chicken project 
+% ==============================================
+patemp='F:\generate_anttemplates\japanesequail\final_version\chicken_v5'
+makeproject('projectname',fullfile(pwd,'proj.m'),...
+    'wa_refpath',patemp)
+
+antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+
+antcb('setpreorientation',5); %  %set pre-orientation
 
 
 %% #################################################

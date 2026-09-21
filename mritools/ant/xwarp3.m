@@ -375,10 +375,18 @@ if find(s.task==1)
 
             %if isfield(s,'species') && strcmp(s.species,'rat')  % ##-RAT-##
             if isfield(s,'species') && (strcmp(s.species,'rat') || strcmp(s.species,'etruscianshrew') ...
-                    || strcmp(s.species,'hamster') || strcmp(s.species,'piglet4w'))
-                skparam.species = s.species;
-                evalc(['skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip'' ,skparam  )']); ;
+                    || strcmp(s.species,'hamster') || strcmp(s.species,'piglet4w') ...
+                    || strcmp(s.species,'quail'))
+                skparam.species      = s.species;
+                skparam.resizeFactor = s.resizeFactor;
+                evalc(['skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip'' ,skparam  )']); 
+            elseif isfield(s,'species') && isfield(s,'brainvol') && ~isempty(s.brainvol)
+                %unspecific species but defined brainvol (example: 'chicken')
+                skparam.species      = s.species;
+                skparam.brainvol     =s.brainvol;
+                 evalc(['skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip'' ,skparam  )']);
             else
+                
                 %skullstrip_pcnn3d(s.t2, fullfile(s.pa, '_msk.nii' ),  'skullstrip'   );
                 evalc('skullstrip_pcnn3d(F1, fullfile(s.pa, ''_msk.nii'' ),  ''skullstrip''   )'); ;
             end

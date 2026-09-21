@@ -274,6 +274,17 @@ if strcmp(do,'set')
 end
 if strcmp(do,'set?');    help antcb>setparams;end
 %% ===============================================
+if strcmp(do,'delete') || strcmp(do,'del')
+    try ;    varargout{1}=deletefiles(input2);
+    catch;
+        %disp('* type    antcb(''setparams'',''?'')     for help');
+        do='deletefiles?';
+    end
+end
+if strcmp(do,'deletefiles?');    help antcb>deletefiles;end
+%% ===============================================
+
+
 if strcmp(do,'loop')
     try ;    varargout{1}=loop(input2(2:end));
     catch;
@@ -2593,6 +2604,37 @@ end
 
 o=[];
 
+
+function  o=deletefiles(p0)
+% delete files from selected animalDirs,
+%% ===============================================
+o=[];
+pp=cell2structnested(p0);
+if isfield(pp,'delete');
+   pp.del=pp.delete;
+   pp=rmfield(pp,'delete');
+end
+% find(strcmp(pp,'delete') | strcmp(pp,'del')) 
+
+mdirs=antcb('getsubjects') ;
+if ischar(pp.del);
+    pp.del=cellstr(pp.del);
+end
+
+for i=1:length(mdirs)
+    for j=1:length(pp.del)
+        try
+            
+            delete(fullfile(mdirs{i}, pp.del{j} ));
+        end
+    end
+    
+end
+
+%% ===============================================
+
+
+
 function  o=setparams(pp)
 % set specific antx-parameters in parameter-file(proj-file),
 % Note that the proj-file is changed accordingly!
@@ -3337,11 +3379,14 @@ function out=selectdirs(input, nargoutCaller);
 %  specify either (all dirs),(via id),(via existing/nonexisting file within folder) or (from list)
 % use "selectdirs" or "sel" to select directories
 % EXAMPLES:
-% antcb('sel')                 ;%select all directories
-% antcb('selectdirs')          ;%select all directories
-% antcb('selectdirs','all');                          ;%(same as above )select all directories
-% antcb('selectdirs','none');                         ;%select no animal folder (deselect all)
-% antcb('selectdirs',[1 2]);                          ;%select directories 1 and 2 (selected by index)
+% antcb('sel');                  %select all directories
+% antcb('selectdirs');            %select all directories
+% antcb('selectdirs','all');      %(same as above )select all directories
+% antcb('selectdirs','none');     %select no animal folder (deselect all)
+% antcb('selectdirs',[1 2]);      %select directories 1 and 2 (selected by index)
+% antcb('selectdirs','^za_.*')    %select all dirs starting with 'za_'  
+% antcb('selectdirs',{'^sal*','^za*'}); %select all dirs starting with 'sal' or 'za_
+% 
 %
 %% select dirs by string in animal-name
 % antcb('selectdirs','dirs','bad|data' )          ; %select all animals with string "bad" or "data" in animal name
@@ -3606,6 +3651,26 @@ else
             end
             is=is2;
         end
+        %% ===============================================
+        
+        %wildcars
+        r  = regexp(dirin, '[*?]', 'once');
+        tf = ~cellfun('isempty', r);
+      
+        if sum(is==0) && sum(tf)~=0
+            is=zeros(size(md,1),1);
+            is0=[];
+            for i=1:length(dirin)
+                isl=regexpi2(md,dirin{i});
+                is0=[is0(:); isl(:)];
+            end
+            is0=unique(is0);
+            is(is0)=1;
+        end
+        
+        %% ===============================================
+        
+        
         iselect=find(is==1);
         set(lb3,'value',iselect) ;
     else

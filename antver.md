@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   04 Sep 2026 (15:27:14)  
+ &#x1F34E; last modification:   21 Sep 2026 (15:01:29)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,13 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**21 Sep 2026 (15:01:29)**</ins>  
+  chicken-atlas (v5) added to google-drive  
+  The Japanese quail-atlas (Yebga Hot R, Siwiaszczyk M, Love SA, et al., 2022) was used and warped in   
+  several iterations to 23 chicken brains, chicken-based TPMs were generated from chicken brains again in several  
+  iterations.   
+  &#8618;  access via link : https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9  
+<!---->
   &#x1F535;   <ins>**04 Sep 2026 (15:27:14)**</ins>  
    __[xcalc.m]__ : added option for math. operation on stacked volumes  
   -checkd xstatlabels.m on macOS  

@@ -56,13 +56,15 @@ if nargin==0;
     help([mfilename]);
    return 
 else
-    %% ===============================================
+   
+    
     
     p=cell2struct(varargin(2:2:end),varargin(1:2:end),2);
     if ~isfield(p,'projectname')
        help([mfilename]); 
        return
     end
+      
     
     projectname=p.projectname; %project name/path
     [datproj projname, ext]=fileparts(projectname);
@@ -89,14 +91,35 @@ else
         end
         p.wa=wa;
     end
+    
+   %% =====[read file parameter.m first and add what's there]===========================
+    try
+        ix_refpath=find(strcmp(varargin,'wa_refpath'));
+        refpath   =varargin{ix_refpath+1};
+        if ~isempty(ix_refpath) && exist(refpath)==7
+            paramfile=fullfile(refpath,'parameter.m');
+            p0=add_params_fromParameterfile(paramfile,struct());
+            q=catstruct2(p0,p);
+            % struct2list(p0),struct2list(p), struct2list(q);%check
+            p=q;
+        end
+    end
+    %% ===============================================
+    
+    
     %% ======[checks]=========================================
     msg={''};
     if length(fn)>1
         chk=zeros(1,4);
-        if isfield(p,'datpath')==1;    chk(1)=1; end
+        if isfield(p,'datpath')==1;     chk(1)=1; end
         if isfield(p,'voxsize')==1;     chk(2)=1; end
         if isfield(p.wa,'refpath')==1;  chk(3)=1; end
         if isfield(p.wa,'species')==1;  chk(4)=1; end
+        
+%         if chk(2)==0 % get default voxsize
+%             paramfile=fullfile(p.wa.refpath,'parameter.m')
+%             p=getparams(paramfile);
+%         end
         
         if sum(chk)~=4 %error
             disp('the following fiels has to be defined: ');
@@ -120,6 +143,11 @@ end
 % p.datpath=fullfile(pwd,'dat')
 % p.wa.elxParamfile={'klasue' 'maus'}
 % p.wa.BiasFieldCor=888
+
+clear global an
+%% ===============================================
+
+
 
 [w1 p0 cc ]=antconfig(0);
 if isempty(p0); return; end
@@ -158,6 +186,39 @@ if exist(f1)==2
 else
     disp('...could not create ANTX-project');
 end
+
+
+function  p1=add_params_fromParameterfile(paramfile,p);
+
+%% ===============================================
+
+
+run(paramfile);
+v = who;
+v( find(ismember(v, {'p','paramfile'})) )=[];
+
+p2 = struct();
+for k = 1:length(v)
+    %p2.(v(k).name) = eval(v(k).name);
+    switch v{k}
+        case {'voxsize'}
+            p2.(v{k}) = eval(v{k});
+        otherwise
+            if isfield(p2,'wa')==0
+            p2.wa=struct();
+            end
+            p2.wa.(v{k}) = eval(v{k});
+    end
+end
+p1=catstruct2(p,p2);
+
+
+%% ===============================================
+
+
+
+
+
 
 
 % ==============================================

@@ -303,7 +303,8 @@ p={...
     
     %'wa.orientRefimage'     2                          'RefImage for rough Reorientation: [0]grayMatter and use old functions),[1]grayMatter,[2]"_sample2.nii2 (T2w-image in AllenSpace)'  num2cell(0:2)
     'wa.orientType'          1     'reorientation index (see "examine orientation" from animal listbox context menu; see: help findrotation2,  ) to rougly match inputVol and "AllenSpace-template" (example [1]Berlin,[5]Munich/Freiburg)' orientype %{@selectorientation }
-    'wa.orientelxParamfile'  which('trafoeuler5.txt')   'single Parameter file for rough Rigid-body registration; default: "trafoeuler2.txt"; use trafoeuler3.txt for large dislocations ' {@paramfilesRigid }
+    %     'wa.orientelxParamfile'  which('trafoeuler5.txt')   'single Parameter file for rough Rigid-body registration; default: "trafoeuler2.txt"; use trafoeuler3.txt for large dislocations ' {@paramfilesRigid }
+    'wa.orientelxParamfile'  which('trafoeuler6_mi.txt')   'single Parameter file for rough Rigid-body registration; default: "trafoeuler6_mi.txt";' {@paramfilesRigid }
     
     
     %%'is used use compartments,(3)use t2w/AVGT as moving/fixed image,(4)heavy lesions(5)used use BFC-t2w/AVGT'
@@ -348,7 +349,27 @@ p={...
     };
 
 
+%% =====[new addit./variable parameters]===========
+try
+    fn=fieldnames(an.wa);
+    for i=1:length(fn)
+        ix=find(ismember(p(:,1), ['wa.' fn{i}]));
+        if isempty(ix)
+            %fn{i}
+            px={['wa.' fn{i}] getfield(an.wa,fn{i})  'unspecified parameter ' '' };
+            p=[p;px];
+        end
+    end
+end
+
+%% ===============================================
+
+
+
 p2=paramadd(p,an);%add/replace parameter
+
+
+
 
 if showgui==1
     

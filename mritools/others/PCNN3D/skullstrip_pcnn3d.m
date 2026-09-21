@@ -58,11 +58,38 @@ else
         pp.brainSize    = [50e3 65e3]; %[60e3 65e3];
         pp.scalefactor  = [1];
         pp.resizeFactor =  3 ;%resize brain by this factor, for faster extraction --> i.e. working on smaller image 
+        
+ elseif isfield(params,'species') && strcmp(params.species,'quail')       
+     pp.species      = params.species;
+     pp.brainSize    = [500 800]; %[60e3 65e3]; ####
+     %  pp.brainSize    = [1000 1300]; %[60e3 65e3]; ####
+     pp.scalefactor  = [1];
+     pp.resizeFactor =  1;%3 ;%resize brain by this factor, for faster extraction --> i.e. working on smaller image
+     
     else
         %warning('### unknown species ### --> ') ;
         pp=pmouse;
     end
 end
+
+%% ====override all params by  dynamic brainvol  ============
+% examle: chicken with brainvol
+if isfield(params,'species') && isfield(params,'brainvol') && ~isempty(params.brainvol)
+    % any species
+    
+    if length(params.brainvol)==1
+        params.brainvol=[params.brainvol params.brainvol+200 ];
+    end
+    pp.brainSize = params.brainvol;
+    pp.species      = params.species;
+    %     pp.scalefactor  = [1];
+    %     pp.resizeFactor =  1;
+   
+end
+
+%% ===============================================
+
+
 
 % disp(['skullstripping with parameters of [' pp.species ']']);
 % brainSize=  [100 550]; %c57/B6- mouse
@@ -122,17 +149,45 @@ catch
 end
 if iserror==1
     try
-        brainSize
+       
         % [args ,I_border, gi] =  evalc(['PCNN3D(  a , ' num2str(radelem-1) '  , vdim2, brainSize );']);
-        [args ,I_border, gi] =  evalc(['PCNN3D(  a , ' num2str(radelem+3) '  , vdim2, brainSize );']);
-        iserror=0;
-        %get Guess for best iteration.
-        ix  = strfind(args,'Guess for best iteration is ');
-        ix2 = strfind(args,'.');
-        ank = ix2(min(find(ix2>ix)));
-        id  = str2num(regexprep(args(ix:ank-1),'\D',''))-2;
-        sprintf('brainvolume: %2.2f [qmm]: ' ,gi(id));
+        %[args ,I_border, gi] =  evalc(['PCNN3D(  a , ' num2str(radelem+3) '  , vdim2, brainSize );']);
         
+        %% ==========[ biasfieldcorrection ]=====================================
+        %tic; [ha  ac  a2]=biasfieldcor(t2file);toc
+        tic;[~, ac3 ,~]=biasfieldcor({ha a});toc
+        a_bk=a;
+%         a=ac3;
+        %% ===============================================
+        
+        radelem_vec=[radelem+3 radelem-1:-1:1 8:10];
+        
+        
+        for i=1:length(radelem_vec)
+            i
+            try
+                if exist('args')~=1
+                    disp(['trying radelem: ' num2str(radelem_vec(i))]);
+                    [args ,I_border, gi] =  evalc(['PCNN3D(  ac3 , ' num2str(radelem_vec(i)) '  , vdim2, brainSize );']);
+                    iserror=0;
+                end
+            catch
+                iserror=1;
+            end
+            
+        end
+        
+        %% ===============================================
+        
+        if iserror==0;
+            iserror=0;
+            %get Guess for best iteration.
+            ix  = strfind(args,'Guess for best iteration is ');
+            ix2 = strfind(args,'.');
+            ank = ix2(min(find(ix2>ix)));
+            id  = str2num(regexprep(args(ix:ank-1),'\D',''))-2;
+            sprintf('brainvolume: %2.2f [qmm]: ' ,gi(id));
+        end
     catch
         iserror=1;
     end
