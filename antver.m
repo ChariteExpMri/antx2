@@ -1229,7 +1229,7 @@
 % et al., 2022) to 23 chicken brains. Chicken-specific tissue probability maps (TPMs) were then created from 
 % the chicken brain data, and the final template was obtained through several iterative refinement steps.
 % #gw -->  access via link : https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
-% 
+% for example registration see: snips--> pipeline --> chicken-brain: registration to chicken-atlas (chicken_v5)
 % 
 % 
 % 

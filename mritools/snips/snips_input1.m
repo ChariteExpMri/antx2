@@ -2597,6 +2597,88 @@ z.outDir     = 'local';                                                 % % <<se
 xcalc(0,z); 
   
 
+%% #################################################
+%  pipeline
+%  chicken-brain: registration to chicken-atlas (chicken_v5) and regionwise-readout
+%  steps: create project, copy T2_TurboRARE-files, run registration, regionwise-readout of Graymatter-image
+
+
+% ==============================================
+%%  [1] make project
+% ===============================================
+cf;clear
+v.study='H:\Daten-2\Imaging\Paul\data1\chickenatlas_test'; %new study for registration
+v.nifti='H:\Daten-2\Imaging\Paul\data1\chickenatlas_test\chick_brainT2WI'; %animal folders with NIFTI-t2w
+v.atlas='D:\MATLAB\anttemplates\chicken_v5'; %used atlas (chickenAtlas)
+ 
+% mkdir(v.study)
+% study-folder is already created, this script is saved in the study-folder
+cd(v.study);
+makeproject('projectname',fullfile(pwd,'proj.m'),'wa_refpath',v.atlas); %make new project
+antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+ 
+% ==============================================
+%%  [2] copy t2w-NIFTIS to study-dat-folder
+% ===============================================
+fisraw=cellstr(spm_select('FPlistRec',v.nifti,'.*.nii'));%get FP-list of 'T2_TurboRARE.nii' from all animals
+for i=1:length(fisraw)
+   % animal=['z_' pnum(i,3)]; % use new animal-name
+    [q,~]=fileparts(fisraw{i});%or use orig-animalName
+    [~,animal]=fileparts(q);
+    f1=fisraw{i};
+    
+    mdir=fullfile(v.study,'dat',animal); %make ANIMAL-DIR
+    mkdir(mdir);
+    
+    fo1=fullfile(mdir, 't2.nii'  ); %make copy of 'T2_TurboRARE.nii as 't2.nii' 
+    copyfile(f1,fo1,'f');
+    showinfo2('file:',mdir);
+end
+ 
+antcb('update');%ipdate ANTx-listbox
+ 
+% ===============================================
+%%  [3] set parameters for config
+% ===============================================
+% Preorientation is defined only once for a single animal using
+% "Examine Orientation via HTML File" in the ANTx Animal Listbox.
+antcb('setpreorientation',5); %set preorientation 
+antcb('update');
+ 
+% ===============================================
+%%  [4] select animals and run registration
+% ===============================================
+%% FIRST; SELECT ANIMALS; EXAMPLES BELOW
+% mdirs=4 ; %select only animal with index 4
+% mdirs=[ 6,9,14, 16,17,18 ]; %select list of animals
+% mdirs=1:length(fisraw);%select all animals from variable
+% mdirs=antcb('getallsubjects'); %use all animals, same as mdirs='all'
+% mdirs=antcb('getsubjects');    %used selected animals from ANTx Animal Listbox.
+ mdirs='all'
+ 
+antcb('sel',mdirs);%select animals
+xwarp3('batch','task',[1:4],'autoreg',1,'parfor',0);
+ 
+% =============================================================================================================
+%% [5] Get region-wise readout
+%% Load the gray matter image in native space (c1t2.nii) and extract mean values for each region
+%% (combined across hemispheres). Results are saved as Excel file in the study's 'results' folder.
+% ==============================================================================================================
+antcb('sel',1); % region-wise readout for 1st animal only
+% antcb('sel','all'); %region-wise readout for all animals 
+
+z=[];                                                                                                                                                                              
+z.files        = { 'c1t2.nii' };     % % files used for calculation                                                                                                                
+z.masks        = '';                 % % <optional> corresponding maskfiles (order is irrelevant)or mask from templates folder                                                     
+z.atlasOS      = '';                 % % The atlas in "other space". IMPORTANT ONLY IF "SPACE"-PARAMER IS SET TO "other">                                                          
+z.hemimaskOS   = '';                 % % The hemispher mask in "other space". IMPORTANT ONLY IF "SPACE"-PARAMER IS SET TO "other">                                                 
+z.atlas        = 'ANO.nii';          % % select atlas here (default: ANO.nii), atlas has to be the standard space atlas                                                            
+z.space        = 'native';           % % use images from "standard","native" or "other" space                                                                                      
+z.hemisphere   = 'both';             % % hemisphere used: "left","right","both" (united)  or "seperate" (left and right separated)                                                 
+z.threshold    = '';                 % % lower intensity threshold value (values >=threshold will be excluded); leave field empty when using a mask                                
+z.fileNameOut  = 'regwise_GM_native_both';                 % % <optional> specific name of the output-file. EMPTY FIELD: use timestamp+paramter for file name                                            
+z.format       = '.xlsx';            % % select output-format: default: ".xlsx"; other formats: ".mat" ".csv" ".csv|tab" "csv|space"  "csv|bar"  ".txt|tab" ".txt|space",".txt|bar"
+xgetlabels4(0,z);  
 
 
   
@@ -4188,6 +4270,12 @@ antcb('selectdirs',idfailed);
 xwarp3('batch','task',[3:4],'autoreg',1,'parfor',1);
      
       
+ 
+ 
+ 
+ 
+ 
+
   
 %% #################################################
 % MPM
