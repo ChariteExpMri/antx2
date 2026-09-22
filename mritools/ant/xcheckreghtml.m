@@ -244,7 +244,7 @@ p={...
     'outputPath'      ''                  '[SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )'  'd'
     'outputstring'    ''                  'optional Output string added (suffix) to the HTML-filename and image-directory '  ''
     'inf1' ''  '____PARAMETER____'  ''
-    'slices'  'n6'   'SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image'  {'n2' 'n3' 'n4' 'n5' 'n6'  '2' '3' '4' '5' '6'}
+    'slices'  'n6'   'SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image'  {'n2' 'n3' 'n4' 'n5' 'n6'  '2' '3' '4' '5' '6' '2 10 10' '3 20 20' '4 20 20' '5 20 20'}
     'dim'     2      'Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital'  {1,2,3}
     'size'    400    'Image size in HTML file (in pixels)' {100 200 300 400 500}
     'grid'    1      'Show line grid on top of image {0,1}'  'b'
@@ -263,7 +263,7 @@ p={...
     }
     'inf2'   '__optional___' '' ''
     'cmapB'           ''      '<optional> specify BG-color; otherwise leave empty'  {'cmap' cmapHTML}
-    'cmapF'           ''      '<optional> specify FG-color; otherwise leave empty'  {'cmap' cmapHTML}
+    'cmapF'           ''      '<optional> specify FG-color; otherwise leave empty; optional: use ''distinguishable_colors(60,{"w","k"})'' and adapt No of colors, here 60 '  {'cmap' cmapHTML}
     'showFusedIMG'   0  '<optional> show the fused image'   'b'
     'sliceadjust'    0  'intensity adjust slices separately; [0]no; [1]yes' 'b'  
     };

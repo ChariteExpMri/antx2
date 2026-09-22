@@ -2658,9 +2658,30 @@ antcb('update');
  
 antcb('sel',mdirs);%select animals
 xwarp3('batch','task',[1:4],'autoreg',1,'parfor',0);
+
+%% =====================================================                                                                                                                                                                        
+%% [5] sanity check: overlay of atlas onto t2.nii in standard-space                                                                                                                                                                              
+%% =====================================================                                                                                                                                                                        
+z=[];                                                                                                                                                                                                                           
+z.backgroundImg = 'x_t2.nii';                                                                % % [SELECT] Background/reference image (a single file)                                                                        
+z.overlayImg    = 'ANO.nii';                                                                 % % [SELECT] Image to overlay (multiple files possible)                                                                        
+z.outputPath    = '';     % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )
+z.outputstring  = '';                                                                            % % optional Output string added (suffix) to the HTML-filename and image-directory                                             
+z.slices        = '5 30 30';                                                                           % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image       
+z.dim           = [2];                                                                           % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital                                 
+z.size          = [300];                                                                         % % Image size in HTML file (in pixels)                                                                                        
+z.grid          = [1];                                                                           % % Show line grid on top of image {0,1}                                                                                       
+z.gridspace     = [20];                                                                          % % Space between grid lines (in pixels)                                                                                       
+z.gridcolor     = [1  1 1];                                                                     % % Grid color                                                                                                                 
+z.plots         = [1  1  1];                                                                     % % images to plot [toggleImg BGimg FGimg], example [1 1 1] plot all three                                                     
+z.cmapB         = 'gray';                                                                        % % <optional> specify BG-color; otherwise leave empty                                                                         
+z.cmapF         = 'distinguishable_colors(100,{"w","k"})';  %'cardiac.lut';                                                                 % % <optional> specify FG-color; otherwise leave empty                                                                         
+z.showFusedIMG  = [1];                                                                           % % <optional> show the fused image                                                                                            
+z.sliceadjust   = [1];                                                                           % % intensity adjust slices separately; [0]no; [1]yes                                                                          
+xcheckreghtml(0,z);   
  
 % =============================================================================================================
-%% [5] Get region-wise readout
+%% [6] Get region-wise readout
 %% Load the gray matter image in native space (c1t2.nii) and extract mean values for each region
 %% (combined across hemispheres). Results are saved as Excel file in the study's 'results' folder.
 % ==============================================================================================================

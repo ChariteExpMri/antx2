@@ -138,9 +138,19 @@ if isColor==1;   % test color
     if size(cmapB,1)>52
         cmapB= cmapB(round(linspace(1,size(cmapB,1),52)), :) ;
     end
-    cmapF=getCMAP(par.cmapF);
-    if size(cmapF,1)>52
-        cmapF= cmapF(round(linspace(1,size(cmapF,1),52)), :) ;
+    
+    if isnumeric(par.cmapF) && size(par.cmapF,2)==3
+        cmapF=par.cmapF;
+    elseif ischar(par.cmapF) && (   ~isempty(strfind(par.cmapF,'distinguishable_colors' )) ...
+        || ~isempty(strfind(par.cmapF,'cbrewer' )) )
+        cmapF=eval((strrep(par.cmapF,'"','''')));
+        cmapF(cmapF<0)=0;
+        cmapF(cmapF>1)=1;
+    else
+        cmapF=getCMAP(par.cmapF);
+        if size(cmapF,1)>52
+            cmapF= cmapF(round(linspace(1,size(cmapF,1),52)), :) ;
+        end
     end
   
     CB=ind2rgb(d3, cmapB);  [c1,cmap1] = rgb2ind(CB,cmapB);
