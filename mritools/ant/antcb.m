@@ -27,6 +27,8 @@
 %                               -->for HELP type antcb('getlabels?');
 % antcb('loop')           % perform a small task over animal dirs -->for HELP type antcb('loop?')
 % 
+% antcb('del')            %delete files/folders from selected animalDirs -->for HELP type antcb('del?')
+% 
 % antcb('load','proj_Harms3_lesionfill_20stack.m')   %load this project
 % antcb('reload')         % reload gui with project and previous mice-selection
 % antcb('version');       % get the last package version (1st output arg)
@@ -281,7 +283,7 @@ if strcmp(do,'delete') || strcmp(do,'del')
         do='deletefiles?';
     end
 end
-if strcmp(do,'deletefiles?');    help antcb>deletefiles;end
+if strcmp(do,'delete?') || strcmp(do,'del?');    help antcb>deletefiles;end
 %% ===============================================
 
 
@@ -2605,11 +2607,43 @@ end
 o=[];
 
 
-function  o=deletefiles(p0)
-% delete files from selected animalDirs,
+function  o=deletefiles(pin)
+% delete files/folders from selected animalDirs
+% 'del' or 'delete': char or cell -->file(s) to delete
+%       - 'all'  : delete all files and folders
+%       - specify multiple files via cell
+%       - use wildcards
+%       - use 'delete' or 'del' 
+% 
+% 'keep' char or cell ->file(s) to keep
+%       - specify multiple files via cell
+%       - use wildcards
+%       - when using keep, 'del' must be set to 'all'
+% 
+% EXAMPLES:
+%% ___ delete specific files/folders ___ 
+%  antcb('del','all');                  % delete all files and folders
+%  antcb('delete','all');               % same as antcb('del','all'); but longer...
+%  antcb('del','coreg2.jpg');           % delete 'coreg2.jpg'
+%  antcb('del',{'c1t2.nii','coreg2.jpg'}); %delete files 'c1t2.nii' & 'coreg2.jpg'
+%  antcb('del','^c.*.nii');             % delete all NIFTI-files starting with 'c'
+%  antcb('del',{'.mat','.txt','.jpg'}); % delete all files with format: '.mat','.txt' and '.jpg'
+%  antcb('del',{'bla','bla2'});         %delete FOLDERS 'bla' & 'bla2'
+%% ___  keep specific files/foldes delete all other files/folders  ___
+%  antcb('del','all','keep','^t2.nii');                 % delete all files, but keep 't2.nii' 
+%  antcb('del','all','keep',{'^t2.nii','coreg2.jpg'});  % delete all files, but keep 't2.nii' & 'coreg2.jpg'
+%  antcb('del','all','keep','^c.*.nii');               % delete all files, but keep all NIFTI-files starting with 'c'
+%  antcb('del','all','keep',{'^t2.nii' '^c.*.nii'});    % delete all files, keep 't2.nii' and all NIFTI-files starting with 'c'
+%  antcb('del','all','keep',{'.mat','.txt','.jpg'});   % delete all files, except files with format: '.mat','.txt' and '.jpg'
+
+
+
 %% ===============================================
 o=[];
-pp=cell2structnested(p0);
+pp.keep='';
+pin=cell2structnested(pin);
+pp=catstruct(pp,pin);
+
 if isfield(pp,'delete');
    pp.del=pp.delete;
    pp=rmfield(pp,'delete');
@@ -2621,13 +2655,91 @@ if ischar(pp.del);
     pp.del=cellstr(pp.del);
 end
 
-for i=1:length(mdirs)
-    for j=1:length(pp.del)
-        try
+if isempty(pp.keep)
+    %%     ======delete specific files =====================
+    %      antcb('del','all');         % delete all files and folders
+    %      antcb('del','coreg2.jpg');  % delete 'coreg2.jpg'
+    %      antcb('del',{'c1t2.nii','coreg2.jpg'}); %delete files 'c1t2.nii' & 'coreg2.jpg'
+    %      antcb('del','^c.*.nii');   % delete all NIFTI-files starting with 'c'
+    %      antcb('del',{'.mat','.txt','.jpg'}); % delete all files with format: '.mat','.txt' and '.jpg'
+    %      antcb('del',{'bla','bla2'}); %delete FOLDERS 'bla' & 'bla2'
+    
+    
+  for i=1:length(mdirs)
+            pa=mdirs{i};
+            fis=spm_select('list', pa); fis=cellstr(fis);  % FILES
+            ixdel =find(ismember(fis,pp.del));
+            ixdel2=regexpi2(fis,strjoin(cellstr(pp.del),'|'));
+            ixdel  =unique([ixdel(:); ixdel2(:)]);
+            if strcmp(char(pp.del),'all'); %delete all files
+                ixdel=[1:length(fis)];
+            end        
+            fis=fis(ixdel);
+            for j=1:length(fis)
+                try
+                    delete(fullfile(pa, fis{j}) ) ;
+                end
+            end
             
-            delete(fullfile(mdirs{i}, pp.del{j} ));
-        end
+            pam=spm_select('list', pa,'dir'); pam=cellstr(pam);  % FOLDERS
+            ixdel=find(ismember(pam,pp.del));
+            if strcmp(char(pp.del),'all'); %delete all files
+                ixdel=[1:length(pam)];
+            end
+            pam=pam(ixdel);
+            if ~isempty(char(pam))
+                for j=1:length(pam)
+                    try
+                        rmdir(fullfile(pa, pam{j}) ,'s' ) ;
+                    end
+                end
+            end
+        end 
+%     for i=1:length(mdirs)
+%         for j=1:length(pp.del)
+%             try
+%                 delete(fullfile(mdirs{i}, pp.del{j} ));
+%             end
+%         end
+%     end
+else
+    %% ======delete all files/folders except specific files/foldes =====================
+    % antcb('del','all','keep',{'t2.nii','coreg2.jpg'});  % delete all files, but keep 't2.nii' & 'coreg2.jpg'
+    % antcb('del','all','keep','^c.*.nii'); % delete all files, but keep all NIFTI-files starting with 'c'
+    % antcb('del','all','keep',{'t2.nii' '^c.*.nii'});  % delete all files, keep 't2.nii' and all NIFTI-files starting with 'c'
+    % antcb('del','all','keep',{'.mat','.txt','.jpg'}); % delete all files, except files with format: '.mat','.txt' and '.jpg'
+    
+    if strcmp(char(pp.del),'all') || strcmp(char(pp.del),'*')
+        for i=1:length(mdirs)
+            pa=mdirs{i};
+            fis=spm_select('list', pa); fis=cellstr(fis);  % FILES
+            ixkeep=find(ismember(fis,pp.keep));
+            ixkeep2=regexpi2(fis,strjoin(cellstr(pp.keep),'|'));
+            ixkeep=unique([ixkeep(:); ixkeep2(:)]);            
+            fis(ixkeep)=[];
+            for j=1:length(fis)
+                try
+                    delete(fullfile(pa, fis{j}) ) ;
+                end
+            end
+            
+            pam=spm_select('list', pa,'dir'); pam=cellstr(pam);  % FOLDERS
+            ixkeep=find(ismember(pam,pp.keep));
+            pam(ixkeep)=[];
+            if ~isempty(char(pam))
+                for j=1:length(pam)
+                    try
+                        rmdir(fullfile(pa, pam{j}) ,'s' ) ;
+                    end
+                end
+            end
+        end  
     end
+    
+    
+    
+    %% ===============================================
+    
     
 end
 
@@ -3386,6 +3498,7 @@ function out=selectdirs(input, nargoutCaller);
 % antcb('selectdirs',[1 2]);      %select directories 1 and 2 (selected by index)
 % antcb('selectdirs','^za_.*')    %select all dirs starting with 'za_'  
 % antcb('selectdirs',{'^sal*','^za*'}); %select all dirs starting with 'sal' or 'za_
+% antcb('selectdirs','[2:end]')   %select all dirs, except the 1st dir
 % 
 %
 %% select dirs by string in animal-name
@@ -3509,6 +3622,11 @@ if strcmp(input{1},'all')
 elseif strcmp(input{1},'none')
     iselect=[];
     set(lb3,'value',iselect);
+elseif ~isempty(strfind(input{1},'[')) && ~isempty(strfind(input{1},']'))
+    iselect=[1:length(li)];
+    eval(['iselect=iselect(' input{1} ');']);
+    set(lb3,'value',iselect);
+    
     
 elseif isnumeric(input{1})
     del=setdiff(input{1},[1:length(li)]);

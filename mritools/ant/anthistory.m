@@ -584,7 +584,8 @@ try
         ms=u.d(ix(1),:)';
         bgcol=[u.coltab(ix(1),:)];
     end
-    
+    bgcol(bgcol<0)=0;
+    bgcol(bgcol>1)=1;
     
     msiz=size(char(u.hd),2);
     ms2=cellfun(@(a,b){['[' a ']'  repmat(' ' ,[1 msiz+5-length(a) ])  b ]}, u.hd' ,ms );

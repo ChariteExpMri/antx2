@@ -66,6 +66,18 @@
 % 
 %        [-1] : brain masked image '_msk.nii' is assumed to exist in the path
 %               use this option if you have created a brain-masked 't2.nii' via other tools
+% 
+%       'animal1' : Use the skull-stripping mask '_msk.nii' from animal 1. The mask is rigidly registered to 
+%                   the T2 image of each other animal and used as an initial mask for subsequent template 
+%                   registration.
+%                     Prerequisite: '_msk.nii' for animal 1 must have been successfully generated beforehand 
+%                                   using another skull-stripping method.
+% 
+%       'animal#' : Same as 'animal1', but use the mask from animal #. 
+%                   Replace '#' with the desired animal index (e.g. 'animal7').
+%                     '_msk.nii' for that animal must already exist.
+%     
+% 
 % #g NOTE: The aim of '_msk.nii' file is to obtain a rough but sufficient rigid registration. Accordingly,
 % #g don't use this file as 'proper' brain mask for later analysis
 % #g for [3]&[4]: For successful registration select the  parameterfile #k "trafoeuler5_MutualInfo.txt" for "orientelxParamfile"-parameter
@@ -236,6 +248,9 @@ meth_skullstrip=...
     '[6]: EXVIVO & high-contrast tube (PBS): approach1: "deTube"+pcnn3d)'                  [6]
     '[7]: EXVIVO & high-contrast tube (PBS): approach2: "deTube"+pcnn3d)'                  [7]
     '[8]: UNIVERSAL: – in/ex vivo, ±skullstrip, ±PBS'                                      [8]
+    '[''animal1'']: if "_msk.nii" was created for animal-1, use this registered mask for other animals ' 'animal1'
+    '[''animal#'']: if "_msk.nii" was created for animal with index #, use [''animal#''] and apply for other animals, replace "#" with animal-index' 'animal#'   
+    
     '                                                               '  [1]
     '[0]: "t2.nii" is already skullstripped (exvivo brain) '                               [0]
     '[2]: create "_msk.nii" as copy of "t2.nii"  (for allready skullstripped brains)'      [2]

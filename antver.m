@@ -1230,9 +1230,14 @@
 % the chicken brain data, and the final template was obtained through several iterative refinement steps.
 % #gw -->  access via link : https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
 % for example registration see: snips--> pipeline --> chicken-brain: registration to chicken-atlas (chicken_v5)
-% 
-% 
-% 
+% #wb 23 Sep 2026 (17:51:30)
+% - removed bug in anthistory.m
+% - adding another skullstripping method 'animal1'/'animal#', were mask '_msk.nii' from animal-1 or animal# (# is the index
+%   of an animal) can be rigidly registered to the T2 image of each other animal and used as an initial mask for 
+%   subsequent template registration (selectable via pulldown of  "x.wa.usePriorskullstrip"-parameter from
+%   ant-configuration/setting)
+% - added: antcb('del')  to delete specific files or delete all files exctept specified files in selected animal-dirs
+%   for help type: antcb('del?') 
 % 
 % 
 % 

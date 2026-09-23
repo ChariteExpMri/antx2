@@ -331,7 +331,65 @@ if find(s.task==1)
     end
     
     %% SKULLSTRIP T2.nii
-    if s.usePriorskullstrip==1 || s.usePriorskullstrip==6 || s.usePriorskullstrip==7 ....
+    if ischar(s.usePriorskullstrip) && ~isempty(strfind(s.usePriorskullstrip,'animal'))
+    %  use '_msk.nii' from another animal: if s.usePriorskullstrip is 'animal1'  -->use _msk.nii from animal-1
+    %% ===============================================
+    
+    idx_animal=str2num(strrep(s.usePriorskullstrip,'animal',''));
+    disp(['   using reference-mask ("_msk.nii") from animal-' num2str(idx_animal)  ' .. registering that mask to current animal' ]);
+    mdirs=antcb('getallsubjects');
+    ref_animal=mdirs{idx_animal};
+    ref_mask  =fullfile(ref_animal,'_msk.nii');
+    ref_mask_copy=fullfile(s.pa,'_msk_ref.nii');
+    copyfile(ref_mask,ref_mask_copy,'f');
+    
+    parafile=s.orientelxParamfile;
+    
+    elastix =which('elastix.exe');
+    if isempty(elastix); error('elastix path not set');end
+    outdir  =fullfile(s.pa,'using_refmask');
+    f3      =s.t2;
+    f222    =ref_mask_copy;
+    if exist(outdir)~=7; mkdir(outdir); end
+    
+    if ispc==1
+        v=['!' elastix  ' -f ' f3 ' -m ' f222 ' -out ' outdir ' -p '  parafile  ];
+        evalc(v);
+    elseif ismac==1
+        ela=elastix4mac;
+        %w='/Volumes/O/antx/mritools/elastix/elastix_macosx64_v4.7/elastix_macosx64_v4.7/bin/elastix'
+        try
+            pathis=pwd;
+            cd(ela.pa);
+            evalc([ '!' ela.E  ' -f ' f3 ' -m ' f222 ' -out ' outdir ' -p '  parafile  ]);
+        end
+        cd(pathis);
+    else
+        v=evalc(['!elastix'  ]);
+        if~isempty(strfind(v,'Use "elastix --help" for information'));
+            v=['!elastix -f ' f3 ' -m ' f222 ' -out ' outdir ' -p '  parafile  ];
+            evalc(v);
+        else
+            error('ELASTIX for LINUX is not installed --> see /doc/linux_troubleshoot.txt ');
+        end
+    end
+    
+    msk_rotated=fullfile(outdir, 'result.0.nii' );
+    msk_fin    =fullfile(s.pa,'_msk.nii');
+    if exist(msk_rotated)==2
+        copyfile(msk_rotated,  msk_fin  ,'f');
+    end
+    
+    % cleanup
+    try; rmdir(outdir,'s'); end
+    try; delete(f222); end
+    
+    
+        
+       %% ===============================================
+       
+    
+    elseif s.usePriorskullstrip==1 || s.usePriorskullstrip==6 || s.usePriorskullstrip==7 ....
             || s.usePriorskullstrip==9 || s.usePriorskullstrip==10
         %disp('#check---skullstripp');
         if s.usePriorskullstrip==1 || s.usePriorskullstrip==9 
