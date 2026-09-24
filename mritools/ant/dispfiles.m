@@ -3,17 +3,16 @@
 %
 %% [OPTIONAL PAIRWISE INPUTS] ___________________________________________
 % 'form' or 'm':  form/mode to display (default: 1)
-%       [1]    :files x folder ..long version
-%       [11]   :files x folder ..compact version
-%       [2]    :folder x files ..long version
-%       [22]   :folder x files ..compact version
+%       [1]    :files x folder 
+%       [2]    :folder x files 
 %     'list'   : list of all files
 %     'cell'   : list of all files in quotes (directly usable in matlab)
 %     'celline'/'line': one line-list of all files in quotes (directly usable in matlab)
 %     'counts' : list and counts of all files
 %
-%    'sel'    : show files only for this  animal selection:
+%    'sel'    : <optional> show files only for this  animal selection:
 %             'selected' or 's' : show files only of GUI-selected animals 
+%             'all'             : for all animals
 %            or use: 
 %             {FP-mdirs}    : cellstring with fullpath animal-dirs
 %             {   mdirs}    : cellstring with animal-dirs assuming project is loaded
@@ -37,14 +36,17 @@
 %         - 'counts' has to be set to [1] if 'countsonly' should be used
 %           example: dispfiles('countsonly',1,'form',1)
 %
-% dir or 'd' :-as  <char> : upper dir ("dat"-dir) to search in subdirs or other dir
+% 'dir' or 'd' :-as  <char> : upper dir ("dat"-dir) to search in subdirs or other dir
 %           default: use data-path from loaded project (an.datpath)
 %         : as <cell> list of fullpath-animal-dirs or other dir
-% show or 's' : show  output
-%       [1] show in comand-window, default: 1
-%       [2] show in separate window
-%       [0] no
-%
+% 'show' or 's' : show  output
+%        [1] show in comand-window, default: 1
+%        [2] show in separate window
+%        [0] no
+% 'get'  'bytes': show fileSize (MB) ..only if 'form' is [1] or [2]  
+%                 example: dispfiles('sel',[1:3],'get','bytes')
+%        'date':  show modification date of files ..only if 'form' is [1] or [2]  
+%                 example: dispfiles('sel',[1:3],'get','date')
 %
 %% [OPTIONAL OUTPUT] ___________________________________________
 % o-struct with
@@ -131,7 +133,12 @@ if  iscell(p.flt)
     p.flt= strjoin(p.flt,'|');
 end
 
-
+if isfield(p,'select')
+    p.sel=p.select;
+    p=rmfield(p,'select');
+end
+    
+    
 if isfield(p,'sel') && ischar(p.sel) && strcmp(p.sel,'s');
     p.sel='selected';
 end
@@ -198,7 +205,14 @@ if isfield(p,'sel')
         %% ===============================================
 %         tf = ~isempty(regexp(strtrim(p.sel), '(?<![A-Za-z0-9_])end(?![A-Za-z0-9_])', 'once'));
 %         if tf==1
+         if ischar(p.sel) && strcmp(char(p.sel),'all')
+             p.sel=dirs;
+         elseif ischar(p.sel) && (strcmp(char(p.sel),'s') || strcmp(char(p.sel),'select') || strcmp(char(p.sel),'selected'))
+            p.sel=antcb('getsubjects');
+         
+         else
             eval([ 'p.sel=dirs(' p.sel ');']);
+         end
 %         end
         % first 4 should work
         %         q={'[1 end]'
@@ -281,7 +295,16 @@ elseif isfield(p,'sort') && strcmp(p.sort,'bytes')
     sortertype=2; %sort accrding bytes
 end
 
-
+if strcmp(p.form,'date')
+    sortertype=1; %sort accrding date
+end
+% if sortertype==0
+    if isfield(p,'get') &&  strcmp(p.get,'date')
+        sortertype=1;
+    elseif isfield(p,'get') &&  strcmp(p.get,'bytes')
+        sortertype=2;
+    end
+% end
 % sorter='date'
 dates=[];
 try
@@ -310,16 +333,30 @@ catch
     df=[];
 end
 
+
+
 %sort according date
 if sortertype==1 && ~isempty(dates)
     dates(dates==0)=nan;
     %     datevec=nanmean(dates,1);
     datevec=nanmax(dates,[],1);
     [~, isort]= sort(datevec);
+    fisuni_raw=fisuni;
     fisuni=fisuni(isort);
-    df=df(:,isort);
-    
+    df=df(:,isort);  
+elseif sortertype==2 && ~isempty(dates)
+    dates(dates==0)=nan;
+    %     datevec=nanmean(dates,1);
+    bytevec=nanmax(dates,[],1);
+    [~, isort]= sort(bytevec);
+    fisuni_raw=fisuni;
+    fisuni=fisuni(isort);
+    df=df(:,isort); 
 end
+if exist('isort')~=1
+   isort=1:size(df,2); 
+end
+    
 
 % ==============================================
 % %
@@ -359,7 +396,7 @@ if nargout>0
     varargout{1}=o;
 end
 if isempty(fisuni)
-    disp('not files found') ;
+    disp('no files found') ;
     return
 end
 % ==============================================
@@ -428,10 +465,32 @@ if 1
         %%   not transposed :  mdirs x files
         % ===============================================
         
+        [~,dirsshort]=fileparts2(dirs);
+        dirs4=dirs2;
+        dirs4(1:length(dirsshort))=dirsshort;
+        
+        if isfield(p,'get') && (strcmp(p.get,'date') || strcmp(p.get,'bytes'))
+            imis=isnan(dates);
+            dates(imis)=0;
+%             dates_readable=cellfun(@(a){[datestr(a) ]} ,num2cell(dates));
+            
+            
+             if strcmp(p.get,'date')
+                dates_readable=cellfun(@(a){[datestr(a) ]} ,num2cell(dates));
+            elseif strcmp(p.get,'bytes')
+                 MB = dates / 1024^2;
+                 dates_readable=cellfun(@(a){[     sprintf('%7.2f MB',a) ]} ,num2cell(MB));
+            end
+            dates_readable(imis)={'-'};
+            dates_sorted  =dates_readable(:,isort);
+            df2(1:end-1,1:end-1)=dates_sorted;
+        end
+        
+        
         he2=['  ' cellfun(@(a){[ repmat('=',[1 length(a)]) ]} , fisuni(:)' )];
-        x=[[ {'  '}  fisuni(:)'  ]; [ he2]; [  dirs2(:)  df2  ] ];
+        x=[[ {'  '}  fisuni(:)'  ]; [ he2]; [  dirs4(:)  df2  ] ];
         if p.countsonly==1
-            x=[[ {'  '}  fisuni(:)'  ]; [ he2]; [  dirs2(end)  df2(end,:)  ] ];
+            x=[[ {'  '}  fisuni(:)'  ]; [ he2]; [  dirs4(end)  df2(end,:)  ] ];
         end
         
         % resort counts as 2nd column
@@ -564,8 +623,27 @@ if 1
 %             
 %             
 %         end
-        he2=['  ' cellfun(@(a){[ repmat('=',[1 length(a)]) ]} , dirs2(:)' )];
-        x=[[ {'  '}  dirs2(:)'  ]; [ he2]; [  fisuni(:)  df3  ] ];
+      [~,dirsshort]=fileparts2(dirs);
+        dirs4=dirs2;
+        dirs4(1:length(dirsshort))=dirsshort;
+        
+        if isfield(p,'get') && (strcmp(p.get,'date') || strcmp(p.get,'bytes'))
+            dates=dates';
+            imis=isnan(dates);
+            dates(imis)=0;
+            if strcmp(p.get,'date')
+                dates_readable=cellfun(@(a){[datestr(a) ]} ,num2cell(dates));
+            elseif strcmp(p.get,'bytes')
+                 MB = dates / 1024^2;
+                 dates_readable=cellfun(@(a){[     sprintf('%7.2f MB',a) ]} ,num2cell(MB));
+            end
+            dates_readable(imis)={'-'};
+            dates_sorted  =dates_readable(isort,:)
+            df3(1:end-1,1:end-1)=dates_sorted;
+        end
+
+        he2=['  ' cellfun(@(a){[ repmat('=',[1 length(a)]) ]} , dirs4(:)' )];
+        x=[[ {'  '}  dirs4(:)'  ]; [ he2]; [  fisuni(:)  df3  ] ];
         if p.countsonly==1
             he2=he2([1 end]);
             df3=df3(:,[end]);
@@ -614,8 +692,12 @@ if 1
         if p.show==1 % show table
             disp(char(w))
         end
+     elseif ischar(p.form) && strcmp(p.form,'date') 
+         'aa'
+         x=[[fisuni df2(end,:)' ]];
         
-        
+        dates_sorted=num2cell(dates(:,isort))';
+        dates_readable=cellfun(@(a){[datestr(a) ]} ,dates_sorted);
         
         
         

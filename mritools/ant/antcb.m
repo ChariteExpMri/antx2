@@ -58,7 +58,7 @@
 % antcb('cwname','klaus works here');   % define command-window title
 % antcb('cwname');                      % ..selection via command window input
 %
-% antcb('versionupdate'),
+% antcb('versionupdate')     % get version-number
 % 
 % antcb('restartsession');   % restarts Matlab-session (and closes current session) and reload previous project
 %                            % see: antcb('restartsession?');  
