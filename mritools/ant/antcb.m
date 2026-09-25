@@ -3622,9 +3622,12 @@ if strcmp(input{1},'all')
 elseif strcmp(input{1},'none')
     iselect=[];
     set(lb3,'value',iselect);
-elseif ~isempty(strfind(input{1},'[')) && ~isempty(strfind(input{1},']'))
+elseif (iscell(input{1})  && any(~cellfun('isempty', regexp(input{1},'[\[\]]','once')))) || ...
+   (~iscell(input{1}) && ~isempty(regexp(input{1},'[\[\]]','once')))
+    %~isempty( regexp(char(input{1}), '[\[\]]', 'once') )
+    %~isempty(strfind(input{1},'[')) && ~isempty(strfind(input{1},']'))
     iselect=[1:length(li)];
-    eval(['iselect=iselect(' input{1} ');']);
+    eval(['iselect=iselect(' char(input{1}) ');']);
     set(lb3,'value',iselect);
     
     
