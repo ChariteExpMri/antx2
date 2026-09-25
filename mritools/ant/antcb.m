@@ -3622,8 +3622,9 @@ if strcmp(input{1},'all')
 elseif strcmp(input{1},'none')
     iselect=[];
     set(lb3,'value',iselect);
-elseif (iscell(input{1})  && any(~cellfun('isempty', regexp(input{1},'[\[\]]','once')))) || ...
-   (~iscell(input{1}) && ~isempty(regexp(input{1},'[\[\]]','once')))
+elseif ~isnumeric(input{1}) && ...
+        (    (iscell(input{1})  && any(~cellfun('isempty', regexp(input{1},'[\[\]]','once')))) || ...
+        (~iscell(input{1}) && ~isempty(regexp(input{1},'[\[\]]','once')))    )
     %~isempty( regexp(char(input{1}), '[\[\]]', 'once') )
     %~isempty(strfind(input{1},'[')) && ~isempty(strfind(input{1},']'))
     iselect=[1:length(li)];
