@@ -332,7 +332,13 @@ elseif g.pfileSet==2
         fullfile(felastix2d,'Par0034rigid_2D.txt'   )
         fullfile(felastix2d,'Par0034affine_2D.txt'  )
         fullfile(felastix2d,'Par0034bsplineFast_2D.txt' )};
+elseif g.pfileSet==3
+    pfile00={...
+        fullfile(felastix2d,'Par0034rigid_2D.txt'   )
+        fullfile(felastix2d,'Par0034affine_2D.txt'  )
+        fullfile(felastix2d,'bspline_2D_v1.txt' )};
 end
+
 pfile0=strrep(pfile00,felastix2d,pa);
 copyfilem(pfile00,pfile0);
 

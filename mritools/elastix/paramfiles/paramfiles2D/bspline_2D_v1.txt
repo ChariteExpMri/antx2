@@ -1,0 +1,75 @@
+// ============================================================
+// Fast 2D slice-wise B-spline registration
+// Fixed  = T2w
+// Moving = MRE magnitude
+// ============================================================
+ 
+// **************** Main Components ****************************
+(Registration "MultiMetricMultiResolutionRegistration")
+(Interpolator "BSplineInterpolator")
+(ResampleInterpolator "FinalBSplineInterpolator")
+(Resampler "DefaultResampler")
+(Optimizer "AdaptiveStochasticGradientDescent")
+(Transform "BSplineTransform")
+(UseDirectionCosines "true")
+ 
+// **************** Transformation *****************************
+// Larger spacing = fewer B-spline control points = much faster
+// 8 voxels gives a relatively smooth deformation.
+// Try 4 if 8 is not sufficiently flexible.
+(FinalGridSpacingInVoxels 2 2)
+(HowToCombineTransforms "Compose")
+ 
+// **************** Similarity measure *************************
+// Keep both metrics as requested.
+(Metric  "AdvancedMattesMutualInformation"  "TransformBendingEnergyPenalty")
+//(Metric0Weight 1.0)
+//(Metric1Weight 1.0)
+
+(Metric0Weight 1.0)
+(Metric1Weight 1.0)
+
+//(NumberOfHistogramBins 32)
+(NumberOfHistogramBins 16)
+(ErodeMask "false")
+ 
+ 
+// Automatic parameter estimation for the optimizer.
+(AutomaticParameterEstimation "true")
+ 
+// **************** Multiresolution **************************** 
+(NumberOfResolutions 3)
+(MaximumNumberOfIterations 100 200 500)
+//(MaximumNumberOfIterations 500)
+// Explicit pyramid:
+// coarse -> intermediate -> full resolution
+//(ImagePyramidSchedule 4 4 2 2 1 1)
+ 
+// **************** Optimizer **********************************
+// Number of randomly sampled pixels per iteration.
+// 500 is enough for a 180 x 180 slice.
+(NumberOfSpatialSamples 400)                     // before: 500
+
+(NewSamplesEveryIteration "true")
+
+(ImageSampler "Random")
+(MaximumNumberOfSamplingAttempts 1000)
+(RequiredRatioOfValidSamples 0.01)
+ 
+// **************** Interpolation ******************************
+// Linear interpolation during optimization.
+// This is faster than order 3.
+(BSplineInterpolationOrder 1)
+// High-quality interpolation for final output.
+(FinalBSplineInterpolationOrder 3)
+  
+// **************** Output *************************************
+(DefaultPixelValue 0)
+(WriteResultImage "true")
+(ResultImagePixelType "float")
+(ResultImageFormat "nii")
+ 
+// **************** Threads ************************************
+// Adjust to your CPU if desired.
+// Remove this line if your Elastix version does not support it.
+(NumberOfThreads 8)
