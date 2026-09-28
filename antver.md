@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   23 Sep 2026 (17:51:30)  
+ &#x1F34E; last modification:   28 Sep 2026 (13:25:20)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**28 Sep 2026 (13:25:20)**</ins>  
+  removed critical bug in skullstrip_pcnn3d.m  
+<!---->
   &#x1F535;   <ins>**23 Sep 2026 (17:51:30)**</ins>  
   - removed bug in anthistory.m  
   - adding another skullstripping method 'animal1'/'animal#', were mask '_msk.nii' from animal-1 or animal# (# is the index  
@@ -14,7 +17,7 @@
     subsequent template registration (selectable via pulldown of  "x.wa.usePriorskullstrip"-parameter from  
     ant-configuration/setting)  
   - added: antcb('del')  to delete specific files or delete all files exctept specified files in selected animal-dirs  
-    for help type: antcb('del?')  
+    for help type: antcb('del?')   
 <!---->
   &#x1F535;   <ins>**21 Sep 2026 (15:01:29)**</ins>  
   Chicken atlas (v5) added to Google Drive.  
