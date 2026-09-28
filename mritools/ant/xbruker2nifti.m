@@ -1279,12 +1279,11 @@ end
 try
     out.hlogfile=hlogfile;
     out.logfile =logfile;
-    [pa]=fileparts2(w3.logfile(:,1));
+    [pa]=fileparts2(out.logfile(:,1));
     [~,mdirs]=fileparts2(pa);
     mdirs=unique(mdirs);
     out.mdirs=mdirs;
 end
-
 
 
 

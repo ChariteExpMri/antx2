@@ -4848,23 +4848,23 @@ end
 % MRE
 % 3D rigid + slice-wise 2D magnitude-to-t2.nii registration
 
+% batch_coregAVMAG_v2.m
 % Important: use this script AFTER (!!!) registration of 't2.nii' (native space) to
 % standard space (ABA). I.e. first registration of t2.nii to template/atlas, than apply this script
-% steps: 
-% [1] replace header of a file, 
-% [2] rigid register 'avmag.nii' to 't2.nii'
-% [3] transform brainmaks from standard space to native space
-% [4] mask 't2.nii' by brainmask ('ix_AVGTmask.nii')
+% steps:
+% [1] replace header of a file,
+% [2] transform brainmaks from standard space to native space
+% [3] mask 't2.nii' by brainmask ('ix_AVGTmask.nii')
+% [4] rigid register 'avmag.nii' to 't2masked.nii'
 % [5] 2D-slice-wise NONLINEAR REGISDTRATION, using 't2masked.nii' as reference
 % [6] create HTML to check registration (see checks-folder)
-% _____
 % original script-name: "batch_coregAVMAG_v2.m"
- 
+
 clear
 timex=tic;
 antcb('load','proj.m')
 % antcb('selectdirs',{'MMRE_wheelrunning2_m405_05032019'})
- 
+
 %% ================================================================
 %% [0] PRESELECT FOLDERS
 %% ================================================================
@@ -4880,51 +4880,29 @@ antcb('load','proj.m')
 %     %     '20260917_sl_baseline_FTY_R7_5207_MREDTI'
 %     %     '20260916_sl_baseline_FTY_R7_5209_MREDTI'
 %     };
-%% =====[or use index-based selection ]===============
+%% =====[or use indexbased selection ]===============
 mydirs=[1:10];
+% mydirs=2
 antcb('selectdirs',mydirs); %select this animals
- 
+
 %% ==============================================
 %%  [1]  replace Header 'cMap.nii'
 %% ===============================================
 mdirs=antcb('getsubjects'); % get selected animals
- 
+
 z=[];
 z.files =  {...
-    'cMap.nii'  'cMap_replacedHDR.nii'  'rHDR:'
-    'avmag.nii' ''                          'ref'  };
+    'cMap.nii' 	'cMap_replacedHDR.nii' 	'rHDR:'
+    'avmag.nii' ''   	                    'ref'  };
 xrename(0,z.files(:,1),z.files(:,2),z.files(:,3));
- 
-%% ==============================================
-%%  [2] rigid register 'avmag.nii' to 't2.nii'
-%% ===============================================
-FILES1={'avmag.nii' 'cMap_replacedHDR.nii'};
-z=[];
-z.TASK          = '[100] noSPMregistration, only elastix';                                  % % Task to perform (display before/after and or register)
-z.targetImg1    = { 't2.nii' };                                                             % % target image [t1], (static/reference image)
-z.sourceImg1    = { 'avmag.nii' };                                                          % % source image [t2], (moved image)
-z.sourceImgNum1 = [1];                                                                      % % if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum)
-z.applyImg1     = { 'cMap_replacedHDR.nii' };                                               % % images on which the transformation is applied (do not select the sourceIMG again!)                                                                                                        % % smoothing to apply to 256x256 joint histogram
-z.centerering   = [0];                                                                      % % make copy of targetIMG & set origin to "center" ,than apply centeringTRafo to all coregistered images,
-z.reslicing     = [1];                                                                      % % reslice images,  [0] no, do not reslice, [1] reslice to target Image (targetImg1)
-z.interpOrder   = 'auto';                                                                   % % interpolation order [0]nearest neighbour, [1] trilinear interpolation, ["auto"] to autodetect interpolation order
-z.prefix        = 'r';                                                                      % % file prefix for the new resliced volume (if empty, overwrite the soureIMG  )
-z.warping       = [0];                                                                      % % USE ELASTIX, example..do subsequent nonlinear warping [0|1],
-% z.warpParamfile = { 'D:\MATLAB\antx2\mritools\elastix\paramfiles\trafoeuler6_mi.txt' };     % % parameterfile used for warping
-z.warpParamfile = { which('trafoeuler6_mi.txt') };     % % parameterfile used for warping
-z.warpPrefix    = 'c_';                                                                     % % prefix out the output file after warping (if empty, it will overwrite the output of the previously affine registered file)
-z.cleanup       = [1];                                                                      % % remove interim steps                                                                                                                                                                       % % images on which the transformation is applied (do not select the sourceIMG again!)
-xcoreg(0,z);
- 
-antcb('del',{'^c_avmag.nii','^c_cMap_replacedHDR.nii','^c_t2.nii'}); %delete unnecessary files
+
 %% ================================================================
-%% [3] transform brainmaks from standard space to native space
+%% [2] transform brainmaks from standard space to native space
 %% ================================================================
- 
 doelastix(-1   , [],      {'AVGTmask.nii'}                      ,0 ,'local' );
- 
+
 %% =====================================================
-%% [4] mask 't2.nii' by brainmask ('ix_AVGTmask.nii')
+%% [3] mask 't2.nii' by brainmask ('ix_AVGTmask.nii')
 %% =====================================================
 z=[];
 z.niftis     = {'ix_AVGTmask.nii'      % %  << select IMAGE(S) from animal-DIRs to manipulate
@@ -4934,7 +4912,33 @@ z.evalstring = '@i1.*@i2';              % % string to evaluate->see help
 z.outName    = 't2masked.nii';          % % outputname: <string><cell> or  use "@xxx" to use the prefix "xx", otherwise define N-outputNames
 z.outDir     = 'local';                 % % <<select the output directory:  ["local"] refers to local mouseDir
 xcalc(0,z);
- 
+
+
+%% ==============================================
+%%  [4] rigid register 'avmag.nii' to 't2masked.nii'
+%% ===============================================
+FILES1={'avmag.nii' 'cMap_replacedHDR.nii'};
+z=[];
+z.TASK          = '[100] noSPMregistration, only elastix';                                  % % Task to perform (display before/after and or register)
+z.targetImg1    = { 't2masked.nii' };                                                             % % target image [t1], (static/reference image)
+z.sourceImg1    = { 'avmag.nii' };                                                          % % source image [t2], (moved image)
+z.sourceImgNum1 = [1];                                                                      % % if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum)
+z.applyImg1     = { 'cMap_replacedHDR.nii' };                                               % % images on which the transformation is applied (do not select the sourceIMG again!)                                                                                                        % % smoothing to apply to 256x256 joint histogram
+z.centerering   = [0];                                                                      % % make copy of targetIMG & set origin to "center" ,than apply centeringTRafo to all coregistered images,
+z.reslicing     = [1];                                                                      % % reslice images,  [0] no, do not reslice, [1] reslice to target Image (targetImg1)
+z.interpOrder   = 'auto';                                                                   % % interpolation order [0]nearest neighbour, [1] trilinear interpolation, ["auto"] to autodetect interpolation order
+z.prefix        = 'r';                                                                      % % file prefix for the new resliced volume (if empty, overwrite the soureIMG  )
+z.warping       = [0];                                                                      % % USE ELASTIX, example..do subsequent nonlinear warping [0|1],
+%z.warpParamfile = { which('trafoeuler6_mi.txt') };     % % parameterfile used for warping
+z.warpParamfile = { which('trafoeuler5.txt') };     % % parameterfile used for warping z.warpParamfile = { which('trafoeuler5.txt') ; which('Par0025affine.txt') };     % % parameterfile used for warping
+% z.warpParamfile = { which('trafoeuler7_mi.txt') };     % % parameterfile used for warping
+z.warpPrefix    = 'rc_';                                                                     % % prefix out the output file after warping (if empty, it will overwrite the output of the previously affine registered file)
+z.cleanup       = [1];                                                                      % % remove interim steps                                                                                                                                                                       % % images on which the transformation is applied (do not select the sourceIMG again!)
+xcoreg(0,z);
+
+antcb('del',{'^c_avmag.nii','^c_cMap_replacedHDR.nii','^c_t2masked.nii'}); %delete unnecessary files
+
+
 %% =====================================================
 %% [5] 2D-slice-wise NONLINEAR REGISDTRATION, using
 %%  't2masked.nii' as reference
@@ -4945,7 +4949,7 @@ z=[];
 z.refIMG            = { 't2masked.nii' };        % % (<<) SELECT REFERENCE IMAGE (example: t2.nii)
 z.sourceIMG         = FILES2(1); % ## modif ##    { 'rc_avgmap3.nii' };     % % (<<) SELECT IMAGE to calculate the transformation
 z.applyIMG          = FILES2(2); % ## modif ##   { 'rc_cmap3.nii' };              % % (<<) SELECT 1/more IMAGES to apply transformation, (if empty sourceIMG is transformed
- 
+
 z.prefix                    = 'p';                               % % this prefix is used for the output file >>[prefix+"name of applyIMG"]
 z.pfileSet                  = [  3  ];                               % % set of parameterfiles {1,2}, [1] default; [2] experimental (faster)
 z.rigid                     = [0];                               % % do rigid transformation
@@ -4966,9 +4970,9 @@ z.cleanup                   = [1];                               % % remove unne
 z.keepFolder                = [0];                               % % keeps local 2d-elastix folder
 xregister2d(0,z);
 toc
- 
+
 antcb('del',{'^prc_.*mask.nii'}); %delete unecessary files
- 
+
 %% =====================================================
 %% [6] create HTML to check registration (see checks-folder)
 %% =====================================================
@@ -4991,10 +4995,12 @@ z.cmapF         = 'cbrewer("qual","Set1",100)';  %'cardiac.lut';
 z.showFusedIMG  = [1];                                                                           % % <optional> show the fused image
 z.sliceadjust   = [1];                                                                           % % intensity adjust slices separately; [0]no; [1]yes
 xcheckreghtml(0,z);
- 
+
 %% ===============================================
 cprintf('*[1 0 1]',['DONE (' sprintf(['ETA: %4.2f min'],toc(timex)/60)  ')'  '\n']);
- 
+
+
+
  
 
 
