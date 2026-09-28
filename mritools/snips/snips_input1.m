@@ -4844,6 +4844,159 @@ for k=1:size(t1,1)
 end
  
  
+%% #################################################
+% MRE
+% 3D rigid + slice-wise 2D magnitude-to-t2.nii registration
+
+% Important: use this script AFTER (!!!) registration of 't2.nii' (native space) to
+% standard space (ABA). I.e. first registration of t2.nii to template/atlas, than apply this script
+% steps: 
+% [1] replace header of a file, 
+% [2] rigid register 'avmag.nii' to 't2.nii'
+% [3] transform brainmaks from standard space to native space
+% [4] mask 't2.nii' by brainmask ('ix_AVGTmask.nii')
+% [5] 2D-slice-wise NONLINEAR REGISDTRATION, using 't2masked.nii' as reference
+% [6] create HTML to check registration (see checks-folder)
+% _____
+% original script-name: "batch_coregAVMAG_v2.m"
+ 
+clear
+timex=tic;
+antcb('load','proj.m')
+% antcb('selectdirs',{'MMRE_wheelrunning2_m405_05032019'})
+ 
+%% ================================================================
+%% [0] PRESELECT FOLDERS
+%% ================================================================
+% mydirs={
+%     %     '20260916_sl_baseline_FTY_R7_5208_MREDTI'
+%     %     '20260916_sl_baseline_FTY_R7_5210_MREDTI'
+%     %     '20260916_sl_baseline_FTY_R7_5211_MREDTI'
+%     %     '20260916_sl_baseline_FTY_R7_5212_MREDTI'
+%     '20260917_sl_baseline_FTY_R7_5203_MREDTI'
+%     %     '20260917_sl_baseline_FTY_R7_5204_MREDTI'
+%     %     '20260917_sl_baseline_FTY_R7_5205_MREDTI'
+%     %     '20260917_sl_baseline_FTY_R7_5206_MREDTI'
+%     %     '20260917_sl_baseline_FTY_R7_5207_MREDTI'
+%     %     '20260916_sl_baseline_FTY_R7_5209_MREDTI'
+%     };
+%% =====[or use index-based selection ]===============
+mydirs=[1:10];
+antcb('selectdirs',mydirs); %select this animals
+ 
+%% ==============================================
+%%  [1]  replace Header 'cMap.nii'
+%% ===============================================
+mdirs=antcb('getsubjects'); % get selected animals
+ 
+z=[];
+z.files =  {...
+    'cMap.nii'  'cMap_replacedHDR.nii'  'rHDR:'
+    'avmag.nii' ''                          'ref'  };
+xrename(0,z.files(:,1),z.files(:,2),z.files(:,3));
+ 
+%% ==============================================
+%%  [2] rigid register 'avmag.nii' to 't2.nii'
+%% ===============================================
+FILES1={'avmag.nii' 'cMap_replacedHDR.nii'};
+z=[];
+z.TASK          = '[100] noSPMregistration, only elastix';                                  % % Task to perform (display before/after and or register)
+z.targetImg1    = { 't2.nii' };                                                             % % target image [t1], (static/reference image)
+z.sourceImg1    = { 'avmag.nii' };                                                          % % source image [t2], (moved image)
+z.sourceImgNum1 = [1];                                                                      % % if sourceImg has 4 dims use this imageNumber  --> sourceImg(:,:,:,sourceImgNum)
+z.applyImg1     = { 'cMap_replacedHDR.nii' };                                               % % images on which the transformation is applied (do not select the sourceIMG again!)                                                                                                        % % smoothing to apply to 256x256 joint histogram
+z.centerering   = [0];                                                                      % % make copy of targetIMG & set origin to "center" ,than apply centeringTRafo to all coregistered images,
+z.reslicing     = [1];                                                                      % % reslice images,  [0] no, do not reslice, [1] reslice to target Image (targetImg1)
+z.interpOrder   = 'auto';                                                                   % % interpolation order [0]nearest neighbour, [1] trilinear interpolation, ["auto"] to autodetect interpolation order
+z.prefix        = 'r';                                                                      % % file prefix for the new resliced volume (if empty, overwrite the soureIMG  )
+z.warping       = [0];                                                                      % % USE ELASTIX, example..do subsequent nonlinear warping [0|1],
+% z.warpParamfile = { 'D:\MATLAB\antx2\mritools\elastix\paramfiles\trafoeuler6_mi.txt' };     % % parameterfile used for warping
+z.warpParamfile = { which('trafoeuler6_mi.txt') };     % % parameterfile used for warping
+z.warpPrefix    = 'c_';                                                                     % % prefix out the output file after warping (if empty, it will overwrite the output of the previously affine registered file)
+z.cleanup       = [1];                                                                      % % remove interim steps                                                                                                                                                                       % % images on which the transformation is applied (do not select the sourceIMG again!)
+xcoreg(0,z);
+ 
+antcb('del',{'^c_avmag.nii','^c_cMap_replacedHDR.nii','^c_t2.nii'}); %delete unnecessary files
+%% ================================================================
+%% [3] transform brainmaks from standard space to native space
+%% ================================================================
+ 
+doelastix(-1   , [],      {'AVGTmask.nii'}                      ,0 ,'local' );
+ 
+%% =====================================================
+%% [4] mask 't2.nii' by brainmask ('ix_AVGTmask.nii')
+%% =====================================================
+z=[];
+z.niftis     = {'ix_AVGTmask.nii'      % %  << select IMAGE(S) from animal-DIRs to manipulate
+    't2.nii' };
+z.niftis_ext = { '' };                  % %  << select external IMAGE(S). Images not from animal-Dirs
+z.evalstring = '@i1.*@i2';              % % string to evaluate->see help
+z.outName    = 't2masked.nii';          % % outputname: <string><cell> or  use "@xxx" to use the prefix "xx", otherwise define N-outputNames
+z.outDir     = 'local';                 % % <<select the output directory:  ["local"] refers to local mouseDir
+xcalc(0,z);
+ 
+%% =====================================================
+%% [5] 2D-slice-wise NONLINEAR REGISDTRATION, using
+%%  't2masked.nii' as reference
+%% =====================================================
+FILES2=stradd(FILES1,'rc_',1);
+tic
+z=[];
+z.refIMG            = { 't2masked.nii' };        % % (<<) SELECT REFERENCE IMAGE (example: t2.nii)
+z.sourceIMG         = FILES2(1); % ## modif ##    { 'rc_avgmap3.nii' };     % % (<<) SELECT IMAGE to calculate the transformation
+z.applyIMG          = FILES2(2); % ## modif ##   { 'rc_cmap3.nii' };              % % (<<) SELECT 1/more IMAGES to apply transformation, (if empty sourceIMG is transformed
+ 
+z.prefix                    = 'p';                               % % this prefix is used for the output file >>[prefix+"name of applyIMG"]
+z.pfileSet                  = [  3  ];                               % % set of parameterfiles {1,2}, [1] default; [2] experimental (faster)
+z.rigid                     = [0];                               % % do rigid transformation
+z.affine                    = [0];                               % % do affine transformation
+z.bspline                   = [1];                               % % do b-spline transformation
+z.slicemode                 = 'fast';                            % % ["all"] all slices or ["fast"] only brain related slices
+z.fast_brainPerSlice_thresh = [2];                               % % [slicemode "fast" only]: threshold (percent) of brain voxels per slice, slices with less brain voxels will not be warped but replaced with the original slice
+z.skullstrip_refIMG         = [0];                               % % perform warpin on the skullstripped reference image
+z.InterpOrder               = [0];                               % % InterpolationOrder: [0]nearest neighbor, [1]trilinear interpolation, [3]cubic
+z.xyresolution              = 'ref';                             % % Final XY-resolution: "ref" from refIMG, "source" from sourceIMG
+z.preserveIntensity         = [0];                               % % preserve intensity: [0] no, [1] preserve min-max-range [2] preserve mean+SD
+z.sliceAssign               = 'auto';                            % % Slice-to-slice assigment of refIMG & sourceIMG: "auto" use image information; otherwise specify as pairwise vector/matrix such as [15 1] or [15 1; 16 2]
+z.reslice2refIMG            = [1];                               % % force to match dimensions of refImage
+z.createMask                = [1];                               % % create binary MaskImage  [ used slices contain "1"-elements; filename: "newfilename+_mask"]
+z.isparallel                = [0];                               % % parallel processing over animals: [0]no,[1]yes
+z.verbose                   = [2];                               % % verbosity level in command window: [0]no info,[1]some info,[2] more info in CMD-window
+z.cleanup                   = [1];                               % % remove unnecessary data
+z.keepFolder                = [0];                               % % keeps local 2d-elastix folder
+xregister2d(0,z);
+toc
+ 
+antcb('del',{'^prc_.*mask.nii'}); %delete unecessary files
+ 
+%% =====================================================
+%% [6] create HTML to check registration (see checks-folder)
+%% =====================================================
+z=[];
+z.backgroundImg = { 't2.nii' };                                                                % % [SELECT] Background/reference image (a single file)
+z.overlayImg    = { 'prc_avmag.nii' };                                                                 % % [SELECT] Image to overlay (multiple files possible)
+z.outputPath    = '';     % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )
+z.outputstring  = '';                                                                            % % optional Output string added (suffix) to the HTML-filename and image-directory
+z.slices        = 'n20';                                                                           % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image
+z.dim           = [1];                                                                           % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital
+z.size          = [400];                                                                         % % Image size in HTML file (in pixels)
+z.grid          = [1];                                                                           % % Show line grid on top of image {0,1}
+z.gridspace     = [20];                                                                          % % Space between grid lines (in pixels)
+z.gridcolor     = [1  1 1];                                                                     % % Grid color
+z.plots         = [1  1  1];                                                                     % % images to plot [toggleImg BGimg FGimg], example [1 1 1] plot all three
+z.cmapB         = 'gray';                                                                        % % <optional> specify BG-color; otherwise leave empty
+%z.cmapF         = 'distinguishable_colors(100,{"w","k"})';  %'cardiac.lut';                                                                 % % <optional> specify FG-color; otherwise leave empty
+z.cmapF         = 'cbrewer("qual","Set1",100)';  %'cardiac.lut';
+% z.cmapF         = 'jet';  %'cardiac.lut';
+z.showFusedIMG  = [1];                                                                           % % <optional> show the fused image
+z.sliceadjust   = [1];                                                                           % % intensity adjust slices separately; [0]no; [1]yes
+xcheckreghtml(0,z);
+ 
+%% ===============================================
+cprintf('*[1 0 1]',['DONE (' sprintf(['ETA: %4.2f min'],toc(timex)/60)  ')'  '\n']);
+ 
+ 
+
 
 
 

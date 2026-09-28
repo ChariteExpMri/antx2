@@ -1268,10 +1268,26 @@ try
     if ~isempty(logfile)
         logfile_fmt=(plog([],[  hlogfile;logfile],0,'','plotlines=0;al=1' ));
         
-        logfileName=fullfile(paout,   ['logImport_' regexprep(datestr(now),{'\s+',':'},{'__','-'}) '.log']);
+        logfileName=fullfile(paout,   ['logImsport_' regexprep(datestr(now),{'\s+',':'},{'__','-'}) '.log']);
         pwrite2file(logfileName,logfile_fmt);
     end
 end
+
+% ==============================================
+%%   add logfile and mdirs to output-struct
+% ===============================================
+try
+    out.hlogfile=hlogfile;
+    out.logfile =logfile;
+    [pa]=fileparts2(w3.logfile(:,1));
+    [~,mdirs]=fileparts2(pa);
+    mdirs=unique(mdirs);
+    out.mdirs=mdirs;
+end
+
+
+
+
 % ==============================================
 %%   save logfile within each animal folder
 % ===============================================
