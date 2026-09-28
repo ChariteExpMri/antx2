@@ -74,17 +74,19 @@ end
 
 %% ====override all params by  dynamic brainvol  ============
 % examle: chicken with brainvol
-if isfield(params,'species') && isfield(params,'brainvol') && ~isempty(params.brainvol)
-    % any species
-    
-    if length(params.brainvol)==1
-        params.brainvol=[params.brainvol params.brainvol+200 ];
+if exist('params')==1
+    if isfield(params,'species') && isfield(params,'brainvol') && ~isempty(params.brainvol)
+        % any species
+        
+        if length(params.brainvol)==1
+            params.brainvol=[params.brainvol params.brainvol+200 ];
+        end
+        pp.brainSize = params.brainvol;
+        pp.species      = params.species;
+        %     pp.scalefactor  = [1];
+        %     pp.resizeFactor =  1;
+        
     end
-    pp.brainSize = params.brainvol;
-    pp.species      = params.species;
-    %     pp.scalefactor  = [1];
-    %     pp.resizeFactor =  1;
-   
 end
 
 %% ===============================================
