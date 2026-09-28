@@ -525,10 +525,10 @@ function calcit(z,pa)
 %     return
 % end
 if ischar(z.niftis);      z.niftis      =cellstr(z.niftis ); end
-if ischar(z.outName);     z.outName =   cellstr(z.outName); end
-if ischar(z.outDir);      z.outDir  =cellstr(z.outDir ); end
+if ischar(z.outName);     z.outName     =cellstr(z.outName); end
+if ischar(z.outDir);      z.outDir      =cellstr(z.outDir ); end
 if ischar(z.niftis_ext);  z.niftis_ext  =cellstr(z.niftis_ext ); end
-
+if ischar(pa);            pa            =cellstr(pa);            end
 
 if strcmp(char(z.outDir),'local')==0 && ~isempty(char(z.outDir)) && exist(char(z.outDir))~=7
     mkdir(char(z.outDir));
