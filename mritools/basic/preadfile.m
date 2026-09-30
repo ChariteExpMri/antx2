@@ -32,23 +32,40 @@ function [dat]=preadfile(fil,varargin)
 %___________________________________________________________________________
 % fil=('F:\NIRS\NIRS_newborn\01\01_nirs.txt'); %DELETE this
 %======================1.1 READ=====================================================
-fid=fopen(fil);
-j=1;
-while 1
-%      d{j,1} = fgetl(fid);
-% %     if ~ischar(tline), break, end
-% %     d{j,1}=tline;  
-%     j=j+1;
-    tline = fgetl(fid);
-    if ~ischar(tline), break, end
-    d{j,1}=tline;  
-    j=j+1;
-end
-fclose(fid);
 
-if exist('d')==0
-    d=' ';
+if 1
+    fid=fopen(fil);
+    j=1;
+    while 1
+        %      d{j,1} = fgetl(fid);
+        % %     if ~ischar(tline), break, end
+        % %     d{j,1}=tline;
+        %     j=j+1;
+        tline = fgetl(fid);
+        if ~ischar(tline), break, end
+        d{j,1}=tline;
+        j=j+1;
+    end
+    fclose(fid);
+    
+    if exist('d')==0
+        d=' ';
+    end
 end
+
+% if 0
+%     txt = fileread(fil);
+%     d = regexp(txt,'\r\n|\n|\r','split')';
+%     
+%     if ~isempty(d) && isempty(d{end})
+%         d(end) = [];
+%     end
+%     
+%     if isempty(d)
+%         d = ' ';
+%     end
+% end
+
 %=====================1.2 separate header and real markers (no 'new segments')=================================================
 
 if nargin==3

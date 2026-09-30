@@ -122,7 +122,262 @@ z.outputprefix = 'ga_';                                                       % 
 z.addcounter   = [1];                                                         % % add a numeric counter to the filename-prefix                                                     
 xgroupassigfactorial(0,z);                                                                                                                                                         
                                    
-                   
+%% #################################################
+% misc
+% use checkpoint-system                 
+
+% The checkpoint system allows tracking the files present in each animal
+% folder at different processing stages. It can be used to identify newly
+% generated files and to safely return to an earlier processing state.
+% Each checkpoint stores the current FILE SET of every animal folder in
+% "checkpoint.mat". The files themselves are not copied or backed up.
+% IMPORTANT:
+%   - A checkpoint records WHICH files exist, not their contents.
+%   - "restore" deletes files that were created after the selected
+%     checkpoint.
+%   - Existing files are NOT reverted to an earlier version.
+%   - checkpoint.mat is maintained automatically and is excluded from
+%     the recorded file set.
+%
+% EXAMPLE WORKFLOW:
+%   [1]  make project
+%   [2]  import some Bruker-data
+%   [3]  set checkpoint-1
+%   [4]  create new files (here: synthetically)
+%   [5]  check for new files since checkpoint-1
+%   [6]  set checkpoint-2
+%   [7]  show files newly created between checkpoint-1 and checkpoint-2
+%   [8]  SIMULATE restore of checkpoint-1
+%   [9]  restore checkpoint-1 and delete all newer files
+%   [10] delete all checkpoint information
+%
+% See the individual sections below for the commands and their output.
+%
+
+% ==============================================
+%%  [1] make project
+% ===============================================
+cf;clear
+
+%------[from my f_drive]---------
+makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[.07 .07 .07],...
+    'wa_refpath','f:\anttemplates\mouse_Allen2017HikishimaLR',...
+    'wa_species','mouse')
+antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+
+% ==============================================
+%%  [2] import some Bruker-data
+% ===============================================
+v.paraw='F:\data7\brukerImport_revisited\raw';
+
+w1=xbruker2nifti(v.paraw,0,[],[],'gui',0,'show',1);
+% FILTER and DISPLAY a list of Bruker files
+protocol='T2_Turbo';
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',...
+    {'protocol',protocol});
+%import files of w2
+xbruker2nifti(w2,0,[],[],'gui',0,'show',0);
+
+dispfiles('flt','.*');
+% ------------------------------------------------------------------------------------------------
+% FILE x FOLDER
+% ------------------------------------------------------------------------------------------------
+%                                      counts  2021517_aj_T13_277_40G_1  2021517_aj_T7_271_40G_1
+%                                      ======  ========================  =======================
+% counts                                       2/2                       2/2
+%                                      ======  ========================  =======================
+% 03_T2_TurboRARE.nii                  2/2     +                         +
+% logImport_01-Oct-2026__16-08-59.log  2/2     +                         +
+% ------------------------------------------------------------------------------------------------
+
+% ==============================================
+%%  [3] set 1st checkpoint
+% ===============================================
+antcb('checkpoint',1);
+q=antcb('checkpoint','show');
+disp(char(plog([],[q.ht;q.t],0,'checkpoints')));
+
+%  ----------------------------------------------------------------------------------------------------------
+% checkpoints
+% ----------------------------------------------------------------------------------------------------------
+%     idx                    animal  checkpointNo                                 file                  date
+%       1  2021517_aj_T13_277_40G_1             1                  03_T2_TurboRARE.nii  01-Oct-2026 16:09:00
+%       1  2021517_aj_T13_277_40G_1             1  logImport_01-Oct-2026__16-08-59.log  01-Oct-2026 16:09:00
+%       2   2021517_aj_T7_271_40G_1             1                  03_T2_TurboRARE.nii  01-Oct-2026 16:08:58
+%       2   2021517_aj_T7_271_40G_1             1  logImport_01-Oct-2026__16-08-59.log  01-Oct-2026 16:09:00
+% ----------------------------------------------------------------------------------------------------------
+
+
+% ==============================================
+%% [4] create new files...here synthetically
+% ===============================================
+ext={'.txt' ,'.csv' ,'.mat'};
+mdirs = antcb('getallsubjects');
+for i=1:length(mdirs)
+    for j=1:length(ext)
+        a=rand(10);
+        F1=fullfile(mdirs{i}, ['__bla_' regexprep(datestr(now),{':',' '},{'_'})   ext{j}] );
+        switch(ext{j})
+            case {'.txt' ,'.csv'}
+                pwrite2file(F1,a);
+            case '.mat'
+                save(F1, 'a');
+        end
+        showinfo2('file:',F1);
+    end
+end
+dispfiles('flt','.*');
+% ------------------------------------------------------------------------------------------------
+% FILE x FOLDER
+% ------------------------------------------------------------------------------------------------
+%                                      counts  2021517_aj_T13_277_40G_1  2021517_aj_T7_271_40G_1
+%                                      ======  ========================  =======================
+% counts                                       6/6                       6/6
+%                                      ======  ========================  =======================
+% 03_T2_TurboRARE.nii                  2/2     +                         +
+% __bla_01-Oct-2026_16_11_03.csv       2/2     +                         +
+% __bla_01-Oct-2026_16_11_03.mat       2/2     +                         +
+% __bla_01-Oct-2026_16_11_03.txt       2/2     +                         +
+% checkpoint.mat                       2/2     +                         +
+% logImport_01-Oct-2026__16-08-59.log  2/2     +                         +
+% ------------------------------------------------------------------------------------------------
+
+
+% ==============================================
+%%  [5] check if new files are generated since last checkpoint
+% ===============================================
+q=antcb('checkpoint','check');
+disp(char(plog([],[q.ht;q.t],0,'newfiles')));
+%
+% -----------------------------------------------------------------------------------------------
+% newfiles
+% -----------------------------------------------------------------------------------------------
+%     idx                    animal  status                            file                  date
+%       1  2021517_aj_T13_277_40G_1     new  __bla_01-Oct-2026_16_11_03.csv  01-Oct-2026 16:11:04
+%       1  2021517_aj_T13_277_40G_1     new  __bla_01-Oct-2026_16_11_03.mat  01-Oct-2026 16:11:04
+%       1  2021517_aj_T13_277_40G_1     new  __bla_01-Oct-2026_16_11_03.txt  01-Oct-2026 16:11:04
+%       2   2021517_aj_T7_271_40G_1     new  __bla_01-Oct-2026_16_11_03.csv  01-Oct-2026 16:11:04
+%       2   2021517_aj_T7_271_40G_1     new  __bla_01-Oct-2026_16_11_03.mat  01-Oct-2026 16:11:04
+%       2   2021517_aj_T7_271_40G_1     new  __bla_01-Oct-2026_16_11_03.txt  01-Oct-2026 16:11:04
+% -----------------------------------------------------------------------------------------------
+
+% ==============================================
+%%  [6] set new checkpoint:  checkpoint-2
+% ===============================================
+antcb('checkpoint',2);
+q=antcb('checkpoint','show'); %show all checkpoints
+disp(char(plog([],[q.ht;q.t],0,'checkpoints')));
+% ----------------------------------------------------------------------------------------------------------
+% checkpoints
+% ----------------------------------------------------------------------------------------------------------
+%     idx                    animal  checkpointNo                                 file                  date
+%       1  2021517_aj_T13_277_40G_1             1                  03_T2_TurboRARE.nii  01-Oct-2026 16:09:00
+%       1  2021517_aj_T13_277_40G_1             1  logImport_01-Oct-2026__16-08-59.log  01-Oct-2026 16:09:00
+%       1  2021517_aj_T13_277_40G_1             2                  03_T2_TurboRARE.nii  01-Oct-2026 16:09:00
+%       1  2021517_aj_T13_277_40G_1             2       __bla_01-Oct-2026_16_11_03.csv  01-Oct-2026 16:11:04
+%       1  2021517_aj_T13_277_40G_1             2       __bla_01-Oct-2026_16_11_03.mat  01-Oct-2026 16:11:04
+%       1  2021517_aj_T13_277_40G_1             2       __bla_01-Oct-2026_16_11_03.txt  01-Oct-2026 16:11:04
+%       1  2021517_aj_T13_277_40G_1             2  logImport_01-Oct-2026__16-08-59.log  01-Oct-2026 16:09:00
+%       2   2021517_aj_T7_271_40G_1             1                  03_T2_TurboRARE.nii  01-Oct-2026 16:08:58
+%       2   2021517_aj_T7_271_40G_1             1  logImport_01-Oct-2026__16-08-59.log  01-Oct-2026 16:09:00
+%       2   2021517_aj_T7_271_40G_1             2                  03_T2_TurboRARE.nii  01-Oct-2026 16:08:58
+%       2   2021517_aj_T7_271_40G_1             2       __bla_01-Oct-2026_16_11_03.csv  01-Oct-2026 16:11:04
+%       2   2021517_aj_T7_271_40G_1             2       __bla_01-Oct-2026_16_11_03.mat  01-Oct-2026 16:11:04
+%       2   2021517_aj_T7_271_40G_1             2       __bla_01-Oct-2026_16_11_03.txt  01-Oct-2026 16:11:04
+%       2   2021517_aj_T7_271_40G_1             2  logImport_01-Oct-2026__16-08-59.log  01-Oct-2026 16:09:00
+% ----
+
+% ==============================================
+%%  [7] show only the new files since checkpoint-1
+% ===============================================
+q=antcb('checkpoint','show','2n');
+disp(char(plog([],[q.ht;q.t],0,'newfiles')));
+
+% -----------------------------------------------------------------------------------------------------
+% newfiles
+% -----------------------------------------------------------------------------------------------------
+%     idx                    animal  checkpointNo                            file                  date
+%       1  2021517_aj_T13_277_40G_1             2  __bla_01-Oct-2026_16_11_03.csv  01-Oct-2026 16:11:04
+%       1  2021517_aj_T13_277_40G_1             2  __bla_01-Oct-2026_16_11_03.mat  01-Oct-2026 16:11:04
+%       1  2021517_aj_T13_277_40G_1             2  __bla_01-Oct-2026_16_11_03.txt  01-Oct-2026 16:11:04
+%       2   2021517_aj_T7_271_40G_1             2  __bla_01-Oct-2026_16_11_03.csv  01-Oct-2026 16:11:04
+%       2   2021517_aj_T7_271_40G_1             2  __bla_01-Oct-2026_16_11_03.mat  01-Oct-2026 16:11:04
+%       2   2021517_aj_T7_271_40G_1             2  __bla_01-Oct-2026_16_11_03.txt  01-Oct-2026 16:11:04
+% -----------------------------------------------------------------------------------------------------
+%
+% ==============================================
+%%  [8] SIMULATE:  restore checkpoint-1, i.e. simulate deleting all newer files
+% ===============================================
+antcb('checkpoint','restore',1,'simulate',1)
+
+% from "2021517_aj_T13_277_40G_1":
+%  ...simulate:delete: __bla_01-Oct-2026_16_11_03.csv
+%  ...simulate:delete: __bla_01-Oct-2026_16_11_03.mat
+%  ...simulate:delete: __bla_01-Oct-2026_16_11_03.txt
+% from "2021517_aj_T7_271_40G_1":
+%  ...simulate:delete: __bla_01-Oct-2026_16_11_03.csv
+%  ...simulate:delete: __bla_01-Oct-2026_16_11_03.mat
+%  ...simulate:delete: __bla_01-Oct-2026_16_11_03.txt
+
+
+% ==============================================
+%%  [9] restore checkpoint-1, i.e. delete all newer files
+% ===============================================
+antcb('checkpoint','restore',1);
+q=antcb('checkpoint','show');
+disp(char(plog([],[q.ht;q.t],0,'checkpoints')));
+
+% ----------------------------------------------------------------------------------------------------------
+% checkpoints
+% ----------------------------------------------------------------------------------------------------------
+%     idx                    animal  checkpointNo                                 file                  date
+%       1  2021517_aj_T13_277_40G_1             1                  03_T2_TurboRARE.nii  01-Oct-2026 16:09:00
+%       1  2021517_aj_T13_277_40G_1             1  logImport_01-Oct-2026__16-08-59.log  01-Oct-2026 16:09:00
+%       2   2021517_aj_T7_271_40G_1             1                  03_T2_TurboRARE.nii  01-Oct-2026 16:08:58
+%       2   2021517_aj_T7_271_40G_1             1  logImport_01-Oct-2026__16-08-59.log  01-Oct-2026 16:09:00
+% ----------------------------------------------------------------------------------------------------------
+
+% ==============================================
+%%  [10] delete entire checkpoint INFORMATION
+% ===============================================
+
+dispfiles('flt','.*');
+% ------------------------------------------------------------------------------------------------
+% FILE x FOLDER
+% ------------------------------------------------------------------------------------------------
+%                                      counts  2021517_aj_T13_277_40G_1  2021517_aj_T7_271_40G_1
+%                                      ======  ========================  =======================
+% counts                                       3/3                       3/3
+%                                      ======  ========================  =======================
+% 03_T2_TurboRARE.nii                  2/2     +                         +
+% checkpoint.mat                       2/2     +                         +
+% logImport_01-Oct-2026__16-08-59.log  2/2     +                         +
+% ---
+
+antcb('checkpoint','del')
+dispfiles('flt','.*');
+
+% ------------------------------------------------------------------------------------------------
+% FILE x FOLDER
+% ------------------------------------------------------------------------------------------------
+%                                      counts  2021517_aj_T13_277_40G_1  2021517_aj_T7_271_40G_1
+%                                      ======  ========================  =======================
+% counts                                       2/2                       2/2
+%                                      ======  ========================  =======================
+% 03_T2_TurboRARE.nii                  2/2     +                         +
+% logImport_01-Oct-2026__16-08-59.log  2/2     +                         +
+% ------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
 
 
 

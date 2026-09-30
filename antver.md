@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   28 Sep 2026 (13:25:20)  
+ &#x1F34E; last modification:   01 Oct 2026 (16:43:15)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,13 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**01 Oct 2026 (16:43:15)**</ins>  
+  new: antcb('del');        delete files/folders from selected animalDirs  
+    - for help see type:  antcb('del?')  
+  new: antcb('checkpoint');  checkpoint system allows tracking the files present in each animal folder at   
+      different processing stages  .. for help see type:  antcb('checkpoint?')  
+    - for example see: snips--> misc --> use checkpoint-system  
+<!---->
   &#x1F535;   <ins>**28 Sep 2026 (13:25:20)**</ins>  
   removed critical bug in skullstrip_pcnn3d.m  
 <!---->

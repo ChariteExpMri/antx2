@@ -1240,11 +1240,16 @@
 %   for help type: antcb('del?') 
 % #wb 28 Sep 2026 (13:25:20)
 % removed critical bug in skullstrip_pcnn3d.m
+% #wb 01 Oct 2026 (16:43:15)
+% new: antcb('del');        delete files/folders from selected animalDirs
+%   - for help see type:  antcb('del?')
+% new: antcb('checkpoint');  checkpoint system allows tracking the files present in each animal folder at 
+%     different processing stages  .. for help see type:  antcb('checkpoint?')
+%   - for example see: snips--> misc --> use checkpoint-system   
 % 
 % 
 % 
 % 
-
 
 
 %% ===============================================

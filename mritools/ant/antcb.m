@@ -8,6 +8,8 @@
 % antcb('getallsubjects') % get all subjects  --> all from list
 %                           ..also possible to obtain the pyratNo, animalNames and a substring from animalnames
 %                           ->for HELP type antcb('getallsubjects?') 
+% antcb('selectdirs')              % SELECT MOUSE DIRECTORIES in ANT-GUI
+%                                  %   HELP: antcb('selectdirs?')
 %
 % antcb('countfiles', flt); % search and count specific files in animal-folders
 %                           % HELP: antcb('countfiles?')
@@ -37,9 +39,14 @@
 % antcb('status',1,'copy Images'); % change status-message :  antcb('status',0,'coffeTime')     statusUpdate
 % antcb('update');                 % update mouse directories
 % antcb('quit')/antcb('close')     % close gui
+% 
 % antcb('watchfile');              % make list of watching files, for HELP type antcb('watchfile?');
-% antcb('selectdirs')              % SELECT MOUSE DIRECTORIES in ANT-GUI
-%                                  %   HELP: antcb('selectdirs?')
+% 
+% 
+% antcb('checkpoint');           % checkpoint system allows tracking the files present in each animal folder 
+%                                % at different processing stages.
+%                                -->for HELP type antcb('checkpoint?');
+% 
 % antcb('copytemplates')           % copy templates from reference to studies template folder
 %                                  %   HELP: antcb('copytemplates?')
 % [tb tbh v]=antcb('getuniquefiles',pa)  ;% get table (tb)+header(tbh) of all unique file over mouseDirs (pa),
@@ -285,6 +292,16 @@ if strcmp(do,'delete') || strcmp(do,'del')
 end
 if strcmp(do,'delete?') || strcmp(do,'del?');    help antcb>deletefiles;end
 %% ===============================================
+if strcmp(do,'checkpoint') 
+    try ;    varargout{1}=checkpoint(input2);
+    catch;
+        %disp('* type    antcb(''setparams'',''?'')     for help');
+        do='checkpoint?';
+    end
+end
+if strcmp(do,'checkpoint?');    help antcb>checkpoint;end
+%% ===============================================
+
 
 
 if strcmp(do,'loop')
@@ -2607,6 +2624,354 @@ end
 
 
 o=[];
+
+
+function o=checkpoint(pin)
+
+
+% =========================================================================
+% CHECKPOINT / RESTORE
+% =========================================================================
+% The checkpoint system allows tracking the files present in each animal
+% folder at different processing stages. It can be used to identify newly
+% generated files and to safely return to an earlier processing state.
+% Each checkpoint stores the current FILE SET of every animal folder in
+% "checkpoint.mat". The files themselves are not copied or backed up.
+% IMPORTANT:
+%   - A checkpoint records WHICH files exist, not their contents.
+%   - "restore" deletes files that were created after the selected
+%     checkpoint.
+%   - Existing files are NOT reverted to an earlier version.
+%   - checkpoint.mat is maintained automatically and is excluded from
+%     the recorded file set.
+% 
+% The checkpoint system records the set of files present in each animal
+% folder at different processing stages. A checkpoint is stored locally
+% in the animal folder as "checkpoint.mat".
+% Checkpoints are identified by consecutive numbers (1, 2, 3, ...).
+% IMPORTANT: restore restores the file set, not the contents of existing files!!! 
+% -------------------------------------------------------------------------
+% CREATE CHECKPOINTS
+% -------------------------------------------------------------------------
+%  -->>> PROCESSING: do some processing-->generate files in animal-Folder
+% antcb('checkpoint',1)
+%     Create checkpoint 1 for all animal folders.
+%
+%  -- >>> PROCESSING: do some OTHER processing-->generate OTHER files in animal-Folder
+% antcb('checkpoint',2)
+%     Create checkpoint 2.
+%  ...
+%  -->>> PROCESSING: do some FURTHER processing-->generate OTHER files in animal-Folder
+% antcb('checkpoint',3)
+%     Create checkpoint 3.
+%  ...
+%     If a checkpoint number already exists, it is replaced by the
+%     current file state rather than being duplicated.
+%
+% -------------------------------------------------------------------------
+% DELETE CHECKPOINT INFORMATION
+% -------------------------------------------------------------------------
+% antcb('checkpoint','del')
+%     Delete "checkpoint.mat" from all animal folders.
+%     This removes all stored checkpoint information.
+%
+% -------------------------------------------------------------------------
+% SHOW CHECKPOINT INFORMATION
+% -------------------------------------------------------------------------
+% antcb('checkpoint','show')
+%     Show all checkpoint information for all animals.
+%
+% antcb('checkpoint','show',2)
+%     Show all files recorded at checkpoint 2.
+%
+% antcb('checkpoint','show','2n')
+%     Show all new files created between checkpoint 1 and checkpoint 2.
+%
+% antcb('checkpoint','show','3n')
+%     Show all new files created between checkpoint 2 and checkpoint 3.
+%
+% -------------------------------------------------------------------------
+% CHECK FOR NEW FILES
+% -------------------------------------------------------------------------
+% antcb('checkpoint','check')
+%     Check whether new files have been created since the last checkpoint.
+%
+% -------------------------------------------------------------------------
+% RESTORE A CHECKPOINT
+% -------------------------------------------------------------------------
+% antcb('checkpoint','restore',1)
+%     Restore checkpoint 1.
+%     All files that were NOT present when checkpoint 1 was created are
+%     deleted. Files already present at checkpoint 1 are retained.
+%     The checkpoint history after checkpoint 1 is also removed.
+% 
+% antcb('checkpoint','restore',1,'simulate',1)
+%     Simulate restoring checkpoint 1.
+%     No files are deleted and the checkpoint information is not changed.
+%     Instead, the files that WOULD be deleted are displayed.
+%
+% =========================================================================
+
+% table  Columns:  1 = checkpoint number, 2 = filename, 3 = file modification date
+o=[];
+%% ===============================================
+pp.dummy='';
+pp.restore=0;
+pp.simulate=0;
+
+%restore-issue
+is_restore=find(strcmp(pin,'restore'));
+if ~isempty(is_restore)
+    px=pin;
+    px(find(strcmp(px,'checkpoint')))=[];
+    px(find(strcmp(px,'restore')))={'checkpoint'};
+    px=[px 'restore' 1];
+    pin=px;
+end
+if strcmp(pin{2},'show')
+    px=pin;
+    if length(px)>2
+        px=[px(1:2) 'checkpointNumber'  px{3}];
+    end
+    pin=px;
+end
+pin=cell2structnested(pin);
+pp=catstruct(pp,pin);
+
+
+mdirs            = antcb('getallsubjects');
+if isempty(mdirs); disp('no animal-dirs exist'); 
+    return; 
+end
+
+
+if pp.restore==1
+      % ==============================================
+    %%   restore-snipet
+    % ===============================================
+    checkpointNumber = pp.checkpoint;
+    mdirs            = antcb('getallsubjects');
+    simulate         =pp.simulate;
+    for i = 1:numel(mdirs)
+        mouseDir = mdirs{i};
+        [~,animal]=fileparts(mouseDir);
+        checkpointFile = fullfile(mouseDir,'checkpoint.mat');
+        load(checkpointFile,'CB');
+        if ~any([CB{:,1}] == checkpointNumber)
+            error('Checkpoint %d does not exist for animal "%s".', ...
+                checkpointNumber,animal);
+        end
+        % Files that existed at checkpoint 1
+        idx = [CB{:,1}] == checkpointNumber;
+        keepFiles = CB(idx,2);
+        % Files currently in the animal folder
+        f = dir(mouseDir);
+        f = f(~[f.isdir]);
+        % Exclude checkpoint file itself
+        f = f(~strcmp({f.name},'checkpoint.mat'));
+        currentFiles = {f.name}';
+        % Files that were NOT present at checkpoint 1
+        deleteFiles = setdiff(currentFiles,keepFiles);
+        disp([ 'from "' animal  '": '   ]);
+        % Delete them
+        for j = 1:numel(deleteFiles)
+            newfile      =fullfile(mouseDir,deleteFiles{j});
+            filenameShort=strrep(newfile,[mouseDir filesep],'');
+            
+            if simulate==0
+                delete(newfile);
+                disp([' .. delete' filenameShort]);
+            else
+                disp([' ...simulate:delete: ' filenameShort]);
+            end
+        end
+        if simulate==0
+            % Remove all checkpoints after the restored checkpoint
+            CB = CB([CB{:,1}] <= checkpointNumber,:);
+            % Save updated checkpoint information
+            save(checkpointFile,'CB');
+        end
+    end
+    return
+    
+elseif ischar(pp.checkpoint) && (strcmp(pp.checkpoint,'del') || strcmp(pp.checkpoint,'delete'))
+    selected=antcb('getsubjects');
+    antcb('selectdirs','all') ;
+    disp('delete "checkpoint.mat" from all animal-folders');
+    antcb('del','checkpoint.mat');
+    return
+elseif  ischar(pp.checkpoint) && strcmp(pp.checkpoint,'show')
+    showtable=1;
+    mdirs = antcb('getallsubjects');
+    t={};
+    for i = 1:numel(mdirs)
+        mouseDir = mdirs{i};
+        [~,animal]=fileparts(mouseDir);
+        checkpointFile = fullfile(mouseDir, 'checkpoint.mat');
+        if exist(checkpointFile, 'file')==2
+            load(checkpointFile, 'CB');
+        else
+            CB = {'missing'  '' ''};
+        end
+        
+        
+        if isfield(pp,'checkpointNumber')
+            if isnumeric(pp.checkpointNumber)
+               CB= CB([CB{:,1}]==pp.checkpointNumber,:);
+            elseif ischar(pp.checkpointNumber)
+                %CMD: antcb('checkpoint','show','2n');
+                [w1 w2]=strtok(pp.checkpointNumber,'n');
+                if strcmp(w2,'n')
+                    checkpointNumber=str2num(w1);
+                    if isnumeric(checkpointNumber)
+                        
+                       cb1=CB([CB{:,1}]==checkpointNumber-1,:);% previous checkpoint
+                       cb2=CB([CB{:,1}]==checkpointNumber  ,:);% current checkpoint
+                       CB=cb2(find(ismember(cb2(:,2),cb1(:,2))==0),:); 
+                    end
+                end
+            end
+            
+            
+        end
+        
+        CB=[   repmat({i animal},[size(CB,1)  1]) CB];
+        t=[t; CB];
+        
+        
+    end
+    
+    ht={'idx' 'animal' 'checkpointNo' 'file' 'date'};
+    if isempty(t)
+        t=[];
+        uhelp(plog([],[repmat({''}, [1 5]) ],0,'checkpoints: no checkpoints found'),0,'name','checkpoints' );
+    else
+        uhelp(plog([],[ht; t],0,'existing checkpoints'),0,'name','checkpoints' );
+    end
+    
+    o.ht=ht;
+    o.t =t;
+    return
+    
+ elseif ischar(pp.checkpoint) && (strcmp(pp.checkpoint,'check') )
+     %checks if new files are generated since last checkpoint
+     %% ===============================================
+     mdirs = antcb('getallsubjects');
+     disp(['checks if new files are generated since last checkpoint']);
+     t={};
+     for i = 1:numel(mdirs)
+         mouseDir = mdirs{i};
+         [~,animal]=fileparts(mouseDir);
+         % Files directly inside animal folder
+         f = dir(mouseDir);
+         f = f(~[f.isdir]);
+         % Exclude checkpoint file itself
+         f = f(~strcmp({f.name}, 'checkpoint.mat'));
+         % ---------------------------------------------------------
+         % Load existing checkpoint information
+         % ---------------------------------------------------------
+         checkpointFile = fullfile(mouseDir, 'checkpoint.mat');
+         if exist(checkpointFile, 'file')==2
+             load(checkpointFile, 'CB');
+         else
+             CB = cell(0,3);
+         end
+         try
+             cb1=CB([CB{:,1}]==max([CB{:,1}]),:);
+         end
+         % ---------------------------------------------------------
+         %  current files list
+         % ---------------------------------------------------------
+         cb2 = cell(numel(f), 3);
+         for j = 1:numel(f)
+             cb2{j,1} = 'new';
+             cb2{j,2} = f(j).name;
+             cb2{j,3} = datestr(f(j).datenum);
+         end
+         CB=cb2(find(ismember(cb2(:,2),cb1(:,2))==0),:) ;
+         CB=[   repmat({i animal},[size(CB,1)  1]) CB];
+        t=[t; CB];
+         
+         % Append
+     end
+     
+     ht={'idx' 'animal' 'status' 'file' 'date'};
+     if isempty(t)
+         t=[];
+         uhelp(plog([],[repmat({''}, [1 5]) ],0,'checkpoints: new files since last checkpoint'),0,'name','checkpoints' );
+     else
+         uhelp(plog([],[ht; t],0,'checkpoints: no new files since last checkpoint'),0,'name','checkpoints' );
+     end
+     
+     o.ht=ht;
+     o.t =t;
+     
+     
+     %% ===============================================
+     
+     return
+    
+end
+
+
+
+
+checkpointNumber = pp.checkpoint;
+mdirs = antcb('getallsubjects');
+if isempty(mdirs); disp('no animal-dirs exist'); 
+    return; 
+end
+disp(['create checkpoint, Number=' num2str(checkpointNumber)]);
+for i = 1:numel(mdirs)
+    mouseDir = mdirs{i};
+     [~,animal]=fileparts(mouseDir);
+    % Files directly inside animal folder
+    f = dir(mouseDir);
+    f = f(~[f.isdir]);
+    % Exclude checkpoint file itself
+    f = f(~strcmp({f.name}, 'checkpoint.mat'));
+    % ---------------------------------------------------------
+    % Load existing checkpoint information
+    % ---------------------------------------------------------
+    checkpointFile = fullfile(mouseDir, 'checkpoint.mat');
+    if exist(checkpointFile, 'file')==2
+        load(checkpointFile, 'CB');
+    else
+        CB = cell(0,3);
+    end
+    % ---------------------------------------------------------
+    % Add current files as new checkpoint
+    % ---------------------------------------------------------
+    newCB = cell(numel(f), 3);
+    for j = 1:numel(f)
+        newCB{j,1} = checkpointNumber;
+        newCB{j,2} = f(j).name;
+        newCB{j,3} = datestr(f(j).datenum);  
+    end
+    % Append
+    
+    
+    % ---------------------------------------------------------
+    % Add / replace checkpoint
+    % ---------------------------------------------------------
+    
+    if isempty(CB)
+        % No previous checkpoints
+        CB = newCB;
+    else
+        % Check whether this checkpoint already exists
+        oldIdx = [CB{:,1}] == checkpointNumber;
+        if any(oldIdx)
+            % Remove existing entries for this checkpoint
+            CB(oldIdx,:) = [];
+        end
+        % Add the new checkpoint
+        CB = [CB; newCB];
+    end
+    save(checkpointFile, 'CB');  
+end
+
+%% ===============================================
 
 
 function  o=deletefiles(pin)

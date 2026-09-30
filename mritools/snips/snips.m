@@ -800,8 +800,38 @@ hPopupPanel.setPanel(jPanel);
 %% ===============================================
 
 
-
 function setWordlist()
+% tic
+u = get(gcf,'userdata');
+
+% Collect all text
+nc = u.c(:,3);
+allText = strjoin(vertcat(nc{:}),' ');
+
+% Extract words
+words = regexp(allText,'\w+(?:-\w+)*','match');
+
+% Minimum length
+words = words(cellfun('length',words) >= 5);
+
+% Remove words consisting of only one repeated character
+keep = true(size(words));
+
+for k = 1:numel(words)
+    w = words{k};
+    keep(k) = any(w ~= w(1));
+end
+
+words = unique(words(keep))';
+
+% Update word list
+hp = findobj(gcf,'tag','find_words');
+set(hp,'string',words);
+% toc
+
+
+function old_setWordlist()
+% tic
 u=get(gcf,'userdata');
 nc=u.c(:,3);
 flatCellArray = vertcat(nc{:});
@@ -840,6 +870,7 @@ words = unique(words)';
 
 hp=findobj(gcf,'tag','find_words');
 set(hp,'string',words);
+% toc
 
 
 function find_words(e,e2)
@@ -1136,6 +1167,7 @@ set(gcf,'userdata',u);
 nodeSelectedCallback()
 
 function SizeChangedFcn(e,e2)
+% return
 hf=findobj('tag','snips');
 u=get(hf,'userdata');
 
@@ -1585,11 +1617,20 @@ for i=1:length(modes)
     end
     
     %% ___________________[resize]_____________________________________________________________________________
-    if strcmp(get(get(hres,'parent'),'type'),'figure')
-        hpar=hf;
-    else % panel or else
-        hpar=get(hres,'parent');
+%     if strcmp(get(get(hres,'parent'),'type'),'figure')
+%         hpar=hf;
+%     else % panel or else
+%         hpar=get(hres,'parent');
+%     end
+    
+    hpar = get(hres,'parent');
+    if ~strcmp(get(hpar,'type'),'figure')
+        % keep hpar
+    else
+        hpar = hf;
     end
+    
+    
     hb=uicontrol('parent',hpar, 'style','push','units','norm','string','<');
     set(hb,'position',posB,'fontsize',5,'tag','BUT_resizeControl',...
         'TooltipString','resize panel','tooltipstring','resize control');
@@ -1622,9 +1663,18 @@ set(hh,'userdata',u);
 
 %% ============ other controls ===================================
 
-h=findobj(gcf,'type','uicontrol'); %controls
-b=h(regexpi2(get(h,'tag'),'BUT_resizeControl')); %resize button
-h(regexpi2(get(h,'tag'),'BUT_resizeControl'))=[];
+% h=findobj(gcf,'type','uicontrol'); %controls
+% b=h(regexpi2(get(h,'tag'),'BUT_resizeControl')); %resize button
+% h(regexpi2(get(h,'tag'),'BUT_resizeControl'))=[];
+% 
+
+
+b = findobj(gcf,'type','uicontrol','tag','BUT_resizeControl');
+% and the other controls:
+h = findobj(gcf,'type','uicontrol');
+h(ismember(h,b)) = [];
+
+
 
 oc.h=h;
 oc.units=get(h,'units');
