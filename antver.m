@@ -1245,11 +1245,14 @@
 %   - for help see type:  antcb('del?')
 % new: antcb('checkpoint');  checkpoint system allows tracking the files present in each animal folder at 
 %     different processing stages  .. for help see type:  antcb('checkpoint?')
-%   - for example see: snips--> misc --> use checkpoint-system   
+%   - for example see: snips--> misc --> use checkpoint-system    
+% #wb 02 Oct 2026 (12:31:28)
+% #k [snips.m] #n : added: CESL-pipline to SNIPS 
+% #gw --> access via ANT-menu: &#8658;Snips/snips or type 'snips'
+% - in snips-GUI: go to pileine/CESL-pipline 
 % 
 % 
-% 
-% 
+
 
 
 %% ===============================================

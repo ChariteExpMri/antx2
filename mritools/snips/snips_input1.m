@@ -2853,6 +2853,359 @@ xcalc(0,z);
   
 
 %% #################################################
+% pipeline
+% CESL-pipline 
+
+% CESL (Chemical Exchange Saturation Transfer / spin-lock MRI) acquires a series of T1rho-weighted
+% images at different spin-lock times (TSL). The signal decay across TSL is fitted with a
+% mono-exponential model to estimate the T1rho relaxation rate (R1rho) for each voxel.
+% In this pipeline, CESL data are registered, fitted, averaged and finally converted to delta-R1rho maps.
+% 
+% *** STEPS *** 
+%  [1] Make project                                                                                
+%  [2] Import Bruker-data                                                                          
+%  [3] Copy and rename turborare as 't2.nii'                                                       
+%  [4] Get pre-orientation wrt. standard-space                                                    
+%  [5] Register to standard space                                                                  
+%  [6] Copy & rename "_T1rho"-files                                                                  
+%  [7] WITHIN-REGISTRATION: rigidly-2D-register all T1rho-files to first T1rho-file using 1st slice
+%  [8] ACROSS-REGISTRATION: rigidly 2D-register c_T1rho_2DG*-files to t2.nii                       
+%  [9] Transform AVGTmask to native space                                                          
+% [10] Extract  AVGTmask slice                                                                    
+% [11] Calculate relaxation time: mono-exponential fit of c_c_T1rho_-files                        
+% [12] Get mean over consecutive rho-images                                                       
+% [13] Make delta R1rho (in percent) for each of the 35 R1rho_-maps   
+%% ===============================================
+
+ 
+cf; clear;
+v.study='H:\Daten-2\Imaging\AG_Boehm_Sturm\circadianStroke_tutorial'; %study-DIR
+v.paraw=fullfile(v.study,'raw'); %Bruker-raw-data-DIR
+cd(v.study);
+ 
+ 
+% ==============================================
+%%   [1] Make project
+% ===============================================
+makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[.07 .07 .07],...
+    'wa_refpath','D:\MATLAB\anttemplates\mouse_Allen2017HikishimaLR',...
+    'wa_species','mouse')
+antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+ 
+% ==============================================
+%%   [2] Import Bruker-data
+% ===============================================
+w1=xbruker2nifti(v.paraw,0,[],[],'gui',0,'show',1); %GET ALL Bruker raw-data files
+ 
+%[A] FILTER: TURBORARE
+w2=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol','TurboRARE'});
+% import TURBORARE
+xbruker2nifti(w2,0,[],[],'gui',0,'show',0);
+ 
+%[B]FILTER: _T1rho_
+w3=xbruker2nifti(w1,0,[],[],'gui',0,'show',1,'flt',{'protocol','_T1rho_'});
+% import all '_T1rho_'-data with ExpNo & PrcNo ad fileName-suffix
+xbruker2nifti(w3,0,[],[],'gui',0,'show',0,'ExpNo_File',1,'PrcNo_File',1);
+ 
+antcb('update'); %update ANTx-animal listbox
+dispfiles; %show imported NIFTIs
+ 
+% ==============================================
+%% [3] Copy and rename turborare as 't2.nii'
+% ===============================================
+antcb('selectdirs','all');   % select all animal-folders
+xrename(0, '.*T2_Turbo','t2.nii',':');
+ 
+% ==============================================
+%% [4]  Get pre-orientation wrt. standard-space 
+% ===============================================
+% check if change of preorienation is necessary!!!
+if 0
+    % ========================================================================================
+    %  [4.1] get HTML-file with pre-orientations
+    %      please inspect the HTML-file. Use the best-matching rotation index from the HTML file
+    %      to update the orientType variable in the project file (proj.m).
+    % ========================================================================================
+    antcb('getpreorientation','selectdirs',1);% GET HTMLFILE WITH PRE-ORIENTATION FOR TRAFO TO STANDARD-SPACE from 1st animal
+    % ========================================================================================
+    %  [4.2] change 'orientType' variable in project-file
+    %      When inspecting the HTML-file best orientation is [1] which is set in 'orientType' variable
+    %      in project-file, projectfile is saved and reloaded
+    % ========================================================================================
+    antcb('setpreorientation',1); %set this pre-orientation
+end
+ 
+% ========================================================================================================================
+%%  [5] Register to standard space 
+% calculate transformation & back-transformation (native-space (NS) -- standard-space (SS))
+% =======================================================================================================================
+antcb('selectdirs','all');   % select all animal-folders
+xwarp3('batch','task',[1:4],'autoreg',1,'parfor',1);
+ 
+% ==============================================
+%% [6] Copy & rename "_T1rho"-files
+% 05_01_T1rho_pre2DG.nii  --> T1rho_2DG__001.nii
+%  ...
+% 05_35_T1rho_post2DG.nii--> T1rho_2DG__035.nii
+% ===============================================
+mdirs=antcb('getsubjects'); %get fullpath-animal-DIRS
+for i=1:length(mdirs)
+    pdisp(i,1);
+    pam=mdirs{i};
+   % [fis] = spm_select('List',pam,'^04_.*_T1rho_.*2DG.*.nii$|^05_.*_T1rho_.*2DG.*.nii$');    fis=cellstr(fis);
+    [fis] = spm_select('List',pam,'_.*_T1rho_.*2DG.*.nii$');    fis=cellstr(fis);
+    if length(fis)~=35;         keyboard;     end  % go in debug-mode if there are no 35 files
+ 
+    fisout =cellfun(@(a){[ 'T1rho_2DG__' a  '.nii' ]}, pnum(1:length(fis),3) ); %list with new output-names
+    for j=1:length(fis)
+        f1=fullfile(pam,fis{j})    ;%old name       
+        f2=fullfile(pam,fisout{j}) ;%new name
+        copyfile(f1,f2,'f');
+    end
+    
+    %write log-file with input &output
+    t1=[fis fisout  ];
+    f3=fullfile(pam, 'check_rename_T1rhofiles.txt'   ) ;
+    t2=plog([],[ {'old' 'new'}; t1    ],0, ['files' ]);
+    pwrite2file(f3, t2  );
+    showinfo2([' logfile'],f3);
+end
+ 
+% ================================================================================
+%% [7] WITHIN-REGISTRATION: rigidly-2D-register all T1rho-files to first T1rho-file using 1st slice
+% apply registration-params to the other slices:  
+% input: T1rho_*-files; output: c_T1rho_*-files
+% =================================================================================
+[files] = spm_select('List',mdirs{1},['^' 'T1rho_' '.*.nii']); files=cellstr(files);%get T1rho-files
+ 
+z=[];                                                                                                                                                                                                                                                                
+z.targetFile                = files(1 )     ;% { 'T1rho_2DG__001.nii' };   % % target image (single 3D-NIFTI-file)                                                                                                            
+z.sourceFiles               = files(2:end)  ;                              % % source images (1/more 3D-NIFTI-files)                                                                                                                                                                          
+z.slice                     = [1];% use 1st slice                          % % slice  to register (3rd dimension), registration parameter will be applied to the other slices                                                 
+z.sliceDimension            = [3];% from this volume-dimension             % % slice is taken from this dimension {1|2|3}; default: [3]                                                                                       
+z.parameterFiles            = { which('parameters_Rigid2D.txt') };         % % Elastix-2D-paramer-files (rigid,affine or Bspline), single or multiple files                                                                   
+z.interpOrder               = 'auto';                                      % % interpolation: [0] nearest neighbour, [1] bilinear interpolation, [3] spline interpolation, order 3, ["auto"] to autodetect interpolation order
+z.prefix                    = 'c_';                                        % % file prefix of the output file (if empty, "c" is used  )                                                                                       
+z.cleanup                   = [1];                                         % % do cleanup. Remove temporary processing folder, {0|1|2}; default: [1]                                                                          
+z.isParallel                = [1];                                         % % parallel processing over sourceFiles , {0|1}; default: [0]                                                                                     
+z.MaximumNumberOfIterations = [];                                          % % number of iterations (if empty use number of iterations as specified in parameter-file)                                                        
+z.isParallel                = [1];                                         % % parallel processing over sourceFiles , {0|1}; default: [0]                                                                                     
+z.MaximumNumberOfIterations = [];                                          % % number of iterations (if empty use number of iterations as specified in parameter-file)
+z.NumberOfResolutions       = [1];                                         % % number of resolution (if empty use number of resolutions as specified in parameter-file)                                                       
+xcoreg2D_singleSlice(0,z); 
+ 
+% ==============================================
+%% [8] ACROSS-REGISTRATION: rigidly 2D-register c_T1rho_2DG*-files to t2.nii
+% using 1st slice of 1st volume of ^c_T1rho, registered to 20th slice of t2.nii
+% apply registration-params to the other slices:
+% as 2D-registration:  input: c_T1rho_*-files & t2.nii; output: c_c_T1rho_*-files
+% ===============================================
+targetSlice=20; % this is the t2:nii-slice with matches with c_T1rho_2DG    
+ 
+z=[];
+z.targetFile                = { 't2.nii' };                                % % target image (single 3D-NIFTI-file)
+z.sourceFile                = { 'c_T1rho_2DG__001.nii' };                  % % source images (single 3D-NIFTI-file)
+z.applyFile                 = { '^c_T1rho' }; %apply to all c_T1rho_2DG*-files       % % apply images  (1/more 3D-NIFTI-files)
+z.targetSlice               = targetSlice;                                 % % slice of target  to register (3rd dimension)
+z.sourceSlice               = [1]; %use 1st slice of c_T1rho_2DG  for 2D-registration   % % slice of source  to register (3rd dimension)
+z.parameterFiles            = { which('parameters_Rigid2D.txt') };     % % Elastix-2D-paramer-files (rigid,affine or Bspline), single or multiple files
+z.interpOrder               = [1];                                         % % interpolation: [0] nearest neighbour, [1] bilinear interpolation, [3] spline interpolation, order 3, ["auto"] to autodetect interpolation order
+z.prefix                    = 'c_';                                        % % file prefix of the output file (if empty, "c_" is used  )
+z.cleanup                   = [1];                                         % % do cleanup. Remove temporary processing folder, {0|1|2}; default: [1]
+z.delete_targetSlice        = [1];                                         % % delete target slice,{0|1}. This interim file is used only for registration
+z.delete_sourceSlice        = [1];                                         % % delete source slice,{0|1}. This interim file is used only for registration
+z.delete_registeredSlice    = [1];                                         % % delete registered source slice,{0|1}. This is the interim output of the registration
+z.isParallel                = [1];                                         % % parallel processing: [0] no ; [1] over animals; [2] over applyfiles ; {0|1|2}; default: [0]
+z.MaximumNumberOfIterations = [];                                          % % number of iterations (if empty use number of iterations as specified in parameter-file)
+z.isParallel  = [0];
+xcoreg2D_singleSlice_arbSlice(0,z);
+ 
+% ==============================================
+%  check: make HTML-overlay in "checks"-DIR
+% ===============================================
+z=[];
+z.backgroundImg = { 't2.nii' };                                            % % [SELECT] Background/reference image (a single file)
+z.overlayImg    = { 'c_c_T1rho_2DG__001.nii' };                            % % [SELECT] Image to overlay (multiple files possible)
+z.outputPath    = fullfile(antcb('getstudypath'), 'checks');     % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )
+z.outputstring  = 'T1regT2space';                                          % % optional Output string added (suffix) to the HTML-filename and image-directory
+z.slices        = targetSlice ;%targetSlice-1:targetSlice+2;%'1';          % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image
+z.dim           = [1];                                                     % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital
+z.size          = [400];                                                   % % Image size in HTML file (in pixels)
+z.grid          = [1];                                                     % % Show line grid on top of image {0,1}
+z.gridspace     = [20];                                                    % % Space between grid lines (in pixels)
+z.gridcolor     = [1  0  0];                                               % % Grid color
+z.cmapB         = '';                                                      % % <optional> specify BG-color; otherwise leave empty
+% z.cmapF         = 'cbrewer("qual","Set3",120)';                                                  % % <optional> specify FG-color; otherwise leave empty
+z.cmapF         = 'gray';                                                  % % <optional> specify FG-color; otherwise leave empty
+z.showFusedIMG  = [0];                                                     % % <optional> show the fused image
+z.sliceadjust   = [0];                                                     % % intensity adjust slices separately; [0]no; [1]yes
+xcheckreghtml(0,z);
+ 
+% ==============================================
+%% [9] Transform AVGTmask to native space
+% ===============================================
+doelastix(-1   , [],      'AVGTmask.nii'   ,0 ,'local' );
+ 
+% ==============================================
+%% [10] Extract  AVGTmask slice
+% ===============================================
+slice=20; %xtract this slice
+show=1;
+for i=1:length(mdirs)
+    f1=fullfile(mdirs{i},'ix_AVGTmask.nii');
+    f2=fullfile(mdirs{i},'ix_AVGTmask_slice.nii');
+    extract_slice(f1,f2,slice,1,show);
+end
+ 
+% ==============================================
+%% [11] Calculate relaxation time: mono-exponential fit of c_c_T1rho_-files
+% Nonlinear FIT separately for each CESL map (maps: ...001-035)
+% Uses a brain mask and parallel processing
+% input: c_c_T1rho_2DG__001.nii,c_c_T1rho_2DG__002.nii,...,c_c_T1rho_2DG__035.nii
+% output: R1rho_-files (R1rho_001.nii,R1rho_002.nii,...,R1rho_035.nii)
+% NOTE: z.TSL: SPIN-LOCK TIMES can be obtained from the TSL-file located in the respective ExpNo-DIR in the Bruker-raw-data
+%       or selected via left z.TSL-icon from the xCESL_monoexpfit-GUI
+% ===============================================
+z=[];
+z.file          = { 'c_c_T1rho_2DG__001.nii' };    % % First CESL map (NIfTI)
+z.fit_othermaps = [1];                             % % Fit all other maps of this series
+z.fitmethod     = 'nonlinear';                     % % Fitting method: {linear|nonlinear}
+z.mask          = { 'ix_AVGTmask_slice.nii' };     % % Binary brain mask (2D NIfTI) (2D-NIFTI): example "ix_AVGTmask_slice.nii"
+z.TSL           = [5000  10000  20000  30000  40000  50000  60000  70000  80000  90000  100000  150000  200000];     % % Spin-lock times (number must match 3rd dimension of CESL map)
+z.TSL_unit      = 'us';                            % % units of SPIN-LOCK TIMES: [s] seconds; [ms] milliseconds; [us] microseconds
+z.outPrefix     = 'R1rho_';                        % % refix of output file (a  numeric suffix (such as "001" ) is added if found)      
+z.isparallel    = [1];                             % % Parallel processing over CESL maps within animal {0,1}
+xCESL_monoexpfit(0,z);
+ 
+% ==============================================
+%  % check: make HTML-file with overlay
+% ===============================================
+slice=20;
+z=[];                                                                                                                                                                                                                                                                       
+z.backgroundImg = { 't2.nii' };                                 % % [SELECT] Background/reference image (a single file)                                                                                                                              
+z.overlayImg    = { 'R1rho_001.nii' 'R1rho_035.nii' };          % % [SELECT] Image to overlay (multiple files possible)                                                                                                                              
+z.outputPath    = fullfile(antcb('getstudypath'),'checks');     % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )                                                      
+z.outputstring  = 'R1rhoFIT_regT2space';                        % % optional Output string added (suffix) to the HTML-filename and image-directory                                                                                                   
+z.slices        = slice;                                        % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image                                                             
+z.dim           = [1];                                          % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital                                                                                       
+z.size          = [400];                                        % % Image size in HTML file (in pixels)                                                                                                                                              
+z.grid          = [1];                                          % % Show line grid on top of image {0,1}                                                                                                                                             
+z.gridspace     = [20];                                         % % Space between grid lines (in pixels)                                                                                                                                             
+z.gridcolor     = [1  0  0];                                    % % Grid color                                                                                                                                                                       
+z.cmapB         = '';                                           % % <optional> specify BG-color; otherwise leave empty                                                                                                                               
+% z.cmapF         = 'gray';                                     % % <optional> specify FG-color; otherwise leave empty                                                                                                                               
+z.cmapF         = 'cbrewer("qual","Set3",120)';                 % % <optional> specify FG-color; otherwise leave empty
+z.showFusedIMG  = [0];                                          % % <optional> show the fused image                                                                                                                                                  
+z.sliceadjust   = [0];                                          % % intensity adjust slices separately; [0]no; [1]yes                                                                                                                                
+xcheckreghtml(0,z);
+ 
+% ==============================================
+%%  [12] Get mean over consecutive rho-images
+% input:  R1rho_001.nii,R1rho_002.nii,...,R1rho_035.nii
+% output: mean_R1rho_001-005.nii, mean_R1rho_006-010.nii,...,mean_R1rho_031-035.nii 
+% ===============================================
+for i=1:length(mdirs)
+    thispa=mdirs{i};
+    [fis] = spm_select('FPList',thispa,'^R1rho_.*.nii'); fis=cellstr(fis);
+    pnum_idx=pnum(1:length(fis),3);
+    stack=sort(repmat([1:35/5]',[5 1]));
+    uni_stack=unique(stack);
+    for j=1:length(uni_stack)
+        ix=find(stack==uni_stack(j));
+        a2=[];
+        fis_stack={};
+        for k=1:length(ix)
+            f1=fis{ ix(k)  };
+            [ha a]=rgetnii(f1) ;
+            a2(:,:,k)=a;
+            fis_stack{end+1,1}=f1;
+        end
+        cprintf('*[0 0 1]', [ '***['  num2str(i) '/' num2str(length(mdirs)) ']'   '\n']);
+        disp({'-stack' num2str(j) ']---------------------------' });
+        disp(char(fis_stack));
+        a3=mean(a2,3);  %average over stack
+        f2=fullfile(thispa,[ 'mean_R1rho_'  pnum_idx{ix(1)} '-' pnum_idx{ix(end)}    '.nii'  ]);
+        disp(['outfile: ' f2]);
+        rsavenii(f2,ha,a3,64);
+    end
+end
+ 
+% ==============================================
+% check: make HTML-file with overlay
+% ===============================================
+z=[];                                                                                                                                                                                                                                                                       
+z.backgroundImg = { 't2.nii' };                                 % % [SELECT] Background/reference image (a single file)                                                                                                                              
+z.overlayImg    = {'mean_R1rho_001-005.nii'};                   % % [SELECT] Image to overlay (multiple files possible)                                                                                                                              
+z.outputPath    = fullfile(antcb('getstudypath'),'checks');     % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )                                                      
+z.outputstring  = 'meanR1rho';                                  % % optional Output string added (suffix) to the HTML-filename and image-directory                                                                                                   
+z.slices        = slice;                                        % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image                                                             
+z.dim           = [1];                                          % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital                                                                                       
+z.size          = [400];                                        % % Image size in HTML file (in pixels)                                                                                                                                              
+z.grid          = [1];                                          % % Show line grid on top of image {0,1}                                                                                                                                             
+z.gridspace     = [20];                                         % % Space between grid lines (in pixels)                                                                                                                                             
+z.gridcolor     = [1  0  0];                                    % % Grid color                                                                                                                                                                       
+z.cmapB         = '';                                           % % <optional> specify BG-color; otherwise leave empty                                                                                                                               
+% z.cmapF         = 'gray';                                     % % <optional> specify FG-color; otherwise leave empty                                                                                                                               
+z.cmapF         = 'cbrewer("qual","Set3",120)';                 % % <optional> specify FG-color; otherwise leave empty
+z.showFusedIMG  = [0];                                          % % <optional> show the fused image                                                                                                                                                  
+z.sliceadjust   = [0];                                          % % intensity adjust slices separately; [0]no; [1]yes                                                                                                                                
+xcheckreghtml(0,z);
+ 
+% ============================================================================
+%%  [13] Make delta R1rho (in percent) for each of the 35 R1rho_-maps
+% input: baseline   : mean_R1rho_001-005.nii
+%        R1rho_-maps: R1rho_001.nii,R1rho_002.nii,...,R1rho_035.nii
+%output: deltaR1rho-maps: deltaR1rho_001.nii,deltaR1rho_002.nii,..., deltaR1rho_035.nii
+% =============================================================================
+for i=1:length(mdirs)
+    cprintf('*[0 0 1]', [ '***['  num2str(i) '/' num2str(length(mdirs)) ']'   '\n']);
+    thispa=mdirs{i};
+    [fis]    = spm_select('FPList',thispa,'^R1rho_.*.nii'); fis=cellstr(fis);
+    [firef]  = spm_select('FPList',thispa,'mean_R1rho_001-005.nii');         %reference
+    [hr r]=rgetnii(firef);
+    for j=1:length(fis)
+        [ha a]=rgetnii(fis{j});
+        b=((a-r)./r).*100; % in percent
+        [pam fname ext]=fileparts(fis{j});
+        f2=fullfile(pam,['delta' fname ext]);
+        rsavenii(f2,ha,b,64);
+        showinfo2(['file: delta R1rho'],f2);
+    end
+end
+ 
+% ==============================================
+% check: make HTML-file with overlay
+% ===============================================
+z=[];                                                                                                                                                                                                                                                                       
+z.backgroundImg = { 't2.nii' };                              % % [SELECT] Background/reference image (a single file)                                                                                                                              
+z.overlayImg    = {'deltaR1rho_001.nii'};                    % % [SELECT] Image to overlay (multiple files possible)                                                                                                                              
+z.outputPath    = fullfile(antcb('getstudypath'),'checks');  % % [SELECT] Outputpath: path to write HTMLfiles and image-folder. Best way: create a new folder "checks" in the study-folder )                                                      
+z.outputstring  = 'deltaR1rho';                              % % optional Output string added (suffix) to the HTML-filename and image-directory                                                                                                   
+z.slices        = slice;                                     % % SLICE-SELECTION: Use (1.) "n"+NUMBER: number of slices to plot or (2.) a single number, which plots every nth. image                                                             
+z.dim           = [1];                                       % % Dimension to plot {1,2,3}: In standard-space this is: {1}transversal,{2}coronal,{3}sagital                                                                                       
+z.size          = [400];                                     % % Image size in HTML file (in pixels)                                                                                                                                              
+z.grid          = [1];                                       % % Show line grid on top of image {0,1}                                                                                                                                             
+z.gridspace     = [20];                                      % % Space between grid lines (in pixels)                                                                                                                                             
+z.gridcolor     = [1  0  0];                                 % % Grid color                                                                                                                                                                       
+z.cmapB         = '';                                        % % <optional> specify BG-color; otherwise leave empty                                                                                                                               
+z.cmapF         = 'gray';                                    % % <optional> specify FG-color; otherwise leave empty                                                                                                                               
+%z.cmapF         = 'cbrewer("qual","Set3",120)';              % % <optional> specify FG-color; otherwise leave empty
+z.cmapF         = 'cbrewer("div","Spectral",30)';              % % <optional> specify FG-color; otherwise leave empty
+z.showFusedIMG  = [1];                                       % % <optional> show the fused image                                                                                                                                                  
+z.sliceadjust   = [1];                                       % % intensity adjust slices separately; [0]no; [1]yes                                                                                                                                
+xcheckreghtml(0,z);
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+%% #################################################
 %  pipeline
 %  chicken-brain: registration to chicken-atlas (chicken_v5) and regionwise-readout
 %  steps: create project, copy T2_TurboRARE-files, run registration, regionwise-readout of Graymatter-image
