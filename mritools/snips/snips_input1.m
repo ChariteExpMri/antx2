@@ -121,7 +121,49 @@ z.outdir       = 'groups';                                                    % 
 z.outputprefix = 'ga_';                                                       % % prefix of resulting excelfile(s)                                                                 
 z.addcounter   = [1];                                                         % % add a numeric counter to the filename-prefix                                                     
 xgroupassigfactorial(0,z);                                                                                                                                                         
-                                   
+
+%% #################################################
+% misc
+% Create DTI-ATLAS using specified regions
+% Regions with identical new IDs will be merged (column New ID below)
+% CONTENT OF THE INPUT REGIONS-FILE "regions_GM_atlasV2.xlsx":
+% -------------------------------------------------------------------------------------------------------------------------
+%                                                          Region  colHex       colRGB     ID  Children  New ID  hemisphere
+%                                             Subthalamic nucleus  0000FF      0 0 255      3       NaN       2         NaN
+%                          Molecular cell layer of the cerebellum  FFFF01    255 255 1      4       NaN       3         NaN
+%                                         Cerebellum, unspecified  00FFFF    0 255 255      5       NaN       3         NaN
+%                                          Entopeduncular nucleus  1AE7FF   26 231 255     32       NaN       7         NaN
+%                                                   Septal region  FF0800      255 8 0     40       NaN       9         NaN
+%                                                Cingulate area 2  1D68EB   29 104 235     10       NaN      10         NaN
+%                                                Cingulate area 1  008080    0 128 128    411       NaN      10         NaN
+%                                          Brainstem, unspecified  9953FF   153 83 255     47       NaN      12         NaN
+%                                Hypothalamic region, unspecified  E278A1  226 120 161     48       NaN      13         NaN
+%               Superficial gray layer of the superior colliculus  5600DD     86 0 221     50       NaN      14         NaN
+%                        Deeper layers of the superior colliculus  E1970F   225 151 15     55       NaN      14         NaN
+%                                             Periaqueductal gray  07FF59     7 255 89     51       NaN      15         NaN
+%                                                  Pontine nuclei  00D70B     0 215 11     58       NaN      18         NaN
+%                                    Parataenial thalamic nucleus  CD0006      205 0 6    211       NaN      21         NaN
+%   ... AND SO ON....
+%                                            Endopiriform nucleus  010A64     1 10 100    500       NaN      85         NaN
+%                          Nucleus of the lateral olfactory tract  E6B843   230 184 67    502       NaN      86         NaN
+%        Paraventricular thalamic nuclei (anterior and posterior)  9C3333    156 51 51    242       NaN      87         NaN
+% -------------------------------------------------------------------------------------------------------------------------
+
+z=[];                                                                                                                                                                                                                             
+z.atlas               = 'F:\data11\jason_gm_atlas_v2\templates\ANO.nii';             % % select ATLAS (must be a NIFTI-file, such as "ANO.nii" in template folder)                                                                
+z.excelfile           = 'F:\data11\jason_gm_atlas_v2\GM_atlasV2\regions_GM_atlasV2.xlsx';     % % select modified ANO.xlsx file (corresponding, but modified EXCELFILE of the "atlas")                                                     
+z.columnNewID         = [6];                                                         % % excelfile column containing the new IDs (column index)                                                                                   
+z.columnHemispherType = [7];                                                         % % excelfile column containing the hemisphere Type (column index)                                                                           
+z.columnNewRegionName = 'none';                                                      % % (optional)excelfile column containing new Region names (use "none" or column index)                                                      
+z.hemisphereIDstyle   = 'successive';                                                % % for hemispeheric separation, define right hemispheric ID-offset {successive|gap100|gap1000|gap2000} or a numeric value                   
+z.outputName          = 'atlas_GM_v2';                                                 % % filename (string) of the output file"                                                                                                    
+z.outputDir           = '';                                                          % % select outputdirectory, if empty output is stored where "excelfile" is located                                                           
+z.makeHTML            = [1];                                                         % % create HTML-file to check regions                                                                                                        
+z.saveMasksSeparately = [0];                                                         % % {0|1} save output masks as separate NIFTIs, (0) single NIFTI (1) multiple NIFTIs                                                         
+z.saveSingleMasks     = [0];                                                         % % for DEBUGGING {0|1}: (1) saves also the input-regions as separate masks (in new created subfolder)                                       
+z.singleMasksType     = [3];                                                         % % for INPUT-regions, specify single mask value {1|2|3}: (1) binary,(2) new ID ,(3) both as separate outputs ("saveSingleMasks" must be "1")
+xexcel2atlas(0,z);
+
 %% #################################################
 % misc
 % use checkpoint-system                 

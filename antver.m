@@ -1250,6 +1250,8 @@
 % #k [snips.m] #n : added: CESL-pipline to SNIPS 
 % #gw --> access via ANT-menu: &#8658;Snips/snips or type 'snips'
 % - in snips-GUI: go to pileine/CESL-pipline 
+% #wb 03 Oct 2026 (22:45:07)
+% smaller changes..
 % 
 % 
 

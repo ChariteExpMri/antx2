@@ -1,5 +1,56 @@
-function [ha,ac,a]=biasfieldcor(file)
+% BIASFIELDCOR Simple slice-wise bias-field correction of a 3D NIfTI image
+% [ha,ac,a] = biasfieldcor(file)
+% biasfieldcor(file,fileout)
+% Performs a simple bias-field correction on a 3D NIfTI volume. The correction is performed independently 
+% for each axial slice using a local intensity-based bias-field estimation. After correction, the intensity 
+% distributions of neighbouring slices are matched to reduce slice-to-slice intensity differences.
+% 
+% _INPUT_
+% file: FULLPATH-FILENAME of the input 3D NIfTI image.
+%       Alternatively, FILE can be a cell array containing an already loaded NIfTI header and image:
+%        file = {ha,a};
+% fileout - OPTIONAL 
+%         FULLPATH-FILENAME of the output 3D NIfTI image.   
+%         If omitted or empty, no output file is written.
+% 
+% _OUTPUT_
+% ha : NIfTI header of the input image.
+% ac : Bias-field-corrected 3D image. The corrected image retains the original image geometry and is returned 
+%      in the intensity scale of the input image.
+% a  : Original 3D image loaded from FILE.
+% 
+% METHOD
+% 1. Each axial slice is normalized to a fixed intensity range.
+% 2. A 2D bias field is estimated for each slice using the local region-based level-set method implemented in LSE_BFE.
+% 3. The estimated bias field is removed from the slice.
+% 4. After processing all slices, slice intensities are adjusted using histogram matching (IMHISTMATCH) to reduce intensity
+%    differences between neighbouring slices.
+% 5. NaN voxels resulting from the correction are replaced by the median intensity of the corrected volume.
+% NOTE: 
+% The correction is slice-wise. It therefore corrects intensity inhomogeneity within individual slices, but does not estimate
+% one smooth 3D bias field across the entire volume.
+% 
+% _EXAMPLES_
+% % Correct a 3D NIfTI image and save the result:
+% f1 = fullfile(pwd,'t2_orig.nii');
+% f2 = fullfile(pwd,'t2_UNBIASED.nii');
+% biasfieldcor(f1,f2);
+% 
+% % Correct an image and keep the result in MATLAB:
+% [ha,ac,a] = biasfieldcor(f1);
+% 
+% % Use an already loaded NIfTI header and image:
+% [ha,ac,a] = biasfieldcor({ha,a});
+
+
+
+function [ha,ac,a]=biasfieldcor(file,fileout)
 % v2.0
+
+
+if exist('fileout')~=1 || ~ischar(fileout)
+    fileout=[];
+end
 
 if iscell(file)
     ha=file{1};
@@ -92,6 +143,15 @@ for i=1:size(a,3)
 
 end
 
+% ==============================================
+%%   nans
+% ===============================================
+
+ cnan=c;
+% c(isnan(c))=nanmedian(c(:));
+
+%% ===============================================
+
 % -------------------------------------------------------
 % slice-wise adjustment
 % -------------------------------------------------------
@@ -118,6 +178,14 @@ end
 
 ac = denormalize01(e,a);
 
-% fprintf('BFC..done.\n');
+% ac_bk=ac;
+ac(isnan(cnan))=nanmedian(ac(:)); %replace nan's
 
+
+%% =====[save file]==========================================
+if ~isempty(fileout)
+   %try; delete(fileout); end 
+   rsavenii(fileout, ha, ac);
 end
+
+

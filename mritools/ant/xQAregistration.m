@@ -11,13 +11,20 @@
 % #ma ___ PARAMETER_____________________                                                    
 % metric      +used metric [1] Pearson correlation(R); [2] mutual information (MI)   
 %             default: [1]
-% imageType   +image to compare with     
+% imageType   +image to compare with  {'gm','avgt' or empty}   
 %             [gm]: compare gray matter; [avgt] compare x_t2.nii with AVGT.nii              
-%              [gm]: -the gray matter image of the animal in standard-space is compared with
+%                    -the gray matter image of the animal in standard-space is compared with
 %                     the gray matter image of the template (reference image)
 %            [avgt]: -the structural image of the animal in standard-space ("x_t2.nii") is compared
 %                     with the structural image of the template ("AVGT.nii")
+%              ''    - if empty it is assumed that the paramter 
 %             default: 'gm'
+% 
+% files     -ALTERNATIVE TO imageType: two NIFTI-files from same space can be selected here and the metric is calculated
+%           -NOTE: select 2 files here, order matters, the content of the parameter "imageType" will be ignored in this case !!!
+%           -example scenario: file-A is rigidly registerd to file-B..The question is how good is the registration in case of hundreds of animals    
+% 
+% 
 % forceReCreateImage +force to (re-)create image even when file exists
 %                    -for "gm" the image "c1t2.nii will be forced to warped to standard-space
 %                    {[0] NO; [1] yes}  
@@ -59,6 +66,24 @@
 % z.report_addDate     = [1];           % % add time/dateStamp to the saved report                                        
 % xQAregistration(0,z);                 % % run function, without GUI (1st arg is 0 )  
 % 
+% % ==================================================================================================                                                                     
+% % #g use Pearson correlation (metric) check regisration of 't2.nii' with rigidly-registered TOF ('c_TOF.nii')
+% % save the report (report_dosave) as HTML-file
+% % execute command without showing the GUI (1st arg of xQAregistration is 0 )
+% % ==================================================================================================  
+% z=[];
+% z.metric             =  [1];	% used metric [1]Pearson correlation(R); [2] mutual information (MI)
+% z.imageType          =  '';	% imageType to compare "gm": gray matter image is compared
+% z.files              = {'t2.nii' 'c_TOF.nii'   };	% select two files from same space to compare (files will override: "imageType")                      
+% z.forceReCreateImage =  [0];	% force to create image even when exists (warp image to standard-space)                        
+% % __SAVE REPORT_________ 	 
+% z.report_dosave      =  [1];	% save report in checks-folder [0]NO, [1]yes
+% z.report_type        =  'html';	% save report as "html" or "xlsx" file
+% z.report_filename    =  'QA_registration_t2_with_c_TOF';	% filename to save the report in "checks"-folder
+% z.report_addDate     =  [0];	% add time/dateStamp to the saved report
+% xQAregistration(0,z);	% RUN
+% 
+% 
 %% =====[other calling options]===================
 % xQAregistration(1);                                 % %  run function, with GUI, show default parameter 
 % xQAregistration(1,z);                               % %  run function, with GUI (1st arg is 1 ) using specific parameter                                                                     
@@ -99,6 +124,20 @@ end
 
 if isempty(pa); return; end
 
+%________________________________________________
+%%  generate list of nifit-files within pa-path
+%________________________________________________
+%% fileList
+if 1
+    fi2={};
+    for i=1:length(pa)
+        [files,~] = spm_select('FPList',pa{i},['.*.nii$']);
+        if ischar(files); files=cellstr(files);   end;
+        fis=strrep(files,[pa{i} filesep],'');
+        fi2=[fi2; fis];
+    end
+    li=unique(fi2);
+end
 
 
 %% ________________________________________________________________________________________________
@@ -109,7 +148,10 @@ if exist('x')~=1;        x=[]; end
 p={...
     'inf1'                  '--- QA registration parameter   ---             '                         ''    ''
     'metric'                1                           'used metric [1]Pearson correlation(R); [2] mutual information (MI)'  {1 ,2}
-    'imageType'             'gm'                      'imageType to compare "gm": gray matter image is compared'         {'gm','avgt'}
+    'imageType'             'gm'                        'imageType to compare "gm": gray matter image is compared'         {'gm','avgt' ,''}
+    
+    'files'      ''        'select two files from same space to compare (files will override: "imageType")'  {@selector2,li,{'TargetImage'},'out','list','selection','multi','position','auto','info','select target-image'}
+    
     'forceReCreateImage'    0                           'force to create image even when exists (warp image to standard-space) ' 'b'
     'inf3'                  ''    '' ''
     'inf2'                  '__SAVE REPORT_________'    '' ''
@@ -199,6 +241,15 @@ elseif strcmp(ss.image,'avgt')
     ss.sourceimgNative   ='t2.nii';
     ss.tag='AVGT';
 end
+%% ====[overryde]===========================================
+
+if  ~isempty(char(z.files)) &&  iscell(z.files) && length(z.files)
+    ss.refimg            =z.files{1};
+    ss.sourceimg         =z.files{2};
+    ss.sourceimgNative   =z.files{2};;
+    ss.tag='2files';
+    
+end
 
 
 % ==============================================
@@ -237,34 +288,63 @@ for i=1:length(mdirs)
     %f1=fullfile(pam,'x_c1t2.nii');
     %     f1=fullfile(pam,'x_t2.nii');
     %f2=fullfile(pam,'AVGT.nii');
-    f3=fullfile(pam,'AVGTmask.nii');
     
-    if exist(f1)==0 || v.forceReCreateImage==1 % x_c1t2.nii does not exist
-        f1pre=fullfile(pam,ss.sourceimgNative);
-        if exist(f1pre)==2 %file exist ...%warp here
-            %warp here
-            pp.source     =  'intern';
-            files=ss.sourceimgNative;%'c1t2.nii';
-            doelastix(1   ,pam,      files   ,1 ,'local',pp );
-        else
-            isok=0;    
-        end    
+    if strcmp(ss.tag,'2files')
+        
+        f3=fullfile(pam,ss.refimg);
+        isok=0;
+        if exist(f1)==2 && exist(f3)==2
+            isok=1;
+        end
+    else
+        f3=fullfile(pam,'AVGTmask.nii');
+        
+        if exist(f1)==0 || v.forceReCreateImage==1 % x_c1t2.nii does not exist
+            f1pre=fullfile(pam,ss.sourceimgNative);
+            if exist(f1pre)==2 %file exist ...%warp here
+                %warp here
+                pp.source     =  'intern';
+                files=ss.sourceimgNative;%'c1t2.nii';
+                doelastix(1   ,pam,      files   ,1 ,'local',pp );
+            else
+                isok=0;
+            end
+        end
     end
     
     if isok==1% all(existn({f1  f3})==2)
         n=n+1;
-        if isempty(m)
-            [hm m]=rgetnii(f3);
-            m=round(m);
-            md=imdilate(m,strel('sphere',5));
-            %             ima=find(m(:)==1);
-            %             % m2=m(ima);%check
-            islice=find(sum(sum(m,1),3)>0);
-            ixdillmask=find(md==1);
-        end
-        [ha a]=rgetnii(f1);
-        if isempty(b)
-            [hb b]=rgetnii(f2);
+        if strcmp(ss.tag,'2files')
+            ha=spm_vol([f1 ',1']);
+            hb=spm_vol([f3 ',1']);
+            
+            if sum((hb.dim-ha.dim).^2)==0 && sum(([hb.mat(:)-ha.mat(:)].^2))==0
+                [ha a]=rgetnii(f1);
+                [hb b]=rgetnii(f3);
+            else %reslice to target
+                [ha a]=rgetnii(f1);
+                [hb b]=rgetnii(f3);
+                rounddiff=find(((round(unique(b(:))*100))/100==unique(b(:)))==0);
+                interpx=1;
+                if isempty(rounddiff); %mask
+                    interpx=0;
+                end
+                [hb b]=rreslice2target({hb b},{ha a}, [], interpx, 64);
+            end
+        else
+            if isempty(m)
+                [hm m]=rgetnii(f3);
+                m=round(m);
+                md=imdilate(m,strel('sphere',5));
+                %             ima=find(m(:)==1);
+                %             % m2=m(ima);%check
+                islice=find(sum(sum(m,1),3)>0);
+                ixdillmask=find(md==1);
+            end
+            [ha a]=rgetnii(f1);
+            if isempty(b)
+                [hb b]=rgetnii(f2);
+            end
         end
         
         %         a2=a(ixdillmask);
@@ -392,6 +472,11 @@ end
 ylim([min(p.m)-.0025 max(p.m)+.001]);
 xlim([0 length(p.m)+1]);
 % zs=zscore(p.r);
+if ~isempty(strfind(ss.ylabel,'2files'))
+   ss.ylabel=  regexprep(  ss.ylabel,'2files',   [ss.refimg ' & ' ss.sourceimg]);
+    
+end
+
 ylabel(ss.ylabel);
 showID();
 
@@ -451,7 +536,10 @@ figure(hf)
 c = uicontextmenu;
 % Set c to be the plot line's UIContextMenu
 hdot=findobj(hf,'tag','dotqa');
-m2 = uimenu(c,'Label','show animated-gif (obntained from registration)'            ,'Callback',{@context_cb,'animatedGif'});
+% m2 = uimenu(c,'Label','2files: show animated-gif'            ,'Callback',{@context_cb,'animatedGif_2files'});
+m2 = uimenu(c,'Label',['show overlay "' u.ss.refimg '" & "' u.ss.sourceimg '"(MRIcron)'],'Callback',{@context_cb,'showmricron_2files'});
+
+m2 = uimenu(c,'Label','show animated-gif (obtained from registration)'            ,'Callback',{@context_cb,'animatedGif'});
 m1 = uimenu(c,'Label','show overlay "x_t2" & "AVGT.nii" (MRIcron)'                ,'Callback',{@context_cb,'showmricron_t2'});
 if strcmp(u.ss.sourceimg,'x_t2.nii')==0
     m2 = uimenu(c,'Label',['show overlay "' u.ss.sourceimg '" & "AVGT.nii" (MRIcron)'],'Callback',{@context_cb,'showmricron_sourceimg'});
@@ -642,6 +730,13 @@ if strcmp(task,'showmricron_t2')
     if exist(f1) && exist(f2)
         rmricron([],f1,f2,0);
     end
+elseif strcmp(task,'showmricron_2files')
+    f1=fullfile(u.ss.pastudy,'dat',animal{2}, u.ss.refimg   );
+    f2=fullfile(u.ss.pastudy,'dat',animal{2}, u.ss.sourceimg);
+    if exist(f1) && exist(f2)
+        rmricron([],f1,f2,0);
+    end
+    
 elseif strcmp(task,'showmricron_sourceimg')
     f1=fullfile(u.ss.pastudy,'dat',animal{2}, 'AVGT.nii');
     f2=fullfile(u.ss.pastudy,'dat',animal{2}, u.ss.sourceimg);
@@ -659,6 +754,9 @@ elseif strcmp(task,'animatedGif');
     if exist(f1)
         web(f1,'-new');
     end
+elseif strcmp(task,'animatedGif_2files');
+%    disp('not implemented')
+    
 elseif strcmp(task,'animatedGif_best')
     
     f1=fullfile(u.ss.pastudy,'dat',t2{end,2},'summary','x_t2_animated.gif');
@@ -688,10 +786,20 @@ else
    ms=['(sorting: ' u.metric '-metric)' ];
 end
 hd=u.hd;
-uhelp(plog([],[hd; tt],0,{['ANIMAL-registration ' ms ];...
+ss=u.ss;
+if strcmp(ss.tag,'2files')
+    head={['FILE-registration ' ms ];...
+    [' #b refimg    : "' ss.refimg '"'];...
+    [' #b sourceimg : "' ss.sourceimg '"'];...
+    [' #g metric    : ' u.ss.metric ]};
+else
+    head={['ANIMAL-registration ' ms ];...
     [' #b image : "' u.ss.sourceimg '"'];...
-    [' #g metric: ' u.ss.metric ]}),...
-    1,'name','QA_registration');
+    [' #g metric: ' u.ss.metric ]};
+end
+
+
+uhelp(plog([],[hd; tt],0,head), 1,'name','QA_registration');
 
 function set_ylimits(e1,e2)
 

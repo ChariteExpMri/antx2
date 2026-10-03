@@ -1409,6 +1409,33 @@ hrt2={'newID_Nifti' 'origID_Nifti' 'origLabel_xls' 'origID_xls'};
 if isfield(v,'newRegionName')==1 && v.newRegionName~=0
   hrt2=[hrt2 'proposedRegionName']  ;
 end
+% ===[add old proposed ID by user]============================================
+
+% uhelp( plog([],[ hrt2; rt2] ),1);
+try
+    old_proposedIDs = zeros(size(rt2,1),1);
+    for i=1:size(rt2,1)
+        ix=find(strcmp(at(:,1), rt2(i,3)));
+        old_proposedIDs(i,1) =at{ix,v.inewID}; %propsed ID
+    end
+    rt2 =[rt2 num2cell(old_proposedIDs)     ] ;
+    hrt2=[hrt2 'proposedRegionID'        ]  ;
+    
+end 
+% =======add  new label ========================================
+newID=cell2mat(b2(:,1));
+newIDvec=repmat({''},[size(rt2,1) 1]);
+for i=1:size(rt2,1)
+    id_new=rt2{i,1};
+    iv=find(newID==id_new);
+    newIDvec(i,1)=b2(iv,2) ;
+end
+
+rt2 =[rt2 newIDvec     ] ;
+hrt2=[hrt2 'newLabel'  ]  ;
+
+% uhelp( plog([],[ hrt2; rt2] ),1);
+%% ===============================================
 
 if isexcel==1
     pwrite2excel(fileout,{9     'Back_reconstr1' },hrt2,[],rt2);

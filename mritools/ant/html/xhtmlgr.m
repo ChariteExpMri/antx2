@@ -157,7 +157,12 @@ end
 if strcmp(task,'copyhtml');  varargout{1}  =copyhtml(ps); end
 if strcmp(task,'study');     varargout{1}  =study(ps); end
 if strcmp(task,'timer');     varargout{1}  =timer(ps); end
-if strcmp(task,'update');     varargout{1} =update(ps); end
+% if strcmp(task,'update');     varargout{1} =update(ps); end
+if strcmp(task,'update')  
+    try 
+        varargout{1} =update(ps); %solution if multiple matlabsessions work on same project
+    end 
+end
 
 
 if strcmp(task,'add');       varargout{1}  =add(ps); end

@@ -2515,7 +2515,12 @@ function  o=loop(pp)
 %   antcb('loop','task','[ha a]=rgetnii(''x_t2.nii'');[hm m]=rgetnii(''ANO.nii'');v=a.*(m==672); rsavenii(''_m672.nii'',ha,v );showinfo2([''new file''],fullfile(''$mdir'', ''_m672.nii''));');
 %_ append NIFTI-headers to cellarray
 % antcb('loop','task','h=spm_vol(''t2.nii''); h2=struct2list(h); if exist(''h3'')~=1; h3={};end; h3=[h3;h2];clear h h2');
-
+%_ make simple biasfield-corrected image
+% antcb('loop','task',"biasfieldcor('t2.nii','t2_unbiased2.nii');");
+% obtain x_t2.nii as 4D-array from selected animals
+% antcb('loop','task',"try; [hz z(:,:,:,i)]=rgetnii('x_t2.nii'); end; ");
+% 
+% 
 
 % mdirs0='all';
 mdirs0='';
