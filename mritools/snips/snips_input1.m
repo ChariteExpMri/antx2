@@ -33,9 +33,8 @@ antcb('load','n') % 'n'/'newest'  : load newest/last modified projectfile in pat
 % programatically create a project 
 
 % ==============================================
-%%  [1] create-mouse project 
+%%  [1] create-mouse project  (ABA CCFv3, 2017)
 % ==============================================
-% 
 %------[from my f_drive]---------
 makeproject('projectname',fullfile(pwd,'proj.m'), 'voxsize',[.07 .07 .07],...
     'wa_refpath','f:\anttemplates\mouse_Allen2017HikishimaLR',...
@@ -58,6 +57,23 @@ makeproject('projectname',fullfile(pwd,'proj.m'),...
 antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
 
 antcb('setpreorientation',5); %  %set pre-orientation
+
+% ==============================================
+%%  [3] create-SIGMA-RAT project 
+% ==============================================
+%------[ my f_drive]---------
+makeproject('projectname',fullfile(pwd,'proj.m'),...
+    'wa_refpath','f:\anttemplates\rat_SIGMA_RAT')
+antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+
+
+%------[windows-server]---------
+makeproject('projectname',fullfile(pwd,'proj.m'),...
+    'wa_refpath','D:\MATLAB\anttemplates\rat_SIGMA_RAT')
+antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+
+
+
 
 
 %% #################################################

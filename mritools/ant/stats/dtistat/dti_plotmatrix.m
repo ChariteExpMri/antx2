@@ -172,7 +172,7 @@ at(:,1)=regexprep(at(:,1),'''',''); %remove apostrophe as in "'R_Ammon's_horn_MO
 us=sx.us;
 threshtype =sx.threshtype; %threshold (1)all (2)p<0.05 (3)FDR
 r          =us.pw(sx.pwnumber);
-val        =r.tb(:,3);
+val        =cell2mat(r.tb(:,3));
 sorttype   =sx.sorttype;
 
 si=us.con.size;
@@ -192,12 +192,13 @@ if threshtype==1
 elseif threshtype==2
     %val=val.*(r.tb(:,2)<.05);
     %length(find(r.tb(:,2)<0.001))
-    val=val.*(r.tb(:,2)<sx.thresh);
+    val=val.*(cell2mat(r.tb(:,2))<sx.thresh);
     ms=[r.stattype '(' r.tbhead{3} ') using p<0.05   (n=' num2str(sum(val~=0)) '/' num2str(numel(val)) ')'];
 elseif threshtype==3
     val=val.*r.fdr;
     ms=[r.stattype '(' r.tbhead{3} ') FDRcorrected   (n=' num2str(sum(val~=0)) '/' num2str(numel(val))  ')'];
 end
+if iscell(val); val=cell2mat(val); end
 if length(us.con.index)==length(val)
     s(us.con.index)=val;
 else
@@ -220,10 +221,10 @@ s(isnan(s))=0;
 pval=zeros(prod(si),1);
 
 if length(us.con.index)==length(r.tb(:,2))
-    pval(us.con.index)=r.tb(:,2);
+    pval(us.con.index)=cell2mat(r.tb(:,2));
 else
     zv=zeros(size(us.con.index));
-    zv(r.ikeep)=r.tb(:,2);
+    zv(r.ikeep)=cell2mat(r.tb(:,2));
     pval(us.con.index)=zv;
     
 end
@@ -345,7 +346,12 @@ sx.la1    =la1;
 sx.la2    =la2; 
 
 is     =find(val~=0);
-sx.tb  = [r.lab(is)  num2cell(r.tb(is,:))];
+dx=r.tb(is,:);
+if iscell(dx)
+    sx.tb  = [r.lab(is)  (r.tb(is,:))];
+else
+    sx.tb  = [r.lab(is)  num2cell(r.tb(is,:))];
+end
 sx.htb = ['connection' r.tbhead ];
 
 disp(['Number of connections: ' num2str(length(is))]);
@@ -356,16 +362,21 @@ disp(['Number of connections: ' num2str(length(is))]);
 hf=findobj(0,'tag','dtifig1');
 ax1=findobj(hf,'tag','ax1');
 axes(ax1);
-him=imagesc(s);
+% him=imagesc(s);
+him=imagesc(s, 'AlphaData', s ~= 0);
+set(ax1, 'Color', 'w');
+
+
 % eval(['cmap=' sx.cmap ';']);
 cmap=getcolormap(sx.cmap);
-iwhite=round(size(cmap,1)/2)+1;
-cmap(iwhite,:)=[1 1 1];
+% iwhite=round(size(cmap,1)/2)+1;
+% cmap(iwhite,:)=[1 1 1];
 colormap(cmap);
 cb=colorbar;
-set(cb,'position',[.82 .1 .03 .1]);
+% set(cb,'position',[.82 .1 .03 .1]);
 % set(cb,'position',[.01 .3 .01 .3]);
-set(cb,'position',[.07 .05 .01 .3]);
+% set(cb,'position',[.07 .05 .01 .3]);
+set(cb,'position',[0.12 0.079762 0.01 0.25]);
 set(cb,'fontsize',8,'fontweight','bold');
 
 ylabel(cb, cblabel);
@@ -376,7 +387,7 @@ set(ax1,'xticklabels','','yticklabels',''   ,'tag','ax1' );
 set(findobj(gcf,'tag','clim'),'string',[ num2str(clim(1)) ' '  num2str(clim(2))]);
 
 
-
+% [0.076786 0.079762 0.01 0.3]
 
 
 % ===========HORIZ========================================================================================
@@ -705,7 +716,7 @@ set(hb,'tooltipstring','define the colormap','callback',@set_cmap);
 
 %% colorLimuts
 hb=uicontrol('style','edit','units','norm', 'string', '-nan nan');
-set(hb,'position',[[0.0035714 0.37024 0.13714 0.035]],'tag','clim');
+set(hb,'position',[[0.0071429 0.39881 0.13714 0.035]],'tag','clim');
 set(hb,'callback',@set_clim);
 set(hb,'tooltipstring',['manual colorlimits' char(10) ' enter a negative and positive value']);
 
@@ -788,10 +799,10 @@ if strcmp(treshtype,'thresh')==1
 end
 header=[contrast ' ' contrastname  '       (treshold: ' treshtype '' threshold  ')'];
 
-try;
+% try;
     %uhelp( plog([],[  sx.htb;sx.tb] ),1);
     uhelp( plog([],[  sx.htb;sx.tb],0, header ),1);
-end
+% end
 
 
 function update(e,e2)
@@ -841,13 +852,23 @@ function cmap=getcolormap(cmapname)
 
 if strcmp(cmapname,'list')==1
     cmap={'bluewhitered' 'parula','jet'  'hot'};
+    maps=getCMAP('html');
+    cmap=[ cmap(:); maps ];
     return
 end
 
 if strcmp(cmapname,'bluewhitered')==1
     cmap=[0 0 0.5;0 0.032258064516129 0.532258064516129;0 0.0645161290322581 0.564516129032258;0 0.0967741935483871 0.596774193548387;0 0.129032258064516 0.629032258064516;0 0.161290322580645 0.661290322580645;0 0.193548387096774 0.693548387096774;0 0.225806451612903 0.725806451612903;0 0.258064516129032 0.758064516129032;0 0.290322580645161 0.790322580645161;0 0.32258064516129 0.82258064516129;0 0.354838709677419 0.854838709677419;0 0.387096774193548 0.887096774193548;0 0.419354838709677 0.919354838709677;0 0.451612903225806 0.951612903225806;0 0.483870967741936 0.983870967741936;0.032258064516129 0.516129032258065 1;0.096774193548387 0.548387096774194 1;0.161290322580645 0.580645161290323 1;0.225806451612903 0.612903225806452 1;0.290322580645161 0.645161290322581 1;0.354838709677419 0.67741935483871 1;0.419354838709677 0.709677419354839 1;0.483870967741936 0.741935483870968 1;0.548387096774194 0.774193548387097 1;0.612903225806452 0.806451612903226 1;0.67741935483871 0.838709677419355 1;0.741935483870968 0.870967741935484 1;0.806451612903226 0.903225806451613 1;0.870967741935484 0.935483870967742 1;0.935483870967742 0.967741935483871 1;1 1 1;1 1 1;1 0.935483870967742 0.935483870967742;1 0.870967741935484 0.870967741935484;1 0.806451612903226 0.806451612903226;1 0.741935483870968 0.741935483870968;1 0.67741935483871 0.67741935483871;1 0.612903225806452 0.612903225806452;1 0.548387096774194 0.548387096774194;1 0.483870967741936 0.483870967741936;1 0.419354838709677 0.419354838709677;1 0.354838709677419 0.354838709677419;1 0.290322580645161 0.290322580645161;1 0.225806451612903 0.225806451612903;1 0.161290322580645 0.161290322580645;1 0.0967741935483871 0.0967741935483871;1 0.032258064516129 0.032258064516129;0.983870967741936 0 0;0.951612903225806 0 0;0.919354838709677 0 0;0.887096774193548 0 0;0.854838709677419 0 0;0.82258064516129 0 0;0.790322580645161 0 0;0.758064516129032 0 0;0.725806451612903 0 0;0.693548387096774 0 0;0.661290322580645 0 0;0.629032258064516 0 0;0.596774193548387 0 0;0.564516129032258 0 0;0.532258064516129 0 0;0.5 0 0];
 else
-    eval(['cmap=' cmapname ';']);
+    
+    %s = '<html> <FONT color=#008066 >&#9632;<FONT color=#209066 >&#9632;<FONT color=#40A066 >&#9632;<FONT color=#60B066 >&#9632;<FONT color=#80C066 >&#9632;<FONT color=#9FCF66 >&#9632;<FONT color=#BFDF66 >&#9632;<FONT color=#DFEF66 >&#9632;<FONT color=#FFFF66 >&#9632;<FONT color=black>&nbsp;summer[6]';
+    cmapname = regexprep(cmapname, {'<[^>]*>', '&#.*;','\[\d*\]' ' ' }, '');
+    try
+        cmap=getCMAP(cmapname);
+    catch
+        
+        eval(['cmap=' cmapname ';']);
+    end
 end
 
 function keys(e,e2)

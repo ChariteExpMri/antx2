@@ -1059,8 +1059,9 @@ h=uicontrol('style','pushbutton','units','norm','position',[0.13 .3 .14 .05],...
     'tooltipstring','visualize results: for type of visulization see right pulldown menu');
 
 h=uicontrol('style','popupmenu','units','norm','position',[0.27 .3 .15 .05],...
-    'string',{'matrix' 'matrix_oldversion' 'plot3d'},'tag','menuplot','backgroundcolor','w',...
+    'string',{'matrix' },'tag','menuplot','backgroundcolor','w',...
     'tooltipstring','type of visualization to show');
+% 'matrix_oldversion' 'plot3d'
 % ==============================================
 %%   export
 % ===============================================
@@ -2668,6 +2669,17 @@ if z.f1design==0 %between
             end
             
             % ==============================================
+            %%
+            % ===============================================
+            [d, dCI, g, gCI] = effectSize_dg(x, y, 0.05, 'between');
+            
+            % USING Hedges' g with its 95% CI,
+            effectSize  =[g gCI]; %only HEDGES'g
+            heffectSize = { 'Hedges_g', 'Hedges_g_CI_Lower', 'Hedges_g_CI_Upper'};
+            res    =[res num2cell(effectSize)];
+            reshead=[reshead  heffectSize];
+            % uhelp(plog([],[ reshead2; res2(1:10,:) ],0,''), 1);
+            % ==============================================
             %%   deal with missings
             % ===============================================
             ck1=sum(abs([x y]),2);
@@ -2904,7 +2916,7 @@ for i=1:size(us.pw,2)
         [Hx, crit_p, adj_ci_cvrg, adj_p]=fdr_bh([dat{ival,3}]',z.qFDR,'pdep','yes');
         
         
-        H(ival)=Hx;
+        H(ival)=double(Hx);
         adj_pFDR=nan(size(H));
         adj_pFDR(ival)=adj_p;
         dat = [dat(:,1)  num2cell(H)    dat(:,2)    dat(:,3:end)  num2cell(adj_pFDR)    ];
@@ -4080,7 +4092,7 @@ for jj=1:ntestchunks
         %idxkeep=find(~isnan(sum(out(:,1:3),2)));
         %     Hfdr=fdr_bh(res(inonan,2) ,z.qFDR,'pdep','yes');
         [Hfdr, crit_p, adj_ci_cvrg, adj_p]=fdr_bh(  cell2mat(res1(:,2))  ,z.qFDR,'pdep','yes');
-        res2      =[num2cell(Hfdr) res1 num2cell(adj_p)];
+        res2      =[num2cell(double(Hfdr)) res1 num2cell(adj_p)];
     end
     reshead2  =[ {'Hfdr' 'Huncor' } reshead(2:end) 'adj_pFDR'] ;
     
@@ -4443,6 +4455,12 @@ if exportType==1 %sheetwise EXCEL
                 d =dat{j,2}(2:end,:);
             catch %n.s.
                 d=repmat({''},[ 1 length(hd)]);
+            end
+            
+            % force Hfdr to be double, not boolean
+            try
+                ifdr=find(strcmp(hd,'Hfdr'));
+                d(:,ifdr)=num2cell(  double(cell2mat(d(:,ifdr)) ));
             end
             
             cprintf([1 0 1],['saving comparison-' num2str(i) ',  sheet: "' sheetname '" ...'  '\n']);

@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   03 Oct 2026 (22:45:07)  
+ &#x1F34E; last modification:   23 Nov 2026 (13:29:30)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**23 Nov 2026 (13:29:30)**</ins>  
+   __[dtistat.m]__ : added: Hedges' g to statistical tests of pairwaise streamline values  
+<!---->
   &#x1F535;   <ins>**03 Oct 2026 (22:45:07)**</ins>  
   smaller changes..  
 <!---->
