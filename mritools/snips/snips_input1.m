@@ -3367,6 +3367,66 @@ z.fileNameOut  = 'regwise_GM_native_both';                 % % <optional> specif
 z.format       = '.xlsx';            % % select output-format: default: ".xlsx"; other formats: ".mat" ".csv" ".csv|tab" "csv|space"  "csv|bar"  ".txt|tab" ".txt|space",".txt|bar"
 xgetlabels4(0,z);  
 
+%% #################################################
+% REGIONWISE READOUT
+% get anatomical labels using atlas_kim_umba_v2 for a already registered animals
+
+%% ==============================================
+%% get anatomical labels using atlas_kim_umba_v2 for a already registered animals 
+%% to the mouse_Allen2017HikishimaLR-atlas
+%  NOTES:
+% - anamals are already registered to 'mouse_Allen2017HikishimaLR'
+% - please rename the  NIFTI and XLSX-files of atlas_kim_umba_v2, otherwise there will be
+%    conflicts with the underlying atlas (see [2])
+%    so from atlas_kim_umba_v2 rename: 
+%                  'ANO.nii'  to for instance 'ANO_kim_umba.nii'
+%                  'ANO.xlsx' to for instance 'ANO_kim_umba.xls' (use identical names for nifti and xlsx)
+%                ..this will be shown below ..
+% ___
+% source: 		F:\generate_anttemplates\kim_umba_v2_mouse\b3_check_getAnatomLbels_fromRegisteredABA.m
+%% ===============================================
+
+%% ====[1] open study-project ===========================================
+pastudy='F:\data5\nogui'  ;%current study: animals are already registerd to ABA-atlas
+cd(pastudy)
+antcb('load',fullfile(pwd,'proj.m')); % LOAD A PROJECT-FILE "proj.m"
+
+%% ===[2] copy and rename atlas_kim_umba_v2 NIFTI- and xlsx-files=====================
+pa_source ='F:\anttemplates\mouse_kim_umba_v2';  %path of template of "mouse_kim_umba_v2"
+pa_atlas  =fullfile(pastudy,'atlas_kim_umba_v2');
+mkdir(pa_atlas); %make folder in study folder
+
+%IMPORTANT: copy and rename (Important!) mouse_kim_umba_v2 atlas (.nii and .xlsx-file)
+% from template folder to 'atlas_kim_umba_v2' in the current study folder
+Fsource_nii =fullfile(pa_source ,'ANO.nii' );
+Fatlas_nii  =fullfile(pa_atlas  ,'ANO_kim_umba.nii' );
+copyfile(Fsource_nii,Fatlas_nii,'f');
+
+Fsource_xlsx =fullfile(pa_source ,'ANO.xlsx' );
+Fatlas_xlsx  =fullfile(pa_atlas  ,'ANO_kim_umba.xlsx' );
+copyfile(Fsource_xlsx,Fatlas_xlsx,'f');
+
+%% ===[3] select animals for atlas-readout =======================================
+antcb('selectdirs',[1] ); %select animals: for instance the first-animal
+
+% ==============================================
+%%  [4] get anatomical labels using mouse_kim_umba_v2-atlas
+% ===============================================
+z=[];                                                                                                                                                                                                                     
+z.files        = { 'x_t2.nii' };                                            % % files used for calculation                                                                                                                
+z.masks        = '';                                                        % % <optional> corresponding maskfiles (order is irrelevant)or mask from templates folder                                                     
+z.atlasOS      = '';                                                        % % The atlas in "other space". IMPORTANT ONLY IF "SPACE"-PARAMER IS SET TO "other">                                                          
+z.hemimaskOS   = '';                                                        % % The hemispher mask in "other space". IMPORTANT ONLY IF "SPACE"-PARAMER IS SET TO "other">                                                 
+z.atlas        = Fatlas_nii;                           % % select atlas here (default: ANO.nii), atlas has to be the standard space atlas                                                            
+z.space        = 'standard';                                                % % use images from "standard","native" or "other" space                                                                                      
+z.hemisphere   = 'both';                                                    % % hemisphere used: "left","right","both" (united)  or "seperate" (left and right separated)                                                 
+z.threshold    = '';                                                        % % lower intensity threshold value (values >=threshold will be excluded); leave field empty when using a mask                                
+z.fileNameOut  = 'atlas_kim_umba_standardspace';                                  % % <optional> specific name of the output-file. EMPTY FIELD: use timestamp+paramter for file name                                            
+z.format       = '.xlsx';                                                   % % select output-format: default: ".xlsx"; other formats: ".mat" ".csv" ".csv|tab" "csv|space"  "csv|bar"  ".txt|tab" ".txt|space",".txt|bar"
+xgetlabels4(0,z);                                                                                                                                                                                                         
+                  
+
+
 
   
 %% #################################################

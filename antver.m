@@ -1254,6 +1254,10 @@
 % smaller changes..
 % #wb 23 Nov 2026 (13:29:30)
 % #k [dtistat.m] #n : added: Hedges' g to statistical tests of pairwaise streamline values
+% #wb 25 Nov 2026 (01:21:07): 
+% bigfix: mouse_kim_umba_v2 (Unified mouse brain atlas v2; Yongsoo Kim) 
+% new version uploaded to google-drive:
+% #gw -->  access via link : https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
 % 
 % 
 % 
