@@ -20,6 +20,9 @@ us=get(findobj(gcf,'tag','setAtlasReference'),'userdata') ;
 
 if ~isempty(us) && isfield(us,'isOK')==1 && us.isOK==1
     
+  
+    
+    
     hsp=findobj(gcf,'tag','species');
     va=get(hsp,'value');
     li=get(hsp,'string');
@@ -37,6 +40,28 @@ if ~isempty(us) && isfield(us,'isOK')==1 && us.isOK==1
     if isempty(ref.path)
         ref=[];
     end
+    %% ====addit. paramter ===========================================
+    v0 = who;
+    infofile=fullfile(us.refpath,'parameter.m');
+    if exist(infofile)==2
+        run(infofile)
+    end
+    v1=who;
+    v=setdiff(v1,[ v0; 'infofile' ;'v0';'v1'; 'species'; 'voxsize' ]);
+    
+    s = struct;
+    for i = 1:numel(v)
+        s.(v{i}) = eval(v{i});
+    end
+    if ~isempty(fieldnames(s))
+        ref.addparams=s;
+    end
+    
+    
+    %% ===============================================
+    
+    
+    
 end
 
 

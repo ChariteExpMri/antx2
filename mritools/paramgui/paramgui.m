@@ -208,9 +208,18 @@
 %% DYNAMICALLY SET VARIABLE FIELD
 % -during runtime, variablename must exist,
 % -variable name must  come with struct-name use 'x.reorienttype' instead of 'reorienttype'
-% example
+% example:
 % paramgui('setdata','x.reorienttype','[]')
 % paramgui('setdata','x.reorienttype',{'ee' 'eeed' 'fgffd'})
+%% DYNAMICALLY ADD a new VARIABLE 
+% -during runtime, variablename must not exist,
+% % paramgui('adddata',VARIABLENNAME,VARIABLECONTENT ,COMMENT); 
+% examples:
+% paramgui('adddata','x.name','klaus' ,'patient name'); 
+%     result:       x.name                  =  'klaus'; % patient name
+% 
+%  paramgui('adddata','x.size',[10 20 30],'objectsize [cm]');
+%      result:      x.size                  =  [10 20 30]; % objectsize [cm]
 %
 %% #by SET PREFERENCES
 % Preferences are stored in the global variable:'paramguipref'.
@@ -336,6 +345,9 @@ if ischar(dat)
       return
     elseif strcmp(dat,'setdata');
         setdata(varargin);
+        return
+    elseif strcmp(dat,'adddata');
+        adddata(varargin);
         return
     elseif strcmp(dat,'setchoice');
         setchoice(varargin);
@@ -5685,18 +5697,13 @@ htmlStr = ['<b><div style="font-family:impact;color:green">'...
 jEditPane.setText(htmlStr)
 %% ===============================================
 
-
-
-
-%%   setdata
-function setdata(varargin);
+function adddata(varargin)
+% snip_adddata(varargin{1})
 inp=varargin{1};
-
 hp=findobj(0,'tag','paramgui');
 us=get(hp,'userdata');
 r=us.jCodePane;
 tx=char(r.getText);
-
 %--------------------------------------------------
 %% get line of caret [cartposnew]
 cartpos=r.getCaretPosition;
@@ -5710,13 +5717,15 @@ catch
 end
 % r.setCaretPosition(cartposnew)
 %%
-
 %--------------------------------------------------
 %% get field and new data
-
 field    =inp{1};
 replaceby=inp{2};
-
+try
+    comment  =inp{3};
+catch
+    comment  ='';
+end
 
 %--------------------------------------------------
 % special characters -cases
@@ -5735,9 +5744,7 @@ elseif isnumeric(replaceby)
         w2=regexprep(w2,'\s+',' ');
         w3=strjoin(w2,char(10));
         replaceby=w3;
-        
     else % 3d
-        
         wp={};
         for i=1:size(replaceby,3)
             w=struct();
@@ -5754,8 +5761,6 @@ elseif isnumeric(replaceby)
         w3=strjoin(wp,char(10));
         replaceby=w3;
     end
-    
-    
     %     ndims(size(w.r))
     %      if isempty(replaceby); replaceby='[]';
     %         if numel(replaceby)==1
@@ -5775,8 +5780,6 @@ elseif iscell(replaceby)
                 end
             end
             replaceby=dx;
-            
-            
             dx=['{' strjoin(replaceby,char(10)) '}'];
             dx=strrep(dx,[char(10)] ,[ char(10) ' ']);
             replaceby=dx;
@@ -5785,7 +5788,6 @@ elseif iscell(replaceby)
         replaceby='{}';
     end
 end
-
 %--------------------------------------------------
 % REPLACE TEXT
 iv   =regexpi(tx,[ char(10) field '[=|\s*]'])  ;% find onset of  variable
@@ -5793,11 +5795,167 @@ if isempty(iv)
     iv   =regexpi(tx,[  field '[=|\s*]'])  ;% find onset of  variable
 end
 ichar=regexpi(tx,[ char(10) 'x.' '[\S+ \S+=]']);   %find chars
+if isempty(iv)
+    %% ===============================================
+    
+    tx4=[tx char(10) field '=' replaceby '; % ' comment];
+    
+    %% ===============================================
+    
+else
+    try
+        range=  [iv ichar(find(ichar==iv)+1)-1];  % get line of code of this variable
+        tx2=[tx(range(1):range(2))];
+    catch
+        range=  [iv length(tx)];                  % .. in case it is the last entry in txt
+        tx2=[tx(range(1):range(2))];
+    end
+    if iv==1 %1st entry
+        range=  [iv    ichar(1)-1 ];  % get line of code of this variable
+        tx2=[tx(range(1):range(2)    )]  ;
+    end
+    d1=min(regexpi(tx2,'='));  %find equal sign
+    d2=min(regexpi(tx2,'%'));  %find comment
+    if ~isempty(d2)
+        le=length(tx2(d1:d2));
+        insert=['= ' replaceby '; %']; %this should be inserted
+        ende=tx2(d2+1:end);   
+        cr=strfind(ende,char(10));
+        if ~isempty(cr)
+            ende=ende(1:cr(1));
+            
+            %ende=ende(1:strfind(ende,char(10)));
+        end
+        crt=strfind(insert,char(10));
+        if ~isempty(crt)
+            insert2=[insert(1:crt(1)-1) ['% ' ende(1:end-1)] insert(crt(1):end)  ];
+            tx3=[tx2(1:d1-1) insert2];
+        else
+            tx3=[tx2(1:d1-1) insert ende];
+        end
+    else                                        % no commented code
+        insert=['= ' replaceby ';' ];
+        tx3=[tx2(1:d1-1) insert];
+    end
+    try
+        tx4=[tx(1:range(1)-1)  tx3  tx(range(2)+1:end)];
+    catch
+        tx4=[tx(1:range(1)-1)  tx3  tx(range(2):end)];
+    end
+end
+% make nicer
+tx5=makenicer2(tx4);
+%% ===============================================
+%--------------------------------------------------
+% insert back
+r.setText(tx5);
+%--------------------------------------------------
+% set caretposition
+try
+    r.setCaretPosition(cartposnew);
+end
 
+
+
+
+
+
+
+%%   setdata
+function setdata(varargin);
+inp=varargin{1};
+hp=findobj(0,'tag','paramgui');
+us=get(hp,'userdata');
+r=us.jCodePane;
+tx=char(r.getText);
+%--------------------------------------------------
+%% get line of caret [cartposnew]
+cartpos=r.getCaretPosition;
+ichar=regexpi(tx,char(10));
+charbef=find(ichar>cartpos);
+cartline=min(charbef);
+try
+    cartposnew=ichar(cartline-1)+3;
+catch
+    cartposnew= 2; %set at the beginning
+end
+% r.setCaretPosition(cartposnew)
+%%
+%--------------------------------------------------
+%% get field and new data
+field    =inp{1};
+replaceby=inp{2};
+%--------------------------------------------------
+% special characters -cases
+if     ischar(replaceby)
+    if isempty(replaceby);
+        replaceby='''''';
+    else
+        replaceby=['''' replaceby ''''];
+    end
+elseif isnumeric(replaceby)
+    if ndims(replaceby)<3
+        w=struct();
+        w.r=replaceby;
+        w2=struct2list(w);
+        w2=strrep(strrep(w2,'w.r=',''),';','');
+        w2=regexprep(w2,'\s+',' ');
+        w3=strjoin(w2,char(10));
+        replaceby=w3;
+    else % 3d
+        wp={};
+        for i=1:size(replaceby,3)
+            w=struct();
+            w.r=replaceby(:,:,i);
+            w2=struct2list(w);
+            w2=strrep(strrep(w2,'w.r=',''),';','');
+            if i<size(replaceby,3)
+                w2{end}=[w2{end} ',...'];
+            end
+            wp=[wp;w2];
+        end
+        wp{1}=[ 'cat(3,' wp{1}];
+        wp{end}=[ wp{end} ')'];
+        w3=strjoin(wp,char(10));
+        replaceby=w3;
+    end
+    %     ndims(size(w.r))
+    %      if isempty(replaceby); replaceby='[]';
+    %         if numel(replaceby)==1
+    %         [regexprep(num2str(replaceby),'\s+','') ]
+    %         elseif size(replaceby,1)==1 & size(replaceby,1)==1
+    %            ['[' regexprep(num2str(replaceby),'\s+',' ') ']' ]
+    %     end
+elseif iscell(replaceby)
+    try;
+        replaceby{1};
+        si=size(replaceby);
+        if find(si>=1)
+            dx=replaceby;
+            for i=1:length(dx)
+                if ischar(dx{i})
+                    dx{i}=['''' dx{i} ''''] ;
+                end
+            end
+            replaceby=dx;
+            dx=['{' strjoin(replaceby,char(10)) '}'];
+            dx=strrep(dx,[char(10)] ,[ char(10) ' ']);
+            replaceby=dx;
+        end
+    catch
+        replaceby='{}';
+    end
+end
+%--------------------------------------------------
+% REPLACE TEXT
+iv   =regexpi(tx,[ char(10) field '[=|\s*]'])  ;% find onset of  variable
+if isempty(iv)
+    iv   =regexpi(tx,[  field '[=|\s*]'])  ;% find onset of  variable
+end
+ichar=regexpi(tx,[ char(10) 'x.' '[\S+ \S+=]']);   %find chars
 if isempty(iv)
     error('### could not found variable "field --> TYPO ???? ###"');
 end
-
 try
     range=  [iv ichar(find(ichar==iv)+1)-1];  % get line of code of this variable
     tx2=[tx(range(1):range(2))];
@@ -5810,8 +5968,6 @@ if iv==1 %1st entry
     tx2=[tx(range(1):range(2)    )]  ;
     
 end
-
-
 d1=min(regexpi(tx2,'='));  %find equal sign
 d2=min(regexpi(tx2,'%'));  %find comment
 if ~isempty(d2)
@@ -5832,10 +5988,7 @@ if ~isempty(d2)
         tx3=[tx2(1:d1-1) insert2];
     else
         tx3=[tx2(1:d1-1) insert ende];
-    end
-    
-    
-    
+    end  
 else                                        % no commented code
     insert=['= ' replaceby ';' ];
     tx3=[tx2(1:d1-1) insert];
@@ -5845,13 +5998,10 @@ try
 catch
     tx4=[tx(1:range(1)-1)  tx3  tx(range(2):end)];
 end
-
 %--------------------------------------------------
 % make nicer
 tx5=makenicer2(tx4);
 %% ===============================================
-
-
 %--------------------------------------------------
 % insert back
 r.setText(tx5);

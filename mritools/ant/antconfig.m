@@ -578,15 +578,30 @@ paramgui('setdata','x.wa.orientType',outval);
 
 function referencefolder(li,lih)
 he=[];
-
-
 [ref ]=getReferencePath;
-
 if isempty(ref); return; end
-
-
 paramgui('setdata','x.wa.refpath',ref.path);
 paramgui('setdata','x.wa.species',ref.species);
+if isfield(ref,'addparams') %additonal parameters such as:brainvol
+    fn=fieldnames(ref.addparams);
+    infofile=fullfile(ref.path,'parameter.m');
+    if exist(infofile)==2
+        ff=preadfile(infofile); ff=ff.all;
+    end
+    for i=1:length(fn)
+        %paramgui('adddata','x.wa.b1','sometext1');
+        val=getfield(ref.addparams, fn{i});
+        comment='';
+        try %add comment
+            ix=regexpi2(ff,['^' fn{i}]);
+            comment=ff{ix(1)};
+            comment=comment(max(strfind(comment,'%'))+1:end);
+        end
+        
+        paramgui('adddata',['x.wa.' fn{i}   ],val,comment);
+    end
+    
+end
 
 
 % removed fields: [tpm,fib,avg,ano ]

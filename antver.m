@@ -1258,7 +1258,8 @@
 % bigfix: mouse_kim_umba_v2 (Unified mouse brain atlas v2; Yongsoo Kim) 
 % new version uploaded to google-drive:
 % #gw -->  access via link : https://drive.google.com/drive/u/1/folders/1q5XOOVLvUYLqYsQJLqNRF7OK8fNwYhI9
-% 
+% #wb 26 Nov 2026 (19:46:43)
+% bigfix: chicken-registration
 % 
 % 
 % 

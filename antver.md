@@ -1,5 +1,5 @@
 ## **ANTx2 Modifications**
- &#x1F34E; last modification:   25 Nov 2026 (01:21:07)  
+ &#x1F34E; last modification:   26 Nov 2026 (19:46:43)  
     
  &#8658; Respository: <a href= "https://github.com/ChariteExpMri/antx2">GitHub:github.com/ChariteExpMri/antx2</a>   
  &#8658; Tutorials: <a href= "https://chariteexpmri.github.io/antxdoc/">https://chariteexpmri.github.io/antxdoc/</a>   
@@ -7,6 +7,9 @@
     
     
 ------------------  
+  &#x1F535;   <ins>**26 Nov 2026 (19:46:43)**</ins>  
+  bigfix: chicken-registration  
+<!---->
   &#x1F535;   <ins>**25 Nov 2026 (01:21:07)**: </ins>  
   bigfix: mouse_kim_umba_v2 (Unified mouse brain atlas v2; Yongsoo Kim)   
   new version uploaded to google-drive:  
