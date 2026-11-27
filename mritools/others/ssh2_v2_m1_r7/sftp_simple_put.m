@@ -6,19 +6,19 @@ function ssh2_struct = sftp_simple_put(hostname, username, password, localFilena
 %   PASSWORD. Once connected the LOCALFILENAME is uploaded from the
 %   remote host using SFTP. The connection is then closed.
 %
-%   LOCALFILENAME can be either a single string, or a cell array of strings. 
+%   LOCALFILENAME can be either a single string, or a cell array of strings.
 %   If LOCALFILENAME is a cell array, all files will be downloaded
 %   sequentially.
 %
 %   OPTIONAL INPUTS:
 %   -----------------------------------------------------------------------
-%   REMOTEPATH specifies a specific path to upload the file to. Otherwise, 
+%   REMOTEPATH specifies a specific path to upload the file to. Otherwise,
 %   the default (home) folder is used.
 %   LOCALPATH specifies the folder to find the LOCALFILENAME in the file
 %   is outside the working directory.
 %   REMOTEFILENAME can be specified to rename the file on the remote host.
 %   If LOCALFILENAME is a cell array, REMOTEFILENAME must be too.
-% 
+%
 %   SFTP_SIMPLE_PUT returns the SSH2_CONN for future use.
 %
 %see also sftp_simple_get, sftp, sftp_get, sftp_put, ssh2_simple_command
@@ -42,7 +42,7 @@ else
     
     if nargin >= 7
         ssh2_struct.remote_file_new_name = remoteFilename;
-    else 
+    else
         remoteFilename = [];
     end
     
@@ -52,17 +52,17 @@ else
         ssh2_struct = sftp_put(ssh2_struct, localFilename, remotePath, localPath, remoteFilename);
     catch
         do_alternative=1;
-    end 
+    end
 end
 
 
 if do_alternative==1
     %% ===============================================
     %addpath('D:\progs\putty');
-%     e=[which('plink.exe') ' -ssh -batch -pw ' password ' ' username '@' hostname ' "' command '"' ];
-%     [s, cs] = system(e);
-%     cs=strsplit(cs,char(10))';
-%     command_result=cellstr(cs);
+    %     e=[which('plink.exe') ' -ssh -batch -pw ' password ' ' username '@' hostname ' "' command '"' ];
+    %     [s, cs] = system(e);
+    %     cs=strsplit(cs,char(10))';
+    %     command_result=cellstr(cs);
     
     
     infile=['"' fullfile(localPath,localFilename) '"'];
@@ -72,13 +72,35 @@ if do_alternative==1
     else
         outfile=[ ' ' outfile ];
     end
-    
-    e=[which('pscp.exe') ' -pw ' password ' ' infile ' ' username '@' hostname outfile ];
-    [s, cs] = system(e);
-     cs=strsplit(cs,char(10))';
-     if isempty(cs{end}); cs(end)=[]; end
-    ssh2_struct=cellstr(cs);
-    %% ===============================================
+    %% ========[charite]=======================================
+    if isempty(strfind(hostname,'bihealth.org'))
+        e=[which('pscp.exe') ' -pw ' password ' ' infile ' ' username '@' hostname outfile ];
+        [s, cs] = system(e);
+        cs=strsplit(cs,char(10))';
+        if isempty(cs{end}); cs(end)=[]; end
+        ssh2_struct=cellstr(cs);
+    else
+        %% ========[BIH]=======================================
+        if strcmp(outfile,':')==1
+            %         outfile = [':~/' batchName];
+            outfile = [':~/' localFilename];
+        end
+        % Transfer file
+        [msg, ssh_exe]=system(['where scp.exe']);
+        ssh_exe=strsplit(ssh_exe,char(10));
+        ssh_exe=ssh_exe{1};
+        if exist(ssh_exe)~=7
+            ssh_exe= 'C:\Windows\System32\OpenSSH\scp.exe';
+        end
+        e = ['"' ssh_exe '" ' ...
+            ' -o BatchMode=yes ' infile  ...
+            ' "' username '@' hostname outfile '"'];
+        [s, cs] = system(e);
+        cs = strsplit(cs, char(10))';
+        if isempty(cs{end}); cs(end)=[]; end
+        ssh2_struct = cellstr(cs);
+        %% ===============================================
+    end
 end
 
 

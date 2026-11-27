@@ -52,11 +52,26 @@ end
 
 
 if do_alternative==1
-    %% ===============================================
-    %addpath('D:\progs\putty');
-    e=[which('plink.exe') ' -ssh -batch -pw ' password ' ' username '@' hostname ' "' command '"' ];
-    [s, cs] = system(e);
-    cs=strsplit(cs,char(10))';
-    command_result=cellstr(cs);
-    %% ===============================================
+    if isempty(strfind(hostname,'bihealth.org'))
+        %% ========[charite]=======================================
+        %addpath('D:\progs\putty');
+        e=[which('plink.exe') ' -ssh -batch -pw ' password ' ' username '@' hostname ' "' command '"' ];
+        [s, cs] = system(e);
+        cs=strsplit(cs,char(10))';
+        command_result=cellstr(cs);
+    else
+        %% ========[BIH]=======================================
+        [msg, ssh_exe]=system(['where ssh.exe']);
+        ssh_exe=strsplit(ssh_exe,char(10));
+        ssh_exe=ssh_exe{1};
+        if exist(ssh_exe)~=7
+           ssh_exe= 'C:\Windows\System32\OpenSSH\ssh.exe';
+        end
+        e = ['"' ssh_exe '"' ' -o BatchMode=yes ' username '@' hostname  ' "' command '"'];
+        [s, cs] = system(e);
+        cs = strsplit(cs, char(10))';
+        command_result = cellstr(cs);
+        %% ===============================================
+        
+    end
 end
